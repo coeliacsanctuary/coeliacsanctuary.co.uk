@@ -8,12 +8,21 @@ use App\Http\Response\Inertia;
 use App\Models\Shop\ShopProduct;
 use App\Resources\Shop\ShopProductResource;
 use App\Resources\Shop\ShopProductReviewResource;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response as LaravelResponse;
+use Illuminate\Support\Facades\Route;
 use Inertia\Response;
 
 class ShowController
 {
-    public function __invoke(ShopProduct $product, Inertia $inertia): Response
+    public function __invoke(ShopProduct $product, Inertia $inertia): Response|RedirectResponse
     {
+        $rawSlug = Route::getCurrentRoute()->originalParameter('product');
+
+        if ($product->legacy_slug === $rawSlug) {
+            return redirect(route('shop.product', $product), LaravelResponse::HTTP_MOVED_PERMANENTLY);
+        }
+
         $product->load(['categories', 'prices', 'variants', 'media', 'reviews']);
 
         $reviews = $product->reviews()

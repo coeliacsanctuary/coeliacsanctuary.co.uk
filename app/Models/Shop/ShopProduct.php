@@ -41,8 +41,10 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     use DisplaysMedia;
     use HasLegacyImage;
     use Imageable;
+
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use LinkableModel;
     use Searchable;
 
@@ -63,7 +65,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         }
 
         /** @phpstan-ignore-next-line  */
-        return $query->where('slug', $value);
+        return $query->where('slug', $value)->orWhere('legacy_slug', $value);
     }
 
     public function registerMediaCollections(): void
