@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Actions\GetPopupCtaAction;
+use App\Http\Controllers\Api\MailcoachSchedule\StoreController as MailcoachScheduleStoreController;
+use App\Http\Middleware\MailcoachIncomingRequestMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('blogs')->group(base_path('routes/blogs/api.php'));
@@ -26,3 +28,7 @@ Route::get('popup', function (GetPopupCtaAction $getPopupCtaAction) {
         'image' => $popup->main_image,
     ];
 });
+
+Route::post('mailcoach-schedule', MailcoachScheduleStoreController::class)
+    ->name('api.mailcoach-schedule')
+    ->middleware(MailcoachIncomingRequestMiddleware::class);

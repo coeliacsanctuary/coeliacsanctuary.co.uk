@@ -17,7 +17,10 @@ class ShowController
 {
     public function __invoke(ShopProduct $product, Inertia $inertia): Response|RedirectResponse
     {
-        $rawSlug = Route::getCurrentRoute()->originalParameter('product');
+        /** @var \Illuminate\Routing\Route $route */
+        $route = Route::getCurrentRoute();
+
+        $rawSlug = $route->originalParameter('product');
 
         if ($product->legacy_slug === $rawSlug) {
             return redirect(route('shop.product', $product), LaravelResponse::HTTP_MOVED_PERMANENTLY);

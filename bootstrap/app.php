@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Console\Commands\ApplyMassDiscountsCommand;
+use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
 use App\Console\Commands\CloseBasketsCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Console\Commands\PublishItemsCommand;
@@ -79,5 +80,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(ApplyMassDiscountsCommand::class)->everyMinute();
         $schedule->command(PrepareShopReviewInvitationsCommand::class)->everyMinute();
         $schedule->command(PublishItemsCommand::class)->everyMinute();
+        $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
     })
     ->create();

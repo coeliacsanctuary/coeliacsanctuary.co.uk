@@ -9,6 +9,8 @@ return [
      */
     'api_token' => env('MAILCOACH_API_TOKEN'),
 
+    'incoming_key' => env('MAILCOACH_INCOMING_KEY'),
+
     'endpoint' => env('MAILCOACH_API_ENDPOINT'),
 
     'newsletter_id' => env('MAILCOACH_NEWSLETTER_ID'),
