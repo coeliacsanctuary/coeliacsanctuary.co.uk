@@ -30,6 +30,9 @@ import eventBus from '@/eventBus';
 import { ConfirmPaymentData } from '@stripe/stripe-js';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import pkg from 'i18n-iso-countries';
+import Warning from '@/Components/Warning.vue';
+import Info from '@/Components/Info.vue';
+import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
@@ -364,6 +367,8 @@ onMounted(() => {
           :total="basket.total"
           :subtotal="basket.subtotal"
         />
+
+        <TestModeDetails />
       </Card>
 
       <Card class="xl:col-span-2">
