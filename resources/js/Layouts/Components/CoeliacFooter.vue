@@ -16,9 +16,9 @@ const year = new Date().getFullYear();
 const navigation: { links: { label: string; url: string }[] } = {
   links: [
     { label: 'Shop', url: '/shop' },
-    { label: 'Blogs', url: '/blogs' },
+    { label: 'Blogs', url: '/blog' },
     { label: 'Eating Out', url: '/eating-out' },
-    { label: 'Recipes', url: '/recipes' },
+    { label: 'Recipes', url: '/recipe' },
     { label: 'Contact', url: '/contact' },
     { label: 'Terms', url: '/terms-of-use' },
     { label: 'Privacy', url: '/privacy-policy' },

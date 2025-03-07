@@ -7,7 +7,9 @@ const props = defineProps<{ content: string }>();
 const compiled = shallowRef<(() => any) | null>(null);
 
 onMounted(async () => {
-  const { compile } = await import('vue');
+  const { compile } = import.meta.env.PROD;
+  // ? await import('vue/dist/vue.esm-bundler.js')
+  await import('vue');
   compiled.value = compile(props.content);
 });
 </script>
