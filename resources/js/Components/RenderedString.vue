@@ -1,9 +1,25 @@
-<script lang="ts">
-import { compile, defineComponent, h, Slot, VNode } from 'vue';
+<script setup lang="ts">
+import { shallowRef, onMounted, defineProps } from 'vue';
+import ArticleHeader from './ArticleHeader.vue';
+import ArticleImage from './ArticleImage.vue';
 
-export default defineComponent({
-  render(): VNode {
-    return h(compile((<Slot>this.$slots.default)()[0].children as string));
-  },
+const props = defineProps<{ content: string }>();
+const compiled = shallowRef<(() => any) | null>(null);
+
+onMounted(async () => {
+  const { compile } = await import('vue');
+  compiled.value = compile(props.content);
 });
 </script>
+
+<template>
+  <div v-if="compiled">
+    <component
+      :is="compiled"
+      :components="{ ArticleHeader, ArticleImage }"
+    />
+  </div>
+  <div v-else>
+    <div v-html="content"></div>
+  </div>
+</template>

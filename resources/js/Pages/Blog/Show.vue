@@ -113,7 +113,7 @@ const loadMoreComments = () => {
 
   <Card>
     <div class="prose prose-lg max-w-none md:prose-xl">
-      <RenderedString>{{ blog.body }}</RenderedString>
+      <RenderedString :content="blog.body" />
     </div>
 
     <GoogleAd code="6662103082" />
