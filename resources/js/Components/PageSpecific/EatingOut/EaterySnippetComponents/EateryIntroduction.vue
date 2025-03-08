@@ -44,7 +44,7 @@ const icon = computed((): string => {
         v-if="isNotNationwide"
         class="mt-2 flex space-x-1 text-sm font-semibold text-grey-darker md:text-base"
       >
-        <span v-if="isBranch">Nationwide Branch</span>
+        <span v-if="isBranch">Nationwide Chain - </span>
         <span>{{ venueType }}</span>
         <span v-if="cuisine && cuisine !== 'English'">- {{ cuisine }} </span>
       </h3>
