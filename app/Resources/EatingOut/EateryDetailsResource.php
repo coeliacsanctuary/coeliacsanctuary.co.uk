@@ -139,7 +139,7 @@ class EateryDetailsResource extends JsonResource
     {
         return [
             'id' => $branch->id,
-            'name' => $branch->name,
+            'name' => $branch->name ?: $this->name,
             'county' => [
                 'id' => $branch->county_id,
                 'name' => $branch->county?->county,
