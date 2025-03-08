@@ -42,14 +42,13 @@ const addToBasket = () => {
     class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
   >
     <Link
-      class="aspect-3/4 sm:aspect-none bg-gray-200 sm:h-96"
+      class="bg-gray-200"
       :href="product.link"
       prefetch
     >
       <img
         :src="product.image"
         :alt="product.title"
-        class="h-full w-full object-cover object-center sm:h-full sm:w-full"
       />
     </Link>
     <div class="flex flex-1 flex-col space-y-2 p-4">
