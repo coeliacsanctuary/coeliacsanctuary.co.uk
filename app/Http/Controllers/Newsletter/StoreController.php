@@ -13,7 +13,9 @@ class StoreController
 {
     public function __invoke(StoreRequest $request, SignUpToNewsletterAction $signUpToNewsletterAction): RedirectResponse
     {
-        $signUpToNewsletterAction->handle($request->string('email')->toString());
+        dispatch(function () use ($signUpToNewsletterAction, $request): void {
+            $signUpToNewsletterAction->handle($request->string('email')->toString());
+        });
 
         return new RedirectResponse(URL::previous());
     }
