@@ -53,7 +53,11 @@ const eateryLink = computed(() => {
         />
 
         <EateryInfoBlock
-          :address="eatery.location.address"
+          :address="
+            eatery.branch
+              ? eatery.branch.location.address
+              : eatery.location.address
+          "
           :info="eatery.info"
           :is-not-nationwide="isNotNationwide"
           :phone="eatery.phone"
