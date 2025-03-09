@@ -11,17 +11,16 @@ import Card from '@/Components/Card.vue';
       <Heading>Coeliac Travel Cards</Heading>
 
       <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl">
-        Our standard coeliac gluten free travel and translation cards come in
-        two languages for the price of one card, one on each side of the card,
-        and available in over 50 different languages!
+        Our standard coeliac gluten free travel and translation cards offer two
+        languages for the price of one — one on each side — and are available in
+        over 50 languages!
       </p>
 
       <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl flex-1">
-        Our standard gluten free travel cards are perfect for those who have
-        coeliac without any other allergies or foods they must avoid, each
-        language is professionally translated to explain coeliac disease and a
-        gluten free diet, what you can and can't eat, cross contamination, and
-        what to look out for.
+        Designed specifically for those with coeliac disease and no additional
+        allergies, these cards are professionally translated to clearly explain
+        coeliac disease, a gluten free diet, safe and unsafe foods,
+        cross-contamination risks, and key points to watch out for.
       </p>
 
       <CoeliacButton
@@ -37,18 +36,18 @@ import Card from '@/Components/Card.vue';
       <Heading>Coeliac+ Travel Cards</Heading>
 
       <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl">
-        Unlike our standard travel and translation cards, our Coeliac+ travel
-        and translation cards come in just one language per card, and are
-        currently available in our 10 most popular languages.
+        Our Coeliac+ travel and translation cards are designed for those who are
+        gluten free and also have additional dietary needs. Unlike our standard
+        cards, each Coeliac+ card is just one language and comes in our 10 most
+        popular languages.
       </p>
 
       <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl flex-1">
-        The first side of the card covers the gluten free diet, professionally
-        translated to explain coeliac disease and a gluten free diet, what you
-        can and can't eat, cross contamination, and what to look out for, the
-        other side of the card has a series of checkboxes for you to check any
-        other allergens you have or foods you must avoid, or other dietary
-        requirements like vegetarian and vegan.
+        On one side, you'll find a professionally translated explanation of
+        coeliac disease, including cross-contamination risks. The reverse side
+        features a series of checkboxes, allowing you to easily indicate any
+        additional allergens, dietary restrictions, or preferences like
+        vegetarian or vegan.
       </p>
 
       <CoeliacButton
