@@ -7,6 +7,7 @@ import { ShopProductIndex } from '@/types/Shop';
 import { nextTick, onMounted, ref } from 'vue';
 import axios, { AxiosResponse } from 'axios';
 import useBrowser from '@/composables/useBrowser';
+import Heading from '@/Components/Heading.vue';
 
 type SearchResult = {
   term: string;
@@ -64,12 +65,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="flex justify-center items-center">
+  <Card
+    class="flex justify-center items-center"
+    theme="primary"
+    faded
+  >
     <div
       ref="searchContainer"
       class="w-full flex flex-col space-y-4 items-center sm:w-2/3"
     >
-      <h2 class="text-xl xl:text-2xl font-semibold">Where are you heading?</h2>
+      <Heading :border="false">Where are you heading?</Heading>
 
       <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl">
         Enter the country or language below and we'll try and find the best
@@ -88,10 +93,11 @@ onMounted(() => {
         lookup-endpoint="/api/shop/travel-card-search"
         :preselect-term="termFromSearch"
         @search="handleSearch"
+        input-classes="text-2xl! p-4! text-center"
       >
         <template #item="{ id, term, type }">
           <div
-            class="flex space-x-2 text-left border-b border-grey-off transition cursor-pointer hover:bg-grey-lightest"
+            class="flex space-x-2 bg-grey-light text-left border-b border-grey-off transition cursor-pointer hover:bg-grey-lightest"
             @click="selectResult(id)"
           >
             <span
@@ -131,22 +137,22 @@ onMounted(() => {
 
     <template v-else>
       <Card>
-        <p
+        <Heading
+          :border="false"
           v-if="searchResult.type === 'country'"
-          class="text-lg font-semibold text-center"
         >
           Here are our travel cards that can be used in
           <span class="text-primary-dark">{{ searchResult.term }}</span>
-        </p>
+        </Heading>
 
-        <p
+        <Heading
+          :border="false"
           v-else
-          class="text-lg font-semibold text-center"
         >
           Here are our travel cards that can be used in
           <span class="text-primary-dark">{{ searchResult.term }}</span>
           speaking areas
-        </p>
+        </Heading>
       </Card>
 
       <div class="grid gap-4 sm:max-lg:grid-cols-2 lg:grid-cols-3">
