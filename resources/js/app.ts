@@ -17,13 +17,13 @@ void createInertiaApp({
     color: '#4B5563',
   },
 
-  resolve: (name) => {
-    const pages: { [T: string]: InertiaPage } = import.meta.glob(
-      './Pages/**/*.vue',
-      { eager: true },
-    );
+  resolve: async (name) => {
+    // @ts-ignore
+    const pages: Record<string, () => Promise<() => InertiaPage>> =
+      import.meta.glob('./Pages/**/*.vue');
 
-    const page: InertiaPage = pages[`./Pages/${name}.vue`];
+    // @ts-ignore
+    const page: InertiaPage = await pages[`./Pages/${name}.vue`]();
 
     page.default.layout = page.default.layout || (Coeliac as Component);
 

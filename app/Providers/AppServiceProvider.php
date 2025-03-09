@@ -9,6 +9,7 @@ use App\Search\Eateries;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Notifications\Channels\MailChannel as IlluminateMailChannel;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,5 +34,7 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
 
         Eateries::bootSearchable();
+
+        Vite::prefetch(concurrency: 3);
     }
 }
