@@ -41,7 +41,7 @@ const optionClasses = (disabled: boolean, selected: boolean): string[] => {
     base.push('bg-primary-light/50');
   }
 
-  base.push(disabled ? 'text-grey-off-dark' : 'hover:bg-grey-light');
+  base.push(disabled ? 'text-grey-off-dark' : 'sm:hover:bg-grey-light');
 
   return base;
 };
@@ -115,7 +115,7 @@ const openBox = (open: boolean) => {
               <span v-text="option.label" />
             </div>
 
-            <span v-text="`(${option.recipeCount} recipes`" />
+            <span v-text="`(${option.recipeCount} recipes)`" />
           </ListboxOption>
         </ListboxOptions>
       </transition>
