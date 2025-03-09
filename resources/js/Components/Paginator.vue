@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/vue/20/solid';
+import useScreensize from '@/composables/useScreensize';
 
 type Page = {
   type: 'page' | 'dots';
@@ -17,15 +18,21 @@ const canGoBack = (): boolean => props.current > 1;
 
 const canGoForward = (): boolean => props.current < props.to;
 
+const screensize = useScreensize();
+
 const pages = (): Page[] => {
   const pageArray: Page[] = [];
 
   if (props.current > 3) {
-    pageArray.push({ type: 'page', number: 1 });
+    pageArray.push({ type: 'page', number: 1, static: true });
   }
 
   if (props.current > 4) {
-    pageArray.push({ type: 'page', number: 2 });
+    pageArray.push({
+      type: 'page',
+      number: 2,
+      static: screensize.screenIsGreaterThanOrEqualTo('sm'),
+    });
   }
 
   if (props.current > 5) {
@@ -33,7 +40,11 @@ const pages = (): Page[] => {
   }
 
   if (props.current >= 3) {
-    pageArray.push({ type: 'page', number: props.current - 2, static: true });
+    pageArray.push({
+      type: 'page',
+      number: props.current - 2,
+      static: screensize.screenIsGreaterThanOrEqualTo('sm'),
+    });
   }
 
   if (props.current >= 2) {
@@ -52,19 +63,27 @@ const pages = (): Page[] => {
   }
 
   if (props.current < props.to - 1) {
-    pageArray.push({ type: 'page', number: props.current + 2, static: true });
+    pageArray.push({
+      type: 'page',
+      number: props.current + 2,
+      static: screensize.screenIsGreaterThanOrEqualTo('sm'),
+    });
   }
 
   if (props.current < props.to - 4) {
-    pageArray.push({ type: 'dots', number: props.to - 2 - 0.1 });
+    pageArray.push({ type: 'dots', number: props.to - 2 - 0.1, static: true });
   }
 
   if (props.current + 1 < props.to) {
-    pageArray.push({ type: 'page', number: props.to - 1 });
+    pageArray.push({
+      type: 'page',
+      number: props.to - 1,
+      static: screensize.screenIsGreaterThanOrEqualTo('sm'),
+    });
   }
 
   if (props.current < props.to) {
-    pageArray.push({ type: 'page', number: props.to });
+    pageArray.push({ type: 'page', number: props.to, static: true });
   }
 
   return pageArray;
@@ -89,13 +108,7 @@ const gotoPage = (page: number | 'next' | 'prev'): void => {
 };
 
 const classes = (page: Page): string[] => {
-  const rtr: string[] = [
-    'items-center',
-    'border-t-2',
-    'px-4',
-    'pt-4',
-    'font-semibold',
-  ];
+  const rtr: string[] = ['items-center', 'border-y-2', 'p-3', 'font-semibold'];
 
   if (page.current) {
     rtr.push('border-primary', 'text-primary');
@@ -119,19 +132,20 @@ const classes = (page: Page): string[] => {
 
 <template>
   <nav
-    class="flex select-none items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+    class="flex select-none items-center justify-between border-t border-gray-200 px-4 sm:px-0 pt-4"
   >
-    <div class="-mt-px flex w-0 flex-1">
+    <div class="-mt-px flex items-center">
       <a
         v-if="canGoBack()"
-        class="inline-flex cursor-pointer items-center border-t-2 border-transparent pt-4 pr-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
+        class="inline-flex cursor-pointer items-center border-t-2 border-transparent pr-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
         @click.prevent="gotoPage('prev')"
       >
         <ArrowLongLeftIcon class="mr-3 h-5 w-5 text-gray-400" />
         <span class="hidden sm:inline">Previous</span>
       </a>
     </div>
-    <div class="sm:-mt-px sm:flex">
+
+    <div class="flex-1 sm:-mt-px flex flex-wrap items-center justify-center">
       <template
         v-for="page in pages()"
         :key="page.number"
@@ -144,15 +158,16 @@ const classes = (page: Page): string[] => {
         />
         <span
           v-else
-          class="hidden items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500 sm:inline-flex"
+          class="inline-flex items-center border-t-2 border-transparent px-4 text-sm font-medium text-gray-500 sm:inline-flex"
           v-text="'...'"
         />
       </template>
     </div>
-    <div class="-mt-px flex w-0 flex-1 justify-end">
+
+    <div class="-mt-px flex justify-end">
       <a
         v-if="canGoForward()"
-        class="inline-flex cursor-pointer items-center border-t-2 border-transparent pt-4 pl-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
+        class="inline-flex cursor-pointer items-center border-t-2 border-transparent pl-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
         @click.prevent="gotoPage('next')"
       >
         <span class="hidden sm:inline">Next</span>
