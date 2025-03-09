@@ -13,6 +13,11 @@ defineProps<{ reviews: EaterySimpleReviewResource[] }>();
       Latest Ratings
     </h3>
 
+    <p class="prose">
+      These are the latest ratings people have left on locations in our
+      <Link href="/eating-out">Eating Out</Link> guide.
+    </p>
+
     <ul class="divide-y divide-primary-dark/80">
       <li
         v-for="review in reviews"
