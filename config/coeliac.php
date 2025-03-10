@@ -35,6 +35,7 @@ return [
     'cacheable' => [
         'blogs' => [
             'home' => 'cache.blogs.home',
+            'tags' => 'cache.blogs.tags',
         ],
         'recipes' => [
             'home' => 'cache.recipes.home',

@@ -63,7 +63,7 @@ class ShowControllerTest extends TestCase
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('Shop/Category')
-                    ->has('category', fn (Assert $page) => $page->hasAll(['title', 'description', 'image', 'link']))
+                    ->has('category', fn (Assert $page) => $page->hasAll(['title', 'description', 'image', 'link', 'travelCardSearch']))
                     ->etc()
             );
     }
