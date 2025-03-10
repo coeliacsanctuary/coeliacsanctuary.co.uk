@@ -103,7 +103,7 @@ const closeTagSidebar = (): void => {
     />
   </Card>
 
-  <div class="grid sm:max-xl:grid-cols-2 xl:grid-cols-3">
+  <div class="grid gap-8 sm:gap-0 sm:max-xl:grid-cols-2 xl:grid-cols-3">
     <BlogDetailCard
       v-for="blog in blogs.data"
       :key="blog.link"

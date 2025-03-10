@@ -150,7 +150,7 @@ const selectAllergen = (freeFrom: string[]): void => {
     />
   </Card>
 
-  <div class="grid gap-3 sm:max-xl:grid-cols-2 sm:gap-0 xl:grid-cols-3">
+  <div class="grid gap-8 sm:max-xl:grid-cols-2 sm:gap-0 xl:grid-cols-3">
     <template v-if="recipes.data.length">
       <RecipeDetailCard
         v-for="recipe in recipes.data"
