@@ -21,7 +21,7 @@ import {
 defineProps<{
   blogs: PaginatedResponse<BlogDetailCardType>;
   tags: BlogTagCount[];
-  activeTag?: BlogTag;
+  activeTag?: string;
 }>();
 
 const showTags = ref(false);
@@ -60,7 +60,7 @@ const closeTagSidebar = (): void => {
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading v-if="!activeTag"> Coeliac Sanctuary Blogs </Heading>
     <Heading v-else>
-      Coeliac Sanctuary Blogs tagged with {{ activeTag.tag }}
+      Coeliac Sanctuary blogs tagged with {{ activeTag }}
     </Heading>
 
     <p class="prose max-w-none md:prose-lg">
