@@ -66,7 +66,7 @@ const loadMoreComments = () => {
             class="after:content-[','] last:after:content-['']"
           >
             <Link
-              :href="`/blog/tag/${tag.slug}`"
+              :href="`/blog/tags/${tag.slug}`"
               class="font-semibold text-primary-dark hover:text-grey-dark"
             >
               {{ tag.tag }}
