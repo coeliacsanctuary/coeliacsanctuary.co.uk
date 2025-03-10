@@ -131,7 +131,7 @@ class IndexControllerTest extends TestCase
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('Blog/Index')
-                    ->has('tags', 14, fn (Assert $page) => $page->hasAll(['slug', 'tag', 'blogs_count'])->etc())
+                    ->has('tags', BlogTag::count(), fn (Assert $page) => $page->hasAll(['slug', 'tag', 'blogs_count'])->etc())
                     ->where('tags.0.tag', $this->tag->tag)
                     ->where('tags.0.slug', $this->tag->slug)
                     ->where('tags.0.blogs_count', 2)
