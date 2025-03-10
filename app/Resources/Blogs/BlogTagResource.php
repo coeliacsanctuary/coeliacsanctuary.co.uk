@@ -7,6 +7,7 @@ namespace App\Resources\Blogs;
 use App\Models\Blogs\BlogTag;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 /** @mixin BlogTag */
 class BlogTagResource extends JsonResource
@@ -15,7 +16,7 @@ class BlogTagResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'tag' => $this->tag,
+            'tag' => Str::title($this->tag),
             'slug' => $this->slug,
         ];
     }
