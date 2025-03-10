@@ -438,6 +438,7 @@ const createMap = () => {
   view.value = new View({
     center: initialLatLng.value,
     zoom: initialZoom.value,
+    enableRotation: false,
   });
 
   map.value = new Map({
