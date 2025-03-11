@@ -28,8 +28,6 @@ export default () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         latLng.value = `${position.coords.latitude},${position.coords.longitude}`;
-        console.log('position');
-        console.log(latLng.value);
 
         options = {
           ...options,
@@ -40,8 +38,7 @@ export default () => {
 
         searchForm.submit(options);
       },
-      (e) => {
-        console.log(e);
+      () => {
         searchForm.submit(options);
       },
     );

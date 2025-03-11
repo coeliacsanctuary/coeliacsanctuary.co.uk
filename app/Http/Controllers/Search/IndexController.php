@@ -67,7 +67,7 @@ class IndexController
             ->render('Search/Index', [
                 'parameters' => $parameters->toResponse(),
                 'location' => $parameters->locationSearch ?: $parameters->term,
-                'results' => $results,
+                'results' => Inertia::defer(fn () => $results),
                 'hasEatery' => SearchState::$hasGeoSearched,
                 'aiAssisted' => $aiAssisted,
             ]);
