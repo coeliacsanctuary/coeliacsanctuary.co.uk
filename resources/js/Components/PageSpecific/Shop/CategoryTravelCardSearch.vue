@@ -29,7 +29,7 @@ const form = useForm('get', '/gluten-free-travel-translation-cards', {
       hide-label
       borders
       class="w-full"
-      input-classes="text-2xl!  p-4! text-center"
+      input-classes="text-lg md:text-2xl!  p-2! md:p-4! text-center"
       v-model="form.term"
       @keyup.enter="form.submit()"
     />

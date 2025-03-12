@@ -125,6 +125,7 @@ const selectAllergen = (freeFrom: string[]): void => {
         :options="featureOptions()"
         label="Feature"
         @changed="selectFeature"
+        class="z-50"
       />
 
       <RecipeListFilterCard
@@ -132,6 +133,7 @@ const selectAllergen = (freeFrom: string[]): void => {
         :options="mealOptions()"
         label="Meals"
         @changed="selectMeal"
+        class="z-49"
       />
 
       <RecipeListFilterCard
@@ -139,6 +141,7 @@ const selectAllergen = (freeFrom: string[]): void => {
         :options="freeFromOptions()"
         label="Free From"
         @changed="selectAllergen"
+        class="z-48"
       />
     </div>
 

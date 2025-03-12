@@ -13,6 +13,7 @@ import { computed, onMounted, ref, Ref, watch } from 'vue';
 import useAddToBasket from '@/composables/useAddToBasket';
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import useScreensize from '@/composables/useScreensize';
+import ProductQuantitySwitcher from '@/Components/PageSpecific/Shop/ProductQuantitySwitcher.vue';
 
 const props = defineProps<{ product: ShopProductDetail }>();
 
@@ -73,7 +74,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
 <template>
   <div
-    class="mt-3 w-full md:col-start-1 md:row-start-2 md:max-w-lg md:self-start"
+    class="mt-3 w-full md:col-start-1 md:row-start-2 md:max-w-sm md:self-start"
   >
     <form
       class="flex w-full flex-col space-y-3"
@@ -151,15 +152,11 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
       </div>
 
       <div class="w-full *:w-full sm:flex sm:justify-between">
-        <FormInput
+        <ProductQuantitySwitcher
           v-model.number="quantity"
-          type="number"
           label="Quantity"
           name="quantity"
-          size="large"
           :min="1"
-          required
-          borders
           :disabled="!isInStock"
           :max="
             availableQuantity && availableQuantity <= 5
@@ -189,7 +186,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
         }}!
       </p>
 
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-center md:justify-between">
         <CoeliacButton
           as="button"
           label="Add To Basket"
