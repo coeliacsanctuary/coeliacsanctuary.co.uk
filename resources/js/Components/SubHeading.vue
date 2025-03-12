@@ -17,7 +17,7 @@ withDefaults(
 <template>
   <component
     :is="as"
-    class="text-left font-coeliac text-xl font-semibold md:max-lg:text-2xl lg:text-3xl my-0!"
+    class="text-left font-coeliac text-2xl font-semibold md:max-lg:text-3xl lg:text-4xl my-0!"
     :class="classes"
   >
     <slot />

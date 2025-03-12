@@ -173,3 +173,38 @@ export const FormLookupPropDefaults: Partial<
   fallbackObject: {},
   fallbackKey: undefined,
 };
+
+export type ProductQuantitySwitcherProps = Omit<
+  InputProps,
+  | 'type'
+  | 'id'
+  | 'autocomplete'
+  | 'placeholder'
+  | 'borders'
+  | 'background'
+  | 'helpText'
+  | 'hideLabel'
+  | 'size'
+>;
+
+const tempProductQuantitySwitcherPropDefaults: Partial<ProductQuantitySwitcherProps> =
+  InputPropDefaults;
+
+const keysToDelete = [
+  'type',
+  'id',
+  'autocomplete',
+  'placeholder',
+  'borders',
+  'background',
+  'helpText',
+  'hideLabel',
+  'size',
+];
+
+keysToDelete.forEach((key) => {
+  delete tempProductQuantitySwitcherPropDefaults[key];
+});
+
+export const ProductQuantitySwitcherPropDefaults: Partial<ProductQuantitySwitcherProps> =
+  tempProductQuantitySwitcherPropDefaults;

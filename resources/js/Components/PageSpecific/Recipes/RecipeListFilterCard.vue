@@ -11,7 +11,10 @@ import Icon from '@/Components/Icon.vue';
 import { SelectBoxItem } from '@/types/Types';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 
-export type RecipeFilterOption = SelectBoxItem & { recipeCount: number };
+export type RecipeFilterOption = SelectBoxItem & {
+  disabled: boolean;
+  recipeCount: number;
+};
 
 const props = defineProps<{
   label: string;

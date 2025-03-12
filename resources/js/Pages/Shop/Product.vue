@@ -111,7 +111,7 @@ const loadMoreReviews = () => {
             class="cursor-zoom-in md:col-start-1"
             @click="viewImage = true"
           >
-            <div class="aspect-square overflow-hidden rounded-lg">
+            <div class="overflow-hidden rounded-lg">
               <img
                 :src="product.image"
                 :alt="product.title"
@@ -146,7 +146,7 @@ const loadMoreReviews = () => {
               >
                 <div class="flex items-center font-semibold space-x-2">
                   <p
-                    class="text-gray-500 group-hover:text-primary-dark xs:max-xl:text-base text-xl"
+                    class="text-gray-500 group-hover:text-primary-dark xs:max-xl:text-base"
                   >
                     Rated
                   </p>
@@ -157,7 +157,7 @@ const loadMoreReviews = () => {
                   />
 
                   <p
-                    class="text-gray-500 group-hover:text-primary-dark xs:max-xl:text-base text-xl"
+                    class="text-gray-500 group-hover:text-primary-dark xs:max-xl:text-lg"
                   >
                     from
                     {{ product.rating.count }}
