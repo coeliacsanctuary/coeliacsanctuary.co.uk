@@ -8,6 +8,8 @@ import { nextTick, onMounted, ref } from 'vue';
 import axios, { AxiosResponse } from 'axios';
 import useBrowser from '@/composables/useBrowser';
 import Heading from '@/Components/Heading.vue';
+import { router } from '@inertiajs/vue3';
+import useUrl from '@/composables/useUrl';
 
 type SearchResult = {
   term: string;
@@ -15,7 +17,7 @@ type SearchResult = {
   products: ShopProductIndex[];
 };
 
-const lookup = ref<null | { reset: () => void }>(null);
+const lookup = ref<null | { reset: () => void; value: string }>(null);
 
 const loadingResult = ref(false);
 const searchResult = ref<SearchResult | null>(null);
@@ -28,6 +30,18 @@ const selectResult = (id: number) => {
   axios
     .get(`/api/shop/travel-card-search/${id}`)
     .then((response: AxiosResponse<SearchResult>) => {
+      const url = new URL(useUrl().currentUrl());
+      url.searchParams.set('term', lookup.value?.value);
+
+      router.get(
+        url.toString(),
+        {},
+        {
+          preserveState: true,
+          preserveScroll: true,
+        },
+      );
+
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       lookup.value?.reset();
       searchResult.value = response.data;

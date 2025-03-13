@@ -102,7 +102,7 @@ const reset = () => {
   results.value = [];
 };
 
-defineExpose({ reset });
+defineExpose({ reset, value });
 
 watch(
   () => props.preselectTerm,
