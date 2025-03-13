@@ -115,7 +115,6 @@ const submitPendingOrder = async (payload: CheckoutForm): Promise<boolean> => {
 
     return true;
   } catch (error: unknown) {
-    console.log(error);
     if (error instanceof AxiosError) {
       const axiosError: AxiosError<{ errors: Record<string, unknown> }> =
         error as AxiosError<{ errors: Record<string, unknown> }>;
@@ -189,6 +188,7 @@ const prepareOrder = async () => {
     await revertPendingOrder();
 
     showLoader.value = false;
+    eventBus.$emit('payment-failed');
   });
 };
 
