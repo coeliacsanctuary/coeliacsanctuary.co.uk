@@ -188,7 +188,7 @@ export type ProductQuantitySwitcherProps = Omit<
 >;
 
 const tempProductQuantitySwitcherPropDefaults: Partial<ProductQuantitySwitcherProps> =
-  InputPropDefaults;
+  { ...InputPropDefaults };
 
 const keysToDelete = [
   'type',

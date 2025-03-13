@@ -50,7 +50,7 @@ const hasSignedUpToNewsletter = ref(false);
           type="email"
           required
           wrapper-classes="h-full"
-          input-classes="h-full"
+          input-classes="h-full p-4!"
         />
 
         <CoeliacButton

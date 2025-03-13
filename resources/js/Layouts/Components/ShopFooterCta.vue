@@ -103,6 +103,7 @@ onMounted(() => {
           'xmd:ml-[10px]',
           'xmd:mt-[-38px]',
           'xmd:text-base',
+          'pointer-events-none',
         ]"
       >
         You have {{ items.length }} {{ pluralise('item', items.length) }}
