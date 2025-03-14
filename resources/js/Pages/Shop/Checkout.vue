@@ -25,7 +25,7 @@ import useUrl from '@/composables/useUrl';
 import axios, { AxiosError } from 'axios';
 import useStripeStore from '@/stores/useStripeStore';
 import en from 'i18n-iso-countries/langs/en.json';
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import { ConfirmPaymentData } from '@stripe/stripe-js';
 import useGoogleEvents from '@/composables/useGoogleEvents';
@@ -33,6 +33,7 @@ import pkg from 'i18n-iso-countries';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
@@ -394,5 +395,21 @@ onMounted(() => {
         </div>
       </Card>
     </div>
+  </template>
+
+  <template v-else>
+    <Card class="flex flex-col items-center justify-center space-y-4 py-8">
+      <p class="prose prose-xl text-center font-semibold">
+        You haven't got any items in your basket!
+      </p>
+
+      <CoeliacButton
+        :as="Link"
+        href="/shop"
+        label="Back to shop"
+        size="xxl"
+        theme="secondary"
+      />
+    </Card>
   </template>
 </template>
