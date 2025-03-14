@@ -47,7 +47,12 @@ const loadMoreComments = () => {
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading>
+    <Heading
+      :back-link="{
+        href: '/recipe',
+        label: 'Back to all recipes...',
+      }"
+    >
       {{ recipe.title }}
     </Heading>
 

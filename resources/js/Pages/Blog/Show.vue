@@ -45,7 +45,12 @@ const loadMoreComments = () => {
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading>
+    <Heading
+      :back-link="{
+        href: '/blog',
+        label: 'Back to all blogs...',
+      }"
+    >
       {{ blog.title }}
     </Heading>
 

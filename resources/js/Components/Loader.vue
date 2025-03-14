@@ -7,7 +7,7 @@ const props = withDefaults(
     display: boolean;
     size?: string;
     width?: string;
-    color?: 'white' | 'primary' | 'secondary';
+    color?: 'white' | 'primary' | 'secondary' | 'dark';
     background?: boolean;
     onTop?: boolean;
     blur?: boolean;
@@ -38,6 +38,9 @@ const classes = computed((): string[] => {
       break;
     case 'primary':
       base.push('border-primary/20', 'border-t-primary/80');
+      break;
+    case 'dark':
+      base.push('border-primary-dark/20', 'border-t-primary-dark/80');
       break;
   }
 
