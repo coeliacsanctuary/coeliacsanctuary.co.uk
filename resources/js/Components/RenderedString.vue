@@ -4,7 +4,7 @@ import ArticleHeader from './ArticleHeader.vue';
 import ArticleImage from './ArticleImage.vue';
 
 const props = defineProps<{ content: string }>();
-const compiled = shallowRef<(() => any) | null>(null);
+const compiled = shallowRef<(() => unknown) | null>(null);
 
 onMounted(async () => {
   const { compile } = import.meta.env.PROD

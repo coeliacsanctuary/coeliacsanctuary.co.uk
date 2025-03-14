@@ -124,24 +124,24 @@ const selectAllergen = (freeFrom: string[]): void => {
         :current-options="selectedFeatures"
         :options="featureOptions()"
         label="Feature"
-        @changed="selectFeature"
         class="z-50"
+        @changed="selectFeature"
       />
 
       <RecipeListFilterCard
         :current-options="selectedMeals"
         :options="mealOptions()"
         label="Meals"
-        @changed="selectMeal"
         class="z-49"
+        @changed="selectMeal"
       />
 
       <RecipeListFilterCard
         :current-options="selectedAllergens"
         :options="freeFromOptions()"
         label="Free From"
-        @changed="selectAllergen"
         class="z-48"
+        @changed="selectAllergen"
       />
     </div>
 

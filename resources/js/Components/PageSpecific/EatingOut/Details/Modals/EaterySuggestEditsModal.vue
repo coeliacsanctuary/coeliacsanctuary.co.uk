@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Modal from '@/Components/Overlays/Modal.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { computed, onMounted, Ref, ref } from 'vue';
+import { Component, computed, onMounted, Ref, ref } from 'vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import Loader from '@/Components/Loader.vue';
 import axios, { AxiosResponse } from 'axios';
@@ -48,7 +48,7 @@ const parseFields = () => {
       getter: () => eatery.address.replaceAll('\n', ', '),
       isFormField: true,
       formField: {
-        component: FormTextarea,
+        component: FormTextarea as Component,
         value: () => eatery.address,
         props: {
           rows: 5,
@@ -63,7 +63,7 @@ const parseFields = () => {
       getter: () => eatery.website || '',
       isFormField: true,
       formField: {
-        component: FormInput,
+        component: FormInput as Component,
         value: () => eatery.website || '',
       },
       updated: false,
@@ -75,7 +75,7 @@ const parseFields = () => {
       getter: () => eatery.gf_menu_link || '',
       isFormField: true,
       formField: {
-        component: FormInput,
+        component: FormInput as Component,
         value: () => eatery.gf_menu_link || '',
       },
       updated: false,
@@ -87,7 +87,7 @@ const parseFields = () => {
       getter: () => eatery.phone || '',
       isFormField: true,
       formField: {
-        component: FormInput,
+        component: FormInput as Component,
         value: () => eatery.phone || '',
       },
       updated: false,
@@ -99,7 +99,7 @@ const parseFields = () => {
       getter: () => eatery.venue_type.label,
       isFormField: true,
       formField: {
-        component: FormSelect,
+        component: FormSelect as Component,
         value: () => eatery.venue_type.id,
         props: {
           options: eatery.venue_type.values.map(
@@ -119,7 +119,7 @@ const parseFields = () => {
       getter: () => eatery.cuisine.label,
       isFormField: true,
       formField: {
-        component: FormSelect,
+        component: FormSelect as Component,
         value: () => eatery.cuisine.id,
         props: {
           options: eatery.cuisine.values.map(
@@ -150,7 +150,7 @@ const parseFields = () => {
       capitalise: true,
       isFormField: false,
       component: {
-        component: EaterySuggestEditOpeningTimes,
+        component: EaterySuggestEditOpeningTimes as Component,
         change: (value: object[]): void => {
           newValue.value = value;
         },
@@ -168,7 +168,7 @@ const parseFields = () => {
         eatery.features.selected.map((feature) => feature.label).join(', '),
       isFormField: false,
       component: {
-        component: EaterySuggestEditFeatures,
+        component: EaterySuggestEditFeatures as Component,
         change: (value: object[]): void => {
           newValue.value = value;
         },
@@ -187,7 +187,7 @@ const parseFields = () => {
       truncate: false,
       isFormField: true,
       formField: {
-        component: FormTextarea,
+        component: FormTextarea as Component,
         value: () => '',
       },
       updated: false,

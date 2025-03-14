@@ -5,7 +5,6 @@ import {
   RadioGroupLabel,
   RadioGroupOption,
 } from '@headlessui/vue';
-import FormInput from '@/Components/Forms/FormInput.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import Icon from '@/Components/Icon.vue';
 import { ShopProductDetail, ShopProductVariant } from '@/types/Shop';

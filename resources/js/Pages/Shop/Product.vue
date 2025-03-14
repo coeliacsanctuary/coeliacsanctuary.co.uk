@@ -198,8 +198,9 @@ const loadMoreReviews = () => {
             <SubHeading
               as="h3"
               :classes="open ? 'text-primary-dark' : ''"
-              v-text="additionalDetail.title"
-            />
+            >
+              {{ additionalDetail.title }}
+            </SubHeading>
             <span class="ml-6 flex items-center">
               <PlusIcon
                 v-if="!open"

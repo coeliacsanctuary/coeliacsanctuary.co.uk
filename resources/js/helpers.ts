@@ -64,8 +64,6 @@ export const pluralise = (str: string, count: number): string => {
   return `${str}s`;
 };
 
-const appName = 'Coeliac Sanctuary';
-
 export const getTitle = (title: string | undefined): string => {
   const appName = 'Coeliac Sanctuary';
 

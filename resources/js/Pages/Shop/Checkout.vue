@@ -7,7 +7,6 @@ import CheckoutTotals from '@/Components/PageSpecific/Shop/Checkout/CheckoutTota
 import { FormSelectOption } from '@/Components/Forms/Props';
 import ContactDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ContactDetails.vue';
 import {
-  DefineComponent,
   computed,
   nextTick,
   reactive,
@@ -15,6 +14,7 @@ import {
   ref,
   watch,
   onMounted,
+  Component,
 } from 'vue';
 import ShippingDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ShippingDetails.vue';
 import useShopStore from '@/stores/useShopStore';
@@ -30,8 +30,6 @@ import eventBus from '@/eventBus';
 import { ConfirmPaymentData } from '@stripe/stripe-js';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import pkg from 'i18n-iso-countries';
-import Warning from '@/Components/Warning.vue';
-import Info from '@/Components/Info.vue';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 const { registerLocale, getAlpha2Code } = pkg;
@@ -46,7 +44,7 @@ type FormSection = {
 };
 
 type SectionComponent = {
-  component: DefineComponent;
+  component: Component;
   key: SectionKeys;
   next: SectionKeys;
   additionalProps: Record<string, unknown>;
@@ -175,7 +173,6 @@ const prepareOrder = async () => {
 
     const { error } = await stripeStore.stripe.confirmPayment({
       elements: stripeStore.elements,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       confirmParams: stripePayload(payload),
       redirect: 'always',
     });
@@ -293,13 +290,13 @@ watch(
 
 const sectionComponents: SectionComponent[] = [
   {
-    component: ContactDetails,
+    component: ContactDetails as Component,
     key: 'details',
     next: 'shipping',
     additionalProps: {},
   },
   {
-    component: ShippingDetails,
+    component: ShippingDetails as Component,
     key: 'shipping',
     next: 'payment',
     additionalProps: {
@@ -307,7 +304,7 @@ const sectionComponents: SectionComponent[] = [
     },
   },
   {
-    component: PaymentDetails,
+    component: PaymentDetails as Component,
     key: 'payment',
     next: '_complete',
     additionalProps: {

@@ -8,7 +8,6 @@ import EateryVisitorPhotos from '@/Components/PageSpecific/EatingOut/Details/Eat
 import EateryVisitorReviews from '@/Components/PageSpecific/EatingOut/Details/EateryVisitorReviews.vue';
 import EateryFeedbackLinks from '@/Components/PageSpecific/EatingOut/Details/EateryFeedbackLinks.vue';
 import { Ref, ref } from 'vue';
-import EateryFeatures from '@/Components/PageSpecific/EatingOut/Details/EateryFeatures.vue';
 import { formatDate } from '@/helpers';
 import EateryBranchList from '@/Components/PageSpecific/EatingOut/Details/EateryBranchList.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';

@@ -30,6 +30,8 @@ module.exports = {
     rules: {
         '@typescript-eslint/no-floating-promises': 'off',
         'vue/multi-word-component-names': 'off',
-        'vue/no-v-html': 'off'
+        'vue/no-v-html': 'off',
+        'vue/prop-name-casing': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
     }
 }

@@ -216,8 +216,8 @@ const imageError = (message: string): void => {
           class="flex-1"
         >
           <input
-            type="hidden"
             v-model="form.branch_name"
+            type="hidden"
             name="branchName"
           />
 

@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { HeadingBackLink } from '@/types/Types';
-import { Link } from '@inertiajs/vue3';
-
 withDefaults(
   defineProps<{
     as?: string;

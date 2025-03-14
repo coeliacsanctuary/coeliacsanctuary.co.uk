@@ -2,7 +2,6 @@
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import { BlogDetailCard } from '@/types/BlogTypes';
-import { formatDate } from '@/helpers';
 
 defineProps<{ blog: BlogDetailCard }>();
 </script>
