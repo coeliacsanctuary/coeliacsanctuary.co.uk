@@ -74,7 +74,10 @@ const howExpensive = (review: EateryReview) => {
 
       <div class="mt-8 md:col-span-2 md:mt-0 xl:col-span-3">
         <div class="flow-root">
-          <div class="mb-2 w-auto rounded-sm bg-primary-light/50 px-3 py-1">
+          <div
+            v-if="reviews.length > 0"
+            class="mb-2 w-auto rounded-sm bg-primary-light/50 px-3 py-1"
+          >
             <FormCheckbox
               v-model="hideReviewsWithoutBody"
               name="hide-ratings"
