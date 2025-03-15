@@ -91,6 +91,7 @@ const eateryLink = computed(() => {
       :link="eateryLink"
       :name="eateryName"
       :reviews="eatery.reviews"
+      :is-branch="eatery.isNationwideBranch"
     />
   </Card>
 </template>

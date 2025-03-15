@@ -10,12 +10,15 @@ import EateryCountryCard from '@/Components/PageSpecific/EatingOut/Index/EateryC
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import { ref } from 'vue';
 
 defineProps<{
   countries: EateryCountryListProp;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
 }>();
+
+const guide = ref<null | { $el: Element }>(null);
 </script>
 
 <template>
@@ -45,8 +48,8 @@ defineProps<{
 
   <Card class="mt-3 flex flex-col space-y-4">
     <a
-      class="flex flex-col items-center justify-center space-y-4 text-center text-xl"
-      href="#guide"
+      class="flex flex-col items-center justify-center space-y-4 text-center text-xl cursor-pointer"
+      @click="guide?.$el.scrollIntoView({ behavior: 'smooth' })"
     >
       <p>Or just browse our Eating Out guide...</p>
       <ChevronDownIcon
@@ -97,7 +100,10 @@ defineProps<{
     </Card>
   </template>
 
-  <Card class="mt-3 flex flex-col space-y-4">
+  <Card
+    ref="guide"
+    class="mt-3 flex flex-col space-y-4"
+  >
     <Heading> Gluten Free around the UK and Ireland </Heading>
 
     <p class="prose prose-lg max-w-none md:prose-xl">

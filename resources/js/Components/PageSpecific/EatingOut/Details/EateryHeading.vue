@@ -96,7 +96,7 @@ const eateryName = (): string => {
 
       <div
         v-if="eatery.town.name !== 'Nationwide'"
-        class="1 flex space-x-3 text-xs font-semibold text-grey-darker"
+        class="1 flex space-x-1 text-xs font-semibold text-grey-darker"
       >
         <Link :href="eatery.town.link"> {{ eatery.town.name }}, </Link>
         <Link :href="eatery.county.link">
