@@ -2,12 +2,18 @@
 import { TownEatery } from '@/types/EateryTypes';
 import StarRating from '@/Components/StarRating.vue';
 import { Link } from '@inertiajs/vue3';
+import { pluralise } from '@/helpers';
+import { StarRating as StarRatingType } from '@/types/EateryTypes';
 
-defineProps<{
-  name: string;
-  link: string;
-  reviews: TownEatery['reviews'];
-}>();
+withDefaults(
+  defineProps<{
+    name: string;
+    link: string;
+    reviews: TownEatery['reviews'];
+    isBranch?: boolean;
+  }>(),
+  { isBranch: false },
+);
 </script>
 
 <template>
@@ -18,15 +24,14 @@ defineProps<{
     >
       <span class="flex-1 sm:mt-2 md:text-lg">
         Rated <strong>{{ reviews.average }} stars</strong> from
-        <strong
-          >{{ reviews.number }} review{{
-            reviews.number > 1 ? 's' : ''
-          }}</strong
-        >
+        <strong>
+          {{ reviews.number }} {{ pluralise('review', reviews.number) }}
+        </strong>
+        {{ isBranch ? 'across all branches' : '' }}
       </span>
 
       <StarRating
-        :rating="parseFloat(reviews.average)"
+        :rating="reviews.average"
         show-all
       />
     </div>
