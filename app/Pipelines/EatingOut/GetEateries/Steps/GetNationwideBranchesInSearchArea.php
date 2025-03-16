@@ -11,6 +11,7 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Services\EatingOut\LocationSearchService;
 use Closure;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -26,7 +27,11 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
             return $next($pipelineData);
         }
 
-        $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+        try {
+            $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+        } catch (Exception) {
+            return $next($pipelineData);
+        }
 
         /** @var Collection<int, NationwideBranch> $ids */
         $ids = NationwideBranch::algoliaSearchAroundLatLng($latLng, $pipelineData->searchTerm->range)->get();
