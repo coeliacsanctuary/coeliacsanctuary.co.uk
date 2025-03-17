@@ -17,12 +17,13 @@ const props = withDefaults(
       | false
       | FunctionalComponent<HTMLAttributes & VNodeProps>
       | (() => void);
-    iconPosition?: 'left' | 'right';
+    iconPosition?: 'left' | 'right' | 'center';
     loading?: boolean;
     classes?: string;
     disabled?: boolean;
     iconOnly?: boolean;
     target?: string;
+    iconClasses?: string;
   }>(),
   {
     label: undefined,
@@ -39,6 +40,7 @@ const props = withDefaults(
     disabled: false,
     iconOnly: false,
     target: undefined,
+    iconClasses: '',
   },
 );
 
@@ -86,6 +88,14 @@ const classes = computed((): string[] => {
 
   if (props.icon && props.iconPosition === 'left') {
     base.push('flex-row-reverse');
+  }
+
+  if (props.icon && props.iconPosition === 'center') {
+    base.push('justify-center');
+  }
+
+  if (props.icon && !props.iconOnly) {
+    base.push('space-x-2');
   }
 
   if (props.theme === 'primary') {
@@ -151,14 +161,17 @@ const isLinkComponent = computed(() => {
     <component
       :is="icon"
       v-if="icon"
-      :class="{
-        '-mr-0.5 ml-2': !iconOnly && iconPosition === 'right',
-        '-ml-0.5 mr-2': !iconOnly && iconPosition === 'left',
-        'h-5 w-5': iconOnly,
-        'h-4 w-4': !iconOnly,
-        'opacity-0': loading,
-        'h-6 w-6': size === 'xxl',
-      }"
+      :class="[
+        {
+          '-mr-0.5 ml-2': !iconOnly && iconPosition === 'right',
+          '-ml-0.5 mr-2': !iconOnly && iconPosition === 'left',
+          'h-5 w-5': iconOnly,
+          'h-4 w-4': !iconOnly,
+          'opacity-0': loading,
+          'h-6 w-6': size === 'xxl',
+        },
+        iconClasses,
+      ]"
       aria-hidden="true"
     />
 

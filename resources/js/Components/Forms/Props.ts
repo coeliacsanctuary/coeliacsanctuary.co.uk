@@ -102,6 +102,7 @@ export type FormSelectProps = BaseFormProps & {
   hideLabel?: boolean;
   error?: string;
   size?: 'default' | 'large';
+  inputClasses?: string;
 };
 
 export const FormSelectPropsDefaults: Partial<FormSelectProps> = {
@@ -111,6 +112,7 @@ export const FormSelectPropsDefaults: Partial<FormSelectProps> = {
   hideLabel: false,
   error: undefined,
   size: 'default',
+  inputClasses: '',
 };
 
 export type FormMultiSelectProps = FormSelectProps & {

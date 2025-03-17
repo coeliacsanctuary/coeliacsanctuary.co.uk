@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\EatingOut;
 
 use App\DataObjects\EatingOut\LatLng;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use RuntimeException;
 use Spatie\Geocoder\Geocoder;
@@ -27,13 +28,15 @@ class LocationSearchService
     /** @return Collection<int, array{lat: float, lng: float}> */
     protected function callSearchService(string $term): Collection
     {
-        /** @var array{lat: float, lng: float} $response */
-        $response = $this->geocoder->getCoordinatesForAddress($term);
+        /** @var array{lat: float, lng: float}[] $response */
+        $response = $this->geocoder->getAllCoordinatesForAddress($term);
 
-        if ((int) $response['lat'] === 0) {
+        if ((int) $response[0]['lat'] === 0) {
             throw new RuntimeException('Http request failed');
         }
 
-        return collect([$response]);
+        return collect($response)
+            ->filter(fn (array $response) => Arr::get($response, 'types.0') === 'locality')
+            ->values();
     }
 }

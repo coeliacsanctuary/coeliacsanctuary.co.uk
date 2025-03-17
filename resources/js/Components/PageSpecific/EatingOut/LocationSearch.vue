@@ -6,10 +6,18 @@ import FormInput from '@/Components/Forms/FormInput.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
+import useScreensize from '@/composables/useScreensize';
 
-const form = useForm<{ term: string; range: 1 | 2 | 5 | 10 | 20 }>({
+type Range = 1 | 2 | 5 | 10 | 20;
+
+const props = withDefaults(defineProps<{ term?: string; range?: Range }>(), {
   term: '',
   range: 2,
+});
+
+const form = useForm<{ term: string; range: Range }>({
+  term: props.term,
+  range: props.range,
 });
 
 const rangeOptions: FormSelectOption[] = [
@@ -51,26 +59,31 @@ const submitSearch = () => {
         hide-label
         class="flex-1"
         size="large"
+        input-classes="p-2!"
       />
 
-      <div class="flex space-x-2">
-        <FormSelect
-          v-model="form.range"
-          name="range"
-          :options="rangeOptions"
-          class="flex-1"
-          size="large"
-        />
+      <FormSelect
+        v-model="form.range"
+        name="range"
+        :options="rangeOptions"
+        class="flex-1"
+        size="large"
+        input-classes="p-2!"
+      />
 
-        <CoeliacButton
-          type="submit"
-          as="button"
-          :icon="MagnifyingGlassIcon"
-          :loading="form.processing"
-          icon-only
-          @click="submitSearch()"
-        />
-      </div>
+      <CoeliacButton
+        type="submit"
+        as="button"
+        :icon="MagnifyingGlassIcon"
+        :loading="form.processing"
+        :icon-only="useScreensize().screenIsGreaterThanOrEqualTo('sm')"
+        label="Search"
+        size="lg"
+        classes="text-2xl!"
+        icon-position="center"
+        icon-classes="size-7!"
+        @click="submitSearch()"
+      />
     </form>
   </Card>
 </template>

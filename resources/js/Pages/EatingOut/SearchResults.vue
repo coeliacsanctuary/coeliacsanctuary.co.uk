@@ -1,27 +1,33 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { EateryFilters, TownEatery } from '@/types/EateryTypes';
+import { EateryFilters, LatLng, TownEatery } from '@/types/EateryTypes';
 import Warning from '@/Components/Warning.vue';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
 import { Ref, ref } from 'vue';
-import useInfiniteScroll from '@/composables/useInfiniteScroll';
 import { router } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import SearchResultsHeading from '@/Components/PageSpecific/EatingOut/SearchResults/SearchResultsHeading.vue';
 import useBrowser from '@/composables/useBrowser';
+import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
+import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 
 defineProps<{
   term: string;
+  range: number;
   image: string;
   eateries: PaginatedResponse<TownEatery>;
   filters: EateryFilters;
+  latlng: LatLng;
 }>();
 
 const landmark: Ref<Element> = ref();
 
-const { items, reset } = useInfiniteScroll<TownEatery>('eateries', landmark);
+const { items, reset } = useInfiniteScrollCollection<TownEatery>(
+  'eateries',
+  landmark,
+);
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
@@ -84,7 +90,9 @@ const reloadEateries = () => {
 <template>
   <SearchResultsHeading
     :term="term"
+    :range="range"
     :image="image"
+    :latlng="latlng"
   />
 
   <Card class="mt-3 flex flex-col space-y-4">
@@ -116,6 +124,11 @@ const reloadEateries = () => {
       </p>
     </Warning>
   </Card>
+
+  <LocationSearch
+    :term="term"
+    :range="range"
+  />
 
   <div class="relative md:flex xmd:space-x-2">
     <TownFilterSidebar
