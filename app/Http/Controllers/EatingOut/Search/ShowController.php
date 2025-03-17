@@ -43,6 +43,7 @@ class ShowController
             ->doNotTrack()
             ->render('EatingOut/SearchResults', [
                 'term' => fn () => $eaterySearchTerm->term,
+                'range' => fn () => $eaterySearchTerm->range,
                 'image' => fn () => $firstResult->town->image ?? $firstResult->county->image ?? $firstResult->country->image,
                 'eateries' => fn () => $eateries,
                 'filters' => fn () => $getFiltersForEateriesAction->handle(fn (Builder $query) => $query->whereIn('id', Arr::pluck($eateries->all(), 'id')), $filters),

@@ -5,6 +5,7 @@ import { LatLng } from '@/types/EateryTypes';
 
 const props = defineProps<{
   term: string;
+  range: number;
   image: string;
   latlng: LatLng;
 }>();
@@ -38,7 +39,8 @@ const linkCards = [
         <h1
           class="text-xl font-semibold xxs:max-sm:text-lg sm:max-md:text-xl md:max-lg:text-2xl lg:max-xl:text-3xl xl:text-4xl"
         >
-          Gluten Free search results for {{ term }}
+          Gluten Free search results for places within {{ range }} miles of
+          {{ term }}
         </h1>
 
         <span
