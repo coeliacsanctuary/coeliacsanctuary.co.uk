@@ -19,7 +19,7 @@ class SortPendingEateriesAction implements GetEateriesPipelineActionContract
 
         $pipelineData->eateries = $eateries
             ->sort(function (PendingEatery $a, PendingEatery $b) {
-                if(is_numeric($a->ordering)) {
+                if (is_numeric($a->ordering)) {
                     return $a->ordering <=> $b->ordering;
                 }
 

@@ -28,7 +28,7 @@ class LocationSearchService
     /** @return Collection<int, array{lat: float, lng: float}> */
     protected function callSearchService(string $term): Collection
     {
-        /** @var array{lat: float, lng: float} $response */
+        /** @var array{lat: float, lng: float}[] $response */
         $response = $this->geocoder->getAllCoordinatesForAddress($term);
 
         if ((int) $response[0]['lat'] === 0) {
@@ -36,9 +36,7 @@ class LocationSearchService
         }
 
         return collect($response)
-            ->filter(function(array $response) {
-                return Arr::get($response, 'types.0') === 'locality';
-            })
+            ->filter(fn (array $response) => Arr::get($response, 'types.0') === 'locality')
             ->values();
     }
 }

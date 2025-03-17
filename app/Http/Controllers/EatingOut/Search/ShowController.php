@@ -10,6 +10,7 @@ use App\Http\Response\Inertia;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
+use App\Resources\EatingOut\EateryListResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -34,8 +35,11 @@ class ShowController
 
         $eateries = $getSearchResultsPipeline->run($eaterySearchTerm, $filters);
 
+        /** @var EateryListResource $jsonResource */
+        $jsonResource = $eateries->collect()->first();
+
         /** @var Eatery $firstResult */
-        $firstResult = $eateries->collect()->first()->load(['town', 'county', 'country']);
+        $firstResult = $jsonResource->resource->load(['town', 'county', 'country']);
 
         return $inertia
             ->title("{$eaterySearchTerm->term} - Search Results")
@@ -44,7 +48,7 @@ class ShowController
             ->render('EatingOut/SearchResults', [
                 'term' => fn () => $eaterySearchTerm->term,
                 'range' => fn () => $eaterySearchTerm->range,
-                'image' => fn () => $firstResult->town->image ?? $firstResult->county->image ?? $firstResult->country->image,
+                'image' => fn () => $firstResult->town->image ?? $firstResult->county->image ?? $firstResult->country->image ?? '',
                 'eateries' => fn () => $eateries,
                 'filters' => fn () => $getFiltersForEateriesAction->handle(fn (Builder $query) => $query->whereIn('id', Arr::pluck($eateries->all(), 'id')), $filters),
                 'latlng' => fn () => ['lat' => $firstResult->lat, 'lng' => $firstResult->lng],
