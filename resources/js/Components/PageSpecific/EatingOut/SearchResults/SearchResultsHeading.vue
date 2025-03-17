@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { DocumentArrowUpIcon, MapIcon } from '@heroicons/vue/24/outline';
 import { Link } from '@inertiajs/vue3';
+import { LatLng } from '@/types/EateryTypes';
 
-defineProps<{
+const props = defineProps<{
   term: string;
   image: string;
+  latlng: LatLng;
 }>();
 
 const linkCards = [
@@ -13,12 +15,14 @@ const linkCards = [
     description:
       "Do you know somewhere that offers gluten free that we don't have listed? Let us know!",
     icon: DocumentArrowUpIcon,
+    href: '/wheretoeat/recommend-a-place',
   },
   {
     title: 'Map',
     description:
       'Browse an interactive map with all of the places we know about marked that offer gluten free!',
     icon: MapIcon,
+    href: `/wheretoeat/browse/${props.latlng.lat},${props.latlng.lng}/13`,
   },
 ];
 </script>
@@ -46,10 +50,12 @@ const linkCards = [
     </div>
 
     <div class="absolute bottom-0 mb-2 grid w-full grid-cols-3 gap-2 px-2">
-      <div
+      <Link
         v-for="item in linkCards"
         :key="item.title"
         class="shrink-0"
+        :href="item.href"
+        prefetch
       >
         <div
           class="flex h-full w-full cursor-pointer flex-col items-center justify-center space-y-2 rounded-sm bg-linear-to-br from-primary/90 to-primary-light/90 p-2 shadow-sm shadow-lg transition duration-500 sm:hover:from-primary/95 sm:hover:to-primary-light/95 md:justify-between md:p-4"
@@ -77,7 +83,7 @@ const linkCards = [
             v-html="item.description"
           />
         </div>
-      </div>
+      </Link>
     </div>
 
     <img

@@ -7,7 +7,7 @@ namespace App\Http\Controllers\EatingOut\Search;
 use App\Actions\EatingOut\GetFiltersForEateriesAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Http\Response\Inertia;
-use App\Models\EatingOut\EateryCountry;
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,15 +34,19 @@ class ShowController
 
         $eateries = $getSearchResultsPipeline->run($eaterySearchTerm, $filters);
 
+        /** @var Eatery $firstResult */
+        $firstResult = $eateries->collect()->first()->load(['town', 'county', 'country']);
+
         return $inertia
             ->title("{$eaterySearchTerm->term} - Search Results")
             ->metaImage($getOpenGraphImageForRouteAction->handle('eatery'))
             ->doNotTrack()
             ->render('EatingOut/SearchResults', [
                 'term' => fn () => $eaterySearchTerm->term,
-                'image' => EateryCountry::query()->where('country', 'England')->firstOrFail()->image,
+                'image' => fn () => $firstResult->town->image ?? $firstResult->county->image ?? $firstResult->country->image,
                 'eateries' => fn () => $eateries,
                 'filters' => fn () => $getFiltersForEateriesAction->handle(fn (Builder $query) => $query->whereIn('id', Arr::pluck($eateries->all(), 'id')), $filters),
+                'latlng' => fn () => ['lat' => $firstResult->lat, 'lng' => $firstResult->lng],
             ]);
     }
 }

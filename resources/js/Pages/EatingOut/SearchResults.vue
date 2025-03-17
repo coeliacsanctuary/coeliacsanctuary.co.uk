@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { EateryFilters, TownEatery } from '@/types/EateryTypes';
+import { EateryFilters, LatLng, TownEatery } from '@/types/EateryTypes';
 import Warning from '@/Components/Warning.vue';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
@@ -18,6 +18,7 @@ defineProps<{
   image: string;
   eateries: PaginatedResponse<TownEatery>;
   filters: EateryFilters;
+  latlng: LatLng;
 }>();
 
 const landmark: Ref<Element> = ref();
@@ -89,6 +90,7 @@ const reloadEateries = () => {
   <SearchResultsHeading
     :term="term"
     :image="image"
+    :latlng="latlng"
   />
 
   <Card class="mt-3 flex flex-col space-y-4">
