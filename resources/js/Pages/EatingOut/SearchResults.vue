@@ -11,6 +11,7 @@ import { router } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import SearchResultsHeading from '@/Components/PageSpecific/EatingOut/SearchResults/SearchResultsHeading.vue';
 import useBrowser from '@/composables/useBrowser';
+import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
 
 defineProps<{
   term: string;
@@ -21,7 +22,10 @@ defineProps<{
 
 const landmark: Ref<Element> = ref();
 
-const { items, reset } = useInfiniteScroll<TownEatery>('eateries', landmark);
+const { items, reset } = useInfiniteScrollCollection<TownEatery>(
+  'eateries',
+  landmark,
+);
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
