@@ -123,7 +123,10 @@ const filtersForFilterBar: ComputedRef<
   const keys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
 
   keys.forEach((key) => {
-    if (processedUrl.value[key] === undefined) {
+    if (
+      processedUrl.value[key] === undefined ||
+      processedUrl.value[key] === ''
+    ) {
       return;
     }
 

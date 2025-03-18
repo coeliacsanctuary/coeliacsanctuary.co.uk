@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { CheckboxItem } from '@/types/Types';
-import { ref } from 'vue';
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     id?: string;
-    modelValue: CheckboxItem[];
     label?: string;
   }>(),
   {
@@ -14,16 +12,12 @@ const props = withDefaults(
   },
 );
 
-const items = ref(props.modelValue);
-
-const emits = defineEmits(['update:modelValue']);
+const items = defineModel<CheckboxItem[]>();
 
 const itemChecked = (index: number) => {
-  const itemsCopy: CheckboxItem[] = props.modelValue;
-
-  itemsCopy[index].checked = !itemsCopy[index].checked;
-
-  emits('update:modelValue', itemsCopy);
+  if (items.value) {
+    items.value[index].checked = !items.value[index].checked;
+  }
 };
 </script>
 

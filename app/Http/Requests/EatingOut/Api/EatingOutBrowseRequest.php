@@ -19,7 +19,8 @@ class EatingOutBrowseRequest extends FormRequest
             'lng' => ['required', 'numeric'],
             'radius' => ['required', 'numeric'],
             'filter' => ['array'],
-            'filter.category' => ['string', Rule::in(['wte', 'att', 'hotel'])],
+            'filter.category' => ['array'],
+            'filter.category.*' => ['string', Rule::in(['wte', 'att', 'hotel'])],
             'filter.venueTypes' => ['string', Rule::exists(EateryVenueType::class, 'slug')],
             'filter.features' => ['string', Rule::exists(EateryFeature::class, 'slug')],
         ];
@@ -38,7 +39,7 @@ class EatingOutBrowseRequest extends FormRequest
     public function filters(): array
     {
         return [
-            'categories' => $this->has('filter.category') ? explode(',', $this->string('filter.category')->toString()) : null,
+            'categories' => $this->has('filter.category') ? $this->array('filter.category') : null,
             'venueTypes' => $this->has('filter.venueTypes') ? explode(',', $this->string('filter.venueTypes')->toString()) : null,
             'features' => $this->has('filter.features') ? explode(',', $this->string('filter.features')->toString()) : null,
             'county' => null,
@@ -50,6 +51,14 @@ class EatingOutBrowseRequest extends FormRequest
         if ($this->has('range')) {
             $this->merge([
                 'radius' => $this->integer('range'),
+            ]);
+        }
+
+        if($this->array('filter.category')) {
+            $this->merge([
+                'filter' => [
+                    'category' => $this->string('filter.category')->explode(',')->toArray(),
+                ]
             ]);
         }
 
