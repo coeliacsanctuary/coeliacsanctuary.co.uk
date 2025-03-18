@@ -495,6 +495,20 @@ const parseUrl = () => {
 const navigateTo = (latLng: LatLng): void => {
   const coordinates = fromLonLat([latLng.lng, latLng.lat]);
 
+  console.log({
+    current: getLatLng(),
+    new: latLng,
+  });
+
+  if (
+    getLatLng().lat.toFixed(5) === latLng.lat.toFixed(5) &&
+    getLatLng().lng.toFixed(5) === latLng.lng.toFixed(5)
+  ) {
+    isLoading.value = false;
+
+    return;
+  }
+
   view.value.animate({
     center: coordinates,
     duration: 1000,
