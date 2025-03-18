@@ -1,13 +1,6 @@
 <script lang="ts" setup>
 import useScreensize from '@/composables/useScreensize';
-import {
-  computed,
-  ComputedRef,
-  DefineComponent,
-  onMounted,
-  Ref,
-  ref,
-} from 'vue';
+import { Component, computed, ComputedRef, onMounted, Ref, ref } from 'vue';
 import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { Coordinate } from 'ol/coordinate';
 import { Cluster, OSM } from 'ol/source';
@@ -37,7 +30,7 @@ import Loader from '@/Components/Loader.vue';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
 import { boundingExtent } from 'ol/extent';
 import { Pixel } from 'ol/pixel';
-import { usePage } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import { DefaultProps } from '@/types/DefaultProps';
 import 'ol/ol.css';
 import PlaceDetails from '@/Components/PageSpecific/EatingOut/Browse/PlaceDetails.vue';
@@ -47,7 +40,7 @@ type FilterKeys = 'category' | 'venueType' | 'feature';
 type UrlFilter = { [T in FilterKeys]?: string };
 
 defineOptions({
-  layout: CoeliacCompact as DefineComponent,
+  layout: CoeliacCompact as Component,
 });
 
 const isLoading = ref(true);
@@ -130,7 +123,10 @@ const filtersForFilterBar: ComputedRef<
   const keys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
 
   keys.forEach((key) => {
-    if (processedUrl.value[key] === undefined) {
+    if (
+      processedUrl.value[key] === undefined ||
+      processedUrl.value[key] === ''
+    ) {
       return;
     }
 
@@ -381,7 +377,11 @@ const updateUrl = (latLng?: LatLng, zoom?: number) => {
     url.searchParams.set(key, value);
   });
 
-  useBrowser().replaceHistory(url, null);
+  router.get(url.toString(), undefined, {
+    replace: true,
+    preserveScroll: true,
+    preserveState: true,
+  });
 };
 
 const handleMapClick = (event: MapBrowserEvent<MouseEvent>) => {
@@ -494,6 +494,20 @@ const parseUrl = () => {
 
 const navigateTo = (latLng: LatLng): void => {
   const coordinates = fromLonLat([latLng.lng, latLng.lat]);
+
+  console.log({
+    current: getLatLng(),
+    new: latLng,
+  });
+
+  if (
+    getLatLng().lat.toFixed(5) === latLng.lat.toFixed(5) &&
+    getLatLng().lng.toFixed(5) === latLng.lng.toFixed(5)
+  ) {
+    isLoading.value = false;
+
+    return;
+  }
 
   view.value.animate({
     center: coordinates,
