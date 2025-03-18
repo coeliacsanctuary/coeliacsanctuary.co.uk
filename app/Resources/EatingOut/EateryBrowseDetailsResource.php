@@ -30,7 +30,7 @@ class EateryBrowseDetailsResource extends JsonResource
             ]),
             'info' => $this->info,
             'location' => [
-                'address' => collect(explode("\n", $this->relationLoaded('branch') ? $this->branch->address : $this->address))
+                'address' => collect(explode("\n", $this->relationLoaded('branch') && $this->branch ? $this->branch->address : $this->address))
                     ->map(fn (string $line) => mb_trim($line))
                     ->join(', '),
                 'lat' => $this->lat,

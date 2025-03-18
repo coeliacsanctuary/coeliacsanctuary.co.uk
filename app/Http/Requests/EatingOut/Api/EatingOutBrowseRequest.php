@@ -56,27 +56,36 @@ class EatingOutBrowseRequest extends FormRequest
             ]);
         }
 
-        if($this->array('filter.category')) {
+        if ($this->array('filter.category')) {
             $this->merge([
                 'filter' => [
                     'category' => $this->string('filter.category')->explode(',')->toArray(),
-                ]
+                ],
             ]);
         }
 
-        if($this->array('filter.feature')) {
+        if ($this->array('filter.feature')) {
             $this->merge([
                 'filter' => [
                     'feature' => $this->string('filter.feature')->explode(',')->toArray(),
-                ]
+                ],
             ]);
         }
 
-        if($this->array('filter.venueType')) {
+        if ($this->array('filter.venueType')) {
             $this->merge([
                 'filter' => [
-                    'venueType' => $this->string('filter.venueType')->explode(',')->toArray(),
-                ]
+                    'venueType' => $this->string('filter.venueType')
+                        ->explode(',')
+                        ->map(function (mixed $venueType) {
+                            if (is_numeric($venueType)) {
+                                return EateryVenueType::query()->findOrFail($venueType)->slug;
+                            }
+
+                            return $venueType;
+                        })
+                        ->toArray(),
+                ],
             ]);
         }
     }
