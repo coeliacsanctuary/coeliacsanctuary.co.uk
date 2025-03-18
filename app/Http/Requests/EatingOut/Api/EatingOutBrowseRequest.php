@@ -21,8 +21,10 @@ class EatingOutBrowseRequest extends FormRequest
             'filter' => ['array'],
             'filter.category' => ['array'],
             'filter.category.*' => ['string', Rule::in(['wte', 'att', 'hotel'])],
-            'filter.venueTypes' => ['string', Rule::exists(EateryVenueType::class, 'slug')],
-            'filter.features' => ['string', Rule::exists(EateryFeature::class, 'slug')],
+            'filter.venueType' => ['array'],
+            'filter.venueType.*' => ['string', Rule::exists(EateryVenueType::class, 'slug')],
+            'filter.feature' => ['array'],
+            'filter.feature.*' => ['string', Rule::exists(EateryFeature::class, 'slug')],
         ];
     }
 
@@ -40,8 +42,8 @@ class EatingOutBrowseRequest extends FormRequest
     {
         return [
             'categories' => $this->has('filter.category') ? $this->array('filter.category') : null,
-            'venueTypes' => $this->has('filter.venueTypes') ? explode(',', $this->string('filter.venueTypes')->toString()) : null,
-            'features' => $this->has('filter.features') ? explode(',', $this->string('filter.features')->toString()) : null,
+            'venueTypes' => $this->has('filter.venueType') ? $this->array('filter.venueType') : null,
+            'features' => $this->has('filter.feature') ? $this->array('filter.feature') : null,
             'county' => null,
         ];
     }
@@ -62,17 +64,19 @@ class EatingOutBrowseRequest extends FormRequest
             ]);
         }
 
-        if ($this->has('filter.venueType')) {
+        if($this->array('filter.feature')) {
             $this->merge([
-                'filter' => array_merge(
-                    $this->collect('filter')->forget('venueType')->toArray(),
-                    [
-                        'venueTypes' => EateryVenueType::query()
-                            ->where('id', $this->integer('filter.venueType'))
-                            ->first()
-                            ?->slug,
-                    ]
-                ),
+                'filter' => [
+                    'feature' => $this->string('filter.feature')->explode(',')->toArray(),
+                ]
+            ]);
+        }
+
+        if($this->array('filter.venueType')) {
+            $this->merge([
+                'filter' => [
+                    'venueType' => $this->string('filter.venueType')->explode(',')->toArray(),
+                ]
             ]);
         }
     }
