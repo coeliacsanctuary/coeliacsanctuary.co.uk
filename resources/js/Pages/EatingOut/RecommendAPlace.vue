@@ -210,7 +210,6 @@ watchDebounced(
         <FormInput
           id="placeWebAddress"
           v-model="form.place.url"
-          type="url"
           :error="form.errors.place?.url"
           label="Place Website"
           name="placeUrl"
