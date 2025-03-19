@@ -11,6 +11,9 @@ import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.v
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import { ref } from 'vue';
+import Info from '@/Components/Info.vue';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { Link } from '@inertiajs/vue3';
 
 defineProps<{
   countries: EateryCountryListProp;
@@ -26,22 +29,37 @@ const guide = ref<null | { $el: Element }>(null);
     <Heading>Gluten Free Places to Eat and Visit</Heading>
 
     <p class="prose prose-lg max-w-none md:prose-xl">
-      Our Where to Eat guide lists 1,000s of independent eateries all over the
-      UK and Ireland that offer gluten free options or have a gluten free menu.
+      Our Where to Eat guide is a comprehensive resource featuring thousands of
+      independent eateries across the UK and Ireland that cater to gluten free
+      diners. Whether you're looking for a dedicated gluten free restaurant, a
+      café with gluten free options, or a pub that offers a full gluten free
+      menu, our guide helps you find safe and delicious places to eat. We
+      include a diverse range of establishments, from cozy local bakeries to
+      fine dining restaurants, ensuring that wherever you are, you can enjoy a
+      great meal without worry.
     </p>
 
-    <p class="prose prose-lg max-w-none md:prose-xl">
-      Most of the places to eat listed in our guide are contributed by people
-      like you, other Coeliac's or people with a gluten intolerance who know of
-      local places in their local area and are kind enough to let us know
-      through our
-      <a
-        href="/wheretoeat/recommend-a-place"
-        target="_blank"
-        >recommend a place</a
-      >
-      form.
-    </p>
+    <Info class="flex">
+      <div class="inline-flex flex-col sm:flex-row sm:items-center">
+        <p class="prose prose-lg max-w-none md:prose-xl">
+          Most of the places to eat listed in our guide are contributed by
+          people like you, other Coeliac's or people with a gluten intolerance
+          who know of local places in their local area. Do you know of a
+          location missing from our guide? Let us know!
+        </p>
+
+        <div class="flex items-center justify-center">
+          <CoeliacButton
+            theme="secondary"
+            size="xl"
+            :as="Link"
+            href="/wheretoeat/recommend-a-place"
+            label="Recommend a Place"
+            classes="font-semibold justify-center mt-2 sm:mt-0 sm:ml-2 sm:min-w-[230px]"
+          />
+        </div>
+      </div>
+    </Info>
   </Card>
 
   <LocationSearch />
