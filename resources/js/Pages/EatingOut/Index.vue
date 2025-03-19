@@ -9,8 +9,11 @@ import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEater
 import EateryCountryCard from '@/Components/PageSpecific/EatingOut/Index/EateryCountryCard.vue';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import Heading from '@/Components/Heading.vue';
-import SubHeading from '@/Components/SubHeading.vue';
 import { ref } from 'vue';
+import Info from '@/Components/Info.vue';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { Link } from '@inertiajs/vue3';
+import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 
 defineProps<{
   countries: EateryCountryListProp;
@@ -26,22 +29,37 @@ const guide = ref<null | { $el: Element }>(null);
     <Heading>Gluten Free Places to Eat and Visit</Heading>
 
     <p class="prose prose-lg max-w-none md:prose-xl">
-      Our Where to Eat guide lists 1,000s of independent eateries all over the
-      UK and Ireland that offer gluten free options or have a gluten free menu.
+      Our Where to Eat guide is a comprehensive resource featuring thousands of
+      independent eateries across the UK and Ireland that cater to gluten free
+      diners. Whether you're looking for a dedicated gluten free restaurant, a
+      café with gluten free options, or a pub that offers a full gluten free
+      menu, our guide helps you find safe and delicious places to eat. We
+      include a diverse range of establishments, from cozy local bakeries to
+      fine dining restaurants, ensuring that wherever you are, you can enjoy a
+      great meal without worry.
     </p>
 
-    <p class="prose prose-lg max-w-none md:prose-xl">
-      Most of the places to eat listed in our guide are contributed by people
-      like you, other Coeliac's or people with a gluten intolerance who know of
-      local places in their local area and are kind enough to let us know
-      through our
-      <a
-        href="/wheretoeat/recommend-a-place"
-        target="_blank"
-        >recommend a place</a
-      >
-      form.
-    </p>
+    <Info class="flex">
+      <div class="inline-flex flex-col sm:flex-row sm:items-center">
+        <p class="prose prose-lg max-w-none md:prose-xl">
+          Most of the eateries in our Where to Eat guide are recommended by
+          people like you—those with coeliac disease or gluten intolerance who
+          know great local spots. If you know a place we’ve missed, let us know
+          and help grow our guide!
+        </p>
+
+        <div class="flex items-center justify-center">
+          <CoeliacButton
+            theme="secondary"
+            size="xl"
+            :as="Link"
+            href="/wheretoeat/recommend-a-place"
+            label="Recommend a Place"
+            classes="font-semibold justify-center mt-2 sm:mt-0 sm:ml-2 sm:min-w-[230px]"
+          />
+        </div>
+      </div>
+    </Info>
   </Card>
 
   <LocationSearch />
@@ -59,45 +77,49 @@ const guide = ref<null | { $el: Element }>(null);
   </Card>
 
   <template v-if="topRated.length">
-    <Card class="mt-3 flex flex-col space-y-4">
-      <SubHeading>
+    <TopPlaces>
+      <template #title>
         Top rated places to eat gluten free around the UK and Ireland
-      </SubHeading>
+      </template>
 
-      <p class="prose prose-lg max-w-none md:prose-xl">
-        These are the top rated places to eat gluten free in our eating out
-        guide, voted by people just like you!
-      </p>
+      <template #default>
+        <p class="prose prose-lg max-w-none md:prose-xl mb-2">
+          These are the top rated places to eat gluten free in our eating out
+          guide, voted by people just like you!
+        </p>
 
-      <div class="group grid gap-3 md:grid-cols-3">
-        <CountyEatery
-          v-for="eatery in topRated"
-          :key="eatery.name"
-          :eatery="eatery"
-        />
-      </div>
-    </Card>
+        <div class="group grid gap-3 md:grid-cols-3">
+          <CountyEatery
+            v-for="eatery in topRated"
+            :key="eatery.name"
+            :eatery="eatery"
+          />
+        </div>
+      </template>
+    </TopPlaces>
   </template>
 
   <template v-if="mostRated.length">
-    <Card class="mt-3 flex flex-col space-y-4">
-      <SubHeading>
+    <TopPlaces>
+      <template #title>
         Most rated places to eat gluten free around the UK and Ireland
-      </SubHeading>
+      </template>
 
-      <p class="prose prose-lg max-w-none md:prose-xl">
-        These are the top gluten free places in our eating guide gluten that
-        have had the most people leave reviews!
-      </p>
+      <template #default>
+        <p class="prose prose-lg max-w-none md:prose-xl mb-2">
+          These are the top gluten free places in our eating guide gluten that
+          have had the most people leave reviews!
+        </p>
 
-      <div class="group grid gap-3 md:grid-cols-3">
-        <CountyEatery
-          v-for="eatery in mostRated"
-          :key="eatery.name"
-          :eatery="eatery"
-        />
-      </div>
-    </Card>
+        <div class="group grid gap-3 md:grid-cols-3">
+          <CountyEatery
+            v-for="eatery in mostRated"
+            :key="eatery.name"
+            :eatery="eatery"
+          />
+        </div>
+      </template>
+    </TopPlaces>
   </template>
 
   <Card
