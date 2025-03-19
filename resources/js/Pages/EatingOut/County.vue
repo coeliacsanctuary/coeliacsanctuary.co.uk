@@ -10,6 +10,10 @@ import CountyTown from '@/Components/PageSpecific/EatingOut/County/CountyTown.vu
 import GoogleAd from '@/Components/GoogleAd.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Heading from '@/Components/Heading.vue';
+import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
+import { Link } from '@inertiajs/vue3';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
+import Info from '@/Components/Info.vue';
 
 defineProps<{
   county: CountyPage;
@@ -29,50 +33,60 @@ defineProps<{
   />
 
   <template v-if="topRated.length">
-    <Card class="mt-3 flex flex-col space-y-4">
-      <SubHeading>
+    <TopPlaces>
+      <template #title>
         Top rated places to eat gluten free in {{ county.name }}
-      </SubHeading>
+      </template>
 
-      <p class="prose prose-lg max-w-none">
-        Discover the best rated places to eat gluten free in
-        <span class="font-semibold">{{ county.name }}</span
-        >, voted by people like you! From cozy cafes to restaurants, these
-        establishments offer exceptional gluten-free options. Enjoy a delightful
-        meal or snack, tailored to your dietary needs.
-      </p>
+      <template #default>
+        <p class="prose prose-lg max-w-none mb-2">
+          Discover the best rated places to eat gluten free in
+          <span
+            class="font-semibold"
+            v-text="county.name"
+          />, voted by people like you! From cozy cafes to restaurants, these
+          establishments offer exceptional gluten-free options. Enjoy a
+          delightful meal or snack, tailored to your dietary needs.
+        </p>
 
-      <div class="group grid gap-3 md:grid-cols-3">
-        <CountyEatery
-          v-for="eatery in topRated"
-          :key="eatery.name"
-          :eatery="eatery"
-        />
-      </div>
-    </Card>
+        <div class="group grid gap-3 md:grid-cols-3">
+          <CountyEatery
+            v-for="eatery in topRated"
+            :key="eatery.name"
+            :eatery="eatery"
+          />
+        </div>
+      </template>
+    </TopPlaces>
   </template>
 
   <template v-if="mostRated.length">
-    <Card class="mt-3 flex flex-col space-y-4">
-      <SubHeading>
+    <TopPlaces>
+      <template #title>
         Most rated places to eat gluten free in {{ county.name }}
-      </SubHeading>
+      </template>
 
-      <p class="prose prose-lg max-w-none">
-        Discover the most reviewed and highly praised places to eat gluten free
-        in <span class="font-semibold">{{ county.name }}</span
-        >, loved by people just like you! These establishments have garnered a
-        significant number of reviews, ensuring a great gluten free experience.
-      </p>
+      <template #default>
+        <p class="prose prose-lg max-w-none mb-2">
+          Discover the most reviewed and highly praised places to eat gluten
+          free in
+          <span
+            class="font-semibold"
+            v-text="county.name"
+          />, loved by people just like you! These establishments have garnered
+          a significant number of reviews, ensuring a great gluten free
+          experience.
+        </p>
 
-      <div class="group grid gap-3 md:grid-cols-3">
-        <CountyEatery
-          v-for="eatery in mostRated"
-          :key="eatery.name"
-          :eatery="eatery"
-        />
-      </div>
-    </Card>
+        <div class="group grid gap-3 md:grid-cols-3">
+          <CountyEatery
+            v-for="eatery in mostRated"
+            :key="eatery.name"
+            :eatery="eatery"
+          />
+        </div>
+      </template>
+    </TopPlaces>
   </template>
 
   <Card class="mt-3 flex flex-col space-y-4">
@@ -85,6 +99,28 @@ defineProps<{
       options in <span class="font-semibold">{{ county.name }}s</span> diverse
       culinary scene.
     </p>
+
+    <Info class="flex">
+      <div class="inline-flex flex-col sm:flex-row sm:items-center">
+        <p class="prose prose-lg max-w-none md:prose-xl">
+          Most of the eateries in our Where to Eat guide are recommended by
+          people like you—those with coeliac disease or gluten intolerance who
+          know great local spots. If you know a place we’ve missed, let us know
+          and help grow our guide!
+        </p>
+
+        <div class="flex items-center justify-center">
+          <CoeliacButton
+            theme="secondary"
+            size="xl"
+            :as="Link"
+            href="/wheretoeat/recommend-a-place"
+            label="Recommend a Place"
+            classes="font-semibold justify-center mt-2 sm:mt-0 sm:ml-2 sm:min-w-[230px]"
+          />
+        </div>
+      </div>
+    </Info>
 
     <GoogleAd code="5284484376" />
 

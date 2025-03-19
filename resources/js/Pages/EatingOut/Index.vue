@@ -42,10 +42,10 @@ const guide = ref<null | { $el: Element }>(null);
     <Info class="flex">
       <div class="inline-flex flex-col sm:flex-row sm:items-center">
         <p class="prose prose-lg max-w-none md:prose-xl">
-          Most of the places to eat listed in our guide are contributed by
-          people like you, other Coeliac's or people with a gluten intolerance
-          who know of local places in their local area. Do you know of a
-          location missing from our guide? Let us know!
+          Most of the eateries in our Where to Eat guide are recommended by
+          people like you—those with coeliac disease or gluten intolerance who
+          know great local spots. If you know a place we’ve missed, let us know
+          and help grow our guide!
         </p>
 
         <div class="flex items-center justify-center">
