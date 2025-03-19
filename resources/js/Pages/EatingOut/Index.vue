@@ -9,11 +9,11 @@ import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEater
 import EateryCountryCard from '@/Components/PageSpecific/EatingOut/Index/EateryCountryCard.vue';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import Heading from '@/Components/Heading.vue';
-import SubHeading from '@/Components/SubHeading.vue';
 import { ref } from 'vue';
 import Info from '@/Components/Info.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { Link } from '@inertiajs/vue3';
+import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 
 defineProps<{
   countries: EateryCountryListProp;
@@ -77,45 +77,49 @@ const guide = ref<null | { $el: Element }>(null);
   </Card>
 
   <template v-if="topRated.length">
-    <Card class="mt-3 flex flex-col space-y-4">
-      <SubHeading>
+    <TopPlaces>
+      <template #title>
         Top rated places to eat gluten free around the UK and Ireland
-      </SubHeading>
+      </template>
 
-      <p class="prose prose-lg max-w-none md:prose-xl">
-        These are the top rated places to eat gluten free in our eating out
-        guide, voted by people just like you!
-      </p>
+      <template #default>
+        <p class="prose prose-lg max-w-none md:prose-xl mb-2">
+          These are the top rated places to eat gluten free in our eating out
+          guide, voted by people just like you!
+        </p>
 
-      <div class="group grid gap-3 md:grid-cols-3">
-        <CountyEatery
-          v-for="eatery in topRated"
-          :key="eatery.name"
-          :eatery="eatery"
-        />
-      </div>
-    </Card>
+        <div class="group grid gap-3 md:grid-cols-3">
+          <CountyEatery
+            v-for="eatery in topRated"
+            :key="eatery.name"
+            :eatery="eatery"
+          />
+        </div>
+      </template>
+    </TopPlaces>
   </template>
 
   <template v-if="mostRated.length">
-    <Card class="mt-3 flex flex-col space-y-4">
-      <SubHeading>
+    <TopPlaces>
+      <template #title>
         Most rated places to eat gluten free around the UK and Ireland
-      </SubHeading>
+      </template>
 
-      <p class="prose prose-lg max-w-none md:prose-xl">
-        These are the top gluten free places in our eating guide gluten that
-        have had the most people leave reviews!
-      </p>
+      <template #default>
+        <p class="prose prose-lg max-w-none md:prose-xl mb-2">
+          These are the top gluten free places in our eating guide gluten that
+          have had the most people leave reviews!
+        </p>
 
-      <div class="group grid gap-3 md:grid-cols-3">
-        <CountyEatery
-          v-for="eatery in mostRated"
-          :key="eatery.name"
-          :eatery="eatery"
-        />
-      </div>
-    </Card>
+        <div class="group grid gap-3 md:grid-cols-3">
+          <CountyEatery
+            v-for="eatery in mostRated"
+            :key="eatery.name"
+            :eatery="eatery"
+          />
+        </div>
+      </template>
+    </TopPlaces>
   </template>
 
   <Card
