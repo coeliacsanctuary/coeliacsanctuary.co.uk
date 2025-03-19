@@ -120,8 +120,8 @@ const reloadEateries = () => {
 
       <p class="mt-2">
         All eateries are recommended by our website visitors, and before going
-        live we check menus and independent reviews. All eateries listed in our
-        eating guide are in no way endorsed by Coeliac Sanctuary.
+        live we check menus and reviews, but we do not vet or visit places to
+        independently check them.
       </p>
     </Warning>
   </Card>
