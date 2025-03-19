@@ -9,9 +9,12 @@ import { Link } from '@inertiajs/vue3';
 import StarRating from '@/Components/StarRating.vue';
 import EateryHeaderLinks from '@/Components/PageSpecific/EatingOut/Details/EateryHeaderLinks.vue';
 import Icon from '@/Components/Icon.vue';
+import Heading from '@/Components/Heading.vue';
 
 const props = defineProps<{
   eatery: DetailedEatery;
+  previous: string;
+  name: string;
 }>();
 
 const iconName = computed((): string => {
@@ -40,19 +43,29 @@ const eateryName = (): string => {
 
 <template>
   <Card class="space-y-2 lg:rounded-b-lg lg:p-8">
-    <div class="flex items-center justify-between space-x-2">
-      <h1
-        class="font-coeliac text-3xl font-semibold leading-tight lg:mb-2 lg:text-5xl"
-        v-text="eateryName()"
-      />
-
-      <div class="w-10 pr-2 pt-2 text-primary">
-        <Icon
-          :name="iconName"
-          class="h-10 w-10"
+    <Heading
+      :border="false"
+      :back-link="{
+        href: props.previous,
+        label: `Back to ${name}`,
+        position: 'top',
+        direction: 'left',
+      }"
+    >
+      <div class="flex items-center justify-between space-x-2">
+        <h1
+          class="font-coeliac text-3xl font-semibold leading-tight lg:mb-2 lg:text-5xl"
+          v-text="eateryName()"
         />
+
+        <div class="w-10 pr-2 pt-2 text-primary">
+          <Icon
+            :name="iconName"
+            class="h-10 w-10"
+          />
+        </div>
       </div>
-    </div>
+    </Heading>
 
     <div
       v-if="eatery.reviews.user_reviews?.length > 0"

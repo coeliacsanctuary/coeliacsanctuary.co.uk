@@ -14,6 +14,8 @@ use App\Models\EatingOut\NationwideBranch;
 use App\Resources\EatingOut\EateryDetailsResource;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
 
 class GetController
@@ -61,6 +63,19 @@ class GetController
             $eatery->setRelation('branch', $nationwideBranch);
         }
 
+        $previous = URL::previous(route('eating-out.town', ['county' => $eatery->county, 'town' => $eatery->town]));
+
+        /** @var \Illuminate\Routing\Route | null $route */
+        $route = Route::getRoutes()->match(Request::create($previous));
+
+        $name = match ($route?->getName()) {
+            'eating-out.town' => "Back to {$eatery->town?->town}",
+            'eating-out.browse', 'eating-out.browse.any' => 'Back to map',
+            'eating-out.search.show', 'search.index' => 'Back to search results',
+            'eating-out.index' => 'Back to eating out guide',
+            default => "Back to {$eatery->county?->county}"
+        };
+
         return $inertia
             ->title("Gluten free at {$eatery->full_name}")
             ->metaDescription("Eat gluten free at {$eatery->full_name}")
@@ -68,6 +83,8 @@ class GetController
             ->metaImage($getOpenGraphImageAction->handle($eatery))
             ->render('EatingOut/Details', [
                 'eatery' => fn () => new EateryDetailsResource($eatery),
+                'previous' => $previous,
+                'name' => $name,
             ])
             ->toResponse($request)
             ->setStatusCode($eatery->closed_down ? Response::HTTP_GONE : Response::HTTP_OK);
