@@ -64,13 +64,9 @@ jobs:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
 
-      - name: Composer Auth Nova
+      - name: Composer Auth
         if: steps.composer.outputs.cache-hit != 'true'
-        run: composer config nova.laravel.com ${{ secrets.NOVA_USERNAME }} ${{ secrets.NOVA_PASSWORD }}
-
-      - name: Composer Mailcoach Nova
-        if: steps.composer.outputs.cache-hit != 'true'
-        run: composer config satis.spatie.be ${{ secrets.MAILCOACH_USERNAME }} ${{ secrets.MAILCOACH_PASSWORD }}
+        run: echo '${{ secrets.COMPOSER_AUTH }}' > $GITHUB_WORKSPACE/auth.json
 
       - name: Install Composer
         if: steps.composer.outputs.cache-hit != 'true'
