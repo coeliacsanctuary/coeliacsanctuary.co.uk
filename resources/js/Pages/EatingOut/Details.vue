@@ -14,6 +14,8 @@ import GoogleAd from '@/Components/GoogleAd.vue';
 
 const props = defineProps<{
   eatery: DetailedEatery;
+  previous: string;
+  name: string;
 }>();
 
 const reviewsElem: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
@@ -43,7 +45,11 @@ const eateryName = (): string => {
       {{ formatDate(eatery.last_updated) }}.
     </div>
 
-    <EateryHeading :eatery="eatery" />
+    <EateryHeading
+      :eatery="eatery"
+      :previous="previous"
+      :name="name"
+    />
 
     <EateryFeedbackLinks
       v-if="!eatery.closed_down"

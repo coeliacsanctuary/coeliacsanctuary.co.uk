@@ -100,7 +100,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             'aroundLatLng' => $latLng->toString(),
             'aroundRadius' => Helpers::milesToMeters($radius),
             'getRankingInfo' => true,
-            'length' => 1000,
+            'hitsPerPage' => 1000,
         ];
 
         /** @var AlgoliaBuilder $searcher */

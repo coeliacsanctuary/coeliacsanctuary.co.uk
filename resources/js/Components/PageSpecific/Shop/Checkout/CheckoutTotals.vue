@@ -25,9 +25,11 @@ const store = useShopStore();
 
 const deliveryEstimate = computed(() => {
   const method =
-    props.selectedCountry === 1 ? 'First Class' : 'International Standard';
+    props.selectedCountry === 1
+      ? 'first class post'
+      : 'Royal Mail International Standard';
 
-  return `Delivered by Royal Mail ${method} usually within ${props.deliveryTimescale} days.`;
+  return `All orders are dispatched within 1 - 2 working days by ${method}, and usually arrive within ${props.deliveryTimescale} days, but this can vary. Please see Royal Mail for more details.`;
 });
 
 const countryForm = useForm('patch', '/shop/basket', {

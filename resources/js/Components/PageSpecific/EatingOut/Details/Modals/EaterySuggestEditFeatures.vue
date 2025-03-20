@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { EditableEateryData } from '@/types/EateryTypes';
+import { EditableEateryFeatureValues } from '@/types/EateryTypes';
 import { onMounted, Ref, ref } from 'vue';
 import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 
 const props = defineProps<{
-  currentFeatures: EditableEateryData['features']['values'];
+  currentFeatures: EditableEateryFeatureValues[];
 }>();
 
 const emits = defineEmits(['change']);
@@ -23,7 +23,7 @@ const emitChange = () => {
 
 onMounted(() => {
   features.value = props.currentFeatures.map((feature) => ({
-    key: feature.value,
+    key: feature.id,
     label: feature.label,
     selected: feature.selected,
   }));

@@ -12,7 +12,7 @@ import { Deferred, router } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import useBrowser from '@/composables/useBrowser';
 import SearchResults from '@/Components/PageSpecific/SearchResults.vue';
-import { VisitOptions } from '@inertiajs/core/types/types';
+import { VisitOptions } from '@inertiajs/core';
 
 const props = defineProps<{
   parameters: SearchParams;

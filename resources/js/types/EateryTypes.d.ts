@@ -270,7 +270,7 @@ export type EditableEateryData = {
       id: number;
       label: string;
     }[];
-    values: EditableEaterySelectableData['values'];
+    values: EditableEateryFeatureValues[];
   };
   is_nationwide: boolean;
 };
@@ -283,6 +283,12 @@ type EditableEaterySelectableData = {
     label: string;
     selected: boolean;
   }[];
+};
+
+type EditableEateryFeatureValues = {
+  id: number;
+  label: string;
+  selected: boolean;
 };
 
 type BaseEditableEateryField = {
