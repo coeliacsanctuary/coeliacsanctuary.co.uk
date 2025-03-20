@@ -8,7 +8,6 @@ import CountyHeading from '@/Components/PageSpecific/EatingOut/County/CountyHead
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
 import CountyTown from '@/Components/PageSpecific/EatingOut/County/CountyTown.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
-import SubHeading from '@/Components/SubHeading.vue';
 import Heading from '@/Components/Heading.vue';
 import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 import { Link } from '@inertiajs/vue3';
