@@ -43,3 +43,5 @@ jobs:
 
       - name: PHPStan
         run: composer run test
+        env:
+          STRIPE_SECRET_KEY: foo

@@ -43,3 +43,6 @@ jobs:
 
       - name: Laravel Pint
         run: composer run pint
+        env:
+          STRIPE_SECRET_KEY: foo
+
