@@ -1,0 +1,155 @@
+# GitHub Action for Link My Ride with PostGIS and Redis
+name: Lint, Static Analysis and Test
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+defaults:
+  run:
+    working-directory: ./
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: ${{ secrets.MYSQL_TEST_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_TEST_PASS }}
+        ports:
+          - 3306:3306
+          # Before continuing, verify the mysql container is reachable from the ubuntu host
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+
+        with:
+          php-version: '8.4'
+          extensions: json, dom, curl, libxml, mbstring
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '20.4.x'
+
+      - uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+
+      - uses: actions/cache@v3
+        id: build-cache
+        with:
+          path: public
+          key: public-${{ hashFiles('package-lock.json') }}
+
+      - name: Copy .env.example file to .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - uses: actions/cache@v3
+        id: composer-cache
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Install Composer
+        if: steps.composer.outputs.cache-hit != 'true'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Install JavaScript Dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Build CSS/JavaScript Files
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: npm run build
+
+  lint:
+    name: Lint
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: ESLint
+        run: npm run lint
+
+  phpstan:
+    name: PHPStan
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Copy .env.example file to .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - uses: ramsey/composer-install@v2
+
+      - name: PHPStan (Static Analysis Tool)
+        run: composer run stan
+
+  pint:
+    name: Laravel Pint
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Copy .env.example file to .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - uses: ramsey/composer-install@v2
+
+      - name: Laravel Pint
+        run: composer run pint
+
+  test-unit-php:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Run Tests
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: ${{ secrets.MYSQL_TEST_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_TEST_PASS }}
+        ports:
+          - 3306:3306
+          # Before continuing, verify the mysql container is reachable from the ubuntu host
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Copy .env.example file to .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+
+      - uses: ramsey/composer-install@v2
+
+      - name: Set application key for pipeline run
+        run: php artisan key:generate
+
+      - uses: actions/cache@v3
+        with:
+          path: public
+          key: public-${{ hashFiles('package-lock.json') }}
+
+      - name: Run Unit Tests
+        run: composer run test
