@@ -1,0 +1,45 @@
+name: PHP Unit
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+defaults:
+  run:
+    working-directory: ./
+
+jobs:
+  pint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+
+        with:
+          php-version: '8.4'
+          extensions: json, dom, curl, libxml, mbstring
+
+      - name: Copy .env.example file to .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - uses: actions/cache@v3
+        id: composer-cache
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Composer Auth
+        if: steps.composer.outputs.cache-hit != 'true'
+        run: echo '${{ secrets.COMPOSER_AUTH }}' > $GITHUB_WORKSPACE/auth.json
+
+      - name: Install Composer
+        if: steps.composer.outputs.cache-hit != 'true'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: PHPStan
+        run: composer run test
