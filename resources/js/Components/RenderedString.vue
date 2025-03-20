@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { shallowRef, onMounted, defineProps } from 'vue';
+import { shallowRef, onMounted, defineProps, Component } from 'vue';
 import ArticleHeader from './ArticleHeader.vue';
 import ArticleImage from './ArticleImage.vue';
 
 const props = defineProps<{ content: string }>();
-const compiled = shallowRef<(() => unknown) | null>(null);
+const compiled = shallowRef<Component | null>(null);
 
 onMounted(async () => {
-  const { compile } = import.meta.env.PROD
-    ? await import('vue/dist/vue.esm-bundler.js')
-    : await import('vue');
-  compiled.value = compile(props.content);
+  const vue: { compile: (content: string) => Component } = (
+    import.meta.env.PROD
+      ? await import('vue/dist/vue.esm-bundler.js')
+      : await import('vue')
+  ) as { compile: (content: string) => Component };
+
+  compiled.value = vue.compile(props.content);
 });
 </script>
 
