@@ -55,6 +55,7 @@ class GetCountyListAction
             ->selectRaw('(select count(*) from wheretoeat_nationwide_branches wnb where wnb.live = 1 and wnb.county_id = wheretoeat_counties.id) branches')
             ->where('wheretoeat.live', true)
             ->where('wheretoeat_counties.county', '!=', 'Nationwide')
+            ->where('wheretoeat_countries.country', '!=', 'Nationwide')
             ->leftJoin('wheretoeat_countries', 'country_id', 'wheretoeat_countries.id')
             ->leftJoin('wheretoeat_counties', 'county_id', 'wheretoeat_counties.id')
             ->leftJoin('wheretoeat_types', 'type_id', 'wheretoeat_types.id')

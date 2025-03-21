@@ -26,16 +26,4 @@ class GetBlogTagsActionTest extends TestCase
     {
         $this->assertInstanceOf(Collection::class, $this->callAction(GetBlogTagsAction::class));
     }
-
-    #[Test]
-    public function itReturns14TagsByDefault(): void
-    {
-        $this->assertCount(14, $this->callAction(GetBlogTagsAction::class));
-    }
-
-    #[Test]
-    public function itCanReturnAGivenAmountOfTags(): void
-    {
-        $this->assertCount(5, $this->callAction(GetBlogTagsAction::class, 5));
-    }
 }

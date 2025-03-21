@@ -19,9 +19,12 @@ class EatingOutBrowseRequest extends FormRequest
             'lng' => ['required', 'numeric'],
             'radius' => ['required', 'numeric'],
             'filter' => ['array'],
-            'filter.category' => ['string', Rule::in(['wte', 'att', 'hotel'])],
-            'filter.venueTypes' => ['string', Rule::exists(EateryVenueType::class, 'slug')],
-            'filter.features' => ['string', Rule::exists(EateryFeature::class, 'slug')],
+            'filter.category' => ['array'],
+            'filter.category.*' => ['string', Rule::in(['wte', 'att', 'hotel'])],
+            'filter.venueType' => ['array'],
+            'filter.venueType.*' => ['string', Rule::exists(EateryVenueType::class, 'slug')],
+            'filter.feature' => ['array'],
+            'filter.feature.*' => ['string', Rule::exists(EateryFeature::class, 'slug')],
         ];
     }
 
@@ -38,9 +41,9 @@ class EatingOutBrowseRequest extends FormRequest
     public function filters(): array
     {
         return [
-            'categories' => $this->has('filter.category') ? explode(',', $this->string('filter.category')->toString()) : null,
-            'venueTypes' => $this->has('filter.venueTypes') ? explode(',', $this->string('filter.venueTypes')->toString()) : null,
-            'features' => $this->has('filter.features') ? explode(',', $this->string('filter.features')->toString()) : null,
+            'categories' => $this->has('filter.category') ? $this->array('filter.category') : null,
+            'venueTypes' => $this->has('filter.venueType') ? $this->array('filter.venueType') : null,
+            'features' => $this->has('filter.feature') ? $this->array('filter.feature') : null,
             'county' => null,
         ];
     }
@@ -53,17 +56,36 @@ class EatingOutBrowseRequest extends FormRequest
             ]);
         }
 
-        if ($this->has('filter.venueType')) {
+        if ($this->array('filter.category')) {
             $this->merge([
-                'filter' => array_merge(
-                    $this->collect('filter')->forget('venueType')->toArray(),
-                    [
-                        'venueTypes' => EateryVenueType::query()
-                            ->where('id', $this->integer('filter.venueType'))
-                            ->first()
-                            ?->slug,
-                    ]
-                ),
+                'filter' => [
+                    'category' => $this->string('filter.category')->explode(',')->toArray(),
+                ],
+            ]);
+        }
+
+        if ($this->array('filter.feature')) {
+            $this->merge([
+                'filter' => [
+                    'feature' => $this->string('filter.feature')->explode(',')->toArray(),
+                ],
+            ]);
+        }
+
+        if ($this->array('filter.venueType')) {
+            $this->merge([
+                'filter' => [
+                    'venueType' => $this->string('filter.venueType')
+                        ->explode(',')
+                        ->map(function (mixed $venueType) {
+                            if (is_numeric($venueType)) {
+                                return EateryVenueType::query()->findOrFail($venueType)->slug;
+                            }
+
+                            return $venueType;
+                        })
+                        ->toArray(),
+                ],
             ]);
         }
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Collections;
 
+use App\Models\Collections\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Collections\GetCollectionsForIndexAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
@@ -19,6 +20,7 @@ class IndexControllerTest extends TestCase
 
         Storage::fake('media');
 
+        Collection::truncate();
         $this->withCollections(30);
     }
 

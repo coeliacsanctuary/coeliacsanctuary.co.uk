@@ -10,7 +10,12 @@ defineProps<{ collection: CollectionPage }>();
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading>
+    <Heading
+      :back-link="{
+        href: '/collection',
+        label: 'Back to all collections...',
+      }"
+    >
       {{ collection.title }}
     </Heading>
 

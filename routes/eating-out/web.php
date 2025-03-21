@@ -53,7 +53,7 @@ Route::prefix('wheretoeat')->group(function (): void {
     Route::post('/recommend-a-place', RecommendAPlaceStoreController::class)->name('eating-out.recommend.create');
 
     Route::get('/browse', BrowseShowController::class)->name('eating-out.browse');
-    Route::get('/browse/{any}', BrowseShowController::class)->where('any', '.*');
+    Route::get('/browse/{any}', BrowseShowController::class)->where('any', '.*')->name('eating-out.browse.any');
 
     Route::get('coeliac-sanctuary-on-the-go', AppShowController::class)->name('eating-out.app');
 

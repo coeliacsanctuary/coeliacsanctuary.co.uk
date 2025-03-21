@@ -39,9 +39,9 @@ const logExpandDiscountCode = () => {
 
 <template>
   <Disclosure
+    v-slot="{ open }"
     as="div"
     class="rounded-sm bg-secondary/50 p-2"
-    v-slot="{ open }"
   >
     <DisclosureButton
       class="flex w-full items-center justify-between text-left"

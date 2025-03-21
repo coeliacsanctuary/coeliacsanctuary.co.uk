@@ -85,6 +85,11 @@ const checkRecommendation = () => {
     });
 };
 
+const addAnother = () => {
+  form.reset();
+  hasSubmitted.value = false;
+};
+
 watchDebounced(
   () => form.place.name,
   () => checkRecommendation(),
@@ -210,7 +215,6 @@ watchDebounced(
         <FormInput
           id="placeWebAddress"
           v-model="form.place.url"
-          type="url"
           :error="form.errors.place?.url"
           label="Place Website"
           name="placeUrl"
@@ -278,6 +282,15 @@ watchDebounced(
         reviews, and if it all checks out, add some missing data and add it to
         the website!
       </p>
+
+      <div class="flex justify-center mt-8">
+        <CoeliacButton
+          label="Add another!"
+          type="button"
+          size="xxl"
+          @click="addAnother()"
+        />
+      </div>
     </div>
   </Card>
 </template>

@@ -8,13 +8,14 @@ import EateryVisitorPhotos from '@/Components/PageSpecific/EatingOut/Details/Eat
 import EateryVisitorReviews from '@/Components/PageSpecific/EatingOut/Details/EateryVisitorReviews.vue';
 import EateryFeedbackLinks from '@/Components/PageSpecific/EatingOut/Details/EateryFeedbackLinks.vue';
 import { Ref, ref } from 'vue';
-import EateryFeatures from '@/Components/PageSpecific/EatingOut/Details/EateryFeatures.vue';
 import { formatDate } from '@/helpers';
 import EateryBranchList from '@/Components/PageSpecific/EatingOut/Details/EateryBranchList.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
 
 const props = defineProps<{
   eatery: DetailedEatery;
+  previous: string;
+  name: string;
 }>();
 
 const reviewsElem: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
@@ -44,7 +45,11 @@ const eateryName = (): string => {
       {{ formatDate(eatery.last_updated) }}.
     </div>
 
-    <EateryHeading :eatery="eatery" />
+    <EateryHeading
+      :eatery="eatery"
+      :previous="previous"
+      :name="name"
+    />
 
     <EateryFeedbackLinks
       v-if="!eatery.closed_down"

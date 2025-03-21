@@ -2,8 +2,6 @@
 import Card from '@/Components/Card.vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { ChevronDownIcon } from '@heroicons/vue/20/solid';
-import StaticMap from '@/Components/Maps/StaticMap.vue';
-import { Link } from '@inertiajs/vue3';
 
 defineProps<{ county: string }>();
 </script>

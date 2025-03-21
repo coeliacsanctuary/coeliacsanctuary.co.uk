@@ -57,6 +57,8 @@ const classes = (): string[] => {
     }
   }
 
+  base.push(props.inputClasses);
+
   return base;
 };
 </script>

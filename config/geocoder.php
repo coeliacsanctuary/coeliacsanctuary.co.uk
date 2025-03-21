@@ -36,6 +36,6 @@ return [
      *
      * More info: https://developers.google.com/maps/documentation/javascript/geocoding#GeocodingRequests
      */
-    'country' => '',
+    'country' => 'GB|country:IE|country:JE|country:GG|country:IM',
 
 ];

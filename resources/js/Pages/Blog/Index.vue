@@ -14,14 +14,13 @@ import BlogListSideBar from '@/Components/PageSpecific/Blogs/BlogListSideBar.vue
 import { PaginatedResponse } from '@/types/GenericTypes';
 import {
   BlogDetailCard as BlogDetailCardType,
-  BlogTag,
   BlogTagCount,
 } from '@/types/BlogTypes';
 
 defineProps<{
   blogs: PaginatedResponse<BlogDetailCardType>;
   tags: BlogTagCount[];
-  activeTag?: BlogTag;
+  activeTag?: string;
 }>();
 
 const showTags = ref(false);
@@ -60,7 +59,7 @@ const closeTagSidebar = (): void => {
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading v-if="!activeTag"> Coeliac Sanctuary Blogs </Heading>
     <Heading v-else>
-      Coeliac Sanctuary Blogs tagged with {{ activeTag.tag }}
+      Coeliac Sanctuary blogs tagged with {{ activeTag }}
     </Heading>
 
     <p class="prose max-w-none md:prose-lg">
@@ -103,7 +102,7 @@ const closeTagSidebar = (): void => {
     />
   </Card>
 
-  <div class="grid sm:max-xl:grid-cols-2 xl:grid-cols-3">
+  <div class="grid gap-8 sm:gap-0 sm:max-xl:grid-cols-2 xl:grid-cols-3">
     <BlogDetailCard
       v-for="blog in blogs.data"
       :key="blog.link"

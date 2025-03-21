@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
-import { Link, router, WhenVisible } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import Comments from '@/Components/PageSpecific/Shared/Comments.vue';
-import { nextTick, ref, Ref } from 'vue';
+import { ref, Ref } from 'vue';
 import { BlogPage } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
@@ -45,7 +45,12 @@ const loadMoreComments = () => {
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading>
+    <Heading
+      :back-link="{
+        href: '/blog',
+        label: 'Back to all blogs...',
+      }"
+    >
       {{ blog.title }}
     </Heading>
 
@@ -66,7 +71,7 @@ const loadMoreComments = () => {
             class="after:content-[','] last:after:content-['']"
           >
             <Link
-              :href="`/blog/tag/${tag.slug}`"
+              :href="`/blog/tags/${tag.slug}`"
               class="font-semibold text-primary-dark hover:text-grey-dark"
             >
               {{ tag.tag }}
@@ -113,7 +118,7 @@ const loadMoreComments = () => {
 
   <Card>
     <div class="prose prose-lg max-w-none md:prose-xl">
-      <RenderedString>{{ blog.body }}</RenderedString>
+      <RenderedString :content="blog.body" />
     </div>
 
     <GoogleAd code="6662103082" />

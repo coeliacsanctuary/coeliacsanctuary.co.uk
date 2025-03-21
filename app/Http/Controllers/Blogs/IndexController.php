@@ -9,6 +9,7 @@ use App\Actions\Blogs\GetBlogTagsAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Http\Response\Inertia;
 use App\Models\Blogs\BlogTag;
+use Illuminate\Support\Str;
 use Inertia\Response;
 
 class IndexController
@@ -28,7 +29,7 @@ class IndexController
             ->render('Blog/Index', [
                 'blogs' => fn () => $getBlogsForBlogIndexAction->handle($tag),
                 'tags' => Inertia::defer(fn () => $getBlogTagsAction->handle()),
-                'activeTag' => $tag->exists ? $tag : null,
+                'activeTag' => $tag->exists ? Str::title($tag->tag) : null,
             ]);
     }
 }

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Infrastructure;
 
+use Illuminate\Support\Facades\Process;
 use PHPUnit\Framework\Attributes\Test;
 use App\Infrastructure\MailChannel;
 use App\Models\NotificationEmail;
 use App\Models\Shop\ShopCustomer;
 use Illuminate\Mail\Mailer;
 use Illuminate\Support\Facades\Mail;
+use Spatie\Mjml\Mjml;
 use Tests\Fixtures\MockMjmlNotification;
 use Tests\Fixtures\MockNotification;
 use Tests\TestCase;
@@ -21,6 +23,7 @@ class MailChannelTest extends TestCase
         parent::setUp();
 
         Mail::fake();
+        Process::fake();
     }
 
     #[Test]
@@ -43,6 +46,13 @@ class MailChannelTest extends TestCase
     {
         $this->assertDatabaseEmpty(NotificationEmail::class);
 
+        $this->mock(Mjml::class)
+            ->shouldReceive('minify')
+            ->andReturnSelf()
+            ->getMock()
+            ->shouldReceive('toHtml')
+            ->andReturn('<html></html>');
+
         app(MailChannel::class)->send(
             $this->create(ShopCustomer::class),
             new MockMjmlNotification(),
@@ -61,6 +71,13 @@ class MailChannelTest extends TestCase
         $mock->shouldAllowMockingProtectedMethods()
             ->shouldReceive('buildMjml')
             ->once();
+
+        $this->mock(Mjml::class)
+            ->shouldReceive('minify')
+            ->andReturnSelf()
+            ->getMock()
+            ->shouldReceive('toHtml')
+            ->andReturn('<html></html>');
 
         app(MailChannel::class)->send(
             $this->create(ShopCustomer::class),

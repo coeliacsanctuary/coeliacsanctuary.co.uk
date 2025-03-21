@@ -124,6 +124,7 @@ const selectAllergen = (freeFrom: string[]): void => {
         :current-options="selectedFeatures"
         :options="featureOptions()"
         label="Feature"
+        class="z-50"
         @changed="selectFeature"
       />
 
@@ -131,6 +132,7 @@ const selectAllergen = (freeFrom: string[]): void => {
         :current-options="selectedMeals"
         :options="mealOptions()"
         label="Meals"
+        class="z-49"
         @changed="selectMeal"
       />
 
@@ -138,6 +140,7 @@ const selectAllergen = (freeFrom: string[]): void => {
         :current-options="selectedAllergens"
         :options="freeFromOptions()"
         label="Free From"
+        class="z-48"
         @changed="selectAllergen"
       />
     </div>
@@ -150,7 +153,7 @@ const selectAllergen = (freeFrom: string[]): void => {
     />
   </Card>
 
-  <div class="grid gap-3 sm:max-xl:grid-cols-2 sm:gap-0 xl:grid-cols-3">
+  <div class="grid gap-8 sm:max-xl:grid-cols-2 sm:gap-0 xl:grid-cols-3">
     <template v-if="recipes.data.length">
       <RecipeDetailCard
         v-for="recipe in recipes.data"

@@ -42,7 +42,7 @@ const navigation: { links: { label: string; url: string }[] } = {
       </p>
 
       <div class="flex items-center justify-center space-x-3">
-        <<a
+        <a
           href="https://www.facebook.com/coeliacsanctuary/"
           target="_blank"
         >

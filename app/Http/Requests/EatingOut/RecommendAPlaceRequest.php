@@ -49,4 +49,11 @@ class RecommendAPlaceRequest extends FormRequest
             'place.details' => 'place details',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'place.url' => 'Make sure the place web address starts with http:// or https://',
+        ];
+    }
 }

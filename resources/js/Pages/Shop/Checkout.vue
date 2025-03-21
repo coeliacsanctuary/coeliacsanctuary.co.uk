@@ -7,7 +7,6 @@ import CheckoutTotals from '@/Components/PageSpecific/Shop/Checkout/CheckoutTota
 import { FormSelectOption } from '@/Components/Forms/Props';
 import ContactDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ContactDetails.vue';
 import {
-  DefineComponent,
   computed,
   nextTick,
   reactive,
@@ -15,6 +14,7 @@ import {
   ref,
   watch,
   onMounted,
+  Component,
 } from 'vue';
 import ShippingDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ShippingDetails.vue';
 import useShopStore from '@/stores/useShopStore';
@@ -25,14 +25,13 @@ import useUrl from '@/composables/useUrl';
 import axios, { AxiosError } from 'axios';
 import useStripeStore from '@/stores/useStripeStore';
 import en from 'i18n-iso-countries/langs/en.json';
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import { ConfirmPaymentData } from '@stripe/stripe-js';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import pkg from 'i18n-iso-countries';
-import Warning from '@/Components/Warning.vue';
-import Info from '@/Components/Info.vue';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
@@ -45,7 +44,7 @@ type FormSection = {
 };
 
 type SectionComponent = {
-  component: DefineComponent;
+  component: Component;
   key: SectionKeys;
   next: SectionKeys;
   additionalProps: Record<string, unknown>;
@@ -115,7 +114,6 @@ const submitPendingOrder = async (payload: CheckoutForm): Promise<boolean> => {
 
     return true;
   } catch (error: unknown) {
-    console.log(error);
     if (error instanceof AxiosError) {
       const axiosError: AxiosError<{ errors: Record<string, unknown> }> =
         error as AxiosError<{ errors: Record<string, unknown> }>;
@@ -175,7 +173,6 @@ const prepareOrder = async () => {
 
     const { error } = await stripeStore.stripe.confirmPayment({
       elements: stripeStore.elements,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       confirmParams: stripePayload(payload),
       redirect: 'always',
     });
@@ -189,6 +186,7 @@ const prepareOrder = async () => {
     await revertPendingOrder();
 
     showLoader.value = false;
+    eventBus.$emit('payment-failed');
   });
 };
 
@@ -292,13 +290,13 @@ watch(
 
 const sectionComponents: SectionComponent[] = [
   {
-    component: ContactDetails,
+    component: ContactDetails as Component,
     key: 'details',
     next: 'shipping',
     additionalProps: {},
   },
   {
-    component: ShippingDetails,
+    component: ShippingDetails as Component,
     key: 'shipping',
     next: 'payment',
     additionalProps: {
@@ -306,7 +304,7 @@ const sectionComponents: SectionComponent[] = [
     },
   },
   {
-    component: PaymentDetails,
+    component: PaymentDetails as Component,
     key: 'payment',
     next: '_complete',
     additionalProps: {
@@ -394,5 +392,21 @@ onMounted(() => {
         </div>
       </Card>
     </div>
+  </template>
+
+  <template v-else>
+    <Card class="flex flex-col items-center justify-center space-y-4 py-8">
+      <p class="prose prose-xl text-center font-semibold">
+        You haven't got any items in your basket!
+      </p>
+
+      <CoeliacButton
+        :as="Link"
+        href="/shop"
+        label="Back to shop"
+        size="xxl"
+        theme="secondary"
+      />
+    </Card>
   </template>
 </template>

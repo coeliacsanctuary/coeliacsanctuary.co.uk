@@ -57,7 +57,9 @@ class MailChannel extends BaseMailChannel
         /** @phpstan-ignore-next-line  */
         $rawMessage = view($message->mjml, $message->data())->render();
 
-        return Mjml::new()->minify()->toHtml($rawMessage);
+        return app(Mjml::class)
+            ->minify()
+            ->toHtml($rawMessage);
     }
 
     /**

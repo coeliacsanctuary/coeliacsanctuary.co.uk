@@ -199,6 +199,7 @@ const icon = computed((): string => {
                     )}`
                   "
                 />
+                {{ branchId ? 'across all branches' : '' }}
               </span>
 
               <StarRating

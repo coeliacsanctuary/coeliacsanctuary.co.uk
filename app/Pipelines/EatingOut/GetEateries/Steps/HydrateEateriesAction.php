@@ -10,6 +10,7 @@ use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReview;
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use RuntimeException;
@@ -38,7 +39,7 @@ class HydrateEateriesAction implements GetEateriesPipelineActionContract
                 },
             ])
             ->whereIn('id', $eateryIds)
-            ->orderByRaw('field(id, ' . Arr::join($eateryIds, ',') . ')')
+            ->when(count($eateryIds) > 0, fn (Builder $builder) => $builder->orderByRaw('field(id, ' . Arr::join($eateryIds, ',') . ')'))
             ->get();
 
         $pipelineData->hydrated = $hydratedEateries;

@@ -5,6 +5,8 @@ import { ShopBasketItem } from '@/types/Shop';
 import { ref } from 'vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySwitcher.vue';
+import Loader from '@/Components/Loader.vue';
 
 defineProps<{ items: ShopBasketItem[]; subtotal: string }>();
 
@@ -24,6 +26,30 @@ const removeItem = (item: ShopBasketItem) => {
     },
   });
 };
+
+const loadingItem = ref<null | number>(null);
+
+const alterQuantity = (
+  item: ShopBasketItem,
+  action: 'increase' | 'decrease',
+) => {
+  loadingItem.value = item.id;
+
+  router.patch(
+    '/shop/basket',
+    {
+      action,
+      item_id: item.id,
+    },
+    {
+      preserveScroll: true,
+      only: ['basket', 'has_basket', 'payment_intent'],
+      onFinish: () => {
+        loadingItem.value = null;
+      },
+    },
+  );
+};
 </script>
 
 <template>
@@ -33,8 +59,17 @@ const removeItem = (item: ShopBasketItem) => {
         <li
           v-for="item in items"
           :key="item.id"
-          class="flex py-3"
+          class="flex py-3 relative"
         >
+          <Loader
+            :display="loadingItem === item.id"
+            absolute
+            on-top
+            blur
+            color="dark"
+            size="size-12"
+            width="border-8"
+          />
           <div
             class="h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200"
           >
@@ -72,7 +107,14 @@ const removeItem = (item: ShopBasketItem) => {
             </div>
 
             <div class="flex flex-1 items-center justify-between">
-              <p class="flex-1">Quantity: {{ item.quantity }}</p>
+              <div class="flex flex-1 space-x-2 items-center">
+                <p>Quantity</p>
+
+                <QuantitySwitcher
+                  :quantity="item.quantity"
+                  @alter="(mode) => alterQuantity(item, mode)"
+                />
+              </div>
 
               <CoeliacButton
                 theme="faded"

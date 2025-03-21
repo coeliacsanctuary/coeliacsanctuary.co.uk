@@ -8,10 +8,15 @@ defineProps<{ reviews: EaterySimpleReviewResource[] }>();
 </script>
 
 <template>
-  <Card class="-m-4 space-y-4 lg:m-0">
+  <Card class="space-y-4 pb-10">
     <h3 class="text-center text-2xl font-semibold text-primary-dark">
       Latest Ratings
     </h3>
+
+    <p class="prose">
+      These are the latest ratings people have left on locations in our
+      <Link href="/eating-out">Eating Out</Link> guide.
+    </p>
 
     <ul class="divide-y divide-primary-dark/80">
       <li

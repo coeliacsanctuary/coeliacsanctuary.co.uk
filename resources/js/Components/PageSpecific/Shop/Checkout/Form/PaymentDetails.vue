@@ -8,6 +8,7 @@ import useShopStore from '@/stores/useShopStore';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
+import eventBus from '@/eventBus';
 
 defineProps<{ show: boolean; completed: boolean; paymentToken: string }>();
 
@@ -90,6 +91,10 @@ watch(billingAddressSelect, () => {
   fields.value.county = '';
   fields.value.postcode = '';
   fields.value.country = '';
+});
+
+eventBus.$on('payment-failed', () => {
+  submitting.value = false;
 });
 </script>
 

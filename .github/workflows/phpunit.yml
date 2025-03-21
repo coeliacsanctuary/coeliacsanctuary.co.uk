@@ -1,0 +1,66 @@
+name: PHP Unit
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+defaults:
+  run:
+    working-directory: ./
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: ${{ secrets.MYSQL_TEST_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_TEST_PASS }}
+        ports:
+          - 3306:3306
+          # Before continuing, verify the mysql container is reachable from the ubuntu host
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      GET_ADDRESS_KEY: foo
+      GOOGLE_MAP_SEARCH: ${{ secrets.GOOGLE_MAP_SEARCH }}
+      MAILCOACH_API_ENDPOINT: "https://www.google.com"
+      MAILCOACH_API_TOKEN: foo
+      MAILCOACH_NEWSLETTER_ID: foo
+      STRIPE_SECRET_KEY: foo
+      DB_PASSWORD: ${{ secrets.MYSQL_TEST_PASS }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+
+        with:
+          php-version: '8.4'
+          extensions: json, dom, curl, libxml, mbstring
+
+      - name: Copy .env.example file to .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - uses: actions/cache@v3
+        id: composer-cache
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Composer Auth
+        if: steps.composer.outputs.cache-hit != 'true'
+        run: echo '${{ secrets.COMPOSER_AUTH }}' > $GITHUB_WORKSPACE/auth.json
+
+      - name: Install Composer
+        if: steps.composer.outputs.cache-hit != 'true'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Key
+        run: php artisan key:generate
+
+      - name: Run tests
+        run: composer run test

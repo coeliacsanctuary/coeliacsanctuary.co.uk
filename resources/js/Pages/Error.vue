@@ -5,6 +5,7 @@ import {
   BookOpenIcon,
   CreditCardIcon,
   BuildingStorefrontIcon,
+  ShoppingCartIcon,
 } from '@heroicons/vue/24/solid';
 import { Link } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
@@ -17,6 +18,12 @@ defineProps<{
 }>();
 
 const links = [
+  {
+    name: 'Shop',
+    href: '/shop',
+    description: 'Find our travel cards, stickers and more!',
+    icon: ShoppingCartIcon,
+  },
   {
     name: 'Blogs',
     href: '/blog',

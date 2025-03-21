@@ -13,14 +13,17 @@ const close = () => emit('close');
 const links: { label: string; href: string }[] = [
   { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
-  { label: 'Gluten Free Travel Cards', href: '/' },
+  {
+    label: 'Gluten Free Travel Cards',
+    href: '/gluten-free-travel-translation-cards',
+  },
   { label: 'Blogs', href: '/blog' },
   { label: 'Eating Out', href: '/eating-out' },
   { label: 'Recipes', href: '/recipe' },
   { label: 'Collections', href: '/collection' },
   { label: 'About Us', href: '/about' },
   { label: 'Work With Us', href: '/work-with-us' },
-  { label: 'Contact', href: '/' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 watch(

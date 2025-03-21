@@ -6,7 +6,6 @@ import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { ref, watch } from 'vue';
 import RatingsBreakdown from '@/Components/PageSpecific/Shared/RatingsBreakdown.vue';
 import { formatDate } from '@/helpers';
-import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
 
 const props = defineProps<{

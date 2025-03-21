@@ -29,12 +29,15 @@ watch(
   <OverlayFrame
     :open="open"
     width="w-full"
-    class="mb-auto mt-14 bg-transparent! max-w-[500px]"
+    class="my-auto bg-transparent! max-w-[500px]"
     @close="emit('close')"
   >
     <form
       class="flex items-center flex-col space-y-2"
-      @submit.prevent="submitSearch()"
+      @submit.prevent="
+        submitSearch();
+        $emit('close');
+      "
     >
       <div class="flex items-center pr-2 w-full bg-white rounded-lg">
         <FormInput
@@ -48,6 +51,7 @@ watch(
           class="flex-1"
           hide-label
           size="large"
+          input-classes="text-xl!  p-2!"
         />
 
         <button>

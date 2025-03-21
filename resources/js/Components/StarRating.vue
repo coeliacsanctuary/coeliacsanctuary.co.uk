@@ -6,7 +6,7 @@ import { StarRating } from '@/types/EateryTypes';
 const props = withDefaults(
   defineProps<{
     rating: StarRating;
-    align?: string;
+    align?: 'center' | 'start' | 'end';
     size?: string;
     color?: string;
     showAll?: boolean;
@@ -35,10 +35,6 @@ onMounted(() => {
   const remainingNumber = parts[1] ? parseInt(parts[1].charAt(0), 10) : 0;
 
   hasHalf.value = remainingNumber > 3 && remainingNumber < 7;
-
-  if (remainingNumber > 0 && remainingNumber <= 3) {
-    wholeNumber.value -= 1;
-  }
 
   if (remainingNumber >= 7) {
     wholeNumber.value += 1;
@@ -85,7 +81,8 @@ const shouldShowEmptyStars = (): boolean => {
     :class="[
       {
         'justify-center sm:justify-start': align === 'center',
-        justifyEnd: align !== 'center',
+        justifyEnd: align === 'end',
+        justifyStart: align === 'start',
       },
       color,
     ]"

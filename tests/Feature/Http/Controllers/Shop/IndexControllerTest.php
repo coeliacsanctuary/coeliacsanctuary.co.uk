@@ -46,7 +46,7 @@ class IndexControllerTest extends TestCase
                     ->has(
                         'categories',
                         5,
-                        fn (Assert $page) => $page->hasAll(['title', 'description', 'image', 'link'])
+                        fn (Assert $page) => $page->hasAll(['title', 'description', 'image', 'link', 'travelCardSearch'])
                     )
                     ->where('categories.0.title', 'Category 0')
                     ->where('categories.1.title', 'Category 1')

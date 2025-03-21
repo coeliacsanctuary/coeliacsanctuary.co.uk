@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import {
-  DetailedEatery,
-  EateryBranchesCollection,
-  EateryNationwideBranch,
-} from '@/types/EateryTypes';
+import { DetailedEatery, EateryBranchesCollection } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import { computed, ref } from 'vue';
-import { pluralise } from '../../../../helpers';
+import { pluralise } from '@/helpers';
 import EateryBranchListModal from '@/Components/PageSpecific/EatingOut/Details/Modals/EateryBranchListModal.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useScreensize from '@/composables/useScreensize';

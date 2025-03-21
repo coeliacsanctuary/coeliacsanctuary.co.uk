@@ -5,6 +5,7 @@ export type ShopCategoryIndex = {
   description: string;
   link: string;
   image: string;
+  travelCardSearch: boolean;
 };
 
 export type ShopBaseProduct = {

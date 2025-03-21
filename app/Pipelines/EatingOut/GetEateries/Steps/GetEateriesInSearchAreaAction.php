@@ -10,6 +10,7 @@ use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Services\EatingOut\LocationSearchService;
 use Closure;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
@@ -25,8 +26,13 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
 
             return $next($pipelineData);
         }
+        try {
+            $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+        } catch (Exception $e) {
+            $pipelineData->eateries = new Collection();
 
-        $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+            return $next($pipelineData);
+        }
 
         /** @var EloquentCollection<int, Eatery> $ids */
         $ids = Eatery::algoliaSearchAroundLatLng($latLng, $pipelineData->searchTerm->range)->get();

@@ -33,6 +33,7 @@ defineProps<{ eatery: CountyEateryType }>();
         <StarRating
           :rating="eatery.rating"
           size="w-5 h-5"
+          align="start"
         />
         <p class="font-semibold text-grey-dark">
           {{ eatery.rating.toFixed(1) }} from {{ eatery.rating_count }} votes
@@ -47,10 +48,12 @@ defineProps<{ eatery: CountyEateryType }>();
 
     <div class="flex flex-col space-y-1">
       <p
+        v-if="eatery.town.name !== 'Nationwide'"
         class="text-xs text-grey-dark md:text-sm"
         v-html="eatery.address"
       />
       <Link
+        v-if="eatery.town.name !== 'Nationwide'"
         :href="eatery.town.link"
         class="text-xs font-semibold text-grey-darker transition hover:text-grey-darkest md:text-sm"
       >

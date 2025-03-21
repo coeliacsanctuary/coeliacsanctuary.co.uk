@@ -29,6 +29,5 @@ defineProps<{
       :key="category.link"
       :category="category"
     />
-    >
   </div>
 </template>

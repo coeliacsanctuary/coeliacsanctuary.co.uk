@@ -26,6 +26,7 @@ class RenderOpenGraphImage
             ->setNodeBinary($nodeBinary)
             ->setNpmBinary($npmBinary)
             ->windowSize(1200, 630)
+            ->noSandbox()
             ->base64Screenshot();
     }
 }

@@ -2,8 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "lint": "eslint ./resources/js --ext .js,.ts,.vue",
-        "lint-fix": "eslint ./resources/js --ext .js,.ts,.vue --fix",
+        "lint": "eslint ./resources/js --cache --ext .js,.ts,.vue",
+        "lint-fix": "eslint ./resources/js --cache --ext .js,.ts,.vue --fix",
         "dev": "vite",
         "build": "vite build && vite build --ssr",
         "build-body": "cd nova-components/Body && npm run dev",
@@ -46,7 +46,7 @@
         "build-apex-charts-prod": "cd nova-components/ApexCharts && npm run prod"
     },
     "devDependencies": {
-        "@inertiajs/vue3": "^2.0.3",
+        "n": "^2.0.5",
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/postcss": "^4.0.0",
         "@tailwindcss/typography": "^0.5.16",

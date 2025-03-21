@@ -4,7 +4,7 @@ import {
   FormLookupProps,
 } from '@/Components/Forms/Props';
 import { ExclamationCircleIcon, XCircleIcon } from '@heroicons/vue/20/solid';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 import axios from 'axios';
 
@@ -71,6 +71,8 @@ const classes = (): string[] => {
 
   base.push(showResultsBox.value ? 'rounded-t-md' : 'rounded-md');
 
+  base.push(props.inputClasses);
+
   return base;
 };
 
@@ -100,7 +102,7 @@ const reset = () => {
   results.value = [];
 };
 
-defineExpose({ reset });
+defineExpose({ reset, value });
 
 watch(
   () => props.preselectTerm,
