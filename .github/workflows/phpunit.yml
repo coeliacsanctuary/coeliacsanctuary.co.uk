@@ -62,5 +62,5 @@ jobs:
       - name: Key
         run: php artisan key:generate
 
-      - name: PHPStan
+      - name: Run tests
         run: composer run test
