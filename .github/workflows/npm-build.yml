@@ -1,7 +1,8 @@
 name: NPM Build
 on:
   workflow_run:
-    workflows: ["NPM Lint"]
+    workflows:
+      - NPM Lint
     types:
       - completed
 
