@@ -1,0 +1,17 @@
+name: Deploy Dev
+on:
+  push:
+    branches:
+      - develop
+
+defaults:
+  run:
+    working-directory: ./
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        run: curl ${{ secrets.DEPLOY_ENVOYER_URL }}
+
