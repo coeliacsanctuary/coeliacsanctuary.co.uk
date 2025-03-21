@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Infrastructure;
 
+use Illuminate\Support\Facades\Process;
 use PHPUnit\Framework\Attributes\Test;
 use App\Infrastructure\MailChannel;
 use App\Models\NotificationEmail;
@@ -21,6 +22,7 @@ class MailChannelTest extends TestCase
         parent::setUp();
 
         Mail::fake();
+        Process::fake();
     }
 
     #[Test]

@@ -25,6 +25,9 @@ jobs:
           # Before continuing, verify the mysql container is reachable from the ubuntu host
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     env:
+      GOOGLE_MAP_SEARCH: ${{ secrets.GOOGLE_MAP_SEARCH }}
+      MAILCOACH_API_ENDPOINT: "https://www.google.com"
+      MAILCOACH_NEWSLETTER_ID: foo
       STRIPE_SECRET_KEY: foo
       DB_PASSWORD: ${{ secrets.MYSQL_TEST_PASS }}
     steps:
