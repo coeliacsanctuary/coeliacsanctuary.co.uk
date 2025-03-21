@@ -3,9 +3,6 @@ import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { ShopCategoryIndex, ShopProductIndex } from '@/types/Shop';
 import CategoryProductCard from '@/Components/PageSpecific/Shop/CategoryProductCard.vue';
-import { ArrowUturnLeftIcon } from '@heroicons/vue/20/solid';
-import { Link } from '@inertiajs/vue3';
-import SubHeading from '@/Components/SubHeading.vue';
 import CategoryTravelCardSearch from '@/Components/PageSpecific/Shop/CategoryTravelCardSearch.vue';
 
 defineProps<{

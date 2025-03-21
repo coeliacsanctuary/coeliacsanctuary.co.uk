@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
-import { Link, router, WhenVisible } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import Comments from '@/Components/PageSpecific/Shared/Comments.vue';
-import { nextTick, ref, Ref } from 'vue';
+import { ref, Ref } from 'vue';
 import { BlogPage } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';

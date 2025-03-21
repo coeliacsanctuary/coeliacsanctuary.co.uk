@@ -3,7 +3,6 @@ import { TownEatery } from '@/types/EateryTypes';
 import StarRating from '@/Components/StarRating.vue';
 import { Link } from '@inertiajs/vue3';
 import { pluralise } from '@/helpers';
-import { StarRating as StarRatingType } from '@/types/EateryTypes';
 
 withDefaults(
   defineProps<{

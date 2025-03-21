@@ -1,21 +1,13 @@
 <script setup lang="ts">
-import {
-  EateryBranchesCollection,
-  EateryNationwideBranch,
-} from '@/types/EateryTypes';
+import { EateryBranchesCollection } from '@/types/EateryTypes';
 import Warning from '@/Components/Warning.vue';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { ChevronDownIcon } from '@heroicons/vue/20/solid';
-import Card from '@/Components/Card.vue';
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
-import StaticMap from '@/Components/Maps/StaticMap.vue';
-import { Link } from '@inertiajs/vue3';
 import CountryList from '@/Components/PageSpecific/EatingOut/Details/Modals/BranchList/CountryList.vue';
 import CountyList from '@/Components/PageSpecific/EatingOut/Details/Modals/BranchList/CountyList.vue';
 import TownList from '@/Components/PageSpecific/EatingOut/Details/Modals/BranchList/TownList.vue';
 import BranchList from '@/Components/PageSpecific/EatingOut/Details/Modals/BranchList/BranchList.vue';
 
-const props = defineProps<{
+defineProps<{
   eateryName: string;
   show: boolean;
   branches: EateryBranchesCollection;
@@ -63,14 +55,15 @@ const close = () => {
             :county="<string>county"
           >
             <TownList
-              v-for="(branches, town) in towns"
+              v-for="(locations, town) in towns"
               :key="town"
               :town="<string>town"
             >
               <BranchList
-                v-for="branch in branches"
+                v-for="branch in locations"
                 :key="branch.id"
                 :branch="branch"
+                :eatery-name="eateryName"
               />
             </TownList>
           </CountyList>

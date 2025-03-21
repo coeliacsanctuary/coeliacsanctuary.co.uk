@@ -6,7 +6,10 @@ import StaticMap from '@/Components/Maps/StaticMap.vue';
 import { Link } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
 
-defineProps<{ branch: EateryNationwideBranch }>();
+const props = defineProps<{
+  branch: EateryNationwideBranch;
+  eateryName: string;
+}>();
 
 const branchName = (branch: EateryNationwideBranch): string => {
   const suffix =

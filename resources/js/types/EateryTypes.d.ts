@@ -1,5 +1,5 @@
 import { CheckboxItem } from '@/types/Types';
-import { DefineComponent } from 'vue';
+import { Component } from 'vue';
 
 export type County = {
   name: string;
@@ -321,7 +321,7 @@ export type EditableEateryField =
   | BaseEditableEateryFieldComponent;
 
 type EditableEateryFieldComponent = {
-  component: DefineComponent;
+  component: Component;
   props?: Partial<Record<string, unknown>>;
 };
 

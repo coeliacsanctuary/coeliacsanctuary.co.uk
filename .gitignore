@@ -20,3 +20,4 @@ yarn-error.log
 /build/
 /.phpunit.cache/
 /bootstrap/ssr
+.eslintcache

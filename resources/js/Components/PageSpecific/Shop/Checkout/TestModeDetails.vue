@@ -3,15 +3,15 @@ import Info from '@/Components/Info.vue';
 import { computed } from 'vue';
 
 const appEnv = computed((): string => {
-  return import.meta.env.VITE_APP_ENV;
+  return import.meta.env.VITE_APP_ENV as string;
 });
 </script>
 
 <template>
   <Info
+    v-if="appEnv !== 'production'"
     class="mt-4"
     faded
-    v-if="appEnv !== 'production'"
   >
     <div class="prose">
       <p class="text-xl font-semibold">

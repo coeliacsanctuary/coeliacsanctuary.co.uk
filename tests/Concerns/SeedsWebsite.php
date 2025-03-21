@@ -96,6 +96,7 @@ trait SeedsWebsite
                 'id' => $sequence->index + 1,
                 'title' => "Collection {$sequence->index}",
                 'created_at' => Carbon::now()->subDays($sequence->index),
+                'updated_at' => Carbon::now()->subDays($sequence->index),
             ])
             ->create()
             ->each(function (Collection $collection): void {

@@ -171,8 +171,8 @@ defineExpose({ reset, pause, refreshUrl, requestOptions });
           />
 
           <div
-            v-else
             v-for="(restaurant, index) in item.description"
+            v-else
             :key="index"
           >
             <p

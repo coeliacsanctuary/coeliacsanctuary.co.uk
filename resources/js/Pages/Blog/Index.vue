@@ -14,7 +14,6 @@ import BlogListSideBar from '@/Components/PageSpecific/Blogs/BlogListSideBar.vue
 import { PaginatedResponse } from '@/types/GenericTypes';
 import {
   BlogDetailCard as BlogDetailCardType,
-  BlogTag,
   BlogTagCount,
 } from '@/types/BlogTypes';
 

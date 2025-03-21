@@ -4,7 +4,6 @@ import SubHeading from '@/Components/SubHeading.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { InertiaForm } from '@/types/Core';
 import FormInput from '@/Components/Forms/FormInput.vue';
-import FormLookup from '@/Components/Forms/FormLookup.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 
 const form = useForm('get', '/gluten-free-travel-translation-cards', {
@@ -22,6 +21,7 @@ const form = useForm('get', '/gluten-free-travel-translation-cards', {
     </p>
 
     <FormInput
+      v-model="form.term"
       label=""
       name="term"
       placeholder="Search for country or language"
@@ -30,7 +30,6 @@ const form = useForm('get', '/gluten-free-travel-translation-cards', {
       borders
       class="w-full"
       input-classes="text-lg md:text-2xl!  p-2! md:p-4! text-center"
-      v-model="form.term"
       @keyup.enter="form.submit()"
     />
 

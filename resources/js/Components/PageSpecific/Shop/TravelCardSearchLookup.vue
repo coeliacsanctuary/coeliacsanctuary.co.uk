@@ -106,8 +106,8 @@ onMounted(() => {
         class="w-full"
         lookup-endpoint="/api/shop/travel-card-search"
         :preselect-term="termFromSearch"
-        @search="handleSearch"
         input-classes="text-2xl! p-4! text-center"
+        @search="handleSearch"
       >
         <template #item="{ id, term, type }">
           <div
@@ -152,16 +152,16 @@ onMounted(() => {
     <template v-else>
       <Card>
         <Heading
-          :border="false"
           v-if="searchResult.type === 'country'"
+          :border="false"
         >
           Here are our travel cards that can be used in
           <span class="text-primary-dark">{{ searchResult.term }}</span>
         </Heading>
 
         <Heading
-          :border="false"
           v-else
+          :border="false"
         >
           Here are our travel cards that can be used in
           <span class="text-primary-dark">{{ searchResult.term }}</span>

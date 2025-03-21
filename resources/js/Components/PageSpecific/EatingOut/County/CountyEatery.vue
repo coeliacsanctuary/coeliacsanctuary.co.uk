@@ -48,14 +48,14 @@ defineProps<{ eatery: CountyEateryType }>();
 
     <div class="flex flex-col space-y-1">
       <p
+        v-if="eatery.town.name !== 'Nationwide'"
         class="text-xs text-grey-dark md:text-sm"
         v-html="eatery.address"
-        v-if="eatery.town.name !== 'Nationwide'"
       />
       <Link
+        v-if="eatery.town.name !== 'Nationwide'"
         :href="eatery.town.link"
         class="text-xs font-semibold text-grey-darker transition hover:text-grey-darkest md:text-sm"
-        v-if="eatery.town.name !== 'Nationwide'"
       >
         View all places in {{ eatery.town.name }}
       </Link>
