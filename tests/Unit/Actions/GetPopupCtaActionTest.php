@@ -27,6 +27,8 @@ class GetPopupCtaActionTest extends TestCase
 
         $this->popup = $this->create(Popup::class);
         $this->popup->addMedia(UploadedFile::fake()->image('popup.jpg'))->toMediaCollection('primary');
+
+        TestTime::addDay();
     }
 
     #[Test]
