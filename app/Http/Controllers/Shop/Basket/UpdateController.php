@@ -6,12 +6,14 @@ namespace App\Http\Controllers\Shop\Basket;
 
 use App\Actions\Shop\AlterItemQuantityAction;
 use App\Actions\Shop\ResolveBasketAction;
+use App\Exceptions\QuantityException;
 use App\Http\Requests\Shop\BasketPatchRequest;
 use App\Models\Shop\ShopOrder;
 use Exception;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class UpdateController
 {
@@ -46,7 +48,11 @@ class UpdateController
             }
 
             DB::commit();
-        } catch (Exception $exception) {
+        } catch (QuantityException) {
+            DB::rollBack();
+
+            throw ValidationException::withMessages(['quantity' => 'not enough quantity available']);
+        } catch (Exception) {
             DB::rollBack();
         }
 

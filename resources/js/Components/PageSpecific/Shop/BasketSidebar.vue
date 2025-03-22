@@ -28,11 +28,13 @@ const removeItem = (item: ShopBasketItem) => {
 };
 
 const loadingItem = ref<null | number>(null);
+const hasError = ref<false | number>(false);
 
 const alterQuantity = (
   item: ShopBasketItem,
   action: 'increase' | 'decrease',
 ) => {
+  hasError.value = false;
   loadingItem.value = item.id;
 
   router.patch(
@@ -46,6 +48,11 @@ const alterQuantity = (
       only: ['basket', 'has_basket', 'payment_intent'],
       onFinish: () => {
         loadingItem.value = null;
+      },
+      onError: (e) => {
+        if (e?.quantity) {
+          hasError.value = item.id;
+        }
       },
     },
   );
@@ -128,6 +135,13 @@ const alterQuantity = (
                 @click="removeItem(item)"
               />
             </div>
+
+            <span
+              v-if="hasError === item.id"
+              class="text-red text-sm font-semibold"
+            >
+              Sorry, there isn't enough quantity available...
+            </span>
           </div>
         </li>
       </ul>

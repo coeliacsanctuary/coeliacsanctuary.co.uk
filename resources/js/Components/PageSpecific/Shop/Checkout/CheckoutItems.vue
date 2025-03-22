@@ -12,12 +12,14 @@ defineProps<{ items: ShopBasketItem[] }>();
 
 const deletingItem = ref<null | number>(null);
 const loadingItem = ref<null | number>(null);
+const hasError = ref<false | number>(false);
 
 const alterQuantity = (
   item: ShopBasketItem,
   action: 'increase' | 'decrease',
 ) => {
   loadingItem.value = item.id;
+  hasError.value = false;
 
   router.patch(
     '/shop/basket',
@@ -31,6 +33,11 @@ const alterQuantity = (
       onFinish: () => {
         loadingItem.value = null;
         eventBus.$emit('refresh-payment-element');
+      },
+      onError: (e) => {
+        if (e?.quantity) {
+          hasError.value = item.id;
+        }
       },
     },
   );
@@ -122,6 +129,13 @@ const removeItem = (item: ShopBasketItem) => {
               @click="removeItem(item)"
             />
           </div>
+
+          <span
+            v-if="hasError === item.id"
+            class="text-red text-sm font-semibold"
+          >
+            Sorry, there isn't enough quantity available...
+          </span>
         </div>
       </li>
     </ul>
