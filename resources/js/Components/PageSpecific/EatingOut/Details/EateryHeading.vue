@@ -47,7 +47,7 @@ const eateryName = (): string => {
       :border="false"
       :back-link="{
         href: props.previous,
-        label: `Back to ${name}`,
+        label: props.name,
         position: 'top',
         direction: 'left',
       }"
