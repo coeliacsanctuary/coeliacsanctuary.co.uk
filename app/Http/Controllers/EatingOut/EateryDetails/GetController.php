@@ -69,12 +69,16 @@ class GetController
         $route = Route::getRoutes()->match(Request::create($previous));
 
         $name = match ($route?->getName()) {
-            'eating-out.town' => "Back to {$eatery->town?->town}",
+            'eating-out.county' => "Back to {$eatery->county?->county}",
             'eating-out.browse', 'eating-out.browse.any' => 'Back to map',
             'eating-out.search.show', 'search.index' => 'Back to search results',
             'eating-out.index' => 'Back to eating out guide',
-            default => "Back to {$eatery->county?->county}"
+            default => "Back to {$eatery->town?->town}"
         };
+
+        if($name === "Back to {$eatery->town?->town}") {
+            $previous = $eatery->town?->link();
+        }
 
         return $inertia
             ->title("Gluten free at {$eatery->full_name}")
