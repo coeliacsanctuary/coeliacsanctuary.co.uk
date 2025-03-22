@@ -76,7 +76,7 @@ class GetController
             default => "Back to {$eatery->town?->town}"
         };
 
-        if($name === "Back to {$eatery->town?->town}") {
+        if ($name === "Back to {$eatery->town?->town}") {
             $previous = $eatery->town?->link();
         }
 

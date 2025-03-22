@@ -33,6 +33,14 @@ class SearchEateries
 
             $geocoder = Geocoder::getCoordinatesForAddress($searchPipelineData->parameters->locationSearch ?: $searchPipelineData->parameters->term);
 
+            if ($geocoder && ! $searchPipelineData->parameters->locationSearch) {
+                $town = Arr::first($geocoder['address_components'], fn ($component) => in_array('postal_town', $component->types));
+
+                if ($town) {
+                    $searchPipelineData->parameters->locationSearch = $town->long_name;
+                }
+            }
+
             if ($geocoder && Arr::get($geocoder, 'accuracy') !== 'result_not_found') {
                 $geoResults = $this->performGeoSearch(implode(', ', [$geocoder['lat'], $geocoder['lng']]));
 
