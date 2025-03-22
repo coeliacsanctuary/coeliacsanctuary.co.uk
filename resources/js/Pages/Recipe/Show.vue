@@ -50,7 +50,7 @@ const loadMoreComments = () => {
     <Heading
       :back-link="{
         href: '/recipe',
-        label: 'Back to all recipes...',
+        label: 'Back to all recipes.',
       }"
     >
       {{ recipe.title }}
