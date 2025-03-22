@@ -48,7 +48,7 @@ const loadMoreComments = () => {
     <Heading
       :back-link="{
         href: '/blog',
-        label: 'Back to all blogs...',
+        label: 'Back to all blogs.',
       }"
     >
       {{ blog.title }}

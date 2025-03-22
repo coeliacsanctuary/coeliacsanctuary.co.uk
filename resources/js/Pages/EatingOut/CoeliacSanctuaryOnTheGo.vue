@@ -9,7 +9,7 @@ defineProps<{ image: string }>();
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading
-      :back-link="{ label: 'Back to eating out guide...', href: '/eating-out' }"
+      :back-link="{ label: 'Back to eating out guide.', href: '/eating-out' }"
     >
       Coeliac Sanctuary - On the Go
     </Heading>

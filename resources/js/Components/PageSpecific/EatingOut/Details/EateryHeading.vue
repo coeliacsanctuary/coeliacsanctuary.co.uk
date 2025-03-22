@@ -47,7 +47,7 @@ const eateryName = (): string => {
       :border="false"
       :back-link="{
         href: props.previous,
-        label: `Back to ${name}`,
+        label: props.name,
         position: 'top',
         direction: 'left',
       }"
@@ -119,7 +119,7 @@ const eateryName = (): string => {
 
       <div
         v-if="eatery.branch"
-        class="2 flex space-x-3 text-xs font-semibold text-grey-darker"
+        class="2 flex space-x-1 text-xs font-semibold text-grey-darker"
       >
         <Link :href="eatery.branch.town.link">
           {{ eatery.branch.town.name }},

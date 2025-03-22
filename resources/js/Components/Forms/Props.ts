@@ -59,6 +59,7 @@ export type TextareaProps = BaseFormInputProps & {
   max?: number;
   hideLabel?: boolean;
   size?: 'default' | 'large';
+  helpText?: string;
 };
 
 export const TextareaPropsDefaults: Partial<TextareaProps> = {
@@ -67,6 +68,7 @@ export const TextareaPropsDefaults: Partial<TextareaProps> = {
   max: undefined,
   hideLabel: false,
   size: 'default',
+  helpText: undefined,
 };
 
 export type CheckboxProps = BaseFormProps & {

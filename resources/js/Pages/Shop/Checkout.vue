@@ -329,7 +329,7 @@ onMounted(() => {
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading
-      :back-link="{ href: '/shop', label: 'Continue shopping...' }"
+      :back-link="{ href: '/shop', label: 'Continue shopping.' }"
       :border="false"
     >
       Complete your order
