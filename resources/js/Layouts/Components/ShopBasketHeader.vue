@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import { Page } from '@inertiajs/core';
 import { ShopBasketItem } from '@/types/Shop';
 import { pluralise } from '@/helpers';
@@ -13,6 +13,12 @@ const label = pluralise('item', items.value.length);
 const openBasket = () => {
   EventBus.$emit('open-basket');
 };
+
+EventBus.$on('product-added-to-basket', () => {
+  router.reload({
+    only: ['basket'],
+  });
+});
 </script>
 
 <template>
