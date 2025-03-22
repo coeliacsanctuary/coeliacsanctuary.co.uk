@@ -6,16 +6,8 @@ import CheckoutItems from '@/Components/PageSpecific/Shop/Checkout/CheckoutItems
 import CheckoutTotals from '@/Components/PageSpecific/Shop/Checkout/CheckoutTotals.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import ContactDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ContactDetails.vue';
-import {
-  computed,
-  nextTick,
-  reactive,
-  Ref,
-  ref,
-  watch,
-  onMounted,
-  Component,
-} from 'vue';
+import { computed, nextTick, reactive, Ref, ref, watch, onMounted } from 'vue';
+import type { Component } from 'vue';
 import ShippingDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ShippingDetails.vue';
 import useShopStore from '@/stores/useShopStore';
 import useLocalStorage from '@/composables/useLocalStorage';
