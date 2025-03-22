@@ -98,6 +98,12 @@ const classes = (): string[] => {
     </div>
 
     <p
+      v-if="helpText"
+      class="text-sm"
+      v-html="helpText"
+    />
+
+    <p
       v-if="error"
       :id="`${name}-error`"
       class="mt-2 text-sm text-red"

@@ -138,31 +138,6 @@ watchDebounced(
         @submit.prevent="submit()"
       >
         <FormInput
-          id="name"
-          v-model="form.name"
-          :error="form.errors.name"
-          autocomplete="fullname"
-          label="Your Name"
-          name="name"
-          required
-          borders
-        />
-
-        <FormInput
-          id="email"
-          v-model="form.email"
-          type="email"
-          :error="form.errors.email"
-          autocomplete="email"
-          label="Your Email"
-          name="email"
-          required
-          borders
-        />
-
-        <hr />
-
-        <FormInput
           id="placeName"
           v-model="form.place.name"
           :error="form.errors.place?.name"
@@ -182,11 +157,11 @@ watchDebounced(
           borders
         />
 
-        <div class="w-full max-w-3xl mx-auto">
-          <Warning
-            v-if="placeAlreadyRecommended"
-            class="rounded-xl"
-          >
+        <div
+          v-if="placeAlreadyRecommended"
+          class="w-full max-w-3xl mx-auto"
+        >
+          <Warning class="rounded-xl">
             <div class="flex flex-col space-y-3 md:text-center">
               <p
                 class="prose lg:max-xl:prose-lg xl:prose-xl"
@@ -226,17 +201,43 @@ watchDebounced(
           v-model="form.place.venueType"
           name="placeVenueType"
           :options="venueTypes"
-          label="Venue Type"
+          label="Place Category"
           borders
         />
 
         <FormTextarea
           v-model="form.place.details"
-          label="Details"
+          label="Place details"
+          help-text="Please include details like if they only do gluten free on certain days, or examples of items on the menu, if they understand cross contamination etc"
           required
           name="placeDetails"
           :rows="6"
           :error="form.errors.place?.details"
+          borders
+        />
+
+        <hr />
+
+        <FormInput
+          id="name"
+          v-model="form.name"
+          :error="form.errors.name"
+          autocomplete="fullname"
+          label="Your Name"
+          name="name"
+          required
+          borders
+        />
+
+        <FormInput
+          id="email"
+          v-model="form.email"
+          type="email"
+          :error="form.errors.email"
+          autocomplete="email"
+          label="Your Email"
+          name="email"
+          required
           borders
         />
 
