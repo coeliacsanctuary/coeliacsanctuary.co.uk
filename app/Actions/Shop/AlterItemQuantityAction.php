@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Exceptions\QuantityException;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProductVariant;
-use RuntimeException;
 
 class AlterItemQuantityAction
 {
@@ -17,7 +17,7 @@ class AlterItemQuantityAction
         $variant = $orderItem->variant;
 
         if ($mode === 'increase' && $variant->quantity < 1) {
-            throw new RuntimeException('Not enough quantity available');
+            throw QuantityException::notEnoughAvailable();
         }
 
         $orderItem->order?->touch();
