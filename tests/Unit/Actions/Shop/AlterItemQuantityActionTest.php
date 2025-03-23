@@ -12,7 +12,6 @@ use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
-use RuntimeException;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
