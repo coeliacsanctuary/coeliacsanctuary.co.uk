@@ -7,6 +7,7 @@ namespace App\Pipelines\EatingOut\GetEateries\Steps;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryType;
 use App\Models\EatingOut\NationwideBranch;
 use Closure;
@@ -28,9 +29,9 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
 
         /** @var Builder<NationwideBranch> $idQuery */
         $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, $pipelineData->latLng->radius)
-            ->whereHas('eatery', function ($query) use ($pipelineData) {
-                $query->where('closed_down', false);
-
+            ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
+                /** @var Builder<Eatery> $query */
+                $query->where('closed_down', false); /** @phpstan-ignore-line */
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
                 }

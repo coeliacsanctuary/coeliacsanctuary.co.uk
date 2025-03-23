@@ -18,6 +18,7 @@ class ShopMassDiscount extends Model
     /** @return BelongsToMany<ShopCategory, $this> */
     public function assignedCategories(): BelongsToMany
     {
+        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             ShopCategory::class,
             'shop_mass_discount_categories',

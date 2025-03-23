@@ -10,7 +10,6 @@ use App\Http\Response\Inertia;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
-use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesPipeline;
 use App\Resources\EatingOut\TownPageResource;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,10 +50,7 @@ class ShowController
                         /** @var Builder<Eatery> $query */
                         return $query
                             ->where('town_id', $town->id)
-                            ->orWhereHas('nationwideBranches', function (Builder $query) use ($town) {
-                                /** @var Builder<NationwideBranch> $query */
-                                return $query->where('town_id', $town->id);
-                            });
+                            ->orWhereHas('nationwideBranches', fn (Builder $query) => $query->where('town_id', $town->id)); /** @phpstan-ignore-line */
                     },
                     $filters,
                 ),

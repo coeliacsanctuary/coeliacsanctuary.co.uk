@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Models\Comments;
 
 use App\Concerns\DisplaysDates;
+use App\Contracts\Comments\HasComments;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @param  HasComments  $commentable
+ */
 class Comment extends Model
 {
     use DisplaysDates;
