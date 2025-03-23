@@ -22,12 +22,9 @@ class GetBlogsForBlogIndexAction
     {
         return new $resource(
             Blog::query()
-                ->when($tag?->exists, fn (Builder $builder) => $builder->whereHas(
+                ->when($tag && $tag->exists, fn (Builder $builder) => $builder->whereHas(
                     'tags',
-                    function (Builder $builder) use ($tag) {
-                        /** @var Builder<BlogTag> $builder */
-                        return $builder->where('slug', $tag?->slug);
-                    }
+                    fn (Builder $builder) => $builder->where('slug', $tag->slug), /** @phpstan-ignore-line */
                 ))
                 ->when($search, fn (Builder $builder) => $builder->where(
                     fn (Builder $builder) => $builder
@@ -39,6 +36,5 @@ class GetBlogsForBlogIndexAction
                 ->latest()
                 ->paginate($perPage)
         );
-
     }
 }

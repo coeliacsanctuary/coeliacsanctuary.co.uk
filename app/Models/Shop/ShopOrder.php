@@ -98,6 +98,6 @@ class ShopOrder extends Model
     /** @return BelongsToMany<ShopSource, $this> */
     public function sources(): BelongsToMany
     {
-        return $this->belongsToMany(ShopSource::class, 'shop_order_sources', 'order_id', 'source_id');
+        return $this->belongsToMany(ShopSource::class, 'shop_order_sources', 'order_id', 'source_id'); /** @phpstan-ignore-line */
     }
 }

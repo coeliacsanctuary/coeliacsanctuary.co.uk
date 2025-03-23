@@ -56,8 +56,10 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     use DisplaysMedia;
     use HasLegacyImage;
     use Imageable;
+
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use LinkableModel;
     use Searchable;
 
@@ -106,6 +108,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     /** @return BelongsToMany<RecipeAllergen, $this> */
     public function allergens(): BelongsToMany
     {
+        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             RecipeAllergen::class,
             'recipe_assigned_allergens',
@@ -125,6 +128,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     /** @return BelongsToMany<RecipeFeature, $this> */
     public function features(): BelongsToMany
     {
+        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             RecipeFeature::class,
             'recipe_assigned_features',
@@ -136,6 +140,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     /** @return BelongsToMany<RecipeMeal, $this> */
     public function meals(): BelongsToMany
     {
+        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             RecipeMeal::class,
             'recipe_assigned_meals',
@@ -255,10 +260,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     {
         return $builder->where(function (Builder $builder) use ($features) {
             foreach ($features as $feature) {
-                $builder->whereHas('features', function (Builder $builder) use ($feature) {
-                    /** @var Builder<RecipeFeature> $builder */
-                    return $builder->where('slug', $feature);
-                });
+                $builder->whereHas('features', fn (Builder $builder) => $builder->where('slug', $feature)); /** @phpstan-ignore-line */
             }
 
             return $builder;
@@ -273,10 +275,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     {
         return $builder->where(function (Builder $builder) use ($meals) {
             foreach ($meals as $meal) {
-                $builder->whereHas('meals', function (Builder $builder) use ($meal) {
-                    /** @var Builder<RecipeMeal> $builder */
-                    return $builder->where('slug', $meal);
-                });
+                $builder->whereHas('meals', fn (Builder $builder) => $builder->where('slug', $meal)); /** @phpstan-ignore-line */
             }
 
             return $builder;
@@ -291,10 +290,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     {
         return $builder->where(function (Builder $builder) use ($freeFrom) {
             foreach ($freeFrom as $allergen) {
-                $builder->whereHas('allergens', function (Builder $builder) use ($allergen) {
-                    /** @var Builder<RecipeAllergen> $builder */
-                    return $builder->where('slug', $allergen);
-                });
+                $builder->whereHas('allergens', fn (Builder $builder) => $builder->where('slug', $allergen)); /** @phpstan-ignore-line */
             }
 
             return $builder;

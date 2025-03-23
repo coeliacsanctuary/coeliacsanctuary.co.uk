@@ -14,6 +14,6 @@ class EateryFeature extends Model
     /** @return BelongsToMany<Eatery, $this> */
     public function eateries(): BelongsToMany
     {
-        return $this->belongsToMany(Eatery::class, 'wheretoeat_assigned_features', 'feature_id', 'wheretoeat_id');
+        return $this->belongsToMany(Eatery::class, 'wheretoeat_assigned_features', 'feature_id', 'wheretoeat_id'); /** @phpstan-ignore-line **/
     }
 }

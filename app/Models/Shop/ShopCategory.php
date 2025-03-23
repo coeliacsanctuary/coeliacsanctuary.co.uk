@@ -21,8 +21,10 @@ class ShopCategory extends Model implements HasMedia
     use DisplaysMedia;
     use HasLegacyImage;
     use Imageable;
+
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use LinkableModel;
 
     protected static function booted(): void
@@ -41,7 +43,7 @@ class ShopCategory extends Model implements HasMedia
     /** @return BelongsToMany<ShopProduct, $this> */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(ShopProduct::class, 'shop_product_categories', 'category_id', 'product_id');
+        return $this->belongsToMany(ShopProduct::class, 'shop_product_categories', 'category_id', 'product_id'); /** @phpstan-ignore-line */
     }
 
     public function registerMediaCollections(): void

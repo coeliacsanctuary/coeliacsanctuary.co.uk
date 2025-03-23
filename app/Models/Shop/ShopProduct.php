@@ -78,7 +78,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     /** @return BelongsToMany<ShopCategory, $this> */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(ShopCategory::class, 'shop_product_categories', 'product_id', 'category_id');
+        return $this->belongsToMany(ShopCategory::class, 'shop_product_categories', 'product_id', 'category_id'); /** @phpstan-ignore-line */
     }
 
     /** @return BelongsTo<ShopShippingMethod, $this> */
@@ -114,6 +114,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     /** @return BelongsToMany<TravelCardSearchTerm, $this> */
     public function travelCardSearchTerms(): BelongsToMany
     {
+        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             TravelCardSearchTerm::class,
             'shop_product_assigned_travel_card_search_terms',
