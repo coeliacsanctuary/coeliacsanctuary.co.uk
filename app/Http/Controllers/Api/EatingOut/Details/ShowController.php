@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\EatingOut\Details;
 use App\Models\EatingOut\Eatery;
 use App\Resources\EatingOut\EateryAppResource;
 use App\Resources\EatingOut\EateryBrowseDetailsResource;
+use App\Support\Helpers;
 use Illuminate\Http\Request;
 
 class ShowController
@@ -23,8 +24,7 @@ class ShowController
             $eatery->setRelation('branch', $branch);
         }
 
-        // @todo
-        if ($request->userAgent() === 'app') {
+        if (Helpers::requestIsFromApp($request)) {
             return new EateryAppResource($eatery);
         }
 

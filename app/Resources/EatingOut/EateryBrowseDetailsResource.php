@@ -16,7 +16,6 @@ class EateryBrowseDetailsResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'user_agent' => $request->userAgent(),
             'id' => $this->id,
             'name' => $this->name,
             'link' => $this->relationLoaded('branch') ? $this->branch?->link() : $this->link(),
