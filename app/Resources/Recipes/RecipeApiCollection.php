@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace App\Resources\Recipes;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class RecipeApiCollection extends ResourceCollection
 {
     public $collects = RecipeApiResource::class;
+
+    /** @return array{data: mixed} */
+    public function toArray(Request $request)
+    {
+        return ['data' => parent::toArray($request)];
+    }
 }
