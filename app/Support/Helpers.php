@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Support;
 
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\IntlMoneyFormatter;
 use Money\Money;
@@ -32,5 +34,14 @@ class Helpers
         $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
 
         return (new IntlMoneyFormatter($numberFormatter, new ISOCurrencies()))->format($money);
+    }
+
+    public static function requestIsFromApp(Request $request): bool
+    {
+        if (Str::of($request->userAgent())->contains('CoeliacSanctuaryOnTheGo')) {
+            return true;
+        }
+
+        return false;
     }
 }
