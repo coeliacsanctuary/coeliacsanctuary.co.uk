@@ -7,17 +7,17 @@ const props = defineProps<{ content: string }>();
 const compiled = shallowRef<Component | null>(null);
 
 onMounted(async () => {
-  // const vue: { compile: (content: string) => Component } = (
-  //   import.meta.env.PROD
-  //     ? await import('vue/dist/vue.esm-bundler.js')
-  //     : await import('vue')
-  // ) as { compile: (content: string) => Component };
+  const vue: { compile: (content: string) => Component } = (
+    import.meta.env.PROD
+      ? await import('vue/dist/vue.esm-bundler.js')
+      : await import('vue')
+  ) as { compile: (content: string) => Component };
+
+  compiled.value = vue.compile(props.content);
+
+  // const { compile } = await import('vue');
   //
-  // compiled.value = vue.compile(props.content);
-
-  const { compile } = await import('vue');
-
-  compiled.value = compile(props.content);
+  // compiled.value = compile(props.content);
 });
 </script>
 
