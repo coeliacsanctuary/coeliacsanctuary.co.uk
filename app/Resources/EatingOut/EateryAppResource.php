@@ -47,6 +47,8 @@ class EateryAppResource extends JsonResource
         /** @var EateryType $eateryType */
         $eateryType = $this->type;
 
+        $branch = $this->relationLoaded('branch') ? $this->branch : null;
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -55,12 +57,12 @@ class EateryAppResource extends JsonResource
             'county_id' => $this->county_id,
             'country_id' => $this->country_id,
             'info' => $this->info,
-            'address' => $this->address,
+            'address' => $branch->address ?? $this->address,
             'phone' => $this->phone,
             'website' => $this->website,
             'gf_menu_link' => $this->gf_menu_link,
-            'lat' => $this->lat,
-            'lng' => $this->lng,
+            'lat' => $branch->lat ?? $this->lat,
+            'lng' => $branch->lng ?? $this->lng,
             'type_id' => $this->type_id,
             'venue_type_id' => $this->venue_type_id,
             'cuisine_id' => $this->cuisine_id,
@@ -77,18 +79,18 @@ class EateryAppResource extends JsonResource
             'full_location' => $this->full_location,
             'type_description' => $this->typeDescription,
             'country' => [
-                'id' => $this->country_id,
-                'country' => $this->country?->country,
+                'id' => $branch->country_id ?? $this->country_id,
+                'country' => $branch->country->country ?? $this->country?->country,
             ],
             'county' => [
-                'id' => $this->county_id,
-                'county' => $this->county?->county,
-                'slug' => $this->county?->slug,
+                'id' => $branch->county_id ?? $this->county_id,
+                'county' => $branch->county?->county ?? $this->county?->county,
+                'slug' => $branch->county?->slug ?? $this->county?->slug,
             ],
             'town' => [
-                'id' => $this->town_id,
-                'town' => $this->town?->town,
-                'slug' => $this->town?->slug,
+                'id' => $branch->town_id ?? $this->town_id,
+                'town' => $branch->town?->town ?? $this->town?->town,
+                'slug' => $branch->town?->slug ?? $this->town?->slug,
             ],
             'type' => [
                 'id' => $eateryType->id,
@@ -114,6 +116,7 @@ class EateryAppResource extends JsonResource
                 'info' => $restaurant->info,
             ]),
             'user_reviews' => $reviews,
+            'distance' => $branch->distance ?? $this->distance,
         ];
     }
 }

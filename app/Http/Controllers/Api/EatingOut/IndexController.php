@@ -9,6 +9,7 @@ use App\Pipelines\EatingOut\GetEateries\GetFilteredEateriesPipeline;
 use App\Resources\EatingOut\EateryAppResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class IndexController
 {
@@ -30,18 +31,18 @@ class IndexController
             $requestFilters = $request->collect('filter');
 
             if ($requestFilters->has('venueType')) {
-                $filters['venueTypes'] = [
-                    EateryVenueType::query()
-                        ->where('id', $requestFilters->get('venueType'))
-                        ->first()
-                        ?->slug,
-                ];
+                $filters['venueTypes'] = EateryVenueType::query()
+                    ->whereIn('id', Str::of($requestFilters->get('venueType'))->explode(','))
+                    ->get()
+                    ?->pluck('slug')
+                    ->toArray();
             }
 
             if ($requestFilters->has('county')) {
                 $filters['county'] = $requestFilters->get('county');
             }
         }
+
 
         return [
             'data' => $getFilteredEateriesPipeline->run($filters, EateryAppResource::class), // @phpstan-ignore-line
