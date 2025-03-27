@@ -9,6 +9,7 @@ use App\Models\EatingOut\EateryAttractionRestaurant;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryReview;
+use App\Models\EatingOut\EateryReviewImage;
 use App\Models\EatingOut\EateryType;
 use App\Models\EatingOut\EateryVenueType;
 use Illuminate\Http\Request;
@@ -20,14 +21,12 @@ class EateryAppResource extends JsonResource
     /** @return array<string, mixed> */
     public function toArray(Request $request)
     {
-
-        $branch = $this->relationLoaded('branch') ? $this->branch : null;
-
-        $reviews = $this->relationLoaded('reviews') ? $this->reviews->map(function (EateryReview $review) {
+        $reviews = $this->relationLoaded('reviews') ? $this->reviews->loadMissing('images')->map(function (EateryReview $review) {
             $review->refresh();
 
             return [
                 'id' => $review->id,
+                'admin_review' => $review->admin_review,
                 'wheretoeat_id' => $review->wheretoeat_id,
                 'rating' => $review->rating,
                 'name' => $review->name,
@@ -35,6 +34,11 @@ class EateryAppResource extends JsonResource
                 'created_at' => $review->created_at,
                 'price' => $review->price,
                 'human_date' => $review->created_at->diffForHumans(),
+                'images' => $review->images->map(fn (EateryReviewImage $image) => [
+                    'id' => $image->id,
+                    'thumb' => $image->thumb,
+                    'path' => $image->path,
+                ]),
             ];
         }) : [];
 
