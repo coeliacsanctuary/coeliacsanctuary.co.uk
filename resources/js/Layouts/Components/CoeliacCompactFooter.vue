@@ -10,9 +10,9 @@ const year = new Date().getFullYear();
 const navigation: { links: { label: string; url: string }[] } = {
   links: [
     { label: 'Contact', url: '/contact' },
-    { label: 'Terms', url: '/contact' },
-    { label: 'Privacy', url: '/contact' },
-    { label: 'Work with Us', url: '/contact' },
+    { label: 'Terms', url: '/terms-of-use' },
+    { label: 'Privacy', url: '/privacy-policy' },
+    { label: 'Work with Us', url: '/work-with-us' },
   ],
 };
 </script>
