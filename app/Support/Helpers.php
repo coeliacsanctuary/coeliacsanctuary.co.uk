@@ -38,10 +38,10 @@ class Helpers
 
     public static function requestIsFromApp(Request $request): bool
     {
-        if (Str::of($request->userAgent())->contains('CoeliacSanctuaryOnTheGo')) {
-            return true;
-        }
+        return (bool) ($request->userAgent() && Str::of($request->userAgent())->contains('CoeliacSanctuaryOntheGo'))
 
-        return false;
+
+
+        ;
     }
 }

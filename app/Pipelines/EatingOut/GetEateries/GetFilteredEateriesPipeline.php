@@ -7,6 +7,8 @@ namespace App\Pipelines\EatingOut\GetEateries;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\LatLng;
 use App\Models\EatingOut\EaterySearchTerm;
+use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToBranches;
+use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToEateries;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromFiltersAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInLatLngRadiusAction;
@@ -46,6 +48,8 @@ class GetFilteredEateriesPipeline
             PaginateEateriesAction::class,
             HydrateEateriesAction::class,
             HydrateBranchesAction::class,
+            AppendDistanceToEateries::class,
+            AppendDistanceToBranches::class,
             CheckForMissingEateriesAction::class,
             RelateEateriesAndBranchesAction::class,
             SerialiseResultsAction::class,

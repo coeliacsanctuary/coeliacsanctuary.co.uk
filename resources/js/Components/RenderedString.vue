@@ -14,6 +14,10 @@ onMounted(async () => {
   ) as { compile: (content: string) => Component };
 
   compiled.value = vue.compile(props.content);
+
+  // const { compile } = await import('vue');
+  //
+  // compiled.value = compile(props.content);
 });
 </script>
 

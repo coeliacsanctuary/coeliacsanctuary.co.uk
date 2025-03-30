@@ -257,7 +257,7 @@ class CoeliacSanctuaryOnTheGoTest extends TestCase
         $eatery = $this->create(Eatery::class);
 
         $this
-            ->withHeader('User-Agent', 'app')
+            ->withHeader('User-Agent', 'CoeliacSanctuaryOntheGo')
             ->getJson('/api/wheretoeat/' . $eatery->id)
             ->assertOk()
             ->assertJsonStructure([
