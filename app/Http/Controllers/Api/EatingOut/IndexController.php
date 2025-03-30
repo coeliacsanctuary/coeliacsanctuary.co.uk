@@ -33,8 +33,7 @@ class IndexController
             if ($requestFilters->has('venueType')) {
                 $filters['venueTypes'] = EateryVenueType::query()
                     ->whereIn('id', Str::of($requestFilters->get('venueType'))->explode(','))
-                    ->get()
-                    ?->pluck('slug')
+                    ->pluck('slug')
                     ->toArray();
             }
 

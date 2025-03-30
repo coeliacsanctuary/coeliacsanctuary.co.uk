@@ -88,13 +88,13 @@ class EateryAppResource extends JsonResource
             ],
             'county' => [
                 'id' => $branch->county_id ?? $this->county_id,
-                'county' => $branch->county?->county ?? $this->county?->county,
-                'slug' => $branch->county?->slug ?? $this->county?->slug,
+                'county' => $branch->county->county ?? $this->county?->county,
+                'slug' => $branch->county->slug ?? $this->county?->slug,
             ],
             'town' => [
                 'id' => $branch->town_id ?? $this->town_id,
-                'town' => $branch->town?->town ?? $this->town?->town,
-                'slug' => $branch->town?->slug ?? $this->town?->slug,
+                'town' => $branch->town->town ?? $this->town?->town,
+                'slug' => $branch->town->slug ?? $this->town?->slug,
             ],
             'type' => [
                 'id' => $eateryType->id,

@@ -47,11 +47,11 @@ class GetEateriesInLatLngRadiusAction implements GetEateriesPipelineActionContra
         $pendingEateries = $eateries->map(fn (Eatery $eatery) => new PendingEatery(
             id: $eatery->id,
             branchId: null,
-            ordering: $eatery->distance,
+            ordering: (float)$eatery->distance,
             lat: $eatery->lat,
             lng: $eatery->lng,
             typeId: $eatery->type_id,
-            distance: $eatery->distance,
+            distance: (float)$eatery->distance,
         ));
 
         if ( ! $pipelineData->eateries instanceof Collection) {
