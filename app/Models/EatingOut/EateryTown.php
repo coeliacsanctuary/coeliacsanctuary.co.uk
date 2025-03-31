@@ -23,6 +23,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
+ * @property string $image
  */
 class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
 {

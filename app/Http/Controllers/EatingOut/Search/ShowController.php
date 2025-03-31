@@ -40,13 +40,13 @@ class ShowController
         $jsonResource = $eateries->collect()->first();
 
         /** @var Eatery|null $firstResult */
-        $firstResult = $jsonResource?->resource->load(['town', 'county', 'country']);
+        $firstResult = $jsonResource->resource?->load(['town', 'county', 'country']);
 
-        $image = match ( ! null) {
+        $image = match (true) {
             $firstResult?->town?->image => $firstResult->town->image,
             $firstResult?->county?->image => $firstResult->county->image,
             $firstResult?->country?->image => $firstResult->country->image,
-            default => EateryCountry::query()->firstWhere('country', 'England')->image,
+            default => EateryCountry::query()->where('country', 'England')->firstOrFail()->image,
         };
 
         return $inertia
