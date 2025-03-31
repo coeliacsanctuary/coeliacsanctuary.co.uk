@@ -15,11 +15,11 @@ import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.v
 
 defineProps<{
   term: string;
-  range: number;
+  range: 1 | 2 | 5 | 10 | 20;
   image: string;
   eateries: PaginatedResponse<TownEatery>;
   filters: EateryFilters;
-  latlng: LatLng;
+  latlng?: LatLng;
 }>();
 
 const landmark: Ref<Element> = ref();
@@ -150,7 +150,7 @@ const reloadEateries = () => {
         v-else
         class="px-8 py-8 text-center text-xl"
       >
-        No eateries found, try updating your filters!
+        No eateries found, try updating your filters or your search term!
       </Card>
       <div ref="landmark" />
     </div>
