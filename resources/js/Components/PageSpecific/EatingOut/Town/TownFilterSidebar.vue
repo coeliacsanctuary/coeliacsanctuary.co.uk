@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { AdjustmentsHorizontalIcon } from '@heroicons/vue/24/solid';
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import TownFilterSidebarContent from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebarContent.vue';
 import useScreensize from '@/composables/useScreensize';
-import { EateryFilters } from '@/types/EateryTypes';
+import { EateryFilterKeys, EateryFilters } from '@/types/EateryTypes';
 
-defineProps<{
+const props = defineProps<{
   filters: EateryFilters;
 }>();
 const viewSidebar = ref(false);
@@ -14,6 +14,22 @@ const viewSidebar = ref(false);
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
 defineEmits(['filtersUpdated', 'sidebarClosed']);
+
+const numberOfSetFilters = computed<number>(() => {
+  let total = 0;
+
+  if (!props.filters) {
+    return total;
+  }
+
+  const keys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
+
+  keys.forEach((key) => {
+    total += props.filters[key]?.length;
+  });
+
+  return total;
+});
 </script>
 
 <template>
@@ -31,6 +47,7 @@ defineEmits(['filtersUpdated', 'sidebarClosed']);
   <div v-if="screenIsGreaterThanOrEqualTo('xmd')">
     <TownFilterSidebarContent
       :filters="filters"
+      :number-of-filters="numberOfSetFilters"
       @updated="$emit('filtersUpdated', $event)"
     />
   </div>
@@ -46,6 +63,7 @@ defineEmits(['filtersUpdated', 'sidebarClosed']);
   >
     <TownFilterSidebarContent
       :filters="filters"
+      :number-of-filters="numberOfSetFilters"
       @updated="$emit('filtersUpdated', $event)"
     />
   </Sidebar>
