@@ -36,7 +36,10 @@ const { subscribeForm } = useNewsletter();
   <footer class="bg-primary">
     <div class="mx-auto max-w-8xl p-4 lg:grid lg:grid-cols-4 lg:gap-x-4">
       <div class="lg:col-span-4">
-        <GoogleAd code="3102132022" />
+        <GoogleAd
+          code="3102132022"
+          title="Sponsored"
+        />
       </div>
 
       <!-- Tagline -->
