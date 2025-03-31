@@ -12,6 +12,8 @@ import RecipeNutritionTable from '@/Components/PageSpecific/Recipes/RecipeNutrit
 import { Page } from '@inertiajs/core';
 import GoogleAd from '@/Components/GoogleAd.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import Warning from '@/Components/Warning.vue';
+import Info from '@/Components/Info.vue';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -62,10 +64,16 @@ const loadMoreComments = () => {
     />
 
     <div
-      class="flex flex-col space-y-2 xs:flex-row xs:justify-between xs:space-y-0 md:text-lg"
+      class="flex flex-col space-y-4 lg:flex-row lg:justify-between lg:space-y-0"
     >
-      <div v-if="recipe.features.length">
-        <h3 class="font-semibold text-grey-darkest">This recipe is...</h3>
+      <Info
+        v-if="recipe.features.length"
+        class="lg:w-md"
+      >
+        <h3 class="font-semibold text-grey-darkest text-lg mb-1">
+          This recipe is...
+        </h3>
+
         <ul class="flex flex-row flex-wrap gap-2 gap-y-1 leading-tight">
           <li
             v-for="feature in recipe.features"
@@ -80,25 +88,29 @@ const loadMoreComments = () => {
             </Link>
           </li>
         </ul>
-      </div>
+      </Info>
 
-      <div v-if="recipe.allergens.length">
-        <div class="w-full rounded-sm bg-red-light/10 p-3 pr-12">
-          <h3 class="font-semibold text-grey-darkest">This recipe contains:</h3>
-          <ul class="flex flex-row flex-wrap gap-2 gap-y-1 leading-tight">
-            <li
-              v-for="allergen in recipe.allergens"
-              :key="allergen.slug"
-              class="font-semibold text-primary-dark after:content-[','] last:after:content-['']"
-              v-text="allergen.allergen"
-            />
-          </ul>
-        </div>
-      </div>
+      <Warning
+        v-if="recipe.allergens.length"
+        class="lg:w-md"
+      >
+        <h3 class="font-semibold text-red-dark text-lg mb-1">
+          This recipe contains:
+        </h3>
+
+        <ul class="flex flex-row flex-wrap gap-2 gap-y-1 leading-tight">
+          <li
+            v-for="allergen in recipe.allergens"
+            :key="allergen.slug"
+            class="font-semibold text-black after:content-[','] last:after:content-['']"
+            v-text="allergen.allergen"
+          />
+        </ul>
+      </Warning>
     </div>
 
     <div
-      class="-m-4 -mb-4! flex justify-between bg-grey-light p-4 shadow-inner"
+      class="!mt-4 -m-4 -mb-4! flex justify-between bg-grey-light p-4 shadow-inner"
     >
       <div>
         <p v-if="recipe.updated">
