@@ -6,15 +6,15 @@ namespace Tests\Unit\Services;
 
 use PHPUnit\Framework\Attributes\Test;
 use App\Services\RenderOpenGraphImage;
-use Spatie\Browsershot\Browsershot;
 use Tests\TestCase;
+use Wnx\SidecarBrowsershot\BrowsershotLambda;
 
 class RenderOpenGraphImageTest extends TestCase
 {
     #[Test]
     public function itCanGenerateABase64ImageStringUsingBrowsershot(): void
     {
-        $this->mock(Browsershot::class)
+        $this->mock(BrowsershotLambda::class)
             ->shouldReceive('setHtml')->once()->andReturnSelf()->getMock()
             ->shouldReceive('setIncludePath')->with('$PATH')->once()->andReturnSelf()->getMock()
             ->shouldReceive('setNodeBinary')->with(config('browsershot.node_path'))->once()->andReturnSelf()->getMock()
