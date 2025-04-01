@@ -12,6 +12,7 @@
         "coeliacsanctuary/nova-field-sortable": "^1.0.2",
         "dompdf/dompdf": "^2.0.8",
         "guzzlehttp/guzzle": "^7.9.2",
+        "hammerstone/sidecar": "dev-l12-compatibility as 0.6.2",
         "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^2.7.2",
         "jpeters8889/address-field": "@dev",
@@ -49,7 +50,8 @@
         "spatie/laravel-sluggable": "^3.7.2",
         "spatie/mjml-php": "^1.2.3",
         "spatie/schema-org": "^3.23.1",
-        "stripe/stripe-php": "^13.18"
+        "stripe/stripe-php": "^13.18",
+        "wnx/sidecar-browsershot": "dev-laravel-12"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14.10",
@@ -76,6 +78,11 @@
         {
             "type": "composer",
             "url": "https://satis.spatie.be"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/laravel-shift/sidecar.git",
+            "canonical": false
         },
         {
             "url": "https://github.com/coeliacsanctuary/advanced-nova-media-library.git",

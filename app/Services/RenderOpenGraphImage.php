@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Spatie\Browsershot\Browsershot;
+use Wnx\SidecarBrowsershot\BrowsershotLambda;
 
 class RenderOpenGraphImage
 {
-    public function __construct(protected Browsershot $browsershot)
-    {
-    }
+    public function __construct(protected BrowsershotLambda $browsershot) {}
 
     public function handle(string $html): string
     {
