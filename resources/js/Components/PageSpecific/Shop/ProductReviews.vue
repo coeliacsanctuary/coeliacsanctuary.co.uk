@@ -7,11 +7,13 @@ import { ref, watch } from 'vue';
 import RatingsBreakdown from '@/Components/PageSpecific/Shared/RatingsBreakdown.vue';
 import { formatDate } from '@/helpers';
 import Info from '@/Components/Info.vue';
+import { StarRating as StarRatingType } from '@/types/EateryTypes';
 
 const props = defineProps<{
   productName: string;
   reviews: PaginatedResponse<ShopProductReview>;
   rating: ShopProductRating;
+  filteredOn?: StarRatingType;
 }>();
 
 const loading = ref(false);
@@ -20,7 +22,14 @@ watch(props.reviews, () => {
   loading.value = false;
 });
 
-defineEmits(['load-more']);
+const reviewFilter = ref<undefined | StarRatingType>(undefined);
+const emits = defineEmits(['load-more', 'set-rating']);
+
+const setRatingFilter = (filter: StarRatingType | undefined) => {
+  reviewFilter.value = filter;
+
+  emits('set-rating', filter);
+};
 </script>
 
 <template>
@@ -30,6 +39,9 @@ defineEmits(['load-more']);
       :breakdown="rating.breakdown"
       :count="rating.count"
       :can-add-review="false"
+      :filtered-on="filteredOn"
+      filterable
+      @filter="setRatingFilter"
     >
       Have you used our <strong v-text="productName" />? Share your thoughts
       with other customers!

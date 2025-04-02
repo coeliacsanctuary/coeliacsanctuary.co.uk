@@ -13,11 +13,13 @@ withDefaults(
       rating: StarRatingType;
       count: number;
     }[];
+    filterable?: boolean;
+    filteredOn?: StarRatingType;
   }>(),
-  { canAddReview: true },
+  { canAddReview: true, filterable: false, filteredOn: undefined },
 );
 
-defineEmits(['createReview']);
+defineEmits(['createReview', 'filter']);
 </script>
 
 <template>
@@ -37,11 +39,17 @@ defineEmits(['createReview']);
     </div>
 
     <div class="mt-6">
-      <dl class="space-y-3">
+      <dl>
         <div
           v-for="item in breakdown"
           :key="item.rating"
-          class="flex items-center text-sm"
+          class="flex items-center text-sm py-2 transition rounded-lg"
+          :class="{
+            'cursor-pointer hover:bg-primary-light/20 px-2 -mx-2 ': filterable,
+            'bg-primary-light/50 hover:bg-primary-light/50':
+              filteredOn === item.rating,
+          }"
+          @click="filterable ? $emit('filter', item.rating) : undefined"
         >
           <dt class="flex flex-1 items-center">
             <p class="w-3 font-semibold">
@@ -72,9 +80,9 @@ defineEmits(['createReview']);
 
           <dd
             v-if="count > 0"
-            class="ml-3 w-10 text-right text-sm tabular-nums text-gray-900"
+            class="ml-3 w-15 text-right text-sm tabular-nums text-gray-900"
           >
-            {{ Math.round((item.count / count) * 100) }}%
+            {{ item.count }} ({{ Math.round((item.count / count) * 100) }}%)
           </dd>
         </div>
       </dl>

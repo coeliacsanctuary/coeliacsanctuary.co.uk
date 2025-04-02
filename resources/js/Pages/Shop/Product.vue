@@ -4,7 +4,7 @@ import { ShopProductDetail, ShopProductReview } from '@/types/Shop';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import StarRating from '@/Components/StarRating.vue';
-import { nextTick, Ref, ref } from 'vue';
+import { nextTick, Ref, ref, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import Modal from '@/Components/Overlays/Modal.vue';
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/outline';
@@ -15,11 +15,13 @@ import { Page } from '@inertiajs/core';
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import useBrowser from '@/composables/useBrowser';
+import { StarRating as StarRatingType } from '@/types/EateryTypes';
 
 const props = defineProps<{
   product: ShopProductDetail;
   reviews: PaginatedResponse<ShopProductReview>;
   productShippingText: string;
+  currentReviewFilter: StarRatingType | undefined;
 }>();
 
 const viewImage = ref(false);
@@ -49,39 +51,71 @@ const scrollToReviews = async (): Promise<void> => {
   }
 };
 
+const reviewFilter = ref<undefined | StarRatingType>(props.currentReviewFilter);
+
 const allReviews: Ref<PaginatedResponse<ShopProductReview>> = ref(
   props.reviews,
 );
+
+const loadReviews = (
+  url: string,
+  then: (
+    event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>,
+  ) => void,
+) => {
+  router.get(
+    url,
+    { reviewFilter: reviewFilter.value },
+    {
+      preserveScroll: true,
+      preserveState: true,
+      only: ['reviews'],
+      replace: true,
+      onSuccess: then,
+    },
+  );
+};
+
+watch(reviewFilter, () => {
+  const url = usePage().url;
+
+  loadReviews(
+    url,
+    (event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>) => {
+      // eslint-disable-next-line no-restricted-globals
+      useBrowser().replaceHistory(url, null);
+
+      allReviews.value.data = event.props.reviews.data;
+      allReviews.value.links = event.props.reviews.links;
+      allReviews.value.meta = event.props.reviews.meta;
+
+      return false;
+    },
+  );
+});
 
 const loadMoreReviews = () => {
   if (!props.reviews.links.next) {
     return;
   }
 
-  router.get(
+  const url = usePage().url;
+
+  loadReviews(
     props.reviews.links.next,
-    {},
-    {
-      preserveScroll: true,
-      preserveState: true,
-      only: ['reviews'],
-      replace: true,
-      onSuccess: (
-        event: Page<{ reviews?: PaginatedResponse<ShopProductReview> }>,
-      ) => {
-        // eslint-disable-next-line no-restricted-globals
-        useBrowser().replaceHistory(usePage().url, null);
+    (event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>) => {
+      // eslint-disable-next-line no-restricted-globals
+      useBrowser().replaceHistory(url, null);
 
-        if (!event.props.reviews) {
-          return true;
-        }
+      if (!event.props.reviews) {
+        return true;
+      }
 
-        allReviews.value.data.push(...event.props.reviews.data);
-        allReviews.value.links = event.props.reviews.links;
-        allReviews.value.meta = event.props.reviews.meta;
+      allReviews.value.data.push(...event.props.reviews.data);
+      allReviews.value.links = event.props.reviews.links;
+      allReviews.value.meta = event.props.reviews.meta;
 
-        return false;
-      },
+      return false;
     },
   );
 };
@@ -282,7 +316,12 @@ const loadMoreReviews = () => {
             :product-name="product.title"
             :reviews="allReviews"
             :rating="product.rating"
+            :filtered-on="reviewFilter"
             @load-more="loadMoreReviews()"
+            @set-rating="
+              (rating: StarRatingType | undefined) =>
+                (reviewFilter = reviewFilter === rating ? undefined : rating)
+            "
           />
         </DisclosurePanel>
       </Disclosure>

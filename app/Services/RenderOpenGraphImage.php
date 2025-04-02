@@ -8,7 +8,9 @@ use Wnx\SidecarBrowsershot\BrowsershotLambda;
 
 class RenderOpenGraphImage
 {
-    public function __construct(protected BrowsershotLambda $browsershot) {}
+    public function __construct(protected BrowsershotLambda $browsershot)
+    {
+    }
 
     public function handle(string $html): string
     {
