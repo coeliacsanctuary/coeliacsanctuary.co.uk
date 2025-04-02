@@ -8,23 +8,33 @@ import RatingsBreakdown from '@/Components/PageSpecific/Shared/RatingsBreakdown.
 import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import EateryAddReview from '@/Components/PageSpecific/EatingOut/Details/Reviews/EateryAddReview.vue';
+import { StarRating as StarRatingType } from '@/types/EateryTypes';
 
 const props = defineProps<{
   eatery: DetailedEatery;
 }>();
 
 const hideReviewsWithoutBody = ref(true);
+const reviewFilter = ref<undefined | StarRatingType>(undefined);
 
 const reviews: ComputedRef<EateryReview[]> = computed(
   () => props.eatery.reviews.user_reviews,
 );
 
 const filteredReviews: ComputedRef<EateryReview[]> = computed(() => {
-  if (!hideReviewsWithoutBody.value) {
-    return reviews.value;
+  let thisReviews = reviews.value;
+
+  if (reviewFilter.value) {
+    thisReviews = thisReviews.filter(
+      (review) => review.rating === reviewFilter.value,
+    );
   }
 
-  return reviews.value.filter((review) => review.body);
+  if (!hideReviewsWithoutBody.value) {
+    return thisReviews;
+  }
+
+  return thisReviews.filter((review) => review.body);
 });
 
 const displayAddReviewModal = ref(false);
@@ -66,7 +76,13 @@ const howExpensive = (review: EateryReview) => {
         :breakdown="eatery.reviews.ratings"
         :count="eatery.reviews.number"
         :can-add-review="!eatery.closed_down"
+        :filtered-on="reviewFilter"
+        filterable
         @create-review="displayAddReviewModal = true"
+        @filter="
+          (rating: StarRatingType) =>
+            (reviewFilter = reviewFilter === rating ? undefined : rating)
+        "
       >
         Have you visited <strong v-text="eatery.name" />? Share your experience
         with other people!
