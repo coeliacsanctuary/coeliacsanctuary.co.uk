@@ -155,7 +155,8 @@ class Inertia
                 'id' => $popup->id,
                 'text' => $popup->text,
                 'link' => $popup->link,
-                'image' => $popup->main_image,
+                'primary_image' => $popup->main_image,
+                'secondary_image' => $popup->secondary_image,
             ]);
         }
     }

@@ -29,6 +29,16 @@ export default () => {
     return window.screen.width;
   };
 
+  const pageHeight = (
+    _default: undefined | number = undefined,
+  ): undefined | number => {
+    if (!hasWindowObject) {
+      return _default;
+    }
+
+    return window.screen.height;
+  };
+
   const replaceHistory = (
     url: string,
     data: null | undefined | object = undefined,
@@ -40,5 +50,5 @@ export default () => {
     window.history.replaceState(data, '', url);
   };
 
-  return { currentUrl, absoluteUrl, pageWidth, replaceHistory };
+  return { currentUrl, absoluteUrl, pageWidth, pageHeight, replaceHistory };
 };

@@ -22,5 +22,6 @@ export type PopupProps = {
   id: number;
   text: string;
   link: string;
-  image: string;
+  primary_image: string;
+  secondary_image?: string;
 };

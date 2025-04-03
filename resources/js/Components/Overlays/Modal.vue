@@ -12,12 +12,14 @@ withDefaults(
     noPadding?: boolean;
     size?: 'small' | 'medium' | 'large' | 'xl' | 'full';
     width?: 'w-full' | 'w-auto';
+    fitScreen?: boolean;
   }>(),
   {
     closeable: true,
     noPadding: false,
     size: 'medium',
     width: 'w-auto',
+    fitScreen: false,
   },
 );
 
@@ -35,6 +37,7 @@ const slots = useSlots();
       'sm:max-w-lg': size === 'medium',
       'sm:max-w-8xl': size === 'large',
       'sm:max-w-[95%]': size === 'full',
+      'max-h-[90vh]': fitScreen,
     }"
     @close="emit('close')"
   >

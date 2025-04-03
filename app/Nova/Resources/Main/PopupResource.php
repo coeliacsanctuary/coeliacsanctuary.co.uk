@@ -34,10 +34,15 @@ class PopupResource extends Resource
 
             Boolean::make('Live'),
 
-            Images::make('Image', 'primary')
+            Images::make('Primary Image', 'primary')
                 ->onlyOnForms()
                 ->addButtonLabel('Select Image')
                 ->rules(['required']),
+
+            Images::make('Secondary', 'secondary')
+                ->help('eg Portrait images')
+                ->onlyOnForms()
+                ->addButtonLabel('Select Image'),
         ];
     }
 
