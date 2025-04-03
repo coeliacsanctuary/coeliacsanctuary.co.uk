@@ -33,8 +33,8 @@ class Popup extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('primary')->singleFile();
-        $this->addMediaCollection('secondary')->singleFile();
+        $this->addMediaCollection('primary');
+        $this->addMediaCollection('secondary');
     }
 
     /**
