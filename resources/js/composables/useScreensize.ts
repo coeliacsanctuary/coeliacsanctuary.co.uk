@@ -20,10 +20,11 @@ type ScreenSize = {
 
 type ScreenConfig = { [T in BreakPoint]: string };
 
-const { pageWidth } = useBrowser();
+const { pageWidth, pageHeight } = useBrowser();
 
 export default () => {
   const rawWidth = ref<number>(pageWidth(1280) as number);
+  const rawHeight = ref<number>(pageHeight(720) as number);
 
   const screenConfig: ScreenConfig = {
     xxs: '400px',
@@ -93,6 +94,10 @@ export default () => {
   const screenIsGreaterThanOrEqualTo = (breakpoint: BreakPoint): boolean =>
     rawWidth.value >= (detailsForBreakpoint(breakpoint)?.from || 0);
 
+  const isPortrait = (): boolean => {
+    return rawWidth.value < rawHeight.value;
+  };
+
   return {
     rawWidth,
     screenSizes,
@@ -102,5 +107,6 @@ export default () => {
     screenIs,
     screenIsGreaterThan,
     screenIsGreaterThanOrEqualTo,
+    isPortrait,
   };
 };
