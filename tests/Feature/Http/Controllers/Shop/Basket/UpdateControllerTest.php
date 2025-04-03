@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Basket;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AlterItemQuantityAction;
+use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\VerifyDiscountCodeAction;
+use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
@@ -14,6 +15,7 @@ use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Encryption\Encrypter;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class UpdateControllerTest extends TestCase
@@ -163,7 +165,6 @@ class UpdateControllerTest extends TestCase
         $this->expectAction(AlterItemQuantityAction::class);
 
         $this
-            ->withoutExceptionHandling()
             ->withCookie('basket_token', $this->order->token)
             ->patch(route('shop.basket.patch'), [
                 'action' => 'increase',
@@ -256,5 +257,99 @@ class UpdateControllerTest extends TestCase
         $discountCode = app('session.store')->get('discountCode');
 
         $this->assertEquals('foobar', app(Encrypter::class)->decrypt($discountCode));
+    }
+
+    #[Test]
+    public function itErrorsIfContactIsntAnArray(): void
+    {
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => 'foo',
+            ])
+            ->assertSessionHasErrors('contact');
+    }
+
+    #[Test]
+    public function itErrorsIfContactIsMissingName(): void
+    {
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => ['foo' => 'bar'],
+            ])
+            ->assertSessionHasErrors('contact.name');
+    }
+
+    #[Test]
+    public function itErrorsIfContactIsMissingEmail(): void
+    {
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => ['foo' => 'bar'],
+            ])
+            ->assertSessionHasErrors('contact.email');
+    }
+
+    #[Test]
+    public function itErrorsIfContactEmailIsNotValid(): void
+    {
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => ['email' => 'bar'],
+            ])
+            ->assertSessionHasErrors('contact.email');
+    }
+
+    #[Test]
+    public function itErrorsIfContactEmailIsNotConfirmed(): void
+    {
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => ['email' => 'foo@bar.com'],
+            ])
+            ->assertSessionHasErrors('contact.email');
+    }
+
+    #[Test]
+    public function itCallsTheCreateCustomerActionWithValidCustomerDetails(): void
+    {
+        $this->expectAction(CreateCustomerAction::class, return: $this->create(ShopCustomer::class));
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => [
+                    'name' => 'foo',
+                    'email' => 'foo@bar.com',
+                    'email_confirmation' => 'foo@bar.com',
+                ],
+            ]);
+    }
+
+    #[Test]
+    public function itSetsTheCustomerIdOnTheBasketModel(): void
+    {
+        $customer = $this->create(ShopCustomer::class);
+
+        $this->expectAction(CreateCustomerAction::class, return: $customer);
+
+        $this->assertNull($this->order->customer_id);
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => [
+                    'name' => 'foo',
+                    'email' => 'foo@bar.com',
+                    'email_confirmation' => 'foo@bar.com',
+                ],
+            ]);
+
+        $this->assertNotNull($this->order->refresh()->customer_id);
+        $this->assertTrue($this->order->customer->is($customer));
     }
 }

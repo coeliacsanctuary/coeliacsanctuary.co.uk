@@ -31,6 +31,10 @@ class BasketPatchRequest extends FormRequest
                     ->where('start_at', '<=', now())
                     ->where('end_at', '>=', now())
             )],
+            'contact' => ['array'],
+            'contact.name' => ['required_with:contact', 'string'],
+            'contact.email' => ['required_with:contact', 'string', 'email', 'confirmed'],
+            'contact.phone' => ['nullable'],
         ];
     }
 

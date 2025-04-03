@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataObjects\Shop;
 
+use App\Http\Requests\Shop\BasketPatchRequest;
 use App\Http\Requests\Shop\CompleteOrderRequest;
 
 final readonly class PendingOrderCustomerDetails
@@ -16,9 +17,9 @@ final readonly class PendingOrderCustomerDetails
         //
     }
 
-    public static function createFromRequest(CompleteOrderRequest $request): static
+    public static function createFromRequest(CompleteOrderRequest|BasketPatchRequest $request): self
     {
-        return new static(
+        return new self(
             name: $request->string('contact.name')->title()->toString(),
             email: $request->string('contact.email')->toString(),
             phone: $request->has('contact.phone') ? $request->string('contact.phone')->toString() : null,
