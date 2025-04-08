@@ -30,6 +30,11 @@ class ShopOrderItemFactory extends Factory
         return $this->state(fn () => ['order_id' => $order->id]);
     }
 
+    public function toBasket(ShopOrder $basket): self
+    {
+        return $this->inOrder($basket);
+    }
+
     public function inProduct(ShopProduct $product): self
     {
         return $this->state(fn () => ['product_id' => $product->id]);

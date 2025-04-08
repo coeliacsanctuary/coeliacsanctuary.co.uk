@@ -6,6 +6,7 @@ import { ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/outline';
 import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
 import useShopStore from '@/stores/useShopStore';
 import { CheckoutContactStep } from '@/types/Shop';
+import axios, { AxiosError } from 'axios';
 
 defineProps<{ show: boolean; completed: boolean; error: boolean }>();
 const emits = defineEmits(['continue', 'toggle']);
@@ -37,10 +38,27 @@ const disableButton = computed((): boolean => {
   return false;
 });
 
+const storeCustomerDetails = async (): Promise<void> => {
+  try {
+    await axios.patch('/shop/basket', { contact: store.userDetails });
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      const axiosError: AxiosError<{ errors: Record<string, unknown> }> =
+        error as AxiosError<{ errors: Record<string, unknown> }>;
+
+      if (axiosError.status === 422 && axiosError.response?.data.errors) {
+        store.setErrors(axiosError.response.data.errors);
+      }
+    }
+  }
+};
+
 const submitForm = () => {
   if (disableButton.value) {
     return;
   }
+
+  storeCustomerDetails();
 
   emits('continue');
 };

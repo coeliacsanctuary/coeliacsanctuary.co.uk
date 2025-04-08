@@ -24,6 +24,7 @@ import useGoogleEvents from '@/composables/useGoogleEvents';
 import pkg from 'i18n-iso-countries';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
+import Alert from '@/Components/PageSpecific/Shared/Alert.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
@@ -47,6 +48,7 @@ type NoBasketProps = {
   countries: undefined;
   basket: undefined;
   payment_intent: undefined;
+  warnings: undefined;
 };
 
 type BasketProps = {
@@ -62,6 +64,7 @@ type BasketProps = {
     total: string;
   };
   payment_intent: string;
+  warnings?: string[];
 };
 
 registerLocale(en);
@@ -305,6 +308,8 @@ const sectionComponents: SectionComponent[] = [
   },
 ];
 
+const showWarningModal = ref(true);
+
 onMounted(() => {
   useGoogleEvents().googleEvent('event', 'begin_checkout', {
     items: props.basket?.items.map((item: ShopBasketItem) => ({
@@ -384,6 +389,33 @@ onMounted(() => {
         </div>
       </Card>
     </div>
+
+    <Alert
+      v-if="warnings?.length"
+      title="We've had to make some adjustments to your basket..."
+      :open="showWarningModal"
+      :actions="[
+        {
+          theme: 'secondary',
+          size: 'lg',
+          label: 'Ok, understood',
+          action: () => (showWarningModal = false),
+        },
+      ]"
+    >
+      <p class="prose prose-md max-w-none mb-3">
+        Sorry, due to stock changes since you created your basket, we've had to
+        alter the quantity of some of your products.
+      </p>
+
+      <ul class="text-primary-dark font-semibold">
+        <li
+          v-for="(warning, index) in warnings"
+          :key="index"
+          v-text="warning"
+        />
+      </ul>
+    </Alert>
   </template>
 
   <template v-else>
