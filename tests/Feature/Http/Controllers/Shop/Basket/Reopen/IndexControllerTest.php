@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers\Shop\Basket\Reopen;
 
 use App\Actions\Shop\ReopenBasketAction;
@@ -11,13 +13,14 @@ use Inertia\Testing\AssertableInertia;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class IndexControllerTest extends TestCase{
+class IndexControllerTest extends TestCase
+{
     #[Test]
     public function itErrorsIfTheSignatureDoesntMatch(): void
     {
         $basket = $this->build(ShopOrder::class)->asExpired()->beenSentAbandonedBasketEmail()->create();
 
-        $this->get(route('shop.basket.reopen', $basket))->assertInertia(fn(AssertableInertia $assert) => $assert->component('Shop/LinkExpired'));
+        $this->get(route('shop.basket.reopen', $basket))->assertInertia(fn (AssertableInertia $assert) => $assert->component('Shop/LinkExpired'));
     }
 
     #[Test]

@@ -1,21 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Actions\Shop;
 
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Actions\Shop\ReopenBasketAction;
 use App\Enums\Shop\OrderState;
-use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use App\Models\Shop\ShopProductVariant;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -27,28 +24,28 @@ class ReopenBasketActionTest extends TestCase
 
     protected ShopOrder $basket;
 
-   protected function setUp(): void
-   {
-       parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-       $this->withCategoriesAndProducts(1, 2);
+        $this->withCategoriesAndProducts(1, 2);
 
-       $this->product = ShopProduct::query()->first();
-       $this->variant = ShopProductVariant::query()->first();
+        $this->product = ShopProduct::query()->first();
+        $this->variant = ShopProductVariant::query()->first();
 
-       $this->product->update(['title' => 'My Product']);
-       $this->variant->update(['title' => '']);
+        $this->product->update(['title' => 'My Product']);
+        $this->variant->update(['title' => '']);
 
-       $this->basket = $this->build(ShopOrder::class)
-           ->forCustomer($this->create(ShopCustomer::class))
-           ->asExpired()
-           ->create();
+        $this->basket = $this->build(ShopOrder::class)
+            ->forCustomer($this->create(ShopCustomer::class))
+            ->asExpired()
+            ->create();
 
-       $this->build(ShopOrderItem::class)
-           ->add($this->variant, 2)
-           ->toBasket($this->basket)
-           ->create();
-   }
+        $this->build(ShopOrderItem::class)
+            ->add($this->variant, 2)
+            ->toBasket($this->basket)
+            ->create();
+    }
 
     #[Test]
     public function itUpdatesTheBasketStateId(): void
@@ -58,7 +55,7 @@ class ReopenBasketActionTest extends TestCase
         app(ReopenBasketAction::class)->handle($this->basket);
 
         $this->assertEquals(OrderState::BASKET, $this->basket->refresh()->state_id);
-   }
+    }
 
     #[Test]
     public function itReturnsAMessageSayingAllItemsAreOutOfStockIfAllItemsAreOutOfStock(): void
@@ -68,7 +65,7 @@ class ReopenBasketActionTest extends TestCase
         $warnings = app(ReopenBasketAction::class)->handle($this->basket);
 
         $this->assertEquals('All of the items in your basket have gone out of stock', $warnings->first());
-   }
+    }
 
     #[Test]
     public function itReturnsAMessageIfTheProductDoesntHaveEnoughQuantity(): void
@@ -78,7 +75,7 @@ class ReopenBasketActionTest extends TestCase
         $warnings = app(ReopenBasketAction::class)->handle($this->basket);
 
         $this->assertEquals('My Product only has 1 item left', $warnings->first());
-   }
+    }
 
     #[Test]
     public function itReturnsAMessageWithTheVariantDetailsIfTheProductDoesntHaveEnoughQuantityAndHasUniqueVariants(): void
@@ -93,7 +90,7 @@ class ReopenBasketActionTest extends TestCase
         $warnings = app(ReopenBasketAction::class)->handle($this->basket);
 
         $this->assertEquals('My Product only has 1 item left in the blue colour', $warnings->first());
-   }
+    }
 
     #[Test]
     public function itDoesntReturnAnyWarningsIfThereIsEnoughStockAvailable(): void
@@ -103,7 +100,7 @@ class ReopenBasketActionTest extends TestCase
         $warnings = app(ReopenBasketAction::class)->handle($this->basket);
 
         $this->assertEmpty($warnings);
-   }
+    }
 
     #[Test]
     public function itDoesntCallTheAddToBasketActionIfThereIsNoStockAvailable(): void
@@ -113,7 +110,7 @@ class ReopenBasketActionTest extends TestCase
         $this->variant->update(['quantity' => 0]);
 
         app(ReopenBasketAction::class)->handle($this->basket);
-   }
+    }
 
     #[Test]
     public function itCallsTheAddToBasketActionWithTheCorrectRemainingQuantityWhenNotAllQuantityIsAvailable(): void
@@ -127,9 +124,9 @@ class ReopenBasketActionTest extends TestCase
             'quantity' => 1,
         ];
 
-        $this->expectAction(AddProductToBasketAction::class, [function(...$params) use($args) {
-            foreach(array_values($args) as $index => $value) {
-                if($value instanceof Model) {
+        $this->expectAction(AddProductToBasketAction::class, [function (...$params) use ($args) {
+            foreach (array_values($args) as $index => $value) {
+                if ($value instanceof Model) {
                     $this->assertTrue($value->is($params[$index]));
 
                     continue;
@@ -154,9 +151,9 @@ class ReopenBasketActionTest extends TestCase
             'quantity' => 2,
         ];
 
-        $this->expectAction(AddProductToBasketAction::class, [function(...$params) use($args) {
-            foreach(array_values($args) as $index => $value) {
-                if($value instanceof Model) {
+        $this->expectAction(AddProductToBasketAction::class, [function (...$params) use ($args) {
+            foreach (array_values($args) as $index => $value) {
+                if ($value instanceof Model) {
                     $this->assertTrue($value->is($params[$index]));
 
                     continue;

@@ -8,7 +8,6 @@ use App\Console\Commands\SendAbandonedBasketEmailCommand;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
-use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use App\Notifications\Shop\AbandonedBasketNotification;
 use Carbon\Carbon;
@@ -43,7 +42,7 @@ class SendAbandonedBasketEmailCommandTest extends TestCase
     #[Test]
     public function itDoesntSendAnAbandonedCartEmailIfTheBasketIsExpiredLessThanTheTimeLimit(): void
     {
-        Config::set('coeliac.shop.abandoned_basket_time_limit', fn(Carbon $carbon) => Carbon::now()->subHours(2));
+        Config::set('coeliac.shop.abandoned_basket_time_limit', fn (Carbon $carbon) => Carbon::now()->subHours(2));
 
         TestTime::freeze();
 
@@ -62,7 +61,7 @@ class SendAbandonedBasketEmailCommandTest extends TestCase
     #[Test]
     public function itDoesntSendIfTheItemHasGoneOutOfStockSinceTheBasketWasCreated(): void
     {
-        Config::set('coeliac.shop.abandoned_basket_time_limit', fn(Carbon $carbon) => Carbon::now()->subHours(1));
+        Config::set('coeliac.shop.abandoned_basket_time_limit', fn (Carbon $carbon) => Carbon::now()->subHours(1));
 
         TestTime::freeze();
 
@@ -93,7 +92,7 @@ class SendAbandonedBasketEmailCommandTest extends TestCase
     #[Test]
     public function itNotifiesTheCustomerIfTheAllTheCriteriaIsMet(): void
     {
-        Config::set('coeliac.shop.abandoned_basket_time_limit', fn(Carbon $carbon) => Carbon::now()->subHours(1));
+        Config::set('coeliac.shop.abandoned_basket_time_limit', fn (Carbon $carbon) => Carbon::now()->subHours(1));
 
         TestTime::freeze();
 
@@ -123,7 +122,7 @@ class SendAbandonedBasketEmailCommandTest extends TestCase
     #[Test]
     public function itUpdatesTheBasketToShowTheAbandonedBasketEmailHasBeenSent(): void
     {
-        Config::set('coeliac.shop.abandoned_basket_time_limit', fn(Carbon $carbon) => Carbon::now()->subHours(1));
+        Config::set('coeliac.shop.abandoned_basket_time_limit', fn (Carbon $carbon) => Carbon::now()->subHours(1));
 
         TestTime::freeze();
 
@@ -157,7 +156,7 @@ class SendAbandonedBasketEmailCommandTest extends TestCase
     #[Test]
     public function itDoesntSendIfTheFlagIsSet(): void
     {
-        Config::set('coeliac.shop.abandoned_basket_time_limit', fn(Carbon $carbon) => Carbon::now()->subHours(1));
+        Config::set('coeliac.shop.abandoned_basket_time_limit', fn (Carbon $carbon) => Carbon::now()->subHours(1));
 
         TestTime::freeze();
 
@@ -190,7 +189,7 @@ class SendAbandonedBasketEmailCommandTest extends TestCase
     #[Test]
     public function itDoesntSendForOldBaskets(): void
     {
-        Config::set('coeliac.shop.abandoned_basket_time_limit', fn(Carbon $carbon) => Carbon::now()->subHours(1));
+        Config::set('coeliac.shop.abandoned_basket_time_limit', fn (Carbon $carbon) => Carbon::now()->subHours(1));
 
         TestTime::freeze();
 

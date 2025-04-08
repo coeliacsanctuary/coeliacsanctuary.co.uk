@@ -32,6 +32,6 @@
         "trim_array_spaces": true,
         "use_arrow_functions": true,
         "void_return": true,
-        "php_unit_method_casing": false,
+        "php_unit_method_casing": false
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Shop\Basket\Reopen;
 
 use App\Actions\Shop\ReopenBasketAction;
@@ -13,10 +15,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response as IlluminateResponse;
 use Inertia\Response;
 
-class IndexController{
+class IndexController
+{
     public function __invoke(Request $request, ShopOrder $basket, ReopenBasketAction $reopenBasketAction): Response | RedirectResponse
     {
-        if(!$request->hasValidSignature()) {
+        if ( ! $request->hasValidSignature()) {
             $randomProducts = ShopProduct::query()
                 ->with(['prices', 'reviews', 'variants'])
                 ->take(6)
