@@ -98,6 +98,7 @@ class ShowController
                     'total' => Helpers::formatMoney(Money::GBP($total)),
                 ],
                 'payment_intent' => app(CreatePaymentIntentAction::class)->handle($basket, $total),
+                'warnings' => $request->session()->get('basket_warnings', []),
             ];
         }
 

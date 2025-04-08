@@ -31,6 +31,7 @@
         "ternary_to_null_coalescing": true,
         "trim_array_spaces": true,
         "use_arrow_functions": true,
-        "void_return": true
+        "void_return": true,
+        "php_unit_method_casing": false,
     }
 }

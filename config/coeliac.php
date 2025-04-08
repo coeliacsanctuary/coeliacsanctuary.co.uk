@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
+
 return [
     'images_url' => env('IMAGES_URL'),
 
     'shop' => [
+        'abandoned_basket_time_limit' => fn (Carbon $date) => $date->subHours(2),
+
         'product_postage_description' => <<<'TEXT'
             <ul>
                 <li>Orders are only processed on normal UK working days.</li>

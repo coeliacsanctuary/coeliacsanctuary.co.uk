@@ -10,7 +10,7 @@ withDefaults(
     open: boolean;
     closeable?: boolean;
     noPadding?: boolean;
-    size?: 'small' | 'medium' | 'large' | 'xl' | 'full';
+    size?: 'small' | 'medium' | 'relaxed' | 'large' | 'full';
     width?: 'w-full' | 'w-auto';
     fitScreen?: boolean;
   }>(),
@@ -35,6 +35,7 @@ const slots = useSlots();
     :class="{
       'xs:max-w-md': size === 'small',
       'sm:max-w-lg': size === 'medium',
+      'sm:max-w-4xl': size === 'relaxed',
       'sm:max-w-8xl': size === 'large',
       'sm:max-w-[95%]': size === 'full',
       'max-h-[90vh]': fitScreen,

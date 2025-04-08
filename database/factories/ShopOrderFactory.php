@@ -20,6 +20,7 @@ class ShopOrderFactory extends Factory
     {
         return [
             'token' => Str::random(8),
+            'sent_abandoned_basket_email' => false,
         ];
     }
 
@@ -93,6 +94,13 @@ class ShopOrderFactory extends Factory
     {
         return $this->state(fn () => [
             'state_id' => OrderState::EXPIRED,
+        ]);
+    }
+
+    public function beenSentAbandonedBasketEmail(): self
+    {
+        return $this->state(fn () => [
+            'sent_abandoned_basket_email' => true,
         ]);
     }
 

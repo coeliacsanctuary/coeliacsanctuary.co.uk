@@ -47,4 +47,18 @@ trait InteractsWithActions
 
         return $this;
     }
+
+    /**
+     * @param  class-string  $action
+     */
+    protected function dontExpectAction(string $action, ?callable $then = null): self
+    {
+        $mockery = $this->partialMock($action)->shouldNotReceive('handle');
+
+        if ($then) {
+            $then($mockery);
+        }
+
+        return $this;
+    }
 }
