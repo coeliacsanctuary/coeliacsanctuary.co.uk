@@ -29,7 +29,7 @@ class SendAbandonedBasketEmailCommand extends Command
             ->withWhereHas('customer')
             ->get()
             ->each(function (ShopOrder $basket): void {
-                $itemsInStock = $basket->items?->reject(fn (ShopOrderItem $item) => $item->variant->quantity === 0);
+                $itemsInStock = $basket->items->reject(fn (ShopOrderItem $item) => $item->variant?->quantity === 0);
 
                 if ($itemsInStock->isEmpty()) {
                     return;

@@ -7,6 +7,7 @@ use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
 use App\Console\Commands\CloseBasketsCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Console\Commands\PublishItemsCommand;
+use App\Console\Commands\SendAbandonedBasketEmailCommand;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Response\Inertia;
 use Illuminate\Console\Scheduling\Schedule;
@@ -77,6 +78,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command(CloseBasketsCommand::class)->everyMinute();
+        $schedule->command(SendAbandonedBasketEmailCommand::class)->everyMinute();
         $schedule->command(ApplyMassDiscountsCommand::class)->everyMinute();
         $schedule->command(PrepareShopReviewInvitationsCommand::class)->everyMinute();
         $schedule->command(PublishItemsCommand::class)->everyMinute();
