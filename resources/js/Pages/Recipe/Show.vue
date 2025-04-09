@@ -14,6 +14,8 @@ import GoogleAd from '@/Components/GoogleAd.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
+import useIntersect from '@/composables/useIntersect';
+import useScreensize from '@/composables/useScreensize';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -148,73 +150,95 @@ const loadMoreComments = () => {
     />
   </Card>
 
-  <Card v-if="recipe.featured_in.length">
-    <h3 class="text-base font-semibold text-grey-darkest">
-      This recipe was featured in
-    </h3>
-
-    <ul class="mt-2 flex flex-row flex-wrap text-sm leading-tight">
-      <li
-        v-for="collection in recipe.featured_in"
-        :key="collection.link"
-        class="after:content-[','] last:after:content-['']"
-      >
-        <Link
-          :href="collection.link"
-          class="font-semibold text-primary-dark hover:text-grey-darker"
-        >
-          {{ collection.title }}
-        </Link>
-      </li>
-    </ul>
-  </Card>
-
-  <Card class="space-y-3 pb-0">
-    <SubHeading classes="text-primary-dark">Ingredients</SubHeading>
-
+  <div
+    class="flex flex-col space-y-3 lg:space-y-0 lg:flex-row-reverse relative"
+  >
     <div
-      class="prose prose-lg max-w-none md:prose-xl"
-      v-html="recipe.ingredients"
-    />
+      class="space-y-3 lg:ml-3 lg:w-[350px] lg:flex-shrink-0 lg:self-start lg:sticky lg:top-[60px] lg:grid lg:grid-cols-1"
+    >
+      <Card
+        v-if="recipe.featured_in?.length"
+        class="lg:row-start-2"
+      >
+        <h3 class="text-base font-semibold text-grey-darkest">
+          This recipe was featured in
+        </h3>
 
-    <ul class="-m-4 mt-4 border-t border-grey-off-light bg-grey-light p-4">
-      <li>
-        <strong class="font-semibold">Preparation Time:</strong>
-        {{ recipe.timing.prep_time }}
-      </li>
-      <li>
-        <strong class="font-semibold">Cooking Time:</strong>
-        {{ recipe.timing.cook_time }}
-      </li>
-      <li>
-        <strong class="font-semibold"
-          >This recipe makes {{ recipe.nutrition.servings }}</strong
-        >
-      </li>
-    </ul>
-  </Card>
+        <ul class="mt-2 flex flex-row flex-wrap text-sm leading-tight">
+          <li
+            v-for="collection in recipe.featured_in"
+            :key="collection.link"
+            class="after:content-[','] last:after:content-['']"
+          >
+            <Link
+              :href="collection.link"
+              class="font-semibold text-primary-dark hover:text-grey-darker"
+            >
+              {{ collection.title }}
+            </Link>
+          </li>
+        </ul>
+      </Card>
 
-  <GoogleAd code="2137793897" />
+      <Card>
+        <SubHeading classes="text-primary-dark">Ingredients</SubHeading>
 
-  <Card class="space-y-3">
-    <SubHeading classes="text-primary-dark">Method</SubHeading>
+        <div
+          class="prose prose-lg max-w-none md:prose-xl"
+          v-html="recipe.ingredients"
+        />
+      </Card>
 
-    <article
-      class="prose prose-lg max-w-none md:prose-xl"
-      v-html="recipe.method"
-    />
+      <Card>
+        <ul class="">
+          <li>
+            <strong class="font-semibold">Preparation Time:</strong>
+            {{ recipe.timing.prep_time }}
+          </li>
+          <li>
+            <strong class="font-semibold">Cooking Time:</strong>
+            {{ recipe.timing.cook_time }}
+          </li>
+          <li>
+            <strong class="font-semibold"
+              >This recipe makes {{ recipe.nutrition.servings }}</strong
+            >
+          </li>
+        </ul>
+      </Card>
 
-    <h3 class="mb-2 mt-4 text-base font-semibold">
-      Nutritional Information (Per {{ recipe.nutrition.portion_size }})
-    </h3>
+      <Card class="hidden lg:flex">
+        <RecipeNutritionTable
+          direction="horizontal"
+          :nutrition="recipe.nutrition"
+        />
+      </Card>
+    </div>
 
-    <RecipeNutritionTable :nutrition="recipe.nutrition" />
-  </Card>
+    <div>
+      <!--      <GoogleAd code="2137793897" />-->
 
-  <Comments
-    :id="recipe.id"
-    :comments="allComments"
-    module="recipe"
-    @load-more="loadMoreComments"
-  />
+      <Card class="space-y-3">
+        <SubHeading classes="text-primary-dark">Method</SubHeading>
+
+        <article
+          class="prose prose-lg max-w-none md:prose-xl"
+          v-html="recipe.method"
+        />
+
+        <h3 class="mb-2 mt-4 text-base font-semibold">
+          Nutritional Information (Per {{ recipe.nutrition.portion_size }})
+        </h3>
+
+        <RecipeNutritionTable :nutrition="recipe.nutrition" />
+      </Card>
+
+      <Comments
+        :id="recipe.id"
+        :comments="allComments"
+        module="recipe"
+        @load-more="loadMoreComments"
+      />
+    </div>
+  </div>
 </template>

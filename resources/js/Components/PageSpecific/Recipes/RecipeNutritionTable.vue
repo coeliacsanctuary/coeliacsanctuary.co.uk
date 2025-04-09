@@ -1,7 +1,13 @@
 <script lang="ts" setup>
 import { RecipePage } from '@/types/RecipeTypes';
 
-defineProps<{ nutrition: RecipePage['nutrition'] }>();
+withDefaults(
+  defineProps<{
+    nutrition: RecipePage['nutrition'];
+    direction: 'vertical' | 'horizontal';
+  }>(),
+  { direction: 'horizontal' },
+);
 </script>
 
 <template>
