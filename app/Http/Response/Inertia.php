@@ -156,7 +156,7 @@ class Inertia
                 'text' => $popup->text,
                 'link' => $popup->link,
                 'primary_image' => $popup->getMedia('primary')->random()?->getUrl(), /** @phpstan-ignore-line */
-                'secondary_image' => $popup->getMedia('secondary')?->random()?->getUrl(), /** @phpstan-ignore-line */
+                'secondary_image' => $popup->getMedia('secondary')->isNotEmpty() ? $popup->getMedia('secondary')->isNotEmpty()->random()->getUrl() : null, /** @phpstan-ignore-line */
             ]);
         }
     }

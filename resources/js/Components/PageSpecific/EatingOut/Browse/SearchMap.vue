@@ -64,8 +64,8 @@ watch(hasError, (check) => {
 </script>
 
 <template>
-  <div class="absolute z-10 w-[calc(100%-40px)] p-2">
-    <div>
+  <div class="absolute z-10 w-[calc(100%-40px)] max-w-lg p-2">
+    <div class="w-full max-w-lg">
       <form
         class="flex w-full max-w-lg items-center gap-2 rounded-md bg-white shadow-sm"
         :class="hasError ? 'border border-red' : ''"
