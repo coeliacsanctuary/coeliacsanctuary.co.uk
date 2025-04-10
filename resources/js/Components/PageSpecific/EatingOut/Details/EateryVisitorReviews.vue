@@ -9,6 +9,7 @@ import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import EateryAddReview from '@/Components/PageSpecific/EatingOut/Details/Reviews/EateryAddReview.vue';
 import { StarRating as StarRatingType } from '@/types/EateryTypes';
+import ReviewImageGallery from '@/Components/PageSpecific/EatingOut/Shared/ReviewImageGallery.vue';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -141,6 +142,13 @@ const howExpensive = (review: EateryReview) => {
                       ? review.body
                       : `<em>Customer didn't leave a review with their rating</em>`
                   "
+                />
+
+                <ReviewImageGallery
+                  v-if="review.images.length"
+                  class="mt-4"
+                  :eatery-name="eatery.name"
+                  :images="review.images"
                 />
 
                 <div>
