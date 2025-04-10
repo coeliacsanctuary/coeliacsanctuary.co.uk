@@ -3,10 +3,19 @@ import { DetailedEatery } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Icon from '@/Components/Icon.vue';
+import { computed } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   eatery: DetailedEatery;
 }>();
+
+const eateryName = computed(() => {
+  if (props.eatery.branch && props.eatery.branch.name) {
+    return props.eatery.branch.name;
+  }
+
+  return props.eatery.name;
+});
 </script>
 
 <template>
@@ -36,7 +45,7 @@ defineProps<{
     </template>
 
     <template v-else>
-      <SubHeading> Here's what we know about {{ eatery.name }} </SubHeading>
+      <SubHeading> Here's what we know about {{ eateryName }} </SubHeading>
 
       <p
         class="mt-4 prose max-w-none sm:prose-lg lg:prose-xl"
