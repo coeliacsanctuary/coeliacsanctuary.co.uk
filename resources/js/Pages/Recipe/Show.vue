@@ -14,7 +14,6 @@ import GoogleAd from '@/Components/GoogleAd.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
-import useIntersect from '@/composables/useIntersect';
 import useScreensize from '@/composables/useScreensize';
 
 const props = defineProps<{
@@ -154,7 +153,7 @@ const loadMoreComments = () => {
     class="flex flex-col space-y-3 lg:space-y-0 lg:flex-row-reverse relative"
   >
     <div
-      class="space-y-3 lg:ml-3 lg:w-[350px] lg:flex-shrink-0 lg:self-start lg:sticky lg:top-[60px] lg:grid lg:grid-cols-1"
+      class="space-y-3 lg:ml-3 lg:w-[350px] lg:flex-shrink-0 lg:self-start lg:grid lg:grid-cols-1 lg:overflow-auto"
     >
       <Card
         v-if="recipe.featured_in?.length"
@@ -208,16 +207,27 @@ const loadMoreComments = () => {
       </Card>
 
       <Card class="hidden lg:flex">
+        <h3 class="mb-4 text-base font-semibold">
+          Nutritional Information (Per {{ recipe.nutrition.portion_size }})
+        </h3>
+
         <RecipeNutritionTable
-          direction="horizontal"
+          direction="vertical"
           :nutrition="recipe.nutrition"
         />
       </Card>
+
+      <GoogleAd
+        :title="
+          useScreensize().screenIsGreaterThanOrEqualTo('lg')
+            ? 'Sponsored'
+            : undefined
+        "
+        code="2137793897"
+      />
     </div>
 
-    <div>
-      <!--      <GoogleAd code="2137793897" />-->
-
+    <div class="flex flex-col space-y-3">
       <Card class="space-y-3">
         <SubHeading classes="text-primary-dark">Method</SubHeading>
 
@@ -226,11 +236,14 @@ const loadMoreComments = () => {
           v-html="recipe.method"
         />
 
-        <h3 class="mb-2 mt-4 text-base font-semibold">
+        <h3 class="mb-2 mt-4 text-base font-semibold lg:hidden">
           Nutritional Information (Per {{ recipe.nutrition.portion_size }})
         </h3>
 
-        <RecipeNutritionTable :nutrition="recipe.nutrition" />
+        <RecipeNutritionTable
+          class="lg:hidden"
+          :nutrition="recipe.nutrition"
+        />
       </Card>
 
       <Comments
