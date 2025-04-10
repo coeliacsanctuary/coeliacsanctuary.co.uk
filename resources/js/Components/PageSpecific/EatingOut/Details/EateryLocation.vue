@@ -8,6 +8,7 @@ import {
   LinkIcon,
   MapIcon,
 } from '@heroicons/vue/24/solid';
+import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -38,6 +39,7 @@ const address = computed(() =>
   >
     <div class="h-map-small w-full max-w-[600px] sm:w-1/2 lg:w-2/3">
       <StaticMap
+        :title="`${eatery.branch && eatery.branch.name ? eatery.branch.name + ' - ' : ''} ${eatery.name} - ${eatery.branch ? eatery.branch.location.address : eatery.location.address}`"
         :lng="lng"
         :lat="lat"
       />
