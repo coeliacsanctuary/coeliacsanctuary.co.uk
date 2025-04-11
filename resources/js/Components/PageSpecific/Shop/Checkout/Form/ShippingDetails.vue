@@ -15,7 +15,7 @@ const emits = defineEmits(['continue', 'toggle']);
 const store = useShopStore();
 
 const data = reactive({ ...store.shippingDetails });
-const { customerName } = store;
+
 const errors: ComputedRef<Partial<CheckoutShippingStep>> = computed(
   () => store.getErrors.shipping || {},
 );
@@ -88,7 +88,7 @@ const submitForm = () => {
       @keyup.enter="submitForm()"
     >
       <p class="prose mt-2! max-w-none xl:prose-lg">
-        Thanks {{ customerName }}, next we need to know where to send your
+        Thanks {{ store.customerName }}, next we need to know where to send your
         order.
       </p>
 
