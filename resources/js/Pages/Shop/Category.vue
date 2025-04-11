@@ -45,7 +45,7 @@ defineProps<{
   <CategoryTravelCardSearch v-if="category.travelCardSearch" />
 
   <div
-    class="grid grid-cols-1 gap-y-4 p-3 sm:max-lg:grid-cols-2 sm:gap-3 lg:grid-cols-3 2xl:p-0"
+    class="grid grid-cols-1 gap-y-4 p-3 sm:gap-3 sm:max-lg:grid-cols-2 lg:grid-cols-3 2xl:p-0"
   >
     <CategoryProductCard
       v-for="product in products"

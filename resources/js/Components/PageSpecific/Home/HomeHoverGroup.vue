@@ -28,7 +28,7 @@ withDefaults(
         'sm:grid-cols-3': perRow === 3,
         'sm:grid-cols-4': perRow === 4,
       }"
-      class="group grid grid-cols-1 divide-y space-y-5 divide-grey-off sm:divide-y-0 sm:space-y-0"
+      class="group grid grid-cols-1 space-y-5 divide-y divide-grey-off sm:space-y-0 sm:divide-y-0"
     >
       <HomeHoverItem
         v-for="item in items"

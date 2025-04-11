@@ -40,13 +40,13 @@ const branchName = (branch: EateryNationwideBranch): string => {
     >
       <div class="flex flex-col space-y-1">
         <span
-          class="text-left text-primary-dark font-semibold lg:max-xl:text-lg xl:text-xl"
+          class="text-left font-semibold text-primary-dark lg:max-xl:text-lg xl:text-xl"
           v-text="branchName(branch)"
         />
 
         <span
           v-if="!open"
-          class="text-xs text-left lg:text-base"
+          class="text-left text-xs lg:text-base"
           v-text="branch.location.address"
         />
       </div>
@@ -56,7 +56,7 @@ const branchName = (branch: EateryNationwideBranch): string => {
       />
     </DisclosureButton>
 
-    <DisclosurePanel class="lex flex-col space-y-3 mt-2">
+    <DisclosurePanel class="lex mt-2 flex-col space-y-3">
       <StaticMap
         :lng="branch.location.lng"
         :lat="branch.location.lat"
@@ -70,7 +70,7 @@ const branchName = (branch: EateryNationwideBranch): string => {
 
       <Link
         :href="branch.link"
-        class="font-semibold text-primary-dark hover:text-black transition text-lg"
+        class="text-lg font-semibold text-primary-dark transition hover:text-black"
       >
         Read more...
       </Link>

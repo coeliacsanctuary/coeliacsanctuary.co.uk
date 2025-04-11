@@ -35,15 +35,15 @@ setInterval(() => {
     <div class="mx-auto w-full max-w-8xl">
       <div class="relative z-10">
         <div
-          class="relative px-6 py-10 sm:max-md:py-12 md:max-xmd:py-14 xmd:max-lg:py-16 lg:max-xl:py-20 xl:py-24"
+          class="relative px-6 py-10 xmd:max-lg:py-16 sm:max-md:py-12 md:max-xmd:py-14 lg:max-xl:py-20 xl:py-24"
         >
           <div class="mx-auto max-w-5xl">
             <h1
-              class="font-coeliac mx-auto bg-secondary/60 px-2 py-3 text-center text-3xl font-semibold tracking-tight text-gray-900 sm:w-4/5 sm:text-4xl sm:leading-10"
+              class="mx-auto bg-secondary/60 px-2 py-3 text-center font-coeliac text-3xl font-semibold tracking-tight text-gray-900 sm:w-4/5 sm:text-4xl sm:leading-10"
               v-text="activeItem.title"
             />
             <p
-              class="prose prose-lg mx-auto mt-6 max-w-none bg-white/70 p-2 text-center text-lg leading-6 text-gray-600 sm:prose-xl sm:w-4/5 sm:leading-8"
+              class="mx-auto prose prose-lg mt-6 max-w-none bg-white/70 p-2 text-center text-lg leading-6 text-gray-600 sm:prose-xl sm:w-4/5 sm:leading-8"
             >
               Check out our online shop for some great coeliac related goodies,
               including our fantastic travel cards for when you go abroad, our

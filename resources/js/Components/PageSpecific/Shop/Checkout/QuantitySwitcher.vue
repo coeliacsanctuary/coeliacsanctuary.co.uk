@@ -9,7 +9,7 @@ defineEmits(['alter']);
 </script>
 
 <template>
-  <div class="flex h-5 space-x-px font-semibold leading-none">
+  <div class="flex h-5 space-x-px leading-none font-semibold">
     <div
       class="flex w-6 shrink-0 cursor-pointer items-center justify-center rounded-l-full bg-secondary"
       @click="$emit('alter', 'decrease')"

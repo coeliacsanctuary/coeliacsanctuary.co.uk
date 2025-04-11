@@ -18,10 +18,10 @@ defineProps<{ county: string }>();
   >
     <DisclosureButton
       class="flex w-full justify-between px-2 focus:outline-hidden"
-      :class="{ 'pb-2 border-b border-primary-light/50': !open }"
+      :class="{ 'border-b border-primary-light/50 pb-2': !open }"
     >
       <span
-        class="text-left text-primary-dark font-semibold lg:max-xl:text-lg xl:text-xl"
+        class="text-left font-semibold text-primary-dark lg:max-xl:text-lg xl:text-xl"
         v-text="county"
       />
       <ChevronDownIcon
@@ -30,7 +30,7 @@ defineProps<{ county: string }>();
       />
     </DisclosureButton>
 
-    <DisclosurePanel class="flex flex-col space-y-3 mt-4 mx-2">
+    <DisclosurePanel class="mx-2 mt-4 flex flex-col space-y-3">
       <slot />
     </DisclosurePanel>
   </Disclosure>

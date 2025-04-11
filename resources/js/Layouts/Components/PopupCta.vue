@@ -81,7 +81,7 @@ const imageUrl = computed<string>(() => {
 
     <template #footer>
       <div
-        class="prose prose-xl lg:prose-2xl text-center w-full max-w-none"
+        class="prose prose-xl w-full max-w-none text-center lg:prose-2xl"
         v-text="popup.text"
       />
     </template>

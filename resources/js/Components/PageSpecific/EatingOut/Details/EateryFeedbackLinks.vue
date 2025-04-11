@@ -23,7 +23,7 @@ const eateryName = (): string => {
 </script>
 
 <template>
-  <Card class="space-y-2 lg:p-8 lg:rounded-lg lg:space-y-4">
+  <Card class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8">
     <h3 class="text-lg font-semibold lg:text-xl">
       Help us improve {{ eateryName() }}
     </h3>
@@ -33,7 +33,7 @@ const eateryName = (): string => {
         class="rounded-sm bg-secondary/25 px-2 py-1 leading-none transition-all hover:bg-secondary/75 lg:px-3 lg:py-2"
       >
         <a
-          class="flex cursor-pointer items-center space-x-2 text-sm font-semibold text-grey transition-all ease-in-out hover:text-black lg:text-lg lg:space-x-3"
+          class="flex cursor-pointer items-center space-x-2 text-sm font-semibold text-grey transition-all ease-in-out hover:text-black lg:space-x-3 lg:text-lg"
           @click.prevent="$emit('goToReview')"
         >
           <StarIcon class="h-4 w-4 lg:h-6 lg:w-6" />
@@ -45,7 +45,7 @@ const eateryName = (): string => {
         class="rounded-sm bg-secondary/25 px-2 py-1 leading-none transition-all hover:bg-secondary/75 lg:px-3 lg:py-2"
       >
         <a
-          class="flex cursor-pointer items-center space-x-2 text-sm font-semibold text-grey transition-all ease-in-out hover:text-black lg:text-lg lg:space-x-3"
+          class="flex cursor-pointer items-center space-x-2 text-sm font-semibold text-grey transition-all ease-in-out hover:text-black lg:space-x-3 lg:text-lg"
           @click.prevent="showEditModal = true"
         >
           <PencilIcon class="h-4 w-4 lg:h-6 lg:w-6" />
@@ -57,7 +57,7 @@ const eateryName = (): string => {
         class="rounded-sm bg-secondary/25 px-2 py-1 leading-none transition-all hover:bg-secondary/75 lg:px-3 lg:py-2"
       >
         <a
-          class="flex cursor-pointer items-center space-x-2 text-sm font-semibold text-grey transition-all ease-in-out hover:text-black lg:text-lg lg:space-x-3"
+          class="flex cursor-pointer items-center space-x-2 text-sm font-semibold text-grey transition-all ease-in-out hover:text-black lg:space-x-3 lg:text-lg"
           @click.prevent="showReportPlaceModal = true"
         >
           <FlagIcon class="h-4 w-4 lg:h-6 lg:w-6" />

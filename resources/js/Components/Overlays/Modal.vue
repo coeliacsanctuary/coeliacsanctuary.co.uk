@@ -45,7 +45,7 @@ const slots = useSlots();
   >
     <div
       :class="{ hidden: !closeable }"
-      class="absolute right-0 top-0 z-50 pr-2 pt-2"
+      class="absolute top-0 right-0 z-50 pt-2 pr-2"
     >
       <button
         class="rounded-md border border-transparent bg-white/40 text-grey-dark hover:border-grey-dark hover:bg-white/80"

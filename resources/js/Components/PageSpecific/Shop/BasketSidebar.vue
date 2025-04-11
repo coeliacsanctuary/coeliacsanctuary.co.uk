@@ -66,7 +66,7 @@ const alterQuantity = (
         <li
           v-for="item in items"
           :key="item.id"
-          class="flex py-3 relative"
+          class="relative flex py-3"
         >
           <Loader
             :display="loadingItem === item.id"
@@ -114,7 +114,7 @@ const alterQuantity = (
             </div>
 
             <div class="flex flex-1 items-center justify-between">
-              <div class="flex flex-1 space-x-2 items-center">
+              <div class="flex flex-1 items-center space-x-2">
                 <p>Quantity</p>
 
                 <QuantitySwitcher
@@ -138,7 +138,7 @@ const alterQuantity = (
 
             <span
               v-if="hasError === item.id"
-              class="text-red text-sm font-semibold"
+              class="text-sm font-semibold text-red"
             >
               Sorry, there isn't enough quantity available...
             </span>

@@ -4,8 +4,8 @@ import Heading from '@/Components/Heading.vue';
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 mt-5">
-    <Card class="prose max-w-6xl mx-auto">
+  <div class="mt-5 flex flex-col gap-5">
+    <Card class="mx-auto prose max-w-6xl">
       <Heading :border="false">Privacy Policy</Heading>
 
       <p class="mb-0">
@@ -17,9 +17,9 @@ import Heading from '@/Components/Heading.vue';
 
     <Card
       id="website"
-      class="prose max-w-6xl mx-auto"
+      class="mx-auto prose max-w-6xl"
     >
-      <ol class="text-sm space-y-2">
+      <ol class="space-y-2 text-sm">
         <li class="list-none">
           <span class="text-lg font-semibold"> Coeliac Sanctuary Website </span>
           <ol>
@@ -188,9 +188,9 @@ import Heading from '@/Components/Heading.vue';
 
     <Card
       id="shop"
-      class="prose max-w-6xl mx-auto"
+      class="mx-auto prose max-w-6xl"
     >
-      <ol class="text-sm space-y-2">
+      <ol class="space-y-2 text-sm">
         <li class="list-none">
           <span class="text-lg font-semibold"> Coeliac Sanctuary Shop </span>
           <ol>
@@ -240,9 +240,9 @@ import Heading from '@/Components/Heading.vue';
 
     <Card
       id="app"
-      class="prose max-w-6xl mx-auto"
+      class="mx-auto prose max-w-6xl"
     >
-      <ol class="text-sm space-y-2">
+      <ol class="space-y-2 text-sm">
         <li class="list-none">
           <span class="text-lg font-semibold">
             Coeliac Sanctuary - On the Go App

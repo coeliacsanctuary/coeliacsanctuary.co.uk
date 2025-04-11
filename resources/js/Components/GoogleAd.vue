@@ -29,10 +29,10 @@ onMounted(() => {
 <template>
   <div
     v-if="hasGoogle"
-    class="m-2 flex flex-col text-center border-y py-2 border-primary-light"
+    class="m-2 flex flex-col border-y border-primary-light py-2 text-center"
   >
     <p
-      class="font-semibold text-xs mb-2 text-left"
+      class="mb-2 text-left text-xs font-semibold"
       v-text="title"
     />
     <ins

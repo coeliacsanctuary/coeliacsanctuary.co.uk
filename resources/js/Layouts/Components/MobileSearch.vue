@@ -29,17 +29,17 @@ watch(
   <OverlayFrame
     :open="open"
     width="w-full"
-    class="my-auto bg-transparent! max-w-[500px]"
+    class="my-auto max-w-[500px] bg-transparent!"
     @close="emit('close')"
   >
     <form
-      class="flex items-center flex-col space-y-2"
+      class="flex flex-col items-center space-y-2"
       @submit.prevent="
         submitSearch();
         $emit('close');
       "
     >
-      <div class="flex items-center pr-2 w-full bg-white rounded-lg">
+      <div class="flex w-full items-center rounded-lg bg-white pr-2">
         <FormInput
           id="mobileSearch"
           v-model="searchForm.q"
@@ -61,7 +61,7 @@ watch(
 
       <p
         v-if="hasError"
-        class="text-red font-semibold text-center"
+        class="text-center font-semibold text-red"
       >
         Please enter at least 3 characters to search!
       </p>

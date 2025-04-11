@@ -99,7 +99,7 @@ const submitComment = () => {
 
     <div
       v-else
-      class="font-semibold my-8"
+      class="my-8 font-semibold"
     >
       There's no comments on this blog, why not leave one?
     </div>

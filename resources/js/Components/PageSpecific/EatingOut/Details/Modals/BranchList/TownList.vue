@@ -21,7 +21,7 @@ defineProps<{ town: string }>();
       class="flex w-full justify-between rounded-lg focus:outline-hidden"
     >
       <span
-        class="text-left text-primary-dark font-semibold lg:max-xl:text-lg xl:text-xl"
+        class="text-left font-semibold text-primary-dark lg:max-xl:text-lg xl:text-xl"
         v-text="town"
       />
       <ChevronDownIcon
@@ -30,7 +30,7 @@ defineProps<{ town: string }>();
       />
     </DisclosureButton>
 
-    <DisclosurePanel class="flex flex-col space-y-3 mt-4 p-2 rounded bg-white">
+    <DisclosurePanel class="mt-4 flex flex-col space-y-3 rounded bg-white p-2">
       <slot />
     </DisclosurePanel>
   </Disclosure>

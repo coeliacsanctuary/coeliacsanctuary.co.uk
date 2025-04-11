@@ -27,7 +27,7 @@ withDefaults(
     <Link
       v-if="backLink && backLink.position === 'top'"
       :href="backLink.href"
-      class="inline-flex items-center font-medium text-gray-500 hover:text-primary-dark xl:text-lg mb-4"
+      class="mb-4 inline-flex items-center font-medium text-gray-500 hover:text-primary-dark xl:text-lg"
       :class="{
         'justify-center':
           !backLink.direction || backLink.direction === 'center',
@@ -42,7 +42,7 @@ withDefaults(
 
     <component
       :is="as"
-      class="text-center font-coeliac text-3xl font-semibold md:max-lg:text-4xl lg:text-5xl mb-0!"
+      class="mb-0! text-center font-coeliac text-3xl font-semibold md:max-lg:text-4xl lg:text-5xl"
       :class="classes"
     >
       <slot />
@@ -51,7 +51,7 @@ withDefaults(
     <Link
       v-if="backLink && backLink.position !== 'top'"
       :href="backLink.href"
-      class="inline-flex items-center justify-center font-medium text-gray-500 hover:text-primary-dark xl:text-lg mt-4"
+      class="mt-4 inline-flex items-center justify-center font-medium text-gray-500 hover:text-primary-dark xl:text-lg"
       :class="{
         'justify-center':
           !backLink.direction || backLink.direction === 'center',

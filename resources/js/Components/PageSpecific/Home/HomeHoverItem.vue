@@ -10,7 +10,7 @@ defineProps<{ item: HomeHoverItemType }>();
 <template>
   <Card
     :shadow="false"
-    class="sm:scale-95 transform transition duration-500 sm:hover:scale-105 sm:hover:opacity-100! sm:group-hover:opacity-50"
+    class="transform transition duration-500 sm:scale-95 sm:group-hover:opacity-50 sm:hover:scale-105 sm:hover:opacity-100!"
   >
     <Link
       :href="item.link"
@@ -33,7 +33,7 @@ defineProps<{ item: HomeHoverItemType }>();
       />
 
       <h2
-        class="p-2 text-center text-lg font-semibold transition sm:group-hover:text-primary-dark xs:max-sm:text-xl sm:text-md"
+        class="sm:text-md p-2 text-center text-lg font-semibold transition xs:max-sm:text-xl sm:group-hover:text-primary-dark"
         v-text="item.title"
       />
     </Link>

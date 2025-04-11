@@ -132,7 +132,7 @@ const removeItem = (item: ShopBasketItem) => {
 
           <span
             v-if="hasError === item.id"
-            class="text-red text-sm font-semibold"
+            class="text-sm font-semibold text-red"
           >
             Sorry, there isn't enough quantity available...
           </span>

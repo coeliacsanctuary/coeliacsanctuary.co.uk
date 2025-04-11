@@ -106,7 +106,7 @@ watch(hasError, (check) => {
     </div>
 
     <div
-      class="mt-1 w-[calc(100%-35px)] max-w-lg rounded-md bg-red/70 p-1 text-sm font-semibold leading-none text-white shadow-sm transition-all"
+      class="mt-1 w-[calc(100%-35px)] max-w-lg rounded-md bg-red/70 p-1 text-sm leading-none font-semibold text-white shadow-sm transition-all"
       :class="hasError ? 'opacity-100' : 'opacity-0'"
       v-text="errorMessage"
     />

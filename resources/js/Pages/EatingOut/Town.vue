@@ -128,7 +128,7 @@ const reloadEateries = () => {
 
   <GoogleAd code="5284484376" />
 
-  <div class="relative md:flex xmd:space-x-2">
+  <div class="relative xmd:space-x-2 md:flex">
     <TownFilterSidebar
       :filters="filters"
       @filters-updated="handleFiltersChanged"

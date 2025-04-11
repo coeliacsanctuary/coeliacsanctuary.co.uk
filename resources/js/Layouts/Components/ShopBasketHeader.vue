@@ -34,7 +34,7 @@ EventBus.$on('product-added-to-basket', () => {
         your basket
       </div>
       <div
-        class="prose prose-lg font-semibold xl:prose-xl hover:text-primary-dark cursor-pointer"
+        class="prose prose-lg cursor-pointer font-semibold hover:text-primary-dark xl:prose-xl"
         @click="openBasket()"
       >
         View Basket

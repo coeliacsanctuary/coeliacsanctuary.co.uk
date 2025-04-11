@@ -60,7 +60,7 @@ const loadMoreComments = () => {
     />
 
     <div
-      class="-m-4 -mb-4! flex flex flex-col flex-col space-y-4 bg-grey-light p-4 text-sm shadow-inner"
+      class="-m-4 -mb-4! flex flex-col space-y-4 bg-grey-light p-4 text-sm shadow-inner"
     >
       <div>
         <strong>Tagged With</strong>
@@ -131,7 +131,7 @@ const loadMoreComments = () => {
     <div class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4">
       <img
         alt="Alison Peters"
-        class="float-left mb-2 mr-2 w-1/4 max-w-[150px] rounded-full"
+        class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
         src="/images/misc/alison.jpg"
       />
       <div class="prose max-w-2xl md:prose-xl">

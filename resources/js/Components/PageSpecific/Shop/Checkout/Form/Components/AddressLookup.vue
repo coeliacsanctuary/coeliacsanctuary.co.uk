@@ -70,7 +70,7 @@ watchDebounced(() => props.address, handleSearch, { debounce: 100 });
       v-if="
         !hasSelectedAddress && searchResults.length > 0 && address.length >= 2
       "
-      class="absolute right-0 top-full z-999 mt-px max-h-60 w-full overflow-scroll border border-grey-darker bg-white shadow-sm"
+      class="absolute top-full right-0 z-999 mt-px max-h-60 w-full overflow-scroll border border-grey-darker bg-white shadow-sm"
     >
       <ul class="divide-y divide-grey-off">
         <li

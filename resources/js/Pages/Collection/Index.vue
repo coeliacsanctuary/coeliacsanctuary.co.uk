@@ -45,7 +45,7 @@ const gotoPage = (p: number) => {
     />
   </Card>
 
-  <div class="grid gap-8 sm:max-xl:grid-cols-2 sm:gap-0 xl:grid-cols-3">
+  <div class="grid gap-8 sm:gap-0 sm:max-xl:grid-cols-2 xl:grid-cols-3">
     <CollectionDetailCard
       v-for="collection in collections.data"
       :key="collection.link"

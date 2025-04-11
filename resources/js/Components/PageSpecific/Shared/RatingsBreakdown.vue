@@ -43,9 +43,9 @@ defineEmits(['createReview', 'filter']);
         <div
           v-for="item in breakdown"
           :key="item.rating"
-          class="flex items-center text-sm py-2 transition rounded-lg"
+          class="flex items-center rounded-lg py-2 text-sm transition"
           :class="{
-            'cursor-pointer hover:bg-primary-light/20 px-2 -mx-2 ': filterable,
+            '-mx-2 cursor-pointer px-2 hover:bg-primary-light/20': filterable,
             'bg-primary-light/50 hover:bg-primary-light/50':
               filteredOn === item.rating,
           }"
@@ -80,7 +80,7 @@ defineEmits(['createReview', 'filter']);
 
           <dd
             v-if="count > 0"
-            class="ml-3 w-15 text-right text-sm tabular-nums text-gray-900"
+            class="ml-3 w-15 text-right text-sm text-gray-900 tabular-nums"
           >
             {{ item.count }} ({{ Math.round((item.count / count) * 100) }}%)
           </dd>

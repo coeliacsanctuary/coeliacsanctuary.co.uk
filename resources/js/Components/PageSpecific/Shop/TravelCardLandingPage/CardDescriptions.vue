@@ -6,7 +6,7 @@ import Card from '@/Components/Card.vue';
 </script>
 
 <template>
-  <div class="grid lg:grid-cols-2 gap-4">
+  <div class="grid gap-4 lg:grid-cols-2">
     <Card class="flex flex-col space-y-4">
       <Heading>Coeliac Travel Cards</Heading>
 
@@ -16,7 +16,7 @@ import Card from '@/Components/Card.vue';
         over 50 languages!
       </p>
 
-      <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl flex-1">
+      <p class="prose max-w-none flex-1 md:max-xl:prose-lg xl:prose-xl">
         Designed specifically for those with coeliac disease and no additional
         allergies, these cards are professionally translated to clearly explain
         coeliac disease, a gluten free diet, safe and unsafe foods,
@@ -42,7 +42,7 @@ import Card from '@/Components/Card.vue';
         popular languages.
       </p>
 
-      <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl flex-1">
+      <p class="prose max-w-none flex-1 md:max-xl:prose-lg xl:prose-xl">
         On one side, you'll find a professionally translated explanation of
         coeliac disease, including cross-contamination risks. The reverse side
         features a series of checkboxes, allowing you to easily indicate any

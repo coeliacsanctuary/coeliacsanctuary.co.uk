@@ -156,7 +156,7 @@ const loadMoreReviews = () => {
 
           <section class="flex flex-col space-y-5 lg:col-span-2">
             <div
-              class="flex flex-col space-y-2 items-center md:items-start pb-5 border-b"
+              class="flex flex-col items-center space-y-2 border-b pb-5 md:items-start"
             >
               <div class="flex flex-col">
                 <p v-if="product.prices.old_price">
@@ -168,7 +168,7 @@ const loadMoreReviews = () => {
                   now
                 </p>
                 <p
-                  class="text-3xl font-semibold leading-none xs:text-4xl"
+                  class="text-3xl leading-none font-semibold xs:text-4xl"
                   v-text="product.prices.current_price"
                 />
               </div>
@@ -178,7 +178,7 @@ const loadMoreReviews = () => {
                 class="group flex-1 cursor-pointer"
                 @click="scrollToReviews()"
               >
-                <div class="flex items-center font-semibold space-x-2">
+                <div class="flex items-center space-x-2 font-semibold">
                   <p
                     class="text-gray-500 group-hover:text-primary-dark xs:max-xl:text-base"
                   >
@@ -227,7 +227,7 @@ const loadMoreReviews = () => {
       >
         <h3>
           <DisclosureButton
-            class="group relative flex w-full items-center justify-between py-2 text-left cursor-pointer hover:text-primary-dark"
+            class="group relative flex w-full cursor-pointer items-center justify-between py-2 text-left hover:text-primary-dark"
           >
             <SubHeading
               as="h3"
@@ -268,7 +268,7 @@ const loadMoreReviews = () => {
       >
         <h3>
           <DisclosureButton
-            class="group relative flex w-full items-center justify-between py-2 text-left cursor-pointer"
+            class="group relative flex w-full cursor-pointer items-center justify-between py-2 text-left"
             @click="showReviews = !showReviews"
           >
             <SubHeading
@@ -285,7 +285,7 @@ const loadMoreReviews = () => {
                 :rating="product.rating.average"
                 show-all
               />
-              <span class="font-sans text-sm ml-2">
+              <span class="ml-2 font-sans text-sm">
                 {{ product.rating.count }}
                 {{ pluralise('review', product.rating.count) }}
               </span>

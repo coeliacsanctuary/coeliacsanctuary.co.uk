@@ -24,7 +24,7 @@ defineProps<{ collection: CollectionDetailCard }>();
       <div class="mt-4 flex flex-1 flex-col space-y-3">
         <Link :href="collection.link">
           <h2
-            class="text-xl font-semibold transition hover:text-primary-dark group-hover:text-primary-dark"
+            class="text-xl font-semibold transition group-hover:text-primary-dark hover:text-primary-dark"
             v-text="collection.title"
           />
         </Link>

@@ -37,8 +37,8 @@ const submitMessage = () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 mt-5">
-    <Card class="prose w-full max-w-6xl mx-auto flex flex-col space-y-4">
+  <div class="mt-5 flex flex-col gap-5">
+    <Card class="mx-auto prose flex w-full max-w-6xl flex-col space-y-4">
       <Heading>Contact Coeliac Sanctuary</Heading>
 
       <div v-if="hasSubmittedForm">
@@ -52,14 +52,14 @@ const submitMessage = () => {
       </div>
 
       <template v-else>
-        <p class="prose prose-lg text-center max-w-none lg:prose-xl">
+        <p class="prose prose-lg max-w-none text-center lg:prose-xl">
           Need to get in touch with the Coeliac Sanctuary team? Complete the
           form below and we'll get back to you as soon as we can!
         </p>
 
         <Warning no-icon>
           <p
-            class="prose prose-lg max-w-none m-0 text-center font-semibold lg:prose-xl"
+            class="m-0 prose prose-lg max-w-none text-center font-semibold lg:prose-xl"
           >
             Are you suggesting a location to add to our Eating Out guide? Please
             use our
@@ -69,7 +69,7 @@ const submitMessage = () => {
         </Warning>
 
         <form
-          class="flex flex-col gap-5 mt-10!"
+          class="mt-10! flex flex-col gap-5"
           method="post"
           action="/contact"
           @submit.prevent="submitMessage()"

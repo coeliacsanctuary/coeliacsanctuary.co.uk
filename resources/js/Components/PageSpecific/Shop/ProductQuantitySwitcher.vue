@@ -58,7 +58,7 @@ const classes = (): string[] => {
 <template>
   <div>
     <label
-      class="block font-semibold leading-6 text-primary-dark text-base sm:max-xl:text-lg xl:text-xl"
+      class="block text-base leading-6 font-semibold text-primary-dark sm:max-xl:text-lg xl:text-xl"
     >
       {{ label }}
       <span
@@ -69,7 +69,7 @@ const classes = (): string[] => {
     </label>
 
     <div
-      class="relative rounded-md shadow-xs h-[55px]"
+      class="relative h-[55px] rounded-md shadow-xs"
       :class="wrapperClasses"
     >
       <input
@@ -85,7 +85,7 @@ const classes = (): string[] => {
 
       <div class="absolute inset-y-0 right-0 py-1 pr-3">
         <PlusCircleIcon
-          class="size-6 transition cursor-pointer"
+          class="size-6 cursor-pointer transition"
           :class="{
             'text-primary/30': value >= props.max,
             'text-primary hover:text-primary-dark':
@@ -95,7 +95,7 @@ const classes = (): string[] => {
         />
 
         <MinusCircleIcon
-          class="size-6 transition cursor-pointer"
+          class="size-6 cursor-pointer transition"
           :class="{
             'text-primary/30': value === 1,
             'text-primary hover:text-primary-dark': value > 1,

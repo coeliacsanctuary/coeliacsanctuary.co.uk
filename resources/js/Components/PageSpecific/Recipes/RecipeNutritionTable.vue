@@ -12,7 +12,7 @@ withDefaults(
 
 <template>
   <div
-    class="text-xs xs:text-sm border-2 border-primary rounded-lg overflow-hidden w-fit"
+    class="w-fit overflow-hidden rounded-lg border-2 border-primary text-xs xs:text-sm"
   >
     <div
       class="grid divide-x-2 divide-primary border-primary bg-primary-light/50 font-semibold"
@@ -106,7 +106,7 @@ withDefaults(
         class=""
         :class="{
           '!border-r-0': direction === 'horizontal',
-          '!border-b-0 col-span-3': direction === 'vertical',
+          'col-span-3 !border-b-0': direction === 'vertical',
         }"
       >
         Protein

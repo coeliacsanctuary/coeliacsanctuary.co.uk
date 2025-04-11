@@ -55,10 +55,10 @@ const titleLabel = computed<string>(() => {
     <div class="flex space-x-8 p-3">
       <div
         :class="{
-          'text-primary-dark border-primary-dark/50': theme === 'info',
-          'text-red-dark border-red-dark/50': theme === 'warning',
+          'border-primary-dark/50 text-primary-dark': theme === 'info',
+          'border-red-dark/50 text-red-dark': theme === 'warning',
         }"
-        class="pr-6 border-r"
+        class="border-r pr-6"
       >
         <InformationCircleIcon
           v-if="theme === 'info'"
@@ -71,7 +71,7 @@ const titleLabel = computed<string>(() => {
         />
       </div>
 
-      <div class="flex-1 flex flex-col space-y-3">
+      <div class="flex flex-1 flex-col space-y-3">
         <p
           class="text-xl font-semibold"
           :class="{
@@ -87,7 +87,7 @@ const titleLabel = computed<string>(() => {
 
         <div
           v-if="actions.length"
-          class="flex space-x-2 justify-end"
+          class="flex justify-end space-x-2"
         >
           <CoeliacButton
             v-for="(action, index) in actions"

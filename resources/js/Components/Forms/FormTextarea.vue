@@ -57,7 +57,7 @@ const classes = (): string[] => {
     <label
       v-if="hideLabel === false"
       :for="id"
-      class="block font-semibold leading-6 text-primary-dark"
+      class="block leading-6 font-semibold text-primary-dark"
       :class="
         size === 'large'
           ? 'text-base sm:max-xl:text-lg xl:text-xl'
@@ -88,7 +88,7 @@ const classes = (): string[] => {
 
       <div
         v-if="error"
-        class="pointer-events-none absolute inset-y-0 right-0 flex pr-3 pt-3"
+        class="pointer-events-none absolute inset-y-0 right-0 flex pt-3 pr-3"
       >
         <ExclamationCircleIcon
           aria-hidden="true"

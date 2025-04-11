@@ -38,7 +38,7 @@ defineProps<{
       </template>
 
       <template #default>
-        <p class="prose prose-lg max-w-none mb-2">
+        <p class="prose prose-lg mb-2 max-w-none">
           Discover the best rated places to eat gluten free in
           <span
             class="font-semibold"
@@ -66,7 +66,7 @@ defineProps<{
       </template>
 
       <template #default>
-        <p class="prose prose-lg max-w-none mb-2">
+        <p class="prose prose-lg mb-2 max-w-none">
           Discover the most reviewed and highly praised places to eat gluten
           free in
           <span

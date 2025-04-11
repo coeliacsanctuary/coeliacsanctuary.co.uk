@@ -132,7 +132,7 @@ const classes = (page: Page): string[] => {
 
 <template>
   <nav
-    class="flex select-none items-center justify-between border-t border-gray-200 px-4 sm:px-0 pt-4"
+    class="flex items-center justify-between border-t border-gray-200 px-4 pt-4 select-none sm:px-0"
   >
     <div class="-mt-px flex items-center">
       <a
@@ -145,7 +145,7 @@ const classes = (page: Page): string[] => {
       </a>
     </div>
 
-    <div class="flex-1 sm:-mt-px flex flex-wrap items-center justify-center">
+    <div class="flex flex-1 flex-wrap items-center justify-center sm:-mt-px">
       <template
         v-for="page in pages()"
         :key="page.number"

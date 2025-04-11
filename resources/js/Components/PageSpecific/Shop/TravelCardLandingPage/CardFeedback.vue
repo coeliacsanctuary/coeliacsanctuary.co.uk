@@ -14,7 +14,7 @@ defineProps<{
     <Heading>Customer Reviews</Heading>
 
     <p
-      class="prose prose-lg max-w-none md:max-xl:prose-xl xl:prose-2xl font-semibold"
+      class="prose prose-lg max-w-none font-semibold md:max-xl:prose-xl xl:prose-2xl"
     >
       Thinking of purchasing some of our products, take a look at what some of
       our previous customers have said about them!

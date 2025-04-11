@@ -236,7 +236,7 @@ const imageError = (message: string): void => {
           >
             <template #item="{ name }">
               <div
-                class="p-2 border-b border-grey-off transition cursor-pointer hover:bg-grey-lightest"
+                class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
                 @click="form.branch_name = name"
                 v-html="name"
               />

@@ -64,7 +64,7 @@ const addToBasket = () => {
         v-text="product.description"
       />
 
-      <div class="flex flex-1 justify-between items-end">
+      <div class="flex flex-1 items-end justify-between">
         <p
           class="text-2xl font-semibold text-gray-900 md:max-xl:text-3xl xl:text-4xl"
         >

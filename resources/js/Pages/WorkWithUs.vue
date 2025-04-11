@@ -5,11 +5,11 @@ import Heading from '@/Components/Heading.vue';
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 mt-5">
-    <Card class="max-w-8xl mx-auto flex flex-col space-y-3">
+  <div class="mt-5 flex flex-col gap-5">
+    <Card class="mx-auto flex max-w-8xl flex-col space-y-3">
       <Heading> Work With Us </Heading>
 
-      <p class="prose prose-lg xl:prose-xl max-w-none">
+      <p class="prose prose-lg max-w-none xl:prose-xl">
         Over the last few years since running Coeliac Sanctuary I have had the
         pleasure of working with some fantastic companies. Please don't hesitate
         to contact me if you want to work with me, whether you want me to help
@@ -19,13 +19,13 @@ import Heading from '@/Components/Heading.vue';
         Coeliac, gluten free living and free from.
       </p>
 
-      <p class="prose prose-lg xl:prose-xl max-w-none">
+      <p class="prose prose-lg max-w-none xl:prose-xl">
         Coeliac Sanctuary is forever growing and currently averages over 30,000
         visitors a month and has a social media following of over 20,000 spread
         across Facebook, Instagram and Twitter.
       </p>
 
-      <h3 class="text-xl font-semibold xl:text-2xl text-center my-5">
+      <h3 class="my-5 text-center text-xl font-semibold xl:text-2xl">
         Here is just a few companies I have had the pleasure of working with in
         the past!
       </h3>
@@ -105,7 +105,7 @@ import Heading from '@/Components/Heading.vue';
       out.
     </WorkWithUsStory>
 
-    <div class="grid sm:max-xmd:grid-cols-2 xmd:grid-cols-10! gap-5">
+    <div class="grid gap-5 xmd:grid-cols-10! sm:max-xmd:grid-cols-2">
       <WorkWithUsStory
         class="xmd:col-span-4 xmd:col-start-2"
         title="Pho"
@@ -152,7 +152,7 @@ import Heading from '@/Components/Heading.vue';
       </WorkWithUsStory>
 
       <Card
-        class="xmd:row-start-2 xmd:col-span-6 xmd:col-start-3 text-center prose prose-lg xl:prose-xl max-w-none"
+        class="prose prose-lg max-w-none text-center xmd:col-span-6 xmd:col-start-3 xmd:row-start-2 xl:prose-xl"
       >
         <p>
           Are you listed in our

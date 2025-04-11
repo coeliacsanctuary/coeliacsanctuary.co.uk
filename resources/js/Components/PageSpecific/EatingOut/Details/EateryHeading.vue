@@ -54,11 +54,11 @@ const eateryName = (): string => {
     >
       <div class="flex items-center justify-between space-x-2">
         <h1
-          class="font-coeliac text-3xl font-semibold leading-tight lg:mb-2 lg:text-5xl"
+          class="font-coeliac text-3xl leading-tight font-semibold lg:mb-2 lg:text-5xl"
           v-text="eateryName()"
         />
 
-        <div class="w-10 pr-2 pt-2 text-primary">
+        <div class="w-10 pt-2 pr-2 text-primary">
           <Icon
             :name="iconName"
             class="h-10 w-10"

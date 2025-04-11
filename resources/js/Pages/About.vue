@@ -7,9 +7,9 @@ import SubHeading from '@/Components/SubHeading.vue';
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 mt-5">
+  <div class="mt-5 flex flex-col gap-5">
     <Card
-      class="prose prose-lg max-w-none lg:max-xl:prose-xl xl:prose-2xl block!"
+      class="prose prose-lg block! max-w-none lg:max-xl:prose-xl xl:prose-2xl"
     >
       <Heading :border="false">About Coeliac Sanctuary</Heading>
 
@@ -83,7 +83,7 @@ import SubHeading from '@/Components/SubHeading.vue';
           </p>
         </div>
 
-        <div class="hidden md:flex flex-col space-y-2 ml-4 w-60 shrink-0">
+        <div class="ml-4 hidden w-60 shrink-0 flex-col space-y-2 md:flex">
           <ArticleImage
             src="/images/misc/coeliac-v1.jpg"
             title="First version of Coeliac Sanctuary, August 2014"
@@ -116,7 +116,7 @@ import SubHeading from '@/Components/SubHeading.vue';
     </Card>
 
     <Card
-      class="prose prose-lg max-w-none lg:max-xl:prose-xl xl:prose-2xl block!"
+      class="prose prose-lg block! max-w-none lg:max-xl:prose-xl xl:prose-2xl"
     >
       <SubHeading>Alison - Founder/Owner</SubHeading>
 
@@ -153,7 +153,7 @@ import SubHeading from '@/Components/SubHeading.vue';
     </Card>
 
     <Card
-      class="prose prose-lg max-w-none lg:max-xl:prose-xl xl:prose-2xl block!"
+      class="prose prose-lg block! max-w-none lg:max-xl:prose-xl xl:prose-2xl"
     >
       <SubHeading>
         Jamie - The sidekick, the brains, developer and tech guru

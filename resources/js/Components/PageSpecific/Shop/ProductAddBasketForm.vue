@@ -88,7 +88,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
           class="w-full"
         >
           <label
-            class="block text-base font-semibold leading-6 text-primary-dark md:max-xl:text-lg xl:text-xl"
+            class="block text-base leading-6 font-semibold text-primary-dark md:max-xl:text-lg xl:text-xl"
           >
             {{ product.variant_title }}
             <span
@@ -131,7 +131,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
                     />
                     <span
                       v-if="disabled"
-                      class="text-xs italic text-grey-dark"
+                      class="text-xs text-grey-dark italic"
                       v-text="'Out of stock'"
                     />
                   </div>

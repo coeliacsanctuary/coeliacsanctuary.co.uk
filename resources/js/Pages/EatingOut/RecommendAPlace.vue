@@ -159,7 +159,7 @@ watchDebounced(
 
         <div
           v-if="placeAlreadyRecommended"
-          class="w-full max-w-3xl mx-auto"
+          class="mx-auto w-full max-w-3xl"
         >
           <Warning class="rounded-xl">
             <div class="flex flex-col space-y-3 md:text-center">
@@ -179,7 +179,7 @@ watchDebounced(
                 />
               </div>
 
-              <p class="prose lg:max-xl:prose-lg xl:prose-xl font-semibold">
+              <p class="prose font-semibold lg:max-xl:prose-lg xl:prose-xl">
                 If you're this is a different place please carry on with your
                 recommendation!
               </p>
@@ -243,7 +243,7 @@ watchDebounced(
 
         <div
           v-if="placeAlreadyRecommended"
-          class="bg-primary-light/15 p-3 rounded-xl"
+          class="rounded-xl bg-primary-light/15 p-3"
         >
           <FormCheckbox
             v-model="confirmNewEatery"
@@ -284,7 +284,7 @@ watchDebounced(
         the website!
       </p>
 
-      <div class="flex justify-center mt-8">
+      <div class="mt-8 flex justify-center">
         <CoeliacButton
           label="Add another!"
           type="button"

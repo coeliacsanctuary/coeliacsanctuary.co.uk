@@ -39,7 +39,7 @@ const linkCards = [
     >
       <div class="">
         <h1
-          class="w-full bg-white p-2 text-center text-xl font-semibold shadow-sm xxs:w-auto xxs:rounded-sm xxs:bg-primary-light/90 xxs:px-8 xxs:max-sm:text-lg xxs:shadow-lg xs:p-4 sm:max-md:text-xl md:max-lg:text-2xl lg:max-xl:text-3xl xl:text-4xl"
+          class="w-full bg-white p-2 text-center text-xl font-semibold shadow-sm xxs:w-auto xxs:rounded-sm xxs:bg-primary-light/90 xxs:px-8 xxs:shadow-lg xxs:max-sm:text-lg xs:p-4 sm:max-md:text-xl md:max-lg:text-2xl lg:max-xl:text-3xl xl:text-4xl"
         >
           Gluten Free places to eat in {{ name }}
         </h1>
@@ -92,7 +92,7 @@ const linkCards = [
             class="flex flex-1 flex-col items-center justify-center xs:w-full xs:flex-row md:flex-none md:items-start"
           >
             <div
-              class="mb-2 hidden flex-1 xs:mb-0 xs:mr-4 xs:block xs:flex-none"
+              class="mb-2 hidden flex-1 xs:mr-4 xs:mb-0 xs:block xs:flex-none"
             >
               <component
                 :is="item.icon"

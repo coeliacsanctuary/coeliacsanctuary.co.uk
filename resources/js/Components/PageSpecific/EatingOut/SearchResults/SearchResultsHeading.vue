@@ -62,13 +62,13 @@ const linkCards = [
           prefetch
         >
           <div
-            class="flex h-full w-full cursor-pointer flex-col items-center justify-center space-y-2 rounded-sm bg-linear-to-br from-primary/90 to-primary-light/90 p-2 shadow-sm shadow-lg transition duration-500 sm:hover:from-primary/95 sm:hover:to-primary-light/95 md:justify-between md:p-4"
+            class="flex h-full w-full cursor-pointer flex-col items-center justify-center space-y-2 rounded-sm bg-linear-to-br from-primary/90 to-primary-light/90 p-2 shadow-lg shadow-sm transition duration-500 sm:hover:from-primary/95 sm:hover:to-primary-light/95 md:justify-between md:p-4"
           >
             <div
               class="flex flex-1 flex-col items-center justify-center xs:w-full xs:flex-row md:flex-none md:items-start"
             >
               <div
-                class="mb-2 hidden flex-1 xs:mb-4 xs:mr-4 xs:block xs:flex-none"
+                class="mb-2 hidden flex-1 xs:mr-4 xs:mb-4 xs:block xs:flex-none"
               >
                 <component
                   :is="item.icon"

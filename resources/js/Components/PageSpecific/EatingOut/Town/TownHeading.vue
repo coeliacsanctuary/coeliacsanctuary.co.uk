@@ -63,7 +63,7 @@ const linkCards = [
             class="flex flex-1 flex-col items-center justify-center xs:w-full xs:flex-row md:flex-none md:items-start"
           >
             <div
-              class="mb-2 hidden flex-1 xs:mb-0 xs:mr-4 xs:block xs:flex-none"
+              class="mb-2 hidden flex-1 xs:mr-4 xs:mb-0 xs:block xs:flex-none"
             >
               <component
                 :is="item.icon"

@@ -142,7 +142,7 @@ const isLinkComponent = computed(() => {
       :class="[
         {
           '-mr-0.5 ml-2': !iconOnly && iconPosition === 'right',
-          '-ml-0.5 mr-2': !iconOnly && iconPosition === 'left',
+          'mr-2 -ml-0.5': !iconOnly && iconPosition === 'left',
           'h-5 w-5': iconOnly,
           'h-4 w-4': !iconOnly,
           'opacity-0': loading,

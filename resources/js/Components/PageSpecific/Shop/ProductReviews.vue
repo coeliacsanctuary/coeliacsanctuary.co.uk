@@ -33,7 +33,7 @@ const setRatingFilter = (filter: StarRatingType | undefined) => {
 </script>
 
 <template>
-  <div class="mx-auto md:grid md:max-xl:grid-cols-3 md:gap-x-8 xl:grid-cols-4">
+  <div class="mx-auto md:grid md:gap-x-8 md:max-xl:grid-cols-3 xl:grid-cols-4">
     <RatingsBreakdown
       :average="rating.average"
       :breakdown="rating.breakdown"
@@ -47,14 +47,14 @@ const setRatingFilter = (filter: StarRatingType | undefined) => {
       with other customers!
     </RatingsBreakdown>
 
-    <div class="mt-8 md:max-xl:col-span-2 md:mt-0 xl:col-span-3">
+    <div class="mt-8 md:mt-0 md:max-xl:col-span-2 xl:col-span-3">
       <Info class="mb-4">
         <p class="text-sm">
           All reviews are from verified purchases, customers are invited to
           leave a review 10 days* after their order has been shipped.
         </p>
 
-        <small class="text-xs mt-4">* 10 days is for UK orders only.</small>
+        <small class="mt-4 text-xs">* 10 days is for UK orders only.</small>
       </Info>
 
       <div class="flow-root">

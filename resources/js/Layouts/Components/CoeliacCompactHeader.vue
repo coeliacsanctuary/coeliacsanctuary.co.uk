@@ -30,7 +30,7 @@ const mobileSearchOpen = ref(false);
         class="mx-auto flex w-full items-start justify-between px-2 lg:relative"
       >
         <div
-          class="lg:hidden flex items-center justify-center rounded-md text-white/80 hover:text-white py-2"
+          class="flex items-center justify-center rounded-md py-2 text-white/80 hover:text-white lg:hidden"
         >
           <Bars3BottomLeftIcon
             class="h-10 w-10"
@@ -42,7 +42,7 @@ const mobileSearchOpen = ref(false);
           href="/"
           class="lg:absolute lg:left-2"
         >
-          <Sealiac class="w-full h-14" />
+          <Sealiac class="h-14 w-full" />
         </Link>
 
         <MainNav class="md:hidden! lg:flex!" />

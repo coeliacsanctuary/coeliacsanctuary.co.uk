@@ -131,7 +131,7 @@ const icon = computed((): string => {
                 <div>
                   <a
                     v-if="placeDetails.website"
-                    class="mt-2 inline-flex items-center rounded-full bg-primary-light/90 px-3 py-1 text-xs font-semibold leading-none text-black transition-all ease-in-out hover:bg-primary-light/100"
+                    class="mt-2 inline-flex items-center rounded-full bg-primary-light/90 px-3 py-1 text-xs leading-none font-semibold text-black transition-all ease-in-out hover:bg-primary-light/100"
                     :href="placeDetails.website"
                     target="_blank"
                   >

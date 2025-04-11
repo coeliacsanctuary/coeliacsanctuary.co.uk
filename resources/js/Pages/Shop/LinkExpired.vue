@@ -38,7 +38,7 @@ const props = defineProps<{ products: ShopProductIndex[] }>();
   <Card class="flex flex-col items-center justify-center space-y-4 py-8">
     <SubHeading> Here's some products to get you started! </SubHeading>
 
-    <div class="mt-8 grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
+    <div class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       <CategoryProductCard
         v-for="(product, index) in products"
         :key="product.id"

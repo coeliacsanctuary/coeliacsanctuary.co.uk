@@ -165,7 +165,7 @@ watch(otherValue, () => {
     <label
       v-if="hideLabel === false"
       :for="id"
-      class="block font-semibold leading-6 text-primary-dark"
+      class="block leading-6 font-semibold text-primary-dark"
       :class="
         size === 'large'
           ? 'text-base sm:text-lg xl:text-xl'

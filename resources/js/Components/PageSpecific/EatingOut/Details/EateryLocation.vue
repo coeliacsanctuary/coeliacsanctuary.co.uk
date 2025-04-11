@@ -48,7 +48,7 @@ const eateryName = computed(() => {
       Where to find {{ eateryName }}
     </SubHeading>
     <div
-      class="flex flex-col space-y-2 sm:flex-row sm:max-lg:space-x-3 sm:space-y-0 lg:space-x-4"
+      class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:max-lg:space-x-3 lg:space-x-4"
     >
       <div class="h-map-small w-full max-w-[600px] sm:w-1/2 lg:w-2/3">
         <StaticMap
@@ -60,7 +60,7 @@ const eateryName = computed(() => {
 
       <ul class="sm:text-md flex flex-col space-y-3 sm:w-1/2 lg:space-y-4">
         <li class="flex items-center space-x-3">
-          <MapIcon class="h-4 w-4 sm:h-6 sm:w-6 lg:w-8 lg:h-8" />
+          <MapIcon class="h-4 w-4 sm:h-6 sm:w-6 lg:h-8 lg:w-8" />
           <span
             class="text-sm font-semibold sm:text-base lg:text-lg"
             v-html="address"
@@ -74,7 +74,7 @@ const eateryName = computed(() => {
             class="flex items-center space-x-3 transition hover:text-primary-dark"
             rel="nofollow"
           >
-            <LinkIcon class="h-4 w-4 sm:h-6 sm:w-6 lg:w-8 lg:h-8" />
+            <LinkIcon class="h-4 w-4 sm:h-6 sm:w-6 lg:h-8 lg:w-8" />
             <span class="text-sm font-semibold sm:text-base lg:text-lg">
               Visit Website
             </span>
@@ -87,7 +87,7 @@ const eateryName = computed(() => {
             class="flex items-center space-x-3 transition hover:text-primary-dark"
           >
             <DevicePhoneMobileIcon
-              class="h-4 w-4 sm:h-6 sm:w-6 lg:w-8 lg:h-8"
+              class="h-4 w-4 sm:h-6 sm:w-6 lg:h-8 lg:w-8"
             />
             <span
               class="text-sm font-semibold sm:text-base lg:text-lg"

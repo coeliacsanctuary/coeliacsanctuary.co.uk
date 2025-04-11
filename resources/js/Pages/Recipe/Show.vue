@@ -71,7 +71,7 @@ const loadMoreComments = () => {
         v-if="recipe.features.length"
         class="lg:w-md"
       >
-        <h3 class="font-semibold text-grey-darkest text-lg mb-1">
+        <h3 class="mb-1 text-lg font-semibold text-grey-darkest">
           This recipe is...
         </h3>
 
@@ -95,7 +95,7 @@ const loadMoreComments = () => {
         v-if="recipe.allergens.length"
         class="lg:w-md"
       >
-        <h3 class="font-semibold text-red-dark text-lg mb-1">
+        <h3 class="mb-1 text-lg font-semibold text-red-dark">
           This recipe contains:
         </h3>
 
@@ -111,7 +111,7 @@ const loadMoreComments = () => {
     </div>
 
     <div
-      class="!mt-4 -m-4 -mb-4! flex justify-between bg-grey-light p-4 shadow-inner"
+      class="-m-4 !mt-4 -mb-4! flex justify-between bg-grey-light p-4 shadow-inner"
     >
       <div>
         <p v-if="recipe.updated">
@@ -150,10 +150,10 @@ const loadMoreComments = () => {
   </Card>
 
   <div
-    class="flex flex-col space-y-3 lg:space-y-0 lg:flex-row-reverse relative"
+    class="relative flex flex-col space-y-3 lg:flex-row-reverse lg:space-y-0"
   >
     <div
-      class="space-y-3 lg:ml-3 lg:w-[350px] lg:flex-shrink-0 lg:self-start lg:grid lg:grid-cols-1 lg:overflow-auto"
+      class="space-y-3 lg:ml-3 lg:grid lg:w-[350px] lg:flex-shrink-0 lg:grid-cols-1 lg:self-start lg:overflow-auto"
     >
       <Card
         v-if="recipe.featured_in?.length"
@@ -236,7 +236,7 @@ const loadMoreComments = () => {
           v-html="recipe.method"
         />
 
-        <h3 class="mb-2 mt-4 text-base font-semibold lg:hidden">
+        <h3 class="mt-4 mb-2 text-base font-semibold lg:hidden">
           Nutritional Information (Per {{ recipe.nutrition.portion_size }})
         </h3>
 

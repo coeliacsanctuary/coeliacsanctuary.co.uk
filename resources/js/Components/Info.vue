@@ -7,7 +7,7 @@ withDefaults(defineProps<{ noIcon?: boolean; faded?: boolean }>(), {
 </script>
 
 <template>
-  <div class="rounded-sm border-2 p-2 shadow-sm border-primary bg-primary/20">
+  <div class="rounded-sm border-2 border-primary bg-primary/20 p-2 shadow-sm">
     <div
       v-if="!noIcon"
       class="float-left pr-2 text-primary"

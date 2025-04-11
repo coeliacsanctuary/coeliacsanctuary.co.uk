@@ -154,10 +154,10 @@ watchDebounced(
 </script>
 
 <template>
-  <div class="flex flex-col space-y-4 xmd:flex-row xmd:space-x-4 xmd:space-y-0">
-    <div class="xmd:shrink-0 xmd:w-1/4 xmd:max-w-[215px]">
+  <div class="flex flex-col space-y-4 xmd:flex-row xmd:space-y-0 xmd:space-x-4">
+    <div class="xmd:w-1/4 xmd:max-w-[215px] xmd:shrink-0">
       <Card
-        class="mt-3 mx-3 rounded-lg bg-primary-light/40! xmd:bg-primary-light/10! xmd:border-2 xmd:border-primary xmd:rounded-lg xmd:p-3 xmd:fixed xmd:max-w-[195px]"
+        class="mx-3 mt-3 rounded-lg bg-primary-light/40! xmd:fixed xmd:max-w-[195px] xmd:rounded-lg xmd:border-2 xmd:border-primary xmd:bg-primary-light/10! xmd:p-3"
         :class="stickyNav ? 'xmd:top-[40px]' : 'xmd:top-auto'"
         faded
         :shadow="false"
@@ -179,7 +179,7 @@ watchDebounced(
 
           <p
             v-if="hasError"
-            class="text-red font-semibold break-words"
+            class="font-semibold break-words text-red"
           >
             Please enter at least 3 characters
           </p>
@@ -223,7 +223,7 @@ watchDebounced(
 
     <Deferred data="results">
       <template #fallback>
-        <Card class="w-full mt-4!">
+        <Card class="mt-4! w-full">
           <Loader
             color="primary"
             :display="true"

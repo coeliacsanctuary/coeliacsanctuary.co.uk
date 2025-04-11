@@ -102,7 +102,7 @@ const { subscribeForm } = useNewsletter();
               :error="subscribeForm.errors?.email"
               borders
             />
-            <div class="mt-4 sm:ml-4 sm:mt-0 sm:shrink-0">
+            <div class="mt-4 sm:mt-0 sm:ml-4 sm:shrink-0">
               <CoeliacButton
                 as="button"
                 classes="w-full justify-center"
@@ -115,7 +115,7 @@ const { subscribeForm } = useNewsletter();
           </form>
           <div
             v-else
-            class="mt-6 flex space-x-2 items-center"
+            class="mt-6 flex items-center space-x-2"
           >
             <div class="text-secondary">
               <CheckCircleIcon class="h-12 w-12" />

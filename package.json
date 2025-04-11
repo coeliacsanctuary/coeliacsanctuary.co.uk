@@ -4,6 +4,7 @@
     "scripts": {
         "lint": "eslint ./resources/js --cache --ext .js,.ts,.vue",
         "lint-fix": "eslint ./resources/js --cache --ext .js,.ts,.vue --fix",
+        "format": "prettier --log-level log --write \"resources/js/**/*.{vue,ts}\"",
         "dev": "vite",
         "build": "vite build && vite build --ssr",
         "build-body": "cd nova-components/Body && npm run dev",
