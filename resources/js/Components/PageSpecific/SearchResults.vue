@@ -91,7 +91,7 @@ defineExpose({ reset, pause, refreshUrl, requestOptions });
 <template>
   <Card
     v-if="searchForm.processing || shouldLoad"
-    class="w-full mt-4!"
+    class="mt-4! w-full"
   >
     <Loader
       color="primary"
@@ -103,26 +103,26 @@ defineExpose({ reset, pause, refreshUrl, requestOptions });
 
   <Card
     v-else-if="items.length === 0"
-    class="w-full mt-4!"
+    class="mt-4! w-full"
   >
-    <div class="py-8 px-4 text-center text-xl font-semibold text-primary-dark">
+    <div class="px-4 py-8 text-center text-xl font-semibold text-primary-dark">
       No results found!
     </div>
   </Card>
 
   <div
     v-else
-    class="group xmd:pt-2 xmd:-ml-3! flex flex-col space-y-2 min-h-screen"
+    class="group flex min-h-screen flex-col space-y-2 xmd:-ml-3! xmd:pt-2"
   >
     <Card
       v-if="hasEatery"
       class="mx-4 rounded-xl border-2 border-primary"
     >
-      <p class="prose lg:prose-xl">
+      <p class="prose max-w-none lg:prose-xl">
         If you're looking for places to eat in
         <strong v-text="location" />, you can find more detailed results in our
         <a
-          class="inline-block font-semibold cursor-pointer"
+          class="inline-block cursor-pointer font-semibold"
           @click.prevent="goToEaterySearch()"
         >
           Eating Out guide
@@ -133,11 +133,11 @@ defineExpose({ reset, pause, refreshUrl, requestOptions });
     <Card
       v-for="item in items"
       :key="item.link"
-      class="transition-all transform sm:scale-95 sm:hover:scale-100 p-4 group/item sm:group-hover:opacity-50 sm:hover:opacity-100!"
+      class="group/item transform p-4 transition-all sm:scale-95 sm:group-hover:opacity-50 sm:hover:scale-100 sm:hover:opacity-100!"
     >
       <Link
         :href="item.link"
-        class="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
+        class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4"
         prefetch
       >
         <div class="w-full sm:max-xl:w-1/4 xl:w-1/5">
@@ -161,13 +161,13 @@ defineExpose({ reset, pause, refreshUrl, requestOptions });
 
         <div class="flex flex-col space-y-4 sm:flex-1 sm:space-y-2">
           <h2
-            class="text-primary-dark text-xl font-semibold group-hover/item:text-black transition lg:max-xl:text-2xl xl:text-3xl"
+            class="text-xl font-semibold text-primary-dark transition group-hover/item:text-black lg:max-xl:text-2xl xl:text-3xl"
             v-text="item.title"
           />
 
           <p
             v-if="typeof item.description === 'string'"
-            class="prose max-w-none lg:prose-xl flex-1"
+            class="prose max-w-none flex-1 lg:prose-xl"
             v-text="item.description"
           />
 
@@ -177,16 +177,16 @@ defineExpose({ reset, pause, refreshUrl, requestOptions });
             :key="index"
           >
             <p
-              class="prose-xl max-w-none lg:prose-2xl flex-1 font-semibold"
+              class="prose-xl max-w-none flex-1 font-semibold lg:prose-2xl"
               v-text="restaurant.title"
             />
             <p
-              class="prose max-w-none lg:prose-xl flex-1"
+              class="prose max-w-none flex-1 lg:prose-xl"
               v-text="restaurant.info"
             />
           </div>
 
-          <div class="flex justify-between items-end mt-auto">
+          <div class="mt-auto flex items-end justify-between">
             <div
               :class="itemTypeClasses(item.type)"
               v-text="item.type"
