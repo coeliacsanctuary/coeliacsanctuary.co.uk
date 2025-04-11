@@ -21,7 +21,6 @@ const props = defineProps<{
   show: boolean;
 }>();
 
-const hasSubmitted = ref(false);
 const loading = ref(true);
 
 const emits = defineEmits(['close', 'openReport']);
@@ -214,8 +213,6 @@ onMounted(() => {
 
 const close = () => {
   emits('close');
-
-  hasSubmitted.value = false;
 };
 
 const editing: Ref<EditableEateryField | null> = ref(null);
@@ -269,6 +266,7 @@ const updateField = (): void => {
     })
     .then(() => {
       fields.value[currentFieldIndex.value as number].updated = true;
+
       cancelEditingField();
     })
     .catch(() => {
@@ -310,28 +308,6 @@ const openReport = () => {
         />
       </div>
 
-      <template v-else-if="hasSubmitted">
-        <div class="flex items-center justify-center text-center text-green">
-          <CheckCircleIcon class="h-24 w-24" />
-        </div>
-
-        <p class="md:prose-md prose mb-2 max-w-none text-center">
-          Thank you for your report about <strong>{{ eateryName }}</strong
-          >, we'll check it out, and if the eatery no longer qualifies, we'll
-          remove it from our website!
-        </p>
-
-        <div class="mt-4 flex-1 text-center">
-          <CoeliacButton
-            as="button"
-            type="button"
-            size="xxl"
-            label="Close"
-            @click="close()"
-          />
-        </div>
-      </template>
-
       <template v-else>
         <div
           class="mb-4 flex flex-col space-y-3 border-b border-primary-light pb-4"
@@ -360,9 +336,18 @@ const openReport = () => {
             >
               <div
                 v-if="field.updated"
-                class="bg-blue-light/25 rounded-sm p-1 text-center"
+                class="bg-blue-light/25 flex flex-col space-y-2 rounded-sm p-1 text-center"
               >
-                Thanks for your suggestion!
+                <span>Thanks for your suggestion!</span>
+                <span
+                  class="cursor-pointer text-xs font-semibold hover:text-primary-dark"
+                  @click="
+                    field.updated = false;
+                    openField(field);
+                  "
+                >
+                  Update again
+                </span>
               </div>
 
               <template v-else>
