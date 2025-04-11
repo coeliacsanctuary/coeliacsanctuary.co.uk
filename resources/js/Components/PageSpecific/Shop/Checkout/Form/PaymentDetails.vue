@@ -123,6 +123,7 @@ eventBus.$on('payment-failed', () => {
 
       <FormSelect
         v-model="billingAddressSelect"
+        label="Billing Address"
         name="billing_address"
         :options="selectOptions"
         :placeholder="undefined"
