@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\EatingOut;
 
+use App\Enums\EatingOut\EateryType;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\EatingOut\GetFiltersForEateriesAction;
 use App\Models\EatingOut\Eatery;
@@ -95,11 +96,12 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function aFilterCategoryCanBeCheckedViaTheRequest(): void
     {
+        Eatery::query()->first()->update(['type_id' => EateryType::ATTRACTION]);
+
         $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause, ['categories' => 'att'])['categories'];
 
         $this->assertFalse($categoryFilters[0]['checked']); // wte
         $this->assertTrue($categoryFilters[1]['checked']); // att
-        $this->assertFalse($categoryFilters[2]['checked']); // hotel
     }
 
     #[Test]
@@ -134,8 +136,6 @@ class GetFiltersForEateriesActionTest extends TestCase
         $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause, ['venueTypes' => $venueType->slug])['venueTypes'];
 
         $this->assertTrue($categoryFilters[0]['checked']);
-        $this->assertFalse($categoryFilters[1]['checked']);
-        $this->assertFalse($categoryFilters[2]['checked']);
     }
 
     #[Test]
@@ -170,7 +170,5 @@ class GetFiltersForEateriesActionTest extends TestCase
         $featureFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause, ['features' => $feature->slug])['features'];
 
         $this->assertTrue($featureFilters[0]['checked']);
-        $this->assertFalse($featureFilters[1]['checked']);
-        $this->assertFalse($featureFilters[2]['checked']);
     }
 }

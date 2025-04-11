@@ -36,11 +36,11 @@ class ShowController
 
         $eateries = $getSearchResultsPipeline->run($eaterySearchTerm, $filters);
 
-        /** @var EateryListResource $jsonResource */
+        /** @var EateryListResource | null $jsonResource */
         $jsonResource = $eateries->collect()->first();
 
         /** @var Eatery|null $firstResult */
-        $firstResult = $jsonResource->resource?->load(['town', 'county', 'country']);
+        $firstResult = $jsonResource?->resource?->load(['town', 'county', 'country']);
 
         $image = match (true) {
             $firstResult?->town?->image => $firstResult->town->image,

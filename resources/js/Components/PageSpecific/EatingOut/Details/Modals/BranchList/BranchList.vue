@@ -5,6 +5,7 @@ import { EateryNationwideBranch } from '@/types/EateryTypes';
 import StaticMap from '@/Components/Maps/StaticMap.vue';
 import { Link } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
+import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 
 const props = defineProps<{
   branch: EateryNationwideBranch;
@@ -59,6 +60,7 @@ const branchName = (branch: EateryNationwideBranch): string => {
       <StaticMap
         :lng="branch.location.lng"
         :lat="branch.location.lat"
+        :title="`${branch.name} - ${branch.location.address}`"
       />
 
       <div

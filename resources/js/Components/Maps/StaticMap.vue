@@ -49,6 +49,7 @@ const styles = () => ({
   >
     <div class="min-w-full">
       <DynamicMap
+        :title="title"
         :lat="lat"
         :lng="lng"
       />

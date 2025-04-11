@@ -5,7 +5,7 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { Ref, ref } from 'vue';
+import { Ref, ref, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import SearchResultsHeading from '@/Components/PageSpecific/EatingOut/SearchResults/SearchResultsHeading.vue';
@@ -13,7 +13,7 @@ import useBrowser from '@/composables/useBrowser';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 
-defineProps<{
+const props = defineProps<{
   term: string;
   range: 1 | 2 | 5 | 10 | 20;
   image: string;
@@ -85,6 +85,8 @@ const reloadEateries = () => {
     preserveScroll: true,
   });
 };
+
+watch(() => props.term, reset);
 </script>
 
 <template>
@@ -130,7 +132,7 @@ const reloadEateries = () => {
     :range="range"
   />
 
-  <div class="relative md:flex xmd:space-x-2">
+  <div class="relative xmd:space-x-2 md:flex">
     <TownFilterSidebar
       :filters="filters"
       @filters-updated="handleFiltersChanged"

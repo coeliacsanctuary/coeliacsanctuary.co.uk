@@ -15,6 +15,7 @@ type Getters = {
 
 type Actions = {
   instantiate: (paymentIntentId: string) => Promise<void>;
+  reset: () => void;
 };
 
 const useStripeStore = defineStore<'stripe', State, Getters, Actions>(
@@ -31,6 +32,11 @@ const useStripeStore = defineStore<'stripe', State, Getters, Actions>(
       elements: (state) => state.stateElements,
     },
     actions: {
+      reset() {
+        this.stateStripe = {} as Stripe;
+        this.stateElements = {} as StripeElements;
+        this.instantiated = false;
+      },
       async instantiate(clientSecret: string) {
         if (this.instantiated) {
           return;

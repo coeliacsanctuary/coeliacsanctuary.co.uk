@@ -32,6 +32,7 @@ const slots = useSlots();
   <OverlayFrame
     :open="open"
     :width="width"
+    class="mx-[2.5%]"
     :class="{
       'xs:max-w-md': size === 'small',
       'sm:max-w-lg': size === 'medium',

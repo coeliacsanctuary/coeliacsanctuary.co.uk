@@ -18,12 +18,14 @@ export const MapModalPropDefaults = {
 };
 
 export type StaticMapProps = MapProps & {
+  title?: string;
   mapClasses?: string;
   canExpand?: boolean;
 };
 
 export const StaticMapPropDefaults: Partial<StaticMapProps> = {
   ...MapPropDefaults,
+  title: undefined,
   mapClasses:
     'min-h-map-small md:max-lg:min-h-map lg:max-xl:min-h-map-small xl:min-h-map',
   canExpand: true,

@@ -67,12 +67,14 @@ class GetFiltersForEateriesAction
         /** @var Collection<int, EateryType> $categories */
         $categories = $baseQuery->get();
 
-        return $categories->map(fn (EateryType $type): array => [
-            'value' => $type->type,
-            'label' => $type->name . ($this->withCount ? " - ({$type->eateries_count})" : ''),
-            'disabled' => false,
-            'checked' => $this->filterIsEnabled('categories', $type->type),
-        ]);
+        return $categories
+            ->reject(fn (EateryType $type): bool => $type->eateries_count === 0)
+            ->map(fn (EateryType $type): array => [
+                'value' => $type->type,
+                'label' => $type->name . ($this->withCount ? " - ({$type->eateries_count})" : ''),
+                'disabled' => false,
+                'checked' => $this->filterIsEnabled('categories', $type->type),
+            ]);
     }
 
     /** @return Collection<int, array{value: string, label: string, disabled: bool, checked: bool}> */
@@ -86,12 +88,14 @@ class GetFiltersForEateriesAction
         /** @var Collection<int, EateryVenueType> $venueTypes */
         $venueTypes = $baseQuery->get();
 
-        return $venueTypes->map(fn (EateryVenueType $venueType): array => [
-            'value' => $venueType->slug,
-            'label' => $venueType->venue_type . ($this->withCount ? " - ({$venueType->eateries_count})" : ''),
-            'disabled' => false,
-            'checked' => $this->filterIsEnabled('venueTypes', $venueType->slug),
-        ]);
+        return $venueTypes
+            ->reject(fn (EateryVenueType $type): bool => $type->eateries_count === 0)
+            ->map(fn (EateryVenueType $venueType): array => [
+                'value' => $venueType->slug,
+                'label' => $venueType->venue_type . ($this->withCount ? " - ({$venueType->eateries_count})" : ''),
+                'disabled' => false,
+                'checked' => $this->filterIsEnabled('venueTypes', $venueType->slug),
+            ]);
     }
 
     /** @return Collection<int, array{value: string, label: string, disabled: bool, checked: bool}> */
@@ -105,12 +109,14 @@ class GetFiltersForEateriesAction
         /** @var Collection<int, EateryFeature> $features */
         $features = $baseQuery->get();
 
-        return $features->map(fn (EateryFeature $feature): array => [
-            'value' => $feature->slug,
-            'label' => $feature->feature . ($this->withCount ? " - ({$feature->eateries_count})" : ''),
-            'disabled' => false,
-            'checked' => $this->filterIsEnabled('features', $feature->slug),
-        ]);
+        return $features
+            ->reject(fn (EateryFeature $type): bool => $type->eateries_count === 0)
+            ->map(fn (EateryFeature $feature): array => [
+                'value' => $feature->slug,
+                'label' => $feature->feature . ($this->withCount ? " - ({$feature->eateries_count})" : ''),
+                'disabled' => false,
+                'checked' => $this->filterIsEnabled('features', $feature->slug),
+            ]);
     }
 
     protected function filterIsEnabled(string $key, string $value): bool

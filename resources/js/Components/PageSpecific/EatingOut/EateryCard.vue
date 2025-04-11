@@ -6,6 +6,7 @@ import StaticMap from '@/Components/Maps/StaticMap.vue';
 import EateryIntroduction from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryIntroduction.vue';
 import EateryReviews from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryReviews.vue';
 import EateryInfoBlock from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryInfoBlock.vue';
+import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 
 const props = defineProps<{ eatery: TownEatery }>();
 
@@ -83,6 +84,7 @@ const eateryLink = computed(() => {
           :lng="
             eatery.branch ? eatery.branch.location.lng : eatery.location.lng
           "
+          :title="`${eatery.branch && eatery.branch.name ? eatery.branch.name + ' - ' : ''} ${eatery.name} - ${eatery.branch ? eatery.branch.location.address : eatery.location.address}`"
         />
       </div>
     </div>
