@@ -403,12 +403,12 @@ onMounted(() => {
         },
       ]"
     >
-      <p class="prose prose-md max-w-none mb-3">
+      <p class="prose-md prose mb-3 max-w-none">
         Sorry, due to stock changes since you created your basket, we've had to
         alter the quantity of some of your products.
       </p>
 
-      <ul class="text-primary-dark font-semibold">
+      <ul class="font-semibold text-primary-dark">
         <li
           v-for="(warning, index) in warnings"
           :key="index"
