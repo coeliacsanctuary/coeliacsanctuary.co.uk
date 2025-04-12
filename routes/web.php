@@ -12,6 +12,7 @@ use App\Http\Controllers\Newsletter\StoreController as NewsletterStoreController
 use App\Http\Controllers\Popup\Activity\StoreController as PopupActivityStoreController;
 use App\Http\Controllers\PrivacyPolicy\IndexController as PrivacyPolicyIndexController;
 use App\Http\Controllers\Shop\TravelCards\IndexController as ShopTravelCardsLandingPageIndexController;
+use App\Http\Controllers\Static\Map\GetController as StaticMapGetController;
 use App\Http\Controllers\TermsOfUse\IndexController as TermsOfUseIndexController;
 use App\Http\Controllers\WorkWithUs\IndexController as WorkWithUsIndexController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -47,3 +48,7 @@ Route::post('popup/{popup}', PopupActivityStoreController::class)->name('popup.a
 Route::post('newsletter', NewsletterStoreController::class)
     ->middleware(HandlePrecognitiveRequests::class)
     ->name('newsletter.store');
+
+Route::get('static/map/{latlng}', StaticMapGetController::class)
+    ->name('static.map')
+    ->where('latlng', '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$');

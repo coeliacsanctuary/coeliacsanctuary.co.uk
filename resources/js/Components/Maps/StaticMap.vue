@@ -11,20 +11,8 @@ const props = withDefaults(
 
 const openModal = ref(false);
 
-const apiKey: string = import.meta.env.VITE_GOOGLE_MAPS_STATIC_KEY as string;
-
-const backgroundUrl = new URL('https://maps.googleapis.com/maps/api/staticmap');
-backgroundUrl.searchParams.set('center', `${props.lat},${props.lng}`);
-backgroundUrl.searchParams.set('size', '600x600');
-backgroundUrl.searchParams.set('maptype', 'roadmap');
-backgroundUrl.searchParams.set(
-  'markers',
-  `color:red|label:|${props.lat},${props.lng}`,
-);
-backgroundUrl.searchParams.set('key', apiKey);
-
 const styles = () => ({
-  background: `url(${backgroundUrl.toString()}) no-repeat 50% 50%`,
+  background: `url(/static/map/${props.lat},${props.lng}) no-repeat 50% 50%`,
   lineHeight: 0,
   cursor: 'pointer',
 });
