@@ -8,7 +8,6 @@ use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Notifications\Shop\AbandonedBasketNotification;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class SendAbandonedBasketEmailCommand extends Command
@@ -17,12 +16,12 @@ class SendAbandonedBasketEmailCommand extends Command
 
     public function handle(): void
     {
-        /** @var callable(Carbon): Carbon $limit */
+        /** @var int $limit */
         $limit = config('coeliac.shop.abandoned_basket_time_limit');
 
         ShopOrder::query()
             ->where('state_id', OrderState::EXPIRED)
-            ->where('updated_at', '<', $limit(now()))
+            ->where('updated_at', '<', now()->subHours($limit))
             ->where('updated_at', '>', now()->startOfDay())
             ->where('sent_abandoned_basket_email', false)
             ->with('items', 'items.variant')
