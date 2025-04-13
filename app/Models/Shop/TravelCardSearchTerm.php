@@ -14,7 +14,6 @@ class TravelCardSearchTerm extends Model
     /** @return BelongsToMany<ShopProduct, $this> */
     public function products(): BelongsToMany
     {
-        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             ShopProduct::class,
             'shop_product_assigned_travel_card_search_terms',

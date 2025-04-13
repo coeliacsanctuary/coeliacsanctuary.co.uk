@@ -43,7 +43,7 @@ class ShopCategory extends Model implements HasMedia
     /** @return BelongsToMany<ShopProduct, $this> */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(ShopProduct::class, 'shop_product_categories', 'category_id', 'product_id'); /** @phpstan-ignore-line */
+        return $this->belongsToMany(ShopProduct::class, 'shop_product_categories', 'category_id', 'product_id');
     }
 
     public function registerMediaCollections(): void

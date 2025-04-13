@@ -17,6 +17,6 @@ class RecipeAllergen extends Model implements FilterableRecipeRelation
     /** @return BelongsToMany<Recipe, $this> */
     public function recipes(): BelongsToMany
     {
-        return $this->belongsToMany(Recipe::class, 'recipe_assigned_allergens', 'allergen_type_id', 'recipe_id'); /** @phpstan-ignore-line */
+        return $this->belongsToMany(Recipe::class, 'recipe_assigned_allergens', 'allergen_type_id', 'recipe_id');
     }
 }

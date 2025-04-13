@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Pipelines\Search\Steps;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\DataObjects\Search\SearchResultItem;
 use App\Models\Blogs\Blog;
 use App\Models\Recipes\Recipe;
 use App\Pipelines\Search\Steps\PaginateResults;
 use Illuminate\Pagination\LengthAwarePaginator;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PaginateResultsTest extends TestCase
@@ -37,7 +37,7 @@ class PaginateResultsTest extends TestCase
         ]);
 
         $closure = function (LengthAwarePaginator $paginator) use ($results): void {
-            /** @var LengthAwarePaginator<SearchResultItem> $results */
+            /** @var LengthAwarePaginator<int, SearchResultItem> $results */
             $this->assertEquals($results->toArray(), $paginator->items());
         };
 

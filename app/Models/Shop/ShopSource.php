@@ -12,6 +12,6 @@ class ShopSource extends Model
     /** @return BelongsToMany<ShopOrder, $this> */
     public function orders(): BelongsToMany
     {
-        return $this->belongsToMany(ShopOrder::class, 'shop_order_sources', 'source_id', 'order_id')->withTimestamps(); /** @phpstan-ignore-line */
+        return $this->belongsToMany(ShopOrder::class, 'shop_order_sources', 'source_id', 'order_id')->withTimestamps();
     }
 }

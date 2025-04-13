@@ -25,7 +25,7 @@ class HydratePage
         ShopProduct::class => ['variants', 'prices'],
     ];
 
-    /** @param LengthAwarePaginator<SearchResultItem> $paginator */
+    /** @param LengthAwarePaginator<int, SearchResultItem> $paginator */
     public function handle(LengthAwarePaginator $paginator, Closure $next): mixed
     {
         /** @var Collection<class-string<IsSearchable>, Collection<int, IsSearchable>> $models */
@@ -54,7 +54,7 @@ class HydratePage
             return $res;
         });
 
-        /** @var LengthAwarePaginator<IsSearchable> $paginator */
+        /** @var LengthAwarePaginator<int, IsSearchable> $paginator */
         $paginator->setCollection($hydratedResults);
 
         return $next($paginator);

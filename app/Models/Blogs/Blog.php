@@ -99,7 +99,6 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     /** @return BelongsToMany<BlogTag, $this> */
     public function tags(): BelongsToMany
     {
-        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             BlogTag::class,
             'blog_assigned_tags',
