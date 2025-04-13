@@ -23,16 +23,22 @@ class BasketOrders extends Chartable
 
     public function getData(Carbon $startDate, Carbon $endDate): array
     {
+        $orders = ShopOrder::query()
+            ->where('created_at', '>=', $startDate)
+            ->where('created_at', '<=', $endDate)
+            ->whereNotNull('order_key');
+
         return [
             ShopOrder::query()
                 ->where('created_at', '>=', $startDate)
                 ->where('created_at', '<=', $endDate)
                 ->count(),
 
-            ShopOrder::query()
-                ->where('created_at', '>=', $startDate)
-                ->where('created_at', '<=', $endDate)
-                ->whereNotNull('order_key')->count(),
+            $orders->count(),
+
+            $orders->where('sent_abandoned_basket_email', false)->count(),
+
+            $orders->where('sent_abandoned_basket_email', true)->count(),
         ];
     }
 
@@ -46,18 +52,30 @@ class BasketOrders extends Chartable
         $data = $this->calculateData($dateRange);
 
         $baskets = array_map(fn (array $a) => $a[0], $data);
-        $sales = array_map(fn (array $a) => $a[1], $data);
+        $allOrders = array_map(fn (array $a) => $a[1], $data);
+        $orders = array_map(fn (array $a) => $a[2], $data);
+        $ordersFromAbandonedBaskets = array_map(fn (array $a) => $a[3], $data);
 
         return [
             [
                 'name' => 'Baskets',
                 'data' => $baskets,
+                'color' => '#DBBC25',
+            ],
+            [
+                'name' => 'All Orders',
+                'data' => $allOrders,
                 'color' => '#80CCFC',
             ],
             [
-                'name' => 'Sales',
-                'data' => $sales,
-                'color' => '#DBBC25',
+                'name' => 'Orders',
+                'data' => $orders,
+                'color' => '#addaf9',
+            ],
+            [
+                'name' => 'Orders from abandoned baskets',
+                'data' => $ordersFromAbandonedBaskets,
+                'color' => '#787878',
             ],
         ];
     }

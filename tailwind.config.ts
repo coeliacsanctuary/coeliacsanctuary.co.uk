@@ -33,14 +33,6 @@ export default {
           DEFAULT: '#DBBC25',
         },
 
-        social: {
-          facebook: '#3b5998',
-          twitter: '#00aced',
-          pinterest: '#bd081c',
-          reddit: '#ff4500',
-          rss: '#f26522',
-        },
-
         grey: {
           DEFAULT: '#666',
           light: '#f7f7f7',
