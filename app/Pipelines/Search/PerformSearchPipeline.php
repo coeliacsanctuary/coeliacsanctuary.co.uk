@@ -23,7 +23,7 @@ use Illuminate\Pipeline\Pipeline;
 
 class PerformSearchPipeline
 {
-    /** @return LengthAwarePaginator<SearchableItemResource> */
+    /** @return LengthAwarePaginator<int, SearchableItemResource> */
     public function run(SearchParameters $parameters): LengthAwarePaginator
     {
         SearchState::$hasGeoSearched = false;
@@ -42,7 +42,7 @@ class PerformSearchPipeline
 
         $data = new SearchPipelineData($parameters, new SearchResultsCollection());
 
-        /** @var LengthAwarePaginator<SearchableItemResource> $results */
+        /** @var LengthAwarePaginator<int, SearchableItemResource> $results */
         $results = app(Pipeline::class)
             ->send($data)
             ->through($pipes)

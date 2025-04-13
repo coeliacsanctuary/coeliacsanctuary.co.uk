@@ -18,11 +18,11 @@ class GetEateriesPipelineData
     /**
      * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
      * @param  null | Collection<int, PendingEatery>  $eateries
-     * @param  null | LengthAwarePaginator<PendingEatery>  $paginator
+     * @param  null | LengthAwarePaginator<int, PendingEatery>  $paginator
      * @param  null | Collection<int, Eatery>  $hydrated
      * @param  null | Collection<int, NationwideBranch>  $hydratedBranches
      * @param  class-string<JsonResource>  $jsonResource,
-     * @param  null | LengthAwarePaginator<JsonResource> | Collection<int, JsonResource>  $serialisedEateries
+     * @param  null | LengthAwarePaginator<int, JsonResource> | Collection<int, JsonResource>  $serialisedEateries
      */
     public function __construct(
         public array $filters,

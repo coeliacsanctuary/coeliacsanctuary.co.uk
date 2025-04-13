@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Static\Maps;
+namespace Tests\Unit\Services\Static\Maps;
 
 use App\Models\GoogleStaticMap;
 use App\Services\Static\Map\GoogleMapService;
@@ -15,7 +15,7 @@ use Intervention\Image\ImageManager;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class GetGoogleStaticMapActionTest extends TestCase
+class GoogleMapServiceTest extends TestCase
 {
     protected function setUp(): void
     {

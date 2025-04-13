@@ -181,7 +181,6 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     /** @return BelongsToMany<EateryFeature, $this> */
     public function features(): BelongsToMany
     {
-        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             EateryFeature::class,
             'wheretoeat_assigned_features',

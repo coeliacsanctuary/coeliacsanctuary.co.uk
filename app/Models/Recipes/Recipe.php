@@ -108,7 +108,6 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     /** @return BelongsToMany<RecipeAllergen, $this> */
     public function allergens(): BelongsToMany
     {
-        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             RecipeAllergen::class,
             'recipe_assigned_allergens',
@@ -128,7 +127,6 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     /** @return BelongsToMany<RecipeFeature, $this> */
     public function features(): BelongsToMany
     {
-        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             RecipeFeature::class,
             'recipe_assigned_features',
@@ -140,7 +138,6 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     /** @return BelongsToMany<RecipeMeal, $this> */
     public function meals(): BelongsToMany
     {
-        /** @phpstan-ignore-next-line  */
         return $this->belongsToMany(
             RecipeMeal::class,
             'recipe_assigned_meals',

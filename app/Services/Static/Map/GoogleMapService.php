@@ -35,7 +35,10 @@ class GoogleMapService
     protected function resolveImage(string $latLng): Image
     {
         if ($this->hasCachedImage()) {
-            return $this->imageManager->make(Storage::disk('media')->get("/maps/{$this->existingRecord->uuid}.jpg"));
+            /** @var GoogleStaticMap $googleStaticMap */
+            $googleStaticMap = $this->existingRecord;
+
+            return $this->imageManager->make(Storage::disk('media')->get("/maps/{$googleStaticMap->uuid}.jpg"));
         }
 
         return $this->resolveImageFromGoogle($latLng);
@@ -81,7 +84,10 @@ class GoogleMapService
 
         $uuid = $this->existingRecord->uuid ?? Str::uuid()->toString();
 
-        Storage::disk('media')->put("maps/{$uuid}.jpg", $rawImage->encode('jpg'));
+        /** @var resource $encodedImageBlob */
+        $encodedImageBlob = $rawImage->encode('jpg');
+
+        Storage::disk('media')->put("maps/{$uuid}.jpg", $encodedImageBlob);
 
         $this->existingRecord = GoogleStaticMap::query()->updateOrCreate([
             'latlng' => $latLng,
