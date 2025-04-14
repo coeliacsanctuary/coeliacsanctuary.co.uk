@@ -8,8 +8,9 @@ import CoeliacButton from '@/Components/CoeliacButton.vue';
 import {
   AdjustmentsHorizontalIcon,
   ArrowUturnLeftIcon,
+  RssIcon,
 } from '@heroicons/vue/20/solid';
-import { ref } from 'vue';
+import { Component, ref } from 'vue';
 import BlogListSideBar from '@/Components/PageSpecific/Blogs/BlogListSideBar.vue';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import {
@@ -57,7 +58,21 @@ const closeTagSidebar = (): void => {
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading v-if="!activeTag"> Coeliac Sanctuary Blogs </Heading>
+    <Heading
+      v-if="!activeTag"
+      :custom-link="{
+        label: 'RSS Feed',
+        href: '/blog/feed',
+        classes: 'font-semibold text-rss hover:text-black transition',
+        newTab: true,
+        position: 'bottom',
+        direction: 'center',
+        icon: RssIcon as Component,
+        iconPosition: 'left',
+      }"
+    >
+      Coeliac Sanctuary Blogs
+    </Heading>
     <Heading v-else>
       Coeliac Sanctuary blogs tagged with {{ activeTag }}
     </Heading>

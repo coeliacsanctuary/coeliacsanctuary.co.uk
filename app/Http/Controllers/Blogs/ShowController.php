@@ -28,6 +28,7 @@ class ShowController
                 'article.tags' => $blog->meta_tags,
             ])
             ->schema($blog->schema()->toScript())
+            ->metaFeed(route('blog.feed'))
             ->render('Blog/Show', [
                 'blog' => new BlogShowResource($blog),
                 'comments' => fn () => $commentsForItemAction->handle($blog),

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { HeadingBackLink } from '@/types/Types';
+import { HeadingBackLink, HeadingCustomLink } from '@/types/Types';
 import { Link } from '@inertiajs/vue3';
 import { ArrowUturnLeftIcon } from '@heroicons/vue/20/solid';
 
@@ -8,12 +8,14 @@ withDefaults(
     as?: string;
     border?: boolean;
     backLink?: HeadingBackLink;
+    customLink?: HeadingCustomLink;
     classes?: string;
   }>(),
   {
     as: 'h1',
     border: true,
     backLink: undefined,
+    customLink: undefined,
     classes: '',
   },
 );
@@ -40,6 +42,36 @@ withDefaults(
       <span v-html="backLink.label" />
     </Link>
 
+    <a
+      v-else-if="customLink && customLink.position === 'top'"
+      :href="customLink.href"
+      :target="customLink.newTab ? '_blank' : '_self'"
+      class="mb-4 inline-flex items-center font-medium"
+      :class="[
+        {
+          'justify-center':
+            !customLink.direction || customLink.direction === 'center',
+          'justify-start': customLink.direction === 'left',
+          'justify-end': customLink.direction === 'right',
+        },
+        customLink.classes,
+      ]"
+    >
+      <component
+        :is="customLink.icon"
+        v-if="customLink.icon && customLink.iconPosition === 'left'"
+        class="h-6 w-6 pr-2 xl:h-8 xl:w-8"
+      />
+
+      <span v-html="customLink.label" />
+
+      <component
+        :is="customLink.icon"
+        v-if="customLink.icon && customLink.iconPosition === 'right'"
+        class="h-6 w-6 pl-2 xl:h-8 xl:w-8"
+      />
+    </a>
+
     <component
       :is="as"
       class="mb-0! text-center font-coeliac text-3xl font-semibold md:max-lg:text-4xl lg:text-5xl"
@@ -64,5 +96,35 @@ withDefaults(
 
       <span v-html="backLink.label" />
     </Link>
+
+    <a
+      v-else-if="customLink && customLink.position === 'bottom'"
+      :href="customLink.href"
+      :target="customLink.newTab ? '_blank' : '_self'"
+      class="mt-4 inline-flex items-center font-medium"
+      :class="[
+        {
+          'justify-center':
+            !customLink.direction || customLink.direction === 'center',
+          'justify-start': customLink.direction === 'left',
+          'justify-end': customLink.direction === 'right',
+        },
+        customLink.classes,
+      ]"
+    >
+      <component
+        :is="customLink.icon"
+        v-if="customLink.icon && customLink.iconPosition === 'left'"
+        class="h-6 w-6 pr-2 xl:h-8 xl:w-8"
+      />
+
+      <span v-html="customLink.label" />
+
+      <component
+        :is="customLink.icon"
+        v-if="customLink.icon && customLink.iconPosition === 'right'"
+        class="h-6 w-6 pl-2 xl:h-8 xl:w-8"
+      />
+    </a>
   </div>
 </template>

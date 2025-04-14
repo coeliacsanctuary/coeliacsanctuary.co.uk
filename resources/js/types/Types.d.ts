@@ -1,5 +1,10 @@
 import { Link } from '@inertiajs/vue3';
-import { FunctionalComponent, HTMLAttributes, VNodeProps } from 'vue';
+import {
+  Component,
+  FunctionalComponent,
+  HTMLAttributes,
+  VNodeProps,
+} from 'vue';
 
 export type HomeHoverItem = {
   title: string;
@@ -41,6 +46,13 @@ export type HeadingBackLink = {
   direction?: 'left' | 'center' | 'right';
 };
 
+export type HeadingCustomLink = HeadingBackLink & {
+  classes: string | string[];
+  icon?: IconComponent;
+  iconPosition?: 'left' | 'right';
+  newTab?: boolean;
+};
+
 export type CoeliacButtonProps = {
   label?: string;
   theme?: 'primary' | 'faded' | 'secondary' | 'light' | 'negative';
@@ -49,11 +61,7 @@ export type CoeliacButtonProps = {
   as?: typeof Link | 'button' | 'a';
   type?: 'submit' | 'button';
   href?: string;
-  icon?:
-    | string
-    | false
-    | FunctionalComponent<HTMLAttributes & VNodeProps>
-    | (() => void);
+  icon?: IconComponent;
   iconPosition?: 'left' | 'right' | 'center';
   loading?: boolean;
   classes?: string;
@@ -62,3 +70,10 @@ export type CoeliacButtonProps = {
   target?: string;
   iconClasses?: string;
 };
+
+export type IconComponent =
+  | string
+  | false
+  | FunctionalComponent<HTMLAttributes & VNodeProps>
+  | Component
+  | (() => void);

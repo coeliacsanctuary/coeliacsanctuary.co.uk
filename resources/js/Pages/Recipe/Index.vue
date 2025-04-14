@@ -3,7 +3,7 @@ import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import Paginator from '@/Components/Paginator.vue';
 import { router } from '@inertiajs/vue3';
-import { Ref, ref, toRef } from 'vue';
+import { Component, Ref, ref, toRef } from 'vue';
 import RecipeDetailCard from '@/Components/PageSpecific/Recipes/RecipeDetailCard.vue';
 import RecipeListFilterCard, {
   RecipeFilterOption,
@@ -16,6 +16,7 @@ import {
   RecipeMeal,
   RecipeSetFilters,
 } from '@/types/RecipeTypes';
+import { RssIcon } from '@heroicons/vue/20/solid';
 
 const props = defineProps<{
   recipes: PaginatedResponse<RecipeDetailCardType>;
@@ -110,7 +111,20 @@ const selectAllergen = (freeFrom: string[]): void => {
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading> Coeliac Sanctuary Recipes </Heading>
+    <Heading
+      :custom-link="{
+        label: 'RSS Feed',
+        href: '/recipe/feed',
+        classes: 'font-semibold text-rss hover:text-black transition',
+        newTab: true,
+        position: 'bottom',
+        direction: 'center',
+        icon: RssIcon as Component,
+        iconPosition: 'left',
+      }"
+    >
+      Coeliac Sanctuary Recipes
+    </Heading>
 
     <p class="prose max-w-none md:prose-lg">
       Why not check out some of our fabulous, gluten free, coeliac recipes! All
