@@ -54,6 +54,8 @@ export default {
         green: {
           DEFAULT: '#00e800',
         },
+
+        rss: '#FF6600',
       },
 
       containers: {

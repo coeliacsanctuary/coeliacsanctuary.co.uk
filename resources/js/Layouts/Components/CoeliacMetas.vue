@@ -85,7 +85,15 @@ defineProps<{ metas: MetaProps }>();
       content="@coeliacsanc"
     />
 
-    <template v-if="metas.alternateMetas">
+    <link
+      v-if="metas.feed"
+      rel="alternate"
+      type="application/rss+xml"
+      :href="metas.feed"
+    />
+
+    v-if="metas.alternateMetas"
+    <template>
       <meta
         v-for="(content, property) in metas.alternateMetas"
         :key="property"
@@ -102,8 +110,8 @@ defineProps<{ metas: MetaProps }>();
 
     <meta
       v-if="metas.doNotTrack"
-      name="”robots”"
-      content="”noindex”"
+      name="robots"
+      content="noindex"
     />
   </Head>
 </template>

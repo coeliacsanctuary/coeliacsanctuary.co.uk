@@ -108,6 +108,13 @@ class Inertia
         return $this;
     }
 
+    public function metaFeed(string $link): self
+    {
+        BaseInertia::share('meta.feed', $link);
+
+        return $this;
+    }
+
     /** @param array<string, mixed> | Arrayable<string, mixed> $props */
     public function render(string $component, array|Arrayable $props = []): Response
     {

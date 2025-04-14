@@ -29,6 +29,7 @@ class ShowController
                 'article:author' => 'Coeliac Sanctuary',
                 'article.tags' => $recipe->meta_tags,
             ])
+            ->metaFeed(route('recipe.feed'))
             ->render('Recipe/Show', [
                 'recipe' => new RecipeShowResource($recipe),
                 'comments' => fn () => $getCommentsForItemAction->handle($recipe),
