@@ -8,7 +8,7 @@ use App\Actions\Blogs\GetBlogsForBlogIndexAction;
 use App\Actions\Recipes\GetRecipesForIndexAction;
 use App\Feeds\CombinedFeed;
 use App\Models\Blogs\Blog;
-use App\Nova\Resources\Main\Recipe;
+use App\Models\Recipes\Recipe;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -19,8 +19,7 @@ class IndexController
         GetBlogsForBlogIndexAction $getBlogsForBlogIndexAction,
         GetRecipesForIndexAction $getRecipesForIndexAction,
         CombinedFeed $combinedFeed,
-    ): Response
-    {
+    ): Response {
         /** @var Collection<int, Blog> $blogs */
         $blogs = $getBlogsForBlogIndexAction
             ->handle()
@@ -33,7 +32,8 @@ class IndexController
             ->collection
             ->map(fn (JsonResource $resource) => $resource->resource);
 
-        $items = $blogs->merge($recipes)
+        /** @var Collection<int, Blog | Recipe> $items */
+        $items = collect([...$blogs, ...$recipes])
             ->sortByDesc('created_at')
             ->take(10);
 

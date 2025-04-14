@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Feeds;
 
-use App\Feeds\BlogFeed;
 use App\Feeds\CombinedFeed;
 use App\Feeds\Feed;
 use App\Models\Blogs\Blog;
