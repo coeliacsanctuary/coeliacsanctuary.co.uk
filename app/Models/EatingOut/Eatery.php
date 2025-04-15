@@ -172,6 +172,11 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
         ]);
     }
 
+    public function absoluteLink(): string
+    {
+        return config('app.url') . $this->link();
+    }
+
     /** @return HasOne<EateryCuisine, $this> */
     public function cuisine(): HasOne
     {

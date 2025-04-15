@@ -132,6 +132,11 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
         ]);
     }
 
+    public function absoluteLink(): string
+    {
+        return config('app.url') . $this->link();
+    }
+
     /**
      * @param  Builder<static>  $query
      * @return Builder<static>
