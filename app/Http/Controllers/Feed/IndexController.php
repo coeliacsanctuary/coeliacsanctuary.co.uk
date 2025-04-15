@@ -26,7 +26,7 @@ class IndexController
             ->collection
             ->map(fn (JsonResource $resource) => $resource->resource);
 
-        /** @var Collection<int, Reccipe> $recipes */
+        /** @var Collection<int, Recipe> $recipes */
         $recipes = $getRecipesForIndexAction
             ->handle()
             ->collection
