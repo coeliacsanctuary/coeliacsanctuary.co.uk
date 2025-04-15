@@ -13,6 +13,7 @@ use App\Http\Controllers\Newsletter\StoreController as NewsletterStoreController
 use App\Http\Controllers\Popup\Activity\StoreController as PopupActivityStoreController;
 use App\Http\Controllers\PrivacyPolicy\IndexController as PrivacyPolicyIndexController;
 use App\Http\Controllers\Shop\TravelCards\IndexController as ShopTravelCardsLandingPageIndexController;
+use App\Http\Controllers\SiteMap\IndexController as SiteMapController;
 use App\Http\Controllers\Static\Map\GetController as StaticMapGetController;
 use App\Http\Controllers\TermsOfUse\IndexController as TermsOfUseIndexController;
 use App\Http\Controllers\WorkWithUs\IndexController as WorkWithUsIndexController;
@@ -51,6 +52,7 @@ Route::post('newsletter', NewsletterStoreController::class)
     ->name('newsletter.store');
 
 Route::get('feed', FeedController::class)->name('feed');
+Route::get('sitemap.xml', SiteMapController::class)->name('sitemap');
 
 Route::get('static/map/{latlng}', StaticMapGetController::class)
     ->name('static.map')

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
 use App\Contracts\Search\IsSearchable;
@@ -38,6 +39,7 @@ use Spatie\SchemaOrg\Schema;
  */
 class ShopProduct extends Model implements HasMedia, IsSearchable
 {
+    use ClearsCache;
     use DisplaysMedia;
     use HasLegacyImage;
     use Imageable;
@@ -287,5 +289,10 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
                         );
                 }
             );
+    }
+
+    protected function cacheKey(): string
+    {
+        return 'products';
     }
 }
