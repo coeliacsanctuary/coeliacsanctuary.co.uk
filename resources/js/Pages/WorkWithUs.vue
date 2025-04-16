@@ -21,8 +21,18 @@ import Heading from '@/Components/Heading.vue';
 
       <p class="prose prose-lg max-w-none xl:prose-xl">
         Coeliac Sanctuary is forever growing and currently averages over 30,000
-        visitors a month and has a social media following of over 20,000 spread
-        across Facebook, Instagram and Twitter.
+        visitors a month and has a social media following of over 35,000 on
+        <a
+          href="https://www.facebook.com/coeliacsanctuary/"
+          target="_blank"
+          >Facebook</a
+        >
+        and nearly 15,000 on
+        <a
+          href="https://www.instagram.com/coeliacsanctuary"
+          target="_blank"
+          >Instagram</a
+        >.
       </p>
 
       <h3 class="my-5 text-center text-xl font-semibold xl:text-2xl">
@@ -55,18 +65,20 @@ import Heading from '@/Components/Heading.vue';
     </WorkWithUsStory>
 
     <WorkWithUsStory
-      title="Hull Pie Company"
-      image="/images/misc/work-with-us/pie-logo.png"
+      title="Schär"
+      image="/images/misc/work-with-us/schar-logo.jpg"
       :links="[
         {
-          href: '/blog/hull-pie-ltd-gluten-free-pies-and-competition',
-          label: 'Hull Pie Ltd Gluten Free Pies',
+          href: 'https://www.facebook.com/coeliacsanctuary/posts/pfbid0NgfUXBLJ5iFCjM3H8wVakkVLPaiJx7NGA6dtnTtXmLDPhnX2EUqh2vVZDiFMCi18l',
+          label: 'Example of a Facebook post showcasing their flatbread range',
         },
       ]"
     >
-      When the Hull Pie Company started selling gluten free pies we happily
-      worked with them to share their new products and also ran a competition to
-      win some of their pies.
+      When Schär got in touch with me to ask if I could help promote their
+      gluten free range, I was more than happy to get involved. I created social
+      media content showcasing their products, used their bread in a range of
+      gluten free recipes, and helped spread the word about their brand to my
+      audience.
     </WorkWithUsStory>
 
     <WorkWithUsStory
@@ -90,6 +102,26 @@ import Heading from '@/Components/Heading.vue';
     </WorkWithUsStory>
 
     <WorkWithUsStory
+      title="Buttermilk"
+      image="/images/misc/work-with-us/buttermilk-logo.png"
+      :links="[
+        {
+          href: 'https://www.facebook.com/coeliacsanctuary/posts/pfbid0ULQNKPHx7x8DUDZd7mBsM5iioFidGHKk2W3igzvRPCdt6dMbE5CRqzRnmQQeCZwal',
+          label: 'Facebook post about the new caramel nougat bars',
+        },
+        {
+          href: 'https://www.facebook.com/coeliacsanctuary/posts/pfbid024fJar27QJCYpn9Sropx1YyQxYaaPPTRT5EYWJTFuCLnFPWLHEUYQ6WPR5gjSRLF9l',
+          label: 'Facebook post about the new chocolate wafer bars',
+        },
+      ]"
+    >
+      When Buttermilk launched their delicious range of gluten free treats, I
+      worked with them to help spread the word on social media. I was especially
+      excited to share their incredible wafer chocolate bars and indulgent
+      caramel nougat bar—firm favourites in our house!
+    </WorkWithUsStory>
+
+    <WorkWithUsStory
       title="Morrisons"
       image="/images/misc/work-with-us/morrisons-logo.png"
       :links="[
@@ -105,9 +137,8 @@ import Heading from '@/Components/Heading.vue';
       out.
     </WorkWithUsStory>
 
-    <div class="grid gap-5 xmd:grid-cols-10! sm:max-xmd:grid-cols-2">
+    <div class="grid gap-5 xmd:grid-cols-2">
       <WorkWithUsStory
-        class="xmd:col-span-4 xmd:col-start-2"
         title="Pho"
         image="/images/misc/work-with-us/pho-logo.png"
         :links="[
@@ -128,7 +159,6 @@ import Heading from '@/Components/Heading.vue';
       </WorkWithUsStory>
 
       <WorkWithUsStory
-        class="xmd:col-span-4"
         title="The Lounge Group"
         image="/images/misc/work-with-us/lounge-logo.png"
         :links="[
@@ -150,27 +180,25 @@ import Heading from '@/Components/Heading.vue';
         Nationwide page. The Lounge Group kindly sent me a massive list of all
         of their branches to add to the Eating Out guide.
       </WorkWithUsStory>
-
-      <Card
-        class="prose prose-lg max-w-none text-center xmd:col-span-6 xmd:col-start-3 xmd:row-start-2 xl:prose-xl"
-      >
-        <p>
-          Are you listed in our
-          <a
-            href="/wheretoeat/nationwide"
-            target="_blank"
-            >Nationwide Eateries</a
-          >
-          page and want all of your branches listing? If you can provide a CSV
-          of your branches please
-          <a
-            href="/contact"
-            target="_blank"
-            >get in touch</a
-          >
-          and I'd love to work with you to get them listed!
-        </p>
-      </Card>
     </div>
+
+    <Card class="mx-auto prose prose-lg max-w-6xl text-center xl:prose-xl">
+      <p>
+        Are you listed in our
+        <a
+          href="/wheretoeat/nationwide"
+          target="_blank"
+          >Nationwide Eateries</a
+        >
+        page and want all of your branches listing? If you can provide a CSV of
+        your branches please
+        <a
+          href="/contact"
+          target="_blank"
+          >get in touch</a
+        >
+        and I'd love to work with you to get them listed!
+      </p>
+    </Card>
   </div>
 </template>
