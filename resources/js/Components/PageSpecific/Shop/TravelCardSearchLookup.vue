@@ -25,38 +25,45 @@ const searchResult = ref<SearchResult | null>(null);
 const { currentUrl } = useBrowser();
 
 const selectResult = (id: number) => {
-  loadingResult.value = true;
+  nextTick(() => {
+    loadingResult.value = true;
 
-  axios
-    .get(`/api/shop/travel-card-search/${id}`)
-    .then((response: AxiosResponse<SearchResult>) => {
-      const url = new URL(useUrl().currentUrl());
-      url.searchParams.set('term', lookup.value?.value);
+    axios
+      .get(`/api/shop/travel-card-search/${id}`)
+      .then((response: AxiosResponse<SearchResult>) => {
+        const url = new URL(useUrl().currentUrl());
+        url.searchParams.set('term', lookup.value?.value);
 
-      router.get(
-        url.toString(),
-        {},
-        {
-          preserveState: true,
-          preserveScroll: true,
-        },
-      );
+        router.get(
+          url.toString(),
+          {},
+          {
+            preserveState: true,
+            preserveScroll: true,
+          },
+        );
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      lookup.value?.reset();
-      searchResult.value = response.data;
-      loadingResult.value = false;
-    });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        lookup.value?.reset();
+        searchResult.value = response.data;
+        loadingResult.value = false;
+      });
+  });
 };
 
 const termFromSearch = ref();
+const hasTyped = ref(false);
 
 const handleSearch = (results: { id: number }[]) => {
-  if (!termFromSearch.value) {
+  if (!termFromSearch.value || hasTyped.value) {
     return;
   }
 
   selectResult(results[0].id);
+};
+
+const typed = () => {
+  hasTyped.value = true;
 };
 
 const searchContainer = ref<null | HTMLElement>(null);
@@ -107,7 +114,9 @@ onMounted(() => {
         lookup-endpoint="/api/shop/travel-card-search"
         :preselect-term="termFromSearch"
         input-classes="text-2xl! p-4! text-center"
+        results-classes="bg-white"
         @search="handleSearch"
+        @typed="typed"
       >
         <template #item="{ id, term, type }">
           <div

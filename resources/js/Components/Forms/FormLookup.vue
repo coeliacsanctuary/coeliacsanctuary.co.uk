@@ -13,7 +13,7 @@ const props = withDefaults(
   FormLookupPropDefaults,
 );
 
-const emits = defineEmits(['search', 'unlock']);
+const emits = defineEmits(['search', 'unlock', 'typed']);
 
 const value = ref('');
 
@@ -107,7 +107,7 @@ defineExpose({ reset, value });
 watch(
   () => props.preselectTerm,
   () => {
-    if (props.preselectTerm) {
+    if (props.preselectTerm && !value.value) {
       value.value = props.preselectTerm;
     }
   },
@@ -165,6 +165,7 @@ watchDebounced(value, performSearch, { debounce: 500 });
           ...(min ? { min } : null),
           ...(max ? { max } : null),
         }"
+        @keyup="$emit('typed')"
       />
 
       <div
@@ -195,6 +196,7 @@ watchDebounced(value, performSearch, { debounce: 500 });
     <div
       v-if="showResultsBox && !lock"
       class="rounded-b-md border border-t-0 border-grey-off shadow-xs focus:border-grey-dark"
+      :class="resultsClasses"
     >
       <ul v-if="results.length > 0 || allowAny">
         <li

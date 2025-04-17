@@ -162,6 +162,7 @@ export type FormLookupProps = Omit<InputProps, 'type'> & {
   allowAny?: boolean;
   fallbackObject?: object;
   fallbackKey?: string;
+  resultsClasses?: string;
 };
 
 export const FormLookupPropDefaults: Partial<
@@ -176,6 +177,7 @@ export const FormLookupPropDefaults: Partial<
   allowAny: false,
   fallbackObject: {},
   fallbackKey: undefined,
+  resultsClasses: '',
 };
 
 export type ProductQuantitySwitcherProps = Omit<
