@@ -37,7 +37,7 @@ class TravelCardSearchAiLookupTest extends TestCase
     {
         app(TravelCardSearchAiLookup::class)->handle('foo');
 
-        OpenAI::assertSent(Chat::class, function(string $method, array $data) {
+        OpenAI::assertSent(Chat::class, function (string $method, array $data) {
             $this->assertEquals('create', $method);
             $message = $data['messages'][0];
 
