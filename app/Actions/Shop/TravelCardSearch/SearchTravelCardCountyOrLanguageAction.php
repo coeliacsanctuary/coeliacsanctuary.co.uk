@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 class SearchTravelCardCountyOrLanguageAction
 {
+    /** @return Collection<int, array{id: int, term: string, type: string}> */
     public function handle(string $searchString): Collection
     {
         return TravelCardSearchTerm::query()

@@ -13,6 +13,7 @@ use Throwable;
 
 class TravelCardSearchAiLookup
 {
+    /** @return Collection<int, array{id: int, term: string, type: string}> */
     public function handle(string $searchTerm): ?Collection
     {
         try {
