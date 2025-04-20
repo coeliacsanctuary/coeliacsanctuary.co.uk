@@ -175,7 +175,7 @@ eventBus.$on('payment-failed', () => {
 
         <FormInput
           v-model="fields.county"
-          label="County"
+          label="County / State / Province"
           name="county"
           autocomplete="county"
           borders
@@ -183,7 +183,7 @@ eventBus.$on('payment-failed', () => {
 
         <FormInput
           v-model="fields.postcode"
-          label="Postcode"
+          label="Postcode / Zipcode"
           name="postcode"
           autocomplete="postcode"
           required
