@@ -177,7 +177,7 @@ if (typeof document !== 'undefined') {
                 <div class="text-right">PayPal</div>
 
                 <template v-if="order.payment.paypalAccount">
-                  <div class="font-semibold">Ending With</div>
+                  <div class="font-semibold">Payment Account</div>
                   <div
                     class="col-span-2 text-right"
                     v-text="order.payment.paypalAccount"
