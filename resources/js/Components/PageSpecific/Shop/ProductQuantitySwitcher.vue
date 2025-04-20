@@ -87,20 +87,24 @@ const classes = (): string[] => {
         <PlusCircleIcon
           class="size-6 cursor-pointer transition"
           :class="{
-            'text-primary/30': value >= props.max,
+            'text-primary/30': value >= props.max || disabled,
             'text-primary hover:text-primary-dark':
-              !props.max || value < props.max,
+              (!props.max || value < props.max) && !disabled,
+            '!cursor-not-allowed': disabled,
           }"
-          @click="!props.max || value < props.max ? value++ : undefined"
+          @click="
+            (!props.max || value < props.max) && !disabled ? value++ : undefined
+          "
         />
 
         <MinusCircleIcon
           class="size-6 cursor-pointer transition"
           :class="{
-            'text-primary/30': value === 1,
-            'text-primary hover:text-primary-dark': value > 1,
+            'text-primary/30': value === 1 || disabled,
+            'text-primary hover:text-primary-dark': value > 1 && !disabled,
+            '!cursor-not-allowed': disabled,
           }"
-          @click="value > 1 ? value-- : undefined"
+          @click="value > 1 && !disabled ? value-- : undefined"
         />
       </div>
     </div>
