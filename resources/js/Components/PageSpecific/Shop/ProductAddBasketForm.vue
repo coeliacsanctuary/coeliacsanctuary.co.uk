@@ -90,7 +90,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
           <label
             class="block text-base leading-6 font-semibold text-primary-dark md:max-xl:text-lg xl:text-xl"
           >
-            {{ product.variant_title }}
+            Select {{ product.variant_title }}
             <span
               class="text-red"
               v-text="'*'"

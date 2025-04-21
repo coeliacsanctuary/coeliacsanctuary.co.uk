@@ -106,6 +106,14 @@ const useShopStore = defineStore<'shop-checkout', State, Getters, Actions>(
         this.setForm({ shipping: details });
       },
       setBillingDetails(details) {
+        if (
+          ['england', 'wales', 'scotland'].includes(
+            details.country.toLowerCase(),
+          )
+        ) {
+          details.country = 'united kingdom';
+        }
+
         this.setForm({ billing: details });
       },
       setCountry(country: string) {

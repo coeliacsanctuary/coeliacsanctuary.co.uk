@@ -8,7 +8,6 @@ import {
   LinkIcon,
   MapIcon,
 } from '@heroicons/vue/24/solid';
-import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 
 const props = defineProps<{

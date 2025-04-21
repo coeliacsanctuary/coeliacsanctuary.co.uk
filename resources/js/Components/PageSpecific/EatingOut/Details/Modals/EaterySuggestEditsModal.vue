@@ -3,7 +3,6 @@ import Modal from '@/Components/Overlays/Modal.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { computed, onMounted, Ref, ref } from 'vue';
 import type { Component } from 'vue';
-import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import Loader from '@/Components/Loader.vue';
 import axios, { AxiosResponse } from 'axios';
 import { DataResponse } from '@/types/GenericTypes';

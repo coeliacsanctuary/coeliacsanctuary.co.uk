@@ -19,7 +19,7 @@ class AddToBasketRequest extends FormRequest
         return [
             'product_id' => ['required', 'numeric', Rule::in($productIds)],
             'variant_id' => ['required', 'numeric'],
-            'quantity' => ['required', 'numeric', 'min:1'],
+            'quantity' => ['required', 'int', 'min:1', 'regex:/^[0-9]+$/'],
         ];
     }
 

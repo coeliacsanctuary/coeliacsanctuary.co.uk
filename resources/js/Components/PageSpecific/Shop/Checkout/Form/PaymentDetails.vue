@@ -18,11 +18,11 @@ const store = useShopStore();
 
 const shippingDetails = computed(() => store.shippingDetails);
 
-const fields = computed<CheckoutBillingStep>(() => ({
+const fields = reactive<CheckoutBillingStep>({
   name: store.customerName,
   country: store.selectedCountry,
   ...shippingDetails.value,
-}));
+});
 
 const billingAddressSelect = ref<'same' | 'other'>('same');
 
@@ -37,30 +37,30 @@ const paymentValid = ref(false);
 
 const submit = () => {
   submitting.value = true;
-  store.setBillingDetails(fields.value);
+  store.setBillingDetails(fields);
 
   emits('continue');
 };
 
 const canSubmit = computed((): boolean => {
   if (billingAddressSelect.value === 'other') {
-    if (fields.value.name === '') {
+    if (fields.name === '') {
       return false;
     }
 
-    if (fields.value.address_1 === '') {
+    if (fields.address_1 === '') {
       return false;
     }
 
-    if (fields.value.town === '') {
+    if (fields.town === '') {
       return false;
     }
 
-    if (fields.value.postcode === '') {
+    if (fields.postcode === '') {
       return false;
     }
 
-    if (fields.value.country === '') {
+    if (fields.country === '') {
       return false;
     }
   }
@@ -74,7 +74,8 @@ const canSubmit = computed((): boolean => {
 
 watch(billingAddressSelect, () => {
   if (billingAddressSelect.value === 'same') {
-    fields.value = reactive({
+    // eslint-disable-next-line no-const-assign
+    fields = reactive({
       name: store.customerName,
       country: store.selectedCountry,
       ...store.shippingDetails,
@@ -83,14 +84,14 @@ watch(billingAddressSelect, () => {
     return;
   }
 
-  fields.value.name = '';
-  fields.value.address_1 = '';
-  fields.value.address_2 = '';
-  fields.value.address_3 = '';
-  fields.value.town = '';
-  fields.value.county = '';
-  fields.value.postcode = '';
-  fields.value.country = '';
+  fields.name = '';
+  fields.address_1 = '';
+  fields.address_2 = '';
+  fields.address_3 = '';
+  fields.town = '';
+  fields.county = '';
+  fields.postcode = '';
+  fields.country = '';
 });
 
 eventBus.$on('payment-failed', () => {
@@ -175,7 +176,7 @@ eventBus.$on('payment-failed', () => {
 
         <FormInput
           v-model="fields.county"
-          label="County"
+          label="County / State / Province"
           name="county"
           autocomplete="county"
           borders
@@ -183,7 +184,7 @@ eventBus.$on('payment-failed', () => {
 
         <FormInput
           v-model="fields.postcode"
-          label="Postcode"
+          label="Postcode / Zipcode"
           name="postcode"
           autocomplete="postcode"
           required

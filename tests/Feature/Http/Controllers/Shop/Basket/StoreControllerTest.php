@@ -101,6 +101,12 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
+    public function itReturnsAValidationErrorWithADodgyScientificNumber(): void
+    {
+        $this->makeRequest(['quantity' => '123e4'])->assertSessionHasErrors('quantity');
+    }
+
+    #[Test]
     public function itCallsTheResolveBasketAction(): void
     {
         $this->expectAction(ResolveBasketAction::class);

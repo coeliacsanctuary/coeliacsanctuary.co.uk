@@ -14,7 +14,6 @@ import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollecti
 import useSearch from '@/composables/useSearch';
 import { pluralise } from '@/helpers';
 import { onMounted, ref } from 'vue';
-import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 
 const props = defineProps<{
   results: PaginatedResponse<SearchResult>;

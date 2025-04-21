@@ -42,7 +42,7 @@ class ShowController
                 $pendingOrder->update(['state_id' => OrderState::BASKET]);
 
                 return redirect(route('shop.basket.checkout'))
-                    ->withErrors(['basket' => 'There has an error authorising your payment, you have not been charged, please try again.'])
+                    ->withErrors(['basket' => 'There was an error authorising your payment, you have not been charged, please try again.'])
                     ->withCookie('basket_token', $pendingOrder->token);
             }
 
