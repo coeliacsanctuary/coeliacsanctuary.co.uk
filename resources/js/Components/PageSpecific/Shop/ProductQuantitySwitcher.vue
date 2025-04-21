@@ -4,7 +4,7 @@ import {
   ProductQuantitySwitcherProps,
 } from '@/Components/Forms/Props';
 import { defineModel } from 'vue';
-import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/20/solid';
+import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/vue/20/solid';
 
 const props = withDefaults(
   defineProps<ProductQuantitySwitcherProps>(),
@@ -53,6 +53,15 @@ const classes = (): string[] => {
 
   return base;
 };
+
+const onlyAllowDigits = (e: KeyboardEvent) => {
+  const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete'];
+  const isDigit = /^[0-9]$/.test(e.key);
+
+  if (!isDigit && !allowedKeys.includes(e.key)) {
+    e.preventDefault();
+  }
+};
 </script>
 
 <template>
@@ -81,9 +90,13 @@ const classes = (): string[] => {
         :min="min"
         :max="max"
         :disabled="disabled"
+        @keydown="onlyAllowDigits"
       />
 
-      <div class="absolute inset-y-0 right-0 py-1 pr-3">
+      <div
+        v-if="value"
+        class="absolute inset-y-0 right-0 py-1 pr-3"
+      >
         <PlusCircleIcon
           class="size-6 cursor-pointer transition"
           :class="{
@@ -100,7 +113,7 @@ const classes = (): string[] => {
         <MinusCircleIcon
           class="size-6 cursor-pointer transition"
           :class="{
-            'text-primary/30': value === 1 || disabled,
+            'text-primary/30': value <= 1 || disabled,
             'text-primary hover:text-primary-dark': value > 1 && !disabled,
             '!cursor-not-allowed': disabled,
           }"
