@@ -92,8 +92,7 @@ defineProps<{ metas: MetaProps }>();
       :href="metas.feed"
     />
 
-    v-if="metas.alternateMetas"
-    <template>
+    <template v-if="metas.alternateMetas">
       <meta
         v-for="(content, property) in metas.alternateMetas"
         :key="property"

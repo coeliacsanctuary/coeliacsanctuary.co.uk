@@ -7,7 +7,7 @@ import { ShopProductIndex } from '@/types/Shop';
 import SubHeading from '@/Components/SubHeading.vue';
 import CategoryProductCard from '@/Components/PageSpecific/Shop/CategoryProductCard.vue';
 
-const props = defineProps<{ products: ShopProductIndex[] }>();
+defineProps<{ products: ShopProductIndex[] }>();
 </script>
 
 <template>

@@ -74,6 +74,7 @@ const canSubmit = computed((): boolean => {
 
 watch(billingAddressSelect, () => {
   if (billingAddressSelect.value === 'same') {
+    // eslint-disable-next-line no-const-assign
     fields = reactive({
       name: store.customerName,
       country: store.selectedCountry,
