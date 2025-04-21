@@ -3,6 +3,7 @@ import eventBus from '@/eventBus';
 import { VisitOptions } from '@inertiajs/core';
 import { InertiaForm } from '@/types/Core';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import { router } from '@inertiajs/vue3';
 
 type AddBasketPayload = {
   product_id: number;
@@ -40,6 +41,7 @@ export default () => {
       preserveScroll: true,
       onSuccess: () => {
         eventBus.$emit('product-added-to-basket');
+        router.flushAll();
 
         useGoogleEvents().googleEvent('event', 'add_to_cart', {
           items: [
