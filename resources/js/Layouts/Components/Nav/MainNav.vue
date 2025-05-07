@@ -31,7 +31,7 @@ watch(isSticky, () => {
     id="main-nav"
     class="mx-auto flex hidden text-lg md:flex md:items-center md:justify-center"
     :class="{
-      'fixed top-0 h-12 w-screen bg-primary': isSticky,
+      'fixed top-0 z-[99999] h-12 w-screen bg-primary': isSticky,
       'h-14 w-full max-w-8xl': !isSticky,
     }"
   >

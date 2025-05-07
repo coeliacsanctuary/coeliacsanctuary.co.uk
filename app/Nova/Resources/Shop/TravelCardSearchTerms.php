@@ -9,10 +9,14 @@ use App\Models\Shop\ShopProduct;
 use App\Models\Shop\TravelCardSearchTerm;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Laravel\Nova\Fields\BelongsToMany;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
@@ -58,7 +62,52 @@ class TravelCardSearchTerms extends Resource
                     $category = $product->categories()->first();
 
                     return "{$category->title} - {$product->title}";
-                }),
+                })
+                ->fields(fn () => [
+                    Boolean::make('Show on Product Page Country List', 'card_show_on_product_page'),
+
+                    Select::make('Language', 'card_language')
+                        ->onlyOnForms()
+                        ->dependsOn(['card_show_on_product_page'], function (Select $field, NovaRequest $request, FormData $formData): void {
+                            $field->hide();
+
+                            /** @phpstan-ignore-next-line */
+                            if ($formData->card_show_on_product_page === true) {
+                                /** @var Pivot $model */
+                                $model = $field->resource;
+
+                                /** @var ShopProduct $product */
+                                $product = ShopProduct::query()->find($model->product_id);
+
+                                $field
+                                    ->show()
+                                    ->options(
+                                        Str::of($product->title)
+                                            ->before(' Coeliac')
+                                            ->explode(' and ')
+                                            ->map(fn (string $language) => mb_trim($language))
+                                            ->mapWithKeys(fn (string $language) => [Str::headline($language) => Str::headline($language)])
+                                            ->put('both', 'Both Languages')
+                                            ->toArray()
+                                    )
+                                    ->displayUsingLabels();
+                            }
+                        }),
+
+                    Number::make('Priority', 'card_score')
+                        ->onlyOnForms()
+                        ->min(0)
+                        ->max(100)
+                        ->help('Used to order the countries on the product page, highest first.')
+                        ->dependsOn(['card_show_on_product_page'], function (Number $field, NovaRequest $request, FormData $formData): void {
+                            $field->hide();
+
+                            /** @phpstan-ignore-next-line */
+                            if ($formData->card_show_on_product_page === true) {
+                                $field->show();
+                            }
+                        }),
+                ]),
         ];
     }
 

@@ -9,8 +9,11 @@ use App\Http\Response\Inertia;
 use App\Models\Shop\ShopProduct;
 use App\Resources\Shop\ShopProductResource;
 use App\Resources\Shop\ShopProductReviewResource;
+use App\Resources\Shop\ShopTravelCardProductResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response as LaravelResponse;
 use Illuminate\Support\Facades\Route;
 use Inertia\Response;
@@ -28,7 +31,18 @@ class ShowController
             return redirect(route('shop.product', $product), LaravelResponse::HTTP_MOVED_PERMANENTLY);
         }
 
-        $product->load(['categories', 'prices', 'variants', 'media', 'reviews']);
+        /** @var class-string<JsonResource> $resource */
+        $resource = ShopProductResource::class;
+
+        /** @var string[] | array{string, mixed} $relations */
+        $relations = ['categories', 'prices', 'variants', 'media', 'reviews'];
+
+        if ($product->categories->pluck('title')->containsAny(['Coeliac Gluten Free Travel Cards', 'Coeliac+ Other Allergen Travel Cards'])) {
+            $resource = ShopTravelCardProductResource::class;
+            $relations['travelCardSearchTerms'] = fn (Relation $builder) => $builder->where('type', 'country'); /** @phpstan-ignore-line  */
+        }
+
+        $product->load($relations);
 
         $reviews = $product->reviews()
             ->with(['parent'])
@@ -43,7 +57,7 @@ class ShowController
             ->metaImage($product->social_image)
             ->schema($product->schema()->toScript())
             ->render('Shop/Product', [
-                'product' => new ShopProductResource($product),
+                'product' => new $resource($product),
                 'reviews' => fn () => ShopProductReviewResource::collection($reviews),
                 'currentReviewFilter' => $request->float('reviewFilter'),
             ]);
