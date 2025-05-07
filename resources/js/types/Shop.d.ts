@@ -1,4 +1,5 @@
 import { StarRating } from '@/types/EateryTypes';
+import { CustomComponent } from '@/types/Types';
 
 export type ShopCategoryIndex = {
   title: string;
@@ -41,6 +42,14 @@ export type ShopProductDetail = ShopBaseProduct & {
     link: string;
   };
   rating?: ShopProductRating;
+};
+
+export type ShopTravelCardProductDetail = ShopProductDetail & {
+  is_travel_card: true;
+  countries: {
+    language: string;
+    countries: { country: string; code?: string }[];
+  }[];
 };
 
 export type ShopProductVariant = {
@@ -139,4 +148,17 @@ export type TravelCardFeedbackItem = {
   name: string;
   product: string;
   link: string;
+};
+
+export type ProductAdditionalDetailAccordionProps = {
+  title: string;
+  openByDefault?: boolean;
+  content?: string;
+  component?: CustomComponent;
+  props?: Record<string, unknown>;
+  headerComponent?: CustomComponent;
+  headerClasses?: string;
+  wrapperComponent?: CustomComponent;
+  wrapperClasses?: string;
+  panelClasses?: string;
 };

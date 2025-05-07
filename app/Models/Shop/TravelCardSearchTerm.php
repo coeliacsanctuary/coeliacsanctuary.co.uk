@@ -19,6 +19,6 @@ class TravelCardSearchTerm extends Model
             'shop_product_assigned_travel_card_search_terms',
             'search_term_id',
             'product_id',
-        );
+        )->withTimestamps()->withPivot(['card_language', 'card_score', 'card_show_on_product_page']);
     }
 }

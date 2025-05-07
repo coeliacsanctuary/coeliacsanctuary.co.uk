@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5695e520bcf4ce2df0b4011ffb6264e7",
+    "content-hash": "306492909dd45f5c3b0e7653b3180c5a",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -1960,7 +1960,7 @@
         },
         {
             "name": "jpeters8889/address-field",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/AddressField",
@@ -1996,7 +1996,7 @@
         },
         {
             "name": "jpeters8889/apex-charts",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ApexCharts",
@@ -2032,7 +2032,7 @@
         },
         {
             "name": "jpeters8889/body",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Body",
@@ -2068,7 +2068,7 @@
         },
         {
             "name": "jpeters8889/country-icon",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CountryIcon",
@@ -2104,7 +2104,7 @@
         },
         {
             "name": "jpeters8889/custom-styles",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CustomStyles",
@@ -2140,7 +2140,7 @@
         },
         {
             "name": "jpeters8889/eatery-opening-times",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryOpeningTimes",
@@ -2176,7 +2176,7 @@
         },
         {
             "name": "jpeters8889/eatery-recommendation-listener",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryRecommendationListener",
@@ -2212,7 +2212,7 @@
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/OrderDispatchSlip",
@@ -2248,7 +2248,7 @@
         },
         {
             "name": "jpeters8889/polymorphic-panel",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PolymorphicPanel",
@@ -2284,7 +2284,7 @@
         },
         {
             "name": "jpeters8889/print-all-orders",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PrintAllOrders",
@@ -2320,7 +2320,7 @@
         },
         {
             "name": "jpeters8889/shop-daily-stock",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopDailyStock",
@@ -2356,7 +2356,7 @@
         },
         {
             "name": "jpeters8889/shop-order-open-dispatch-slip",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderOpenDispatchSlip",
@@ -2392,7 +2392,7 @@
         },
         {
             "name": "jpeters8889/shop-order-shipping-action",
-            "version": "dev-develop",
+            "version": "dev-hotfix/shop-tweaks",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderShippingAction",
@@ -3722,6 +3722,73 @@
                 "source": "https://github.com/thephpleague/flysystem-local/tree/3.29.0"
             },
             "time": "2024-08-09T21:24:39+00:00"
+        },
+        {
+            "name": "league/iso3166",
+            "version": "4.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alcohol/iso3166.git",
+                "reference": "5133fed7d54728222f4058702487dccedda20472"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alcohol/iso3166/zipball/5133fed7d54728222f4058702487dccedda20472",
+                "reference": "5133fed7d54728222f4058702487dccedda20472",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.12.6",
+                "phpstan/phpstan-deprecation-rules": "^1.2.1",
+                "phpstan/phpstan-strict-rules": "^1.6.1",
+                "phpunit/phpunit": "^9.6.21"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\ISO3166\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com"
+                }
+            ],
+            "description": "ISO 3166-1 PHP Library",
+            "homepage": "https://github.com/alcohol/iso3166",
+            "keywords": [
+                "3166",
+                "3166-1",
+                "ISO 3166",
+                "countries",
+                "iso",
+                "library"
+            ],
+            "support": {
+                "issues": "https://github.com/alcohol/iso3166/issues",
+                "source": "https://github.com/alcohol/iso3166"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/alcohol",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-10-10T07:39:24+00:00"
         },
         {
             "name": "league/mime-type-detection",

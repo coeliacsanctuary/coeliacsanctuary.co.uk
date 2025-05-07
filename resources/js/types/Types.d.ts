@@ -48,7 +48,7 @@ export type HeadingBackLink = {
 
 export type HeadingCustomLink = HeadingBackLink & {
   classes: string | string[];
-  icon?: IconComponent;
+  icon?: CustomComponent;
   iconPosition?: 'left' | 'right';
   newTab?: boolean;
 };
@@ -61,7 +61,7 @@ export type CoeliacButtonProps = {
   as?: typeof Link | 'button' | 'a';
   type?: 'submit' | 'button';
   href?: string;
-  icon?: IconComponent;
+  icon?: CustomComponent;
   iconPosition?: 'left' | 'right' | 'center';
   loading?: boolean;
   classes?: string;
@@ -71,9 +71,10 @@ export type CoeliacButtonProps = {
   iconClasses?: string;
 };
 
-export type IconComponent =
+export type CustomComponent =
   | string
   | false
   | FunctionalComponent<HTMLAttributes & VNodeProps>
   | Component
+  | Record<string, unknown>
   | (() => void);

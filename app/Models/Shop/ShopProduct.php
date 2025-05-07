@@ -121,7 +121,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
             'shop_product_assigned_travel_card_search_terms',
             'product_id',
             'search_term_id',
-        );
+        )->withTimestamps()->withPivot(['card_language', 'card_score', 'card_show_on_product_page']);
     }
 
     public function getScoutKey(): mixed
