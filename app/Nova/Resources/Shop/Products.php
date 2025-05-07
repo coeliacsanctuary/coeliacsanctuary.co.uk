@@ -82,6 +82,10 @@ class Products extends Resource
                     ->deferrable()
                     ->help('In pounds, eg £2.50')
                     ->fillUsing(function (NovaRequest $request, ShopProduct $model, $attribute): void {
+                        if ($request->method() !== 'GET') {
+                            return;
+                        }
+
                         $model->prices()->create([
                             'price' => $request->input($attribute),
                         ]);
