@@ -92,6 +92,7 @@ class ShopTravelCardProductResource extends ShopProductResource
                 'scotland', 'orkney islands', 'shetland islands' => 'gb-sct',
                 'america', 'usa' => 'us',
                 'channel islands' => 'gb',
+                'czech republic' => 'cz',
                 default => Str::lower(Arr::get(app(ISO3166::class)->name($country), 'alpha2')),
             };
         } catch (Exception) {
