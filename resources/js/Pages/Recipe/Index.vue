@@ -3,7 +3,7 @@ import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import Paginator from '@/Components/Paginator.vue';
 import { router } from '@inertiajs/vue3';
-import { Component, Ref, ref, toRef } from 'vue';
+import { Component, computed, Ref, ref, toRef } from 'vue';
 import RecipeDetailCard from '@/Components/PageSpecific/Recipes/RecipeDetailCard.vue';
 import RecipeListFilterCard, {
   RecipeFilterOption,
@@ -17,6 +17,8 @@ import {
   RecipeSetFilters,
 } from '@/types/RecipeTypes';
 import { RssIcon } from '@heroicons/vue/20/solid';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { ArrowPathIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps<{
   recipes: PaginatedResponse<RecipeDetailCardType>;
@@ -107,6 +109,32 @@ const selectAllergen = (freeFrom: string[]): void => {
 
   refreshPage();
 };
+
+const resetFilters = () => {
+  selectedFeatures.value = [];
+  selectedMeals.value = [];
+  selectedAllergens.value = [];
+
+  page.value = 1;
+
+  refreshPage();
+};
+
+const isFiltered = computed(() => {
+  if (selectedFeatures.value.length > 0) {
+    return true;
+  }
+
+  if (selectedMeals.value.length > 0) {
+    return true;
+  }
+
+  if (selectedAllergens.value.length > 0) {
+    return true;
+  }
+
+  return false;
+});
 </script>
 
 <template>
@@ -133,26 +161,43 @@ const selectAllergen = (freeFrom: string[]): void => {
       supermarkets, so anyone can make them at home!
     </p>
 
-    <div class="grid gap-3 md:grid-cols-3">
-      <RecipeListFilterCard
-        :current-options="selectedFeatures"
-        :options="featureOptions()"
-        label="Feature"
-        @changed="selectFeature"
-      />
+    <div
+      class="flex flex-col justify-between space-y-3 md:flex-row md:space-y-0 md:space-x-3"
+    >
+      <div class="grid flex-1 gap-3 md:grid-cols-3">
+        <RecipeListFilterCard
+          :current-options="selectedFeatures"
+          :options="featureOptions()"
+          label="Feature"
+          @changed="selectFeature"
+        />
 
-      <RecipeListFilterCard
-        :current-options="selectedMeals"
-        :options="mealOptions()"
-        label="Meals"
-        @changed="selectMeal"
-      />
+        <RecipeListFilterCard
+          :current-options="selectedMeals"
+          :options="mealOptions()"
+          label="Meals"
+          @changed="selectMeal"
+        />
 
-      <RecipeListFilterCard
-        :current-options="selectedAllergens"
-        :options="freeFromOptions()"
-        label="Free From"
-        @changed="selectAllergen"
+        <RecipeListFilterCard
+          :current-options="selectedAllergens"
+          :options="freeFromOptions()"
+          label="Free From"
+          @changed="selectAllergen"
+        />
+      </div>
+
+      <CoeliacButton
+        v-if="isFiltered"
+        label="Reset Filters"
+        :icon="ArrowPathIcon"
+        bold
+        icon-classes="w-8 h-8"
+        size="lg"
+        theme="light"
+        classes="h-[48px] justify-end"
+        as="button"
+        @click="resetFilters()"
       />
     </div>
 

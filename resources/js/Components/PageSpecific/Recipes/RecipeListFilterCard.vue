@@ -28,6 +28,11 @@ const emit = defineEmits(['changed']);
 
 watch(selectedOptions, () => emit('changed', selectedOptions.value));
 
+watch(
+  () => props.currentOptions,
+  () => (selectedOptions.value = props.currentOptions),
+);
+
 const optionClasses = (disabled: boolean, selected: boolean): string[] => {
   const base = [
     'p-2',
