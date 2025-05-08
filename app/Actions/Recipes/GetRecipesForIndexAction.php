@@ -24,28 +24,17 @@ class GetRecipesForIndexAction
         $mealFilters = array_filter($filters['meals'] ?? []);
         $freeFromFilters = array_filter($filters['freeFrom'] ?? []);
 
-        /** @var Builder<Recipe> $query */
-        $query = Recipe::query()->with(['media', 'features', 'nutrition']);
-
-        if (count($featureFilters) > 0) {
-            $query->hasFeatures($featureFilters);
-        }
-
-        if (count($mealFilters) > 0) {
-            $query->hasMeals($mealFilters);
-        }
-
-        if (count($freeFromFilters) > 0) {
-            $query->hasFreeFrom($freeFromFilters);
-        }
-
         return new $resource(
-            $query
+            Recipe::query()
+                ->with(['media', 'features', 'nutrition'])
                 ->when($search, fn (Builder $builder) => $builder->where(
                     fn (Builder $builder) => $builder
                         ->where('id', $search)
                         ->orWhere('title', 'LIKE', "%{$search}%")
                 ))
+                ->when(count($featureFilters) > 0, fn (Builder $query) => $query->hasFeatures($featureFilters))
+                ->when(count($mealFilters) > 0, fn (Builder $query) => $query->hasMeals($mealFilters))
+                ->when(count($freeFromFilters) > 0, fn (Builder $query) => $query->hasFreeFrom($freeFromFilters))
                 ->latest()
                 ->paginate($perPage)
                 ->withQueryString()

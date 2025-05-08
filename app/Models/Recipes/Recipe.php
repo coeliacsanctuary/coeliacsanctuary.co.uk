@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -255,13 +256,13 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
      */
     public function scopeHasFeatures(Builder $builder, array $features): Builder
     {
-        return $builder->where(function (Builder $builder) use ($features) {
-            foreach ($features as $feature) {
-                $builder->whereHas('features', fn (Builder $builder) => $builder->where('slug', $feature)); /** @phpstan-ignore-line */
-            }
+        $ids = Cache::remember(
+            'recipe-feature-ids-' . implode('-', $features),
+            now()->addSecond(),
+            fn () => RecipeFeature::query()->whereIn('slug', $features)->pluck('id'),
+        );
 
-            return $builder;
-        });
+        return $builder->where(fn (Builder $builder) => $builder->whereHas('features', fn (Builder $builder) => $builder->whereIn('id', $ids)));
     }
 
     /**
@@ -270,13 +271,13 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
      */
     public function scopeHasMeals(Builder $builder, array $meals): Builder
     {
-        return $builder->where(function (Builder $builder) use ($meals) {
-            foreach ($meals as $meal) {
-                $builder->whereHas('meals', fn (Builder $builder) => $builder->where('slug', $meal)); /** @phpstan-ignore-line */
-            }
+        $ids = Cache::remember(
+            'recipe-meal-ids-' . implode('-', $meals),
+            now()->addSecond(),
+            fn () => RecipeMeal::query()->whereIn('slug', $meals)->pluck('id'),
+        );
 
-            return $builder;
-        });
+        return $builder->where(fn (Builder $builder) => $builder->whereHas('meals', fn (Builder $builder) => $builder->whereIn('id', $ids)));
     }
 
     /**
@@ -285,13 +286,13 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
      */
     public function scopeHasFreeFrom(Builder $builder, array $freeFrom): Builder
     {
-        return $builder->where(function (Builder $builder) use ($freeFrom) {
-            foreach ($freeFrom as $allergen) {
-                $builder->whereHas('allergens', fn (Builder $builder) => $builder->where('slug', $allergen)); /** @phpstan-ignore-line */
-            }
+        $ids = Cache::remember(
+            'recipe-freefrom-ids-' . implode('-', $freeFrom),
+            now()->addSecond(),
+            fn () => RecipeAllergen::query()->whereIn('slug', $freeFrom)->pluck('id'),
+        );
 
-            return $builder;
-        });
+        return $builder->where(fn (Builder $builder) => $builder->whereHas('allergens', fn (Builder $builder) => $builder->whereIn('id', $ids)));
     }
 
     public function toSearchableArray(): array
