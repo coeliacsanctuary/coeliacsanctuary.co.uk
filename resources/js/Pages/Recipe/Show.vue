@@ -150,7 +150,7 @@ const loadMoreComments = () => {
   </Card>
 
   <div
-    class="relative flex flex-col space-y-3 lg:flex-row-reverse lg:space-y-0"
+    class="relative flex flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
     <div
       class="space-y-3 lg:ml-3 lg:grid lg:w-[350px] lg:flex-shrink-0 lg:grid-cols-1 lg:self-start lg:overflow-auto"
