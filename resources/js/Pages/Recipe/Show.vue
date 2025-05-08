@@ -65,7 +65,7 @@ const loadMoreComments = () => {
     />
 
     <div
-      class="flex flex-col space-y-4 lg:flex-row lg:justify-between lg:space-y-0"
+      class="flex flex-col space-y-4 lg:flex-row lg:justify-between lg:space-y-0 lg:space-x-4"
     >
       <Info
         v-if="recipe.features.length"
@@ -87,6 +87,28 @@ const loadMoreComments = () => {
             >
               {{ feature.feature }}
             </Link>
+          </li>
+        </ul>
+      </Info>
+
+      <Info
+        class="lg:w-md"
+        no-icon
+        theme="light"
+      >
+        <ul class="">
+          <li>
+            <strong class="font-semibold">Preparation Time:</strong>
+            {{ recipe.timing.prep_time }}
+          </li>
+          <li>
+            <strong class="font-semibold">Cooking Time:</strong>
+            {{ recipe.timing.cook_time }}
+          </li>
+          <li>
+            <strong class="font-semibold"
+              >This recipe makes {{ recipe.nutrition.servings }}</strong
+            >
           </li>
         </ul>
       </Info>
@@ -186,24 +208,6 @@ const loadMoreComments = () => {
           class="prose prose-lg max-w-none md:prose-xl"
           v-html="recipe.ingredients"
         />
-      </Card>
-
-      <Card>
-        <ul class="">
-          <li>
-            <strong class="font-semibold">Preparation Time:</strong>
-            {{ recipe.timing.prep_time }}
-          </li>
-          <li>
-            <strong class="font-semibold">Cooking Time:</strong>
-            {{ recipe.timing.cook_time }}
-          </li>
-          <li>
-            <strong class="font-semibold"
-              >This recipe makes {{ recipe.nutrition.servings }}</strong
-            >
-          </li>
-        </ul>
       </Card>
 
       <Card class="hidden lg:flex">
