@@ -138,7 +138,6 @@ const selectAllergen = (freeFrom: string[]): void => {
         :current-options="selectedFeatures"
         :options="featureOptions()"
         label="Feature"
-        class="z-50"
         @changed="selectFeature"
       />
 
@@ -146,7 +145,6 @@ const selectAllergen = (freeFrom: string[]): void => {
         :current-options="selectedMeals"
         :options="mealOptions()"
         label="Meals"
-        class="z-49"
         @changed="selectMeal"
       />
 
@@ -154,7 +152,6 @@ const selectAllergen = (freeFrom: string[]): void => {
         :current-options="selectedAllergens"
         :options="freeFromOptions()"
         label="Free From"
-        class="z-48"
         @changed="selectAllergen"
       />
     </div>
