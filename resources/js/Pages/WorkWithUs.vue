@@ -10,34 +10,39 @@ import Heading from '@/Components/Heading.vue';
       <Heading> Work With Us </Heading>
 
       <p class="prose prose-lg max-w-none xl:prose-xl">
-        Over the last few years since running Coeliac Sanctuary I have had the
-        pleasure of working with some fantastic companies. Please don't hesitate
-        to contact me if you want to work with me, whether you want me to help
-        promote your brand, create an exciting new recipe or something else, I
-        love a challenge and will have a go at anything! I am always looking for
-        brands who would love to work with me, specifically in the area of
-        Coeliac, gluten free living and free from.
+        Coeliac Sanctuary has grown into a trusted, go-to hub for everything
+        gluten free — and over the years, I’ve had the pleasure of collaborating
+        with some brilliant brands to help promote their products, share
+        recipes, and spread the gluten free word far and wide.
       </p>
 
       <p class="prose prose-lg max-w-none xl:prose-xl">
-        Coeliac Sanctuary is forever growing and currently averages over 30,000
-        visitors a month and has a social media following of over 35,000 on
+        Whether it’s through recipe development, social media content, event
+        coverage, or helping list eateries in my Eating Out guide, I love
+        working with companies who care about the gluten free community as much
+        as I do.
+      </p>
+
+      <p class="prose prose-lg max-w-none xl:prose-xl">
+        With over 30,000 monthly website visitors, a loyal
         <a
           href="https://www.facebook.com/coeliacsanctuary/"
           target="_blank"
           >Facebook</a
         >
-        and nearly 15,000 on
+        community of 35,000+, and 15,000+
         <a
           href="https://www.instagram.com/coeliacsanctuary"
           target="_blank"
           >Instagram</a
-        >.
+        >
+        followers, I’ve built an engaged audience who value my recommendations
+        and genuinely want to discover the best gluten free options out there.
       </p>
 
       <h3 class="my-5 text-center text-xl font-semibold xl:text-2xl">
-        Here is just a few companies I have had the pleasure of working with in
-        the past!
+        Scroll down to see some of the amazing brands I’ve worked with — and if
+        you’d like to be next, just get in touch!
       </h3>
     </Card>
 
@@ -183,21 +188,26 @@ import Heading from '@/Components/Heading.vue';
     </div>
 
     <Card class="mx-auto prose prose-lg max-w-6xl text-center xl:prose-xl">
-      <p>
-        Are you listed in our
+      <h3 class="my-5 text-center text-xl font-semibold xl:text-2xl">
+        Are you a national restaurant chain featured on our
         <a
           href="/wheretoeat/nationwide"
           target="_blank"
           >Nationwide Eateries</a
         >
-        page and want all of your branches listing? If you can provide a CSV of
-        your branches please
+        section?
+      </h3>
+
+      <p class="prose prose-lg max-w-none xl:prose-xl">
+        If you’d like your individual branches listed in our Eating Out guide —
+        just like Pho and The Lounge Group —
         <a
           href="/contact"
           target="_blank"
-          >get in touch</a
-        >
-        and I'd love to work with you to get them listed!
+          >I’d love to hear from you</a
+        >. If you can provide a list (CSV or similar), I can get your venues
+        added, helping more gluten free diners find safe and reliable places to
+        eat across the UK.
       </p>
     </Card>
   </div>
