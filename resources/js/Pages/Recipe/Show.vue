@@ -19,6 +19,7 @@ import useScreensize from '@/composables/useScreensize';
 const props = defineProps<{
   recipe: RecipePage;
   comments: PaginatedResponse<Comment>;
+  backLink: string;
 }>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
@@ -52,7 +53,7 @@ const loadMoreComments = () => {
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading
       :back-link="{
-        href: '/recipe',
+        href: backLink,
         label: 'Back to all recipes.',
       }"
     >
