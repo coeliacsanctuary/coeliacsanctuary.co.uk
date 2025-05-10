@@ -61,7 +61,7 @@ const mobileSearchOpen = ref(false);
         class="mx-auto hidden h-px w-4/5 bg-linear-to-r from-white/20 via-white/40 to-white/20 md:block"
       />
 
-      <MainNav />
+      <MainNav @open-search="mobileSearchOpen = true" />
     </div>
   </div>
 
