@@ -60,7 +60,7 @@ const imageUrl = computed<string>(() => {
   <Modal
     :open="displayModal"
     no-padding
-    size="large"
+    size="relaxed"
     :fit-screen="!!popup.secondary_image && useScreensize().isPortrait()"
     @close="displayModal = false"
   >
