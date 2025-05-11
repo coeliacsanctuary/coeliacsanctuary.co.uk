@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\EatingOut\Features;
 
-use App\Actions\EatingOut\GetFiltersForEateriesAction;
+use App\Services\EatingOut\Filters\GetFilters;
 use Illuminate\Http\Request;
 
 class IndexController
 {
-    public function __invoke(Request $request, GetFiltersForEateriesAction $getFiltersForTown): array
+    public function __invoke(Request $request, GetFilters $getFiltersForTown): array
     {
         /** @var array{categories: string[], features: string[], venueTypes: string []}  $filters */
         $filters = [
@@ -19,7 +19,7 @@ class IndexController
         ];
 
         return [
-            'data' => $getFiltersForTown->handle(filters: $filters, withCount: false),
+            'data' => $getFiltersForTown->handle($filters),
         ];
     }
 }

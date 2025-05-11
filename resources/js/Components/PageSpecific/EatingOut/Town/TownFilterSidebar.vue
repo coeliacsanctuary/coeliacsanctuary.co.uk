@@ -14,22 +14,6 @@ const viewSidebar = ref(false);
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
 defineEmits(['filtersUpdated', 'sidebarClosed']);
-
-const numberOfSetFilters = computed<number>(() => {
-  let total = 0;
-
-  if (!props.filters) {
-    return total;
-  }
-
-  const keys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
-
-  keys.forEach((key) => {
-    total += props.filters[key]?.length;
-  });
-
-  return total;
-});
 </script>
 
 <template>
@@ -47,7 +31,6 @@ const numberOfSetFilters = computed<number>(() => {
   <div v-if="screenIsGreaterThanOrEqualTo('xmd')">
     <TownFilterSidebarContent
       :filters="filters"
-      :number-of-filters="numberOfSetFilters"
       @updated="$emit('filtersUpdated', $event)"
     />
   </div>
@@ -63,7 +46,6 @@ const numberOfSetFilters = computed<number>(() => {
   >
     <TownFilterSidebarContent
       :filters="filters"
-      :number-of-filters="numberOfSetFilters"
       @updated="$emit('filtersUpdated', $event)"
     />
   </Sidebar>

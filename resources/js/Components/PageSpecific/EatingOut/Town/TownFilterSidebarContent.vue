@@ -7,7 +7,6 @@ import { EateryFilters } from '@/types/EateryTypes';
 
 const props = defineProps<{
   filters: EateryFilters;
-  numberOfFilters: number;
 }>();
 
 const eateryTypeFilters: Ref<CheckboxItem[]> = ref(props.filters.categories);
@@ -62,10 +61,7 @@ const resetFilters = () => {
     <div
       class="flex items-center justify-between border-b border-grey-off bg-grey-off-light p-3"
     >
-      <div class="text-lg font-semibold">
-        Filter Eateries
-        {{ numberOfFilters > 0 ? `(${numberOfFilters})` : '' }}
-      </div>
+      <div class="text-lg font-semibold">Filter Eateries</div>
 
       <a
         :class="
@@ -74,7 +70,7 @@ const resetFilters = () => {
             : 'bg-primary-light opacity-0'
         "
         class="cursor-pointer rounded-lg px-2 py-1 shadow-sm transition"
-        @click="resetFilters"
+        @click.prevent="resetFilters"
       >
         Reset
       </a>

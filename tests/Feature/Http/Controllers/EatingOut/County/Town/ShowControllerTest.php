@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\County\Town;
 
-use PHPUnit\Framework\Attributes\Test;
-use App\Actions\EatingOut\GetFiltersForEateriesAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesPipeline;
+use App\Services\EatingOut\Filters\GetFiltersForTown;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ShowControllerTest extends TestCase
@@ -73,9 +73,9 @@ class ShowControllerTest extends TestCase
     }
 
     #[Test]
-    public function itCallsTheGetFiltersForTownAction(): void
+    public function itCallsTheGetFiltersForTownService(): void
     {
-        $this->expectAction(GetFiltersForEateriesAction::class);
+        $this->expectAction(GetFiltersForTown::class);
 
         $this->visitTown();
     }
