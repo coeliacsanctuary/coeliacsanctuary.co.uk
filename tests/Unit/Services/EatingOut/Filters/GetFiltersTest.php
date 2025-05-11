@@ -13,11 +13,14 @@ use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
 use App\Services\EatingOut\Filters\GetFilters;
 use Database\Seeders\EateryScaffoldingSeeder;
+use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GetFiltersTest extends TestCase
 {
+    protected Collection $eateries;
+
     protected EateryCounty $county;
 
     protected EateryTown $town;
@@ -31,7 +34,7 @@ class GetFiltersTest extends TestCase
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
         $this->town = EateryTown::query()->withoutGlobalScopes()->first();
 
-        $this->build(Eatery::class)
+        $this->eateries = $this->build(Eatery::class)
             ->count(5)
             ->create([
                 'county_id' => $this->county->id,

@@ -11,10 +11,8 @@ use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
 use App\Resources\EatingOut\EateryListResource;
-use App\Services\EatingOut\Filters\GetFilters;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Inertia\Response;
 
 class ShowController
@@ -24,7 +22,7 @@ class ShowController
         EaterySearchTerm $eaterySearchTerm,
         Inertia $inertia,
         GetSearchResultsPipeline $getSearchResultsPipeline,
-        GetFilters $getFiltersForEateriesAction,
+        GetFiltersForSearchResults $getFiltersForSearchResults,
         GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction,
     ): Response {
         /** @var array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null } $filters */
@@ -58,8 +56,7 @@ class ShowController
                 'range' => fn () => $eaterySearchTerm->range,
                 'image' => fn () => $image,
                 'eateries' => fn () => $eateries,
-                //                'filters' => fn () => $getFiltersForEateriesAction->handle(fn (Builder $query) => $query->whereIn('id', Arr::pluck($eateries->all(), 'id')), $filters),
-                'filters' => fn () => $getFiltersForEateriesAction->handle($filters),
+                'filters' => fn () => $getFiltersForSearchResults->usingSearchKey($eaterySearchTerm->key)->handle($filters),
                 'latlng' => fn () => $firstResult ? ['lat' => $firstResult->lat, 'lng' => $firstResult->lng] : null,
             ]);
     }

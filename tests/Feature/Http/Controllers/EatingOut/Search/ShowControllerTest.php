@@ -10,7 +10,7 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
-use App\Services\EatingOut\Filters\GetFilters;
+use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
 use App\Services\EatingOut\LocationSearchService;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Testing\TestResponse;
@@ -68,9 +68,9 @@ class ShowControllerTest extends TestCase
     }
 
     #[Test]
-    public function itCallsTheGetFiltersAction(): void
+    public function itCallsTheGetFiltersForSearchResultsAction(): void
     {
-        $this->expectAction(GetFilters::class);
+        $this->expectAction(GetFiltersForSearchResults::class);
 
         $this->visitSearchResults();
     }

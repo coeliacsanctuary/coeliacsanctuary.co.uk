@@ -63,10 +63,10 @@ class GetFilters
         $filters = $baseQuery->get();
 
         return $filters
-            ->reject(fn (Model $filter): bool => $filter->eateries_count === 0)
+            ->reject(fn (Model $filter): bool => $filter->hasAttribute('eateries_count') ? $filter->eateries_count === 0 : false)
             ->map(fn (Model $filter): array => [
                 'value' => (string) $filter->$checkedColumn,
-                'label' => $filter->$nameColumn . ($filter->eateries_count ? " - ({$filter->eateries_count})" : ''),
+                'label' => $filter->$nameColumn . ($filter->hasAttribute('eateries_count') ? " - ({$filter->eateries_count})" : ''),
                 'disabled' => false,
                 'checked' => $this->filterIsEnabled($filterName, $filter->$checkedColumn),
             ]);
