@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\EatingOut\Search;
 
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\DataObjects\EatingOut\LatLng;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCountry;
@@ -12,6 +13,7 @@ use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
 use App\Resources\EatingOut\EateryListResource;
 use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
+use App\Support\State\EatingOut\Search\LatLngState;
 use Illuminate\Http\Request;
 use Inertia\Response;
 
@@ -47,6 +49,13 @@ class ShowController
             default => EateryCountry::query()->where('country', 'England')->firstOrFail()->image,
         };
 
+        /** @var ?LatLng $latLng */
+        $latLng = LatLngState::$latLng;
+
+        if ( ! $latLng && $firstResult) {
+            $latLng = new LatLng($firstResult->lat, $firstResult->lng);
+        }
+
         return $inertia
             ->title("{$eaterySearchTerm->term} - Search Results")
             ->metaImage($getOpenGraphImageForRouteAction->handle('eatery'))
@@ -57,7 +66,7 @@ class ShowController
                 'image' => fn () => $image,
                 'eateries' => fn () => $eateries,
                 'filters' => fn () => $getFiltersForSearchResults->usingSearchKey($eaterySearchTerm->key)->handle($filters),
-                'latlng' => fn () => $firstResult ? ['lat' => $firstResult->lat, 'lng' => $firstResult->lng] : null,
+                'latlng' => fn () => $latLng?->toLatLng(),
             ]);
     }
 }

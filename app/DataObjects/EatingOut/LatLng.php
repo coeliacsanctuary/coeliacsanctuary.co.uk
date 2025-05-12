@@ -15,4 +15,12 @@ class LatLng
     {
         return "{$this->lat},{$this->lng}";
     }
+
+    public function toLatLng(): array
+    {
+        return [
+            'lat' => $this->lat,
+            'lng' => $this->lng,
+        ];
+    }
 }

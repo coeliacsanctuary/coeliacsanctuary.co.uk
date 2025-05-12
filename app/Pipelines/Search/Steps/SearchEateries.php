@@ -10,7 +10,7 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Search\Eateries;
 use App\Support\Helpers;
-use App\Support\Search\SearchState;
+use App\Support\State\Search\SearchState;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;

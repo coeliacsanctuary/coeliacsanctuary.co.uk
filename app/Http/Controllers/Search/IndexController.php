@@ -10,7 +10,7 @@ use App\Http\Requests\Search\SearchRequest;
 use App\Http\Response\Inertia;
 use App\Models\Search\Search;
 use App\Pipelines\Search\PerformSearchPipeline;
-use App\Support\Search\SearchState;
+use App\Support\State\Search\SearchState;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;

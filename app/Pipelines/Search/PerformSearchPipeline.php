@@ -17,7 +17,7 @@ use App\Pipelines\Search\Steps\SearchRecipes;
 use App\Pipelines\Search\Steps\SearchShop;
 use App\Pipelines\Search\Steps\SortResults;
 use App\Resources\Search\SearchableItemResource;
-use App\Support\Search\SearchState;
+use App\Support\State\Search\SearchState;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pipeline\Pipeline;
 
