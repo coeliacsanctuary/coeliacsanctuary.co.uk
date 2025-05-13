@@ -7,6 +7,7 @@ namespace App\Services\EatingOut;
 use App\DataObjects\EatingOut\LatLng;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use RuntimeException;
 use Spatie\Geocoder\Geocoder;
 
@@ -36,7 +37,18 @@ class LocationSearchService
         }
 
         return collect($response)
-            ->filter(fn (array $response) => Arr::get($response, 'types.0') === 'locality')
+            ->filter(fn (array $result) => $this->isValidResult($result, $term))
             ->values();
+    }
+
+    protected function isValidResult(array $result, string $term): bool
+    {
+        $keys = ['locality', 'archipelago'];
+
+        if (in_array(Arr::get($result, 'types.0'), $keys)) {
+            return true;
+        }
+
+        return (bool) (Str::of(Arr::get($result, 'formatted_address'))->lower()->contains(Str::lower($term)));
     }
 }
