@@ -2,29 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\EatingOut;
+namespace Tests\Unit\Services\EatingOut\Filters;
 
 use App\Enums\EatingOut\EateryType;
-use PHPUnit\Framework\Attributes\Test;
-use App\Actions\EatingOut\GetFiltersForEateriesAction;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
-use Closure;
+use App\Services\EatingOut\Filters\GetFilters;
 use Database\Seeders\EateryScaffoldingSeeder;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class GetFiltersForEateriesActionTest extends TestCase
+class GetFiltersTest extends TestCase
 {
+    protected Collection $eateries;
+
     protected EateryCounty $county;
 
     protected EateryTown $town;
-
-    protected Closure $whereClause;
 
     protected function setUp(): void
     {
@@ -34,17 +33,16 @@ class GetFiltersForEateriesActionTest extends TestCase
 
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
         $this->town = EateryTown::query()->withoutGlobalScopes()->first();
-        $this->whereClause = fn (Builder $query) => $query->where('town_id', $this->town->id);
 
-        $this->build(Eatery::class)
+        $this->eateries = $this->build(Eatery::class)
             ->count(5)
             ->create([
                 'county_id' => $this->county->id,
                 'town_id' => $this->town->id,
-                'venue_type_id' => EateryVenueType::query()->first()->id,
+                'venue_type_id' => EateryVenueType::query()->orderBy('venue_type')->first()->id,
             ]);
 
-        EateryFeature::query()->first()->eateries()->attach(Eatery::query()->first());
+        EateryFeature::query()->orderBy('feature')->first()->eateries()->attach(Eatery::query()->first());
 
         $this->county->eateries->each(function (Eatery $eatery, $index): void {
             $this->build(EateryReview::class)
@@ -60,19 +58,19 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function itReturnsTheFiltersWithTheCorrectKeys(): void
     {
-        $this->assertIsArray($this->callAction(GetFiltersForEateriesAction::class, $this->whereClause));
+        $this->assertIsArray($this->getFilters());
 
         $keys = ['categories', 'venueTypes', 'features'];
 
         foreach ($keys as $key) {
-            $this->assertArrayHasKey($key, $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause));
+            $this->assertArrayHasKey($key, $this->getFilters());
         }
     }
 
     #[Test]
     public function itReturnsTheEateryCategoryFilters(): void
     {
-        $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause)['categories'];
+        $categoryFilters = $this->getFilters()['categories'];
 
         $keys = ['value', 'label', 'disabled', 'checked'];
 
@@ -86,7 +84,7 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function eachCategoryFilterIsNotCheckedByDefault(): void
     {
-        $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause)['categories'];
+        $categoryFilters = $this->getFilters()['categories'];
 
         foreach ($categoryFilters as $category) {
             $this->assertFalse($category['checked']);
@@ -98,7 +96,7 @@ class GetFiltersForEateriesActionTest extends TestCase
     {
         Eatery::query()->first()->update(['type_id' => EateryType::ATTRACTION]);
 
-        $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause, ['categories' => 'att'])['categories'];
+        $categoryFilters = $this->getFilters(['categories' => 'att'])['categories'];
 
         $this->assertFalse($categoryFilters[0]['checked']); // wte
         $this->assertTrue($categoryFilters[1]['checked']); // att
@@ -107,7 +105,7 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function itReturnsTheEateryVenueTypeFilters(): void
     {
-        $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause)['venueTypes'];
+        $categoryFilters = $this->getFilters()['venueTypes'];
 
         $keys = ['value', 'label', 'disabled', 'checked'];
 
@@ -121,7 +119,7 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function eachVenueTypeFilterIsNotCheckedByDefault(): void
     {
-        $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause)['venueTypes'];
+        $categoryFilters = $this->getFilters()['venueTypes'];
 
         foreach ($categoryFilters as $category) {
             $this->assertFalse($category['checked']);
@@ -131,9 +129,9 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function aFilterVenueTypeCanBeCheckedViaTheRequest(): void
     {
-        $venueType = EateryVenueType::query()->first();
+        $venueType = EateryVenueType::query()->orderBy('venue_type')->first();
 
-        $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause, ['venueTypes' => $venueType->slug])['venueTypes'];
+        $categoryFilters = $this->getFilters(['venueTypes' => $venueType->slug])['venueTypes'];
 
         $this->assertTrue($categoryFilters[0]['checked']);
     }
@@ -141,7 +139,7 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function itReturnsTheEateryFeaturesFilters(): void
     {
-        $categoryFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause)['features'];
+        $categoryFilters = $this->getFilters()['features'];
 
         $keys = ['value', 'label', 'disabled', 'checked'];
 
@@ -155,7 +153,7 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function eachFeatureFilterIsNotCheckedByDefault(): void
     {
-        $featureFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause)['features'];
+        $featureFilters = $this->getFilters()['features'];
 
         foreach ($featureFilters as $feature) {
             $this->assertFalse($feature['checked']);
@@ -165,10 +163,15 @@ class GetFiltersForEateriesActionTest extends TestCase
     #[Test]
     public function aFilterFeatureCanBeCheckedViaTheRequest(): void
     {
-        $feature = EateryFeature::query()->first();
+        $feature = EateryFeature::query()->orderBy('feature')->first();
 
-        $featureFilters = $this->callAction(GetFiltersForEateriesAction::class, $this->whereClause, ['features' => $feature->slug])['features'];
+        $featureFilters = $this->getFilters(['features' => $feature->slug])['features'];
 
         $this->assertTrue($featureFilters[0]['checked']);
+    }
+
+    protected function getFilters(array $filters = []): array
+    {
+        return $this->callAction(GetFilters::class, $filters);
     }
 }

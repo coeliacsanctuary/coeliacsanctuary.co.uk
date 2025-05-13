@@ -71,7 +71,7 @@ watch(data, () => store.setUserDetails(data));
     <h2
       class="flex items-center justify-between text-3xl font-semibold"
       :class="{
-        'text-primary-dark': !error && (show || completed),
+        'cursor-pointer text-primary-dark': !error && (show || completed),
         'text-grey-off': !error && !show,
         'text-red': error,
       }"

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Search;
+namespace App\Support\State\Search;
 
 class SearchState
 {

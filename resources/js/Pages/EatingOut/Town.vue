@@ -70,7 +70,7 @@ const handleFiltersChanged = ({
     }
   }
 
-  router.get(useBrowser().currentUrl(), params, {
+  router.get(useBrowser().currentPath(), params, {
     preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
     preserveScroll: true,
   });

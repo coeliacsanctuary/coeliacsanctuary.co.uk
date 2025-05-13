@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\Search;
 
-use PHPUnit\Framework\Attributes\Test;
-use App\Actions\EatingOut\GetFiltersForEateriesAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\DataObjects\EatingOut\LatLng;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
+use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
 use App\Services\EatingOut\LocationSearchService;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ShowControllerTest extends TestCase
@@ -68,9 +68,9 @@ class ShowControllerTest extends TestCase
     }
 
     #[Test]
-    public function itCallsTheGetFiltersAction(): void
+    public function itCallsTheGetFiltersForSearchResultsAction(): void
     {
-        $this->expectAction(GetFiltersForEateriesAction::class);
+        $this->expectAction(GetFiltersForSearchResults::class);
 
         $this->visitSearchResults();
     }

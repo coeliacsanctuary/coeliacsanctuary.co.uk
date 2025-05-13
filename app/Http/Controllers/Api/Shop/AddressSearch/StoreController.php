@@ -16,18 +16,6 @@ class StoreController
     {
         $payload = [];
 
-        if ($request->has('country')) {
-            $country = $request->string('country')->toString();
-
-            if ($country === 'United Kingdom') {
-                $country = 'UK';
-            }
-
-            $payload['filter'] = [
-                'country' => $country,
-            ];
-        }
-
         if ($request->has('lat') && $request->has('lng')) {
             $payload['location'] = [
                 'latitude' => $request->float('lat'),

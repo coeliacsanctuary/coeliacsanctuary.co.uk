@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Pipelines\EatingOut\GetEateries;
 
+use App\Pipelines\EatingOut\GetEateries\Steps\ExposeSearchResultEateryIdsAction;
 use PHPUnit\Framework\Attributes\Test;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryFeature;
@@ -96,6 +97,7 @@ class GetSearchResultsPipelineTest extends TestCase
         $this->expectPipelineToExecute(AppendDistanceToBranches::class);
         $this->expectPipelineToExecute(CheckForMissingEateriesAction::class);
         $this->expectPipelineToExecute(RelateEateriesAndBranchesAction::class);
+        $this->expectPipelineToExecute(ExposeSearchResultEateryIdsAction::class);
         $this->expectPipelineToExecute(SerialiseResultsAction::class);
 
         $this->runPipeline(GetSearchResultsPipeline::class, $this->eaterySearchTerm, []);

@@ -70,7 +70,7 @@ const handleFiltersChanged = ({
     }
   }
 
-  router.get(useBrowser().currentUrl(), params, {
+  router.get(useBrowser().currentPath(), params, {
     preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
     preserveScroll: true,
   });
@@ -139,7 +139,7 @@ watch(() => props.term, reset);
       @sidebar-closed="reloadEateries"
     />
 
-    <div class="flex flex-col space-y-4 xmd:w-3/4">
+    <div class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1">
       <template v-if="items.length">
         <EateryCard
           v-for="eatery in items"

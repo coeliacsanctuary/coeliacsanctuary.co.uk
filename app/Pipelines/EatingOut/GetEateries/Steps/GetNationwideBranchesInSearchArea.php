@@ -10,6 +10,7 @@ use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Services\EatingOut\LocationSearchService;
+use App\Support\State\EatingOut\Search\LatLngState;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,7 +29,7 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
         }
 
         try {
-            $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+            $latLng = $this->getLatLng($pipelineData);
         } catch (Exception) {
             return $next($pipelineData);
         }
@@ -91,5 +92,19 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
         $pipelineData->eateries->push(...$pendingEateries);
 
         return $next($pipelineData);
+    }
+
+    protected function getLatLng(GetEateriesPipelineData $pipelineData): \App\DataObjects\EatingOut\LatLng
+    {
+        if (LatLngState::$latLng) {
+            return LatLngState::$latLng;
+        }
+
+        /** @phpstan-ignore-next-line  */
+        $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+
+        LatLngState::$latLng = $latLng;
+
+        return $latLng;
     }
 }
