@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import axios, { AxiosResponse } from 'axios';
 import { watchDebounced } from '@vueuse/core';
 import useShopStore from '@/stores/useShopStore';
@@ -25,7 +25,7 @@ onMounted(() => {
 
 const emits = defineEmits(['setAddress']);
 
-const country = ref(useShopStore().selectedCountry);
+const country = computed(() => useShopStore().selectedCountry);
 
 const hasSelectedAddress = ref(false);
 const searchResults = ref<{ id: string; address: string }[]>([]);
@@ -39,6 +39,10 @@ const selectAddress = async (id: string) => {
 };
 
 const handleSearch = async () => {
+  if (country.value !== 'United Kingdom') {
+    return;
+  }
+
   if (hasSelectedAddress.value) {
     hasSelectedAddress.value = false;
     return;
@@ -51,7 +55,6 @@ const handleSearch = async () => {
   const request: AxiosResponse<{ id: string; address: string }[]> =
     await axios.post('/api/shop/address-search', {
       search: props.address,
-      country: country.value,
       lat: latlng.value.lat,
       lng: latlng.value.lng,
     });
