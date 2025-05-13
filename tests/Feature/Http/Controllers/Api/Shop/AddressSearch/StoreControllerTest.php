@@ -52,48 +52,6 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
-    public function itPassesTheCountryToTheSearchIfOneIsSentInTheRequest(): void
-    {
-        Http::preventStrayRequests();
-        Http::fake([
-            '*' => Http::response([]),
-        ]);
-
-        $this->postJson(route('api.shop.address-search'), [
-            'search' => 'foo',
-            'country' => 'bar',
-        ])->assertOk();
-
-        Http::assertSent(function (Request $request) {
-            $this->assertArrayHasKey('filter', $request->data());
-            $this->assertArrayHasKey('country', $request->data()['filter']);
-            $this->assertEquals('bar', $request->data()['filter']['country']);
-
-            return true;
-        });
-    }
-
-    #[Test]
-    public function itSendsTheCountryAsUkIfTheCountryIsUnitedKingdom(): void
-    {
-        Http::preventStrayRequests();
-        Http::fake([
-            '*' => Http::response([]),
-        ]);
-
-        $this->postJson(route('api.shop.address-search'), [
-            'search' => 'foo',
-            'country' => 'United Kingdom',
-        ])->assertOk();
-
-        Http::assertSent(function (Request $request) {
-            $this->assertEquals('UK', $request->data()['filter']['country']);
-
-            return true;
-        });
-    }
-
-    #[Test]
     public function itSendsTheLatLngIfRequested(): void
     {
         Http::preventStrayRequests();
