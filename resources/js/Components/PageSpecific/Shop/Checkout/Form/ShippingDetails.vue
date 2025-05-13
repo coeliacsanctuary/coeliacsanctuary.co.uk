@@ -65,7 +65,7 @@ const submitForm = () => {
     <h2
       class="flex justify-between text-3xl font-semibold"
       :class="{
-        'text-primary-dark': !error && (show || completed),
+        'cursor-pointer text-primary-dark': !error && (show || completed),
         'text-grey-off': !error && !show,
         'text-red': error,
       }"

@@ -104,7 +104,7 @@ eventBus.$on('payment-failed', () => {
     <h2
       class="flex justify-between text-3xl font-semibold"
       :class="{
-        'text-primary-dark': show || completed,
+        'cursor-pointer text-primary-dark': show || completed,
         'text-grey-off': !show,
       }"
       @click="completed ? $emit('toggle') : undefined"
