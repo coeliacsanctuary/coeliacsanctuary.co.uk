@@ -51,7 +51,7 @@ class GetCountyListAction
             ->selectRaw('wheretoeat_countries.country, wheretoeat_counties.county, wheretoeat_counties.slug county_slug')
             ->selectRaw('SUM(CASE WHEN wheretoeat.type_id = 1 THEN 1 ELSE 0 END) eateries')
             ->selectRaw('SUM(CASE WHEN wheretoeat.type_id = 2 THEN 1 ELSE 0 END) attractions')
-            ->selectRaw('SUM(CASE WHEN wheretoeat.type_id = 2 THEN 1 ELSE 0 END) hotels')
+            ->selectRaw('SUM(CASE WHEN wheretoeat.type_id = 3 THEN 1 ELSE 0 END) hotels')
             ->selectRaw('(select count(*) from wheretoeat_nationwide_branches wnb where wnb.live = 1 and wnb.county_id = wheretoeat_counties.id) branches')
             ->where('wheretoeat.live', true)
             ->where('wheretoeat_counties.county', '!=', 'Nationwide')
