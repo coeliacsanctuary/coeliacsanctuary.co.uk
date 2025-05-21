@@ -157,8 +157,12 @@ watchDebounced(
   <div class="flex flex-col space-y-4 xmd:flex-row xmd:space-y-0 xmd:space-x-4">
     <div class="xmd:w-1/4 xmd:max-w-[215px] xmd:shrink-0">
       <Card
-        class="mx-3 mt-3 rounded-lg bg-primary-light/40! xmd:fixed xmd:max-w-[195px] xmd:rounded-lg xmd:border-2 xmd:border-primary xmd:bg-primary-light/10! xmd:p-3"
-        :class="stickyNav ? 'xmd:top-[40px]' : 'xmd:top-auto'"
+        class="mx-3 mt-3 rounded-lg bg-primary-light/40! xmd:max-w-[195px] xmd:rounded-lg xmd:border-2 xmd:border-primary xmd:bg-primary-light/10! xmd:p-3"
+        :class="{
+          'xmd:top-[40px]': stickyNav,
+          'xmd:top-auto': !stickyNav,
+          'xmd:fixed': results && results.data?.length > 1,
+        }"
         faded
         :shadow="false"
       >

@@ -52,7 +52,9 @@
         "spatie/mjml-php": "^1.2.5",
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
-        "wnx/sidecar-browsershot": "^2.6.0"
+        "wnx/sidecar-browsershot": "^2.6.0",
+        "ext-libxml": "*",
+        "ext-dom": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15.4",
