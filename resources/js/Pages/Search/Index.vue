@@ -11,12 +11,14 @@ import Loader from '@/Components/Loader.vue';
 import { Deferred, router } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import useBrowser from '@/composables/useBrowser';
-import SearchResults from '@/Components/PageSpecific/SearchResults.vue';
+import SearchResults from '@/Components/PageSpecific/Search/SearchResults.vue';
 import { VisitOptions } from '@inertiajs/core';
+import { LatLng } from '@/types/EateryTypes';
 
 const props = defineProps<{
   parameters: SearchParams;
-  location: string;
+  location?: string;
+  searchedLatLng?: LatLng;
   results?: PaginatedResponse<SearchResult>;
   hasEatery: boolean;
   aiAssisted: boolean;
@@ -41,7 +43,8 @@ const resultsElem: Ref<null | {
   requestOptions: Partial<VisitOptions>;
 }> = ref(null);
 
-const { hasError, searchForm, latLng, submitSearch } = useSearch();
+const { hasError, searchForm, latLng, cancelSearch, submitSearch } =
+  useSearch();
 
 onMounted(() => {
   if (resultsElem.value) {
@@ -99,15 +102,21 @@ const handleSearch = () => {
     resultsElem.value.pause = true;
   }
 
-  submitSearch({
-    onSuccess: () => {
-      if (resultsElem.value) {
-        resultsElem.value.pause = false;
-        resultsElem.value.reset();
-      }
+  if (cancelSearch) {
+    (<Ref<{ cancel: () => void }>>cancelSearch).value.cancel();
+  }
 
-      shouldLoad.value = false;
-    },
+  nextTick(() => {
+    submitSearch({
+      onSuccess: () => {
+        if (resultsElem.value) {
+          resultsElem.value.pause = false;
+          resultsElem.value.reset();
+        }
+
+        shouldLoad.value = false;
+      },
+    });
   });
 };
 
@@ -161,7 +170,11 @@ watchDebounced(
         :class="{
           'xmd:top-[40px]': stickyNav,
           'xmd:top-auto': !stickyNav,
-          'xmd:fixed': results && results.data?.length > 1,
+          'xmd:fixed':
+            !searchForm.processing &&
+            !shouldLoad &&
+            results &&
+            results.data?.length > 1,
         }"
         faded
         :shadow="false"
@@ -245,6 +258,7 @@ watchDebounced(
         :landmark="landmark"
         :has-eatery="hasEatery"
         :location="location"
+        :search-lat-lng="searchedLatLng"
         :term="parameters.q"
         @mounted="shouldLoad = false"
       />

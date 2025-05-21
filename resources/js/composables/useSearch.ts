@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { Ref, ref } from 'vue';
 import { InertiaForm } from '@/types/Core';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { SearchParams } from '@/types/Search';
@@ -16,6 +16,8 @@ export default () => {
     shop: true,
   }) as InertiaForm<SearchParams>;
 
+  const cancelSearch: Ref<{ cancel: () => void } | undefined> = ref();
+
   const submitSearch = (options: Partial<VisitOptions> = {}) => {
     hasError.value = false;
 
@@ -31,6 +33,7 @@ export default () => {
 
         options = {
           ...options,
+          onCancelToken: (cancelToken) => (cancelSearch.value = cancelToken),
           headers: {
             'x-search-location': latLng.value,
           },
@@ -44,5 +47,5 @@ export default () => {
     );
   };
 
-  return { latLng, hasError, searchForm, submitSearch };
+  return { latLng, hasError, searchForm, cancelSearch, submitSearch };
 };

@@ -21,30 +21,30 @@ class GoogleMapService
         //
     }
 
-    public function renderMap(string $latLng): Image
+    public function renderMap(string $latLng, array $params = []): Image
     {
-        $this->resolveExistingRecord($latLng);
+        $this->resolveExistingRecord($latLng, $params);
 
-        $image = $this->resolveImage($latLng);
+        $image = $this->resolveImage($latLng, $params);
 
         $this->existingRecord?->increment('hits');
 
         return $image;
     }
 
-    protected function resolveImage(string $latLng): Image
+    protected function resolveImage(string $latLng, array $params): Image
     {
         if ($this->hasCachedImage()) {
             /** @var GoogleStaticMap $googleStaticMap */
             $googleStaticMap = $this->existingRecord;
 
-            return $this->imageManager->make(Storage::disk('media')->get("/maps/{$googleStaticMap->uuid}.jpg"));
+            return $this->imageManager->make(Storage::disk('media')->get("/maps/{$googleStaticMap->uuid}-{$googleStaticMap->parameters}.jpg"));
         }
 
-        return $this->resolveImageFromGoogle($latLng);
+        return $this->resolveImageFromGoogle($latLng, $params);
     }
 
-    protected function getGoogleMapUrl(string $latLng): string
+    protected function getGoogleMapUrl(string $latLng, array $params): string
     {
         return URL::query('https://maps.googleapis.com/maps/api/staticmap', [
             'center' => $latLng,
@@ -52,17 +52,21 @@ class GoogleMapService
             'maptype' => 'roadmap',
             'markers' => "color:red|label:|{$latLng}",
             'key' => config('services.google.maps.static'),
+            ...$params,
         ]);
     }
 
-    protected function resolveExistingRecord(string $latLng): void
+    protected function resolveExistingRecord(string $latLng, array $parameters): void
     {
-        $this->existingRecord = GoogleStaticMap::query()->where('latlng', $latLng)->first();
+        $this->existingRecord = GoogleStaticMap::query()
+            ->where('latlng', $latLng)
+            ->where('parameters', md5((string)json_encode($parameters)))
+            ->first();
     }
 
-    protected function getImageFromGoogle(string $latLng): string
+    protected function getImageFromGoogle(string $latLng, array $params): string
     {
-        $imageRequest = Http::get($this->getGoogleMapUrl($latLng));
+        $imageRequest = Http::get($this->getGoogleMapUrl($latLng, $params));
 
         return $imageRequest->getBody()->getContents();
     }
@@ -76,9 +80,9 @@ class GoogleMapService
         return $this->existingRecord->last_fetched_at->addDays(30)->isFuture();
     }
 
-    protected function resolveImageFromGoogle(string $latLng): Image
+    protected function resolveImageFromGoogle(string $latLng, array $params): Image
     {
-        $image = $this->getImageFromGoogle($latLng);
+        $image = $this->getImageFromGoogle($latLng, $params);
 
         $rawImage = $this->imageManager->make($image);
 
@@ -87,10 +91,13 @@ class GoogleMapService
         /** @var resource $encodedImageBlob */
         $encodedImageBlob = $rawImage->encode('jpg');
 
-        Storage::disk('media')->put("maps/{$uuid}.jpg", $encodedImageBlob);
+        $encodedParams = md5((string)json_encode($params));
+
+        Storage::disk('media')->put("maps/{$uuid}-{$encodedParams}.jpg", $encodedImageBlob);
 
         $this->existingRecord = GoogleStaticMap::query()->updateOrCreate([
             'latlng' => $latLng,
+            'parameters' => md5((string)json_encode($params)),
         ], [
             'uuid' => $uuid,
             'last_fetched_at' => now(),

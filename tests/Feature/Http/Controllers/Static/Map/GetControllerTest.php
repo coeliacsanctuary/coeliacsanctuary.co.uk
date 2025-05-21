@@ -24,11 +24,26 @@ class GetControllerTest extends TestCase
 
         $this->mock(GoogleMapService::class)
             ->shouldReceive('renderMap')
-            ->withArgs([$london])
+            ->withArgs([$london, []])
             ->once()
             ->andReturn(Image::make($this->getFakeImageString()));
 
         $this->get(route('static.map', ['latlng' => $london]))->assertOk();
+    }
+
+    #[Test]
+    public function itPassesAdditionalParamsToGoogleMaps(): void
+    {
+        $london = '51.5,-0.1';
+        $params = ['foo' => 'bar'];
+
+        $this->mock(GoogleMapService::class)
+            ->shouldReceive('renderMap')
+            ->withArgs([$london, $params])
+            ->once()
+            ->andReturn(Image::make($this->getFakeImageString()));
+
+        $this->get(route('static.map', ['latlng' => $london, 'params' => json_encode($params)]))->assertOk();
     }
 
     #[Test]

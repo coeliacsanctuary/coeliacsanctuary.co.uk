@@ -13,7 +13,7 @@ class GetController
     public function __invoke(Request $request, string $latlng, GoogleMapService $googleMapService): Response
     {
         return $googleMapService
-            ->renderMap($latlng)
+            ->renderMap($latlng, json_decode($request->string('params')->toString(), true) ?? [])
             ->response('jpg');
     }
 }

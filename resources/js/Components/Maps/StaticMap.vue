@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 import { StaticMapPropDefaults, StaticMapProps } from '@/Components/Maps/Props';
@@ -11,10 +11,24 @@ const props = withDefaults(
 
 const openModal = ref(false);
 
+const url = computed(() => {
+  let url = `/static/map/${props.lat},${props.lng}`;
+
+  if (props.additionalParams) {
+    const params = new URLSearchParams({
+      params: JSON.stringify(props.additionalParams),
+    });
+
+    url += `?${params.toString()}`;
+  }
+
+  return url;
+});
+
 const styles = () => ({
-  background: `url(/static/map/${props.lat},${props.lng}) no-repeat 50% 50%`,
+  background: `url(${url.value}) no-repeat 50% 50%`,
   lineHeight: 0,
-  cursor: 'pointer',
+  cursor: props.canExpand ? 'pointer' : 'default',
 });
 </script>
 

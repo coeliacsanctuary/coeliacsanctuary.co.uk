@@ -34,16 +34,18 @@ class SearchEateries
             $geocoder = Geocoder::getCoordinatesForAddress($searchPipelineData->parameters->locationSearch ?: $searchPipelineData->parameters->term);
 
             if ($geocoder && ! $searchPipelineData->parameters->locationSearch) {
-                $town = Arr::first($geocoder['address_components'], fn ($component) => in_array('postal_town', $component->types));
-
-                if ($town) {
-                    $searchPipelineData->parameters->locationSearch = $town->long_name;
+                /** @phpstan-ignore-next-line  */
+                if (Arr::first($geocoder['address_components'])) {
+                    /** @phpstan-ignore-next-line  */
+                    $searchPipelineData->parameters->locationSearch = Arr::first($geocoder['address_components'])->long_name;
                 }
             }
 
             if ($geocoder && Arr::get($geocoder, 'accuracy') !== 'result_not_found') {
                 $geoResults = $this->performGeoSearch(implode(', ', [$geocoder['lat'], $geocoder['lng']]));
 
+                SearchState::$lat = $geocoder['lat'];
+                SearchState::$lng = $geocoder['lng'];
                 SearchState::$hasGeoSearched = true;
             } elseif ($searchPipelineData->parameters->userLocation) {
                 $geoResults = $this->performGeoSearch(implode(',', $searchPipelineData->parameters->userLocation), $searchPipelineData->parameters->term);

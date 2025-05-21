@@ -7,4 +7,8 @@ namespace App\Support\State\Search;
 class SearchState
 {
     public static bool $hasGeoSearched = false;
+
+    public static ?float $lat = null;
+
+    public static ?float $lng = null;
 }

@@ -39,7 +39,7 @@ class GoogleMapServiceTest extends TestCase
             ->andReturnSelf()
             ->getMock()
             ->shouldReceive('get')
-            ->withArgs(["/maps/{$record->uuid}.jpg"])
+            ->withArgs(["/maps/{$record->uuid}-{$record->parameters}.jpg"])
             ->andReturn($this->getFakeImageString())
             ->once();
 
@@ -91,6 +91,70 @@ class GoogleMapServiceTest extends TestCase
     }
 
     #[Test]
+    public function itCanPassCustomParametersToTheGoogleMap(): void
+    {
+        $london = '51.5,-0.1';
+        $parameters = ['foo' => 'bar'];
+
+        URL::shouldReceive('query')
+            ->once()
+            ->withArgs(function (string $host, array $query) use ($london) {
+                $this->assertEquals('https://maps.googleapis.com/maps/api/staticmap', $host);
+                $this->assertArrayHasKeys(['center', 'size', 'maptype', 'markers', 'key', 'foo'], $query);
+                $this->assertEquals($london, $query['center']);
+                $this->assertEquals('bar', $query['foo']);
+
+                return true;
+            })
+            ->andReturn('https://foo.bar');
+
+        Http::fake([
+            'https://foo.bar' => Http::response($this->getFakeImageString(), headers: [
+                'Content-Type' => 'Content-Type: image/jpeg',
+            ]),
+        ]);
+
+        app(GoogleMapService::class)->renderMap($london, $parameters);
+    }
+
+    #[Test]
+    public function itCanPassCustomParametersToTheGoogleMapThatOverrideExistingOnes(): void
+    {
+        $london = '51.5,-0.1';
+
+        Http::fake([
+            'https://foo.bar' => Http::response($this->getFakeImageString(), headers: [
+                'Content-Type' => 'Content-Type: image/jpeg',
+            ]),
+            'https://foo.baz' => Http::response($this->getFakeImageString(), headers: [
+                'Content-Type' => 'Content-Type: image/jpeg',
+            ]),
+        ]);
+
+        URL::shouldReceive('query')
+            ->once()
+            ->withArgs(function (string $host, array $query) {
+                $this->assertEquals('600x600', $query['size']);
+
+                return true;
+            })
+            ->andReturn('https://foo.bar');
+
+        app(GoogleMapService::class)->renderMap($london);
+
+        URL::shouldReceive('query')
+            ->once()
+            ->withArgs(function (string $host, array $query) {
+                $this->assertEquals('300x300', $query['size']);
+
+                return true;
+            })
+            ->andReturn('https://foo.baz');
+
+        app(GoogleMapService::class)->renderMap($london, ['size' => '300x300']);
+    }
+
+    #[Test]
     public function itStoresTheImage(): void
     {
         $london = '51.5,-0.1';
@@ -136,6 +200,7 @@ class GoogleMapServiceTest extends TestCase
         $record = GoogleStaticMap::query()->first();
 
         $this->assertEquals($london, $record->latlng);
+        $this->assertEquals(md5(json_encode([])), $record->parameters);
         $this->assertTrue($record->last_fetched_at->isSameMinute(now()));
         $this->assertEquals(1, $record->hits);
     }
@@ -175,8 +240,8 @@ class GoogleMapServiceTest extends TestCase
             ->andReturnSelf()
             ->getMock()
             ->shouldReceive('put')
-            ->withArgs(function (string $path) use ($uuid) {
-                $this->assertEquals("maps/{$uuid}.jpg", $path);
+            ->withArgs(function (string $path) use ($uuid, $record) {
+                $this->assertEquals("maps/{$uuid}-{$record->parameters}.jpg", $path);
 
                 return true;
             })

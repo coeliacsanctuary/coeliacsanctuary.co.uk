@@ -18,7 +18,7 @@ const store = useShopStore();
 
 const shippingDetails = computed(() => store.shippingDetails);
 
-const fields = reactive<CheckoutBillingStep>({
+let fields = reactive<CheckoutBillingStep>({
   name: store.customerName,
   country: store.selectedCountry,
   ...shippingDetails.value,

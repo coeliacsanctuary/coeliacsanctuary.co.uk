@@ -40,7 +40,7 @@ class IndexController
 
         $aiAssisted = false;
 
-        if ( ! Str::contains(URL::previousPath(), '/search')) {
+        if ( ! Str::contains(URL::previousPath(), '/search') && ! Str::contains(URL::previousPath(), 'wheretoeat/search')) {
             $searchAiResponse = $identifySearchAreasWithAiAction->handle($search);
 
             if ($searchAiResponse) {
@@ -66,7 +66,8 @@ class IndexController
             ->doNotTrack()
             ->render('Search/Index', [
                 'parameters' => $parameters->toResponse(),
-                'location' => $parameters->locationSearch ?: $parameters->term,
+                'location' => $parameters->locationSearch,
+                'searchedLatLng' => SearchState::$lat ? ['lat' => SearchState::$lat, 'lng' => SearchState::$lng] : null,
                 'results' => Inertia::defer(fn () => $results),
                 'hasEatery' => SearchState::$hasGeoSearched,
                 'aiAssisted' => $aiAssisted,
