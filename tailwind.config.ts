@@ -106,6 +106,24 @@ export default {
             ol: {
               listStyle: 'auto',
             },
+            table: {
+              tableLayout: 'fixed',
+              tr: {
+                borderBottomColor: theme('colors.primary.light'),
+                borderBottomWidth: '2px',
+                '&:last-of-type': {
+                  borderBottomWidth: '0',
+                },
+                'th, td': {
+                  padding: '4px',
+                  borderRightColor: theme('colors.primary.light'),
+                  borderRightWidth: '2px',
+                  '&:last-child': {
+                    borderRightWidth: '0',
+                  },
+                },
+              },
+            },
           },
         },
       }),
