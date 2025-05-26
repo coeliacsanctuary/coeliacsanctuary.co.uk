@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
-import ArticleImage from '@/Components/ArticleImage.vue';
+import ArticleImage from '@/JitComponents/ArticleImage.vue';
 import { Link } from '@inertiajs/vue3';
 import SubHeading from '@/Components/SubHeading.vue';
 </script>

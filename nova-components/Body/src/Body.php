@@ -48,7 +48,7 @@ class Body extends Field
                 libxml_use_internal_errors(true);
 
                 $dom = new DOMDocument();
-                $allowedCustomTags = ['article-header', 'article-image', 'coeliac-iframe'];
+                $allowedCustomTags = ['article-header', 'article-image', 'article-iframe'];
                 $dom->loadHTML("<div>{$value}</div>");
 
                 $xmlErrors = collect(libxml_get_errors())
@@ -65,7 +65,7 @@ class Body extends Field
                 }
 
                 if (Str::contains($value, '<iframe')) {
-                    return $fail('Use <coeliac-iframe> instead of <iframe>');
+                    return $fail('Use <article-iframe> instead of <iframe>');
                 }
 
                 preg_match_all(

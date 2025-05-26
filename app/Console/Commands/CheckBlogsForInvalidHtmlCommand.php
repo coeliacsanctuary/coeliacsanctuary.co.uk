@@ -59,7 +59,7 @@ class CheckBlogsForInvalidHtmlCommand extends Command
         libxml_use_internal_errors(true);
 
         $dom = new DOMDocument();
-        $allowedCustomTags = ['article-header', 'article-image', 'coeliac-iframe'];
+        $allowedCustomTags = ['article-header', 'article-image', 'article-iframe'];
         $dom->loadHTML("<div>{$blog->body}</div>");
 
         $xmlErrors = collect(libxml_get_errors())

@@ -6,8 +6,6 @@ import {
   compile,
   defineComponent,
 } from 'vue';
-import ArticleHeader from './ArticleHeader.vue';
-import ArticleImage from './ArticleImage.vue';
 import { CustomComponent } from '@/types/Types';
 const props = defineProps<{ content: string }>();
 
@@ -28,10 +26,7 @@ onMounted(() => {
 
 <template>
   <div v-if="compiled">
-    <component
-      :is="compiled"
-      :components="{ ArticleHeader, ArticleImage }"
-    />
+    <component :is="compiled" />
   </div>
   <div v-else>
     <div v-html="content"></div>

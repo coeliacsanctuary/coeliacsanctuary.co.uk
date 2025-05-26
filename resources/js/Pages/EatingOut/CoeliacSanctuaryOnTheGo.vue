@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import ArticleImage from '@/Components/ArticleImage.vue';
+import ArticleImage from '@/JitComponents/ArticleImage.vue';
 import Heading from '@/Components/Heading.vue';
 
 defineProps<{ image: string }>();

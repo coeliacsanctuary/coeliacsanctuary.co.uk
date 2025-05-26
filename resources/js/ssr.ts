@@ -5,8 +5,6 @@ import { Component, createSSRApp, h } from 'vue';
 import { InertiaPage } from '@/types/Core';
 import Coeliac from '@/Layouts/Coeliac.vue';
 import { createPinia } from 'pinia';
-import ArticleHeader from '@/Components/ArticleHeader.vue';
-import ArticleImage from '@/Components/ArticleImage.vue';
 import { getTitle } from '@/helpers';
 import AnalyticsTrack from '@/analyticsTrack';
 
@@ -35,14 +33,25 @@ createServer((page) =>
       return page;
     },
 
-    setup({ App, props, plugin }) {
+    setup({ el, App, props, plugin }) {
       const pinia = createPinia();
+      const app = createSSRApp({ render: () => h(App, props) });
 
-      return createSSRApp({ render: () => h(App, props) })
-        .component('article-header', ArticleHeader as Component)
-        .component('article-image', ArticleImage as Component)
-        .use(plugin)
-        .use(pinia);
+      const jitComponents: Record<string, { default: Component }> =
+        import.meta.glob('./JitComponents/*.vue', { eager: true });
+
+      Object.entries(jitComponents).forEach(([path, module]) => {
+        const componentName = path.split('/').pop()?.replace('.vue', '') ?? '';
+
+        const kebabName = componentName
+          .replace(/([A-Z])/g, '-$1')
+          .replace(/^-/, '')
+          .toLowerCase();
+
+        app.component(kebabName, module.default);
+      });
+
+      app.use(pinia).use(plugin).mount(el);
     },
   }),
 );
