@@ -102,7 +102,7 @@ const handleSearch = () => {
     resultsElem.value.pause = true;
   }
 
-  if (cancelSearch) {
+  if (cancelSearch && cancelSearch.value) {
     (<Ref<{ cancel: () => void }>>cancelSearch).value.cancel();
   }
 
