@@ -10,8 +10,10 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
+use App\Pipelines\EatingOut\DetermineNationwideBranchFromName\DetermineNationwideBranchFromNamePipeline;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -37,16 +39,22 @@ class StoreControllerTest extends TestCase
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
         $this->town = EateryTown::query()->withoutGlobalScopes()->first();
 
-        $this->eatery = $this->create(Eatery::class);
+        $this->eatery = $this->create(Eatery::class, [
+            'town_id' => $this->town->id,
+            'county_id' => $this->county->id,
+        ]);
 
         $this->nationwideBranch = $this->create(NationwideBranch::class, [
             'wheretoeat_id' => $this->eatery->id,
+            'name' => 'My Branch',
+            'town_id' => $this->town->id,
+            'county_id' => $this->county->id,
         ]);
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itReturnsNotFoundForAnEateryThatDoesntExist(callable $route, callable $data, $before): void
+    public function itReturnsNotFoundForAnEateryThatDoesntExist(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
@@ -55,7 +63,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itReturnsNotFoundForAnEateryThatIsNotLive(callable $route, callable $data, $before): void
+    public function itReturnsNotFoundForAnEateryThatIsNotLive(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
@@ -66,212 +74,222 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAnInvalidRating(callable $route, callable $data, $before): void
+    public function itErrorsWithoutAnInvalidRating(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data(['rating' => null])->create())
+        $this->submitForm($route, $data(['rating' => null], $this)->create())
             ->assertSessionHasErrors('rating');
 
-        $this->submitForm($route, $data(['rating' => 'foo'])->create())
+        $this->submitForm($route, $data(['rating' => 'foo'], $this)->create())
             ->assertSessionHasErrors('rating');
 
-        $this->submitForm($route, $data(['rating' => true])->create())
+        $this->submitForm($route, $data(['rating' => true], $this)->create())
             ->assertSessionHasErrors('rating');
 
-        $this->submitForm($route, $data(['rating' => -1])->create())
+        $this->submitForm($route, $data(['rating' => -1], $this)->create())
             ->assertSessionHasErrors('rating');
 
-        $this->submitForm($route, $data(['rating' => 6])->create())
+        $this->submitForm($route, $data(['rating' => 6], $this)->create())
             ->assertSessionHasErrors('rating');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itFailsWithAnInvalidMethodValue(callable $route, callable $data, $before): void
+    public function itFailsWithAnInvalidMethodValue(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data(['method' => null])->create())
+        $this->submitForm($route, $data(['method' => null], $this)->create())
             ->assertSessionHasErrors('method');
 
-        $this->submitForm($route, $data(['method' => 123])->create())
+        $this->submitForm($route, $data(['method' => 123], $this)->create())
             ->assertSessionHasErrors('method');
 
-        $this->submitForm($route, $data(['method' => false])->create())
+        $this->submitForm($route, $data(['method' => false], $this)->create())
             ->assertSessionHasErrors('method');
 
-        $this->submitForm($route, $data(['method' => 'foo'])->create())
+        $this->submitForm($route, $data(['method' => 'foo'], $this)->create())
             ->assertSessionHasErrors('method');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutABranchNameWhenTheEateryIsNationwide(callable $route, callable $data, $before): void
+    public function itErrorsWithoutABranchNameWhenTheEateryIsNationwide(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
         $this->eatery->county->update(['county' => 'Nationwide']);
 
-        $this->submitForm($route, $data(['branch_name' => 123])->create())
+        $this->submitForm($route, $data(['branch_name' => 123], $this)->create())
             ->assertSessionHasErrors('branch_name');
 
-        $this->submitForm($route, $data(['branch_name' => false])->create())
+        $this->submitForm($route, $data(['branch_name' => false], $this)->create())
             ->assertSessionHasErrors('branch_name');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAName(callable $route, callable $data, $before): void
+    public function itErrorsWithoutAName(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data()->state(['name' => null])->create())
+        $this->submitForm($route, $data([], $this)->state(['name' => null])->create())
             ->assertSessionHasErrors('name');
 
-        $this->submitForm($route, $data()->state(['name' => 123])->create())
+        $this->submitForm($route, $data([], $this)->state(['name' => 123])->create())
             ->assertSessionHasErrors('name');
 
-        $this->submitForm($route, $data()->state(['name' => true])->create())
+        $this->submitForm($route, $data([], $this)->state(['name' => true])->create())
             ->assertSessionHasErrors('name');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAEmail(callable $route, callable $data, $before): void
+    public function itErrorsWithoutAEmail(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data()->state(['email' => null])->create())
+        $this->submitForm($route, $data([], $this)->state(['email' => null])->create())
             ->assertSessionHasErrors('email');
 
-        $this->submitForm($route, $data()->state(['email' => 123])->create())
+        $this->submitForm($route, $data([], $this)->state(['email' => 123])->create())
             ->assertSessionHasErrors('email');
 
-        $this->submitForm($route, $data()->state(['email' => true])->create())
+        $this->submitForm($route, $data([], $this)->state(['email' => true])->create())
             ->assertSessionHasErrors('email');
 
-        $this->submitForm($route, $data()->state(['email' => 'foo'])->create())
+        $this->submitForm($route, $data([], $this)->state(['email' => 'foo'])->create())
             ->assertSessionHasErrors('email');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAReviewField(callable $route, callable $data, $before): void
+    public function itErrorsWithoutAReviewField(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data()->state(['review' => null])->create())
+        $this->submitForm($route, $data([], $this)->state(['review' => null])->create())
             ->assertSessionHasErrors('review');
 
-        $this->submitForm($route, $data()->state(['review' => 123])->create())
+        $this->submitForm($route, $data([], $this)->state(['review' => 123])->create())
             ->assertSessionHasErrors('review');
 
-        $this->submitForm($route, $data()->state(['review' => true])->create())
+        $this->submitForm($route, $data([], $this)->state(['review' => true])->create())
             ->assertSessionHasErrors('review');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithAnInvalidFoodRatingValue(callable $route, callable $data, $before): void
+    public function itErrorsWithAnInvalidFoodRatingValue(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data()->state(['food_rating' => 123])->create())
+        $this->submitForm($route, $data([], $this)->state(['food_rating' => 123])->create())
             ->assertSessionHasErrors('food_rating');
 
-        $this->submitForm($route, $data()->state(['food_rating' => true])->create())
+        $this->submitForm($route, $data([], $this)->state(['food_rating' => true])->create())
             ->assertSessionHasErrors('food_rating');
 
-        $this->submitForm($route, $data()->state(['food_rating' => 'foo'])->create())
+        $this->submitForm($route, $data([], $this)->state(['food_rating' => 'foo'])->create())
             ->assertSessionHasErrors('food_rating');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithAnInvalidServiceRatingValue(callable $route, callable $data, $before): void
+    public function itErrorsWithAnInvalidServiceRatingValue(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data()->state(['service_rating' => 123])->create())
+        $this->submitForm($route, $data([], $this)->state(['service_rating' => 123])->create())
             ->assertSessionHasErrors('service_rating');
 
-        $this->submitForm($route, $data()->state(['service_rating' => true])->create())
+        $this->submitForm($route, $data([], $this)->state(['service_rating' => true])->create())
             ->assertSessionHasErrors('service_rating');
 
-        $this->submitForm($route, $data()->state(['service_rating' => 'foo'])->create())
+        $this->submitForm($route, $data([], $this)->state(['service_rating' => 'foo'])->create())
             ->assertSessionHasErrors('service_rating');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAnInvalidHowExpensiveField(callable $route, callable $data, $before): void
+    public function itErrorsWithoutAnInvalidHowExpensiveField(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data(['how_expensive' => 'foo'])->create())
+        $this->submitForm($route, $data(['how_expensive' => 'foo'], $this)->create())
             ->assertSessionHasErrors('how_expensive');
 
-        $this->submitForm($route, $data(['how_expensive' => true])->create())
+        $this->submitForm($route, $data(['how_expensive' => true], $this)->create())
             ->assertSessionHasErrors('how_expensive');
 
-        $this->submitForm($route, $data(['how_expensive' => -1])->create())
+        $this->submitForm($route, $data(['how_expensive' => -1], $this)->create())
             ->assertSessionHasErrors('how_expensive');
 
-        $this->submitForm($route, $data(['how_expensive' => 6])->create())
+        $this->submitForm($route, $data(['how_expensive' => 6], $this)->create())
             ->assertSessionHasErrors('how_expensive');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsIfSubmittingMoreThan6Images(callable $route, callable $data, $before): void
+    public function itErrorsIfSubmittingMoreThan6Images(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data(['images' => [1, 2, 3, 4, 5, 6, 7]])->create())
+        $this->submitForm($route, $data(['images' => [1, 2, 3, 4, 5, 6, 7]], $this)->create())
             ->assertSessionHasErrors('images');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsIfAnImageDoesntExistInTheTable(callable $route, callable $data, $before): void
+    public function itErrorsIfAnImageDoesntExistInTheTable(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data(['images' => [1]])->create())
+        $this->submitForm($route, $data(['images' => [1]], $this)->create())
             ->assertSessionHasErrors('images.0');
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itReturnsOk(callable $route, callable $data, $before): void
+    public function itReturnsOk(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
-        $this->submitForm($route, $data()->create())->assertSessionHasNoErrors();
+        $this->submitForm($route, $data([], $this)->create())->assertSessionHasNoErrors();
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itCallsTheCreateEateryReviewAction(callable $route, callable $data, $before): void
+    public function itExecutesDetermineNationwideBranchFromNamePipeline(callable $route, callable $data, callable $before): void
+    {
+        $before($this);
+
+        $this->expectPipelineToRun(DetermineNationwideBranchFromNamePipeline::class);
+
+        $this->submitForm($route, $data(['rating' => 5], $this)->create());
+    }
+
+    #[Test]
+    #[DataProvider('routesToVisit')]
+    public function itCallsTheCreateEateryReviewAction(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
         $this->expectAction(CreateEateryReviewAction::class);
 
-        $this->submitForm($route, $data(['rating' => 5])->create());
-
+        $this->submitForm($route, $data(['rating' => 5], $this)->create());
     }
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itCreatesAFullRatingThatIsNotApproved(callable $route, callable $data, $before): void
+    public function itCreatesAFullRatingThatIsNotApproved(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
         $this->assertEmpty($this->eatery->reviews);
 
-        $this->submitForm($route, $data()
+        $this->submitForm($route, $data([], $this)
             ->state([
                 'rating' => 4,
                 'name' => 'Foo Bar',
@@ -287,6 +305,8 @@ class StoreControllerTest extends TestCase
         $this->assertEquals(4, $review->rating);
         $this->assertEquals('Foo Bar', $review->name);
         $this->assertEquals('foo@bar.com', $review->email);
+
+        $after($this, $review);
     }
 
     protected function submitForm(callable $route, array $data): TestResponse
@@ -305,6 +325,10 @@ class StoreControllerTest extends TestCase
                 ]),
                 fn (array $data = []): EateryCreateReviewRequestFactory => EateryCreateReviewRequestFactory::new($data),
                 function (): void {},
+                function (self $test, EateryReview $review): void {
+                    $test->assertNull($review->branch_name);
+                    $test->assertNull($review->nationwide_branch_id);
+                },
             ],
             'nationwide eatery' => [
                 fn (self $test, ?string $eatery = null): string => route('eating-out.nationwide.show.reviews.create', [
@@ -314,7 +338,7 @@ class StoreControllerTest extends TestCase
                     $request = EateryCreateReviewRequestFactory::new($data);
 
                     if ( ! Arr::hasAny($data, ['nationwide_branch', 'branch_name'])) {
-                        $request = $request->forBranch();
+                        $request = $request->withBranchName();
                     }
 
                     return $request;
@@ -323,17 +347,18 @@ class StoreControllerTest extends TestCase
                     $test->county->update(['county' => 'Nationwide']);
                     $test->town->update(['town' => 'nationwide']);
                 },
+                function (): void {},
             ],
             'nationwide branch' => [
                 fn (self $test, ?string $eatery = null): string => route('eating-out.nationwide.show.branch.reviews.create', [
                     'eatery' => $eatery ?? $test->eatery->slug,
                     'nationwideBranch' => $test->nationwideBranch->slug,
                 ]),
-                function (array $data = []): EateryCreateReviewRequestFactory {
+                function (array $data, self $test): EateryCreateReviewRequestFactory {
                     $request = EateryCreateReviewRequestFactory::new($data);
 
                     if ( ! Arr::hasAny($data, ['nationwide_branch', 'branch_name'])) {
-                        $request = $request->forBranch();
+                        $request = $request->withBranchName($test->nationwideBranch->branch_name);
                     }
 
                     return $request;
@@ -342,6 +367,7 @@ class StoreControllerTest extends TestCase
                     $test->county->update(['county' => 'Nationwide']);
                     $test->town->update(['town' => 'nationwide']);
                 },
+                function (): void {},
             ],
         ];
     }

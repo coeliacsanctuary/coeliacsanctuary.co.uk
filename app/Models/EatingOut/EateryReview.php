@@ -49,6 +49,12 @@ class EateryReview extends Model
         return $this->belongsTo(Eatery::class, 'wheretoeat_id', 'id');
     }
 
+    /** @return BelongsTo<NationwideBranch, $this> */
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(NationwideBranch::class, 'nationwide_branch_id', 'id');
+    }
+
     /** @return Attribute<string | null, never> */
     public function averageRating(): Attribute
     {
