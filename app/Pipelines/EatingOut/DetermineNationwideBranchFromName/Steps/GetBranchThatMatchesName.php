@@ -16,10 +16,16 @@ class GetBranchThatMatchesName extends BaseStep
             return $next($data);
         }
 
+        $branchName = $data->branchName;
+
+        if (Str::startsWith($branchName, 'the ')) {
+            $branchName = Str::replaceFirst('the ', '', $branchName);
+        }
+
         $matchingBranches = $data->branches
             ->reject(fn (NationwideBranch $branch) => $branch->name === null)
             /** @phpstan-ignore-next-line */
-            ->filter(fn (NationwideBranch $branch) => Str::of($branch->name)->contains($data->branchName, true));
+            ->filter(fn (NationwideBranch $branch) => Str::of($branch->name)->contains($branchName, true) || Str::of($branchName)->contains($branch->name, false));
 
         if ($matchingBranches->count() === 1) {
             $data->branch = $matchingBranches->first();

@@ -89,6 +89,8 @@ class GetBranchThatMatchesNameTest extends BaseStepTestCase
             'exact match' => ['my branch', 'my branch'],
             'partial match' => ['my branch', 'branch'],
             'mixed case match' => ['My Branch', 'my branch'],
+            "'the' prefix" => ['branch', 'the branch'],
+            "'the' prefix missing" => ['the branch', 'branch'],
         ];
     }
 

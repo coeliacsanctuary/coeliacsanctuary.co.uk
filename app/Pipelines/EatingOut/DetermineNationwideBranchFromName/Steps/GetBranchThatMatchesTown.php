@@ -7,6 +7,8 @@ namespace App\Pipelines\EatingOut\DetermineNationwideBranchFromName\Steps;
 use App\DataObjects\EatingOut\DetermineNationwideBranchPipelineData;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class GetBranchThatMatchesTown extends BaseStep
 {
@@ -17,7 +19,16 @@ class GetBranchThatMatchesTown extends BaseStep
         }
 
         $town = EateryTown::withoutGlobalScopes()
-            ->whereLike('town', "%{$data->branchName}%")
+            ->whereIn('id', $data->branches->pluck('town_id')->unique()->toArray())
+            ->where(fn(Builder $builder) => $builder
+                ->whereLike('town', "%{$data->branchName}%")
+                ->orWhere(function (Builder $builder) use ($data): void {
+                    Str::of($data->branchName)
+                        ->explode(' ')
+                        ->map(fn (string $term) => mb_trim($term, " \n\r\t\v\0,"))
+                        ->each(fn (string $term) => $builder->orWhereLike('town', "%{$term}%"));
+                })
+            )
             ->first();
 
         if ($town) {
