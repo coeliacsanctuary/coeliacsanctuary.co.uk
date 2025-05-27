@@ -20,14 +20,15 @@ class GetBranchThatMatchesTown extends BaseStep
 
         $town = EateryTown::withoutGlobalScopes()
             ->whereIn('id', $data->branches->pluck('town_id')->unique()->toArray())
-            ->where(fn(Builder $builder) => $builder
-                ->whereLike('town', "%{$data->branchName}%")
-                ->orWhere(function (Builder $builder) use ($data): void {
-                    Str::of($data->branchName)
-                        ->explode(' ')
-                        ->map(fn (string $term) => mb_trim($term, " \n\r\t\v\0,"))
-                        ->each(fn (string $term) => $builder->orWhereLike('town', "%{$term}%"));
-                })
+            ->where(
+                fn (Builder $builder) => $builder
+                    ->whereLike('town', "%{$data->branchName}%")
+                    ->orWhere(function (Builder $builder) use ($data): void {
+                        Str::of($data->branchName)
+                            ->explode(' ')
+                            ->map(fn (string $term) => mb_trim($term, " \n\r\t\v\0,"))
+                            ->each(fn (string $term) => $builder->orWhereLike('town', "%{$term}%"));
+                    })
             )
             ->first();
 

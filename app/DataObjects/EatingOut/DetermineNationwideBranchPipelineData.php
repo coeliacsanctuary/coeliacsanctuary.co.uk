@@ -20,5 +20,6 @@ class DetermineNationwideBranchPipelineData
         public ?NationwideBranch $requestBranch = null,
         public ?NationwideBranch $branch = null,
         public bool $passed = false,
-    ) {}
+    ) {
+    }
 }

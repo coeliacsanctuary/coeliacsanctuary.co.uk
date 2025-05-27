@@ -9,10 +9,8 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\DetermineNationwideBranchFromName\Steps\BaseStep;
-use App\Pipelines\EatingOut\DetermineNationwideBranchFromName\Steps\GetBranchThatMatchesName;
 use App\Pipelines\EatingOut\DetermineNationwideBranchFromName\Steps\GetBranchThatMatchesTown;
 use Illuminate\Database\Eloquent\Collection;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
 class GetBranchThatMatchesTownTest extends BaseStepTestCase

@@ -13,7 +13,6 @@ use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\DetermineNationwideBranchFromName\DetermineNationwideBranchFromNamePipeline;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
