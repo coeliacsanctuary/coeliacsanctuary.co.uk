@@ -24,10 +24,10 @@ class GetBranchThatMatchesTown extends BaseStep
                 fn (Builder $builder) => $builder
                     ->whereLike('town', "%{$data->branchName}%")
                     ->orWhere(function (Builder $builder) use ($data): void {
-                        Str::of($data->branchName)
+                        Str::of((string) $data->branchName)
                             ->explode(' ')
                             ->map(fn (string $term) => mb_trim($term, " \n\r\t\v\0,"))
-                            ->each(fn (string $term) => $builder->orWhereLike('town', "%{$term}%"));
+                            ->each(fn (string $term) => $builder->orWhere('town', $term));
                     })
             )
             ->first();

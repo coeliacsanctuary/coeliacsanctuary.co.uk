@@ -184,6 +184,24 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 },
                 'Superclub (Crewe)',
             ],
+            'full and partial match for branch name' => [
+                function (self $test) {
+                    $eatery = $test->create(Eatery::class);
+
+                    $branch = $test->create(NationwideBranch::class, [
+                        'wheretoeat_id' => $eatery->id,
+                        'name' => 'Superclub Hall',
+                    ]);
+
+                    $test->create(NationwideBranch::class, [
+                        'wheretoeat_id' => $eatery->id,
+                        'name' => 'Hall',
+                    ]);
+
+                    return [$eatery, $branch];
+                },
+                'Superclub Hall',
+            ],
         ];
     }
 }
