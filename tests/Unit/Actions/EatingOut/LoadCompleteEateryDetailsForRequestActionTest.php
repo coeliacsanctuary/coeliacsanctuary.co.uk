@@ -160,7 +160,8 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
             new NationwideBranch(),
         );
 
-        $this->assertNotNull($this->eatery->adminReview);;
+        $this->assertNotNull($this->eatery->adminReview);
+        ;
         $this->assertTrue($review->is($this->eatery->adminReview));
     }
 

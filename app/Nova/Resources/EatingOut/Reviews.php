@@ -132,15 +132,16 @@ class Reviews extends Resource
             Select::make('Branch', 'nationwide_branch_id')
                 ->displayUsingLabels()
                 ->searchable()
-                ->options($this
-                    ->resource
-                    ->eatery
-                    ->nationwideBranches()
-                    ->with(['town', 'county', 'country'])
-                    ->chaperone('eatery')
-                    ->get()
-                    ->mapWithKeys(fn (NationwideBranch $nationwideBranch) => [$nationwideBranch->id => $nationwideBranch->full_name])
-                    ->sort()
+                ->options(
+                    $this
+                        ->resource
+                        ->eatery
+                        ->nationwideBranches()
+                        ->with(['town', 'county', 'country'])
+                        ->chaperone('eatery')
+                        ->get()
+                        ->mapWithKeys(fn (NationwideBranch $nationwideBranch) => [$nationwideBranch->id => $nationwideBranch->full_name])
+                        ->sort()
                 ),
 
             Text::make('User Inputted Branch Name', 'branch_name')->hideFromIndex()->showOnPreview(),

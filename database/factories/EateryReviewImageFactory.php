@@ -16,7 +16,7 @@ class EateryReviewImageFactory extends Factory
     public function definition()
     {
         return [
-            'wheretoeat_review_id' => fn(array $attributes) => self::factoryForModel(EateryReview::class)->approved()->on($attributes['wheretoeat_id']),
+            'wheretoeat_review_id' => fn (array $attributes) => self::factoryForModel(EateryReview::class)->approved()->on($attributes['wheretoeat_id']),
             'wheretoeat_id' => 1,
             'thumb' => Str::random(),
             'path' => Str::random(),
