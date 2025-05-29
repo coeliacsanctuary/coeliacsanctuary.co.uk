@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import Icon from '@/Components/Icon.vue';
 import { StarRating } from '@/types/EateryTypes';
 
@@ -22,7 +22,7 @@ const props = withDefaults(
 const wholeNumber = ref(0);
 const hasHalf = ref(false);
 
-onMounted(() => {
+const loadStars = () => {
   let stars = 0;
 
   if (props.rating) {
@@ -39,6 +39,10 @@ onMounted(() => {
   if (remainingNumber >= 7) {
     wholeNumber.value += 1;
   }
+};
+
+onMounted(() => {
+  loadStars();
 });
 
 const remainingStars = computed((): number[] => {
@@ -74,6 +78,11 @@ const shouldShowEmptyStars = (): boolean => {
 
   return true;
 };
+
+watch(
+  () => props.rating,
+  () => loadStars(),
+);
 </script>
 
 <template>
