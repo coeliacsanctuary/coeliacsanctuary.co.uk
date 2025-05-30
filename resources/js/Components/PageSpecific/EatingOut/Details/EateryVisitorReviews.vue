@@ -86,7 +86,7 @@ watch(showAllReviews, (newValue) => {
         <div class="flow-root">
           <div
             v-if="reviews.length > 0 || eatery.branch"
-            class="mb-2 flex w-auto justify-between space-x-16 rounded-sm bg-primary-light/50 px-3 py-1"
+            class="mb-2 flex w-auto flex-col justify-between space-y-4 rounded-sm bg-primary-light/50 px-3 py-1 sm:flex-row sm:space-y-0 sm:space-x-16"
           >
             <div
               class="flex-1"
@@ -97,16 +97,18 @@ watch(showAllReviews, (newValue) => {
                 name="hide-ratings"
                 label="Hide ratings without a review"
                 :disabled="reviews.length === 0"
+                class="w-full sm:w-auto"
               />
             </div>
             <div
               v-if="eatery.branch"
-              class="flex flex-1 justify-end"
+              class="flex flex-1 sm:justify-end"
             >
               <FormCheckbox
                 v-model="showAllReviews"
                 name="show-all-reviews"
                 label="Show reviews for all branches"
+                class="w-full sm:w-auto"
               />
             </div>
           </div>

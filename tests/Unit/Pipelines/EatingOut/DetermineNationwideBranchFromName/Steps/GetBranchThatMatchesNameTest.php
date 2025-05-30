@@ -60,7 +60,7 @@ class GetBranchThatMatchesNameTest extends BaseStepTestCase
             ->count(2)
             ->sequence(
                 [
-                    'name' => 'My Branch',
+                    'name' => 'My Branch On',
                 ],
                 [
                     'name' => 'My Branch On My Street',
@@ -71,6 +71,40 @@ class GetBranchThatMatchesNameTest extends BaseStepTestCase
         $callback = function (DetermineNationwideBranchPipelineData $data): void {
             $this->assertFalse($data->passed);
             $this->assertNull($data->branch);
+        };
+
+        $data = new DetermineNationwideBranchPipelineData(
+            new Collection($branches),
+            'My Branch',
+            $eatery,
+            passed: false,
+        );
+
+        $this->factory()->handle($data, $callback);
+    }
+
+    #[Test]
+    public function ifThereIsMoreThanOneBranchWithAMatchingNameInTheGivenBranchesButThereIsAnExactMatchItWillUseThat(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $branches = $this->build(NationwideBranch::class)
+            ->forEatery($eatery)
+            ->count(2)
+            ->sequence(
+                [
+                    'name' => 'My Branch',
+                ],
+                [
+                    'name' => 'My Branch On My Street',
+                ],
+            )
+            ->create();
+
+        $callback = function (DetermineNationwideBranchPipelineData $data) use ($branches): void {
+            $this->assertTrue($data->passed);
+            $this->assertNotNull($data->branch);
+            $this->assertTrue($data->branch->is($branches->first()));
         };
 
         $data = new DetermineNationwideBranchPipelineData(

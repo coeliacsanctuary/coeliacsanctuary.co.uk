@@ -41,7 +41,7 @@ class GetController
             $town,
             $nationwideBranch,
             $pageType,
-            $request->boolean('show-all-reviews') !== true
+            $request->boolean('show-all-reviews'),
         );
 
         [$name, $previous] = $computeEateryBackLinkAction->handle($eatery);
