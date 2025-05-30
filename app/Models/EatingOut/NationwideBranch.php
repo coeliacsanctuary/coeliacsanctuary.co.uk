@@ -31,6 +31,7 @@ use Laravel\Scout\Searchable;
  *
  * @property Eatery $eatery
  * @property string $short_name
+ * @property string $full_name
  */
 class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSearchable
 {

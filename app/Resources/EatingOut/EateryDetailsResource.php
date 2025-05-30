@@ -103,7 +103,7 @@ class EateryDetailsResource extends JsonResource
                     'expense' => $review->price,
                     'food_rating' => $review->food_rating,
                     'service_rating' => $review->service_rating,
-                    'branch_name' => $review->branch_name,
+                    'branch_name' => $review->branch ? $review->branch->name : $review->branch_name,
                     'images' => $review->images->count() > 0 ? $review->images->map(fn (EateryReviewImage $image) => [
                         'id' => $image->id,
                         'thumbnail' => $image->thumb,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 
 class NationwideBranchFactory extends Factory
@@ -24,6 +25,13 @@ class NationwideBranchFactory extends Factory
             'lng' => $this->faker->longitude,
             'live' => true,
         ];
+    }
+
+    public function forEatery(Eatery $eatery): self
+    {
+        return $this->state(fn () => [
+            'wheretoeat_id' => $eatery->id,
+        ]);
     }
 
     public function notLive(): self

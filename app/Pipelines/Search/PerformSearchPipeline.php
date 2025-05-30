@@ -7,7 +7,7 @@ namespace App\Pipelines\Search;
 use App\DataObjects\Search\SearchParameters;
 use App\DataObjects\Search\SearchPipelineData;
 use App\DataObjects\Search\SearchResultsCollection;
-use App\Pipelines\EatingOut\CheckRecommendedPlace\Steps\CombineResults;
+use App\Pipelines\Search\Steps\CombineResults;
 use App\Pipelines\Search\Steps\HydratePage;
 use App\Pipelines\Search\Steps\PaginateResults;
 use App\Pipelines\Search\Steps\PrepareResource;

@@ -37,9 +37,9 @@ trait CreatesFactories
         $factory = $this->build($what);
 
         if ($count > 1) {
-            $factory->count($count);
+            $factory = $factory->count($count);
         }
 
-        return $factory->create($attributes);
+        return $factory->state($attributes)->create();
     }
 }

@@ -22,10 +22,10 @@ class EateryCreateReviewRequestFactory extends RequestFactory
         ];
     }
 
-    public function forBranch(): self
+    public function withBranchName(?string $name = null): self
     {
         return $this->state([
-            'branch_name' => $this->faker->city,
+            'branch_name' => $name ?: $this->faker->city,
         ]);
     }
 }

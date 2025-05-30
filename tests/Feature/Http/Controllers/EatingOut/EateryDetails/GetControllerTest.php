@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\EateryDetails;
 
+use App\Actions\EatingOut\ComputeEateryBackLinkAction;
+use App\Actions\EatingOut\LoadCompleteEateryDetailsForRequestAction;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -94,6 +96,22 @@ class GetControllerTest extends TestCase
         $this->visitEatery()->assertGone();
     }
 
+    #[Test]
+    public function itCallsTheComputeBackLinkAction(): void
+    {
+        $this->expectAction(ComputeEateryBackLinkAction::class, return: ['foo', 'bar']);
+
+        $this->visitEatery();
+    }
+
+    #[Test]
+    public function itCallsTheLoadCompleteEateryDetailsForRequestAction(): void
+    {
+        $this->expectAction(LoadCompleteEateryDetailsForRequestAction::class, return: ['foo', 'bar']);
+
+        $this->visitEatery();
+    }
+
     protected function convertToNationwideEatery(): self
     {
         $this->eatery->county->update(['county' => 'Nationwide']);
@@ -137,6 +155,22 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
+    public function itCallsTheComputeBackLinkActionOnTheNationwidePage(): void
+    {
+        $this->expectAction(ComputeEateryBackLinkAction::class, return: ['foo', 'bar']);
+
+        $this->convertToNationwideEatery()->visitNationwideEatery();
+    }
+
+    #[Test]
+    public function itCallsTheLoadCompleteEateryDetailsForRequestActionOnTheNationwidePage(): void
+    {
+        $this->expectAction(LoadCompleteEateryDetailsForRequestAction::class, return: ['foo', 'bar']);
+
+        $this->convertToNationwideEatery()->visitNationwideEatery();
+    }
+
+    #[Test]
     public function itReturnsOkForALiveBranch(): void
     {
         $this
@@ -168,6 +202,22 @@ class GetControllerTest extends TestCase
                     ->where('eatery.name', $this->eatery->name)
                     ->etc()
             );
+    }
+
+    #[Test]
+    public function itCallsTheComputeBackLinkActionOnBranchPage(): void
+    {
+        $this->expectAction(ComputeEateryBackLinkAction::class, return: ['foo', 'bar']);
+
+        $this->convertToNationwideEatery()->visitBranch();
+    }
+
+    #[Test]
+    public function itCallsTheLoadCompleteEateryDetailsForRequestActionOnBranchPage(): void
+    {
+        $this->expectAction(LoadCompleteEateryDetailsForRequestAction::class, return: ['foo', 'bar']);
+
+        $this->convertToNationwideEatery()->visitBranch();
     }
 
     protected function visitEatery(): TestResponse

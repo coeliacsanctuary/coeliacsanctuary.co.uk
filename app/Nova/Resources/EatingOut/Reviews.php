@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\EatingOut;
 
 use App\Models\EatingOut\EateryReview;
+use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\ApproveReview;
 use App\Nova\Resource;
 use Illuminate\Http\Request;
@@ -97,9 +98,9 @@ class Reviews extends Resource
                 ])->showOnPreview(),
             ]),
 
-            new Panel('Review', [
-                Text::make('Branch Name')->hideFromIndex()->showOnPreview(),
+            ...($this->resource->eatery->county_id === 1 ? $this->getBranchPanel() : []),
 
+            new Panel('Review', [
                 Textarea::make('Review')->showOnPreview(),
 
                 Boolean::make('Approved')->showOnPreview()->filterable(),
@@ -123,5 +124,27 @@ class Reviews extends Resource
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->withoutGlobalScopes()->withCount(['images']);
+    }
+
+    protected function getBranchPanel(): array
+    {
+        return [new Panel('Branch', [
+            Select::make('Branch', 'nationwide_branch_id')
+                ->displayUsingLabels()
+                ->searchable()
+                ->options(
+                    $this
+                        ->resource
+                        ->eatery
+                        ->nationwideBranches()
+                        ->with(['town', 'county', 'country'])
+                        ->chaperone('eatery')
+                        ->get()
+                        ->mapWithKeys(fn (NationwideBranch $nationwideBranch) => [$nationwideBranch->id => $nationwideBranch->full_name])
+                        ->sort()
+                ),
+
+            Text::make('User Inputted Branch Name', 'branch_name')->hideFromIndex()->showOnPreview(),
+        ])];
     }
 }
