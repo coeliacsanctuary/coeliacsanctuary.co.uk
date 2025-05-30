@@ -3,13 +3,14 @@ import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { Link, router } from '@inertiajs/vue3';
 import Comments from '@/Components/PageSpecific/Shared/Comments.vue';
-import { ref, Ref } from 'vue';
+import { onMounted, ref, Ref } from 'vue';
 import { BlogPage } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
 import RenderedString from '@/Components/RenderedString.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
 import { Page } from '@inertiajs/core';
+import { loadScript } from '@/helpers';
 
 const props = defineProps<{
   blog: BlogPage;
@@ -17,6 +18,12 @@ const props = defineProps<{
 }>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
+
+onMounted(() => {
+  if (props.blog.hasTwitterEmbed) {
+    loadScript('https://platform.twitter.com/widgets.js');
+  }
+});
 
 const loadMoreComments = () => {
   if (!props.comments.links.next) {

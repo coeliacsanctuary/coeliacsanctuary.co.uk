@@ -27,7 +27,8 @@ class SearchableItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         $title = match ($this->resource::class) {
-            Blog::class, Recipe::class, ShopProduct::class => $this->resource->title,
+            Blog::class => Str::of($this->resource->title)->replace('&quot;', '"'),
+            Recipe::class, ShopProduct::class => $this->resource->title,
             Eatery::class => "{$this->resource->name}, {$this->resource->short_location}",
             NationwideBranch::class => ($this->resource->name ?: $this->resource->eatery->name) . ", {$this->resource->short_location}",
             default => throw new Exception('Unknown search class'),
