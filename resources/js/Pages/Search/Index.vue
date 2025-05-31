@@ -96,6 +96,10 @@ searchForm.defaults(props.parameters).reset();
 const shouldLoad = ref(true);
 
 const handleSearch = () => {
+  if (shouldLoad.value) {
+    return;
+  }
+
   shouldLoad.value = true;
 
   if (resultsElem.value) {
@@ -160,6 +164,19 @@ watchDebounced(
   () => handleSearch(),
   { debounce: 500 },
 );
+
+router.on('before', (event): void => {
+  if (!latLng.value) {
+    return;
+  }
+
+  if (event.detail.visit.only[0] === 'results') {
+    event.detail.visit.headers = {
+      ...event.detail.visit.headers,
+      'x-search-location': latLng.value,
+    };
+  }
+});
 </script>
 
 <template>
