@@ -15,7 +15,7 @@ const emits = defineEmits(['continue', 'toggle']);
 const store = useShopStore();
 
 const data = reactive({ ...store.shippingDetails });
-const { customerName } = store;
+
 const errors: ComputedRef<Partial<CheckoutShippingStep>> = computed(
   () => store.getErrors.shipping || {},
 );
@@ -65,7 +65,7 @@ const submitForm = () => {
     <h2
       class="flex justify-between text-3xl font-semibold"
       :class="{
-        'text-primary-dark': !error && (show || completed),
+        'cursor-pointer text-primary-dark': !error && (show || completed),
         'text-grey-off': !error && !show,
         'text-red': error,
       }"
@@ -88,7 +88,7 @@ const submitForm = () => {
       @keyup.enter="submitForm()"
     >
       <p class="prose mt-2! max-w-none xl:prose-lg">
-        Thanks {{ customerName }}, next we need to know where to send your
+        Thanks {{ store.customerName }}, next we need to know where to send your
         order.
       </p>
 

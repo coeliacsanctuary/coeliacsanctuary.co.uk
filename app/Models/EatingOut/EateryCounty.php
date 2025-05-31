@@ -21,6 +21,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
+ *
+ * @property string $image
  */
 class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
 {
@@ -120,5 +122,10 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
             'wheretoeat',
             $this->slug,
         ]);
+    }
+
+    public function absoluteLink(): string
+    {
+        return config('app.url') . $this->link();
     }
 }

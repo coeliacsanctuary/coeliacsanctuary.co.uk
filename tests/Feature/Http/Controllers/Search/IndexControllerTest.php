@@ -157,6 +157,7 @@ class IndexControllerTest extends TestCase
                             ->where('shop', false),
                     )
                     ->has('location')
+                    ->has('searchedLatLng')
                     ->has('hasEatery')
                     ->has('aiAssisted')
             );

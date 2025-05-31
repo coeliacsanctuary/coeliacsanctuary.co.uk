@@ -33,7 +33,10 @@ const submitSearch = () => {
     return;
   }
 
-  form.post('/wheretoeat/search');
+  form.post('/wheretoeat/search', {
+    preserveState: false,
+    preserveScroll: true,
+  });
 };
 </script>
 

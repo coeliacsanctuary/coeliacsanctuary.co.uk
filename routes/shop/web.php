@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Shop\Basket\DestroyController as BasketDestroyController;
 use App\Http\Controllers\Shop\Basket\Discount\DestroyController as DiscountDestroyController;
+use App\Http\Controllers\Shop\Basket\Reopen\IndexController as ReopenBasketIndexController;
 use App\Http\Controllers\Shop\Basket\ShowController as BasketShowController;
 use App\Http\Controllers\Shop\Basket\StoreController as BasketStoreController;
 use App\Http\Controllers\Shop\Basket\UpdateController as BasketUpdateController;
@@ -42,6 +43,9 @@ Route::middleware(ShopBasketTokenMiddleware::class)->group(function (): void {
 
         Route::delete('/discount', DiscountDestroyController::class)->name('shop.basket.discount.remove');
         Route::delete('/{item}', BasketDestroyController::class)->name('shop.basket.remove');
+
+        Route::get('/{basket:token}/reopen', ReopenBasketIndexController::class)
+            ->name('shop.basket.reopen');
     });
 
     Route::get('/product/{product}', ProductShowController::class)->name('shop.product');

@@ -7,7 +7,7 @@ namespace App\Pipelines\Search;
 use App\DataObjects\Search\SearchParameters;
 use App\DataObjects\Search\SearchPipelineData;
 use App\DataObjects\Search\SearchResultsCollection;
-use App\Pipelines\EatingOut\CheckRecommendedPlace\Steps\CombineResults;
+use App\Pipelines\Search\Steps\CombineResults;
 use App\Pipelines\Search\Steps\HydratePage;
 use App\Pipelines\Search\Steps\PaginateResults;
 use App\Pipelines\Search\Steps\PrepareResource;
@@ -17,13 +17,13 @@ use App\Pipelines\Search\Steps\SearchRecipes;
 use App\Pipelines\Search\Steps\SearchShop;
 use App\Pipelines\Search\Steps\SortResults;
 use App\Resources\Search\SearchableItemResource;
-use App\Support\Search\SearchState;
+use App\Support\State\Search\SearchState;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pipeline\Pipeline;
 
 class PerformSearchPipeline
 {
-    /** @return LengthAwarePaginator<SearchableItemResource> */
+    /** @return LengthAwarePaginator<int, SearchableItemResource> */
     public function run(SearchParameters $parameters): LengthAwarePaginator
     {
         SearchState::$hasGeoSearched = false;
@@ -42,7 +42,7 @@ class PerformSearchPipeline
 
         $data = new SearchPipelineData($parameters, new SearchResultsCollection());
 
-        /** @var LengthAwarePaginator<SearchableItemResource> $results */
+        /** @var LengthAwarePaginator<int, SearchableItemResource> $results */
         $results = app(Pipeline::class)
             ->send($data)
             ->through($pipes)

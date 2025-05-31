@@ -13,6 +13,7 @@ export type MetaProps = {
   image: string;
   schema?: string[];
   doNotTrack?: true;
+  feed?: string;
   alternateMetas?: {
     [T: string]: string;
   };
@@ -22,5 +23,6 @@ export type PopupProps = {
   id: number;
   text: string;
   link: string;
-  image: string;
+  primary_image: string;
+  secondary_image?: string;
 };

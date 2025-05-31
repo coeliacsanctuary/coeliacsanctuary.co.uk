@@ -55,15 +55,15 @@ const links = [
 </script>
 
 <template>
-  <Card class="w-full max-w-[700px] mx-auto mt-5 rounded-xl">
+  <Card class="mx-auto mt-5 w-full max-w-[700px] rounded-xl">
     <main class="mx-auto w-full">
-      <div class="text-center pt-4">
+      <div class="pt-4 text-center">
         <Heading :border="false">
           {{ title }}
         </Heading>
 
         <p
-          class="mt-6 prose prose-xl"
+          class="prose prose-xl mt-6"
           v-text="description"
         />
       </div>
@@ -76,18 +76,18 @@ const links = [
           <li
             v-for="(link, linkIdx) in links"
             :key="linkIdx"
-            class="relative flex gap-x-6 py-6 group"
+            class="group relative flex gap-x-6 py-6"
           >
             <div class="flex size-12 flex-none items-center justify-center">
               <component
                 :is="link.icon"
-                class="size-12 text-primary-dark group-hover:text-black transition transition-duration-500"
+                class="transition-duration-500 size-12 text-primary-dark transition group-hover:text-black"
                 aria-hidden="true"
               />
             </div>
             <div class="flex-auto">
               <SubHeading
-                class="text-primary-dark group-hover:text-black transition transition-duration-500"
+                class="transition-duration-500 text-primary-dark transition group-hover:text-black"
               >
                 <Link :href="link.href">
                   {{ link.name }}
@@ -109,7 +109,7 @@ const links = [
         <div class="mt-10 flex justify-center">
           <Link
             href="/"
-            class="prose font-semibold text-primary-dark hover:text-black transition"
+            class="prose font-semibold text-primary-dark transition hover:text-black"
           >
             Back to Coeliac Sanctuary
           </Link>

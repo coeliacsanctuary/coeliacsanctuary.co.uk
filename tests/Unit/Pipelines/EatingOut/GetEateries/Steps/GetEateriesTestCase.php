@@ -18,6 +18,7 @@ use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToBranches;
 use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToEateries;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\ExposeSearchResultEateryIdsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromFiltersAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInLatLngRadiusAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInSearchAreaAction;
@@ -377,7 +378,7 @@ abstract class GetEateriesTestCase extends TestCase
     protected function callAppendDistanceToBranchesMethod(Collection $eateries, Collection $hydrated): ?GetEateriesPipelineData
     {
         $hydrated = $hydrated->map(function (NationwideBranch $eatery, $index) {
-//            $eatery->branchId = $index + 1;
+            //            $eatery->branchId = $index + 1;
             $eatery->distance = $this->faker->randomFloat();
 
             return $eatery;
@@ -453,6 +454,25 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $this->callAction(SerialiseResultsAction::class, $pipelineData, $closure);
+
+        return $toReturn;
+    }
+
+    protected function callExposeResultResultEateryIdsAction(Collection $eateries = new Collection(), array $filters = []): ?GetEateriesPipelineData
+    {
+        $toReturn = null;
+
+        $closure = function (GetEateriesPipelineData $pipelineData) use (&$toReturn): void {
+            $toReturn = $pipelineData;
+        };
+
+        $pipelineData = new GetEateriesPipelineData(
+            searchTerm: $this->eaterySearchTerm,
+            filters: $filters,
+            eateries: $eateries,
+        );
+
+        $this->callAction(ExposeSearchResultEateryIdsAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }

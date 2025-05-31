@@ -12,7 +12,6 @@ class AddressSearchRequest extends FormRequest
     {
         return [
             'search' => ['required', 'string', 'min:2'],
-            'country' => ['nullable', 'string'],
             'lat' => ['nullable', 'numeric', 'required_with:lng'],
             'lng' => ['nullable', 'numeric', 'required_with:lat'],
         ];

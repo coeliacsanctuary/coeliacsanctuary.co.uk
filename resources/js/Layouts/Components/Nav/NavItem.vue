@@ -21,7 +21,7 @@ withDefaults(
       'border-b-2 border-transparent hover:border-white': !active,
     }"
     :href="href"
-    class="flex h-full items-center px-4 font-medium font-coeliac text-2xl leading-none tracking-wider lg:text-3xl"
+    class="flex h-full items-center px-4 font-coeliac text-2xl leading-none font-medium tracking-wider lg:text-3xl"
     prefetch
   >
     {{ label }}

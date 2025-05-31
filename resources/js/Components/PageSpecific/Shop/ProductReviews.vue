@@ -7,11 +7,13 @@ import { ref, watch } from 'vue';
 import RatingsBreakdown from '@/Components/PageSpecific/Shared/RatingsBreakdown.vue';
 import { formatDate } from '@/helpers';
 import Info from '@/Components/Info.vue';
+import { StarRating as StarRatingType } from '@/types/EateryTypes';
 
 const props = defineProps<{
   productName: string;
   reviews: PaginatedResponse<ShopProductReview>;
   rating: ShopProductRating;
+  filteredOn?: StarRatingType;
 }>();
 
 const loading = ref(false);
@@ -20,29 +22,39 @@ watch(props.reviews, () => {
   loading.value = false;
 });
 
-defineEmits(['load-more']);
+const reviewFilter = ref<undefined | StarRatingType>(undefined);
+const emits = defineEmits(['load-more', 'set-rating']);
+
+const setRatingFilter = (filter: StarRatingType | undefined) => {
+  reviewFilter.value = filter;
+
+  emits('set-rating', filter);
+};
 </script>
 
 <template>
-  <div class="mx-auto md:grid md:max-xl:grid-cols-3 md:gap-x-8 xl:grid-cols-4">
+  <div class="mx-auto md:grid md:gap-x-8 md:max-xl:grid-cols-3 xl:grid-cols-4">
     <RatingsBreakdown
       :average="rating.average"
       :breakdown="rating.breakdown"
       :count="rating.count"
       :can-add-review="false"
+      :filtered-on="filteredOn"
+      filterable
+      @filter="setRatingFilter"
     >
       Have you used our <strong v-text="productName" />? Share your thoughts
       with other customers!
     </RatingsBreakdown>
 
-    <div class="mt-8 md:max-xl:col-span-2 md:mt-0 xl:col-span-3">
+    <div class="mt-8 md:mt-0 md:max-xl:col-span-2 xl:col-span-3">
       <Info class="mb-4">
         <p class="text-sm">
           All reviews are from verified purchases, customers are invited to
           leave a review 10 days* after their order has been shipped.
         </p>
 
-        <small class="text-xs mt-4">* 10 days is for UK orders only.</small>
+        <small class="mt-4 text-xs">* 10 days is for UK orders only.</small>
       </Info>
 
       <div class="flow-root">

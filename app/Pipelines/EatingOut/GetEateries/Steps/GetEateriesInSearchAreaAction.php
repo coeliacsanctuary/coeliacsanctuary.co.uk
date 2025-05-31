@@ -6,9 +6,11 @@ namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
+use App\DataObjects\EatingOut\LatLng;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Services\EatingOut\LocationSearchService;
+use App\Support\State\EatingOut\Search\LatLngState;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,8 +28,9 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
 
             return $next($pipelineData);
         }
+
         try {
-            $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+            $latLng = $this->getLatLng($pipelineData);
         } catch (Exception $e) {
             $pipelineData->eateries = new Collection();
 
@@ -91,5 +94,19 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
         $pipelineData->eateries->push(...$pendingEateries);
 
         return $next($pipelineData);
+    }
+
+    protected function getLatLng(GetEateriesPipelineData $pipelineData): LatLng
+    {
+        if (LatLngState::$latLng) {
+            return LatLngState::$latLng;
+        }
+
+        /** @phpstan-ignore-next-line  */
+        $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+
+        LatLngState::$latLng = $latLng;
+
+        return $latLng;
     }
 }

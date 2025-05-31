@@ -3,13 +3,14 @@ import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { Link, router } from '@inertiajs/vue3';
 import Comments from '@/Components/PageSpecific/Shared/Comments.vue';
-import { ref, Ref } from 'vue';
+import { onMounted, ref, Ref } from 'vue';
 import { BlogPage } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
 import RenderedString from '@/Components/RenderedString.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
 import { Page } from '@inertiajs/core';
+import { loadScript } from '@/helpers';
 
 const props = defineProps<{
   blog: BlogPage;
@@ -17,6 +18,12 @@ const props = defineProps<{
 }>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
+
+onMounted(() => {
+  if (props.blog.hasTwitterEmbed) {
+    loadScript('https://platform.twitter.com/widgets.js');
+  }
+});
 
 const loadMoreComments = () => {
   if (!props.comments.links.next) {
@@ -48,7 +55,7 @@ const loadMoreComments = () => {
     <Heading
       :back-link="{
         href: '/blog',
-        label: 'Back to all blogs...',
+        label: 'Back to all blogs.',
       }"
     >
       {{ blog.title }}
@@ -60,7 +67,7 @@ const loadMoreComments = () => {
     />
 
     <div
-      class="-m-4 -mb-4! flex flex flex-col flex-col space-y-4 bg-grey-light p-4 text-sm shadow-inner"
+      class="-m-4 -mb-4! flex flex-col space-y-4 bg-grey-light p-4 text-sm shadow-inner"
     >
       <div>
         <strong>Tagged With</strong>
@@ -131,7 +138,7 @@ const loadMoreComments = () => {
     <div class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4">
       <img
         alt="Alison Peters"
-        class="float-left mb-2 mr-2 w-1/4 max-w-[150px] rounded-full"
+        class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
         src="/images/misc/alison.jpg"
       />
       <div class="prose max-w-2xl md:prose-xl">

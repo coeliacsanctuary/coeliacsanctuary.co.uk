@@ -75,7 +75,7 @@ https://www.coeliacsanctuary.co.uk{{ $recipe->link }}
 <hr class="recHR"/>
 <h2 class="recH3">Ingredients</h2>
 
-{!! $recipe->ingredients !!}<br/><br/>
+{!! nl2br($recipe->ingredients) !!}<br/><br/>
 
 <strong>Preparation Time: </strong> {{ $recipe->prep_time }}<br/>
 <strong>Cooking Time: </strong> {{ $recipe->cook_time }}<br/><br/>

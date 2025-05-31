@@ -2,7 +2,7 @@ import { defineConfig, UserConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, isSsrBuild }) => {
   let config: UserConfig = {
     plugins: [
       laravel({
@@ -32,7 +32,7 @@ export default defineConfig(({ command }) => {
     },
   };
 
-  if (command === 'serve') {
+  if (!isSsrBuild) {
     config['resolve'] = {
       alias: {
         vue: 'vue/dist/vue.esm-bundler.js',

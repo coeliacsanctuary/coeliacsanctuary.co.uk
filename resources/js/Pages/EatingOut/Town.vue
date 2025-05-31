@@ -70,7 +70,7 @@ const handleFiltersChanged = ({
     }
   }
 
-  router.get(useBrowser().currentUrl(), params, {
+  router.get(useBrowser().currentPath(), params, {
     preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
     preserveScroll: true,
   });
@@ -128,7 +128,7 @@ const reloadEateries = () => {
 
   <GoogleAd code="5284484376" />
 
-  <div class="relative md:flex xmd:space-x-2">
+  <div class="relative xmd:space-x-2 md:flex">
     <TownFilterSidebar
       :filters="filters"
       @filters-updated="handleFiltersChanged"

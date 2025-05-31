@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Api\EatingOut\Features;
 
-use PHPUnit\Framework\Attributes\Test;
-use App\Actions\EatingOut\GetFiltersForEateriesAction;
+use App\Services\EatingOut\Filters\GetFilters;
 use Database\Seeders\EateryScaffoldingSeeder;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class IndexControllerTest extends TestCase
@@ -19,9 +19,9 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
-    public function itCallsTheGetFiltersForTownAction(): void
+    public function itCallsTheGetFiltersService(): void
     {
-        $this->expectAction(GetFiltersForEateriesAction::class);
+        $this->expectAction(GetFilters::class);
 
         $this->get(route('api.wheretoeat.features'));
     }

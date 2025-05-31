@@ -13,7 +13,7 @@ defineProps<{ collection: CollectionPage }>();
     <Heading
       :back-link="{
         href: '/collection',
-        label: 'Back to all collections...',
+        label: 'Back to all collections.',
       }"
     >
       {{ collection.title }}

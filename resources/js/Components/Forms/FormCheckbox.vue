@@ -23,10 +23,10 @@ const value = defineModel<boolean>();
           'text-grey': !disabled,
           'text-grey-off': disabled,
           'font-semibold': value === true,
-          'text-primary-dark font-semibold': highlight,
+          'font-semibold text-primary-dark': highlight,
         }"
         :for="name"
-        class="select-none text-sm xmd:text-base"
+        class="text-sm select-none xmd:text-base"
         v-text="label"
       />
     </div>

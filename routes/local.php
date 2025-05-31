@@ -55,6 +55,35 @@ Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = nu
     return Mjml::new()->toHtml($content);
 });
 
+Route::get('/mail/shop/abandoned-cart/{orderId?}', function (?int $basketId = null): string {
+    $basket = ShopOrder::query()
+        ->whereIn('state_id', [OrderState::BASKET, OrderState::EXPIRED])
+        ->whereHas('customer')
+        ->with(['items', 'items.product.media', 'customer'])
+        ->when(
+            $basketId,
+            fn (Builder $builder) => $builder->findOrFail($basketId),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $content = view('mailables.mjml.shop.abandoned-basket', [
+        'key' => 'foo',
+        'date' => now(),
+        'link' => URL::temporarySignedRoute('shop.basket.reopen', now()->addDay(), ['basket' => $basket]),
+        'basket' => $basket,
+        'reason' => 'as a reminder to complete your purchase',
+        'notifiable' => $basket->customer,
+        'relatedTitle' => 'products',
+        'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+            title: $product->title,
+            image: $product->main_image,
+            link: $product->link,
+        )),
+    ])->render();
+
+    return Mjml::new()->toHtml($content);
+});
+
 Route::get('/mail/shop/review-invitation/{orderId?}', function (?int $orderId = null): string {
     $order = ShopOrder::query()
         ->where('state_id', OrderState::SHIPPED)

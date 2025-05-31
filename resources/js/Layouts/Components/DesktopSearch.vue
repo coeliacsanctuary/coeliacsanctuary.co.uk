@@ -8,11 +8,11 @@ const { hasError, searchForm, submitSearch } = useSearch();
 
 <template>
   <form
-    class="flex-col space-y-2 mt-8 hidden items-center pr-2 transition md:flex"
+    class="mt-8 hidden flex-col items-center space-y-2 pr-2 transition md:flex"
     @submit.prevent="submitSearch()"
   >
     <div
-      class="flex w-full rounded-xl bg-white/50 focus-within:bg-white/90 pr-2"
+      class="flex w-full rounded-xl bg-white/50 pr-2 focus-within:bg-white/90"
     >
       <FormInput
         v-model="searchForm.q"
@@ -32,7 +32,7 @@ const { hasError, searchForm, submitSearch } = useSearch();
 
     <p
       v-if="hasError"
-      class="text-red font-semibold text-right leading-none"
+      class="text-right leading-none font-semibold text-red"
     >
       Please enter at least 3 characters to search!
     </p>

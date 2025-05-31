@@ -27,14 +27,14 @@ const close = () => {
     size="lg"
     @close="close()"
   >
-    <div class="bg-white flex-1">
+    <div class="flex-1 bg-white">
       <div
         class="border-grey-mid relative border-b bg-grey-light p-3 pr-[34px] text-center text-sm font-semibold"
       >
         {{ eateryName }}'s Branch List
       </div>
 
-      <div class="p-3 flex flex-col space-y-3">
+      <div class="flex flex-col space-y-3 p-3">
         <Warning>
           <p class="prose-sm max-w-none lg:prose">
             Please note while we take every care to keep this list up to date,

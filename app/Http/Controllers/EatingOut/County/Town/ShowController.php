@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\County\Town;
 
-use App\Actions\EatingOut\GetFiltersForEateriesAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Http\Response\Inertia;
-use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
-use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesPipeline;
 use App\Resources\EatingOut\TownPageResource;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\EatingOut\Filters\GetFiltersForTown;
 use Illuminate\Http\Request;
 use Inertia\Response;
 
@@ -24,7 +21,7 @@ class ShowController
         EateryCounty $county,
         EateryTown $town,
         Inertia $inertia,
-        GetFiltersForEateriesAction $getFiltersForTown,
+        GetFiltersForTown $getFiltersForTown,
         GetEateriesPipeline $getEateriesPipeline,
         GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
     ): Response {
@@ -46,18 +43,7 @@ class ShowController
             ->render('EatingOut/Town', [
                 'town' => fn () => new TownPageResource($town),
                 'eateries' => fn () => $getEateriesPipeline->run($town, $filters),
-                'filters' => fn () => $getFiltersForTown->handle(
-                    function (Builder $query) use ($town) {
-                        /** @var Builder<Eatery> $query */
-                        return $query
-                            ->where('town_id', $town->id)
-                            ->orWhereHas('nationwideBranches', function (Builder $query) use ($town) {
-                                /** @var Builder<NationwideBranch> $query */
-                                return $query->where('town_id', $town->id);
-                            });
-                    },
-                    $filters,
-                ),
+                'filters' => fn () => $getFiltersForTown->setTown($town)->handle($filters),
             ]);
     }
 }

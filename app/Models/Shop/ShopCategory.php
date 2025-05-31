@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
 use App\Legacy\HasLegacyImage;
@@ -18,11 +19,14 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class ShopCategory extends Model implements HasMedia
 {
+    use ClearsCache;
     use DisplaysMedia;
     use HasLegacyImage;
     use Imageable;
+
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use LinkableModel;
 
     protected static function booted(): void
@@ -59,5 +63,10 @@ class ShopCategory extends Model implements HasMedia
     protected function linkRoot(): string
     {
         return 'shop';
+    }
+
+    protected function cacheKey(): string
+    {
+        return 'categories';
     }
 }

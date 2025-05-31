@@ -144,7 +144,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
 
         if (app(Request::class)->route('town')) {
             /** @var EateryTown | string $town */
-            $town = app(Request::class)->route('town'); /** @phpstan-ignore-line */
+            $town = app(Request::class)->route('town');
             if ( ! $town instanceof EateryTown) {
                 $town = EateryTown::query()->where('slug', $town)->firstOrFail();
             }
@@ -170,6 +170,11 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             $this->town?->slug,
             $this->slug,
         ]);
+    }
+
+    public function absoluteLink(): string
+    {
+        return config('app.url') . $this->link();
     }
 
     /** @return HasOne<EateryCuisine, $this> */

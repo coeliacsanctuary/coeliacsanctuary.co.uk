@@ -51,7 +51,7 @@ const classes = computed((): string[] => {
 <template>
   <div
     v-if="display"
-    class="left-0 top-0 flex h-full w-full items-center justify-center"
+    class="top-0 left-0 flex h-full w-full items-center justify-center"
     :class="{
       absolute: absolute,
       'bg-black/50': background,

@@ -17,7 +17,7 @@ withDefaults(
 
 <template>
   <div class="@container">
-    <Card class="flex flex-col space-y-5 h-full @xl:p-8">
+    <Card class="flex h-full flex-col space-y-5 @xl:p-8">
       <Heading
         classes="text-primary-dark text-left"
         as="h2"
@@ -26,14 +26,14 @@ withDefaults(
         {{ title }}
       </Heading>
 
-      <div class="flex flex-col @sm:space-x-5 @sm:flex-row w-full h-full">
-        <div class="flex flex-col space-y-5 flex-1 h-full">
-          <p class="prose prose-lg @xl:prose-xl flex flex-1 max-w-none inline">
+      <div class="flex h-full w-full flex-col @sm:flex-row @sm:space-x-5">
+        <div class="flex h-full flex-1 flex-col space-y-5">
+          <p class="prose prose-lg flex inline max-w-none flex-1 @xl:prose-xl">
             <img
               v-if="!noSmallImage"
               :src="image"
               :alt="title"
-              class="w-1/2 float-right ml-2 mb-2 @sm:hidden"
+              class="float-right mb-2 ml-2 w-1/2 @sm:hidden"
               loading="lazy"
             />
             <slot />
@@ -46,7 +46,7 @@ withDefaults(
             <li
               v-for="link in links"
               :key="link.href"
-              class="pl-0 ps-0! my-0 font-semibold text-primary-dark hover:text-black"
+              class="my-0 ps-0! pl-0 font-semibold text-primary-dark hover:text-black"
             >
               <a
                 :href="link.href"
@@ -57,11 +57,11 @@ withDefaults(
           </ul>
         </div>
 
-        <div class="hidden @sm:block @sm:w-1/4 @-sm:shrink-0 @sm:max-w-xs">
+        <div class="hidden @sm:block @sm:w-1/4 @sm:max-w-xs @-sm:shrink-0">
           <img
             :src="image"
             :alt="title"
-            class="w-full float-right"
+            class="float-right w-full"
             loading="lazy"
           />
         </div>

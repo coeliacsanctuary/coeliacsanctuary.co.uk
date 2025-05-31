@@ -66,7 +66,7 @@ const guide = ref<null | { $el: Element }>(null);
 
   <Card class="mt-3 flex flex-col space-y-4">
     <a
-      class="flex flex-col items-center justify-center space-y-4 text-center text-xl cursor-pointer"
+      class="flex cursor-pointer flex-col items-center justify-center space-y-4 text-center text-xl"
       @click="guide?.$el.scrollIntoView({ behavior: 'smooth' })"
     >
       <p>Or just browse our Eating Out guide...</p>
@@ -83,7 +83,7 @@ const guide = ref<null | { $el: Element }>(null);
       </template>
 
       <template #default>
-        <p class="prose prose-lg max-w-none md:prose-xl mb-2">
+        <p class="prose prose-lg mb-2 max-w-none md:prose-xl">
           These are the top rated places to eat gluten free in our eating out
           guide, voted by people just like you!
         </p>
@@ -106,7 +106,7 @@ const guide = ref<null | { $el: Element }>(null);
       </template>
 
       <template #default>
-        <p class="prose prose-lg max-w-none md:prose-xl mb-2">
+        <p class="prose prose-lg mb-2 max-w-none md:prose-xl">
           These are the top gluten free places in our eating guide gluten that
           have had the most people leave reviews!
         </p>

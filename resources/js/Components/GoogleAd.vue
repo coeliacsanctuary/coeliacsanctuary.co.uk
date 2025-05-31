@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 
-defineProps<{ code: string }>();
+withDefaults(defineProps<{ code: string; title?: string }>(), {
+  title: 'Sponsored - content continues below',
+});
 
 const hasGoogle = computed(() => {
   if (typeof window === 'undefined') {
@@ -27,8 +29,12 @@ onMounted(() => {
 <template>
   <div
     v-if="hasGoogle"
-    class="w-full my-2 flex text-center"
+    class="m-2 flex flex-col border-y border-primary-light py-2 text-center"
   >
+    <p
+      class="mb-2 text-left text-xs font-semibold"
+      v-text="title"
+    />
     <ins
       class="adsbygoogle"
       style="display: block; width: 100%"

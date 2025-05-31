@@ -10,7 +10,7 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Search\Eateries;
 use App\Support\Helpers;
-use App\Support\Search\SearchState;
+use App\Support\State\Search\SearchState;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -33,16 +33,17 @@ class SearchEateries
 
             $geocoder = Geocoder::getCoordinatesForAddress($searchPipelineData->parameters->locationSearch ?: $searchPipelineData->parameters->term);
 
-            if ($geocoder && Arr::get($geocoder, 'accuracy') !== 'result_not_found') {
+            if ($this->geocoderIsValid($geocoder, $searchPipelineData)) {
+                /** @phpstan-ignore-next-line  */
+                $searchPipelineData->parameters->locationSearch = Arr::first($geocoder['address_components'])->long_name;
+
                 $geoResults = $this->performGeoSearch(implode(', ', [$geocoder['lat'], $geocoder['lng']]));
 
+                SearchState::$lat = $geocoder['lat'];
+                SearchState::$lng = $geocoder['lng'];
                 SearchState::$hasGeoSearched = true;
             } elseif ($searchPipelineData->parameters->userLocation) {
                 $geoResults = $this->performGeoSearch(implode(',', $searchPipelineData->parameters->userLocation), $searchPipelineData->parameters->term);
-
-                if ($geoResults->count() > 0) {
-                    $baseResults = collect();
-                }
             }
 
             $baseResults = $baseResults->map(function (Eatery|NationwideBranch $eatery) use ($geoResults) {
@@ -89,5 +90,22 @@ class SearchEateries
 
             return $eatery;
         });
+    }
+
+    protected function geocoderIsValid(?array $geocoder, SearchPipelineData $searchPipelineData): bool
+    {
+        if ( ! $geocoder) {
+            return false;
+        }
+
+        if ($searchPipelineData->parameters->locationSearch) {
+            return false;
+        }
+
+        if ( ! Arr::has($geocoder, 'address_components')) {
+            return false;
+        }
+
+        return data_get($geocoder, 'address_components.0.types.0') !== 'country';
     }
 }

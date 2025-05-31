@@ -17,7 +17,7 @@ class CommentApprovedMailable extends BaseMailable
     public function toMail(): MjmlMessage
     {
         return MjmlMessage::make()
-            ->subject("Your comment on {$this->comment->commentable->title} on Coeliac Sanctuary has been approved!")
+            ->subject("Your comment on {$this->comment->commentable->title} on Coeliac Sanctuary has been approved!") /** @phpstan-ignore-line */
             ->mjml('mailables.mjml.comment-approved', $this->baseData([
                 'comment' => $this->comment,
                 'reason' => 'to let you know your comment on Coeliac Sanctuary has been approved.',

@@ -4,8 +4,6 @@ import { Component, createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
 import Coeliac from '@/Layouts/Coeliac.vue';
-import ArticleHeader from '@/Components/ArticleHeader.vue';
-import ArticleImage from '@/Components/ArticleImage.vue';
 import { InertiaPage } from '@/types/Core';
 import { getTitle } from '@/helpers';
 import AnalyticsTrack from '@/analyticsTrack';
@@ -32,13 +30,23 @@ void createInertiaApp({
 
   setup({ el, App, props, plugin }) {
     const pinia = createPinia();
+    const app = createApp({ render: () => h(App, props) });
 
-    createApp({ render: () => h(App, props) })
-      .component('article-header', ArticleHeader as Component)
-      .component('article-image', ArticleImage as Component)
-      .use(plugin)
-      .use(pinia)
-      .mount(el);
+    const jitComponents: Record<string, { default: Component }> =
+      import.meta.glob('./JitComponents/*.vue', { eager: true });
+
+    Object.entries(jitComponents).forEach(([path, module]) => {
+      const componentName = path.split('/').pop()?.replace('.vue', '') ?? '';
+
+      const kebabName = componentName
+        .replace(/([A-Z])/g, '-$1')
+        .replace(/^-/, '')
+        .toLowerCase();
+
+      app.component(kebabName, module.default);
+    });
+
+    app.use(pinia).use(plugin).mount(el);
   },
 });
 

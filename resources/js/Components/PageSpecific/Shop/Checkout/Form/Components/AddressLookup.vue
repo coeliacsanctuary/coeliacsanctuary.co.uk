@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import axios, { AxiosResponse } from 'axios';
 import { watchDebounced } from '@vueuse/core';
 import useShopStore from '@/stores/useShopStore';
@@ -25,7 +25,7 @@ onMounted(() => {
 
 const emits = defineEmits(['setAddress']);
 
-const country = ref(useShopStore().selectedCountry);
+const country = computed(() => useShopStore().selectedCountry);
 
 const hasSelectedAddress = ref(false);
 const searchResults = ref<{ id: string; address: string }[]>([]);
@@ -39,6 +39,10 @@ const selectAddress = async (id: string) => {
 };
 
 const handleSearch = async () => {
+  if (country.value !== 'United Kingdom') {
+    return;
+  }
+
   if (hasSelectedAddress.value) {
     hasSelectedAddress.value = false;
     return;
@@ -51,7 +55,6 @@ const handleSearch = async () => {
   const request: AxiosResponse<{ id: string; address: string }[]> =
     await axios.post('/api/shop/address-search', {
       search: props.address,
-      country: country.value,
       lat: latlng.value.lat,
       lng: latlng.value.lng,
     });
@@ -70,7 +73,7 @@ watchDebounced(() => props.address, handleSearch, { debounce: 100 });
       v-if="
         !hasSelectedAddress && searchResults.length > 0 && address.length >= 2
       "
-      class="absolute right-0 top-full z-999 mt-px max-h-60 w-full overflow-scroll border border-grey-darker bg-white shadow-sm"
+      class="absolute top-full right-0 z-999 mt-px max-h-60 w-full overflow-scroll border border-grey-darker bg-white shadow-sm"
     >
       <ul class="divide-y divide-grey-off">
         <li

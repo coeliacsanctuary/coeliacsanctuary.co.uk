@@ -31,7 +31,7 @@ defineProps<{
         <div class="relative h-72 w-full xmd:hidden" />
         <div class="relative h-32 w-full xmd:hidden" />
         <div
-          class="absolute inset-x-0 bottom-0 rounded-bl-lg rounded-br-lg bg-primary-alt/75 p-4 backdrop-blur-sm backdrop-filter xs:flex xs:items-center xs:justify-between xmd:inset-x-auto xmd:inset-y-0 xmd:w-96 xmd:flex-col xmd:items-start xmd:rounded-br-none xmd:rounded-tl-lg xmd:p-6"
+          class="absolute inset-x-0 bottom-0 rounded-br-lg rounded-bl-lg bg-primary-alt/75 p-4 backdrop-blur-sm backdrop-filter xs:flex xs:items-center xs:justify-between xmd:inset-x-auto xmd:inset-y-0 xmd:w-96 xmd:flex-col xmd:items-start xmd:rounded-tl-lg xmd:rounded-br-none xmd:p-6"
         >
           <div>
             <h2
@@ -45,7 +45,7 @@ defineProps<{
           </div>
 
           <div
-            class="mt-6 flex shrink-0 items-center justify-center rounded-md border border-white/25 bg-primary-alt/0 px-4 py-3 text-base font-medium text-white hover:bg-primary-dark/50 xs:max-xmd:ml-8 xs:mt-0 xmd:ml-0 xmd:w-full xl:text-lg"
+            class="mt-6 flex shrink-0 items-center justify-center rounded-md border border-white/25 bg-primary-alt/0 px-4 py-3 text-base font-medium text-white hover:bg-primary-dark/50 xs:mt-0 xs:max-xmd:ml-8 xmd:ml-0 xmd:w-full xl:text-lg"
           >
             Shop Now
           </div>

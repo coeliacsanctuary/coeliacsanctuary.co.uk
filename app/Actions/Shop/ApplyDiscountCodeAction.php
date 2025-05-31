@@ -32,6 +32,6 @@ class ApplyDiscountCodeAction
             })
             ->sum(DB::raw('product_price * quantity'));
 
-        return ($runningTotal / 100) * $discountCode->deduction;
+        return (int) (($runningTotal / 100) * $discountCode->deduction);
     }
 }

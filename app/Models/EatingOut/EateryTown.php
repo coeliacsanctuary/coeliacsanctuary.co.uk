@@ -23,6 +23,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
+ *
+ * @property string $image
  */
 class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
 {
@@ -83,7 +85,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
 
         if (app(Request::class)->route('county')) {
             /** @var ?EateryCounty $county | string */
-            $county = app(Request::class)->route('county'); /** @phpstan-ignore-line */
+            $county = app(Request::class)->route('county');
             if ( ! $county instanceof EateryCounty) {
                 $county = EateryCounty::query()->where('slug', $county)->firstOrFail();
             }
@@ -145,6 +147,11 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
             $this->county?->slug,
             $this->slug,
         ]);
+    }
+
+    public function absoluteLink(): string
+    {
+        return config('app.url') . $this->link();
     }
 
     public function keywords(): array

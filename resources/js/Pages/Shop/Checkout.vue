@@ -6,16 +6,8 @@ import CheckoutItems from '@/Components/PageSpecific/Shop/Checkout/CheckoutItems
 import CheckoutTotals from '@/Components/PageSpecific/Shop/Checkout/CheckoutTotals.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import ContactDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ContactDetails.vue';
-import {
-  computed,
-  nextTick,
-  reactive,
-  Ref,
-  ref,
-  watch,
-  onMounted,
-  Component,
-} from 'vue';
+import { computed, nextTick, reactive, Ref, ref, watch, onMounted } from 'vue';
+import type { Component } from 'vue';
 import ShippingDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ShippingDetails.vue';
 import useShopStore from '@/stores/useShopStore';
 import useLocalStorage from '@/composables/useLocalStorage';
@@ -32,6 +24,7 @@ import useGoogleEvents from '@/composables/useGoogleEvents';
 import pkg from 'i18n-iso-countries';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
+import Alert from '@/Components/PageSpecific/Shared/Alert.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
@@ -55,6 +48,7 @@ type NoBasketProps = {
   countries: undefined;
   basket: undefined;
   payment_intent: undefined;
+  warnings: undefined;
 };
 
 type BasketProps = {
@@ -70,6 +64,7 @@ type BasketProps = {
     total: string;
   };
   payment_intent: string;
+  warnings?: string[];
 };
 
 registerLocale(en);
@@ -313,6 +308,8 @@ const sectionComponents: SectionComponent[] = [
   },
 ];
 
+const showWarningModal = ref(true);
+
 onMounted(() => {
   useGoogleEvents().googleEvent('event', 'begin_checkout', {
     items: props.basket?.items.map((item: ShopBasketItem) => ({
@@ -329,7 +326,7 @@ onMounted(() => {
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading
-      :back-link="{ href: '/shop', label: 'Continue shopping...' }"
+      :back-link="{ href: '/shop', label: 'Continue shopping.' }"
       :border="false"
     >
       Complete your order
@@ -392,6 +389,33 @@ onMounted(() => {
         </div>
       </Card>
     </div>
+
+    <Alert
+      v-if="warnings?.length"
+      title="We've had to make some adjustments to your basket..."
+      :open="showWarningModal"
+      :actions="[
+        {
+          theme: 'secondary',
+          size: 'lg',
+          label: 'Ok, understood',
+          action: () => (showWarningModal = false),
+        },
+      ]"
+    >
+      <p class="prose-md prose mb-3 max-w-none">
+        Sorry, due to stock changes since you created your basket, we've had to
+        alter the quantity of some of your products.
+      </p>
+
+      <ul class="font-semibold text-primary-dark">
+        <li
+          v-for="(warning, index) in warnings"
+          :key="index"
+          v-text="warning"
+        />
+      </ul>
+    </Alert>
   </template>
 
   <template v-else>

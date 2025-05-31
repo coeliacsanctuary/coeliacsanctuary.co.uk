@@ -28,10 +28,10 @@ const mobileSearchOpen = ref(false);
       class="relative z-20"
     >
       <div
-        class="mx-auto flex w-full max-w-8xl items-start justify-between px-2 gap-2"
+        class="mx-auto flex w-full max-w-8xl items-start justify-between gap-2 px-2"
       >
         <div
-          class="md:hidden flex items-center justify-center rounded-md text-white/80 hover:text-white py-2"
+          class="flex items-center justify-center rounded-md py-2 text-white/80 hover:text-white md:hidden"
         >
           <Bars3BottomLeftIcon
             class="h-10 w-10"
@@ -40,7 +40,7 @@ const mobileSearchOpen = ref(false);
         </div>
 
         <Link href="/">
-          <Sealiac class="py-2 w-full" />
+          <Sealiac class="w-full py-2" />
         </Link>
 
         <div class="md:w-full md:max-w-xs">
@@ -61,7 +61,7 @@ const mobileSearchOpen = ref(false);
         class="mx-auto hidden h-px w-4/5 bg-linear-to-r from-white/20 via-white/40 to-white/20 md:block"
       />
 
-      <MainNav />
+      <MainNav @open-search="mobileSearchOpen = true" />
     </div>
   </div>
 

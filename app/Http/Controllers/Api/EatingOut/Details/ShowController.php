@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\EatingOut\Details;
 
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryReview;
 use App\Resources\EatingOut\EateryAppResource;
 use App\Resources\EatingOut\EateryBrowseDetailsResource;
+use App\Support\Helpers;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 
 class ShowController
@@ -14,7 +17,11 @@ class ShowController
     public function __invoke(Request $request, Eatery $eatery): EateryBrowseDetailsResource|EateryAppResource
     {
         $eatery->load([
-            'country', 'county', 'town', 'town.county', 'restaurants', 'venueType', 'type', 'cuisine', 'reviews',
+            'country', 'county', 'town', 'town.county', 'restaurants', 'venueType', 'type', 'cuisine',
+            'reviews' => function (HasMany $builder) {
+                /** @var HasMany<EateryReview, Eatery> $builder */
+                return $builder->where('approved', 1)->latest();
+            }
         ]);
 
         if ($request->has('branchId')) {
@@ -23,8 +30,7 @@ class ShowController
             $eatery->setRelation('branch', $branch);
         }
 
-        // @todo
-        if ($request->userAgent() === 'app') {
+        if (Helpers::requestIsFromApp($request)) {
             return new EateryAppResource($eatery);
         }
 

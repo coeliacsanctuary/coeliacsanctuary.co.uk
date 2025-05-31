@@ -10,14 +10,16 @@ withDefaults(
     open: boolean;
     closeable?: boolean;
     noPadding?: boolean;
-    size?: 'small' | 'medium' | 'large' | 'xl' | 'full';
+    size?: 'small' | 'medium' | 'relaxed' | 'large' | 'full';
     width?: 'w-full' | 'w-auto';
+    fitScreen?: boolean;
   }>(),
   {
     closeable: true,
     noPadding: false,
     size: 'medium',
     width: 'w-auto',
+    fitScreen: false,
   },
 );
 
@@ -30,17 +32,20 @@ const slots = useSlots();
   <OverlayFrame
     :open="open"
     :width="width"
+    class="mx-[2.5%]"
     :class="{
       'xs:max-w-md': size === 'small',
       'sm:max-w-lg': size === 'medium',
+      'sm:max-w-4xl': size === 'relaxed',
       'sm:max-w-8xl': size === 'large',
       'sm:max-w-[95%]': size === 'full',
+      'max-h-[90vh]': fitScreen,
     }"
     @close="emit('close')"
   >
     <div
       :class="{ hidden: !closeable }"
-      class="absolute right-0 top-0 z-50 pr-2 pt-2"
+      class="absolute top-0 right-0 z-50 pt-2 pr-2"
     >
       <button
         class="rounded-md border border-transparent bg-white/40 text-grey-dark hover:border-grey-dark hover:bg-white/80"

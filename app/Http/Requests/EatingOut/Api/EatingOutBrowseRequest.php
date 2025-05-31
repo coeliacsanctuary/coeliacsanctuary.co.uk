@@ -52,7 +52,7 @@ class EatingOutBrowseRequest extends FormRequest
     {
         if ($this->has('range')) {
             $this->merge([
-                'radius' => $this->integer('range'),
+                'radius' => $this->float('range'),
             ]);
         }
 

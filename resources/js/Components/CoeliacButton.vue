@@ -1,48 +1,26 @@
 <script lang="ts" setup>
 import { Link } from '@inertiajs/vue3';
-import { computed, FunctionalComponent, HTMLAttributes, VNodeProps } from 'vue';
+import { computed } from 'vue';
 import Loader from '@/Components/Loader.vue';
+import { CoeliacButtonProps } from '@/types/Types';
 
-const props = withDefaults(
-  defineProps<{
-    label?: string;
-    theme?: 'primary' | 'faded' | 'secondary' | 'light' | 'negative';
-    size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
-    bold?: boolean;
-    as?: typeof Link | 'button' | 'a';
-    type?: 'submit' | 'button';
-    href?: string;
-    icon?:
-      | string
-      | false
-      | FunctionalComponent<HTMLAttributes & VNodeProps>
-      | (() => void);
-    iconPosition?: 'left' | 'right' | 'center';
-    loading?: boolean;
-    classes?: string;
-    disabled?: boolean;
-    iconOnly?: boolean;
-    target?: string;
-    iconClasses?: string;
-  }>(),
-  {
-    label: undefined,
-    theme: 'primary',
-    size: 'md',
-    bold: false,
-    as: Link,
-    type: undefined,
-    href: undefined,
-    icon: false,
-    iconPosition: 'left',
-    loading: false,
-    classes: '',
-    disabled: false,
-    iconOnly: false,
-    target: undefined,
-    iconClasses: '',
-  },
-);
+const props = withDefaults(defineProps<CoeliacButtonProps>(), {
+  label: undefined,
+  theme: 'primary',
+  size: 'md',
+  bold: false,
+  as: Link,
+  type: undefined,
+  href: undefined,
+  icon: false,
+  iconPosition: 'left',
+  loading: false,
+  classes: '',
+  disabled: false,
+  iconOnly: false,
+  target: undefined,
+  iconClasses: '',
+});
 
 const classes = computed((): string[] => {
   const base = [
@@ -164,7 +142,7 @@ const isLinkComponent = computed(() => {
       :class="[
         {
           '-mr-0.5 ml-2': !iconOnly && iconPosition === 'right',
-          '-ml-0.5 mr-2': !iconOnly && iconPosition === 'left',
+          'mr-2 -ml-0.5': !iconOnly && iconPosition === 'left',
           'h-5 w-5': iconOnly,
           'h-4 w-4': !iconOnly,
           'opacity-0': loading,

@@ -80,7 +80,7 @@ onMounted(() => {
       <li
         v-for="day in openingTimes"
         :key="day.key"
-        class="flex w-full flex-col space-y-2 py-1 xs:flex-row xs:items-center xs:justify-between xs:space-x-2 xs:space-y-0"
+        class="flex w-full flex-col space-y-2 py-1 xs:flex-row xs:items-center xs:justify-between xs:space-y-0 xs:space-x-2"
       >
         <div class="flex justify-between xs:flex-1 xs:items-center">
           <div>{{ day.label }}</div>

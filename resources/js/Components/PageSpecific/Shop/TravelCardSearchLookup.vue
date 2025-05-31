@@ -25,38 +25,45 @@ const searchResult = ref<SearchResult | null>(null);
 const { currentUrl } = useBrowser();
 
 const selectResult = (id: number) => {
-  loadingResult.value = true;
+  nextTick(() => {
+    loadingResult.value = true;
 
-  axios
-    .get(`/api/shop/travel-card-search/${id}`)
-    .then((response: AxiosResponse<SearchResult>) => {
-      const url = new URL(useUrl().currentUrl());
-      url.searchParams.set('term', lookup.value?.value);
+    axios
+      .get(`/api/shop/travel-card-search/${id}`)
+      .then((response: AxiosResponse<SearchResult>) => {
+        const url = new URL(useUrl().currentUrl());
+        url.searchParams.set('term', lookup.value?.value);
 
-      router.get(
-        url.toString(),
-        {},
-        {
-          preserveState: true,
-          preserveScroll: true,
-        },
-      );
+        router.get(
+          url.toString(),
+          {},
+          {
+            preserveState: true,
+            preserveScroll: true,
+          },
+        );
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      lookup.value?.reset();
-      searchResult.value = response.data;
-      loadingResult.value = false;
-    });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        lookup.value?.reset();
+        searchResult.value = response.data;
+        loadingResult.value = false;
+      });
+  });
 };
 
 const termFromSearch = ref();
+const hasTyped = ref(false);
 
 const handleSearch = (results: { id: number }[]) => {
-  if (!termFromSearch.value) {
+  if (!termFromSearch.value || hasTyped.value) {
     return;
   }
 
   selectResult(results[0].id);
+};
+
+const typed = () => {
+  hasTyped.value = true;
 };
 
 const searchContainer = ref<null | HTMLElement>(null);
@@ -80,13 +87,13 @@ onMounted(() => {
 
 <template>
   <Card
-    class="flex justify-center items-center"
+    class="flex items-center justify-center"
     theme="primary"
     faded
   >
     <div
       ref="searchContainer"
-      class="w-full flex flex-col space-y-4 items-center sm:w-2/3"
+      class="flex w-full flex-col items-center space-y-4 sm:w-2/3"
     >
       <Heading :border="false">Where are you heading?</Heading>
 
@@ -107,11 +114,13 @@ onMounted(() => {
         lookup-endpoint="/api/shop/travel-card-search"
         :preselect-term="termFromSearch"
         input-classes="text-2xl! p-4! text-center"
+        results-classes="bg-white"
         @search="handleSearch"
+        @typed="typed"
       >
         <template #item="{ id, term, type }">
           <div
-            class="flex space-x-2 bg-grey-light text-left border-b border-grey-off transition cursor-pointer hover:bg-grey-lightest"
+            class="flex cursor-pointer space-x-2 border-b border-grey-off bg-grey-light text-left transition hover:bg-grey-lightest"
             @click="selectResult(id)"
           >
             <span
@@ -119,7 +128,7 @@ onMounted(() => {
               v-html="term"
             />
             <span
-              class="font-semibold bg-grey-off-light text-grey-dark text-xs flex justify-center items-center w-[77px] sm:w-[100px]"
+              class="flex w-[77px] items-center justify-center bg-grey-off-light text-xs font-semibold text-grey-dark sm:w-[100px]"
             >
               {{ type.charAt(0).toUpperCase() + type.slice(1) }}
             </span>
@@ -127,7 +136,7 @@ onMounted(() => {
         </template>
 
         <template #no-results>
-          <div class="p-3 text-center flex flex-col space-y-2">
+          <div class="flex flex-col space-y-2 p-3 text-center">
             <div>Sorry, nothing found</div>
 
             <div>
@@ -144,7 +153,7 @@ onMounted(() => {
   <template v-if="searchResult">
     <div
       v-if="loadingResult"
-      class="w-full min-h-map justify-center items-center relative"
+      class="relative min-h-map w-full items-center justify-center"
     >
       <Loader :display="true" />
     </div>

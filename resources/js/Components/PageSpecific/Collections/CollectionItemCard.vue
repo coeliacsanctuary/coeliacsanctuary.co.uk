@@ -8,8 +8,8 @@ defineProps<{ item: CollectionItem }>();
 </script>
 
 <template>
-  <Card class="flex flex-col space-y-2 md:flex-row md:space-x-4 md:space-y-0">
-    <div class="md:min-w-1/4 md:max-w-16">
+  <Card class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
+    <div class="md:max-w-16 md:min-w-1/4">
       <Link
         :href="item.link"
         class="mb-0 flex flex-col"
@@ -53,7 +53,7 @@ defineProps<{ item: CollectionItem }>();
       <div class="flex flex-1 items-end justify-between">
         <p class="text-xs md:text-sm">Added on {{ item.date }}</p>
         <div
-          class="rounded-lg bg-primary-light/50 px-4 py-2 text-sm font-semibold leading-none md:text-base"
+          class="rounded-lg bg-primary-light/50 px-4 py-2 text-sm leading-none font-semibold md:text-base"
         >
           <span v-text="item.type" />
         </div>

@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\Search;
 
-use App\Actions\EatingOut\GetFiltersForEateriesAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\DataObjects\EatingOut\LatLng;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
 use App\Resources\EatingOut\EateryListResource;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
+use App\Support\State\EatingOut\Search\LatLngState;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Inertia\Response;
 
 class ShowController
@@ -23,7 +24,7 @@ class ShowController
         EaterySearchTerm $eaterySearchTerm,
         Inertia $inertia,
         GetSearchResultsPipeline $getSearchResultsPipeline,
-        GetFiltersForEateriesAction $getFiltersForEateriesAction,
+        GetFiltersForSearchResults $getFiltersForSearchResults,
         GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction,
     ): Response {
         /** @var array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null } $filters */
@@ -35,11 +36,25 @@ class ShowController
 
         $eateries = $getSearchResultsPipeline->run($eaterySearchTerm, $filters);
 
-        /** @var EateryListResource $jsonResource */
+        /** @var EateryListResource | null $jsonResource */
         $jsonResource = $eateries->collect()->first();
 
-        /** @var Eatery $firstResult */
-        $firstResult = $jsonResource->resource->load(['town', 'county', 'country']);
+        /** @var Eatery|null $firstResult */
+        $firstResult = $jsonResource?->resource?->load(['town', 'county', 'country']);
+
+        $image = match (true) {
+            $firstResult?->town?->image => $firstResult->town->image,
+            $firstResult?->county?->image => $firstResult->county->image,
+            $firstResult?->country?->image => $firstResult->country->image,
+            default => EateryCountry::query()->where('country', 'England')->firstOrFail()->image,
+        };
+
+        /** @var ?LatLng $latLng */
+        $latLng = LatLngState::$latLng;
+
+        if ( ! $latLng && $firstResult) {
+            $latLng = new LatLng($firstResult->lat, $firstResult->lng);
+        }
 
         return $inertia
             ->title("{$eaterySearchTerm->term} - Search Results")
@@ -48,10 +63,10 @@ class ShowController
             ->render('EatingOut/SearchResults', [
                 'term' => fn () => $eaterySearchTerm->term,
                 'range' => fn () => $eaterySearchTerm->range,
-                'image' => fn () => $firstResult->town->image ?? $firstResult->county->image ?? $firstResult->country->image ?? '',
+                'image' => fn () => $image,
                 'eateries' => fn () => $eateries,
-                'filters' => fn () => $getFiltersForEateriesAction->handle(fn (Builder $query) => $query->whereIn('id', Arr::pluck($eateries->all(), 'id')), $filters),
-                'latlng' => fn () => ['lat' => $firstResult->lat, 'lng' => $firstResult->lng],
+                'filters' => fn () => $getFiltersForSearchResults->usingSearchKey($eaterySearchTerm->key)->handle($filters),
+                'latlng' => fn () => $latLng?->toLatLng(),
             ]);
     }
 }

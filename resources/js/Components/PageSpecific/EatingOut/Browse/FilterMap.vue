@@ -80,10 +80,10 @@ onMounted(() => {
 <template>
   <div
     v-show="filters"
-    class="group absolute bottom-0 right-0 z-10 p-4 md:p-6 select-none"
+    class="group absolute right-0 bottom-0 z-10 p-4 select-none md:p-6"
   >
     <div
-      class="absolute left-0 ml-[-10px] rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm font-semibold uppercase leading-none opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 md:ml-[8px] xmd:ml-[10px] xmd:mt-[-38px] xmd:text-base"
+      class="absolute left-0 ml-[-10px] rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:mt-[-38px] xmd:ml-[10px] xmd:text-base md:ml-[8px]"
       :class="numberOfSetFilters > 0 ? 'mt-[-43px]' : 'mt-[-28px]'"
     >
       Filter
@@ -94,12 +94,12 @@ onMounted(() => {
     >
       <div
         v-if="numberOfSetFilters > 0"
-        class="absolute top-[-0.75rem] left-[-0.75rem] bg-white text-secondary leading-none font-semibold size-8 flex justify-center items-center rounded-full border-2 border-secondary"
+        class="absolute top-[-0.75rem] left-[-0.75rem] flex size-8 items-center justify-center rounded-full border-2 border-secondary bg-white leading-none font-semibold text-secondary"
         v-text="numberOfSetFilters"
       />
 
       <AdjustmentsHorizontalIcon
-        class="h-8 w-8 md:max-xmd:h-12 md:max-xmd:w-12 xmd:h-14 xmd:w-14"
+        class="h-8 w-8 xmd:h-14 xmd:w-14 md:max-xmd:h-12 md:max-xmd:w-12"
         @click="viewSidebar = true"
       />
     </div>

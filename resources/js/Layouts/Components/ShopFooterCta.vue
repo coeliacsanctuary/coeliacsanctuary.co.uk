@@ -110,7 +110,7 @@ onMounted(() => {
         in your basket.
       </div>
       <div
-        class="absolute right-0 top-0 -mr-3 -mt-3 flex h-6 w-6 items-center justify-center rounded-full bg-red"
+        class="absolute top-0 right-0 -mt-3 -mr-3 flex h-6 w-6 items-center justify-center rounded-full bg-red"
         v-text="items.length"
       />
       <ShoppingBagIcon
@@ -143,7 +143,7 @@ onMounted(() => {
         </div>
 
         <p
-          class="text-center text-3xl font-semibold leading-relaxed opacity-50"
+          class="text-center text-3xl leading-relaxed font-semibold opacity-50"
         >
           You have no items in your basket...
         </p>

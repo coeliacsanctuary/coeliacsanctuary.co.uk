@@ -7,7 +7,7 @@ const props = defineProps<{
   term: string;
   range: number;
   image: string;
-  latlng: LatLng;
+  latlng?: LatLng;
 }>();
 
 const linkCards = [
@@ -23,7 +23,8 @@ const linkCards = [
     description:
       'Browse an interactive map with all of the places we know about marked that offer gluten free!',
     icon: MapIcon,
-    href: `/wheretoeat/browse/${props.latlng.lat},${props.latlng.lng}/13`,
+    href: `/wheretoeat/browse/${props.latlng?.lat},${props.latlng?.lng}/13`,
+    if: props.latlng !== null,
   },
 ];
 </script>
@@ -52,40 +53,42 @@ const linkCards = [
     </div>
 
     <div class="absolute bottom-0 mb-2 grid w-full grid-cols-3 gap-2 px-2">
-      <Link
-        v-for="item in linkCards"
-        :key="item.title"
-        class="shrink-0"
-        :href="item.href"
-        prefetch
-      >
-        <div
-          class="flex h-full w-full cursor-pointer flex-col items-center justify-center space-y-2 rounded-sm bg-linear-to-br from-primary/90 to-primary-light/90 p-2 shadow-sm shadow-lg transition duration-500 sm:hover:from-primary/95 sm:hover:to-primary-light/95 md:justify-between md:p-4"
+      <template v-for="item in linkCards">
+        <Link
+          v-if="item.if !== undefined ? item.if : true"
+          :key="item.title"
+          class="shrink-0"
+          :href="item.href"
+          prefetch
         >
           <div
-            class="flex flex-1 flex-col items-center justify-center xs:w-full xs:flex-row md:flex-none md:items-start"
+            class="flex h-full w-full cursor-pointer flex-col items-center justify-center space-y-2 rounded-sm bg-linear-to-br from-primary/90 to-primary-light/90 p-2 shadow-lg shadow-sm transition duration-500 sm:hover:from-primary/95 sm:hover:to-primary-light/95 md:justify-between md:p-4"
           >
             <div
-              class="mb-2 hidden flex-1 xs:mb-4 xs:mr-4 xs:block xs:flex-none"
+              class="flex flex-1 flex-col items-center justify-center xs:w-full xs:flex-row md:flex-none md:items-start"
             >
-              <component
-                :is="item.icon"
-                class="h-12 w-12 xs:max-md:h-10 xs:max-md:w-10 md:h-8 md:w-8"
-              />
-            </div>
+              <div
+                class="mb-2 hidden flex-1 xs:mr-4 xs:mb-4 xs:block xs:flex-none"
+              >
+                <component
+                  :is="item.icon"
+                  class="h-12 w-12 xs:max-md:h-10 xs:max-md:w-10 md:h-8 md:w-8"
+                />
+              </div>
 
-            <div
-              class="text-center text-sm font-semibold xs:flex-1 xs:text-left xs:max-md:text-base md:max-lg:text-xl lg:text-2xl"
-            >
-              {{ item.title }}
+              <div
+                class="text-center text-sm font-semibold xs:flex-1 xs:text-left xs:max-md:text-base md:max-lg:text-xl lg:text-2xl"
+              >
+                {{ item.title }}
+              </div>
             </div>
+            <p
+              class="hidden text-sm md:inline lg:text-base"
+              v-html="item.description"
+            />
           </div>
-          <p
-            class="hidden text-sm md:inline lg:text-base"
-            v-html="item.description"
-          />
-        </div>
-      </Link>
+        </Link>
+      </template>
     </div>
 
     <img

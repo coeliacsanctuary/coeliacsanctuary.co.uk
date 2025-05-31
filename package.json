@@ -4,6 +4,7 @@
     "scripts": {
         "lint": "eslint ./resources/js --cache --ext .js,.ts,.vue",
         "lint-fix": "eslint ./resources/js --cache --ext .js,.ts,.vue --fix",
+        "format": "prettier --log-level log --write \"resources/js/**/*.{vue,ts}\"",
         "dev": "vite",
         "build": "vite build && vite build --ssr",
         "build-body": "cd nova-components/Body && npm run dev",
@@ -46,7 +47,6 @@
         "build-apex-charts-prod": "cd nova-components/ApexCharts && npm run prod"
     },
     "devDependencies": {
-        "n": "^2.0.5",
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/postcss": "^4.0.0",
         "@tailwindcss/typography": "^0.5.16",
@@ -56,6 +56,7 @@
         "@vue/eslint-config-prettier": "^9.0.0",
         "dayjs": "^1.11.7",
         "laravel-vite-plugin": "^1.0",
+        "n": "^2.0.5",
         "postcss": "^8.4.21",
         "prettier": "^3.2.5",
         "prettier-plugin-tailwindcss": "^0.6.11",
@@ -63,6 +64,7 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "@googlemaps/polyline-codec": "^1.0.28",
         "@headlessui/vue": "^1.7.8",
         "@heroicons/vue": "^2.0.14",
         "@inertiajs/core": "^1.0.9",

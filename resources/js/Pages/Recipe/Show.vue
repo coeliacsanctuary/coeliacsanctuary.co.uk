@@ -12,10 +12,14 @@ import RecipeNutritionTable from '@/Components/PageSpecific/Recipes/RecipeNutrit
 import { Page } from '@inertiajs/core';
 import GoogleAd from '@/Components/GoogleAd.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import Warning from '@/Components/Warning.vue';
+import Info from '@/Components/Info.vue';
+import useScreensize from '@/composables/useScreensize';
 
 const props = defineProps<{
   recipe: RecipePage;
   comments: PaginatedResponse<Comment>;
+  backLink: string;
 }>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
@@ -49,8 +53,8 @@ const loadMoreComments = () => {
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading
       :back-link="{
-        href: '/recipe',
-        label: 'Back to all recipes...',
+        href: backLink,
+        label: 'Back to all recipes.',
       }"
     >
       {{ recipe.title }}
@@ -62,10 +66,16 @@ const loadMoreComments = () => {
     />
 
     <div
-      class="flex flex-col space-y-2 xs:flex-row xs:justify-between xs:space-y-0 md:text-lg"
+      class="flex flex-col space-y-4 lg:flex-row lg:justify-between lg:space-y-0 lg:space-x-4"
     >
-      <div v-if="recipe.features.length">
-        <h3 class="font-semibold text-grey-darkest">This recipe is...</h3>
+      <Info
+        v-if="recipe.features.length"
+        class="lg:w-md"
+      >
+        <h3 class="mb-1 text-lg font-semibold text-grey-darkest">
+          This recipe is...
+        </h3>
+
         <ul class="flex flex-row flex-wrap gap-2 gap-y-1 leading-tight">
           <li
             v-for="feature in recipe.features"
@@ -80,25 +90,51 @@ const loadMoreComments = () => {
             </Link>
           </li>
         </ul>
-      </div>
+      </Info>
 
-      <div v-if="recipe.allergens.length">
-        <div class="w-full rounded-sm bg-red-light/10 p-3 pr-12">
-          <h3 class="font-semibold text-grey-darkest">This recipe contains:</h3>
-          <ul class="flex flex-row flex-wrap gap-2 gap-y-1 leading-tight">
-            <li
-              v-for="allergen in recipe.allergens"
-              :key="allergen.slug"
-              class="font-semibold text-primary-dark after:content-[','] last:after:content-['']"
-              v-text="allergen.allergen"
-            />
-          </ul>
-        </div>
-      </div>
+      <Info
+        class="lg:w-md"
+        no-icon
+        theme="light"
+      >
+        <ul class="">
+          <li>
+            <strong class="font-semibold">Preparation Time:</strong>
+            {{ recipe.timing.prep_time }}
+          </li>
+          <li>
+            <strong class="font-semibold">Cooking Time:</strong>
+            {{ recipe.timing.cook_time }}
+          </li>
+          <li>
+            <strong class="font-semibold"
+              >This recipe makes {{ recipe.nutrition.servings }}</strong
+            >
+          </li>
+        </ul>
+      </Info>
+
+      <Warning
+        v-if="recipe.allergens.length"
+        class="lg:w-md"
+      >
+        <h3 class="mb-1 text-lg font-semibold text-red-dark">
+          This recipe contains:
+        </h3>
+
+        <ul class="flex flex-row flex-wrap gap-2 gap-y-1 leading-tight">
+          <li
+            v-for="allergen in recipe.allergens"
+            :key="allergen.slug"
+            class="font-semibold text-black after:content-[','] last:after:content-['']"
+            v-text="allergen.allergen"
+          />
+        </ul>
+      </Warning>
     </div>
 
     <div
-      class="-m-4 -mb-4! flex justify-between bg-grey-light p-4 shadow-inner"
+      class="-m-4 !mt-4 -mb-4! flex justify-between bg-grey-light p-4 shadow-inner"
     >
       <div>
         <p v-if="recipe.updated">
@@ -136,73 +172,91 @@ const loadMoreComments = () => {
     />
   </Card>
 
-  <Card v-if="recipe.featured_in.length">
-    <h3 class="text-base font-semibold text-grey-darkest">
-      This recipe was featured in
-    </h3>
-
-    <ul class="mt-2 flex flex-row flex-wrap text-sm leading-tight">
-      <li
-        v-for="collection in recipe.featured_in"
-        :key="collection.link"
-        class="after:content-[','] last:after:content-['']"
-      >
-        <Link
-          :href="collection.link"
-          class="font-semibold text-primary-dark hover:text-grey-darker"
-        >
-          {{ collection.title }}
-        </Link>
-      </li>
-    </ul>
-  </Card>
-
-  <Card class="space-y-3 pb-0">
-    <SubHeading classes="text-primary-dark">Ingredients</SubHeading>
-
+  <div
+    class="relative flex flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
+  >
     <div
-      class="prose prose-lg max-w-none md:prose-xl"
-      v-html="recipe.ingredients"
-    />
+      class="space-y-3 lg:ml-3 lg:grid lg:w-[350px] lg:flex-shrink-0 lg:grid-cols-1 lg:self-start lg:overflow-auto"
+    >
+      <Card
+        v-if="recipe.featured_in?.length"
+        class="lg:row-start-2"
+      >
+        <h3 class="text-base font-semibold text-grey-darkest">
+          This recipe was featured in
+        </h3>
 
-    <ul class="-m-4 mt-4 border-t border-grey-off-light bg-grey-light p-4">
-      <li>
-        <strong class="font-semibold">Preparation Time:</strong>
-        {{ recipe.timing.prep_time }}
-      </li>
-      <li>
-        <strong class="font-semibold">Cooking Time:</strong>
-        {{ recipe.timing.cook_time }}
-      </li>
-      <li>
-        <strong class="font-semibold"
-          >This recipe makes {{ recipe.nutrition.servings }}</strong
-        >
-      </li>
-    </ul>
-  </Card>
+        <ul class="mt-2 flex flex-row flex-wrap text-sm leading-tight">
+          <li
+            v-for="collection in recipe.featured_in"
+            :key="collection.link"
+            class="after:content-[','] last:after:content-['']"
+          >
+            <Link
+              :href="collection.link"
+              class="font-semibold text-primary-dark hover:text-grey-darker"
+            >
+              {{ collection.title }}
+            </Link>
+          </li>
+        </ul>
+      </Card>
 
-  <GoogleAd code="2137793897" />
+      <Card>
+        <SubHeading classes="text-primary-dark">Ingredients</SubHeading>
 
-  <Card class="space-y-3">
-    <SubHeading classes="text-primary-dark">Method</SubHeading>
+        <div
+          class="prose prose-lg max-w-none md:prose-xl"
+          v-html="recipe.ingredients"
+        />
+      </Card>
 
-    <article
-      class="prose prose-lg max-w-none md:prose-xl"
-      v-html="recipe.method"
-    />
+      <Card class="hidden lg:flex">
+        <h3 class="mb-4 text-base font-semibold">
+          Nutritional Information (Per {{ recipe.nutrition.portion_size }})
+        </h3>
 
-    <h3 class="mb-2 mt-4 text-base font-semibold">
-      Nutritional Information (Per {{ recipe.nutrition.portion_size }})
-    </h3>
+        <RecipeNutritionTable
+          direction="vertical"
+          :nutrition="recipe.nutrition"
+        />
+      </Card>
 
-    <RecipeNutritionTable :nutrition="recipe.nutrition" />
-  </Card>
+      <GoogleAd
+        :title="
+          useScreensize().screenIsGreaterThanOrEqualTo('lg')
+            ? 'Sponsored'
+            : undefined
+        "
+        code="2137793897"
+      />
+    </div>
 
-  <Comments
-    :id="recipe.id"
-    :comments="allComments"
-    module="recipe"
-    @load-more="loadMoreComments"
-  />
+    <div class="flex flex-col space-y-3">
+      <Card class="space-y-3">
+        <SubHeading classes="text-primary-dark">Method</SubHeading>
+
+        <article
+          class="prose prose-lg max-w-none md:prose-xl"
+          v-html="recipe.method"
+        />
+
+        <h3 class="mt-4 mb-2 text-base font-semibold lg:hidden">
+          Nutritional Information (Per {{ recipe.nutrition.portion_size }})
+        </h3>
+
+        <RecipeNutritionTable
+          class="lg:hidden"
+          :nutrition="recipe.nutrition"
+        />
+      </Card>
+
+      <Comments
+        :id="recipe.id"
+        :comments="allComments"
+        module="recipe"
+        @load-more="loadMoreComments"
+      />
+    </div>
+  </div>
 </template>

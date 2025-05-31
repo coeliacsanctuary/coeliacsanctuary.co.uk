@@ -29,7 +29,7 @@ const itemChecked = (index: number) => {
       v-text="label"
     />
 
-    <div class="divide-gray-light divide-y border-b border-t border-gray-200">
+    <div class="divide-gray-light divide-y border-t border-b border-gray-200">
       <div
         v-for="(item, index) in items"
         :key="item.value"
@@ -46,7 +46,7 @@ const itemChecked = (index: number) => {
               'font-semibold': item.checked === true,
             }"
             :for="`${id}-${item.value}`"
-            class="select-none text-sm text-gray-900 xmd:text-base"
+            class="text-sm text-gray-900 select-none xmd:text-base"
             v-text="item.label"
           />
         </div>

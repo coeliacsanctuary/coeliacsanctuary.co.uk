@@ -138,6 +138,87 @@ watchDebounced(
         @submit.prevent="submit()"
       >
         <FormInput
+          id="placeName"
+          v-model="form.place.name"
+          :error="form.errors.place?.name"
+          label="Place Name"
+          name="placeName"
+          required
+          borders
+        />
+
+        <FormTextarea
+          v-model="form.place.location"
+          label="Place Location / Address"
+          required
+          name="placeLocation"
+          :rows="3"
+          :error="form.errors.place?.location"
+          borders
+        />
+
+        <div
+          v-if="placeAlreadyRecommended"
+          class="mx-auto w-full max-w-3xl"
+        >
+          <Warning class="rounded-xl">
+            <div class="flex flex-col space-y-3 md:text-center">
+              <p
+                class="prose lg:max-xl:prose-lg xl:prose-xl"
+                v-text="placeAlreadyRecommended.result"
+              />
+
+              <div class="text-center">
+                <CoeliacButton
+                  as="a"
+                  :href="placeAlreadyRecommended.url"
+                  :label="placeAlreadyRecommended.label"
+                  target="_blank"
+                  theme="secondary"
+                  size="xl"
+                />
+              </div>
+
+              <p class="prose font-semibold lg:max-xl:prose-lg xl:prose-xl">
+                If you're this is a different place please carry on with your
+                recommendation!
+              </p>
+            </div>
+          </Warning>
+        </div>
+
+        <FormInput
+          id="placeWebAddress"
+          v-model="form.place.url"
+          :error="form.errors.place?.url"
+          label="Place Website"
+          name="placeUrl"
+          borders
+        />
+
+        <FormSelect
+          id="placeVenueType"
+          v-model="form.place.venueType"
+          name="placeVenueType"
+          :options="venueTypes"
+          label="Place Category"
+          borders
+        />
+
+        <FormTextarea
+          v-model="form.place.details"
+          label="Place details"
+          help-text="Please include details like if they only do gluten free on certain days, or examples of items on the menu, if they understand cross contamination etc"
+          required
+          name="placeDetails"
+          :rows="6"
+          :error="form.errors.place?.details"
+          borders
+        />
+
+        <hr />
+
+        <FormInput
           id="name"
           v-model="form.name"
           :error="form.errors.name"
@@ -160,89 +241,9 @@ watchDebounced(
           borders
         />
 
-        <hr />
-
-        <FormInput
-          id="placeName"
-          v-model="form.place.name"
-          :error="form.errors.place?.name"
-          label="Place Name"
-          name="placeName"
-          required
-          borders
-        />
-
-        <FormTextarea
-          v-model="form.place.location"
-          label="Place Location / Address"
-          required
-          name="placeLocation"
-          :rows="3"
-          :error="form.errors.place?.location"
-          borders
-        />
-
-        <div class="w-full max-w-3xl mx-auto">
-          <Warning
-            v-if="placeAlreadyRecommended"
-            class="rounded-xl"
-          >
-            <div class="flex flex-col space-y-3 md:text-center">
-              <p
-                class="prose lg:max-xl:prose-lg xl:prose-xl"
-                v-text="placeAlreadyRecommended.result"
-              />
-
-              <div class="text-center">
-                <CoeliacButton
-                  as="a"
-                  :href="placeAlreadyRecommended.url"
-                  :label="placeAlreadyRecommended.label"
-                  target="_blank"
-                  theme="secondary"
-                  size="xl"
-                />
-              </div>
-
-              <p class="prose lg:max-xl:prose-lg xl:prose-xl font-semibold">
-                If you're this is a different place please carry on with your
-                recommendation!
-              </p>
-            </div>
-          </Warning>
-        </div>
-
-        <FormInput
-          id="placeWebAddress"
-          v-model="form.place.url"
-          :error="form.errors.place?.url"
-          label="Place Website"
-          name="placeUrl"
-          borders
-        />
-
-        <FormSelect
-          id="placeVenueType"
-          v-model="form.place.venueType"
-          name="placeVenueType"
-          :options="venueTypes"
-          label="Venue Type"
-          borders
-        />
-
-        <FormTextarea
-          v-model="form.place.details"
-          label="Details"
-          required
-          name="placeDetails"
-          :rows="6"
-          :error="form.errors.place?.details"
-          borders
-        />
-
         <div
           v-if="placeAlreadyRecommended"
-          class="bg-primary-light/15 p-3 rounded-xl"
+          class="rounded-xl bg-primary-light/15 p-3"
         >
           <FormCheckbox
             v-model="confirmNewEatery"
@@ -283,7 +284,7 @@ watchDebounced(
         the website!
       </p>
 
-      <div class="flex justify-center mt-8">
+      <div class="mt-8 flex justify-center">
         <CoeliacButton
           label="Add another!"
           type="button"

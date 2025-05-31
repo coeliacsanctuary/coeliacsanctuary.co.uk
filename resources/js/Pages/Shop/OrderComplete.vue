@@ -146,7 +146,7 @@ if (typeof document !== 'undefined') {
           <dt class="text-lg font-semibold text-primary-dark">
             Payment Information
           </dt>
-          <dd class="space-y-1 sm:flex sm:space-x-4 sm:space-y-0">
+          <dd class="space-y-1 sm:flex sm:space-y-0 sm:space-x-4">
             <div class="mt-2 grid flex-auto grid-cols-3 gap-2">
               <template v-if="order.payment.type !== 'PayPal'">
                 <div class="col-span-2 font-semibold">Payment Method</div>
@@ -177,7 +177,7 @@ if (typeof document !== 'undefined') {
                 <div class="text-right">PayPal</div>
 
                 <template v-if="order.payment.paypalAccount">
-                  <div class="font-semibold">Ending With</div>
+                  <div class="font-semibold">Payment Account</div>
                   <div
                     class="col-span-2 text-right"
                     v-text="order.payment.paypalAccount"

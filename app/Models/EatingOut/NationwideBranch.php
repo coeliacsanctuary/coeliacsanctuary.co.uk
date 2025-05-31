@@ -31,6 +31,7 @@ use Laravel\Scout\Searchable;
  *
  * @property Eatery $eatery
  * @property string $short_name
+ * @property string $full_name
  */
 class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSearchable
 {
@@ -130,6 +131,11 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
             $this->eatery->slug,
             $this->slug,
         ]);
+    }
+
+    public function absoluteLink(): string
+    {
+        return config('app.url') . $this->link();
     }
 
     /**

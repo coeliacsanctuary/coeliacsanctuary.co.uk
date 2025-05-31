@@ -18,16 +18,16 @@ const hasSignedUpToNewsletter = ref(false);
   >
     <div
       v-if="!hasSignedUpToNewsletter"
-      class="relative p-3 flex flex-col"
+      class="relative flex flex-col p-3"
     >
       <h2
-        class="font-coeliac mx-auto text-center text-4xl font-semibold tracking-tight"
+        class="mx-auto text-center font-coeliac text-4xl font-semibold tracking-tight"
       >
         Want more updates? Sign up to my newsletter!
       </h2>
 
       <form
-        class="w-full mt-10 flex flex-col gap-y-4 sm:flex-row sm:gap-y-0 sm:gap-x-4"
+        class="mt-10 flex w-full flex-col gap-y-4 sm:flex-row sm:gap-x-4 sm:gap-y-0"
         @submit.prevent="
           subscribeForm.submit({
             preserveScroll: true,
@@ -43,7 +43,7 @@ const hasSignedUpToNewsletter = ref(false);
           autocomplete="email"
           name="email-address"
           placeholder="Enter your email address..."
-          class="flex-1 h-full"
+          class="h-full flex-1"
           :error="subscribeForm.errors?.email"
           borders
           size="large"
@@ -67,7 +67,7 @@ const hasSignedUpToNewsletter = ref(false);
 
     <div
       v-else
-      class="flex space-x-2 items-center justify-center"
+      class="flex items-center justify-center space-x-2"
     >
       <div class="text-secondary">
         <CheckCircleIcon class="h-12 w-12" />

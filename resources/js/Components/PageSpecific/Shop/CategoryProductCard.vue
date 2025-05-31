@@ -63,7 +63,8 @@ const addToBasket = () => {
         class="prose-sm text-gray-500 md:max-xl:prose-base xl:prose-lg"
         v-text="product.description"
       />
-      <div class="flex flex-1 justify-between">
+
+      <div class="flex flex-1 items-end justify-between">
         <p
           class="text-2xl font-semibold text-gray-900 md:max-xl:text-3xl xl:text-4xl"
         >

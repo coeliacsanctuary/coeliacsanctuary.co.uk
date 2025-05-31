@@ -108,6 +108,13 @@ class Inertia
         return $this;
     }
 
+    public function metaFeed(string $link): self
+    {
+        BaseInertia::share('meta.feed', $link);
+
+        return $this;
+    }
+
     /** @param array<string, mixed> | Arrayable<string, mixed> $props */
     public function render(string $component, array|Arrayable $props = []): Response
     {
@@ -155,7 +162,8 @@ class Inertia
                 'id' => $popup->id,
                 'text' => $popup->text,
                 'link' => $popup->link,
-                'image' => $popup->main_image,
+                'primary_image' => $popup->getMedia('primary')->random()?->getUrl(), /** @phpstan-ignore-line */
+                'secondary_image' => $popup->getMedia('secondary')->isNotEmpty() ? $popup->getMedia('secondary')->random()->getUrl() : null,
             ]);
         }
     }

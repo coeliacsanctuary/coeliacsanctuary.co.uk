@@ -47,18 +47,18 @@ const eateryName = (): string => {
       :border="false"
       :back-link="{
         href: props.previous,
-        label: `Back to ${name}`,
+        label: props.name,
         position: 'top',
         direction: 'left',
       }"
     >
       <div class="flex items-center justify-between space-x-2">
         <h1
-          class="font-coeliac text-3xl font-semibold leading-tight lg:mb-2 lg:text-5xl"
+          class="font-coeliac text-3xl leading-tight font-semibold lg:mb-2 lg:text-5xl"
           v-text="eateryName()"
         />
 
-        <div class="w-10 pr-2 pt-2 text-primary">
+        <div class="w-10 pt-2 pr-2 text-primary">
           <Icon
             :name="iconName"
             class="h-10 w-10"
@@ -119,7 +119,7 @@ const eateryName = (): string => {
 
       <div
         v-if="eatery.branch"
-        class="2 flex space-x-3 text-xs font-semibold text-grey-darker"
+        class="2 flex space-x-1 text-xs font-semibold text-grey-darker"
       >
         <Link :href="eatery.branch.town.link">
           {{ eatery.branch.town.name }},

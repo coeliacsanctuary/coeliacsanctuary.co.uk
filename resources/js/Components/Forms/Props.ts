@@ -59,6 +59,7 @@ export type TextareaProps = BaseFormInputProps & {
   max?: number;
   hideLabel?: boolean;
   size?: 'default' | 'large';
+  helpText?: string;
 };
 
 export const TextareaPropsDefaults: Partial<TextareaProps> = {
@@ -67,6 +68,7 @@ export const TextareaPropsDefaults: Partial<TextareaProps> = {
   max: undefined,
   hideLabel: false,
   size: 'default',
+  helpText: undefined,
 };
 
 export type CheckboxProps = BaseFormProps & {
@@ -160,6 +162,7 @@ export type FormLookupProps = Omit<InputProps, 'type'> & {
   allowAny?: boolean;
   fallbackObject?: object;
   fallbackKey?: string;
+  resultsClasses?: string;
 };
 
 export const FormLookupPropDefaults: Partial<
@@ -174,6 +177,7 @@ export const FormLookupPropDefaults: Partial<
   allowAny: false,
   fallbackObject: {},
   fallbackKey: undefined,
+  resultsClasses: '',
 };
 
 export type ProductQuantitySwitcherProps = Omit<

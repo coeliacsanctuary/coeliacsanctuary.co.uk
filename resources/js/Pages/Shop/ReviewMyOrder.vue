@@ -158,7 +158,7 @@ const submitForm = () => {
         class="flex-1"
       >
         <div
-          class="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
+          class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4"
         >
           <div class="shrink-0 sm:w-1/4">
             <img

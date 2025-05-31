@@ -5,17 +5,22 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Shop\Basket;
 
 use App\Actions\Shop\AlterItemQuantityAction;
+use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\ResolveBasketAction;
+use App\DataObjects\Shop\PendingOrderCustomerDetails;
+use App\Exceptions\QuantityException;
 use App\Http\Requests\Shop\BasketPatchRequest;
 use App\Models\Shop\ShopOrder;
 use Exception;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class UpdateController
 {
-    public function __invoke(BasketPatchRequest $request, ResolveBasketAction $resolveBasketAction): RedirectResponse
+    public function __invoke(BasketPatchRequest $request, ResolveBasketAction $resolveBasketAction): RedirectResponse | Response
     {
         /** @var string | null $token */
         $token = $request->cookies->get('basket_token');
@@ -45,9 +50,25 @@ class UpdateController
                 $request->session()->put('discountCode', app(Encrypter::class)->encrypt($request->string('discount')->toString()));
             }
 
+            if ($request->has('contact')) {
+                $customer = app(CreateCustomerAction::class)->handle(PendingOrderCustomerDetails::createFromRequest($request));
+
+                $basket->update([
+                    'customer_id' => $customer->id,
+                ]);
+            }
+
             DB::commit();
-        } catch (Exception $exception) {
+        } catch (QuantityException) {
             DB::rollBack();
+
+            throw ValidationException::withMessages(['quantity' => 'not enough quantity available']);
+        } catch (Exception) {
+            DB::rollBack();
+        }
+
+        if ($request->wantsJson()) {
+            return response()->noContent();
         }
 
         return redirect()->back();

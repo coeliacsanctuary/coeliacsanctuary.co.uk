@@ -13,7 +13,7 @@ const props = withDefaults(
   FormLookupPropDefaults,
 );
 
-const emits = defineEmits(['search', 'unlock']);
+const emits = defineEmits(['search', 'unlock', 'typed']);
 
 const value = ref('');
 
@@ -107,7 +107,7 @@ defineExpose({ reset, value });
 watch(
   () => props.preselectTerm,
   () => {
-    if (props.preselectTerm) {
+    if (props.preselectTerm && !value.value) {
       value.value = props.preselectTerm;
     }
   },
@@ -121,7 +121,7 @@ watchDebounced(value, performSearch, { debounce: 500 });
     <label
       v-if="hideLabel === false"
       :for="id"
-      class="block font-semibold leading-6 text-primary-dark"
+      class="block leading-6 font-semibold text-primary-dark"
       :class="
         size === 'large'
           ? 'text-base sm:max-xl:text-lg xl:text-xl'
@@ -138,7 +138,7 @@ watchDebounced(value, performSearch, { debounce: 500 });
 
     <small
       v-if="helpText"
-      class="mb-2 mt-0 block text-sm leading-none text-grey-dark"
+      class="mt-0 mb-2 block text-sm leading-none text-grey-dark"
       v-text="helpText"
     />
 
@@ -165,11 +165,12 @@ watchDebounced(value, performSearch, { debounce: 500 });
           ...(min ? { min } : null),
           ...(max ? { max } : null),
         }"
+        @keyup="$emit('typed')"
       />
 
       <div
         v-if="lock"
-        class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3"
+        class="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-3"
         @click="
           value = '';
           $emit('unlock');
@@ -177,7 +178,7 @@ watchDebounced(value, performSearch, { debounce: 500 });
       >
         <XCircleIcon
           aria-hidden="true"
-          class="h-5 w-5 text-grey-darkest hover:text-primary-dark transition"
+          class="h-5 w-5 text-grey-darkest transition hover:text-primary-dark"
         />
       </div>
 
@@ -194,7 +195,8 @@ watchDebounced(value, performSearch, { debounce: 500 });
 
     <div
       v-if="showResultsBox && !lock"
-      class="rounded-b-md border border-grey-off focus:border-grey-dark shadow-xs border-t-0"
+      class="rounded-b-md border border-t-0 border-grey-off shadow-xs focus:border-grey-dark"
+      :class="resultsClasses"
     >
       <ul v-if="results.length > 0 || allowAny">
         <li
@@ -219,7 +221,7 @@ watchDebounced(value, performSearch, { debounce: 500 });
 
       <div
         v-else
-        class="text-center py-2"
+        class="py-2 text-center"
       >
         <slot name="no-results">
           <em>Nothing found...</em>

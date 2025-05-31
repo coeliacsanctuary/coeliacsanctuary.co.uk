@@ -10,6 +10,7 @@ use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Services\EatingOut\LocationSearchService;
+use App\Support\State\EatingOut\Search\LatLngState;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,7 +29,7 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
         }
 
         try {
-            $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+            $latLng = $this->getLatLng($pipelineData);
         } catch (Exception) {
             return $next($pipelineData);
         }
@@ -56,7 +57,9 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
             ], ','))
             ->whereIn('wheretoeat_nationwide_branches.id', $ids->pluck('id'))
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
-            ->whereHas('eatery', function ($query) use ($pipelineData) {
+            ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
+                /** @var Builder<Eatery> $query */
+                /** @phpstan-ignore-next-line  */
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
                 }
@@ -89,5 +92,19 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
         $pipelineData->eateries->push(...$pendingEateries);
 
         return $next($pipelineData);
+    }
+
+    protected function getLatLng(GetEateriesPipelineData $pipelineData): \App\DataObjects\EatingOut\LatLng
+    {
+        if (LatLngState::$latLng) {
+            return LatLngState::$latLng;
+        }
+
+        /** @phpstan-ignore-next-line  */
+        $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+
+        LatLngState::$latLng = $latLng;
+
+        return $latLng;
     }
 }

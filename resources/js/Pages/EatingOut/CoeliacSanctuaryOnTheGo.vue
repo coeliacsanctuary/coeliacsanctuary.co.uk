@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import ArticleImage from '@/Components/ArticleImage.vue';
+import ArticleImage from '@/JitComponents/ArticleImage.vue';
 import Heading from '@/Components/Heading.vue';
 
 defineProps<{ image: string }>();
@@ -9,13 +9,13 @@ defineProps<{ image: string }>();
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading
-      :back-link="{ label: 'Back to eating out guide...', href: '/eating-out' }"
+      :back-link="{ label: 'Back to eating out guide.', href: '/eating-out' }"
     >
       Coeliac Sanctuary - On the Go
     </Heading>
 
     <img
-      class="mb-4 mx-auto"
+      class="mx-auto mb-4"
       :src="image"
       alt="Coeliac Sanctuary - On the Go"
     />
@@ -44,7 +44,7 @@ defineProps<{ image: string }>();
     </p>
 
     <div
-      class="flex justify-center items-center text-center space-x-2 max-w-[900px] mx-auto"
+      class="mx-auto flex max-w-[900px] items-center justify-center space-x-2 text-center"
     >
       <ArticleImage
         position="fullwidth"
@@ -61,20 +61,20 @@ defineProps<{ image: string }>();
     </div>
 
     <div
-      class="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:space-x-4 sm:space-y-0 sm:mt-4 max-w-[900px] mx-auto"
+      class="mx-auto flex max-w-[900px] flex-col space-y-4 sm:mt-4 sm:flex-row sm:justify-between sm:space-y-0 sm:space-x-4"
     >
       <a
         title="Google Play Store"
         href="https://play.google.com/store/apps/details?id=com.coeliacsanctuary.onthego"
         target="_blank"
-        class="flex flex-col space-y-2 bg-linear-to-br from-primary/30 to-primary-light/30 rounded-sm p-2 lg:p-4 items-center sm:max-w-1/2 sm:h-full"
+        class="flex flex-col items-center space-y-2 rounded-sm bg-linear-to-br from-primary/30 to-primary-light/30 p-2 sm:h-full sm:max-w-1/2 lg:p-4"
       >
         <img
           style="width: 250px"
           src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
           alt="Get it on Google Play"
         />
-        <span class="font-semibold text-center">
+        <span class="text-center font-semibold">
           Download the App now from the Google Play store
         </span>
       </a>
@@ -83,7 +83,7 @@ defineProps<{ image: string }>();
         title="Apple App Store"
         href="https://apps.apple.com/us/app/coeliac-sanctuary-on-the-go/id1608694621"
         target="_blank"
-        class="flex flex-col space-y-2 bg-linear-to-br from-primary/30 to-primary-light/30 rounded-sm p-2 lg:p-4 items-center sm:max-w-1/2 sm:h-full"
+        class="flex flex-col items-center space-y-2 rounded-sm bg-linear-to-br from-primary/30 to-primary-light/30 p-2 sm:h-full sm:max-w-1/2 lg:p-4"
       >
         <img
           style="width: 220px"
@@ -91,7 +91,7 @@ defineProps<{ image: string }>();
           src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1644192000&h=d94315b3908f3483bc41a28cdbda8bf7"
           alt="Download on the App Store"
         />
-        <span class="font-semibold text-center">
+        <span class="text-center font-semibold">
           Download the App now from the Apple App store
         </span>
       </a>

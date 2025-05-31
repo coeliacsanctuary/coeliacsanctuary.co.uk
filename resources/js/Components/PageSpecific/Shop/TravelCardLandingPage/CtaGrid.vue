@@ -38,25 +38,25 @@ const ctaItems: Cta[] = [
 </script>
 
 <template>
-  <div class="grid lg:grid-cols-2 gap-4">
+  <div class="grid gap-4 lg:grid-cols-2">
     <Card
       v-for="cta in ctaItems"
       :key="cta.title"
-      class="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 lg:max-xl:flex-col lg:max-xl:space-y-4 xl:flex-row xl:space-y-0"
+      class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 lg:max-xl:flex-col lg:max-xl:space-y-4 xl:flex-row xl:space-y-0"
     >
       <h2
-        class="text-2xl text-primary font-semibold text-center sm:hidden"
+        class="text-center text-2xl font-semibold text-primary sm:hidden"
         v-text="cta.title"
       />
 
       <div
-        class="flex justify-center items-center my-12 sm:m-0! sm:p-2 sm:max-lg:w-1/4 sm:shrink-0 lg:max-xl:w-full xl:w-1/4"
+        class="my-12 flex items-center justify-center sm:m-0! sm:shrink-0 sm:p-2 sm:max-lg:w-1/4 lg:max-xl:w-full xl:w-1/4"
         v-html="cta.icon"
       />
 
       <div class="sm:space-y-2">
         <h2
-          class="hidden text-2xl text-primary font-semibold sm:block lg:text-center lg:text-4xl xl:text-left"
+          class="hidden text-2xl font-semibold text-primary sm:block lg:text-center lg:text-4xl xl:text-left"
           v-text="cta.title"
         />
 

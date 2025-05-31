@@ -4,11 +4,11 @@ import Heading from '@/Components/Heading.vue';
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 mt-5">
-    <Card class="prose max-w-6xl mx-auto">
+  <div class="mt-5 flex flex-col gap-5">
+    <Card class="mx-auto prose max-w-6xl">
       <Heading :border="false">Cookie Policy</Heading>
 
-      <ol class="text-sm space-y-2 mt-0">
+      <ol class="mt-0 space-y-2 text-sm">
         <li>
           To give our visitors the best experience and to ensure our website
           works properly we place small data files called cookies onto your
@@ -16,7 +16,7 @@ import Heading from '@/Components/Heading.vue';
         </li>
 
         <li>
-          <span class="text-primary-dark font-semibold">What Are Cookies</span>
+          <span class="font-semibold text-primary-dark">What Are Cookies</span>
           <ol>
             <li>
               A cookie is a small text file that a website places onto your
@@ -29,7 +29,7 @@ import Heading from '@/Components/Heading.vue';
         </li>
 
         <li>
-          <span class="text-primary-dark font-semibold"
+          <span class="font-semibold text-primary-dark"
             >How do you use cookies?</span
           >
           <ol>
@@ -38,7 +38,7 @@ import Heading from '@/Components/Heading.vue';
               and to enhance the website performance.
             </li>
             <li>
-              <span class="text-primary-dark font-semibold"
+              <span class="font-semibold text-primary-dark"
                 >Protecting your privacy</span
               >
               <ol>
@@ -56,7 +56,7 @@ import Heading from '@/Components/Heading.vue';
               </ol>
             </li>
             <li>
-              <span class="text-primary-dark font-semibold"
+              <span class="font-semibold text-primary-dark"
                 >Website Performance</span
               >
               <ol>
@@ -75,7 +75,7 @@ import Heading from '@/Components/Heading.vue';
           </ol>
         </li>
         <li>
-          <span class="text-primary-dark font-semibold"
+          <span class="font-semibold text-primary-dark"
             >Third-party Cookies</span
           >
           <ol>
@@ -88,7 +88,7 @@ import Heading from '@/Components/Heading.vue';
           </ol>
         </li>
         <li>
-          <span class="text-primary-dark font-semibold"
+          <span class="font-semibold text-primary-dark"
             >How to control Cookies</span
           >
           <ol>

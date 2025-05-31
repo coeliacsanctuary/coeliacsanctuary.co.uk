@@ -41,7 +41,7 @@ const howExpensive = () => {
     rtr += '£';
   }
 
-  return `<strong>${rtr}</strong> - ${props.review.expense?.label}`;
+  return `<strong class="flex-shrink-0">${rtr}</strong> <span>${props.review.expense?.label}</span>`;
 };
 
 const displayFullReview = ref(false);
@@ -64,12 +64,12 @@ const reviewBody = computed(() => {
     <div class="flex flex-col space-y-2 lg:space-y-4">
       <ul
         v-if="hasRatings"
-        class="mb-2 grid grid-cols-1 gap-1 leading-none xs:grid-cols-4 xs:gap-3 lg:text-lg"
+        class="mb-2 grid grid-cols-1 gap-1 leading-none xs:grid-cols-2 xs:gap-3 xmd:grid-cols-4 lg:text-lg"
       >
         <li
-          class="flex items-center space-x-1 rounded-sm bg-primary-light/50 px-3 py-2"
+          class="flex items-center space-x-2 rounded-sm bg-primary-light/50 px-3 py-2"
         >
-          <strong>Our Rating</strong>
+          <strong class="flex-shrink-0">Our Rating</strong>
           <StarRating
             :rating="<StarRatingType>review.rating"
             size="w-4 h-4"
@@ -79,20 +79,21 @@ const reviewBody = computed(() => {
 
         <li
           v-if="review.expense"
-          class="flex items-center rounded-sm bg-primary-light/50 px-3 py-2"
+          class="flex items-center space-x-2 rounded-sm bg-primary-light/50 px-3 py-2"
           v-html="howExpensive()"
         />
         <li
           v-if="review.food_rating"
-          class="flex items-center rounded-sm bg-primary-light/50 px-3 py-2"
+          class="flex items-center space-x-2 rounded-sm bg-primary-light/50 px-3 py-2"
         >
-          <strong>Food</strong>: {{ ucfirst(review.food_rating) }}
+          <strong>Food</strong> <span>{{ ucfirst(review.food_rating) }}</span>
         </li>
         <li
           v-if="review.service_rating"
-          class="flex items-center rounded-sm bg-primary-light/50 px-3 py-2"
+          class="flex items-center space-x-2 rounded-sm bg-primary-light/50 px-3 py-2"
         >
-          <strong>Service</strong>: {{ ucfirst(review.service_rating) }}
+          <strong>Service</strong>
+          <span>{{ ucfirst(review.service_rating) }}</span>
         </li>
       </ul>
 

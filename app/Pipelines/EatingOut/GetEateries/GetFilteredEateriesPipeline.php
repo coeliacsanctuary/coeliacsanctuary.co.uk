@@ -7,6 +7,8 @@ namespace App\Pipelines\EatingOut\GetEateries;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\LatLng;
 use App\Models\EatingOut\EaterySearchTerm;
+use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToBranches;
+use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToEateries;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromFiltersAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInLatLngRadiusAction;
@@ -31,7 +33,7 @@ class GetFilteredEateriesPipeline
     /**
      * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
      * @param  class-string<JsonResource>  $jsonResource
-     * @return LengthAwarePaginator<JsonResource>
+     * @return LengthAwarePaginator<int, JsonResource>
      */
     public function run(array $filters, string $jsonResource = EateryListResource::class): LengthAwarePaginator
     {
@@ -46,6 +48,8 @@ class GetFilteredEateriesPipeline
             PaginateEateriesAction::class,
             HydrateEateriesAction::class,
             HydrateBranchesAction::class,
+            AppendDistanceToEateries::class,
+            AppendDistanceToBranches::class,
             CheckForMissingEateriesAction::class,
             RelateEateriesAndBranchesAction::class,
             SerialiseResultsAction::class,
@@ -85,7 +89,7 @@ class GetFilteredEateriesPipeline
             ->through($pipes)
             ->thenReturn();
 
-        /** @var LengthAwarePaginator<JsonResource> $serialisedEateries */
+        /** @var LengthAwarePaginator<int, JsonResource> $serialisedEateries */
         $serialisedEateries = $pipeline->serialisedEateries;
 
         return $serialisedEateries;

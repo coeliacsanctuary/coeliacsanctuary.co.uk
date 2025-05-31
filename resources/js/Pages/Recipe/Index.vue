@@ -3,7 +3,7 @@ import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import Paginator from '@/Components/Paginator.vue';
 import { router } from '@inertiajs/vue3';
-import { Ref, ref, toRef } from 'vue';
+import { Component, computed, Ref, ref, toRef } from 'vue';
 import RecipeDetailCard from '@/Components/PageSpecific/Recipes/RecipeDetailCard.vue';
 import RecipeListFilterCard, {
   RecipeFilterOption,
@@ -16,6 +16,9 @@ import {
   RecipeMeal,
   RecipeSetFilters,
 } from '@/types/RecipeTypes';
+import { RssIcon } from '@heroicons/vue/20/solid';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { ArrowPathIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps<{
   recipes: PaginatedResponse<RecipeDetailCardType>;
@@ -106,11 +109,50 @@ const selectAllergen = (freeFrom: string[]): void => {
 
   refreshPage();
 };
+
+const resetFilters = () => {
+  selectedFeatures.value = [];
+  selectedMeals.value = [];
+  selectedAllergens.value = [];
+
+  page.value = 1;
+
+  refreshPage();
+};
+
+const isFiltered = computed(() => {
+  if (selectedFeatures.value.length > 0) {
+    return true;
+  }
+
+  if (selectedMeals.value.length > 0) {
+    return true;
+  }
+
+  if (selectedAllergens.value.length > 0) {
+    return true;
+  }
+
+  return false;
+});
 </script>
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading> Coeliac Sanctuary Recipes </Heading>
+    <Heading
+      :custom-link="{
+        label: 'RSS Feed',
+        href: '/recipe/feed',
+        classes: 'font-semibold text-rss hover:text-black transition',
+        newTab: true,
+        position: 'bottom',
+        direction: 'center',
+        icon: RssIcon as Component,
+        iconPosition: 'left',
+      }"
+    >
+      Coeliac Sanctuary Recipes
+    </Heading>
 
     <p class="prose max-w-none md:prose-lg">
       Why not check out some of our fabulous, gluten free, coeliac recipes! All
@@ -119,29 +161,43 @@ const selectAllergen = (freeFrom: string[]): void => {
       supermarkets, so anyone can make them at home!
     </p>
 
-    <div class="grid gap-3 md:grid-cols-3">
-      <RecipeListFilterCard
-        :current-options="selectedFeatures"
-        :options="featureOptions()"
-        label="Feature"
-        class="z-50"
-        @changed="selectFeature"
-      />
+    <div
+      class="flex flex-col justify-between space-y-3 md:flex-row md:space-y-0 md:space-x-3"
+    >
+      <div class="grid flex-1 gap-3 md:grid-cols-3">
+        <RecipeListFilterCard
+          :current-options="selectedFeatures"
+          :options="featureOptions()"
+          label="Feature"
+          @changed="selectFeature"
+        />
 
-      <RecipeListFilterCard
-        :current-options="selectedMeals"
-        :options="mealOptions()"
-        label="Meals"
-        class="z-49"
-        @changed="selectMeal"
-      />
+        <RecipeListFilterCard
+          :current-options="selectedMeals"
+          :options="mealOptions()"
+          label="Meals"
+          @changed="selectMeal"
+        />
 
-      <RecipeListFilterCard
-        :current-options="selectedAllergens"
-        :options="freeFromOptions()"
-        label="Free From"
-        class="z-48"
-        @changed="selectAllergen"
+        <RecipeListFilterCard
+          :current-options="selectedAllergens"
+          :options="freeFromOptions()"
+          label="Free From"
+          @changed="selectAllergen"
+        />
+      </div>
+
+      <CoeliacButton
+        v-if="isFiltered"
+        label="Reset Filters"
+        :icon="ArrowPathIcon"
+        bold
+        icon-classes="w-8 h-8"
+        size="lg"
+        theme="light"
+        classes="h-[48px] justify-end"
+        as="button"
+        @click="resetFilters()"
       />
     </div>
 
@@ -153,7 +209,7 @@ const selectAllergen = (freeFrom: string[]): void => {
     />
   </Card>
 
-  <div class="grid gap-8 sm:max-xl:grid-cols-2 sm:gap-0 xl:grid-cols-3">
+  <div class="grid gap-8 sm:gap-0 sm:max-xl:grid-cols-2 xl:grid-cols-3">
     <template v-if="recipes.data.length">
       <RecipeDetailCard
         v-for="recipe in recipes.data"

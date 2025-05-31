@@ -14,6 +14,8 @@ use Jpeters8889\CountryIcon\CountryIcon;
 use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -27,7 +29,7 @@ class Baskets extends Resource
     /** @var class-string<ShopOrder> */
     public static string $model = ShopOrder::class;
 
-    public static $clickAction = 'preview';
+    public static $clickAction = 'detail';
 
     public function fields(NovaRequest $request)
     {
@@ -60,11 +62,28 @@ class Baskets extends Resource
                     'info' => 'clock',
                 ]),
 
-            // Order Items
+            HasMany::make('Items', resource: OrderItem::class),
+
+            HasOne::make('Customer', resource: Customer::class),
         ];
     }
 
     public static function indexQuery(NovaRequest $request, $query)
+    {
+        return $query
+            ->withoutGlobalScopes()
+            ->select('*')
+            ->selectSub('select sum(product_price * quantity) from shop_order_items i where i.order_id = shop_orders.id', 'subtotal')
+            ->with(['postageCountry'])
+            ->withCount(['items'])
+            ->whereIn('state_id', [
+                OrderState::BASKET,
+                OrderState::PENDING,
+                OrderState::EXPIRED,
+            ]);
+    }
+
+    public static function detailQuery(NovaRequest $request, $query)
     {
         return $query
             ->withoutGlobalScopes()

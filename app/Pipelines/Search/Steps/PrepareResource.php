@@ -13,15 +13,15 @@ use Illuminate\Support\Collection;
 class PrepareResource
 {
     /**
-     * @param  LengthAwarePaginator<IsSearchable>  $paginator
-     * @return LengthAwarePaginator<SearchableItemResource>
+     * @param  LengthAwarePaginator<int, IsSearchable>  $paginator
+     * @return LengthAwarePaginator<int, SearchableItemResource>
      */
     public function handle(LengthAwarePaginator $paginator, Closure $next): mixed
     {
         /** @var Collection<int, SearchableItemResource> $items */
         $items = $paginator->map(fn (IsSearchable $searchable) => SearchableItemResource::make($searchable));
 
-        /** @var LengthAwarePaginator<SearchableItemResource> $paginator */
+        /** @var LengthAwarePaginator<int, SearchableItemResource> $paginator */
         $paginator->setCollection($items);
 
         return $next($paginator);

@@ -26,6 +26,7 @@ class IndexController
             ->metaDescription('Coeliac Sanctuary gluten free blog list | All of our Coeliac blog posts in one list')
             ->metaTags(['coeliac sanctuary blog', 'blog', 'coeliac blog', 'gluten free blog', ...($tag->exists ? ["{$tag->tag} blogs"] : [])])
             ->metaImage($getOpenGraphImageForRouteAction->handle('blog'))
+            ->metaFeed(route('blog.feed'))
             ->render('Blog/Index', [
                 'blogs' => fn () => $getBlogsForBlogIndexAction->handle($tag),
                 'tags' => Inertia::defer(fn () => $getBlogTagsAction->handle()),

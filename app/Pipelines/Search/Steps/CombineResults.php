@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Pipelines\EatingOut\CheckRecommendedPlace\Steps;
+namespace App\Pipelines\Search\Steps;
 
 use App\DataObjects\Search\SearchPipelineData;
 use Closure;

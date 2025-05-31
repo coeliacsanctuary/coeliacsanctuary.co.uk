@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
 use App\Contracts\Search\IsSearchable;
@@ -38,6 +39,7 @@ use Spatie\SchemaOrg\Schema;
  */
 class ShopProduct extends Model implements HasMedia, IsSearchable
 {
+    use ClearsCache;
     use DisplaysMedia;
     use HasLegacyImage;
     use Imageable;
@@ -119,7 +121,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
             'shop_product_assigned_travel_card_search_terms',
             'product_id',
             'search_term_id',
-        );
+        )->withTimestamps()->withPivot(['card_language', 'card_score', 'card_show_on_product_page']);
     }
 
     public function getScoutKey(): mixed
@@ -287,5 +289,10 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
                         );
                 }
             );
+    }
+
+    protected function cacheKey(): string
+    {
+        return 'products';
     }
 }

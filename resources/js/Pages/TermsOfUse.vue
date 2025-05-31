@@ -4,11 +4,11 @@ import Heading from '@/Components/Heading.vue';
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 mt-5">
-    <Card class="prose max-w-6xl mx-auto">
+  <div class="mt-5 flex flex-col gap-5">
+    <Card class="mx-auto prose max-w-6xl">
       <Heading :border="false">Coeliac Sanctuary Terms of Use</Heading>
 
-      <ol class="text-sm space-y-2 mt-0">
+      <ol class="mt-0 space-y-2 text-sm">
         <li>
           We are not qualified medical professionals, therefore any information
           you take from Coeliac Sanctuary is adhered to at your own risk. Always
@@ -26,7 +26,7 @@ import Heading from '@/Components/Heading.vue';
           rightful owner or sourced from Stock Photography websites.
         </li>
         <li>
-          <span class="text-primary-dark font-semibold">Recipes</span>
+          <span class="font-semibold text-primary-dark">Recipes</span>
           <ol>
             <li>
               Recipes are developed and belong to Alison Peters or Jamie Peters
@@ -36,7 +36,7 @@ import Heading from '@/Components/Heading.vue';
         </li>
 
         <li>
-          <span class="text-primary-dark font-semibold">Eating Out</span>
+          <span class="font-semibold text-primary-dark">Eating Out</span>
           <ol>
             <li>
               Where to eat venues are added as and when they are found or
@@ -81,7 +81,7 @@ import Heading from '@/Components/Heading.vue';
           </ol>
         </li>
         <li>
-          <span class="text-primary-dark font-semibold">Our Reviews</span>
+          <span class="font-semibold text-primary-dark">Our Reviews</span>
           <ol>
             <li>
               Any star ratings and our reviews are written based on our opinion
@@ -95,7 +95,7 @@ import Heading from '@/Components/Heading.vue';
           </ol>
         </li>
         <li>
-          <span class="text-primary-dark font-semibold"
+          <span class="font-semibold text-primary-dark"
             >Coeliac Sanctuary Newsletter</span
           >
           <ol>
@@ -123,7 +123,7 @@ import Heading from '@/Components/Heading.vue';
           </ol>
         </li>
         <li id="shop">
-          <span class="text-primary-dark font-semibold"
+          <span class="font-semibold text-primary-dark"
             >Coeliac Sanctuary Shop</span
           >
           <ol>
@@ -133,7 +133,7 @@ import Heading from '@/Components/Heading.vue';
               terms and conditions
             </li>
             <li>
-              <span class="text-primary-dark font-semibold"
+              <span class="font-semibold text-primary-dark"
                 >Product Availability</span
               >
               <ol>
@@ -145,7 +145,7 @@ import Heading from '@/Components/Heading.vue';
               </ol>
             </li>
             <li>
-              <span class="text-primary-dark font-semibold">Postage</span>
+              <span class="font-semibold text-primary-dark">Postage</span>
               <ol>
                 <li>
                   All of our products are sent via Royal Mail 1st Class. In most
@@ -161,7 +161,7 @@ import Heading from '@/Components/Heading.vue';
               </ol>
             </li>
             <li>
-              <span class="text-primary-dark font-semibold"
+              <span class="font-semibold text-primary-dark"
                 >International Postage</span
               >
               <ol>
@@ -183,7 +183,7 @@ import Heading from '@/Components/Heading.vue';
               </ol>
             </li>
             <li>
-              <span class="text-primary-dark font-semibold"
+              <span class="font-semibold text-primary-dark"
                 >Delivery Estimates</span
               >
               <ol>
@@ -195,7 +195,7 @@ import Heading from '@/Components/Heading.vue';
               </ol>
             </li>
             <li>
-              <span class="text-primary-dark font-semibold"
+              <span class="font-semibold text-primary-dark"
                 >Returns and Refunds</span
               >
               <ol>
@@ -209,7 +209,7 @@ import Heading from '@/Components/Heading.vue';
               </ol>
             </li>
             <li>
-              <span class="text-primary-dark font-semibold">Payments</span>
+              <span class="font-semibold text-primary-dark">Payments</span>
               <ol>
                 <li>
                   All payments through our shop are encrypted, and all payments,
@@ -233,7 +233,7 @@ import Heading from '@/Components/Heading.vue';
               </ol>
             </li>
             <li>
-              <span class="text-primary-dark font-semibold">Tax</span>
+              <span class="font-semibold text-primary-dark">Tax</span>
               <ol>
                 <li>
                   None of our prices have any Value Added Tax (VAT) as Coeliac
@@ -243,7 +243,7 @@ import Heading from '@/Components/Heading.vue';
             </li>
 
             <li>
-              <span class="text-primary-dark font-semibold"
+              <span class="font-semibold text-primary-dark"
                 >Full Set of Cards</span
               >
               <ol>

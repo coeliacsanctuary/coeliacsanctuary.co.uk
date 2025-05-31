@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { PopupProps } from '@/types/DefaultProps';
 import Modal from '@/Components/Overlays/Modal.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import useBrowser from '@/composables/useBrowser';
+import useScreensize from '@/composables/useScreensize';
 
 const props = defineProps<{ popup: PopupProps }>();
 
@@ -45,13 +46,22 @@ onMounted(() => {
     });
   }, 6000);
 });
+
+const imageUrl = computed<string>(() => {
+  if (props.popup.secondary_image && useScreensize().isPortrait()) {
+    return props.popup.secondary_image;
+  }
+
+  return props.popup.primary_image;
+});
 </script>
 
 <template>
   <Modal
     :open="displayModal"
     no-padding
-    size="large"
+    size="relaxed"
+    :fit-screen="!!popup.secondary_image && useScreensize().isPortrait()"
     @close="displayModal = false"
   >
     <Link
@@ -60,14 +70,18 @@ onMounted(() => {
       @click.prevent="handlePopupClick()"
     >
       <img
-        :src="popup.image"
+        :src="imageUrl"
         :alt="popup.text"
+        :class="{
+          'max-h-[90vh]':
+            !!popup.secondary_image && useScreensize().isPortrait(),
+        }"
       />
     </Link>
 
     <template #footer>
       <div
-        class="prose prose-xl lg:prose-2xl text-center w-full max-w-none"
+        class="prose prose-xl w-full max-w-none text-center lg:prose-2xl"
         v-text="popup.text"
       />
     </template>

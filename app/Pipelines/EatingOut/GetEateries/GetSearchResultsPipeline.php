@@ -9,6 +9,7 @@ use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToBranches;
 use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToEateries;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\ExposeSearchResultEateryIdsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInSearchAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInSearchArea;
 use App\Pipelines\EatingOut\GetEateries\Steps\HydrateBranchesAction;
@@ -27,7 +28,7 @@ class GetSearchResultsPipeline
     /**
      * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
      * @param  class-string<JsonResource>  $jsonResource
-     * @return LengthAwarePaginator<JsonResource>
+     * @return LengthAwarePaginator<int, JsonResource>
      */
     public function run(EaterySearchTerm $eaterySearchTerm, array $filters, string $jsonResource = EateryListResource::class): LengthAwarePaginator
     {
@@ -42,6 +43,7 @@ class GetSearchResultsPipeline
             AppendDistanceToBranches::class,
             CheckForMissingEateriesAction::class,
             RelateEateriesAndBranchesAction::class,
+            ExposeSearchResultEateryIdsAction::class,
             SerialiseResultsAction::class,
         ];
 
@@ -57,7 +59,7 @@ class GetSearchResultsPipeline
             ->through($pipes)
             ->thenReturn();
 
-        /** @var LengthAwarePaginator<JsonResource> $serialisedEateries */
+        /** @var LengthAwarePaginator<int, JsonResource> $serialisedEateries */
         $serialisedEateries = $pipeline->serialisedEateries;
 
         return $serialisedEateries;

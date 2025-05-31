@@ -33,14 +33,6 @@ export default {
           DEFAULT: '#DBBC25',
         },
 
-        social: {
-          facebook: '#3b5998',
-          twitter: '#00aced',
-          pinterest: '#bd081c',
-          reddit: '#ff4500',
-          rss: '#f26522',
-        },
-
         grey: {
           DEFAULT: '#666',
           light: '#f7f7f7',
@@ -62,6 +54,8 @@ export default {
         green: {
           DEFAULT: '#00e800',
         },
+
+        rss: '#FF6600',
       },
 
       containers: {
@@ -75,7 +69,7 @@ export default {
         '1/3': '33%',
         16: '16rem',
         18: '18rem',
-        '8xl': '108rem',
+        '8xl': '88rem',
       },
 
       minHeight: {
@@ -111,6 +105,24 @@ export default {
             },
             ol: {
               listStyle: 'auto',
+            },
+            table: {
+              tableLayout: 'fixed',
+              tr: {
+                borderBottomColor: theme('colors.primary.light'),
+                borderBottomWidth: '2px',
+                '&:last-of-type': {
+                  borderBottomWidth: '0',
+                },
+                'th, td': {
+                  padding: '4px',
+                  borderRightColor: theme('colors.primary.light'),
+                  borderRightWidth: '2px',
+                  '&:last-child': {
+                    borderRightWidth: '0',
+                  },
+                },
+              },
             },
           },
         },

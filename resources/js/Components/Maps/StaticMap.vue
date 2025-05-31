@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 import { StaticMapPropDefaults, StaticMapProps } from '@/Components/Maps/Props';
@@ -11,22 +11,24 @@ const props = withDefaults(
 
 const openModal = ref(false);
 
-const apiKey: string = import.meta.env.VITE_GOOGLE_MAPS_STATIC_KEY as string;
+const url = computed(() => {
+  let url = `/static/map/${props.lat},${props.lng}`;
 
-const backgroundUrl = new URL('https://maps.googleapis.com/maps/api/staticmap');
-backgroundUrl.searchParams.set('center', `${props.lat},${props.lng}`);
-backgroundUrl.searchParams.set('size', '600x600');
-backgroundUrl.searchParams.set('maptype', 'roadmap');
-backgroundUrl.searchParams.set(
-  'markers',
-  `color:red|label:|${props.lat},${props.lng}`,
-);
-backgroundUrl.searchParams.set('key', apiKey);
+  if (props.additionalParams) {
+    const params = new URLSearchParams({
+      params: JSON.stringify(props.additionalParams),
+    });
+
+    url += `?${params.toString()}`;
+  }
+
+  return url;
+});
 
 const styles = () => ({
-  background: `url(${backgroundUrl.toString()}) no-repeat 50% 50%`,
+  background: `url(${url.value}) no-repeat 50% 50%`,
   lineHeight: 0,
-  cursor: 'pointer',
+  cursor: props.canExpand ? 'pointer' : 'default',
 });
 </script>
 
@@ -49,6 +51,7 @@ const styles = () => ({
   >
     <div class="min-w-full">
       <DynamicMap
+        :title="title"
         :lat="lat"
         :lng="lng"
       />

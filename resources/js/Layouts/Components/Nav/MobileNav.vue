@@ -49,7 +49,7 @@ watch(
     <div class="flex-1 bg-primary">
       <nav class="w-full pt-10">
         <ul
-          class="flex flex-col space-y-3 text-center text-[1.65rem] font-coeliac text-white font-semibold"
+          class="flex flex-col space-y-3 text-center font-coeliac text-[1.65rem] font-semibold text-white"
         >
           <li
             v-for="(link, index) in links"

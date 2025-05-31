@@ -209,6 +209,7 @@ return [
         'develop' => [
             'supervisor-1' => [
                 'maxProcesses' => 1,
+                'force' => true,
             ],
         ],
 

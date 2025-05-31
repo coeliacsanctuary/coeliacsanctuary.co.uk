@@ -104,7 +104,7 @@ const handleTouchEnd = (event: TouchEvent) => {
       >
         <img
           v-if="limit === 0 || viewAll === true || index < limit"
-          class="max-h-[125px] max-w-[125px] cursor-pointer p-1 lg:max-2xl:max-h-[200px] lg:max-2xl:max-w-[200px] 2xl:max-h-[250px] 2xl:max-w-[250px] lg:p-2"
+          class="max-h-[125px] max-w-[125px] cursor-pointer p-1 lg:p-2 lg:max-2xl:max-h-[200px] lg:max-2xl:max-w-[200px] 2xl:max-h-[250px] 2xl:max-w-[250px]"
           :src="image.thumbnail"
           :alt="altText"
           @click="openImage(index)"
@@ -153,7 +153,7 @@ const handleTouchEnd = (event: TouchEvent) => {
           alt=""
         />
         <div
-          class="absolute left-0 top-0 flex h-full w-full justify-between"
+          class="absolute top-0 left-0 flex h-full w-full justify-between"
           @touchstart="handleTouchStart($event)"
           @touchend="handleTouchEnd($event)"
         >
@@ -163,7 +163,7 @@ const handleTouchEnd = (event: TouchEvent) => {
           >
             <div
               v-if="displayImage > 0"
-              class="absolute left-0 top-0 flex h-full items-center justify-center bg-black/25 px-4 text-white transition group-hover:bg-black/50"
+              class="absolute top-0 left-0 flex h-full items-center justify-center bg-black/25 px-4 text-white transition group-hover:bg-black/50"
             >
               <ChevronLeftIcon class="h-6 w-6" />
             </div>
@@ -174,7 +174,7 @@ const handleTouchEnd = (event: TouchEvent) => {
           >
             <div
               v-if="displayImage < images.length - 1"
-              class="absolute right-0 top-0 flex h-full items-center justify-center bg-black/25 px-4 text-white transition group-hover:bg-black/50"
+              class="absolute top-0 right-0 flex h-full items-center justify-center bg-black/25 px-4 text-white transition group-hover:bg-black/50"
             >
               <ChevronRightIcon class="h-6 w-6" />
             </div>

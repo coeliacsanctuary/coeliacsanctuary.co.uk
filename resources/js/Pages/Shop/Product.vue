@@ -1,10 +1,15 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { ShopProductDetail, ShopProductReview } from '@/types/Shop';
+import {
+  ProductAdditionalDetailAccordionProps,
+  ShopProductDetail,
+  ShopProductReview,
+  ShopTravelCardProductDetail,
+} from '@/types/Shop';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import StarRating from '@/Components/StarRating.vue';
-import { nextTick, Ref, ref } from 'vue';
+import { computed, nextTick, Ref, ref, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import Modal from '@/Components/Overlays/Modal.vue';
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/outline';
@@ -15,27 +20,88 @@ import { Page } from '@inertiajs/core';
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import useBrowser from '@/composables/useBrowser';
+import { StarRating as StarRatingType } from '@/types/EateryTypes';
+import { CustomComponent } from '@/types/Types';
+import TravelCardProductCountries from '@/Components/PageSpecific/Shop/TravelCardProductCountries.vue';
+import ProductAdditionalDetailsAccordionItem from '@/Components/PageSpecific/Shop/ProductAdditionalDetailsAccordionItem.vue';
+import StandardTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/StandardTravelCardEnglishTranslation.vue';
+import CoeliacPlusTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/CoeliacPlusTravelCardEnglishTranslation.vue';
+
+type Product = ShopProductDetail | ShopTravelCardProductDetail;
 
 const props = defineProps<{
-  product: ShopProductDetail;
+  product: Product;
   reviews: PaginatedResponse<ShopProductReview>;
   productShippingText: string;
+  currentReviewFilter: StarRatingType | undefined;
 }>();
 
-const viewImage = ref(false);
+const isTravelCardProduct = (
+  product: Product,
+): product is ShopTravelCardProductDetail =>
+  (product as ShopTravelCardProductDetail).is_travel_card;
 
-const additionalDetails = ref([
+const englishTranslationComponent = (category: string): CustomComponent => {
+  if (category.toLowerCase().includes('coeliac+')) {
+    return CoeliacPlusTravelCardEnglishTranslation as CustomComponent;
+  }
+
+  return StandardTravelCardEnglishTranslation as CustomComponent;
+};
+
+const travelCardProduct = computed(() =>
+  isTravelCardProduct(props.product) ? props.product : undefined,
+);
+
+const additionalDetails: ProductAdditionalDetailAccordionProps[] = [
   {
     title: 'Full Description',
     content: props.product.long_description,
     openByDefault: true,
+    wrapperComponent: Card as CustomComponent,
+    wrapperClasses: 'mx-3 mt-0! sm:p-4',
   },
+  travelCardProduct.value && travelCardProduct.value.countries.length
+    ? {
+        title: 'Where can I use this travel card?',
+        component: TravelCardProductCountries as CustomComponent,
+        props: {
+          countries: travelCardProduct.value.countries,
+          product: travelCardProduct.value.title,
+        },
+        headerComponent: Card as CustomComponent,
+        headerClasses: 'mx-3 mt-0! sm:p-4 flex-row !w-auto',
+        wrapperComponent: 'div',
+      }
+    : undefined,
+  travelCardProduct.value
+    ? {
+        title: 'What does my travel card say?',
+        component: englishTranslationComponent(
+          travelCardProduct.value.category.title,
+        ),
+        props: {
+          product: travelCardProduct.value.title,
+          canNotEat: travelCardProduct.value.title
+            .toLowerCase()
+            .includes('chinese')
+            ? 'soy sauce'
+            : '',
+        },
+        headerComponent: Card as CustomComponent,
+        headerClasses: 'mx-3 mt-0! sm:p-4 flex-row !w-auto',
+        wrapperComponent: 'div',
+      }
+    : undefined,
   {
     title: 'Postage Information',
     content: props.productShippingText,
-    openByDefault: false,
+    wrapperComponent: Card as CustomComponent,
+    wrapperClasses: 'mx-3 mt-0! sm:p-4',
   },
-]);
+].filter((detail) => detail !== undefined);
+
+const viewImage = ref(false);
 
 const showReviews = ref(false);
 
@@ -49,39 +115,71 @@ const scrollToReviews = async (): Promise<void> => {
   }
 };
 
+const reviewFilter = ref<undefined | StarRatingType>(props.currentReviewFilter);
+
 const allReviews: Ref<PaginatedResponse<ShopProductReview>> = ref(
   props.reviews,
 );
+
+const loadReviews = (
+  url: string,
+  then: (
+    event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>,
+  ) => void,
+) => {
+  router.get(
+    url,
+    { reviewFilter: reviewFilter.value },
+    {
+      preserveScroll: true,
+      preserveState: true,
+      only: ['reviews'],
+      replace: true,
+      onSuccess: then,
+    },
+  );
+};
+
+watch(reviewFilter, () => {
+  const url = usePage().url;
+
+  loadReviews(
+    url,
+    (event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>) => {
+      // eslint-disable-next-line no-restricted-globals
+      useBrowser().replaceHistory(url, null);
+
+      allReviews.value.data = event.props.reviews.data;
+      allReviews.value.links = event.props.reviews.links;
+      allReviews.value.meta = event.props.reviews.meta;
+
+      return false;
+    },
+  );
+});
 
 const loadMoreReviews = () => {
   if (!props.reviews.links.next) {
     return;
   }
 
-  router.get(
+  const url = usePage().url;
+
+  loadReviews(
     props.reviews.links.next,
-    {},
-    {
-      preserveScroll: true,
-      preserveState: true,
-      only: ['reviews'],
-      replace: true,
-      onSuccess: (
-        event: Page<{ reviews?: PaginatedResponse<ShopProductReview> }>,
-      ) => {
-        // eslint-disable-next-line no-restricted-globals
-        useBrowser().replaceHistory(usePage().url, null);
+    (event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>) => {
+      // eslint-disable-next-line no-restricted-globals
+      useBrowser().replaceHistory(url, null);
 
-        if (!event.props.reviews) {
-          return true;
-        }
+      if (!event.props.reviews) {
+        return true;
+      }
 
-        allReviews.value.data.push(...event.props.reviews.data);
-        allReviews.value.links = event.props.reviews.links;
-        allReviews.value.meta = event.props.reviews.meta;
+      allReviews.value.data.push(...event.props.reviews.data);
+      allReviews.value.links = event.props.reviews.links;
+      allReviews.value.meta = event.props.reviews.meta;
 
-        return false;
-      },
+      return false;
     },
   );
 };
@@ -122,7 +220,7 @@ const loadMoreReviews = () => {
 
           <section class="flex flex-col space-y-5 lg:col-span-2">
             <div
-              class="flex flex-col space-y-2 items-center md:items-start pb-5 border-b"
+              class="flex flex-col items-center space-y-2 border-b pb-5 md:items-start"
             >
               <div class="flex flex-col">
                 <p v-if="product.prices.old_price">
@@ -134,7 +232,7 @@ const loadMoreReviews = () => {
                   now
                 </p>
                 <p
-                  class="text-3xl font-semibold leading-none xs:text-4xl"
+                  class="text-3xl leading-none font-semibold xs:text-4xl"
                   v-text="product.prices.current_price"
                 />
               </div>
@@ -144,7 +242,7 @@ const loadMoreReviews = () => {
                 class="group flex-1 cursor-pointer"
                 @click="scrollToReviews()"
               >
-                <div class="flex items-center font-semibold space-x-2">
+                <div class="flex items-center space-x-2 font-semibold">
                   <p
                     class="text-gray-500 group-hover:text-primary-dark xs:max-xl:text-base"
                   >
@@ -182,111 +280,76 @@ const loadMoreReviews = () => {
     </div>
   </Card>
 
+  <ProductAdditionalDetailsAccordionItem
+    v-for="additionalDetail in additionalDetails"
+    :key="additionalDetail.title"
+    v-bind="additionalDetail"
+  />
+
   <Card class="mx-3 mt-0! mb-3 sm:p-4 lg:mt-1!">
-    <div class="divide-y divide-gray-200">
-      <Disclosure
-        v-for="additionalDetail in additionalDetails"
-        :key="additionalDetail.title"
-        v-slot="{ open }"
-        as="div"
-        :default-open="additionalDetail.openByDefault"
-      >
-        <h3>
-          <DisclosureButton
-            class="group relative flex w-full items-center justify-between py-2 text-left cursor-pointer hover:text-primary-dark"
-          >
-            <SubHeading
-              as="h3"
-              :classes="open ? 'text-primary-dark' : ''"
-            >
-              {{ additionalDetail.title }}
-            </SubHeading>
-            <span class="ml-6 flex items-center">
-              <PlusIcon
-                v-if="!open"
-                class="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
-                aria-hidden="true"
-              />
-              <MinusIcon
-                v-else
-                class="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
-                aria-hidden="true"
-              />
-            </span>
-          </DisclosureButton>
-        </h3>
-
-        <DisclosurePanel
-          :id="additionalDetail.title"
-          as="div"
-          class="pb-6"
+    <Disclosure
+      v-if="product.rating"
+      as="div"
+    >
+      <h3>
+        <DisclosureButton
+          class="group relative flex w-full cursor-pointer items-center justify-between py-2 text-left"
+          @click="showReviews = !showReviews"
         >
-          <div
-            class="prose prose-lg max-w-none lg:prose-xl"
-            v-html="additionalDetail.content"
-          />
-        </DisclosurePanel>
-      </Disclosure>
-
-      <Disclosure
-        v-if="product.rating"
-        as="div"
-      >
-        <h3>
-          <DisclosureButton
-            class="group relative flex w-full items-center justify-between py-2 text-left cursor-pointer"
-            @click="showReviews = !showReviews"
+          <SubHeading
+            as="h3"
+            :classes="
+              showReviews
+                ? 'text-primary-dark flex items-center'
+                : ' flex items-center'
+            "
           >
-            <SubHeading
-              as="h3"
-              :classes="
-                showReviews
-                  ? 'text-primary-dark flex items-center'
-                  : ' flex items-center'
-              "
-            >
-              <span class="mr-4">Reviews</span>
-              <StarRating
-                size="size-4"
-                :rating="product.rating.average"
-                show-all
-              />
-              <span class="font-sans text-sm ml-2">
-                {{ product.rating.count }}
-                {{ pluralise('review', product.rating.count) }}
-              </span>
-            </SubHeading>
-            <span class="ml-6 flex items-center">
-              <PlusIcon
-                v-if="!showReviews"
-                class="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
-                aria-hidden="true"
-              />
-              <MinusIcon
-                v-else
-                class="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
-                aria-hidden="true"
-              />
+            <span class="mr-4">Reviews</span>
+            <StarRating
+              size="size-4"
+              :rating="product.rating.average"
+              show-all
+            />
+            <span class="ml-2 font-sans text-sm">
+              {{ product.rating.count }}
+              {{ pluralise('review', product.rating.count) }}
             </span>
-          </DisclosureButton>
-        </h3>
+          </SubHeading>
+          <span class="ml-6 flex items-center">
+            <PlusIcon
+              v-if="!showReviews"
+              class="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
+              aria-hidden="true"
+            />
+            <MinusIcon
+              v-else
+              class="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
+              aria-hidden="true"
+            />
+          </span>
+        </DisclosureButton>
+      </h3>
 
-        <DisclosurePanel
-          v-show="showReviews"
-          id="reviews-dropdown"
-          as="div"
-          class="pb-6"
-          static
-        >
-          <ProductReviews
-            :product-name="product.title"
-            :reviews="allReviews"
-            :rating="product.rating"
-            @load-more="loadMoreReviews()"
-          />
-        </DisclosurePanel>
-      </Disclosure>
-    </div>
+      <DisclosurePanel
+        v-show="showReviews"
+        id="reviews-dropdown"
+        as="div"
+        class="pb-6"
+        static
+      >
+        <ProductReviews
+          :product-name="product.title"
+          :reviews="allReviews"
+          :rating="product.rating"
+          :filtered-on="reviewFilter"
+          @load-more="loadMoreReviews()"
+          @set-rating="
+            (rating: StarRatingType | undefined) =>
+              (reviewFilter = reviewFilter === rating ? undefined : rating)
+          "
+        />
+      </DisclosurePanel>
+    </Disclosure>
   </Card>
 
   <Modal

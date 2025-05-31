@@ -3,10 +3,19 @@ import { DetailedEatery } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Icon from '@/Components/Icon.vue';
+import { computed } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   eatery: DetailedEatery;
 }>();
+
+const eateryName = computed(() => {
+  if (props.eatery.branch && props.eatery.branch.name) {
+    return props.eatery.branch.name;
+  }
+
+  return props.eatery.name;
+});
 </script>
 
 <template>
@@ -36,31 +45,31 @@ defineProps<{
     </template>
 
     <template v-else>
-      <SubHeading> Here's what we know about {{ eatery.name }} </SubHeading>
+      <SubHeading> Here's what we know about {{ eateryName }} </SubHeading>
 
       <p
-        class="mt-4 prose max-w-none sm:prose-lg lg:prose-xl"
+        class="prose mt-4 max-w-none sm:prose-lg lg:prose-xl"
         v-html="eatery.info"
       />
     </template>
 
     <ul
       v-if="eatery.features"
-      class="grid grid-cols-1 gap-2 xxs:max-sm:grid-cols-2 sm:max-xmd:grid-cols-3 xmd:max-xl:grid-cols-4 xmd:gap-3 lg:gap-3 xl:grid-cols-6"
+      class="grid grid-cols-1 gap-2 xxs:max-sm:grid-cols-2 xmd:gap-3 xmd:max-xl:grid-cols-4 sm:max-xmd:grid-cols-3 lg:gap-3 xl:grid-cols-6"
     >
       <li
         v-for="feature in eatery.features"
         :key="feature.slug"
         class="flex items-center space-x-2 leading-none lg:space-x-4"
       >
-        <div class="h-8 w-8 lg:h-12 lg:w-12 shrink-0 text-primary">
+        <div class="h-8 w-8 shrink-0 text-primary lg:h-12 lg:w-12">
           <Icon
             :name="feature.slug"
             class="h-8 w-8 lg:h-12 lg:w-12"
           />
         </div>
 
-        <span class="block font-semibold leading-none lg:text-xl">
+        <span class="block leading-none font-semibold lg:text-xl">
           {{ feature.name }}
         </span>
       </li>

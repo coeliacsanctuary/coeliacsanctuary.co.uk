@@ -33,9 +33,9 @@ class GetNationwideBranchesInTownAction implements GetEateriesPipelineActionCont
             ], ','))
             ->where('wheretoeat_nationwide_branches.town_id', $pipelineData->town->id)
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
-            ->whereHas('eatery', function ($query) use ($pipelineData) {
-                $query->where('closed_down', false);
-
+            ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
+                /** @var Builder<Eatery> $query */
+                $query->where('closed_down', false); /** @phpstan-ignore-line */
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
                 }

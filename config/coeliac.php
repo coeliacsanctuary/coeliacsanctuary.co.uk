@@ -6,6 +6,8 @@ return [
     'images_url' => env('IMAGES_URL'),
 
     'shop' => [
+        'abandoned_basket_time_limit' => 2,
+
         'product_postage_description' => <<<'TEXT'
             <ul>
                 <li>Orders are only processed on normal UK working days.</li>
@@ -36,9 +38,11 @@ return [
         'blogs' => [
             'home' => 'cache.blogs.home',
             'tags' => 'cache.blogs.tags',
+            'site-map' => 'cache.blogs.site-map',
         ],
         'recipes' => [
             'home' => 'cache.recipes.home',
+            'site-map' => 'cache.recipes.site-map',
         ],
         'collections' => [
             'home' => 'cache.collections.home',
@@ -51,6 +55,11 @@ return [
             'stats' => 'cache.eating-out.stats',
             'top-rated-in-county' => 'coeliac.eating-out.top-rated-in-county.{county.slug}',
             'most-rated-in-county' => 'coeliac.eating-out.most-rated-in-county.{county.slug}',
+            'site-map-counties' => 'coeliac.eating-out.site-map.counties',
+            'site-map-towns' => 'coeliac.eating-out.site-map.towns',
+            'site-map-eateries' => 'coeliac.eating-out.site-map.eateries',
+            'site-map-nationwide' => 'coeliac.eating-out.site-map.nationwide',
+            'site-map-nationwide-branches' => 'coeliac.eating-out.site-map.nationwide-branches',
         ],
         'eating-out-reviews' => [
             'home' => 'cache.eating-out-reviews.home',
@@ -59,6 +68,12 @@ return [
             'stats' => 'cache.eating-out.stats',
             'top-rated-in-county' => 'coeliac.eating-out.top-rated-in-county.{eatery.county.slug}',
             'most-rated-in-county' => 'coeliac.eating-out.most-rated-in-county.{eatery.county.slug}',
+        ],
+        'categories' => [
+            'site-map' => 'coeliac.shop.categories.site-map',
+        ],
+        'products' => [
+            'site-map' => 'coeliac.shop.products.site-map',
         ],
     ],
 ];

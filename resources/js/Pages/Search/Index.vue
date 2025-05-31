@@ -11,12 +11,14 @@ import Loader from '@/Components/Loader.vue';
 import { Deferred, router } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import useBrowser from '@/composables/useBrowser';
-import SearchResults from '@/Components/PageSpecific/SearchResults.vue';
+import SearchResults from '@/Components/PageSpecific/Search/SearchResults.vue';
 import { VisitOptions } from '@inertiajs/core';
+import { LatLng } from '@/types/EateryTypes';
 
 const props = defineProps<{
   parameters: SearchParams;
-  location: string;
+  location?: string;
+  searchedLatLng?: LatLng;
   results?: PaginatedResponse<SearchResult>;
   hasEatery: boolean;
   aiAssisted: boolean;
@@ -41,7 +43,8 @@ const resultsElem: Ref<null | {
   requestOptions: Partial<VisitOptions>;
 }> = ref(null);
 
-const { hasError, searchForm, latLng, submitSearch } = useSearch();
+const { hasError, searchForm, latLng, cancelSearch, submitSearch } =
+  useSearch();
 
 onMounted(() => {
   if (resultsElem.value) {
@@ -93,21 +96,31 @@ searchForm.defaults(props.parameters).reset();
 const shouldLoad = ref(true);
 
 const handleSearch = () => {
+  if (shouldLoad.value) {
+    return;
+  }
+
   shouldLoad.value = true;
 
   if (resultsElem.value) {
     resultsElem.value.pause = true;
   }
 
-  submitSearch({
-    onSuccess: () => {
-      if (resultsElem.value) {
-        resultsElem.value.pause = false;
-        resultsElem.value.reset();
-      }
+  if (cancelSearch && cancelSearch.value) {
+    (<Ref<{ cancel: () => void }>>cancelSearch).value.cancel();
+  }
 
-      shouldLoad.value = false;
-    },
+  nextTick(() => {
+    submitSearch({
+      onSuccess: () => {
+        if (resultsElem.value) {
+          resultsElem.value.pause = false;
+          resultsElem.value.reset();
+        }
+
+        shouldLoad.value = false;
+      },
+    });
   });
 };
 
@@ -151,14 +164,35 @@ watchDebounced(
   () => handleSearch(),
   { debounce: 500 },
 );
+
+router.on('before', (event): void => {
+  if (!latLng.value) {
+    return;
+  }
+
+  if (event.detail.visit.only[0] === 'results') {
+    event.detail.visit.headers = {
+      ...event.detail.visit.headers,
+      'x-search-location': latLng.value,
+    };
+  }
+});
 </script>
 
 <template>
-  <div class="flex flex-col space-y-4 xmd:flex-row xmd:space-x-4 xmd:space-y-0">
-    <div class="xmd:shrink-0 xmd:w-1/4 xmd:max-w-[215px]">
+  <div class="flex flex-col space-y-4 xmd:flex-row xmd:space-y-0 xmd:space-x-4">
+    <div class="xmd:w-1/4 xmd:max-w-[215px] xmd:shrink-0">
       <Card
-        class="mt-3 mx-3 rounded-lg bg-primary-light/40! xmd:bg-primary-light/10! xmd:border-2 xmd:border-primary xmd:rounded-lg xmd:p-3 xmd:fixed xmd:max-w-[195px]"
-        :class="stickyNav ? 'xmd:top-[40px]' : 'xmd:top-auto'"
+        class="mx-3 mt-3 rounded-lg bg-primary-light/40! xmd:max-w-[195px] xmd:rounded-lg xmd:border-2 xmd:border-primary xmd:bg-primary-light/10! xmd:p-3"
+        :class="{
+          'xmd:top-[40px]': stickyNav,
+          'xmd:top-auto': !stickyNav,
+          'xmd:fixed':
+            !searchForm.processing &&
+            !shouldLoad &&
+            results &&
+            results.data?.length > 1,
+        }"
         faded
         :shadow="false"
       >
@@ -179,7 +213,7 @@ watchDebounced(
 
           <p
             v-if="hasError"
-            class="text-red font-semibold break-words"
+            class="font-semibold break-words text-red"
           >
             Please enter at least 3 characters
           </p>
@@ -223,7 +257,7 @@ watchDebounced(
 
     <Deferred data="results">
       <template #fallback>
-        <Card class="w-full mt-4!">
+        <Card class="mt-4! w-full">
           <Loader
             color="primary"
             :display="true"
@@ -241,6 +275,7 @@ watchDebounced(
         :landmark="landmark"
         :has-eatery="hasEatery"
         :location="location"
+        :search-lat-lng="searchedLatLng"
         :term="parameters.q"
         @mounted="shouldLoad = false"
       />

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Product;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ShowControllerTest extends TestCase
@@ -62,6 +62,59 @@ class ShowControllerTest extends TestCase
                     ->has('product', fn (Assert $page) => $page->hasAll([
                         'id', 'title', 'description', 'long_description', 'image', 'prices', 'rating', 'variants', 'category', 'variant_title',
                     ]))
+            );
+    }
+
+    #[Test]
+    public function itReturnsTheTravelCardSpecificProductKeysIfTheProductIsInATravelCardCategory(): void
+    {
+        $this->product->categories->first()->update(['title' => 'Coeliac Gluten Free Travel Cards']);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('Shop/Product')
+                    ->has(
+                        'product',
+                        fn (Assert $page) => $page
+                            ->where('is_travel_card', true)
+                            ->has('countries')
+                            ->etc()
+                    )
+            );
+
+        $this->product->categories->first()->update(['title' => 'Coeliac+ Other Allergen Travel Cards']);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('Shop/Product')
+                    ->has(
+                        'product',
+                        fn (Assert $page) => $page
+                            ->where('is_travel_card', true)
+                            ->has('countries')
+                            ->etc()
+                    )
+            );
+    }
+
+    #[Test]
+    public function itDoesNotIncludeTheTravelCardSpecificProductKeysIfTheProductIsNotInATravelCardCategory(): void
+    {
+        $this->product->categories->first()->update(['title' => 'Foo Bar Baz']);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('Shop/Product')
+                    ->has(
+                        'product',
+                        fn (Assert $page) => $page
+                            ->missing('is_travel_card')
+                            ->missing('countries')
+                            ->etc()
+                    )
             );
     }
 

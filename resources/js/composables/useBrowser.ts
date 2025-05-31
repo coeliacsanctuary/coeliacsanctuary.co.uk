@@ -11,6 +11,14 @@ export default () => {
     return window.location.href;
   };
 
+  const currentPath = (): string => {
+    if (!hasWindowObject) {
+      return usePage().url.split('?')[0];
+    }
+
+    return window.location.pathname;
+  };
+
   const absoluteUrl = (): string => {
     if (!hasWindowObject) {
       return `https://www.coeliacsanctaury.co.uk/${usePage().url}`;
@@ -29,6 +37,16 @@ export default () => {
     return window.screen.width;
   };
 
+  const pageHeight = (
+    _default: undefined | number = undefined,
+  ): undefined | number => {
+    if (!hasWindowObject) {
+      return _default;
+    }
+
+    return window.screen.height;
+  };
+
   const replaceHistory = (
     url: string,
     data: null | undefined | object = undefined,
@@ -40,5 +58,12 @@ export default () => {
     window.history.replaceState(data, '', url);
   };
 
-  return { currentUrl, absoluteUrl, pageWidth, replaceHistory };
+  return {
+    currentUrl,
+    currentPath,
+    absoluteUrl,
+    pageWidth,
+    pageHeight,
+    replaceHistory,
+  };
 };

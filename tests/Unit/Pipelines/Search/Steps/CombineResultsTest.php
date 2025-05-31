@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Pipelines\Search\Steps;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\DataObjects\Search\SearchParameters;
 use App\DataObjects\Search\SearchPipelineData;
 use App\DataObjects\Search\SearchResultItem;
@@ -13,8 +12,9 @@ use App\Models\Blogs\Blog;
 use App\Models\EatingOut\Eatery;
 use App\Models\Recipes\Recipe;
 use App\Models\Shop\ShopProduct;
-use App\Pipelines\EatingOut\CheckRecommendedPlace\Steps\CombineResults;
+use App\Pipelines\Search\Steps\CombineResults;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CombineResultsTest extends TestCase

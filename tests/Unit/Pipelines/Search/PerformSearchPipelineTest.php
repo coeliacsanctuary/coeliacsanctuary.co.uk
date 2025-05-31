@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Pipelines\Search;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\DataObjects\Search\SearchParameters;
-use App\Pipelines\EatingOut\CheckRecommendedPlace\Steps\CombineResults;
 use App\Pipelines\Search\PerformSearchPipeline;
+use App\Pipelines\Search\Steps\CombineResults;
 use App\Pipelines\Search\Steps\HydratePage;
 use App\Pipelines\Search\Steps\PaginateResults;
 use App\Pipelines\Search\Steps\PrepareResource;
@@ -16,6 +15,7 @@ use App\Pipelines\Search\Steps\SearchEateries;
 use App\Pipelines\Search\Steps\SearchRecipes;
 use App\Pipelines\Search\Steps\SearchShop;
 use App\Pipelines\Search\Steps\SortResults;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PerformSearchPipelineTest extends TestCase

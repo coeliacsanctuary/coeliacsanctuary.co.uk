@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop;
 
+use App\Exceptions\QuantityException;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AlterItemQuantityAction;
 use App\Models\Shop\ShopOrder;
@@ -11,7 +12,6 @@ use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
-use RuntimeException;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
@@ -52,7 +52,7 @@ class AlterItemQuantityActionTest extends TestCase
     {
         $this->variant->update(['quantity' => 0]);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(QuantityException::class);
 
         $this->callAction(AlterItemQuantityAction::class, $this->item, 'increase');
     }

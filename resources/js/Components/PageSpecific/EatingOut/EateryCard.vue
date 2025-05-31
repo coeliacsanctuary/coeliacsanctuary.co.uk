@@ -83,6 +83,7 @@ const eateryLink = computed(() => {
           :lng="
             eatery.branch ? eatery.branch.location.lng : eatery.location.lng
           "
+          :title="`${eatery.branch && eatery.branch.name ? eatery.branch.name + ' - ' : ''} ${eatery.name} - ${eatery.branch ? eatery.branch.location.address : eatery.location.address}`"
         />
       </div>
     </div>

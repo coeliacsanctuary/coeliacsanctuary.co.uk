@@ -50,7 +50,7 @@ const openText = computed(() => {
 <template>
   <ul class="flex flex-wrap items-center gap-2">
     <li
-      v-if="eatery.county.id > 1"
+      v-if="eatery.county.id > 1 || eatery.branch"
       class="rounded-sm bg-primary-light/25 px-3 py-1 leading-none"
     >
       <a
@@ -139,9 +139,9 @@ const openText = computed(() => {
       @close="viewMap = false"
     >
       <DynamicMap
-        :title="eatery.location.address"
-        :lat="eatery.location.lat"
-        :lng="eatery.location.lng"
+        :title="`${eatery.branch && eatery.branch.name ? eatery.branch.name + ' - ' : ''} ${eatery.name} - ${eatery.branch ? eatery.branch.location.address : eatery.location.address}`"
+        :lat="eatery.branch ? eatery.branch.location.lat : eatery.location.lat"
+        :lng="eatery.branch ? eatery.branch.location.lng : eatery.location.lng"
       />
     </Modal>
 
@@ -151,18 +151,5 @@ const openText = computed(() => {
       :opening-times="eatery.opening_times"
       @close="viewOpeningTimes = false"
     />
-
-    <!--    <portal-->
-    <!--      v-if="viewOpeningTimes"-->
-    <!--      to="modal"-->
-    <!--    >-->
-    <!--      <modal-->
-    <!--        title="Opening Times"-->
-    <!--        name="opening-times"-->
-    <!--        modal-classes="w-full max-w-[400px]"-->
-    <!--      >-->
-    <!--        <opening-times-modal :opening-times="eatery.openingTimes" />-->
-    <!--      </modal>-->
-    <!--    </portal>-->
   </ul>
 </template>

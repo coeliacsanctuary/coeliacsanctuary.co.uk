@@ -4,7 +4,7 @@ import {
   ProductQuantitySwitcherProps,
 } from '@/Components/Forms/Props';
 import { defineModel } from 'vue';
-import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/20/solid';
+import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/vue/20/solid';
 
 const props = withDefaults(
   defineProps<ProductQuantitySwitcherProps>(),
@@ -53,12 +53,21 @@ const classes = (): string[] => {
 
   return base;
 };
+
+const onlyAllowDigits = (e: KeyboardEvent) => {
+  const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete'];
+  const isDigit = /^[0-9]$/.test(e.key);
+
+  if (!isDigit && !allowedKeys.includes(e.key)) {
+    e.preventDefault();
+  }
+};
 </script>
 
 <template>
   <div>
     <label
-      class="block font-semibold leading-6 text-primary-dark text-base sm:max-xl:text-lg xl:text-xl"
+      class="block text-base leading-6 font-semibold text-primary-dark sm:max-xl:text-lg xl:text-xl"
     >
       {{ label }}
       <span
@@ -69,7 +78,7 @@ const classes = (): string[] => {
     </label>
 
     <div
-      class="relative rounded-md shadow-xs h-[55px]"
+      class="relative h-[55px] rounded-md shadow-xs"
       :class="wrapperClasses"
     >
       <input
@@ -81,26 +90,34 @@ const classes = (): string[] => {
         :min="min"
         :max="max"
         :disabled="disabled"
+        @keydown="onlyAllowDigits"
       />
 
-      <div class="absolute inset-y-0 right-0 py-1 pr-3">
+      <div
+        v-if="value"
+        class="absolute inset-y-0 right-0 py-1 pr-3"
+      >
         <PlusCircleIcon
-          class="size-6 transition cursor-pointer"
+          class="size-6 cursor-pointer transition"
           :class="{
-            'text-primary/30': value >= props.max,
+            'text-primary/30': value >= props.max || disabled,
             'text-primary hover:text-primary-dark':
-              !props.max || value < props.max,
+              (!props.max || value < props.max) && !disabled,
+            '!cursor-not-allowed': disabled,
           }"
-          @click="!props.max || value < props.max ? value++ : undefined"
+          @click="
+            (!props.max || value < props.max) && !disabled ? value++ : undefined
+          "
         />
 
         <MinusCircleIcon
-          class="size-6 transition cursor-pointer"
+          class="size-6 cursor-pointer transition"
           :class="{
-            'text-primary/30': value === 1,
-            'text-primary hover:text-primary-dark': value > 1,
+            'text-primary/30': value <= 1 || disabled,
+            'text-primary hover:text-primary-dark': value > 1 && !disabled,
+            '!cursor-not-allowed': disabled,
           }"
-          @click="value > 1 ? value-- : undefined"
+          @click="value > 1 && !disabled ? value-- : undefined"
         />
       </div>
     </div>

@@ -13,13 +13,13 @@ import Card from '@/Components/Card.vue';
   >
     <Card class="mt-3 flex flex-col space-y-4">
       <DisclosureButton>
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <SubHeading>
             <slot name="title" />
           </SubHeading>
           <ChevronDownIcon
             :class="open ? 'rotate-180 transform' : ''"
-            class="size-8 transition flex-shrink-0"
+            class="size-8 flex-shrink-0 transition"
           />
         </div>
       </DisclosureButton>

@@ -89,6 +89,7 @@ class Blog extends Resource
             new Panel('Content', [
                 Body::make('Body')
                     ->canHaveImages()
+                    ->mustBeValidHtml()
                     ->fullWidth()
                     ->rules(['required']),
             ]),
