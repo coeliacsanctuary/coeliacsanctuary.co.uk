@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Shop;
 
 use App\Enums\Shop\OrderState;
-use App\Models\Collections\Collection as CollectionModel;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
+use App\Nova\Actions\Shop\CreateTravelCardFullSet;
 use App\Nova\FieldOverrides\Stack;
 use App\Nova\Filters\ProductQuantity;
 use App\Nova\Filters\ShopLiveProducts;
@@ -61,7 +61,8 @@ class Products extends Resource
                     ->fullWidth()
                     ->rules(['required', 'max:200']),
 
-                Slug::make('Slug')->from('Title')
+                Slug::make('Slug')
+                    ->from('Title')
                     ->hideWhenUpdating()
                     ->hideFromIndex()
                     ->showOnCreating()
@@ -227,8 +228,8 @@ class Products extends Resource
     }
 
     /**
-     * @param  Builder<CollectionModel>  $query
-     * @return Builder<CollectionModel | Model>
+     * @param  Builder<ShopProduct>  $query
+     * @return Builder<ShopProduct | Model>
      */
     public static function indexQuery(NovaRequest $request, $query)
     {
@@ -278,6 +279,13 @@ class Products extends Resource
         return [
             new ShopLiveProducts(),
             new ProductQuantity(),
+        ];
+    }
+
+    public function actions(NovaRequest $request)
+    {
+        return [
+            CreateTravelCardFullSet::make()->standalone()
         ];
     }
 }
