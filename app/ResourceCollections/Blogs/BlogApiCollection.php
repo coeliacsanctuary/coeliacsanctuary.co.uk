@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Resources\Recipes;
+namespace App\ResourceCollections\Blogs;
 
+use App\Resources\Blogs\BlogApiResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class RecipeApiCollection extends ResourceCollection
+class BlogApiCollection extends ResourceCollection
 {
-    public $collects = RecipeApiResource::class;
+    public $collects = BlogApiResource::class;
 
     /** @return array{data: mixed} */
     public function toArray(Request $request)

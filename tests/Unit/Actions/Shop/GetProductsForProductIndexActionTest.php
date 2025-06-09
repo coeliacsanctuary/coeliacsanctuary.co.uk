@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\GetProductsForProductIndexAction;
 use App\Models\Shop\ShopProduct;
-use App\Resources\Shop\ShopProductApiCollection;
+use App\ResourceCollections\Shop\ShopProductApiCollection;
 use App\Resources\Shop\ShopProductApiResource;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GetProductsForProductIndexActionTest extends TestCase

@@ -66,8 +66,6 @@ class UpdateRecipeGasMarksCommand extends Command
                 $progress->advance();
             });
         } catch (Exception $e) {
-            dump($e);
-
             DB::rollBack();
         }
 

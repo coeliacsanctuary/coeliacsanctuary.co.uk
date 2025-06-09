@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Comments;
 
 use App\Contracts\Comments\HasComments;
-use App\Resources\Comments\CommentCollection;
+use App\ResourceCollections\Comments\CommentCollection;
 
 class GetCommentsForItemAction
 {

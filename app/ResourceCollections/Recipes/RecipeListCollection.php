@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Resources\Recipes;
+namespace App\ResourceCollections\Recipes;
 
+use App\Resources\Recipes\RecipeDetailCardViewResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class RecipeListCollection extends ResourceCollection

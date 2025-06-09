@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Api\Recipes;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Recipes\GetRecipesForIndexAction;
-use App\Resources\Recipes\RecipeApiCollection;
+use App\ResourceCollections\Recipes\RecipeApiCollection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class IndexControllerTest extends TestCase

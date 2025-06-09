@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Resources\EatingOut;
 
 use App\Models\EatingOut\EateryCounty;
+use App\ResourceCollections\EatingOut\NationwideListCollection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

@@ -6,7 +6,7 @@ namespace App\Actions\Blogs;
 
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
-use App\Resources\Blogs\BlogListCollection;
+use App\ResourceCollections\Blogs\BlogListCollection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
