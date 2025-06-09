@@ -69,7 +69,7 @@ class ShowController
         } catch (ModelNotFoundException $exception) {
             return new RedirectResponse(route('shop.index'));
         } catch (Exception $exception) {
-            //
+            return new RedirectResponse(route('shop.index'));
         }
     }
 }
