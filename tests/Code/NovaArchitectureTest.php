@@ -11,7 +11,6 @@ use Jpeters8889\ApexCharts\Chartable;
 use Jpeters8889\PhpUnitCodeAssertions\CodeAssertionsTestCase;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Dashboard;
-use Laravel\Nova\Filters\Filter;
 use PHPUnit\Framework\Attributes\Test;
 
 class NovaArchitectureTest extends CodeAssertionsTestCase
