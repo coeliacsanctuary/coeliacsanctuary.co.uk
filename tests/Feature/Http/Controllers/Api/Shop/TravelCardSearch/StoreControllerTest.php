@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\Api\Shop\TravelCardSearch;
 
 use App\Actions\Shop\TravelCardSearch\SearchTravelCardCountyOrLanguageAction;
-use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookup;
+use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookupAction;
 use App\Models\Shop\TravelCardSearchTerm;
 use App\Models\Shop\TravelCardSearchTermHistory;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -59,7 +59,7 @@ class StoreControllerTest extends TestCase
     public function itCallsTheSearchTravelCardCountryOrLanguageAction(): void
     {
         $this->expectAction(SearchTravelCardCountyOrLanguageAction::class, ['foo'], return: collect(['foo' => 'bar']));
-        $this->dontExpectAction(TravelCardSearchAiLookup::class);
+        $this->dontExpectAction(TravelCardSearchAiLookupAction::class);
 
         $this->postJson(route('api.shop.travel-card-search.store'), ['term' => 'foo']);
     }
@@ -68,7 +68,7 @@ class StoreControllerTest extends TestCase
     public function itCallsTheTravelCardSearchAiLookupActionIfThereAreNoResults(): void
     {
         $this->expectAction(SearchTravelCardCountyOrLanguageAction::class, ['foo'], return: collect([]));
-        $this->expectAction(TravelCardSearchAiLookup::class, ['foo'], return: collect(['foo ' => 'bar']));
+        $this->expectAction(TravelCardSearchAiLookupAction::class, ['foo'], return: collect(['foo ' => 'bar']));
 
         $this->postJson(route('api.shop.travel-card-search.store'), ['term' => 'foo']);
     }

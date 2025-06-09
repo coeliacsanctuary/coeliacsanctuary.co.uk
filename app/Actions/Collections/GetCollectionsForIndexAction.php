@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Collections;
 
 use App\Models\Collections\Collection;
-use App\Resources\Collections\CollectionListCollection;
+use App\ResourceCollections\Collections\CollectionListCollection;
 
 class GetCollectionsForIndexAction
 {

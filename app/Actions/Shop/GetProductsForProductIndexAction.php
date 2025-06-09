@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Shop;
 
 use App\Models\Shop\ShopProduct;
-use App\Resources\Shop\ShopProductApiCollection;
+use App\ResourceCollections\Shop\ShopProductApiCollection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

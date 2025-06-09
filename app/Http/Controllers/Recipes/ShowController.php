@@ -8,7 +8,6 @@ use App\Actions\Comments\GetCommentsForItemAction;
 use App\Http\Response\Inertia;
 use App\Models\Recipes\Recipe;
 use App\Resources\Recipes\RecipeShowResource;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -45,10 +44,5 @@ class ShowController
                 'comments' => fn () => $getCommentsForItemAction->handle($recipe),
                 'backLink' => $backLink,
             ]);
-    }
-
-    public function print(Recipe $recipe): View
-    {
-        return view('recipe-print', ['recipe' => $recipe]);
     }
 }

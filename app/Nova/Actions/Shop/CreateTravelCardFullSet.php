@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Nova\Actions\Shop;
 
 use App\Models\Shop\ShopProduct;
@@ -17,7 +19,7 @@ class CreateTravelCardFullSet extends Action
 {
     public function handle(ActionFields $fields, Collection $models)
     {
-        if(!$fields->quantity || !is_numeric($fields->quantity)) {
+        if ( ! $fields->quantity || ! is_numeric($fields->quantity)) {
             return ActionResponse::danger('Quantity must be a number.');
         }
 
@@ -30,12 +32,12 @@ class CreateTravelCardFullSet extends Action
             ->get();
 
         try {
-            $cardsToUpdate->each(function (ShopProduct $card) use ($fields) {
+            $cardsToUpdate->each(function (ShopProduct $card) use ($fields): void {
                 if ($card->variants->first()->quantity < $fields->quantity) {
                     $suffix = $fields->quantity === 1 ? 'a full set' : "{$fields->quantity} full sets";
 
                     throw new Exception("Product {$card->title} does not have enough quantity to create {$suffix}.");
-           }
+                }
             });
         } catch (Exception $e) {
             return ActionResponse::danger($e->getMessage());
@@ -55,6 +57,7 @@ class CreateTravelCardFullSet extends Action
             return ActionResponse::message('Travel card full sets created and all stock updated.');
         } catch (Exception) {
             DB::rollBack();
+
             return ActionResponse::danger('There was an error creating the full sets stock.');
         }
     }
