@@ -2,11 +2,13 @@
 import CoeliacHeader from '@/Layouts/Components/CoeliacHeader.vue';
 import CoeliacFooter from '@/Layouts/Components/CoeliacFooter.vue';
 import { MetaProps, PopupProps } from '@/types/DefaultProps';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import ShopBasketHeader from '@/Layouts/Components/ShopBasketHeader.vue';
 import ShopFooterCta from '@/Layouts/Components/ShopFooterCta.vue';
 import PopupCta from '@/Layouts/Components/PopupCta.vue';
+import Loader from '@/Components/Loader.vue';
+import eventBus from '@/eventBus';
 
 defineProps<{ meta: MetaProps; popup?: PopupProps }>();
 
@@ -17,6 +19,11 @@ const isShop = computed(
     usePage().component !== 'Shop/OrderComplete' &&
     usePage().component !== 'Shop/ReviewMyOrder',
 );
+
+const showLoader = ref(false);
+
+eventBus.$on('show-site-loader', () => (showLoader.value = true));
+eventBus.$on('hide-site-loader', () => (showLoader.value = false));
 </script>
 
 <template>
@@ -40,4 +47,15 @@ const isShop = computed(
       :popup="popup"
     />
   </div>
+
+  <teleport to="body">
+    <Loader
+      :display="showLoader"
+      size="size-24"
+      width="border-10"
+      background
+      blur
+      on-top
+    />
+  </teleport>
 </template>

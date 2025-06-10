@@ -1,37 +1,43 @@
 import { Ref, ref } from 'vue';
-import { InertiaForm } from '@/types/Core';
-import { useForm } from 'laravel-precognition-vue-inertia';
-import { SearchParams } from '@/types/Search';
 import { VisitOptions } from '@inertiajs/core';
 import { router } from '@inertiajs/vue3';
+import useSearchStore from '@/stores/useSearchStore';
+import { storeToRefs } from 'pinia';
 
 const latLng = ref<string | null>(null);
 
 export default () => {
+  const store = useSearchStore();
+
   const hasError = ref(false);
 
-  const searchForm: InertiaForm<SearchParams> = useForm('get', '/search', {
-    q: '',
-    blogs: true,
-    recipes: true,
-    eateries: false,
-    shop: true,
-  }) as InertiaForm<SearchParams>;
+  const { data: searchForm } = storeToRefs(store);
 
   const cancelSearch: Ref<{ cancel: () => void } | undefined> = ref();
+
+  const isSubmitting = ref(false);
 
   const submitSearch = (
     options: Omit<VisitOptions, 'method' | 'data'> = {},
   ) => {
     hasError.value = false;
 
-    if (searchForm.q.length < 3) {
+    if (searchForm.value.q.length < 3) {
       hasError.value = true;
 
       return;
     }
 
-    if (searchForm.eateries) {
+    isSubmitting.value = true;
+
+    options = {
+      ...options,
+      onSuccess: () => {
+        isSubmitting.value = false;
+      },
+    };
+
+    if (searchForm.value.eateries) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           latLng.value = `${position.coords.latitude},${position.coords.longitude}`;
@@ -44,21 +50,29 @@ export default () => {
             },
           };
 
-          router.get('/search', searchForm.data(), options);
+          router.get('/search', searchForm.value, options);
         },
         () => {
-          router.get('/search', searchForm.data(), options);
+          router.get('/search', searchForm.value, options);
         },
       );
 
       return;
     }
 
-    router.get('/search', searchForm.data(), {
+    router.get('/search', searchForm.value, {
       ...options,
       preserveState: true,
     });
   };
 
-  return { latLng, hasError, searchForm, cancelSearch, submitSearch };
+  return {
+    latLng,
+    hasError,
+    searchForm,
+    cancelSearch,
+    store,
+    isSubmitting,
+    submitSearch,
+  };
 };
