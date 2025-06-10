@@ -5,13 +5,13 @@ import {
 } from '@heroicons/vue/24/outline';
 import { ref } from 'vue';
 import MobileNav from '@/Layouts/Components/Nav/MobileNav.vue';
-import CoeliacMetas from '@/Layouts/Components/CoeliacMetas.vue';
 import MainNav from '@/Layouts/Components/Nav/MainNav.vue';
 import Sealiac from '@/Svg/Sealiac.vue';
 import { Link } from '@inertiajs/vue3';
 import { MetaProps } from '@/types/DefaultProps';
 import MobileSearch from '@/Layouts/Components/MobileSearch.vue';
 import DesktopSearch from '@/Layouts/Components/DesktopSearch.vue';
+import CoeliacMetas from '@/Layouts/Components/CoeliacMetas.vue';
 
 defineProps<{ metas: MetaProps }>();
 

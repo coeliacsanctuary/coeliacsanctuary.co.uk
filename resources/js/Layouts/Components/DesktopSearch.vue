@@ -2,14 +2,21 @@
 import FormInput from '@/Components/Forms/FormInput.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import useSearch from '@/composables/useSearch';
+import eventBus from '@/eventBus';
 
 const { hasError, searchForm, submitSearch } = useSearch();
+
+const processSearch = () => {
+  eventBus.$emit('show-site-loader');
+
+  submitSearch();
+};
 </script>
 
 <template>
   <form
     class="mt-8 hidden flex-col items-center space-y-2 pr-2 transition md:flex"
-    @submit.prevent="submitSearch()"
+    @submit.prevent="processSearch()"
   >
     <div
       class="flex w-full rounded-xl bg-white/50 pr-2 focus-within:bg-white/90"
