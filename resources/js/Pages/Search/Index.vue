@@ -5,7 +5,7 @@ import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import useSearch from '@/composables/useSearch';
 import { SearchParams, SearchResult } from '@/types/Search';
 import { PaginatedResponse } from '@/types/GenericTypes';
-import { nextTick, onMounted, Ref, ref, watch } from 'vue';
+import { nextTick, onMounted, onUnmounted, Ref, ref, watch } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 import Loader from '@/Components/Loader.vue';
 import { Deferred, router } from '@inertiajs/vue3';
@@ -43,10 +43,19 @@ const resultsElem: Ref<null | {
   requestOptions: Partial<VisitOptions>;
 }> = ref(null);
 
-const { hasError, searchForm, latLng, cancelSearch, submitSearch } =
-  useSearch();
+const {
+  hasError,
+  searchForm,
+  latLng,
+  cancelSearch,
+  isSubmitting,
+  store,
+  submitSearch,
+} = useSearch();
 
 onMounted(() => {
+  eventBus.$emit('hide-site-loader');
+
   if (resultsElem.value) {
     resultsElem.value.pause = true;
   }
@@ -86,12 +95,14 @@ onMounted(() => {
   });
 });
 
+onUnmounted(() => {
+  store.$reset();
+});
+
 const stickyNav = ref(false);
 
 eventBus.$on('sticky-nav-on', () => (stickyNav.value = true));
 eventBus.$on('sticky-nav-off', () => (stickyNav.value = false));
-
-searchForm.defaults(props.parameters).reset();
 
 const shouldLoad = ref(true);
 
@@ -121,23 +132,31 @@ const handleSearch = () => {
 };
 
 watch(
-  () => searchForm.blogs,
-  () => handleSearch(),
+  () => searchForm.value.blogs,
+  () => {
+    handleSearch();
+  },
 );
 
 watch(
-  () => searchForm.recipes,
-  () => handleSearch(),
+  () => searchForm.value.recipes,
+  () => {
+    handleSearch();
+  },
 );
 
 watch(
-  () => searchForm.eateries,
-  () => handleSearch(),
+  () => searchForm.value.eateries,
+  () => {
+    handleSearch();
+  },
 );
 
 watch(
-  () => searchForm.shop,
-  () => handleSearch(),
+  () => searchForm.value.shop,
+  () => {
+    handleSearch();
+  },
 );
 
 watch(
@@ -156,12 +175,16 @@ watch(
 );
 
 watchDebounced(
-  () => searchForm.q,
-  () => handleSearch(),
+  () => searchForm.value.q,
+  () => {
+    handleSearch();
+  },
   { debounce: 500 },
 );
 
 router.on('before', (event): void => {
+  eventBus.$emit('hide-site-loader');
+
   if (!latLng.value) {
     return;
   }
@@ -184,10 +207,7 @@ router.on('before', (event): void => {
           'xmd:top-[40px]': stickyNav,
           'xmd:top-auto': !stickyNav,
           'xmd:fixed':
-            !searchForm.processing &&
-            !shouldLoad &&
-            results &&
-            results.data?.length > 1,
+            !isSubmitting && !shouldLoad && results && results.data?.length > 1,
         }"
         faded
         :shadow="false"
