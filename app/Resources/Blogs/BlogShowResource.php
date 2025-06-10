@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Resources\Blogs;
 
 use App\Models\Blogs\Blog;
+use App\ResourceCollections\Blogs\BlogTagCollection;
 use App\Resources\Collections\FeaturedInCollectionSimpleCardViewResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -36,12 +37,12 @@ class BlogShowResource extends JsonResource
                 ->replace('&quot;', '"')
                 ->markdown([
                     'renderer' => [
-                        'soft_break' => "<br />",
+                        'soft_break' => '<br />',
                     ],
                 ]),
             'hasTwitterEmbed' => Str::contains($this->body, $twitterReplacements),
             'tags' => new BlogTagCollection($this->tags),
-            'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollections)
+            'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollections),
         ];
     }
 }

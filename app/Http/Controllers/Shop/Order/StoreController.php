@@ -104,7 +104,6 @@ class StoreController
 
             return new Response(status: Response::HTTP_CREATED);
         } catch (Exception $exception) {
-            dump($exception);
             DB::rollBack();
 
             throw ValidationException::withMessages(['order' => 'There was an error completing your order, you have not been charged']);

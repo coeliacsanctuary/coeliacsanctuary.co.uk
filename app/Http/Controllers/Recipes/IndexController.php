@@ -8,11 +8,9 @@ use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Recipes\GetRecipeFiltersForIndexAction;
 use App\Actions\Recipes\GetRecipesForIndexAction;
 use App\Http\Response\Inertia;
-use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeMeal;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Inertia\Response;
 
@@ -49,10 +47,5 @@ class IndexController
                 'freeFrom' => fn () => $getRecipeFiltersForIndexAction->handle(RecipeAllergen::class, $filters),
                 'setFilters' => fn () => $filters,
             ]);
-    }
-
-    public function print(Recipe $recipe): View
-    {
-        return view('recipe-print', ['recipe' => $recipe]);
     }
 }

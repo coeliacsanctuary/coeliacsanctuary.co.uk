@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Recipes;
 
 use App\Models\Recipes\Recipe;
-use App\Resources\Recipes\RecipeListCollection;
+use App\ResourceCollections\Recipes\RecipeListCollection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

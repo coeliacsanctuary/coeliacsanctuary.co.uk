@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Resources\Collections;
+namespace App\ResourceCollections\Collections;
 
+use App\Resources\Collections\CollectedItemResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CollectedItemCollection extends ResourceCollection

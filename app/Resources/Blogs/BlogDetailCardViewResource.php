@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Resources\Blogs;
 
 use App\Models\Blogs\Blog;
+use App\ResourceCollections\Blogs\BlogTagCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;

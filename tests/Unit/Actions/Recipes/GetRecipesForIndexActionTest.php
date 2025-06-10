@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Recipes;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Recipes\GetRecipesForIndexAction;
 use App\Contracts\Recipes\FilterableRecipeRelation;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeMeal;
+use App\ResourceCollections\Recipes\RecipeListCollection;
 use App\Resources\Recipes\RecipeDetailCardViewResource;
-use App\Resources\Recipes\RecipeListCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GetRecipesForIndexActionTest extends TestCase

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\Shop\TravelCardSearch;
 
 use App\Actions\Shop\TravelCardSearch\SearchTravelCardCountyOrLanguageAction;
-use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookup;
+use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookupAction;
 use App\Support\Ai\Prompts\TravelCardLookupPrompt;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Resources\Chat;
@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 class TravelCardSearchAiLookupTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -35,7 +35,7 @@ class TravelCardSearchAiLookupTest extends TestCase
     #[Test]
     public function itUsesTheTravelCardLookupPrompt(): void
     {
-        app(TravelCardSearchAiLookup::class)->handle('foo');
+        app(TravelCardSearchAiLookupAction::class)->handle('foo');
 
         OpenAI::assertSent(Chat::class, function (string $method, array $data) {
             $this->assertEquals('create', $method);
@@ -56,7 +56,7 @@ class TravelCardSearchAiLookupTest extends TestCase
     {
         $this->expectAction(SearchTravelCardCountyOrLanguageAction::class, ['foobar'], return: collect());
 
-        app(TravelCardSearchAiLookup::class)->handle('foo');
+        app(TravelCardSearchAiLookupAction::class)->handle('foo');
     }
 
     #[Test]
@@ -76,7 +76,7 @@ class TravelCardSearchAiLookupTest extends TestCase
 
         $this->dontExpectAction(SearchTravelCardCountyOrLanguageAction::class);
 
-        app(TravelCardSearchAiLookup::class)->handle('foo');
+        app(TravelCardSearchAiLookupAction::class)->handle('foo');
     }
 
     #[Test]
@@ -94,6 +94,6 @@ class TravelCardSearchAiLookupTest extends TestCase
 
         $this->dontExpectAction(SearchTravelCardCountyOrLanguageAction::class);
 
-        app(TravelCardSearchAiLookup::class)->handle('foo');
+        app(TravelCardSearchAiLookupAction::class)->handle('foo');
     }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Api\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\GetProductsForProductIndexAction;
-use App\Resources\Shop\ShopProductApiCollection;
+use App\ResourceCollections\Shop\ShopProductApiCollection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class IndexControllerTest extends TestCase

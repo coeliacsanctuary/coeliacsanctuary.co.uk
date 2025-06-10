@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Collections;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Collections\GetCollectionsForIndexAction;
 use App\Models\Collections\Collection;
+use App\ResourceCollections\Collections\CollectionListCollection;
 use App\Resources\Collections\CollectionDetailCardViewResource;
-use App\Resources\Collections\CollectionListCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GetCollectionsForIndexTest extends TestCase

@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 use OpenAI\Laravel\Facades\OpenAI;
 use Throwable;
 
-class TravelCardSearchAiLookup
+class TravelCardSearchAiLookupAction
 {
     /** @return Collection<int, array{id: int, term: string, type: string}> */
     public function handle(string $searchTerm): ?Collection

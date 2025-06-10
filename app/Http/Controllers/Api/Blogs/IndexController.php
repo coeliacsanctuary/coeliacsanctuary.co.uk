@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Blogs;
 
 use App\Actions\Blogs\GetBlogsForBlogIndexAction;
-use App\Resources\Blogs\BlogApiCollection;
+use App\ResourceCollections\Blogs\BlogApiCollection;
 use Illuminate\Http\Request;
 
 class IndexController

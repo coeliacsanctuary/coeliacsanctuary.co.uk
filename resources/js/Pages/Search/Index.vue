@@ -96,10 +96,6 @@ searchForm.defaults(props.parameters).reset();
 const shouldLoad = ref(true);
 
 const handleSearch = () => {
-  if (shouldLoad.value) {
-    return;
-  }
-
   shouldLoad.value = true;
 
   if (resultsElem.value) {

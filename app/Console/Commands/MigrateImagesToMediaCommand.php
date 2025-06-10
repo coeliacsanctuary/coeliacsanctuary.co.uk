@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-class MigrateImagesToMedia extends Command
+class MigrateImagesToMediaCommand extends Command
 {
     protected $signature = 'one-time:coeliac:migrate-images {module}';
 

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Resources\EatingOut;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
+use App\ResourceCollections\EatingOut\CountyTownCollection;
 use App\Resources\EatingOut\CountyPageResource;
-use App\Resources\EatingOut\CountyTownCollection;
 use App\Resources\EatingOut\CountyTownResource;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CountyPageResourceTest extends TestCase

@@ -30,7 +30,7 @@ defineProps<{
   <div class="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4">
     <div class="flex w-full flex-col space-y-4 lg:w-3/4">
       <Card class="md:p-5">
-        <h1 class="mb-3 font-coeliac text-3xl font-semibold md:text-5xl">
+        <h1 class="mb-3 font-coeliac text-3xl font-semibold md:text-[2.9rem]">
           Coeliac Sanctuary - Gluten Free Blog by Alison Peters
         </h1>
 
