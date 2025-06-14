@@ -85,7 +85,7 @@ https://www.coeliacsanctuary.co.uk{{ $recipe->link }}
 <hr class="recHR"/>
 
 <h2 class="recH3">Method</h2>
-{!! $recipe->method !!}
+{!! nl2br($recipe->method) !!}
 
 @if($recipe->df_to_not_df)
     <br/><br/>{{ $recipe->df_to_not_df }}
