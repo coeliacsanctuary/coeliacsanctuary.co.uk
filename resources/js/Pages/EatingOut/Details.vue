@@ -66,7 +66,11 @@ const eateryName = (): string => {
       />
 
       <EateryBranchList
-        v-if="eatery.is_nationwide && eatery.nationwide_branches"
+        v-if="
+          eatery.is_nationwide &&
+          eatery.nationwide_branches &&
+          eatery.nationwide_branches?.length !== 0
+        "
         class="md:w-1/3 md:shrink-0 md:grow-0 xl:w-1/4"
         :eatery="eatery"
       />
