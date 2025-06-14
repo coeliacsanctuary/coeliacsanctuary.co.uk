@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -287,7 +286,8 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
             $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_meals m where m.recipe_id = recipes.id and m.meal_type_id = {$id})"));
         }
 
-        return $builder;    }
+        return $builder;
+    }
 
     /**
      * @param  Builder<Recipe>  $builder
@@ -305,7 +305,8 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
             $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_allergens a where a.recipe_id = recipes.id and a.allergen_type_id = {$id})"));
         }
 
-        return $builder;    }
+        return $builder;
+    }
 
     public function toSearchableArray(): array
     {

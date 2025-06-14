@@ -8,6 +8,7 @@ use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryReview;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,7 +39,10 @@ class HydrateEateriesAction implements GetEateriesPipelineActionContract
                         ->where('approved', 1)
                         ->latest();
                 },
-                'features' => fn(BelongsToMany $builder) => $builder->where('feature', '100% Gluten Free')
+                'features' => function (BelongsToMany $builder) {
+                    /** @var BelongsToMany<EateryFeature, Eatery> $builder */
+                    return $builder->where('feature', '100% Gluten Free');
+                }
             ])
             ->whereIn('id', $eateryIds)
             ->when(count($eateryIds) > 0, fn (Builder $builder) => $builder->orderByRaw('field(id, ' . Arr::join($eateryIds, ',') . ')'))
