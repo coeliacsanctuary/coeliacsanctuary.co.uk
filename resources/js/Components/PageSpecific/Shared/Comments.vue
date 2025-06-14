@@ -84,7 +84,7 @@ const submitComment = () => {
           </div>
           <div
             class="prose prose-sm max-w-none md:prose-base"
-            v-text="comment.reply.comment"
+            v-html="comment.reply.comment"
           />
         </div>
       </div>
