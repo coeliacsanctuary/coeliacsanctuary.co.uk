@@ -302,7 +302,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         );
 
         foreach ($ids as $id) {
-            $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_allergens a where f.recipe_id = recipes.id and a.allergen_type_id = {$id})"));
+            $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_allergens a where a.recipe_id = recipes.id and a.allergen_type_id = {$id})"));
         }
 
         return $builder;    }
