@@ -90,6 +90,7 @@ export type EateryFilters = {
 
 export type TownEatery = Eatery & {
   key: string;
+  is_fully_gf: boolean;
   link: string;
   type: string;
   venue_type?: string;

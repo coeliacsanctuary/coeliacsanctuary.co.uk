@@ -59,6 +59,7 @@ class EateryDetailsResource extends JsonResource
                 'name' => $restaurant->restaurant_name,
                 'info' => $restaurant->info,
             ]),
+            'is_fully_gf' => $this->features->where('feature', '100% Gluten Free')->isNotEmpty(),
             'info' => $this->info,
             'location' => [
                 'address' => collect(explode("\n", $this->address))
