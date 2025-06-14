@@ -102,6 +102,7 @@ const submitForm = () => {
                 name="details"
                 :rows="5"
                 :error="form.errors.details"
+                borders
               />
             </form>
             <div class="flex-1 text-center">
