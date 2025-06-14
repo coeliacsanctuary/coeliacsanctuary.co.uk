@@ -71,6 +71,7 @@ const eateryName = (): string => {
     :eatery-name="eateryName()"
     :eatery-id="eatery.id"
     :show="showEditModal"
+    :is-nationwide="eatery.is_nationwide && !eatery.branch"
     @close="showEditModal = false"
     @open-report="
       showEditModal = false;

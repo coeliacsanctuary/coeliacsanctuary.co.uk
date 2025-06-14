@@ -63,6 +63,7 @@ class EateryListResource extends JsonResource
                 'info' => $restaurant->info,
             ]),
             'info' => $this->info,
+            'is_fully_gf' => $this->features->where('feature', '100% Gluten Free')->isNotEmpty(),
             'location' => [
                 'address' => collect(explode("\n", $this->address))
                     ->map(fn (string $line) => mb_trim($line))

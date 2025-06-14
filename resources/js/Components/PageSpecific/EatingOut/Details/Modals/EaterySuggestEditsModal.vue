@@ -18,6 +18,7 @@ const props = defineProps<{
   eateryName: string;
   eateryId: number;
   show: boolean;
+  isNationwide?: boolean;
 }>();
 
 const loading = ref(true);
@@ -321,8 +322,14 @@ const openReport = () => {
             class="prose prose-sm cursor-pointer border border-primary-light bg-primary-light/20 p-2"
             @click="openReport()"
           >
-            Has <strong v-text="eateryName" /> closed down, or no longer does
-            gluten free? Click here to report it instead!
+            <template v-if="!isNationwide">
+              Has <strong v-text="eateryName" /> closed down, or no longer does
+              gluten free? Click here to report it instead!
+            </template>
+            <template v-else>
+              Does <strong v-text="eateryName" /> no longer do gluten free? Or
+              has it changed procedures? Click here to report it instead!
+            </template>
           </p>
         </div>
 

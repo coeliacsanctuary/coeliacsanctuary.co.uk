@@ -26,6 +26,7 @@ const eateryLink = computed(() => props.eatery.link);
           :venue-type="eatery.venue_type"
           :website="eatery.website"
           :is-branch="false"
+          :is-fully-gf="eatery.is_fully_gf"
         />
 
         <EateryInfoBlock

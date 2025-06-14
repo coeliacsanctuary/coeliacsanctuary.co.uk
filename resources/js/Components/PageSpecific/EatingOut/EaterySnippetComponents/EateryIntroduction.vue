@@ -13,6 +13,7 @@ const props = defineProps<{
   cuisine?: string;
   website?: string;
   isBranch?: boolean;
+  isFullyGf: boolean;
 }>();
 
 const icon = computed((): string => {
@@ -31,15 +32,37 @@ const icon = computed((): string => {
 <template>
   <div class="flex justify-between">
     <div class="mb-4 flex-1">
-      <h2 class="text-2xl font-semibold md:text-3xl">
-        <Link
-          :href="link"
-          class="hover:text-primary-dark hover:underline"
-          prefetch
+      <div class="flex items-center text-2xl font-semibold md:text-3xl">
+        <div
+          v-if="isNotNationwide"
+          class="mr-2 w-10 pt-2 text-primary"
         >
-          {{ name }}
-        </Link>
-      </h2>
+          <Icon
+            :name="icon"
+            class="h-10 w-10"
+          />
+        </div>
+
+        <h2 class="flex-1">
+          <Link
+            :href="link"
+            class="hover:text-primary-dark hover:underline"
+            prefetch
+          >
+            {{ name }}
+          </Link>
+        </h2>
+      </div>
+
+      <div class="my-2 w-fit">
+        <span
+          v-if="isFullyGf"
+          class="rounded-full border border-secondary bg-secondary/50 px-2 py-1 text-center text-sm font-semibold"
+        >
+          100% Gluten Free
+        </span>
+      </div>
+
       <h3
         v-if="isNotNationwide"
         class="mt-2 flex space-x-1 text-sm font-semibold text-grey-darker md:text-base"
@@ -61,16 +84,6 @@ const icon = computed((): string => {
 
         Visit Website
       </a>
-    </div>
-
-    <div
-      v-if="isNotNationwide"
-      class="w-10 pt-2 text-primary"
-    >
-      <Icon
-        :name="icon"
-        class="h-10 w-10"
-      />
     </div>
   </div>
 </template>
