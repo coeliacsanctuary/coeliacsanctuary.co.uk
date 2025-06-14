@@ -9,7 +9,6 @@ import TileLayer from 'ol/layer/Tile';
 import { Feature, MapBrowserEvent, View } from 'ol';
 import { getDistance } from 'ol/sphere';
 import SearchMap from '@/Components/PageSpecific/EatingOut/Browse/SearchMap.vue';
-import FilterMap from '@/Components/PageSpecific/EatingOut/Browse/FilterMap.vue';
 import axios, { AxiosResponse } from 'axios';
 import {
   EateryBrowseResource,
@@ -35,6 +34,8 @@ import { DefaultProps } from '@/types/DefaultProps';
 import 'ol/ol.css';
 import PlaceDetails from '@/Components/PageSpecific/EatingOut/Browse/PlaceDetails.vue';
 import useBrowser from '@/composables/useBrowser';
+import RecommendAPlaceCta from '@/Components/PageSpecific/EatingOut/Browse/RecommendAPlaceCta.vue';
+import FilterMap from '@/Components/PageSpecific/EatingOut/Browse/FilterMap.vue';
 
 type FilterKeys = 'category' | 'venueType' | 'feature';
 type UrlFilter = { [T in FilterKeys]?: string };
@@ -543,6 +544,8 @@ onMounted(() => {
       @end-loading="isLoading = false"
       @navigate-to="navigateTo($event)"
     />
+
+    <RecommendAPlaceCta />
 
     <FilterMap
       :set-filters="filtersForFilterBar"
