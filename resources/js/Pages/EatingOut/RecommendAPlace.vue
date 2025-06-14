@@ -180,8 +180,8 @@ watchDebounced(
               </div>
 
               <p class="prose font-semibold lg:max-xl:prose-lg xl:prose-xl">
-                If you're this is a different place please carry on with your
-                recommendation!
+                If you're sure this is a different place please carry on with
+                your recommendation!
               </p>
             </div>
           </Warning>
