@@ -26,8 +26,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -262,7 +264,11 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
             fn () => RecipeFeature::query()->whereIn('slug', $features)->pluck('id'),
         );
 
-        return $builder->where(fn (Builder $builder) => $builder->whereHas('features', fn (Builder $builder) => $builder->whereIn('id', $ids)));
+        foreach ($ids as $id) {
+            $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_features f where f.recipe_id = recipes.id and f.feature_type_id = {$id})"));
+        }
+
+        return $builder;
     }
 
     /**
@@ -277,8 +283,11 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
             fn () => RecipeMeal::query()->whereIn('slug', $meals)->pluck('id'),
         );
 
-        return $builder->where(fn (Builder $builder) => $builder->whereHas('meals', fn (Builder $builder) => $builder->whereIn('id', $ids)));
-    }
+        foreach ($ids as $id) {
+            $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_meals m where m.recipe_id = recipes.id and m.meal_type_id = {$id})"));
+        }
+
+        return $builder;    }
 
     /**
      * @param  Builder<Recipe>  $builder
@@ -292,8 +301,11 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
             fn () => RecipeAllergen::query()->whereIn('slug', $freeFrom)->pluck('id'),
         );
 
-        return $builder->where(fn (Builder $builder) => $builder->whereHas('allergens', fn (Builder $builder) => $builder->whereIn('id', $ids)));
-    }
+        foreach ($ids as $id) {
+            $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_allergens a where a.recipe_id = recipes.id and a.allergen_type_id = {$id})"));
+        }
+
+        return $builder;    }
 
     public function toSearchableArray(): array
     {
