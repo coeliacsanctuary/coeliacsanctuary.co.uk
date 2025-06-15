@@ -28,6 +28,7 @@ class EateryListResource extends JsonResource
         $eateryType = $this->type;
 
         if ($branch) {
+            /** @phpstan-ignore-next-line  */
             $this->reviews = $this->reviews->where('nationwide_branch_id', $branch->id);
         }
 
