@@ -27,6 +27,10 @@ class EateryListResource extends JsonResource
         /** @var EateryType $eateryType */
         $eateryType = $this->type;
 
+        if ($branch) {
+            $this->reviews = $this->reviews->where('nationwide_branch_id', $branch->id);
+        }
+
         return [
             'name' => $this->name,
             'key' => $this->id . ($branch ? '-' . $branch->id : null),
