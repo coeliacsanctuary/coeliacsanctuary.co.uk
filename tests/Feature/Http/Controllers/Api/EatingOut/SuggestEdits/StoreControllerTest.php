@@ -366,6 +366,18 @@ class StoreControllerTest extends TestCase
         $this->makeRequest(field: 'opening_times', value: [['end' => [24]]])
             ->assertStatus(422)
             ->assertJsonValidationErrorFor('value.0.end.0');
+
+        $this->makeRequest(
+            field: 'opening_times',
+            value: [
+                [
+                    'start' => [12],
+                    'end' => [11],
+                ],
+            ],
+        )
+            ->assertStatus(422)
+            ->assertJsonValidationErrorFor('value.0.end.0');
     }
 
     #[Test]
