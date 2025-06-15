@@ -23,7 +23,7 @@ class OpeningTimesField extends EditableField
             'value.*.start.0' => ['present', 'nullable', 'numeric', 'min:0', 'max:23'],
             'value.*.start.1' => ['present', 'nullable', 'numeric', Rule::in([0, 15, 30, 45])],
             'value.*.end' => ['required', 'array', 'size:2'],
-            'value.*.end.0' => ['present', 'nullable', 'numeric', 'min:0', 'max:23'],
+            'value.*.end.0' => ['present', 'nullable', 'numeric', 'min:0', 'max:23', 'after:value.*.start.0'],
             'value.*.end.1' => ['present', 'nullable', 'numeric', Rule::in([0, 15, 30, 45])],
         ];
     }
