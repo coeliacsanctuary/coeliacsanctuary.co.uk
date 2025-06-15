@@ -107,7 +107,7 @@ defineExpose({ reset, value });
 watch(
   () => props.preselectTerm,
   () => {
-    if (props.preselectTerm && !value.value) {
+    if (props.preselectTerm) {
       value.value = props.preselectTerm;
     }
   },
