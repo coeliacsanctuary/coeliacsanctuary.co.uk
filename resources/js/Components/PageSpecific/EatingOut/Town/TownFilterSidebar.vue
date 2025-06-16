@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { AdjustmentsHorizontalIcon } from '@heroicons/vue/24/solid';
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import TownFilterSidebarContent from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebarContent.vue';
 import useScreensize from '@/composables/useScreensize';
-import { EateryFilterKeys, EateryFilters } from '@/types/EateryTypes';
+import { EateryFilters } from '@/types/EateryTypes';
 
 const props = defineProps<{
   filters: EateryFilters;

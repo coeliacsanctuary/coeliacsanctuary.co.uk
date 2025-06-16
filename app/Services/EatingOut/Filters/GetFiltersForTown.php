@@ -76,7 +76,7 @@ class GetFiltersForTown extends GetFilters
             ->toRawSql();
     }
 
-    protected function resolveFilters(string $filterable, string $filterName, string $orderBy, string $nameColumn, string $checkedColumn): Collection
+    protected function resolveFilters(string $filterable, string $filterName, string $orderBy, string $nameColumn, string $checkedColumn, ?callable $mergeWithMap = null): Collection
     {
         if ($filterable === EateryFeature::class) {
             $this->relation = ['wheretoeat_assigned_features', 'wheretoeat.id', 'wheretoeat_assigned_features.wheretoeat_id'];
@@ -96,7 +96,7 @@ class GetFiltersForTown extends GetFilters
             default => throw new RuntimeException('Unknown filterable'),
         };
 
-        $filters = parent::resolveFilters($filterable, $filterName, $orderBy, $nameColumn, $checkedColumn);
+        $filters = parent::resolveFilters($filterable, $filterName, $orderBy, $nameColumn, $checkedColumn, $mergeWithMap);
 
         $this->relation = null;
         $this->column = '';

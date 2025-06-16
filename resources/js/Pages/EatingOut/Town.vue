@@ -6,7 +6,7 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { Ref, ref } from 'vue';
+import { onBeforeUnmount, onMounted, onUpdated, Ref, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
@@ -31,7 +31,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
 const handleFiltersChanged = ({
   filters,
-  preserveState,
+  preserveState = true,
 }: {
   filters: EateryFilters;
   preserveState: boolean;
@@ -70,9 +70,17 @@ const handleFiltersChanged = ({
     }
   }
 
+  const lastScroll = window.scrollY;
+
   router.get(useBrowser().currentPath(), params, {
     preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
     preserveScroll: true,
+    onFinish: () => {
+      // This avoids race conditions with hydration
+      requestAnimationFrame(() => {
+        window.scrollTo(0, lastScroll);
+      });
+    },
   });
 };
 

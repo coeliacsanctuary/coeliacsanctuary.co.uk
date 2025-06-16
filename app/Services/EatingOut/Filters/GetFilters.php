@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\EatingOut\Filters;
 
+use App\Enums\EatingOut\EateryType as EateryTypeEnum;
 use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryType;
 use App\Models\EatingOut\EateryVenueType;
@@ -50,9 +51,10 @@ class GetFilters
      * @template T of EateryType | EateryVenueType | EateryFeature
      *
      * @param  class-string<T>  $filterable
-     * @return Collection<int, array{value: string, label: string, disabled: bool, checked: bool}>
+     * @param  null | callable(T $filterable): array  $mergeWithMap
+     * @return Collection<int, non-empty-array>
      */
-    protected function resolveFilters(string $filterable, string $filterName, string $orderBy, string $nameColumn, string $checkedColumn): Collection
+    protected function resolveFilters(string $filterable, string $filterName, string $orderBy, string $nameColumn, string $checkedColumn, ?callable $mergeWithMap = null): Collection
     {
         /** @var Builder<T> $baseQuery */
         $baseQuery = $filterable::query();
@@ -63,28 +65,49 @@ class GetFilters
         $filters = $baseQuery->get();
 
         return $filters
-            ->reject(fn (Model $filter): bool => $filter->hasAttribute('eateries_count') ? $filter->eateries_count === 0 : false)
+            ->reject(fn (Model $filter): bool => $filter->hasAttribute('eateries_count') && $filter->eateries_count === 0)
             ->map(fn (Model $filter): array => [
                 'value' => (string) $filter->$checkedColumn,
                 'label' => $filter->$nameColumn . ($filter->hasAttribute('eateries_count') ? " - ({$filter->eateries_count})" : ''),
                 'disabled' => false,
                 'checked' => $this->filterIsEnabled($filterName, $filter->$checkedColumn),
+                /** @phpstan-ignore-next-line  */
+                ...($mergeWithMap ? $mergeWithMap($filter) : []),
             ]);
     }
 
-    /** @return Collection<int, array{value: string, label: string, disabled: bool, checked: bool}> */
+    /** @return Collection<int, non-empty-array> */
     protected function getCategories(): Collection
     {
         return $this->resolveFilters(EateryType::class, 'categories', 'id', 'name', 'type');
     }
 
-    /** @return Collection<int, array{value: string, label: string, disabled: bool, checked: bool}> */
+    /** @return Collection<int, non-empty-array> */
     protected function getVenueTypes(): Collection
     {
-        return $this->resolveFilters(EateryVenueType::class, 'venueTypes', 'venue_type', 'venue_type', 'slug');
+        return $this
+            ->resolveFilters(
+                EateryVenueType::class,
+                'venueTypes',
+                'venue_type',
+                'venue_type',
+                'slug',
+                fn (EateryVenueType $filterable) => ['groupBy' => Str::of(EateryTypeEnum::from($filterable->type_id)->name)->title()->plural()],
+            )
+            ->sortBy(function (array $filterable) {
+                if ($filterable['groupBy'] === 'Eatery') {
+                    return 0;
+                }
+
+                if ($filterable['groupBy'] === 'Attraction') {
+                    return 1;
+                }
+
+                return 2;
+            });
     }
 
-    /** @return Collection<int, array{value: string, label: string, disabled: bool, checked: bool}> */
+    /** @return Collection<int, non-empty-array> */
     protected function getFeatures(): Collection
     {
         return $this->resolveFilters(EateryFeature::class, 'features', 'feature', 'feature', 'slug');
