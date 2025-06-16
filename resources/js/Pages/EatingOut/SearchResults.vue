@@ -12,6 +12,8 @@ import SearchResultsHeading from '@/Components/PageSpecific/EatingOut/SearchResu
 import useBrowser from '@/composables/useBrowser';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
+import { Link } from '@inertiajs/vue3';
+import Info from '@/Components/Info.vue';
 
 const props = defineProps<{
   term: string;
@@ -20,6 +22,7 @@ const props = defineProps<{
   eateries: PaginatedResponse<TownEatery>;
   filters: EateryFilters;
   latlng?: LatLng;
+  county?: { name: string; link: string };
 }>();
 
 const landmark: Ref<Element> = ref();
@@ -140,6 +143,19 @@ watch(() => props.term, reset);
     />
 
     <div class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1">
+      <Info
+        v-if="county"
+        class="mx-4 xmd:mx-0"
+      >
+        <p class="prose prose-lg max-w-none">
+          It looks like you're looking for places to eat in {{ county.name }},
+          you can get more detailed results on the dedicated
+          <Link :href="county.link">
+            {{ county.name }} page in my eating out guide.
+          </Link>
+        </p>
+      </Info>
+
       <template v-if="items.length">
         <EateryCard
           v-for="eatery in items"
