@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\EatingOut\RecommendAPlace;
 
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\Enums\EatingOut\EateryType;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryVenueType;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Inertia\Response;
 
 class CreateController
@@ -16,10 +19,16 @@ class CreateController
         $venueTypes = EateryVenueType::query()
             ->orderBy('venue_type')
             ->get()
-            ->map(fn (EateryVenueType $eateryVenueType) => [
-                'label' => $eateryVenueType->venue_type,
-                'value' => $eateryVenueType->id,
-            ]);
+            ->groupBy('type_id')
+            ->map(fn (Collection $options, int $typeId) => [
+                'label' => Str::of(EateryType::from($typeId)->name)->title()->plural()->toString(),
+                'options' => $options
+                    ->map(fn (EateryVenueType $eateryVenueType) => [
+                        'label' => $eateryVenueType->venue_type,
+                        'value' => $eateryVenueType->id,
+                    ]),
+            ])
+            ->values();
 
         return $inertia
             ->title('Recommend A Place')

@@ -5,7 +5,7 @@ import Heading from '@/Components/Heading.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
-import { FormSelectOption } from '@/Components/Forms/Props';
+import { FormSelectGroup, FormSelectOption } from '@/Components/Forms/Props';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
@@ -29,7 +29,7 @@ type FormData = {
 };
 
 defineProps<{
-  venueTypes: FormSelectOption[];
+  venueTypes: FormSelectGroup[];
 }>();
 
 const form = useForm<FormData>('post', '/wheretoeat/recommend-a-place', {

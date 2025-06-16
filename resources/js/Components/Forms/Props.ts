@@ -97,9 +97,14 @@ export type FormMultiSelectOption = {
   value: string;
 };
 
+export type FormSelectGroup = {
+  label: string;
+  options: FormSelectOption[];
+};
+
 export type FormSelectProps = BaseFormProps & {
   label?: string;
-  options: FormSelectOption[];
+  options: FormSelectOption[] | FormSelectGroup[];
   placeholder?: string;
   hideLabel?: boolean;
   error?: string;

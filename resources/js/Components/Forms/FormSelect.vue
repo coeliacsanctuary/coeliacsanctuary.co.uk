@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import {
+  FormSelectGroup,
+  FormSelectOption,
   FormSelectProps,
   FormSelectPropsDefaults,
 } from '@/Components/Forms/Props';
@@ -102,12 +104,29 @@ const classes = (): string[] => {
           v-text="placeholder"
         />
 
-        <option
-          v-for="option in options"
-          :key="option.value.toString()"
-          :value="option.value"
-          v-text="option.label"
-        />
+        <template v-if="options[0].options">
+          <optgroup
+            v-for="group in <FormSelectGroup[]>options"
+            :key="group.label"
+            :label="group.label"
+          >
+            <option
+              v-for="option in group.options"
+              :key="option.value.toString()"
+              :value="option.value"
+              v-text="option.label"
+            />
+          </optgroup>
+        </template>
+
+        <template v-else>
+          <option
+            v-for="option in <FormSelectOption[]>options"
+            :key="option.value.toString()"
+            :value="option.value"
+            v-text="option.label"
+          />
+        </template>
       </select>
 
       <div
