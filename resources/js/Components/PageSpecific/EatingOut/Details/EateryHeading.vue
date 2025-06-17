@@ -52,18 +52,15 @@ const eateryName = (): string => {
         direction: 'left',
       }"
     >
-      <div class="flex items-center space-x-2">
-        <div class="w-10 text-primary">
+      <div class="flex items-center">
+        <div class="mr-2 w-10 text-primary">
           <Icon
             :name="iconName"
             class="h-10 w-10"
           />
         </div>
 
-        <h1
-          class="font-coeliac text-3xl leading-tight font-semibold lg:text-5xl"
-          v-text="eateryName()"
-        />
+        {{ eateryName() }}
       </div>
     </Heading>
 

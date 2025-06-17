@@ -15,6 +15,7 @@ use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
+use App\Schema\EaterySchema;
 use App\Scopes\LiveScope;
 use App\Support\Helpers;
 use Illuminate\Container\Container;
@@ -28,12 +29,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Spatie\SchemaOrg\Restaurant;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
  *
  * @property string | null $average_rating
- * @property string | null $average_expense
+ * @property array{value: string, label: string} | null $average_expense
  * @property bool | null $has_been_rated
  * @property int | null $rating
  * @property int | null $rating_count
@@ -436,5 +438,10 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     protected function cacheKey(): string
     {
         return 'eating-out';
+    }
+
+    public function schema(): Restaurant
+    {
+        return EaterySchema::make($this);
     }
 }

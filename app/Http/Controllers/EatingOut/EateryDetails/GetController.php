@@ -51,6 +51,7 @@ class GetController
             ->metaDescription("Eat gluten free at {$eatery->full_name}")
             ->metaTags($eatery->keywords())
             ->metaImage($getOpenGraphImageAction->handle($eatery))
+            ->schema($eatery->schema()->toScript())
             ->render('EatingOut/Details', [
                 'eatery' => fn () => new EateryDetailsResource($eatery),
                 'previous' => $previous,

@@ -67,7 +67,8 @@ class LoadCompleteEateryDetailsForRequestAction
                     );
             },
             'adminReview.images', 'reviews.images', 'restaurants', 'features', 'openingTimes',
-        ]);
+        ])
+            ->loadCount(['reviews']);
 
         if ($pageType === 'nationwide') {
             $eatery->load(['nationwideBranches.eatery', 'nationwideBranches.town', 'nationwideBranches.town.county', 'nationwideBranches.county', 'nationwideBranches.country']);
