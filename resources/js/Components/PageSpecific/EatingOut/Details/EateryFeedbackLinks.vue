@@ -83,6 +83,7 @@ const eateryName = (): string => {
     :eatery-name="eateryName()"
     :eatery-id="eatery.id"
     :branch-id="eatery.branch?.id"
+    :is-nationwide="eatery.is_nationwide"
     :show="showReportPlaceModal"
     @close="showReportPlaceModal = false"
   />

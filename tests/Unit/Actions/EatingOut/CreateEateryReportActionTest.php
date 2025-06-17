@@ -41,4 +41,30 @@ class CreateEateryReportActionTest extends TestCase
         $report = $this->eatery->reports->first();
         $this->assertEquals('Foo', $report->details);
     }
+
+    #[Test]
+    public function itStoresTheBranchId(): void
+    {
+        $this->assertEmpty($this->eatery->reports);
+
+        $this->callAction(CreateEateryReportAction::class, $this->eatery, 'Foo', 1);
+
+        $this->assertNotEmpty($this->eatery->refresh()->reports);
+
+        $report = $this->eatery->reports->first();
+        $this->assertEquals(1, $report->branch_id);
+    }
+
+    #[Test]
+    public function itStoresTheBranchName(): void
+    {
+        $this->assertEmpty($this->eatery->reports);
+
+        $this->callAction(CreateEateryReportAction::class, $this->eatery, 'Foo', 1, 'Bar');
+
+        $this->assertNotEmpty($this->eatery->refresh()->reports);
+
+        $report = $this->eatery->reports->first();
+        $this->assertEquals('Bar', $report->branch_name);
+    }
 }

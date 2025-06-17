@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\ReportEatery;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\EatingOut\CreateEateryReportAction;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
+use App\Pipelines\EatingOut\DetermineNationwideBranchFromName\DetermineNationwideBranchFromNamePipeline;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\RequestFactories\EateryCreateReviewRequestFactory;
 use Tests\TestCase;
 
@@ -74,12 +75,35 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
+    public function itRunsTheDetermineNationwideBranchFromNamePipelineIfABranchNameIsPresent(callable $route): void
+    {
+        $this->expectPipelineToRun(DetermineNationwideBranchFromNamePipeline::class);
+
+        $this->submitForm($route, ['details' => 'foo', 'branch_name' => 'bar']);
+    }
+
+    #[Test]
+    #[DataProvider('routesToVisit')]
     public function itCallsTheCreateEateryReportAction(callable $route): void
     {
         $this->expectAction(CreateEateryReportAction::class);
 
         $this->submitForm($route, ['details' => 'foo']);
+    }
 
+    #[Test]
+    #[DataProvider('routesToVisit')]
+    public function itSetsTheBranchIdFromThePipelineIfABranchNameIsPresent(callable $route): void
+    {
+        $this->expectPipelineToRun(DetermineNationwideBranchFromNamePipeline::class, return: $this->nationwideBranch);
+
+        $this->expectAction(CreateEateryReportAction::class, args: [function ($a, $b, $branchId) {
+            $this->assertEquals($this->nationwideBranch->id, $branchId);
+
+            return true;
+        }]);
+
+        $this->submitForm($route, ['details' => 'foo', 'branch_name' => 'bar']);
     }
 
     #[Test]
@@ -112,7 +136,7 @@ class StoreControllerTest extends TestCase
                     }
 
                     return route('eating-out.show.report.create', ['county' => $test->county, 'town' => $test->town, 'eatery' => $eatery]);
-                }
+                },
             ],
             'nationwide eatery' => [
                 function (self $test, ?string $eatery = null): string {
@@ -121,7 +145,7 @@ class StoreControllerTest extends TestCase
                     }
 
                     return route('eating-out.nationwide.show.report.create', ['eatery' => $eatery]);
-                }
+                },
             ],
             'nationwide branch' => [
                 function (self $test, ?string $eatery = null): string {
@@ -133,8 +157,8 @@ class StoreControllerTest extends TestCase
                         'eatery' => $eatery,
                         'nationwideBranch' => $test->nationwideBranch->slug,
                     ]);
-                }
-            ]
+                },
+            ],
         ];
     }
 }
