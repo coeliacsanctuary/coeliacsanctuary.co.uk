@@ -5,7 +5,9 @@
     "license": "proprietary",
     "require": {
         "php": "^8.3",
+        "ext-dom": "*",
         "ext-intl": "*",
+        "ext-libxml": "*",
         "algolia/algoliasearch-client-php": "^3.4.2",
         "algolia/scout-extended": "^3.2.2",
         "coeliacsanctuary/advanced-nova-media-library": "^1.1",
@@ -31,6 +33,7 @@
         "kirschbaum-development/nova-inline-relationship": "^2.1.1",
         "laravel/framework": "^12.17.0",
         "laravel/horizon": "^5.32.1",
+        "laravel/nightwatch": "^1.7",
         "laravel/nova": "^5.7.2",
         "laravel/sanctum": "^4.1.1",
         "laravel/scout": "^10.15.0",
@@ -52,9 +55,7 @@
         "spatie/mjml-php": "^1.2.5",
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
-        "wnx/sidecar-browsershot": "^2.6.0",
-        "ext-libxml": "*",
-        "ext-dom": "*"
+        "wnx/sidecar-browsershot": "^2.6.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15.4",
