@@ -10,6 +10,7 @@ use App\Http\Controllers\EatingOut\EateryDetails\GetController as EateryDetailsG
 use App\Http\Controllers\EatingOut\IndexController;
 use App\Http\Controllers\EatingOut\LandingPage\IndexController as LandingPageIndexController;
 use App\Http\Controllers\EatingOut\Nationwide\IndexController as NationwideIndexController;
+use App\Http\Controllers\EatingOut\London\IndexController as LondonIndexController;
 use App\Http\Controllers\EatingOut\RecommendAPlace\CreateController as RecommendAPlaceCreateController;
 use App\Http\Controllers\EatingOut\RecommendAPlace\StoreController as RecommendAPlaceStoreController;
 use App\Http\Controllers\EatingOut\ReportEatery\StoreController as ReportEateryStoreController;
@@ -48,6 +49,8 @@ Route::prefix('wheretoeat')->group(function (): void {
     Route::prefix('/nationwide/{eatery}/{nationwideBranch}')->group(
         $prefixedEateryRoutes('eating-out.nationwide.show.branch')
     );
+
+    Route::get('/london', LondonIndexController::class)->name('eating-out.london');
 
     Route::get('/recommend-a-place', RecommendAPlaceCreateController::class)->name('eating-out.recommend.index');
     Route::post('/recommend-a-place', RecommendAPlaceStoreController::class)->name('eating-out.recommend.create');

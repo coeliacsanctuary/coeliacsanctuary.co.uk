@@ -14,6 +14,7 @@ const props = defineProps<{
   towns: number;
   eateries: number;
   reviews: number;
+  hideTowns?: boolean;
 }>();
 
 const linkCards = [
@@ -48,6 +49,7 @@ const linkCards = [
         class="hidden min-w-[190px] grid-cols-1 gap-2 text-lg font-semibold sm:grid"
       >
         <div
+          v-if="!hideTowns"
           class="flex w-full justify-between space-x-8 rounded-sm bg-primary-light/90 p-2 shadow-lg lg:space-x-12"
         >
           <div class="flex items-center space-x-4 lg:space-x-6">
