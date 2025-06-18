@@ -6,7 +6,6 @@ namespace App\Models\EatingOut;
 
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasOpenGraphImage;
-use App\Contracts\HasOpenGraphImageContract;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\Media;
 use Error;
@@ -18,15 +17,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-/**
- * @implements HasOpenGraphImageContract<$this>
- *
- * @property string $image
- */
-class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
+class EateryArea extends Model
 {
     use DisplaysMedia;
 
@@ -36,7 +29,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
-    protected $table = 'wheretoeat_towns';
+    protected $table = 'wheretoeat_areas';
 
     protected static function booted(): void
     {
@@ -47,13 +40,12 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
                 ->orWhereHas('liveBranches')
         );
 
-        static::creating(static function (self $town) {
-            if ( ! $town->slug) {
-                $town->slug = Str::slug($town->town);
-                $town->legacy = $town->slug;
+        static::creating(static function (self $area) {
+            if ( ! $area->slug) {
+                $area->slug = Str::slug($area->area);
             }
 
-            return $town;
+            return $area;
         });
 
         static::saved(function (self $town): void {
@@ -61,8 +53,8 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
                 return;
             }
 
-            CreateEatingOutOpenGraphImageJob::dispatch($town);
-            CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
+            //            CreateEatingOutOpenGraphImageJob::dispatch($town);
+            //            CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
         });
     }
 
@@ -83,15 +75,15 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
             return $query->where('id', $value);
         }
 
-        if (app(Request::class)->route('county')) {
-            /** @var ?EateryCounty $county | string */
-            $county = app(Request::class)->route('county');
-            if ( ! $county instanceof EateryCounty) {
-                $county = EateryCounty::query()->where('slug', $county)->firstOrFail();
+        if (app(Request::class)->route('town')) {
+            /** @var ?EateryTown $town | string */
+            $town = app(Request::class)->route('town');
+            if ( ! $town instanceof EateryTown) {
+                $town = EateryTown::query()->where('slug', $town)->firstOrFail();
             }
 
             /** @var Builder<static> $return */
-            $return = $county->towns()->where('slug', $value)->getQuery();
+            $return = $town->areas()->where('slug', $value)->getQuery();
 
             return $return;
         }
@@ -102,14 +94,14 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
     /** @return HasMany<Eatery, $this> */
     public function eateries(): HasMany
     {
-        return $this->hasMany(Eatery::class, 'town_id');
+        return $this->hasMany(Eatery::class, 'area_id');
     }
 
     /** @return HasMany<Eatery, $this> */
     public function liveEateries(): HasMany
     {
         /** @var HasMany<Eatery, $this> $relation */
-        $relation = $this->hasMany(Eatery::class, 'town_id')->where('live', true);
+        $relation = $this->hasMany(Eatery::class, 'area_id')->where('live', true);
 
         if ( ! request()->routeIs('eating-out.show')) {
             $relation->where('closed_down', false);
@@ -121,36 +113,27 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
     /** @return HasMany<NationwideBranch, $this> */
     public function liveBranches(): HasMany
     {
-        return $this->hasMany(NationwideBranch::class, 'town_id')->where('live', true);
+        return $this->hasMany(NationwideBranch::class, 'area_id')->where('live', true);
     }
 
-    /** @return BelongsTo<EateryCounty, $this> */
-    public function county(): BelongsTo
+    /** @return BelongsTo<EateryTown, $this> */
+    public function town(): BelongsTo
     {
-        return $this->belongsTo(EateryCounty::class, 'county_id');
-    }
-
-    /** @return HasMany<EateryArea, $this> */
-    public function areas(): HasMany
-    {
-        return $this->hasMany(EateryArea::class, 'area_id');
+        return $this->belongsTo(EateryTown::class, 'town_id');
     }
 
     /** @return HasManyThrough<EateryReview, Eatery, $this> */
     public function reviews(): HasManyThrough
     {
-        return $this->hasManyThrough(EateryReview::class, Eatery::class, 'town_id', 'wheretoeat_id');
+        return $this->hasManyThrough(EateryReview::class, Eatery::class, 'area_id', 'wheretoeat_id');
     }
 
     public function link(): string
     {
-        if ($this->slug === 'nationwide') {
-            return '/wheretoeat/nationwide';
-        }
-
         return '/' . implode('/', [
             'wheretoeat',
-            $this->county?->slug,
+            'london',
+            $this->town?->slug,
             $this->slug,
         ]);
     }

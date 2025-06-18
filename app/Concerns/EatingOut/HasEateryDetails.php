@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Concerns\EatingOut;
 
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
@@ -69,6 +70,12 @@ trait HasEateryDetails
     public function town(): BelongsTo
     {
         return $this->belongsTo(EateryTown::class, 'town_id');
+    }
+
+    /** @return BelongsTo<EateryArea, $this> */
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(EateryArea::class, 'area_id');
     }
 
     /** @return BelongsTo<EateryCounty, $this> */
