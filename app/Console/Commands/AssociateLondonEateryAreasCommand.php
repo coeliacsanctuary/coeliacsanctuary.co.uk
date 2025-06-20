@@ -55,7 +55,7 @@ class AssociateLondonEateryAreasCommand extends Command
 
         /** @var EateryTown $town */
         $town = $model->town;
-        
+
         $prompt = <<<PROMPT
                 For the given eating out location in London,
 
