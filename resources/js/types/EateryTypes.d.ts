@@ -21,11 +21,26 @@ export type NationwidePage = County & {
   chains: NationwideEatery[];
 };
 
+export type LondonPage = Exclude<CountyPage, 'towns'> & {
+  boroughs: LondonPageBorough[];
+};
+
 export type CountyPageTown = Town & {
   link: string;
   eateries: number;
   attractions: number;
   hotels: number;
+};
+
+export type LondonPageBorough = Exclude<
+  CountyPageTown,
+  'attractions' | 'hotels'
+> & {
+  description: string;
+  latlng: LatLng;
+  locations: number;
+  area_count: number;
+  top_areas: string[];
 };
 
 export type NationwideEatery = {

@@ -16,6 +16,11 @@ class LatLng
         return "{$this->lat},{$this->lng}";
     }
 
+    public static function fromString(string $string): static
+    {
+        return new self(...array_map(fn (mixed $bit) => (float) $bit, explode(',', $string)));
+    }
+
     public function toLatLng(): array
     {
         return [

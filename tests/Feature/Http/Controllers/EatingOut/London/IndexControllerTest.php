@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\London;
 
+use App\Models\EatingOut\EateryArea;
+use App\Models\EatingOut\EateryTown;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\EatingOut\GetMostRatedPlacesInCountyAction;
 use App\Actions\EatingOut\GetTopRatedPlacesInCountyAction;
@@ -27,12 +29,19 @@ class IndexControllerTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
 
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
+        $town = EateryTown::query()->withoutGlobalScopes()->first();
 
-        $this->county->update(['slug' => 'london']);
+        $this->county->update(['slug' => 'london', 'county' => 'London']);
+
+        $area = $this->build(EateryArea::class)->create([
+            'town_id' => $town->id,
+        ]);
 
         $this->build(Eatery::class)
             ->create([
                 'county_id' => $this->county->id,
+                'town_id' => $town->id,
+                'area_id' => $area->id,
             ]);
 
         Bus::fake(CreateEatingOutOpenGraphImageJob::class);
@@ -44,22 +53,22 @@ class IndexControllerTest extends TestCase
         $this->visitPage()->assertOk();
     }
 
-//    #[Test]
-//    public function itCallsTheGetMostRatedPlacesInCountyAction(): void
-//    {
-//        $this->expectAction(GetMostRatedPlacesInCountyAction::class);
-//
-//        $this->visitPage();
-//    }
-//
-//    #[Test]
-//    public function itCallsTheGetTopRatedPlacesInCountyAction(): void
-//    {
-//        $this->expectAction(GetTopRatedPlacesInCountyAction::class);
-//
-//        $this->visitPage();
-//    }
-//
+    #[Test]
+    public function itCallsTheGetMostRatedPlacesInCountyAction(): void
+    {
+        $this->expectAction(GetMostRatedPlacesInCountyAction::class);
+
+        $this->visitPage();
+    }
+
+    #[Test]
+    public function itCallsTheGetTopRatedPlacesInCountyAction(): void
+    {
+        $this->expectAction(GetTopRatedPlacesInCountyAction::class);
+
+        $this->visitPage();
+    }
+
 //    #[Test]
 //    public function itCallsTheGetOpenGraphImageAction(): void
 //    {
@@ -75,8 +84,8 @@ class IndexControllerTest extends TestCase
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('EatingOut/London')
-//                    ->has('county')
-//                    ->where('county.name', $this->county->county)
+                    ->has('london')
+                    ->where('london.name', 'London')
                     ->etc()
             );
     }

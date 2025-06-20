@@ -9,8 +9,7 @@ use App\Actions\EatingOut\GetTopRatedPlacesInCountyAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCounty;
-use App\Resources\EatingOut\CountyPageResource;
-use App\Resources\EatingOut\NationwidePageResource;
+use App\Resources\EatingOut\LondonPageResource;
 use Inertia\Response;
 
 class IndexController
@@ -19,7 +18,7 @@ class IndexController
         Inertia $inertia,
         GetMostRatedPlacesInCountyAction $getMostRatedPlacesInCounty,
         GetTopRatedPlacesInCountyAction $getTopRatedPlacesInCounty,
-//        GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
+        //        GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
     ): Response {
         /** @var EateryCounty $county */
         $county = EateryCounty::query()->firstWhere('slug', 'london');
@@ -33,7 +32,7 @@ class IndexController
             ])
 //            ->metaImage($getOpenGraphImageAction->handle($county))
             ->render('EatingOut/London', [
-                'county' => new CountyPageResource($county),
+                'london' => new LondonPageResource($county),
                 'topRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
                 'mostRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
             ]);

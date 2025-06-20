@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
@@ -133,7 +134,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
     /** @return HasMany<EateryArea, $this> */
     public function areas(): HasMany
     {
-        return $this->hasMany(EateryArea::class, 'area_id');
+        return $this->hasMany(EateryArea::class, 'town_id');
     }
 
     /** @return HasManyThrough<EateryReview, Eatery, $this> */
