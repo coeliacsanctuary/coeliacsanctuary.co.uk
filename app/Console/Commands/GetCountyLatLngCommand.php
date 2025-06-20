@@ -20,7 +20,7 @@ class GetCountyLatLngCommand extends Command
             ->whereNull('latlng')
             ->lazy()
             ->each(function (EateryCounty $county) use ($locationSearchService): void {
-                $latLng = $locationSearchService->getLatLng("{$county->county}, {$county->country?->country}");
+                $latLng = $locationSearchService->getLatLng("{$county->county}, {$county->country?->country}", force: true);
 
                 $county->updateQuietly([
                     'latlng' => $latLng->toString(),

@@ -7,16 +7,22 @@ namespace App\Resources\EatingOut;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\ResourceCollections\EatingOut\CountyTownCollection;
+use App\ResourceCollections\EatingOut\LondonBoroughCollection;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /** @mixin EateryCounty */
-class CountyPageResource extends JsonResource
+class LondonPageResource extends JsonResource
 {
-    /** @return array{name: string, slug: string, image: string, towns: CountyTownCollection, eateries: int, reviews: int} */
+    /** @return array{name: string, slug: string, latlng: string, image: string, boroughs: LondonBoroughCollection, eateries: int, reviews: int} */
     public function toArray(Request $request)
     {
-        $this->load('activeTowns', 'activeTowns.county', 'activeTowns.liveEateries', 'activeTowns.liveBranches', 'activeTowns.liveEateries.area', 'activeTowns.liveBranches.area');
+        $this->load([
+            'activeTowns', 'activeTowns.county', 'activeTowns.liveEateries', 'activeTowns.liveBranches',
+            /** @phpstan-ignore-next-line  */
+            'activeTowns.areas' => fn (Relation $builder) => $builder->chaperone()->withCount('eateries'),
+        ]);
         $this->loadCount(['eateries', 'reviews']);
 
         /** @var EateryCountry $country */
@@ -25,9 +31,9 @@ class CountyPageResource extends JsonResource
         return [
             'name' => $this->county,
             'slug' => $this->slug,
-            'latlng' => $this->latlng,
+            'latlng' => (string)$this->latlng,
             'image' => $this->image ?? $country->image,
-            'towns' => new CountyTownCollection($this->activeTowns),
+            'boroughs' => new LondonBoroughCollection($this->activeTowns),
             'eateries' => $this->eateries_count,
             'reviews' => $this->reviews_count,
         ];

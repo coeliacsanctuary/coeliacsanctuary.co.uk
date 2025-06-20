@@ -31,7 +31,7 @@ class HydrateEateriesAction implements GetEateriesPipelineActionContract
 
         $hydratedEateries = Eatery::query()
             ->with([/** @phpstan-ignore-line */
-                'country', 'county', 'town', 'town.county', 'type', 'venueType', 'cuisine', 'restaurants',
+                'country', 'county', 'town', 'town.county', 'type', 'venueType', 'cuisine', 'restaurants', 'area',
                 'reviews' => function (HasMany $builder) {
                     /** @var HasMany<EateryReview, Eatery> $builder */
                     return $builder
@@ -42,7 +42,7 @@ class HydrateEateriesAction implements GetEateriesPipelineActionContract
                 'features' => function (BelongsToMany $builder) {
                     /** @var BelongsToMany<EateryFeature, Eatery> $builder */
                     return $builder->where('feature', '100% Gluten Free');
-                }
+                },
             ])
             ->whereIn('id', $eateryIds)
             ->when(count($eateryIds) > 0, fn (Builder $builder) => $builder->orderByRaw('field(id, ' . Arr::join($eateryIds, ',') . ')'))

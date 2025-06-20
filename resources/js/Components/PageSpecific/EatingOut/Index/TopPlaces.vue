@@ -4,12 +4,16 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import { ChevronDownIcon } from '@heroicons/vue/24/solid';
 import Card from '@/Components/Card.vue';
+
+withDefaults(defineProps<{ showBreakpoint?: string }>(), {
+  showBreakpoint: 'md',
+});
 </script>
 
 <template>
   <Disclosure
     v-slot="{ open }"
-    :default-open="useScreensize().screenIsGreaterThanOrEqualTo('md')"
+    :default-open="useScreensize().screenIsGreaterThanOrEqualTo(showBreakpoint)"
   >
     <Card class="mt-3 flex flex-col space-y-4">
       <DisclosureButton>

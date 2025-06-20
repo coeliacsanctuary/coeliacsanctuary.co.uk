@@ -21,7 +21,7 @@ class GetTownLatLngCommand extends Command
             ->lazy()
             ->each(function (EateryTown $town) use ($locationSearchService): void {
                 $name = "{$town->town}, {$town->county?->county}, {$town->county?->country?->country}";
-                $latLng = $locationSearchService->getLatLng($name);
+                $latLng = $locationSearchService->getLatLng($name, force: true);
 
                 $town->updateQuietly([
                     'latlng' => $latLng->toString(),
