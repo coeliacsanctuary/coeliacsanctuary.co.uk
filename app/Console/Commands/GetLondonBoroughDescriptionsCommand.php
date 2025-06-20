@@ -9,12 +9,13 @@ use App\Models\EatingOut\EateryTown;
 use Illuminate\Console\Command;
 use OpenAI\Laravel\Facades\OpenAI;
 
-class GetLondonBoroughIntoTestCommand extends Command
+class GetLondonBoroughDescriptionsCommand extends Command
 {
     protected $signature = 'one-time:coeliac:get-london-borough-intros';
 
     public function handle(): void
     {
+        /** @phpstan-ignore-next-line  */
         EateryCounty::query()
             ->where('slug', 'london')
             ->first()

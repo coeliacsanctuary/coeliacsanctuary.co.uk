@@ -15,11 +15,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin EateryCounty */
 class LondonPageResource extends JsonResource
 {
-    /** @return array{name: string, slug: string, image: string, towns: CountyTownCollection, eateries: int, reviews: int} */
+    /** @return array{name: string, slug: string, latlng: string, image: string, boroughs: LondonBoroughCollection, eateries: int, reviews: int} */
     public function toArray(Request $request)
     {
         $this->load([
             'activeTowns', 'activeTowns.county', 'activeTowns.liveEateries', 'activeTowns.liveBranches',
+            /** @phpstan-ignore-next-line  */
             'activeTowns.areas' => fn (Relation $builder) => $builder->chaperone()->withCount('eateries'),
         ]);
         $this->loadCount(['eateries', 'reviews']);
@@ -30,7 +31,7 @@ class LondonPageResource extends JsonResource
         return [
             'name' => $this->county,
             'slug' => $this->slug,
-            'latlng' => $this->latlng,
+            'latlng' => (string)$this->latlng,
             'image' => $this->image ?? $country->image,
             'boroughs' => new LondonBoroughCollection($this->activeTowns),
             'eateries' => $this->eateries_count,

@@ -179,14 +179,14 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             return "/wheretoeat/nationwide/{$this->slug}";
         }
 
-        if($this->area) {
+        if ($this->area) {
             return '/' . implode('/', [
-                    'wheretoeat',
-                    'london',
-                    $this->town?->slug,
-                    $this->area->slug,
-                    $this->slug,
-                ]);
+                'wheretoeat',
+                'london',
+                $this->town?->slug,
+                $this->area->slug,
+                $this->slug,
+            ]);
         }
 
         return '/' . implode('/', [
@@ -415,7 +415,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             'gluten free places to eat in the uk', "gluten free places to eat in {$town}",
         ];
 
-        if($area) {
+        if ($area) {
             $kw = array_merge($kw, [
                 "gluten free {$area}", "coeliac {$area} eateries", "gluten free {$area} eateries",
                 "gluten free places to eat in {$area}",

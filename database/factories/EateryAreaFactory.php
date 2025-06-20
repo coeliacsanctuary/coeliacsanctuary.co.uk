@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\EatingOut\EateryArea;
-use App\Models\EatingOut\EateryTown;
 use Illuminate\Support\Str;
 
 class EateryAreaFactory extends Factory

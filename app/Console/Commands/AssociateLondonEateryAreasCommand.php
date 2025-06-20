@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use Illuminate\Console\Command;
 use OpenAI\Laravel\Facades\OpenAI;
@@ -17,6 +18,7 @@ class AssociateLondonEateryAreasCommand extends Command
 
     public function handle(): void
     {
+        /** @phpstan-ignore-next-line  */
         EateryCounty::query()
             ->where('slug', 'london')
             ->first()
@@ -28,6 +30,7 @@ class AssociateLondonEateryAreasCommand extends Command
             ->lazy()
             ->each($this->processLocation(...));
 
+        /** @phpstan-ignore-next-line  */
         EateryCounty::query()
             ->where('slug', 'london')
             ->first()
@@ -46,15 +49,18 @@ class AssociateLondonEateryAreasCommand extends Command
 
         $name = $model->name;
 
-        if($model instanceof NationwideBranch && !$name) {
+        if ($model instanceof NationwideBranch && ! $name) {
             $name = $model->eatery->name;
         }
 
+        /** @var EateryTown $town */
+        $town = $model->town;
+        
         $prompt = <<<PROMPT
                 For the given eating out location in London,
 
                 Name: {$name},
-                Borough: {$model->town->town},
+                Borough: {$town->town},
                 Address: {$address},
 
                 Please determine the area within that borough that the eatery resides in, this should be a well known area within that borough and the address of the eatery should be within that area. The area you give will be used as an index on the eatery and as part of SEO.
@@ -82,14 +88,14 @@ class AssociateLondonEateryAreasCommand extends Command
             /** @var array $json */
             $json = json_decode($response, true);
 
-            if (!array_key_exists('area', $json)) {
+            if ( ! array_key_exists('area', $json)) {
                 $this->error("invalid json returned {$response} {$name}");
 
                 return;
             }
 
             $this->info("Eatery: {$name}");
-            $this->info("Borough: {$model->town->town}");
+            $this->info("Borough: {$town->town}");
             $this->info("Address: {$address}");
             $this->info("Suggested Area: {$json['area']}");
             $this->info("Reason: {$json['explanation']}");

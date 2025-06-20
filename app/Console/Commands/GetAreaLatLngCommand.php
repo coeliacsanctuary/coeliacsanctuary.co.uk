@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Models\EatingOut\EateryArea;
-use App\Models\EatingOut\EateryTown;
 use App\Services\EatingOut\LocationSearchService;
 use Illuminate\Console\Command;
 
@@ -20,6 +19,7 @@ class GetAreaLatLngCommand extends Command
             ->whereNull('latlng')
             ->lazy()
             ->each(function (EateryArea $area) use ($locationSearchService): void {
+                /** @phpstan-ignore-next-line  */
                 $name = "{$area->area}, {$area->town->town}, {$area->town->county?->county}, {$area->town->county?->country?->country}";
 
                 $latLng = $locationSearchService->getLatLng($name, force: true);
