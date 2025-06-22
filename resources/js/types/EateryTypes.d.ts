@@ -93,6 +93,11 @@ export type TownPage = Town & {
   image?: string;
 };
 
+export type LondonBoroughPage = TownPage & {
+  intro_text: string;
+  areas: CountyPageTown[];
+};
+
 export type EateryFilterItem = CheckboxItem & {
   value: string;
   label: string;

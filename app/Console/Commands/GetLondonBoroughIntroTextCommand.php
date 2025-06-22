@@ -9,9 +9,9 @@ use App\Models\EatingOut\EateryTown;
 use Illuminate\Console\Command;
 use OpenAI\Laravel\Facades\OpenAI;
 
-class GetLondonBoroughDescriptionsCommand extends Command
+class GetLondonBoroughIntroTextCommand extends Command
 {
-    protected $signature = 'one-time:coeliac:get-london-borough-description';
+    protected $signature = 'one-time:coeliac:get-london-borough-intros';
 
     public function handle(): void
     {
@@ -31,15 +31,19 @@ class GetLondonBoroughDescriptionsCommand extends Command
 
             {$borough->town}
 
-            Please generate a nice, SEO friendly short paragraph on popular areas and/or tourist destinations and/or sights in that borough, for example, if the borough was Westminster, you could include Big Ben, Covent Garden etc.
+            Please generate a nice, SEO friendly introductory paragraphs on popular areas and/or tourist destinations and/or sights in that borough, for example, if the borough was Westminster, you could include Big Ben, Covent Garden etc.
 
             Areas/Tourist Destinations/Sights could include popular things like Big Ben, Madame Tussauds, Shopping Centers, Parks, Sports Stadiums/Teams, etc
 
-            This short paragraph will be used on a listing page with all the other London Boroughs in an online Gluten Free eating guide across London.
+            These paragraphs will be used on at the top of a dedicated page for that borough in a gluten free guide for places across london, and will serve as the above the fold introductory text on the page, so please also add many organic references to eating out in this borough, with special mention to gluten free (Spelled as is, no dashes) and make these the emphasis.
 
-            Please limit the paragraph to no more than 50 words or so.
+            Please limit the paragraphs to no more than 150 words or so, or if it makes sense, at least two paragraphs, but no more than 3.
 
-            Pleas return only the short paragraph, and nothing else.
+            Please separate all new lines with the PHP newline character \n
+
+            Please keep it organic, no 'welcome to' etc, this will go below a H1 of `Eating gluten free in {$borough->town}` which is already in place.
+
+            Pleas return only the paragraph(s), and nothing else.
            PROMPT;
 
         $result = OpenAI::chat()->create([
@@ -53,7 +57,7 @@ class GetLondonBoroughDescriptionsCommand extends Command
         $response = $result->choices[0]->message->content;
 
         $borough->updateQuietly([
-            'description' => $response,
+            'intro_text' => $response,
         ]);
 
         $this->info("Updated {$borough->town}");
