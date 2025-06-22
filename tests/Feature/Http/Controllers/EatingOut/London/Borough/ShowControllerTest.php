@@ -10,8 +10,6 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
-use App\Pipelines\EatingOut\GetEateries\GetEateriesPipeline;
-use App\Services\EatingOut\Filters\GetFiltersForTown;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Testing\TestResponse;
@@ -76,18 +74,18 @@ class ShowControllerTest extends TestCase
     //        $this->visitTown();
     //    }
     //
-        #[Test]
-        public function itRendersTheInertiaPage(): void
-        {
-            $this->visitTown()
-                ->assertInertia(
-                    fn (Assert $page) => $page
-                        ->component('EatingOut/LondonBorough')
-                        ->has('borough')
-                        ->where('borough.name', $this->borough->town)
-                        ->etc()
-                );
-        }
+    #[Test]
+    public function itRendersTheInertiaPage(): void
+    {
+        $this->visitTown()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/LondonBorough')
+                    ->has('borough')
+                    ->where('borough.name', $this->borough->town)
+                    ->etc()
+            );
+    }
 
     protected function visitTown(): TestResponse
     {

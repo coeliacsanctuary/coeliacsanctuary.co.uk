@@ -6,7 +6,6 @@ namespace App\Resources\EatingOut;
 
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
-use App\ResourceCollections\EatingOut\CountyTownCollection;
 use App\ResourceCollections\EatingOut\LondonBoroughCollection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
