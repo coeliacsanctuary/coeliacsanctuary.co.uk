@@ -24,6 +24,7 @@ class ShowController
         }
 
         $borough
+            /** @phpstan-ignore-next-line  */
             ->load(['areas' => fn (Relation $relation) => $relation->chaperone()->with(['liveEateries', 'liveBranches'])->orderBy('area')])
             ->setRelation('county', $county);
 
