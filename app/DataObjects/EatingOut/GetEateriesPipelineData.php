@@ -38,5 +38,6 @@ class GetEateriesPipelineData
         public string $jsonResource = EateryListResource::class,
         public LengthAwarePaginator|Collection|null $serialisedEateries = null,
         public bool $throwSearchException = true,
-    ) {}
+    ) {
+    }
 }

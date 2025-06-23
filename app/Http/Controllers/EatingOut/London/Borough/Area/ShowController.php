@@ -37,7 +37,7 @@ class ShowController
             abort(404);
         }
 
-        $area->town->setRelation('county', $county);
+        $borough->setRelation('county', $county);
 
         /** @var array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters */
         $filters = [
@@ -52,7 +52,8 @@ class ShowController
             ->where('area', $area->area)
             ->withCount(['liveEateries', 'liveBranches'])
             ->get()
-            ->map(fn(EateryArea $alternateArea) => [
+            ->map(fn (EateryArea $alternateArea) => [
+                /** @phpstan-ignore-next-line  */
                 'borough' => $alternateArea->town->town,
                 'link' => $alternateArea->link(),
                 'locations' => $alternateArea->live_eateries_count + $alternateArea->live_branches_count,

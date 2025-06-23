@@ -11,9 +11,7 @@ use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesInLondonAreaPipeline;
-use App\Pipelines\EatingOut\GetEateries\GetEateriesPipeline;
 use App\Services\EatingOut\Filters\GetFiltersForLondonArea;
-use App\Services\EatingOut\Filters\GetFiltersForTown;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Testing\TestResponse;
@@ -88,13 +86,13 @@ class ShowControllerTest extends TestCase
         $this->visitArea();
     }
 
-//    #[Test]
-//    public function itCallsTheGetOpenGraphImageAction(): void
-//    {
-//        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
-//
-//        $this->visitTown();
-//    }
+    //    #[Test]
+    //    public function itCallsTheGetOpenGraphImageAction(): void
+    //    {
+    //        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
+    //
+    //        $this->visitTown();
+    //    }
 
     #[Test]
     public function itRendersTheInertiaPage(): void

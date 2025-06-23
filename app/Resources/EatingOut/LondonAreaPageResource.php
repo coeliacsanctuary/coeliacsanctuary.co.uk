@@ -14,14 +14,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin EateryArea */
 class LondonAreaPageResource extends JsonResource
 {
-    /** @return array{name: string, slug: string, image: string, county: TownCountyResource} */
+    /** @return array{name: string, slug: string, image: string, borough: LondonBoroughResource} */
     public function toArray(Request $request)
     {
         /** @var EateryTown $borough */
         $borough = $this->town;
 
         /** @var EateryCounty $county */
-        $county = $this->town->county;
+        $county = $borough->county;
 
         /** @var EateryCountry $country */
         $country = $county->country;

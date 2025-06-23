@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Services\EatingOut\Filters;
 
 use App\Services\EatingOut\Filters\GetFiltersForLondonArea;
-use App\Services\EatingOut\Filters\GetFiltersForTown;
 use PHPUnit\Framework\Attributes\Test;
 
 class GetFiltersForLondonAreaTest extends GetFiltersTest
