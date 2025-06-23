@@ -1,10 +1,18 @@
 <script lang="ts" setup>
 import { InformationCircleIcon } from '@heroicons/vue/20/solid';
 
-withDefaults(defineProps<{ noIcon?: boolean; theme?: 'primary' | 'light' }>(), {
-  noIcon: false,
-  theme: 'primary',
-});
+withDefaults(
+  defineProps<{
+    noIcon?: boolean;
+    theme?: 'primary' | 'light';
+    flex?: boolean;
+  }>(),
+  {
+    noIcon: false,
+    theme: 'primary',
+    flex: false,
+  },
+);
 </script>
 
 <template>
@@ -13,6 +21,7 @@ withDefaults(defineProps<{ noIcon?: boolean; theme?: 'primary' | 'light' }>(), {
     :class="{
       'border-primary bg-primary/20': theme === 'primary',
       'border-primary-light bg-primary-light/20': theme === 'light',
+      flex: flex,
     }"
   >
     <div

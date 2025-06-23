@@ -75,15 +75,15 @@ class EateryArea extends Model
             return $query->where('id', $value);
         }
 
-        if (app(Request::class)->route('town')) {
-            /** @var ?EateryTown $town | string */
-            $town = app(Request::class)->route('town');
-            if ( ! $town instanceof EateryTown) {
-                $town = EateryTown::query()->where('slug', $town)->firstOrFail();
+        if (app(Request::class)->route('borough')) {
+            /** @var ?EateryTown $borough | string */
+            $borough = app(Request::class)->route('borough');
+            if ( ! $borough instanceof EateryTown) {
+                $borough = EateryTown::query()->where('slug', $borough)->firstOrFail();
             }
 
             /** @var Builder<static> $return */
-            $return = $town->areas()->where('slug', $value)->getQuery();
+            $return = $borough->areas()->where('slug', $value)->getQuery();
 
             return $return;
         }
@@ -146,8 +146,8 @@ class EateryArea extends Model
     public function keywords(): array
     {
         return [
-            "gluten free {$this->town}", "coeliac {$this->town} eateries", "gluten free {$this->town} eateries",
-            'gluten free places to eat in the uk', "gluten free places to eat in {$this->town}",
+            "gluten free {$this->area}", "coeliac {$this->area} eateries", "gluten free {$this->area} eateries",
+            'gluten free places to eat in the uk', "gluten free places to eat in {$this->area}",
             'gluten free places to eat', 'gluten free cafes', 'gluten free restaurants', 'gluten free uk',
             'places to eat', 'cafes', 'restaurants', 'eating out', 'catering to coeliac', 'eating out uk',
             'gluten free venues', 'gluten free dining', 'gluten free directory', 'gf food',

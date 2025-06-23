@@ -98,6 +98,10 @@ export type LondonBoroughPage = TownPage & {
   areas: CountyPageTown[];
 };
 
+export type LondonAreaPage = Exclude<TownPage, 'county'> & {
+  borough: County;
+};
+
 export type EateryFilterItem = CheckboxItem & {
   value: string;
   label: string;
