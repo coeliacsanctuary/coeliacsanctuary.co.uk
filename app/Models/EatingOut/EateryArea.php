@@ -21,6 +21,11 @@ use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * @implements HasOpenGraphImageContract<$this>
+ *
+ * @property string $image
+ */
 class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
 {
     use DisplaysMedia;

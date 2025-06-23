@@ -6,10 +6,8 @@ namespace Tests\Unit\Actions\OpenGraphImages;
 
 use App\Actions\OpenGraphImages\GenerateAreaOpenGraphImageAction;
 use App\Models\EatingOut\EateryArea;
-use PHPUnit\Framework\Attributes\Test;
-use App\Actions\OpenGraphImages\GenerateTownOpenGraphImageAction;
-use App\Models\EatingOut\EateryTown;
 use Illuminate\View\View;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GenerateAreaOpenGraphImageActionTest extends TestCase

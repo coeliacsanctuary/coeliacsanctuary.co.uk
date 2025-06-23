@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\EatingOut;
 
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use Illuminate\Http\Request;
@@ -26,16 +27,24 @@ class ComputeEateryBackLinkAction
         /** @var EateryTown $town */
         $town = $eatery->branch->town ?? $eatery->town;
 
+        /** @var EateryArea | null $area */
+        $area = $eatery->branch->area ?? $eatery->area;
+
         $name = match ($route?->getName()) {
-            'eating-out.county' => "Back to {$county->county}",
+            'eating-out.county', 'eating-out.london' => "Back to {$county->county}",
             'eating-out.browse', 'eating-out.browse.any' => 'Back to map',
             'eating-out.search.show', 'search.index' => 'Back to search results',
             'eating-out.index' => 'Back to eating out guide',
-            default => "Back to {$town->town}"
+            'eating-out.town', 'eating-out.london.borough' => "Back to {$town->town}",
+            default => $area ? "Back to {$area->area}" : "Back to {$town->town}"
         };
 
         if ($name === "Back to {$town->town}") {
             $previous = $town->absoluteLink();
+        }
+
+        if ($area && $name === "Back to {$area->area}") {
+            $previous = $area->absoluteLink();
         }
 
         return [$name, $previous];
