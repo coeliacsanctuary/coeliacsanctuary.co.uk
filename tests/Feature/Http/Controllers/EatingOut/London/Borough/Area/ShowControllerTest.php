@@ -86,13 +86,13 @@ class ShowControllerTest extends TestCase
         $this->visitArea();
     }
 
-    //    #[Test]
-    //    public function itCallsTheGetOpenGraphImageAction(): void
-    //    {
-    //        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
-    //
-    //        $this->visitTown();
-    //    }
+    #[Test]
+    public function itCallsTheGetOpenGraphImageAction(): void
+    {
+        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
+
+        $this->visitArea();
+    }
 
     #[Test]
     public function itRendersTheInertiaPage(): void

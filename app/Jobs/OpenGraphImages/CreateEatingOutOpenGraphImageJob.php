@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
+use App\Actions\OpenGraphImages\GenerateAreaOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateCountyOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateEateryOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateNationwideBranchOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateTownOpenGraphImageAction;
 use App\Contracts\OpenGraphActionContract;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
@@ -32,7 +34,7 @@ class CreateEatingOutOpenGraphImageJob implements ShouldQueue
 
     public int $tries = 2;
 
-    public function __construct(public Eatery|NationwideBranch|EateryTown|EateryCounty|EateryCountry $model)
+    public function __construct(public Eatery|NationwideBranch|EateryArea|EateryTown|EateryCounty|EateryCountry $model)
     {
         //
     }
@@ -47,6 +49,7 @@ class CreateEatingOutOpenGraphImageJob implements ShouldQueue
         $action = match ($this->model::class) {
             EateryCounty::class => app(GenerateCountyOpenGraphImageAction::class),
             EateryTown::class => app(GenerateTownOpenGraphImageAction::class),
+            EateryArea::class => app(GenerateAreaOpenGraphImageAction::class),
             Eatery::class => app(GenerateEateryOpenGraphImageAction::class),
             NationwideBranch::class => app(GenerateNationwideBranchOpenGraphImageAction::class),
             default => throw new RuntimeException('Unknown class'),

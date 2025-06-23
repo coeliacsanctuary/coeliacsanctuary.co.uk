@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\OpenGraphImages;
 
+use App\Models\EatingOut\EateryArea;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
@@ -68,6 +69,7 @@ class GetEatingOutOpenGraphImageActionTest extends TestCase
         return [
             'county' => [EateryCounty::class],
             'town' => [EateryTown::class],
+            'area' => [EateryArea::class],
             'eatery' => [Eatery::class],
             'nationwide branch' => [NationwideBranch::class],
         ];

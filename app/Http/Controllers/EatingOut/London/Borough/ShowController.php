@@ -32,7 +32,7 @@ class ShowController
             ->title("Gluten Free Places to Eat in the London borough of {$borough->town}")
             ->metaDescription("Coeliac Sanctuary gluten free places in the London borough of {$borough->town} | Places can cater to Coeliac and Gluten Free diets in {$borough->town}, {$county->county}!")
             ->metaTags($borough->keywords())
-//            ->metaImage($getOpenGraphImageAction->handle($town))
+            ->metaImage($getOpenGraphImageAction->handle($borough))
             ->render('EatingOut/LondonBorough', [
                 'borough' => fn () => new LondonBoroughPageResource($borough),
             ]);

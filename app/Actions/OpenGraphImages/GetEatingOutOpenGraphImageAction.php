@@ -6,6 +6,7 @@ namespace App\Actions\OpenGraphImages;
 
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
@@ -13,7 +14,7 @@ use App\Models\EatingOut\NationwideBranch;
 
 class GetEatingOutOpenGraphImageAction
 {
-    public function handle(Eatery|NationwideBranch|EateryTown|EateryCounty|EateryCountry $model): string
+    public function handle(Eatery|NationwideBranch|EateryArea|EateryTown|EateryCounty|EateryCountry $model): string
     {
         if ( ! $model->relationLoaded('openGraphImage')) {
             $model->load('openGraphImage');

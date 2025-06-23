@@ -18,7 +18,7 @@ class IndexController
         Inertia $inertia,
         GetMostRatedPlacesInCountyAction $getMostRatedPlacesInCounty,
         GetTopRatedPlacesInCountyAction $getTopRatedPlacesInCounty,
-        //        GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
+        GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
     ): Response {
         /** @var EateryCounty $county */
         $county = EateryCounty::query()->firstWhere('slug', 'london');
@@ -30,7 +30,7 @@ class IndexController
                 'coeliac london', 'gluten free london', 'eating gluten free in london',
                 'gluten free places to eat at chains in london', ...$county->keywords(),
             ])
-//            ->metaImage($getOpenGraphImageAction->handle($county))
+            ->metaImage($getOpenGraphImageAction->handle($county))
             ->render('EatingOut/London', [
                 'london' => new LondonPageResource($county),
                 'topRated' => fn () => $getMostRatedPlacesInCounty->handle($county),

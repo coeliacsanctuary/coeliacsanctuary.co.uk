@@ -69,13 +69,13 @@ class IndexControllerTest extends TestCase
         $this->visitPage();
     }
 
-    //    #[Test]
-    //    public function itCallsTheGetOpenGraphImageAction(): void
-    //    {
-    //        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
-    //
-    //        $this->visitPage();
-    //    }
+    #[Test]
+    public function itCallsTheGetOpenGraphImageAction(): void
+    {
+        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
+
+        $this->visitPage();
+    }
 
     #[Test]
     public function itRendersTheInertiaPage(): void

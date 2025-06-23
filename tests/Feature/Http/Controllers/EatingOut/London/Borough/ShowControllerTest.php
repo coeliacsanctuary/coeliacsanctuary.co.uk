@@ -63,21 +63,21 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itReturnsOkForABoroughThatHasPlaces(): void
     {
-        $this->visitTown()->assertOk();
+        $this->visitBorough()->assertOk();
     }
 
-    //    #[Test]
-    //    public function itCallsTheGetOpenGraphImageAction(): void
-    //    {
-    //        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
-    //
-    //        $this->visitTown();
-    //    }
-    //
+    #[Test]
+    public function itCallsTheGetOpenGraphImageAction(): void
+    {
+        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
+
+        $this->visitBorough();
+    }
+
     #[Test]
     public function itRendersTheInertiaPage(): void
     {
-        $this->visitTown()
+        $this->visitBorough()
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('EatingOut/LondonBorough')
@@ -87,7 +87,7 @@ class ShowControllerTest extends TestCase
             );
     }
 
-    protected function visitTown(): TestResponse
+    protected function visitBorough(): TestResponse
     {
         return $this->get(route('eating-out.london.borough', $this->borough));
     }

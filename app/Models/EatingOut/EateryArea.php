@@ -6,6 +6,7 @@ namespace App\Models\EatingOut;
 
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasOpenGraphImage;
+use App\Contracts\HasOpenGraphImageContract;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\Media;
 use Error;
@@ -17,9 +18,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class EateryArea extends Model
+class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
 {
     use DisplaysMedia;
 
@@ -48,13 +50,14 @@ class EateryArea extends Model
             return $area;
         });
 
-        static::saved(function (self $town): void {
+        static::saved(function (self $area): void {
             if (config('coeliac.generate_og_images') === false) {
                 return;
             }
 
-            //            CreateEatingOutOpenGraphImageJob::dispatch($town);
-            //            CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
+            CreateEatingOutOpenGraphImageJob::dispatch($area);
+            CreateEatingOutOpenGraphImageJob::dispatch($area->town()->withoutGlobalScopes()->firstOrFail());
+            CreateEatingOutOpenGraphImageJob::dispatch($area->town()->withoutGlobalScopes()->firstOrFail()->county()->withoutGlobalScopes()->firstOrFail());
         });
     }
 

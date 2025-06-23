@@ -65,7 +65,7 @@ class ShowController
             ->title("Gluten Free Places to Eat in {$area->area}, {$borough->town}, London")
             ->metaDescription("Coeliac Sanctuary gluten free places in the {$area->area}, {$borough->town} London | Places can cater to Coeliac and Gluten Free diets in {$borough->town}, {$county->county}!")
             ->metaTags(array_unique(array_merge($area->keywords(), $borough->keywords())))
-//            ->metaImage($getOpenGraphImageAction->handle($town))
+            ->metaImage($getOpenGraphImageAction->handle($area))
             ->render('EatingOut/LondonArea', [
                 'area' => fn () => new LondonAreaPageResource($area),
                 'alternateAreas' => fn () => $otherAreas,
