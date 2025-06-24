@@ -319,6 +319,8 @@ class StoreControllerTest extends TestCase
 
     public static function routesToVisit(): array
     {
+        // [route, post data, before hook, after hook]
+
         return [
             'normal eatery' => [
                 fn (self $test, ?string $eatery = null): string => route('eating-out.show.reviews.create', [
