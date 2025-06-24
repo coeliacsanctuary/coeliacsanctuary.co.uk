@@ -20,7 +20,7 @@ class GetLatestReviewsForHomepageAction
         $reviews = Cache::rememberForever(
             $key,
             fn () => SimpleReviewResource::collection(EateryReview::query()
-                ->with(['eatery', 'eatery.town', 'eatery.county', 'eatery.country', 'eatery.town.county'])
+                ->with(['eatery', 'eatery.area', 'eatery.town', 'eatery.county', 'eatery.country', 'eatery.town.county'])
                 ->take(8)
                 ->latest()
                 ->get())
