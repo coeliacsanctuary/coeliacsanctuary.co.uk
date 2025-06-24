@@ -7,6 +7,7 @@ namespace App\Http\Controllers\EatingOut\ReportEatery;
 use App\Actions\EatingOut\CreateEateryReportAction;
 use App\Http\Requests\EatingOut\EateryCreateReportRequest;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\DetermineNationwideBranchFromName\DetermineNationwideBranchFromNamePipeline;
@@ -18,6 +19,7 @@ class StoreController
         EateryCreateReportRequest $request,
         EateryCounty $county,
         EateryTown $town,
+        EateryArea $area,
         Eatery $eatery,
         CreateEateryReportAction $createEateryReportAction,
         DetermineNationwideBranchFromNamePipeline $determineNationwideBranchFromNamePipeline,

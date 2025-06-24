@@ -6,6 +6,7 @@ namespace Tests\Feature\Http\Controllers\EatingOut\Review;
 
 use App\Actions\EatingOut\CreateEateryReviewAction;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
@@ -25,6 +26,8 @@ class StoreControllerTest extends TestCase
 
     protected EateryTown $town;
 
+    protected EateryArea $area;
+
     protected Eatery $eatery;
 
     protected NationwideBranch $nationwideBranch;
@@ -37,6 +40,7 @@ class StoreControllerTest extends TestCase
 
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
         $this->town = EateryTown::query()->withoutGlobalScopes()->first();
+        $this->area = $this->create(EateryArea::class, ['town_id' => $this->town->id]);
 
         $this->eatery = $this->create(Eatery::class, [
             'town_id' => $this->town->id,
@@ -324,6 +328,21 @@ class StoreControllerTest extends TestCase
                 ]),
                 fn (array $data = []): EateryCreateReviewRequestFactory => EateryCreateReviewRequestFactory::new($data),
                 function (): void {},
+                function (self $test, EateryReview $review): void {
+                    $test->assertNull($review->branch_name);
+                    $test->assertNull($review->nationwide_branch_id);
+                },
+            ],
+            'london eatery' => [
+                fn (self $test, ?string $eatery = null): string => route('eating-out.london.borough.area.show.reviews.create', [
+                    'town' => $test->town->slug,
+                    'area' => $test->area->slug,
+                    'eatery' => $eatery ?? $test->eatery->slug,
+                ]),
+                fn (array $data = []): EateryCreateReviewRequestFactory => EateryCreateReviewRequestFactory::new($data),
+                function (self $test): void {
+                    $test->eatery->update(['area_id' => $test->area->id]);
+                },
                 function (self $test, EateryReview $review): void {
                     $test->assertNull($review->branch_name);
                     $test->assertNull($review->nationwide_branch_id);

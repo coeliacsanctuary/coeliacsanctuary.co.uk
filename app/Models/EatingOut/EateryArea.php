@@ -83,9 +83,10 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
             return $query->where('id', $value);
         }
 
-        if (app(Request::class)->route('borough')) {
+        if (app(Request::class)->route('borough') || app(Request::class)->route('town')) {
             /** @var ?EateryTown $borough | string */
-            $borough = app(Request::class)->route('borough');
+            $borough = app(Request::class)->route('borough') ?? app(Request::class)->route('town');
+
             if ( ! $borough instanceof EateryTown) {
                 $borough = EateryTown::query()->where('slug', $borough)->firstOrFail();
             }

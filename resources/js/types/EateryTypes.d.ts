@@ -177,6 +177,11 @@ export type DetailedEatery = Exclude<TownEatery, 'key'> & {
       count: number;
     }[];
   };
+  area?: {
+    id: number;
+    name: string;
+    link: string;
+  };
   features?: {
     name: string;
     slug: string;

@@ -50,6 +50,11 @@ class EateryDetailsResource extends JsonResource
                 'name' => $this->town?->town,
                 'link' => $this->town?->link(),
             ],
+            'area' => $this->area ? [
+                'id' => $this->area_id,
+                'name' => $this->area->area,
+                'link' => $this->area->link(),
+            ] : null,
             'venue_type' => $this->venueType?->venue_type,
             'type' => $this->type?->name,
             'cuisine' => $this->cuisine?->cuisine,

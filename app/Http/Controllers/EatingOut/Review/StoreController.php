@@ -7,6 +7,7 @@ namespace App\Http\Controllers\EatingOut\Review;
 use App\Actions\EatingOut\CreateEateryReviewAction;
 use App\Http\Requests\EatingOut\EateryCreateReviewRequest;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
@@ -19,6 +20,7 @@ class StoreController
         EateryCreateReviewRequest $request,
         EateryCounty $county,
         EateryTown $town,
+        EateryArea $area,
         Eatery $eatery,
         NationwideBranch $nationwideBranch,
         CreateEateryReviewAction $createEateryReviewAction,

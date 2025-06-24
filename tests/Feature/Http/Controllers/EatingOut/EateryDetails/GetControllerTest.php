@@ -6,6 +6,7 @@ namespace Tests\Feature\Http\Controllers\EatingOut\EateryDetails;
 
 use App\Actions\EatingOut\ComputeEateryBackLinkAction;
 use App\Actions\EatingOut\LoadCompleteEateryDetailsForRequestAction;
+use App\Models\EatingOut\EateryArea;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -25,6 +26,8 @@ class GetControllerTest extends TestCase
 
     protected EateryTown $town;
 
+    protected EateryArea $area;
+
     protected Eatery $eatery;
 
     protected NationwideBranch $nationwideBranch;
@@ -37,6 +40,7 @@ class GetControllerTest extends TestCase
 
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
         $this->town = EateryTown::query()->withoutGlobalScopes()->first();
+        $this->area = $this->create(EateryArea::class, ['town_id' => $this->town->id]);
 
         $this->eatery = $this->create(Eatery::class);
 
@@ -220,6 +224,64 @@ class GetControllerTest extends TestCase
         $this->convertToNationwideEatery()->visitBranch();
     }
 
+    protected function convertToLondonEatery(): self
+    {
+        $this->eatery->county->update(['slug' => 'london', 'county' => 'london']);
+        $this->eatery->update(['area_id' => $this->area->id]);
+
+        return $this;
+    }
+
+    #[Test]
+    public function itReturnsOkForALondonEatery(): void
+    {
+        $this
+            ->convertToLondonEatery()
+            ->visitLondonEatery()
+            ->assertOk();
+    }
+
+    #[Test]
+    public function itCallsTheGetOpenGraphImageActionForALondonEatery(): void
+    {
+        $this->expectAction(GetEatingOutOpenGraphImageAction::class);
+
+        $this
+            ->convertToLondonEatery()
+            ->visitLondonEatery();
+    }
+
+    #[Test]
+    public function itRendersTheLondonInertiaPage(): void
+    {
+        $this
+            ->convertToLondonEatery()
+            ->visitLondonEatery()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/Details')
+                    ->has('eatery')
+                    ->where('eatery.name', $this->eatery->name)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itCallsTheComputeBackLinkActionOnTheLondonPage(): void
+    {
+        $this->expectAction(ComputeEateryBackLinkAction::class, return: ['foo', 'bar']);
+
+        $this->convertToLondonEatery()->visitLondonEatery();
+    }
+
+    #[Test]
+    public function itCallsTheLoadCompleteEateryDetailsForRequestActionOnTheLondonPage(): void
+    {
+        $this->expectAction(LoadCompleteEateryDetailsForRequestAction::class, return: ['foo', 'bar']);
+
+        $this->convertToLondonEatery()->visitLondonEatery();
+    }
+
     protected function visitEatery(): TestResponse
     {
         return $this->get(route('eating-out.show', ['county' => $this->county, 'town' => $this->town, 'eatery' => $this->eatery->slug]));
@@ -236,5 +298,10 @@ class GetControllerTest extends TestCase
     protected function visitNationwideEatery(): TestResponse
     {
         return $this->get(route('eating-out.nationwide.show', ['eatery' => $this->eatery->slug]));
+    }
+
+    protected function visitLondonEatery(): TestResponse
+    {
+        return $this->get(route('eating-out.london.borough.area.show', ['town' => $this->town, 'area' => $this->area, 'eatery' => $this->eatery->slug]));
     }
 }

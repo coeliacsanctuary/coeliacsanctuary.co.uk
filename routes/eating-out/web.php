@@ -55,6 +55,7 @@ Route::prefix('wheretoeat')->group(function (): void {
     Route::get('/london', LondonIndexController::class)->name('eating-out.london');
     Route::get('/london/{borough}', LondonBoroughShowController::class)->name('eating-out.london.borough');
     Route::get('/london/{borough}/{area}', LondonBoroughAreaShowController::class)->name('eating-out.london.borough.area');
+    Route::prefix('/london/{town}/{area}/{eatery}')->group($prefixedEateryRoutes('eating-out.london.borough.area.show'));
 
     Route::get('/recommend-a-place', RecommendAPlaceCreateController::class)->name('eating-out.recommend.index');
     Route::post('/recommend-a-place', RecommendAPlaceStoreController::class)->name('eating-out.recommend.create');

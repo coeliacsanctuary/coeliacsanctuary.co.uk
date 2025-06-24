@@ -9,6 +9,7 @@ use App\Actions\EatingOut\LoadCompleteEateryDetailsForRequestAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
@@ -21,6 +22,7 @@ class GetController
     public function __invoke(
         EateryCounty $county,
         EateryTown $town,
+        EateryArea $area,
         Eatery $eatery,
         NationwideBranch $nationwideBranch,
         Request $request,
@@ -29,6 +31,13 @@ class GetController
         LoadCompleteEateryDetailsForRequestAction $loadCompleteEateryDetailsForRequestAction,
         ComputeEateryBackLinkAction $computeEateryBackLinkAction,
     ): Response {
+        if($area->exists()) {
+            /** @var EateryCounty $county */
+            $county = EateryCounty::query()->where('slug', 'london')->first();
+
+            $eatery->setRelation('county', $county);
+        }
+
         $pageType = match ($request->route()?->getName()) {
             'eating-out.nationwide.show' => 'nationwide',
             'eating-out.nationwide.show.branch' => 'branch',
