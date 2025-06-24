@@ -156,6 +156,11 @@ class EateryDetailsResource extends JsonResource
                 'name' => $branch->town?->town,
                 'link' => $branch->town?->link(),
             ],
+            'area' => $branch->area ? [
+                'id' => $branch->area_id,
+                'name' => $branch->area->area,
+                'link' => $branch->area->link(),
+            ] : null,
             'link' => $branch->link(),
             'location' => [
                 'address' => collect(explode("\n", $branch->address))
@@ -186,8 +191,13 @@ class EateryDetailsResource extends JsonResource
                             ->sortKeys()
                             ->map(
                                 fn (Collection $branches) => $branches
-                                    ->sortBy('name')
-                                    ->map(fn (NationwideBranch $branch) => $this->formatBranch($branch))
+                                    ->groupBy(fn (NationwideBranch $branch) => $branch->area?->area ?? '_') /** @phpstan-ignore-line */
+                                    ->sortKeys()
+                                    ->map(
+                                        fn (Collection $branches) => $branches
+                                            ->sortBy('name')
+                                            ->map(fn (NationwideBranch $branch) => $this->formatBranch($branch))
+                                    )
                             )
                     )
             )

@@ -19,6 +19,10 @@ const branchName = (branch: EateryNationwideBranch): string => {
 
   const name = branch.name ? branch.name : props.eateryName;
 
+  if (branch.area) {
+    return `${name}, ${branch.area.name}, ${suffix}`;
+  }
+
   return `${name}, ${suffix}`;
 };
 </script>

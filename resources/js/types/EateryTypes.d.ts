@@ -155,6 +155,11 @@ export type EateryNationwideBranch = {
     name: string;
     link: string;
   };
+  area?: {
+    id: number;
+    name: string;
+    link: string;
+  };
 };
 
 export type DetailedEatery = Exclude<TownEatery, 'key'> & {
@@ -202,7 +207,9 @@ export type DetailedEatery = Exclude<TownEatery, 'key'> & {
 export type EateryBranchesCollection = {
   [Country: string]: {
     [County: string]: {
-      [Town: string]: EateryNationwideBranch[];
+      [Town: string]: {
+        [Area: string | null]: EateryNationwideBranch[];
+      };
     };
   };
 };

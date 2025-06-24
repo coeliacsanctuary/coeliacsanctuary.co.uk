@@ -26,7 +26,11 @@ const numberOfBranches = computed(() => {
   Object.keys(branches.value).forEach((country: string) => {
     Object.keys(branches.value[country]).forEach((county: string) => {
       Object.keys(branches.value[country][county]).forEach((town: string) => {
-        count += branches.value[country][county][town].length;
+        Object.keys(branches.value[country][county][town]).forEach(
+          (area: string) => {
+            count += branches.value[country][county][town][area].length;
+          },
+        );
       });
     });
   });

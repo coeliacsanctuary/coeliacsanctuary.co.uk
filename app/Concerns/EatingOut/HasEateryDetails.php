@@ -116,7 +116,7 @@ trait HasEateryDetails
         });
     }
 
-    /** @return Attribute<non-falsy-string | null, never> */
+    /** @return Attribute<string | null, never> */
     public function shortLocation(): Attribute
     {
         return Attribute::get(function () {
@@ -128,10 +128,11 @@ trait HasEateryDetails
                 return 'Nationwide';
             }
 
-            return implode(', ', [
+            return implode(', ', array_filter([
+                $this->area?->area,
                 $this->town->town,
                 $this->county->county,
-            ]);
+            ]));
         });
     }
 
