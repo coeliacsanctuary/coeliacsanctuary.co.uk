@@ -130,6 +130,12 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
         return $this->belongsTo(EateryCounty::class, 'county_id');
     }
 
+    /** @return HasMany<EateryArea, $this> */
+    public function areas(): HasMany
+    {
+        return $this->hasMany(EateryArea::class, 'town_id');
+    }
+
     /** @return HasManyThrough<EateryReview, Eatery, $this> */
     public function reviews(): HasManyThrough
     {

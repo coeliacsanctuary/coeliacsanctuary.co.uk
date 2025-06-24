@@ -6,6 +6,7 @@ namespace Tests\Feature\Http\Controllers\EatingOut\ReportEatery;
 
 use App\Actions\EatingOut\CreateEateryReportAction;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
@@ -23,6 +24,8 @@ class StoreControllerTest extends TestCase
 
     protected EateryTown $town;
 
+    protected EateryArea $area;
+
     protected Eatery $eatery;
 
     protected NationwideBranch $nationwideBranch;
@@ -35,6 +38,7 @@ class StoreControllerTest extends TestCase
 
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
         $this->town = EateryTown::query()->withoutGlobalScopes()->first();
+        $this->area =  $this->create(EateryArea::class, ['town_id' => $this->town->id]);
 
         $this->eatery = $this->create(Eatery::class);
 
@@ -135,7 +139,26 @@ class StoreControllerTest extends TestCase
                         $eatery = $test->eatery->slug;
                     }
 
-                    return route('eating-out.show.report.create', ['county' => $test->county, 'town' => $test->town, 'eatery' => $eatery]);
+                    return route('eating-out.show.report.create', [
+                        'county' => $test->county,
+                        'town' => $test->town,
+                        'eatery' => $eatery,
+                    ]);
+                },
+            ],
+            'london eatery' => [
+                function (self $test, ?string $eatery = null): string {
+                    if ( ! $eatery) {
+                        $eatery = $test->eatery->slug;
+                    }
+
+                    $test->eatery->update(['area_id' => $test->area->id]);
+
+                    return route('eating-out.london.borough.area.show.report.create', [
+                        'town' => $test->town,
+                        'area' => $test->area,
+                        'eatery' => $eatery,
+                    ]);
                 },
             ],
             'nationwide eatery' => [

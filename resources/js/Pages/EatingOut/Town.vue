@@ -6,7 +6,7 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { onBeforeUnmount, onMounted, onUpdated, Ref, ref } from 'vue';
+import { Ref, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';

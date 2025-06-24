@@ -17,7 +17,7 @@ class EateryBrowseDetailsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->relationLoaded('branch') && $this->branch && $this->branch->name ? "{$this->branch->name} - ({$this->name})" : $this->name,
             'link' => $this->relationLoaded('branch') ? $this->branch?->link() : $this->link(),
             'full_location' => $this->full_location,
             'venue_type' => $this->venueType?->venue_type,

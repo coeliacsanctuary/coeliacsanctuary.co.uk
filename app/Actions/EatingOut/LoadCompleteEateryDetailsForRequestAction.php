@@ -71,7 +71,10 @@ class LoadCompleteEateryDetailsForRequestAction
             ->loadCount(['reviews']);
 
         if ($pageType === 'nationwide') {
-            $eatery->load(['nationwideBranches.eatery', 'nationwideBranches.town', 'nationwideBranches.town.county', 'nationwideBranches.county', 'nationwideBranches.country']);
+            $eatery->load([
+                'nationwideBranches.eatery', 'nationwideBranches.area', 'nationwideBranches.area.town', 'nationwideBranches.town',
+                'nationwideBranches.town.county', 'nationwideBranches.county', 'nationwideBranches.country'
+            ]);
         }
 
         if ($pageType === 'branch') {

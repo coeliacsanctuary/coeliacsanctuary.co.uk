@@ -19,7 +19,7 @@ class IndexController
 
         return [
             'data' => $eatery->nationwideBranches()
-                ->with(['eatery', 'town', 'county'])
+                ->with(['eatery', 'area', 'area.town', 'town', 'county'])
                 ->where(
                     fn (Builder $query) => $query
                         ->whereLike('name', "%{$request->string('term')->toString()}%")

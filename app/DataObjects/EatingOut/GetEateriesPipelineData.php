@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataObjects\EatingOut;
 
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
@@ -27,6 +28,7 @@ class GetEateriesPipelineData
     public function __construct(
         public array $filters,
         public ?EateryTown $town = null,
+        public ?EateryArea $area = null,
         public ?EaterySearchTerm $searchTerm = null,
         public ?LatLng $latLng = null,
         public ?Collection $eateries = null,
