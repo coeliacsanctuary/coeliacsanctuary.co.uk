@@ -42,6 +42,9 @@ class IndexControllerTest extends TestCase
             ->shouldReceive('towns')
             ->andReturn(collect())
             ->once()
+            ->shouldReceive('areas')
+            ->andReturn(collect())
+            ->once()
             ->shouldReceive('eateries')
             ->andReturn(collect())
             ->once()
@@ -68,7 +71,7 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsTheFeedView(): void
+    public function itReturnsTheSiteMapView(): void
     {
         $this->get(route('sitemap'))->assertViewIs('static.sitemap');
     }

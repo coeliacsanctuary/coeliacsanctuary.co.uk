@@ -111,6 +111,15 @@
         </url>
     @endforeach
 
+    <!-- Areas -->
+    @foreach($areas as $area)
+        <url>
+            <loc>{{ $area->absoluteLink() }}</loc>
+            <changefreq>weekly</changefreq>
+            <priority>0.7</priority>
+        </url>
+    @endforeach
+
     <!-- Eateries -->
     @foreach($eateries as $eatery)
         <url>

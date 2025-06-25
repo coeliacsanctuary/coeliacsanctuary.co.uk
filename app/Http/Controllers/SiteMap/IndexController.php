@@ -17,6 +17,7 @@ class IndexController
                 'recipes' => $siteMapGenerator->recipes(),
                 'counties' => $siteMapGenerator->counties(),
                 'towns' => $siteMapGenerator->towns(),
+                'areas' => $siteMapGenerator->areas(),
                 'eateries' => $siteMapGenerator->eateries(),
                 'nationwideChains' => $siteMapGenerator->nationwideChains(),
                 'nationwideBranches' => $siteMapGenerator->nationwideBranches(),

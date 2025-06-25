@@ -6,6 +6,7 @@ namespace Tests\Unit\Support\SiteMap;
 
 use App\Models\Blogs\Blog;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
@@ -193,6 +194,50 @@ class SiteMapGeneratorTest extends TestCase
         app(SiteMapGenerator::class)->towns();
 
         $this->assertInstanceOf(Collection::class, Cache::get(config('coeliac.cacheable.eating-out.site-map-towns')));
+    }
+
+    #[Test]
+    public function itReturnsACollectionOfAreas(): void
+    {
+        $this->build(EateryArea::class)
+            ->count(5)
+            ->has($this->build(Eatery::class)->state(['live' => true]))
+            ->state([])
+            ->create();
+
+        $this->assertInstanceOf(Collection::class, app(SiteMapGenerator::class)->areas());
+
+        app(SiteMapGenerator::class)->areas()->each(function (EateryArea $area): void {
+            $this->assertInstanceOf(EateryArea::class, $area);
+        });
+    }
+
+    #[Test]
+    public function itReturnsAllAreas(): void
+    {
+        $this->build(EateryArea::class)
+            ->count(20)
+            ->has($this->build(Eatery::class)->state(['live' => true]))
+            ->state([])
+            ->create();
+
+        $this->assertCount(20, app(SiteMapGenerator::class)->areas());
+    }
+
+    #[Test]
+    public function itCachesTheAreas(): void
+    {
+        $this->assertNull(Cache::get(config('coeliac.cacheable.eating-out.site-map-areas')));
+
+        $this->build(EateryArea::class)
+            ->count(5)
+            ->has($this->build(Eatery::class)->state(['live' => true]))
+            ->state([])
+            ->create();
+
+        app(SiteMapGenerator::class)->areas();
+
+        $this->assertInstanceOf(Collection::class, Cache::get(config('coeliac.cacheable.eating-out.site-map-areas')));
     }
 
     #[Test]

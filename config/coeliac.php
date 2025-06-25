@@ -57,6 +57,7 @@ return [
             'most-rated-in-county' => 'coeliac.eating-out.most-rated-in-county.{county.slug}',
             'site-map-counties' => 'coeliac.eating-out.site-map.counties',
             'site-map-towns' => 'coeliac.eating-out.site-map.towns',
+            'site-map-areas' => 'coeliac.eating-out.site-map.areas',
             'site-map-eateries' => 'coeliac.eating-out.site-map.eateries',
             'site-map-nationwide' => 'coeliac.eating-out.site-map.nationwide',
             'site-map-nationwide-branches' => 'coeliac.eating-out.site-map.nationwide-branches',
