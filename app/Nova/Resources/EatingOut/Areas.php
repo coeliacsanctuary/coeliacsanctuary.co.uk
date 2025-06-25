@@ -6,15 +6,12 @@ namespace App\Nova\Resources\EatingOut;
 
 use App\Models\Collections\Collection as CollectionModel;
 use App\Models\EatingOut\EateryArea;
-use App\Models\EatingOut\EateryCounty;
-use App\Models\EatingOut\EateryTown;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Slug;
@@ -55,9 +52,7 @@ class Areas extends Resource
             BelongsTo::make('Borough', 'town', resource: Towns::class)
                 ->filterable()
                 ->fullWidth()
-                ->displayUsing(function ($town) {
-                    return $town->town;
-                }),
+                ->displayUsing(fn ($town) => $town->town),
 
             Images::make('Image', 'primary')
                 ->onlyOnForms()

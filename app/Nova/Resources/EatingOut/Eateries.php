@@ -78,10 +78,8 @@ class Eateries extends Resource
 
                 BelongsTo::make('County', resource: Counties::class)
                     ->searchable()
-                    ->dependsOn('country', function (BelongsTo $field, NovaRequest $request, FormData $data) {
-                        $field->relatableQueryUsing(function (NovaRequest $subRequest, Builder $query) use($data) {
-                            return $query->where('wheretoeat_counties.country_id', $data->get('country'));
-                        });
+                    ->dependsOn('country', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
+                        $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('wheretoeat_counties.country_id', $data->get('country')));
                     })
                     ->hideFromIndex()
                     ->fullWidth()
@@ -102,10 +100,8 @@ class Eateries extends Resource
 
                 BelongsTo::make('Town', resource: Towns::class)
                     ->searchable()
-                    ->dependsOn('county', function (BelongsTo $field, NovaRequest $request, FormData $data) {
-                        $field->relatableQueryUsing(function (NovaRequest $subRequest, Builder $query) use($data) {
-                            return $query->where('county_id', $data->get('county'));
-                        });
+                    ->dependsOn('county', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
+                        $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('county_id', $data->get('county')));
                     })
                     ->hideFromIndex()
                     ->fullWidth()
@@ -113,10 +109,8 @@ class Eateries extends Resource
 
                 BelongsTo::make('Area', resource: Areas::class)
                     ->searchable()
-                    ->dependsOn('town', function (BelongsTo $field, NovaRequest $request, FormData $data) {
-                        $field->relatableQueryUsing(function (NovaRequest $subRequest, Builder $query) use($data) {
-                            return $query->where('town_id', $data->get('town'));
-                        });
+                    ->dependsOn('town', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
+                        $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('town_id', $data->get('town')));
                     })
                     ->hideFromIndex()
                     ->fullWidth()
@@ -126,7 +120,7 @@ class Eateries extends Resource
                         $countyId = $request->input('county');
                         $county = EateryCounty::query()->where('id', $countyId)->first();
 
-                        if($county?->slug === 'london') {
+                        if ($county?->slug === 'london') {
                             $field->show();
                         } else {
                             $field->hide();
