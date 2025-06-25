@@ -13,6 +13,7 @@ use App\Models\EatingOut\EaterySuggestedEdit;
 use App\Models\Shop\ShopOrder;
 use App\Nova\Dashboards\Main;
 use App\Nova\Dashboards\Shop;
+use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EaterySearch;
@@ -84,6 +85,7 @@ class Menu
                     MenuItem::resource(NationwideEateries::class),
                     MenuItem::resource(Counties::class),
                     MenuItem::resource(Towns::class),
+                    MenuItem::resource(Areas::class),
                 ]),
 
                 MenuGroup::make('Feedback', [

@@ -22,6 +22,7 @@ use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
@@ -58,13 +59,30 @@ class Eateries extends Resource
     {
         $detailsFields = [
             Panel::make('Location', [
-                BelongsTo::make('Town', resource: Towns::class)
-                    ->searchable()
+                BelongsTo::make('Country', resource: Countries::class)
                     ->hideFromIndex()
                     ->fullWidth()
-                    ->showCreateRelationButton(),
+                    ->hide()
+                    ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        $field->show();
+
+                        /** @var EateryCounty | null $county */
+                        $county = EateryCounty::query()->find($request->county);
+
+                        if ($county) {
+                            $field->setValue($county->country_id);
+                        }
+
+                        return $field;
+                    }),
 
                 BelongsTo::make('County', resource: Counties::class)
+                    ->searchable()
+                    ->dependsOn('country', function (BelongsTo $field, NovaRequest $request, FormData $data) {
+                        $field->relatableQueryUsing(function (NovaRequest $subRequest, Builder $query) use($data) {
+                            return $query->where('wheretoeat_counties.country_id', $data->get('country'));
+                        });
+                    })
                     ->hideFromIndex()
                     ->fullWidth()
                     ->hide()
@@ -82,18 +100,36 @@ class Eateries extends Resource
                         return $field;
                     }),
 
-                BelongsTo::make('Country', resource: Countries::class)
+                BelongsTo::make('Town', resource: Towns::class)
+                    ->searchable()
+                    ->dependsOn('county', function (BelongsTo $field, NovaRequest $request, FormData $data) {
+                        $field->relatableQueryUsing(function (NovaRequest $subRequest, Builder $query) use($data) {
+                            return $query->where('county_id', $data->get('county'));
+                        });
+                    })
                     ->hideFromIndex()
                     ->fullWidth()
+                    ->showCreateRelationButton(),
+
+                BelongsTo::make('Area', resource: Areas::class)
+                    ->searchable()
+                    ->dependsOn('town', function (BelongsTo $field, NovaRequest $request, FormData $data) {
+                        $field->relatableQueryUsing(function (NovaRequest $subRequest, Builder $query) use($data) {
+                            return $query->where('town_id', $data->get('town'));
+                        });
+                    })
+                    ->hideFromIndex()
+                    ->fullWidth()
+                    ->showCreateRelationButton()
                     ->hide()
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
-                        $field->show();
+                        $countyId = $request->input('county');
+                        $county = EateryCounty::query()->where('id', $countyId)->first();
 
-                        /** @var EateryCounty | null $county */
-                        $county = EateryCounty::query()->find($request->county);
-
-                        if ($county) {
-                            $field->setValue($county->country_id);
+                        if($county?->slug === 'london') {
+                            $field->show();
+                        } else {
+                            $field->hide();
                         }
 
                         return $field;

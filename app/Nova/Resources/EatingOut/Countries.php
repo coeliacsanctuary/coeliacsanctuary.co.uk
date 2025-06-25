@@ -27,6 +27,8 @@ class Countries extends Resource
 
     public static $title = 'country';
 
+    public static $search = ['country'];
+
     public function fields(NovaRequest $request)
     {
         return [
