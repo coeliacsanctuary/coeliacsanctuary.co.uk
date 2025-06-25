@@ -26,7 +26,7 @@ const formattedAreas = (areas: LondonPageBorough['top_areas']): string => {
   <Card class="relative">
     <Link
       :href="borough.link"
-      class="absolute h-full w-full"
+      class="absolute top-0 left-0 h-full w-full"
       prefetch="click"
     />
 
@@ -42,7 +42,7 @@ const formattedAreas = (areas: LondonPageBorough['top_areas']): string => {
           v-text="borough.description"
         />
 
-        <p class="prose prose-xl max-w-none">
+        <p class="prose prose-lg max-w-none font-semibold text-primary-dark">
           Find {{ borough.locations }}
           {{ pluralise('place', borough.locations) }} to eat in
           <strong v-text="borough.name" /> across areas including

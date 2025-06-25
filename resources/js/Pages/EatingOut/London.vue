@@ -3,7 +3,6 @@ import Card from '@/Components/Card.vue';
 import {
   CountyEatery as CountyEateryType,
   LondonPage,
-  LondonPageBorough,
 } from '@/types/EateryTypes';
 import Heading from '@/Components/Heading.vue';
 import CountyHeading from '@/Components/PageSpecific/EatingOut/County/CountyHeading.vue';
@@ -12,16 +11,18 @@ import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 import { Link } from '@inertiajs/vue3';
 import Info from '@/Components/Info.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import StaticMap from '@/Components/Maps/StaticMap.vue';
-import { pluralise } from '@/helpers';
 import LondonBorough from '@/Components/PageSpecific/EatingOut/County/LondonBorough.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
+import { Ref, ref } from 'vue';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 
 defineProps<{
   london: LondonPage;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
 }>();
+
+const boroughList = ref<HTMLElement | null>(null);
 </script>
 
 <template>
@@ -99,7 +100,7 @@ defineProps<{
           delightful meal or snack, tailored to your dietary needs.
         </p>
 
-        <div class="group grid grid-cols-3 gap-3">
+        <div class="group grid gap-3 md:grid-cols-3">
           <CountyEatery
             v-for="eatery in topRated"
             :key="eatery.name"
@@ -141,11 +142,20 @@ defineProps<{
 
   <GoogleAd code="5284484376" />
 
-  <div class="group mt-2 grid gap-3 md:grid-cols-2">
+  <div
+    ref="boroughList"
+    class="group mt-2 grid gap-3 md:grid-cols-2"
+  >
     <LondonBorough
       v-for="borough in london.boroughs"
       :key="borough.name"
       :borough="borough"
     />
   </div>
+
+  <JumpToContentButton
+    v-if="boroughList"
+    :anchor="boroughList"
+    label="Jump to Borough List"
+  />
 </template>

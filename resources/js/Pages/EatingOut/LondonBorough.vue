@@ -2,15 +2,15 @@
 import Card from '@/Components/Card.vue';
 import Warning from '@/Components/Warning.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
-import { LondonBoroughPage, TownPage } from '@/types/EateryTypes';
+import { LondonBoroughPage } from '@/types/EateryTypes';
 import TownHeading from '@/Components/PageSpecific/EatingOut/Town/TownHeading.vue';
 import CountyTown from '@/Components/PageSpecific/EatingOut/County/CountyTown.vue';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import { ref } from 'vue';
 
-defineProps<{
-  borough: LondonBoroughPage;
-  // eateries: PaginatedCollection<TownEatery>;
-  // filters: EateryFilters;
-}>();
+defineProps<{ borough: LondonBoroughPage }>();
+
+const areaList = ref<HTMLElement | null>(null);
 </script>
 
 <template>
@@ -53,11 +53,20 @@ defineProps<{
 
   <GoogleAd code="5284484376" />
 
-  <div class="group grid gap-3 md:grid-cols-3">
+  <div
+    ref="areaList"
+    class="group grid gap-3 md:grid-cols-3"
+  >
     <CountyTown
       v-for="area in borough.areas"
       :key="area.name"
       :town="area"
     />
   </div>
+
+  <JumpToContentButton
+    v-if="areaList"
+    :anchor="areaList"
+    label="Jump to Area List"
+  />
 </template>

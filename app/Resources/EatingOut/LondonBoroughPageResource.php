@@ -32,7 +32,7 @@ class LondonBoroughPageResource extends JsonResource
             'county' => new TownCountyResource($county),
             'areas' => new LondonBoroughAreaCollection($this->areas),
             'intro_text' => Str::of((string) $this->intro_text)
-                ->replace($this->town, "<strong>{$this->town}</strong>")
+                ->replaceFirst($this->town, "<strong>{$this->town}</strong>")
                 ->markdown([
                     'renderer' => [
                         'soft_break' => '<br />',

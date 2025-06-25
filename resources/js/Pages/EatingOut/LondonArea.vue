@@ -15,6 +15,7 @@ import { RequestPayload } from '@inertiajs/core';
 import useBrowser from '@/composables/useBrowser';
 import Info from '@/Components/Info.vue';
 import { pluralise } from '@/helpers';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 
 type AlternateArea = {
   borough: string;
@@ -29,6 +30,7 @@ defineProps<{
   filters: EateryFilters;
 }>();
 
+const placeList = ref<HTMLElement | null>(null);
 const landmark: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 const { items, reset } = useInfiniteScrollCollection<TownEatery>(
@@ -153,7 +155,10 @@ const reloadEateries = () => {
       @sidebar-closed="reloadEateries"
     />
 
-    <div class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1">
+    <div
+      ref="placeList"
+      class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1"
+    >
       <Info
         v-if="alternateAreas && alternateAreas.length"
         flex
@@ -198,4 +203,11 @@ const reloadEateries = () => {
       <div ref="landmark" />
     </div>
   </div>
+
+  <JumpToContentButton
+    v-if="placeList"
+    :anchor="placeList"
+    label="Jump to Eatery List"
+    side="left"
+  />
 </template>
