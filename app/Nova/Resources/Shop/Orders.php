@@ -9,6 +9,7 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use App\Nova\Actions\Shop\CancelOrder;
 use App\Nova\Actions\Shop\OpenDispatchSlip;
+use App\Nova\Actions\Shop\RefundOrder;
 use App\Nova\Actions\Shop\ShipOrder;
 use App\Nova\Metrics\ShopDailySales;
 use App\Nova\Metrics\ShopIncome;
@@ -119,6 +120,10 @@ class Orders extends Resource
             CancelOrder::make()
                 ->showInline()
                 ->canRun(fn ($request, ShopOrder $order) => $order->state_id !== OrderState::SHIPPED),
+            RefundOrder::make()
+                ->showInline()
+                ->confirmText('Are you sure you want to refund this order?')
+                ->confirmButtonText('Refund Order'),
             OpenDispatchSlip::make()
                 ->onlyInline()
                 ->withoutConfirmation(),
