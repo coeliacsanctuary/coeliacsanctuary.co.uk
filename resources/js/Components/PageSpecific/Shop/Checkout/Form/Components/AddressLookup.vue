@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import axios, { AxiosResponse } from 'axios';
 import { watchDebounced } from '@vueuse/core';
 import useShopStore from '@/stores/useShopStore';
+import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 
 const props = defineProps<{ address: string }>();
 
+const useMyLocation = ref(false);
+
 const latlng = ref<{ lat?: number; lng?: number }>({});
 
-onMounted(() => {
+const getLocation = () => {
   navigator.geolocation.getCurrentPosition(
     (result) => {
       latlng.value = {
@@ -21,7 +24,7 @@ onMounted(() => {
       enableHighAccuracy: false,
     },
   );
-});
+};
 
 const emits = defineEmits(['setAddress']);
 
@@ -62,12 +65,25 @@ const handleSearch = async () => {
   searchResults.value = request.data;
 };
 
+watch(useMyLocation, () => {
+  getLocation();
+});
+
 watchDebounced(() => props.address, handleSearch, { debounce: 100 });
 </script>
 
 <template>
   <div class="relative">
     <slot />
+
+    <div>
+      <FormCheckbox
+        v-model="useMyLocation"
+        name="foo"
+        label="Use my location to find my address quicker?"
+        layout="left"
+      />
+    </div>
 
     <div
       v-if="

@@ -21,11 +21,26 @@ export type NationwidePage = County & {
   chains: NationwideEatery[];
 };
 
+export type LondonPage = Exclude<CountyPage, 'towns'> & {
+  boroughs: LondonPageBorough[];
+};
+
 export type CountyPageTown = Town & {
   link: string;
   eateries: number;
   attractions: number;
   hotels: number;
+};
+
+export type LondonPageBorough = Exclude<
+  CountyPageTown,
+  'attractions' | 'hotels'
+> & {
+  description: string;
+  latlng: LatLng;
+  locations: number;
+  area_count: number;
+  top_areas: string[];
 };
 
 export type NationwideEatery = {
@@ -42,6 +57,7 @@ export type NationwideEatery = {
   type: string;
   venue_type?: string;
   website?: string;
+  is_fully_gf: boolean;
 };
 
 export type Eatery = {
@@ -77,6 +93,15 @@ export type TownPage = Town & {
   image?: string;
 };
 
+export type LondonBoroughPage = TownPage & {
+  intro_text: string;
+  areas: CountyPageTown[];
+};
+
+export type LondonAreaPage = Exclude<TownPage, 'county'> & {
+  borough: County;
+};
+
 export type EateryFilterItem = CheckboxItem & {
   value: string;
   label: string;
@@ -90,6 +115,7 @@ export type EateryFilters = {
 
 export type TownEatery = Eatery & {
   key: string;
+  is_fully_gf?: boolean;
   link: string;
   type: string;
   venue_type?: string;
@@ -129,6 +155,11 @@ export type EateryNationwideBranch = {
     name: string;
     link: string;
   };
+  area?: {
+    id: number;
+    name: string;
+    link: string;
+  };
 };
 
 export type DetailedEatery = Exclude<TownEatery, 'key'> & {
@@ -151,6 +182,11 @@ export type DetailedEatery = Exclude<TownEatery, 'key'> & {
       count: number;
     }[];
   };
+  area?: {
+    id: number;
+    name: string;
+    link: string;
+  };
   features?: {
     name: string;
     slug: string;
@@ -171,7 +207,9 @@ export type DetailedEatery = Exclude<TownEatery, 'key'> & {
 export type EateryBranchesCollection = {
   [Country: string]: {
     [County: string]: {
-      [Town: string]: EateryNationwideBranch[];
+      [Town: string]: {
+        [Area: string | null]: EateryNationwideBranch[];
+      };
     };
   };
 };

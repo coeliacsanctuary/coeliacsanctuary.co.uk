@@ -80,15 +80,8 @@ onMounted(() => {
 <template>
   <div
     v-show="filters"
-    class="group absolute right-0 bottom-0 z-10 p-4 select-none md:p-6"
+    class="group absolute right-0 bottom-0 z-10 flex flex-row-reverse items-center p-4 select-none md:p-6"
   >
-    <div
-      class="absolute left-0 ml-[-10px] rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:mt-[-38px] xmd:ml-[10px] xmd:text-base md:ml-[8px]"
-      :class="numberOfSetFilters > 0 ? 'mt-[-43px]' : 'mt-[-28px]'"
-    >
-      Filter
-    </div>
-
     <div
       class="relative -ml-3 cursor-pointer rounded-full border-2 border-white bg-secondary p-3 text-white shadow-sm transition md:shadow-lg"
     >
@@ -102,6 +95,12 @@ onMounted(() => {
         class="h-8 w-8 xmd:h-14 xmd:w-14 md:max-xmd:h-12 md:max-xmd:w-12"
         @click="viewSidebar = true"
       />
+    </div>
+
+    <div
+      class="mr-4 rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:text-base"
+    >
+      Filter
     </div>
   </div>
 

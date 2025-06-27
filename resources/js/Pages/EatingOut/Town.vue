@@ -13,6 +13,7 @@ import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollecti
 import GoogleAd from '@/Components/GoogleAd.vue';
 import { RequestPayload } from '@inertiajs/core';
 import useBrowser from '@/composables/useBrowser';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 
 defineProps<{
   town: TownPage;
@@ -20,6 +21,7 @@ defineProps<{
   filters: EateryFilters;
 }>();
 
+const placeList = ref<HTMLElement | null>(null);
 const landmark: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 const { items, reset } = useInfiniteScrollCollection<TownEatery>(
@@ -31,7 +33,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
 const handleFiltersChanged = ({
   filters,
-  preserveState,
+  preserveState = true,
 }: {
   filters: EateryFilters;
   preserveState: boolean;
@@ -70,9 +72,17 @@ const handleFiltersChanged = ({
     }
   }
 
+  const lastScroll = window.scrollY;
+
   router.get(useBrowser().currentPath(), params, {
     preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
     preserveScroll: true,
+    onFinish: () => {
+      // This avoids race conditions with hydration
+      requestAnimationFrame(() => {
+        window.scrollTo(0, lastScroll);
+      });
+    },
   });
 };
 
@@ -135,7 +145,10 @@ const reloadEateries = () => {
       @sidebar-closed="reloadEateries"
     />
 
-    <div class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1">
+    <div
+      ref="placeList"
+      class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1"
+    >
       <template v-if="items.length">
         <EateryCard
           v-for="eatery in items"
@@ -153,4 +166,11 @@ const reloadEateries = () => {
       <div ref="landmark" />
     </div>
   </div>
+
+  <JumpToContentButton
+    v-if="placeList"
+    :anchor="placeList"
+    label="Jump to Eatery List"
+    side="left"
+  />
 </template>

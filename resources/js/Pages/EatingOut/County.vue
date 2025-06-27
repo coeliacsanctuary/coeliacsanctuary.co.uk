@@ -13,12 +13,16 @@ import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 import { Link } from '@inertiajs/vue3';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import Info from '@/Components/Info.vue';
+import { ref } from 'vue';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 
 defineProps<{
   county: CountyPage;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
 }>();
+
+const townList = ref<HTMLElement | null>(null);
 </script>
 
 <template>
@@ -123,7 +127,10 @@ defineProps<{
 
     <GoogleAd code="5284484376" />
 
-    <div class="group grid gap-3 md:grid-cols-3">
+    <div
+      ref="townList"
+      class="group grid gap-3 md:grid-cols-3"
+    >
       <CountyTown
         v-for="town in county.towns"
         :key="town.name"
@@ -131,4 +138,10 @@ defineProps<{
       />
     </div>
   </Card>
+
+  <JumpToContentButton
+    v-if="townList"
+    :anchor="townList"
+    label="Jump to Towns List"
+  />
 </template>

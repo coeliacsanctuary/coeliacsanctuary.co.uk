@@ -7,12 +7,15 @@ import useShopStore from '@/stores/useShopStore';
 import AddressLookup from '@/Components/PageSpecific/Shop/Checkout/Form/Components/AddressLookup.vue';
 import { CheckoutShippingStep } from '@/types/Shop';
 import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
+import { storeToRefs } from 'pinia';
 
 defineProps<{ show: boolean; completed: boolean; error: boolean }>();
 
 const emits = defineEmits(['continue', 'toggle']);
 
 const store = useShopStore();
+
+const { selectedCountry: country } = storeToRefs(store);
 
 const data = reactive({ ...store.shippingDetails });
 
@@ -46,6 +49,33 @@ const handleAddressLookup = (address: CheckoutShippingStep) => {
 };
 
 const addressActive = ref(false);
+
+const postcodeLabel = computed(() => {
+  switch (country.value) {
+    case 'United Kingdom':
+    case 'Republic of Ireland':
+      return 'Postcode';
+    case 'Canada':
+      return 'Postal Code';
+    default:
+      return 'Zipcode';
+  }
+});
+
+const countyLabel = computed(() => {
+  switch (country.value) {
+    case 'United States':
+    case 'Australia':
+      return 'State';
+    case 'United Kingdom':
+    case 'Republic of Ireland':
+      return 'County';
+    case 'New Zealand':
+      return 'Region';
+    default:
+      return 'Province';
+  }
+});
 
 watch(data, () => {
   store.setShippingDetails(data);
@@ -141,7 +171,7 @@ const submitForm = () => {
       <FormInput
         v-model="data.county"
         :error="errors?.county"
-        label="County"
+        :label="countyLabel"
         name="county"
         autocomplete="county"
         borders
@@ -150,7 +180,7 @@ const submitForm = () => {
       <FormInput
         v-model="data.postcode"
         :error="errors?.postcode"
-        label="Postcode"
+        :label="postcodeLabel"
         name="postcode"
         autocomplete="postcode"
         class="flex-1"

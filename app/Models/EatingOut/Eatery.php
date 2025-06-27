@@ -15,6 +15,7 @@ use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
+use App\Schema\EaterySchema;
 use App\Scopes\LiveScope;
 use App\Support\Helpers;
 use Illuminate\Container\Container;
@@ -28,12 +29,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Spatie\SchemaOrg\Restaurant;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
  *
  * @property string | null $average_rating
- * @property string | null $average_expense
+ * @property array{value: string, label: string} | null $average_expense
  * @property bool | null $has_been_rated
  * @property int | null $rating
  * @property int | null $rating_count
@@ -142,6 +144,19 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             return $query->where('id', $value);
         }
 
+        if (app(Request::class)->route('area')) {
+            /** @var EateryArea | string $area */
+            $area = app(Request::class)->route('area');
+            if ( ! $area instanceof EateryArea) {
+                $area = EateryArea::query()->where('slug', $area)->firstOrFail();
+            }
+
+            /** @var Builder<static> $return */
+            $return = $area->liveEateries()->where('slug', $value)->getQuery();
+
+            return $return;
+        }
+
         if (app(Request::class)->route('town')) {
             /** @var EateryTown | string $town */
             $town = app(Request::class)->route('town');
@@ -162,6 +177,16 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     {
         if ($this->county?->slug === 'nationwide') {
             return "/wheretoeat/nationwide/{$this->slug}";
+        }
+
+        if ($this->area) {
+            return '/' . implode('/', [
+                'wheretoeat',
+                'london',
+                $this->town?->slug,
+                $this->area->slug,
+                $this->slug,
+            ]);
         }
 
         return '/' . implode('/', [
@@ -316,12 +341,13 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
                 return "{$this->name} Nationwide Chain";
             }
 
-            return implode(', ', [
+            return implode(', ', array_filter([
                 $this->name,
+                $this->area?->area,
                 $this->town->town,
                 $this->county?->county,
                 $this->country?->country,
-            ]);
+            ]));
         });
     }
 
@@ -380,25 +406,37 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
 
     public function keywords(): array
     {
+        $area = $this->area?->area;
         $town = $this->town?->town;
 
-        return [
+        $kw = [
             $this->name, $this->full_name, "{$this->name} gluten free",
             "gluten free {$town}", "coeliac {$town} eateries", "gluten free {$town} eateries",
             'gluten free places to eat in the uk', "gluten free places to eat in {$town}",
+        ];
+
+        if ($area) {
+            $kw = array_merge($kw, [
+                "gluten free {$area}", "coeliac {$area} eateries", "gluten free {$area} eateries",
+                "gluten free places to eat in {$area}",
+            ]);
+        }
+
+        return array_merge($kw, [
             'gluten free places to eat', 'gluten free cafes', 'gluten free restaurants', 'gluten free uk',
             'places to eat', 'cafes', 'restaurants', 'eating out', 'catering to coeliac', 'eating out uk',
             'gluten free venues', 'gluten free dining', 'gluten free directory', 'gf food',
-        ];
+        ]);
     }
 
     public function toSearchableArray(): array
     {
-        $this->loadMissing(['town', 'county', 'country']);
+        $this->loadMissing(['area', 'town', 'county', 'country']);
 
         return $this->transform([
             'title' => $this->relationLoaded('town') && $this->town ? $this->name . ', ' . $this->town->town : $this->name,
             'location' => $this->relationLoaded('town') && $this->town && $this->relationLoaded('county') && $this->county ? $this->town->town . ', ' . $this->county->county : '',
+            'area' => $this->relationLoaded('area') && $this->area ? $this->area->area : '',
             'town' => $this->relationLoaded('town') && $this->town ? $this->town->town : '',
             'county' => $this->relationLoaded('county') && $this->county ? $this->county->county : '',
             'info' => $this->info,
@@ -430,11 +468,16 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
      */
     protected function makeAllSearchableUsing(Builder $query): Builder
     {
-        return $query->with(['town', 'county', 'country']);
+        return $query->with(['area', 'town', 'county', 'country']);
     }
 
     protected function cacheKey(): string
     {
         return 'eating-out';
+    }
+
+    public function schema(): Restaurant
+    {
+        return EaterySchema::make($this);
     }
 }

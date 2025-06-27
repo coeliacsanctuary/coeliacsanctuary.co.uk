@@ -166,11 +166,11 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
     }
 
     #[Test]
-    public function itLoadsTheReviewImagesRelationship(): void
+    public function itLoadsTheApprovedReviewImagesRelationship(): void
     {
         $image = $this->build(EateryReviewImage::class)->on($this->eatery)->create();
 
-        $this->eatery->setRelation('reviewImages', null);
+        $this->eatery->setRelation('$this->approvedReviewImages', null);
         $this->assertNull($this->eatery->adminReview);
 
         app(LoadCompleteEateryDetailsForRequestAction::class)->handle(
@@ -180,8 +180,8 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
             new NationwideBranch(),
         );
 
-        $this->assertNotNull($this->eatery->reviewImages);
-        $this->assertTrue($image->is($this->eatery->reviewImages->first()));
+        $this->assertNotNull($this->eatery->approvedReviewImages);
+        $this->assertTrue($image->is($this->eatery->approvedReviewImages->first()));
     }
 
     #[Test]

@@ -32,6 +32,8 @@ class Counties extends Resource
 
     public static $title = 'county';
 
+    public static $search = ['county'];
+
     public function fields(NovaRequest $request)
     {
         $countries = EateryCountry::query()

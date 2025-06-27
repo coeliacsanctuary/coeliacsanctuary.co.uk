@@ -86,7 +86,10 @@ const pages = (): Page[] => {
     pageArray.push({ type: 'page', number: props.to, static: true });
   }
 
-  return pageArray;
+  return pageArray.filter(
+    (page, index) =>
+      pageArray.map((page) => page.number).indexOf(page.number) === index,
+  );
 };
 
 const emits = defineEmits(['change']);

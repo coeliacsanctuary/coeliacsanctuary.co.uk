@@ -9,6 +9,7 @@ use App\DataObjects\EatingOut\LatLng;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCountry;
+use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
 use App\Resources\EatingOut\EateryListResource;
@@ -56,6 +57,16 @@ class ShowController
             $latLng = new LatLng($firstResult->lat, $firstResult->lng);
         }
 
+        $countyDetails = null;
+        $county = EateryCounty::query()->where('county', $eaterySearchTerm->term)->first();
+
+        if ($county) {
+            $countyDetails = [
+                'name' => $county->county,
+                'link' => $county->link(),
+            ];
+        }
+
         return $inertia
             ->title("{$eaterySearchTerm->term} - Search Results")
             ->metaImage($getOpenGraphImageForRouteAction->handle('eatery'))
@@ -67,6 +78,7 @@ class ShowController
                 'eateries' => fn () => $eateries,
                 'filters' => fn () => $getFiltersForSearchResults->usingSearchKey($eaterySearchTerm->key)->handle($filters),
                 'latlng' => fn () => $latLng?->toLatLng(),
+                'county' => fn () => $countyDetails,
             ]);
     }
 }

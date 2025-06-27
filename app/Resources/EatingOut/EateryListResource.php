@@ -27,6 +27,11 @@ class EateryListResource extends JsonResource
         /** @var EateryType $eateryType */
         $eateryType = $this->type;
 
+        if ($branch) {
+            /** @phpstan-ignore-next-line  */
+            $this->reviews = $this->reviews->where('nationwide_branch_id', $branch->id);
+        }
+
         return [
             'name' => $this->name,
             'key' => $this->id . ($branch ? '-' . $branch->id : null),
@@ -63,6 +68,7 @@ class EateryListResource extends JsonResource
                 'info' => $restaurant->info,
             ]),
             'info' => $this->info,
+            'is_fully_gf' => $this->features->where('feature', '100% Gluten Free')->isNotEmpty(),
             'location' => [
                 'address' => collect(explode("\n", $this->address))
                     ->map(fn (string $line) => mb_trim($line))

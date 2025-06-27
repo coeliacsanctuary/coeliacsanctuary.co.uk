@@ -17,7 +17,11 @@
 
     <div class="grid grid-cols-2">
         <div class="text-6xl font-coeliac p-8 text-center">
+            @if($town->county?->county === 'London')
+                Eating out Gluten Free in the London borough of {{ $town->town }}
+            @else
             Eating out Gluten Free in {{ $town->town }}
+            @endif
         </div>
         <div class="grid gap-4 font-sans p-6 z-20 @if($width === 4) grid-cols-4 @elseif($width===3) grid-cols-3 @else grid-cols-2 @endif">
             @if($eateries > 0)

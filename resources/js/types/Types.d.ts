@@ -25,6 +25,8 @@ export type SelectBoxItem = FormItem & {
 
 export type CheckboxItem = SelectBoxItem & {
   checked?: boolean;
+  groupBy?: string;
+  originalIndex?: number;
 };
 
 export type Comment = {

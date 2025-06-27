@@ -6,6 +6,7 @@ import CountryList from '@/Components/PageSpecific/EatingOut/Details/Modals/Bran
 import CountyList from '@/Components/PageSpecific/EatingOut/Details/Modals/BranchList/CountyList.vue';
 import TownList from '@/Components/PageSpecific/EatingOut/Details/Modals/BranchList/TownList.vue';
 import BranchList from '@/Components/PageSpecific/EatingOut/Details/Modals/BranchList/BranchList.vue';
+import AreaList from '@/Components/PageSpecific/EatingOut/Details/Modals/BranchList/AreaList.vue';
 
 defineProps<{
   eateryName: string;
@@ -55,16 +56,32 @@ const close = () => {
             :county="<string>county"
           >
             <TownList
-              v-for="(locations, town) in towns"
+              v-for="(areas, town) in towns"
               :key="town"
               :town="<string>town"
             >
-              <BranchList
-                v-for="branch in locations"
-                :key="branch.id"
-                :branch="branch"
-                :eatery-name="eateryName"
-              />
+              <template v-if="Object.keys(areas)[0] !== '_'">
+                <AreaList
+                  v-for="(locations, area) in areas"
+                  :key="area"
+                  :area="<string>area"
+                >
+                  <BranchList
+                    v-for="branch in locations"
+                    :key="branch.id"
+                    :branch="branch"
+                    :eatery-name="eateryName"
+                  />
+                </AreaList>
+              </template>
+              <template v-else>
+                <BranchList
+                  v-for="branch in areas['_']"
+                  :key="branch.id"
+                  :branch="branch"
+                  :eatery-name="eateryName"
+                />
+              </template>
             </TownList>
           </CountyList>
         </CountryList>

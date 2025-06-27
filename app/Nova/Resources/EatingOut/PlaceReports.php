@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\EatingOut;
 
 use App\Models\EatingOut\EateryReport;
+use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -15,6 +16,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -58,6 +60,23 @@ class PlaceReports extends Resource
                 ->hideFromIndex(fn ($foo, EateryReport $report) => $report->eatery->county_id !== 1)
                 ->hideFromDetail(fn ($foo, EateryReport $report) => $report->eatery->county_id !== 1)
                 ->displayUsing(fn (NationwideEateries $eatery) => $eatery->resource->load(['town' => fn (Relation $builder) => $builder->withoutGlobalScopes(), 'county', 'country'])->full_name),
+
+            Select::make('Branch', 'branch_id')
+                ->displayUsingLabels()
+                ->searchable()
+                ->options(
+                    $this
+                        ->resource
+                        ->eatery
+                        ?->nationwideBranches()
+                        ->with(['town', 'county', 'country'])
+                        ->chaperone('eatery')
+                        ->get()
+                        ->mapWithKeys(fn (NationwideBranch $nationwideBranch) => [$nationwideBranch->id => $nationwideBranch->full_name])
+                        ->sort() ?? []
+                ),
+
+            Text::make('User Inputted Branch Name', 'branch_name')->hideFromIndex()->showOnPreview(),
 
             Text::make('Details')
                 ->showOnPreview()

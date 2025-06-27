@@ -52,18 +52,15 @@ const eateryName = (): string => {
         direction: 'left',
       }"
     >
-      <div class="flex items-center justify-between space-x-2">
-        <h1
-          class="font-coeliac text-3xl leading-tight font-semibold lg:mb-2 lg:text-5xl"
-          v-text="eateryName()"
-        />
-
-        <div class="w-10 pt-2 pr-2 text-primary">
+      <div class="flex items-center">
+        <div class="mr-2 w-10 text-primary">
           <Icon
             :name="iconName"
             class="h-10 w-10"
           />
         </div>
+
+        {{ eateryName() }}
       </div>
     </Heading>
 
@@ -111,6 +108,12 @@ const eateryName = (): string => {
         v-if="eatery.town.name !== 'Nationwide'"
         class="1 flex space-x-1 text-xs font-semibold text-grey-darker"
       >
+        <Link
+          v-if="eatery.area"
+          :href="eatery.area.link"
+        >
+          {{ eatery.area.name }},
+        </Link>
         <Link :href="eatery.town.link"> {{ eatery.town.name }}, </Link>
         <Link :href="eatery.county.link">
           {{ eatery.county.name }}

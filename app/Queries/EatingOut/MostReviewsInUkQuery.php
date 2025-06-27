@@ -21,7 +21,7 @@ class MostReviewsInUkQuery
             ->select('wheretoeat.*')
             ->addSelect(DB::raw('avg(rating) as rating'))
             ->addSelect(DB::raw('count(wheretoeat_reviews.wheretoeat_id) as rating_count'))
-            ->with(['county', 'town'])
+            ->with(['county', 'town', 'area'])
             ->groupBy('wheretoeat.id')
             ->orderByRaw($rating)
             ->take(3)

@@ -112,22 +112,24 @@ watch(
               :options="countries"
             />
           </div>
-          <small
-            class="mt-2 block leading-tight xl:text-base"
-            v-text="deliveryEstimate"
-          />
-          <small
-            v-if="selectedCountry > 1"
-            class="mt-2 block font-semibold xl:text-base"
-          >
-            Please note, you may be required to pay any applicable customs
-            charges for any items coming from the UK.
-          </small>
         </dt>
         <dd
           class="shrink-0 text-lg font-semibold lg:max-xl:text-xl xl:text-2xl"
           v-text="postage"
         />
+      </div>
+      <div>
+        <small
+          class="mt-2 block leading-tight xl:text-base"
+          v-text="deliveryEstimate"
+        />
+        <small
+          v-if="selectedCountry > 1"
+          class="mt-2 block font-semibold xl:text-base"
+        >
+          Please note, you may be required to pay any applicable customs charges
+          for any items coming from the UK.
+        </small>
       </div>
       <div
         v-if="discount"

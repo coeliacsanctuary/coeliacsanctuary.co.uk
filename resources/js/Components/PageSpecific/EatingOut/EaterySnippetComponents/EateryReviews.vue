@@ -26,7 +26,6 @@ withDefaults(
         <strong>
           {{ reviews.number }} {{ pluralise('review', reviews.number) }}
         </strong>
-        {{ isBranch ? 'across all branches' : '' }}
       </span>
 
       <StarRating

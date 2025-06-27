@@ -50,6 +50,11 @@ class EateryDetailsResource extends JsonResource
                 'name' => $this->town?->town,
                 'link' => $this->town?->link(),
             ],
+            'area' => $this->area ? [
+                'id' => $this->area_id,
+                'name' => $this->area->area,
+                'link' => $this->area->link(),
+            ] : null,
             'venue_type' => $this->venueType?->venue_type,
             'type' => $this->type?->name,
             'cuisine' => $this->cuisine?->cuisine,
@@ -59,6 +64,7 @@ class EateryDetailsResource extends JsonResource
                 'name' => $restaurant->restaurant_name,
                 'info' => $restaurant->info,
             ]),
+            'is_fully_gf' => $this->features->where('feature', '100% Gluten Free')->isNotEmpty(),
             'info' => $this->info,
             'location' => [
                 'address' => collect(explode("\n", $this->address))
@@ -150,6 +156,11 @@ class EateryDetailsResource extends JsonResource
                 'name' => $branch->town?->town,
                 'link' => $branch->town?->link(),
             ],
+            'area' => $branch->area ? [
+                'id' => $branch->area_id,
+                'name' => $branch->area->area,
+                'link' => $branch->area->link(),
+            ] : null,
             'link' => $branch->link(),
             'location' => [
                 'address' => collect(explode("\n", $branch->address))
@@ -180,8 +191,13 @@ class EateryDetailsResource extends JsonResource
                             ->sortKeys()
                             ->map(
                                 fn (Collection $branches) => $branches
-                                    ->sortBy('name')
-                                    ->map(fn (NationwideBranch $branch) => $this->formatBranch($branch))
+                                    ->groupBy(fn (NationwideBranch $branch) => $branch->area?->area ?? '_') /** @phpstan-ignore-line */
+                                    ->sortKeys()
+                                    ->map(
+                                        fn (Collection $branches) => $branches
+                                            ->sortBy('name')
+                                            ->map(fn (NationwideBranch $branch) => $this->formatBranch($branch))
+                                    )
                             )
                     )
             )

@@ -16,6 +16,7 @@ class StoreController
             $eatery,
             $request->string('details')->toString(),
             $request->has('branch_id') ? $request->integer('branch_id') : null,
+            $request->has('branch_name') ? $request->string('branch_name')->toString() : null,
         );
     }
 }

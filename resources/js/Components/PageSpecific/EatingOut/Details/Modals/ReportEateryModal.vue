@@ -7,11 +7,14 @@ import { ref } from 'vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import useUrl from '@/composables/useUrl';
 import { InertiaForm } from '@/types/Core';
+import FormLookup from '@/Components/Forms/FormLookup.vue';
 
 const props = defineProps<{
   eateryName: string;
   eateryId: number;
   branchId?: number;
+  branchName?: string;
+  isNationwide: boolean;
   show: boolean;
 }>();
 
@@ -21,10 +24,23 @@ const emits = defineEmits(['close']);
 
 const { generateUrl } = useUrl();
 
+const branchName = (): string => {
+  if (props.branchName) {
+    return props.branchName;
+  }
+
+  return '';
+};
+
 const form = useForm('post', generateUrl('report'), {
   details: '',
   branch_id: props.branchId,
-}) as InertiaForm<{ details: string; branch_id?: number }>;
+  ...(props.isNationwide ? { branch_name: branchName() } : null),
+}) as InertiaForm<{
+  details: string;
+  branch_id?: number;
+  branch_name?: string;
+}>;
 
 const close = () => {
   emits('close');
@@ -94,16 +110,51 @@ const submitForm = () => {
               class="mb-5 flex-1"
               @submit.prevent="submitForm()"
             >
+              <div
+                v-if="isNationwide && !branchId"
+                class="mb-4 flex-1"
+              >
+                <input
+                  v-model="form.branch_name"
+                  type="hidden"
+                  name="branchName"
+                />
+
+                <FormLookup
+                  ref="lookup"
+                  label="What branch are you reporting"
+                  :error="form.errors.branch_name"
+                  name=""
+                  borders
+                  :lookup-endpoint="`/api/wheretoeat/${eateryId}/branches`"
+                  :preselect-term="form.branch_name"
+                  :lock="form.branch_name !== ''"
+                  allow-any
+                  fallback-key="name"
+                  required
+                  @unlock="form.branch_name = ''"
+                >
+                  <template #item="{ name }">
+                    <div
+                      class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
+                      @click="form.branch_name = name"
+                      v-html="name"
+                    />
+                  </template>
+                </FormLookup>
+              </div>
+
               <FormTextarea
                 v-model="form.details"
-                label=""
-                hide-label
+                label="Why are you reporting this location?"
                 required
                 name="details"
                 :rows="5"
                 :error="form.errors.details"
+                borders
               />
             </form>
+
             <div class="flex-1 text-center">
               <CoeliacButton
                 as="button"

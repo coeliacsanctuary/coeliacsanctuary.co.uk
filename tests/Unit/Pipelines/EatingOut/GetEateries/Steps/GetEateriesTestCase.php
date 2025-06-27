@@ -8,6 +8,7 @@ use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\LatLng;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryReview;
@@ -20,11 +21,13 @@ use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToEateries;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\ExposeSearchResultEateryIdsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromFiltersAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInLatLngRadiusAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInSearchAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInTownAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesFromFiltersAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInLatLngAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInLondonAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInTownAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\HydrateBranchesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\HydrateEateriesAction;
@@ -46,6 +49,8 @@ abstract class GetEateriesTestCase extends TestCase
     protected EateryCounty $county;
 
     protected EateryTown $town;
+
+    protected EateryArea $area;
 
     protected EaterySearchTerm $eaterySearchTerm;
 
@@ -75,6 +80,7 @@ abstract class GetEateriesTestCase extends TestCase
 
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
         $this->town = EateryTown::query()->withoutGlobalScopes()->first();
+        $this->area = $this->create(EateryArea::class, ['town_id' => $this->town->id]);
 
         $this->build(Eatery::class)
             ->count($this->eateriesToCreate)
@@ -82,6 +88,7 @@ abstract class GetEateriesTestCase extends TestCase
             ->create([
                 'county_id' => $this->county->id,
                 'town_id' => $this->town->id,
+                'area_id' => $this->area->id,
                 'venue_type_id' => EateryVenueType::query()->first()->id,
             ]);
 
@@ -103,6 +110,7 @@ abstract class GetEateriesTestCase extends TestCase
                 ->create([
                     'county_id' => $this->county->id,
                     'town_id' => $this->town->id,
+                    'area_id' => $this->area->id,
                 ]);
         }
     }
@@ -125,6 +133,26 @@ abstract class GetEateriesTestCase extends TestCase
 
         return $toReturn;
     }
+
+    protected function callGetEateriesInAreaAction(Collection $eateries = new Collection(), array $filters = []): ?GetEateriesPipelineData
+    {
+        $toReturn = null;
+
+        $closure = function (GetEateriesPipelineData $pipelineData) use (&$toReturn): void {
+            $toReturn = $pipelineData;
+        };
+
+        $pipelineData = new GetEateriesPipelineData(
+            area: $this->area,
+            filters: $filters,
+            eateries: $eateries,
+        );
+
+        $this->callAction(GetEateriesInAreaAction::class, $pipelineData, $closure);
+
+        return $toReturn;
+    }
+
 
     protected function callGetEateriesFromFiltersAction(Collection $eateries = new Collection(), array $filters = []): ?GetEateriesPipelineData
     {
@@ -208,6 +236,25 @@ abstract class GetEateriesTestCase extends TestCase
         );
 
         $this->callAction(GetNationwideBranchesInTownAction::class, $pipelineData, $closure);
+
+        return $toReturn;
+    }
+
+    protected function callGetBranchesInAreaAction(Collection $eateries = new Collection(), array $filters = []): ?GetEateriesPipelineData
+    {
+        $toReturn = null;
+
+        $closure = function (GetEateriesPipelineData $pipelineData) use (&$toReturn): void {
+            $toReturn = $pipelineData;
+        };
+
+        $pipelineData = new GetEateriesPipelineData(
+            area: $this->area,
+            filters: $filters,
+            eateries: $eateries,
+        );
+
+        $this->callAction(GetNationwideBranchesInLondonAreaAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }

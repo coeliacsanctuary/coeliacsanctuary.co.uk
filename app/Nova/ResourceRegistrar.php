@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova;
 
+use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Countries;
 use App\Nova\Resources\EatingOut\Eateries;
@@ -79,6 +80,7 @@ class ResourceRegistrar
             Countries::class,
             Counties::class,
             Towns::class,
+            Areas::class,
             Reviews::class,
             ReviewImage::class,
             MyPlaces::class,

@@ -6,6 +6,7 @@ namespace App\Support\SiteMap;
 
 use App\Models\Blogs\Blog;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
@@ -63,6 +64,19 @@ class SiteMapGenerator
         );
     }
 
+    /** @return Collection<int, EateryArea> */
+    public function areas(): Collection
+    {
+        return Cache::rememberForever(
+            Config::string('coeliac.cacheable.eating-out.site-map-areas'),
+            fn (): Collection => EateryArea::query()
+                ->with(['town'])
+                ->orderBy('town_id')
+                ->orderBy('area')
+                ->get()
+        );
+    }
+
     /** @return Collection<int, Eatery> */
     public function eateries(): Collection
     {
@@ -70,9 +84,10 @@ class SiteMapGenerator
             Config::string('coeliac.cacheable.eating-out.site-map-eateries'),
             fn (): Collection => Eatery::query()
                 ->where('county_id', '!=', 1)
-                ->with(['county', 'town'])
+                ->with(['county', 'town', 'area'])
                 ->orderBy('county_id')
                 ->orderBy('town_id')
+                ->orderBy('area_id')
                 ->orderBy('name')
                 ->get()
         );

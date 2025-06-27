@@ -50,6 +50,7 @@ const eateryLink = computed(() => {
           :venue-type="eatery.venue_type"
           :website="eatery.website"
           :is-branch="eatery.isNationwideBranch"
+          :is-fully-gf="eatery.is_fully_gf"
         />
 
         <EateryInfoBlock

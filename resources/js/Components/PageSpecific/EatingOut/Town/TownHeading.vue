@@ -2,24 +2,34 @@
 import { DocumentArrowUpIcon, MapIcon } from '@heroicons/vue/24/outline';
 import { Link } from '@inertiajs/vue3';
 import { County } from '@/types/EateryTypes';
+import { computed } from 'vue';
 
 const props = defineProps<{
   name: string;
   county: County;
   latlng: string;
   image?: string;
+  londonBorough?: boolean;
 }>();
+
+const title = computed(() => {
+  if (props.londonBorough) {
+    return `the London borough of ${props.name}`;
+  }
+
+  return `${props.name}, ${props.county.name}`;
+});
 
 const linkCards = [
   {
     title: 'Recommend a place',
-    description: `Do you know somewhere in <span class="font-semibold">${props.name}, ${props.county.name}</span> that offers gluten free that we don't have listed? Let us know!`,
+    description: `Do you know somewhere in <span class="font-semibold">${title.value}</span> that offers gluten free that we don't have listed? Let us know!`,
     icon: DocumentArrowUpIcon,
     href: '/wheretoeat/recommend-a-place',
   },
   {
     title: 'Map',
-    description: `Browse an interactive map of <span class="font-semibold">${props.name}, ${props.county.name}</span> with all of the places we know about marked that offer gluten free!`,
+    description: `Browse an interactive map of <span class="font-semibold">${title.value}</span> with all of the places we know about marked that offer gluten free!`,
     icon: MapIcon,
     href: `/wheretoeat/browse/${props.latlng}/13`,
   },
@@ -37,7 +47,7 @@ const linkCards = [
         <h1
           class="text-xl font-semibold xxs:max-sm:text-lg sm:max-md:text-xl md:max-lg:text-2xl lg:max-xl:text-3xl xl:text-4xl"
         >
-          Gluten Free places to eat in {{ name }}, {{ county.name }}
+          Gluten Free places to eat in {{ title }}
         </h1>
 
         <span

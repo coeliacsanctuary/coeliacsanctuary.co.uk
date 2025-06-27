@@ -12,6 +12,7 @@ import {
 import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import EateryOpeningTimesModal from '@/Components/PageSpecific/EatingOut/Details/Modals/EateryOpeningTimesModal.vue';
+import useScreensize from '@/composables/useScreensize';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -49,6 +50,16 @@ const openText = computed(() => {
 
 <template>
   <ul class="flex flex-wrap items-center gap-2">
+    <div class="w-fit">
+      <span
+        v-if="eatery.is_fully_gf"
+        class="rounded-sm border border-secondary bg-secondary/50 px-2 py-1 text-center text-sm font-semibold"
+      >
+        100%
+        {{ useScreensize().screenIsGreaterThan('xxs') ? 'Gluten Free' : 'GF' }}
+      </span>
+    </div>
+
     <li
       v-if="eatery.county.id > 1 || eatery.branch"
       class="rounded-sm bg-primary-light/25 px-3 py-1 leading-none"

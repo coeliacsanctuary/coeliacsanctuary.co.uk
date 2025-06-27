@@ -6,6 +6,7 @@ namespace Tests\Unit\Services\EatingOut\Filters;
 
 use App\Enums\EatingOut\EateryType;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryReview;
@@ -25,6 +26,8 @@ class GetFiltersTest extends TestCase
 
     protected EateryTown $town;
 
+    protected EateryArea $area;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,12 +36,14 @@ class GetFiltersTest extends TestCase
 
         $this->county = EateryCounty::query()->withoutGlobalScopes()->first();
         $this->town = EateryTown::query()->withoutGlobalScopes()->first();
+        $this->area = $this->create(EateryArea::class, ['town_id' => $this->town->id]);
 
         $this->eateries = $this->build(Eatery::class)
             ->count(5)
             ->create([
                 'county_id' => $this->county->id,
                 'town_id' => $this->town->id,
+                'area_id' => $this->area->id,
                 'venue_type_id' => EateryVenueType::query()->orderBy('venue_type')->first()->id,
             ]);
 

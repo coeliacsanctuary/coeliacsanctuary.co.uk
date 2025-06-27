@@ -9,11 +9,12 @@ use App\Models\EatingOut\EateryReport;
 
 class CreateEateryReportAction
 {
-    public function handle(Eatery $eatery, string $details, ?int $branchId = null): EateryReport
+    public function handle(Eatery $eatery, string $details, ?int $branchId = null, ?string $branchName = null): EateryReport
     {
         return $eatery->reports()->create([
             'details' => $details,
             'branch_id' => $branchId,
+            'branch_name' => $branchName
         ]);
     }
 }

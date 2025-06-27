@@ -26,7 +26,11 @@ const numberOfBranches = computed(() => {
   Object.keys(branches.value).forEach((country: string) => {
     Object.keys(branches.value[country]).forEach((county: string) => {
       Object.keys(branches.value[country][county]).forEach((town: string) => {
-        count += branches.value[country][county][town].length;
+        Object.keys(branches.value[country][county][town]).forEach(
+          (area: string) => {
+            count += branches.value[country][county][town][area].length;
+          },
+        );
       });
     });
   });
@@ -41,17 +45,17 @@ const numberOfBranches = computed(() => {
     :class="$attrs.class"
   >
     <p class="prose max-w-none sm:prose-lg lg:prose-xl">
-      We've currently got
+      Our gluten free eating out guide currently features
       <span
         class="font-semibold"
         v-text="numberOfBranches"
       />
-      {{ pluralise('branch', numberOfBranches) }} for
+      {{ ' ' }}
       <span
         class="font-semibold"
         v-text="eatery.name"
       />
-      listed in our eating guide.
+      {{ pluralise('restaurant', numberOfBranches) }} across the UK.
     </p>
 
     <CoeliacButton

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Jobs\OpenGraphImages;
 
+use App\Actions\OpenGraphImages\GenerateAreaOpenGraphImageAction;
+use App\Models\EatingOut\EateryArea;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GenerateCountyOpenGraphImageAction;
@@ -79,6 +81,7 @@ class CreateEatingOutOpenGraphImageJobTest extends TestCase
         return [
             'county' => [EateryCounty::class, GenerateCountyOpenGraphImageAction::class, true],
             'town' => [EateryTown::class, GenerateTownOpenGraphImageAction::class, true],
+            'area' => [EateryArea::class, GenerateAreaOpenGraphImageAction::class, true],
             'eatery' => [Eatery::class, GenerateEateryOpenGraphImageAction::class, false],
             'nationwide branch' => [NationwideBranch::class, GenerateNationwideBranchOpenGraphImageAction::class, false],
         ];

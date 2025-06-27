@@ -22,13 +22,13 @@ class GetLatestEateriesForHomepageAction
             $key,
             function () {
                 $eateries = Eatery::query()
-                    ->with(['town', 'county', 'town.county', 'country'])
+                    ->with(['town', 'area', 'county', 'town.county', 'country'])
                     ->take(8)
                     ->latest()
                     ->get();
 
                 $branches = NationwideBranch::query()
-                    ->with(['eatery', 'town', 'county', 'town.county', 'country'])
+                    ->with(['eatery', 'area', 'town', 'county', 'town.county', 'country'])
                     ->take(8)
                     ->latest()
                     ->get();
