@@ -57,8 +57,8 @@ class OrderRefundMailableTest extends TestCase
     {
         $data = [
             'order' => fn ($assertionOrder) => $this->assertTrue($this->order->is($assertionOrder)),
-            'refund' => fn($assertionRefund) => $this->assertTrue($this->refund->is($assertionRefund)),
-            'refundReason' => fn($refundReason) => $this->assertEquals('this is the reason', $refundReason),
+            'refund' => fn ($assertionRefund) => $this->assertTrue($this->refund->is($assertionRefund)),
+            'refundReason' => fn ($refundReason) => $this->assertEquals('this is the reason', $refundReason),
             'notifiable' => fn ($customer) => $this->assertTrue($this->order->customer->is($customer)),
             'reason' => fn ($reason) => $this->assertEquals('to let you know your Coeliac Sanctuary order has been cancelled.', $reason),
         ];

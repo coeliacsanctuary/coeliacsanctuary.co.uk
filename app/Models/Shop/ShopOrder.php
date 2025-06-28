@@ -61,6 +61,7 @@ class ShopOrder extends Model
         return $this->hasOne(ShopPayment::class, 'order_id');
     }
 
+    /** @return HasManyThrough<ShopPaymentRefund, ShopPayment, $this> */
     public function refunds(): HasManyThrough
     {
         return $this->hasManyThrough(ShopPaymentRefund::class, ShopPayment::class, 'order_id', 'payment_id');

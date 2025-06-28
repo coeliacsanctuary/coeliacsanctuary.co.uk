@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Actions\Shop;
 
 use App\DataObjects\Shop\RefundOrderDto;
+use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopPayment;
+use App\Models\Shop\ShopPaymentResponse;
 use App\Notifications\Shop\OrderRefundNotification;
 use Stripe\StripeClient;
 
@@ -18,14 +21,20 @@ class RefundOrderAction
 
     public function handle(ShopOrder $order, RefundOrderDto $refundOrderDto): void
     {
-        $chargeId = $order->payment->response->charge_id;
+        /** @var ShopPayment $payment */
+        $payment = $order->payment;
+
+        /** @var ShopPaymentResponse $response */
+        $response = $payment->response;
+
+        $chargeId = $response->charge_id;
 
         $refund = $this->stripeClient->refunds->create([
             'charge_id' => $chargeId,
             'amount' => $refundOrderDto->amount,
         ]);
 
-        $refundModel = $order->payment->refunds()->create([
+        $refundModel = $payment->refunds()->create([
             'refund_id' => $refund->id,
             'amount' => $refundOrderDto->amount,
             'note' => $refundOrderDto->note,
@@ -37,7 +46,10 @@ class RefundOrderAction
         }
 
         if ($refundOrderDto->notifyCustomer) {
-            $order->customer->notify(new OrderRefundNotification($refundModel, $refundOrderDto->reason));
+            /** @var ShopCustomer $customer */
+            $customer = $order->customer;
+
+            $customer->notify(new OrderRefundNotification($refundModel, $refundOrderDto->reason));
         }
     }
 }

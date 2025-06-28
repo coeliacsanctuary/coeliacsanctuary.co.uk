@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Mailables\Shop;
 
 use App\Infrastructure\MjmlMessage;
+use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPaymentRefund;
 
 class OrderRefundMailable extends BaseShopMailable
 {
     public function __construct(protected ShopPaymentRefund $refund, protected string | null $refundReason, protected string $key)
     {
-        parent::__construct($refund->order, $key);
+        /** @var ShopOrder $order */
+        $order = $refund->order;
+
+        parent::__construct($order, $key);
     }
 
     public function toMail(): MjmlMessage

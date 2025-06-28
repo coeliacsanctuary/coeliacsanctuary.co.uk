@@ -6,10 +6,8 @@ namespace App\Notifications\Shop;
 
 use App\Infrastructure\MjmlMessage;
 use App\Infrastructure\Notification;
-use App\Mailables\Shop\OrderCancelledMailable;
 use App\Mailables\Shop\OrderRefundMailable;
 use App\Models\Shop\ShopCustomer;
-use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPaymentRefund;
 use App\Models\User;
 use Illuminate\Notifications\AnonymousNotifiable;
