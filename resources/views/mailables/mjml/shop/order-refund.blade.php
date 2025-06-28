@@ -29,7 +29,7 @@
             </mj-text>
             @if($refundReason)
                 <mj-text mj-class="inner">The reason given for your refund was:</mj-text>
-                <mj-text mj-class="inner">{{ $refundReason }}</mj-text>
+                <mj-text mj-class="inner"><strong>{{ $refundReason }}</strong></mj-text>
             @endif
             <mj-text mj-class="inner" padding-top="10px">
                 Thanks, Alison - Coeliac Sanctuary
@@ -125,13 +125,13 @@
 
         @foreach($order->refunds as $refund)
             <mj-column css-class="force-half-width" width="50%">
-                <mj-text line-height="1.5" padding-top="10px">
-                    @if($loop->first){{ Str::plural('Refund', $order->refunds->count()) }} @else &nbsp; @endif
+                <mj-text line-height="1.5" padding-top="10px" css-class="red-text">
+                    <h4 class="red-text">@if($loop->first){{ Str::plural('Refund', $order->refunds->count()) }} @else &nbsp; @endif</h4>
                 </mj-text>
             </mj-column>
             <mj-column css-class="force-half-width" width="50%">
-                <mj-text line-height="1.5" align="right" padding-top="10px">
-                    -{{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}
+                <mj-text line-height="1.5" align="right" padding-top="10px" css-class="red-text">
+                    <h4 class="red-text">-{{ Helpers::formatMoney(Money::GBP($refund->amount)) }}</h4>
                 </mj-text>
             </mj-column>
         @endforeach
