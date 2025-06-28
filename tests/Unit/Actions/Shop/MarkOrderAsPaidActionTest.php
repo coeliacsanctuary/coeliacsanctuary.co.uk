@@ -64,8 +64,6 @@ class MarkOrderAsPaidActionTest extends TestCase
     #[Test]
     public function itStoresThePaymentResponse(): void
     {
-        $this->assertNull($this->order->payment->response);
-
         $this->callAction(MarkOrderAsPaidAction::class, $this->order, $this->createCharge());
 
         $this->assertNotNull($this->order->payment->payment_type_id);

@@ -15,6 +15,7 @@
 
             @media only screen and (max-width: 480px) { *[class~=hide_on_mobile] { display: none !important;} }
             *[class~=force-half-width] { width:50% !important;}
+            *[class~=red-text] { color:#E53E3E !important;}
         </mj-style>
 
         @stack('head')
@@ -53,12 +54,12 @@
                 </mj-section>
 
                 <mj-section mj-class="yellow" padding="8px 10px" vertical-align="middle">
-                    <mj-column  vertical-align="middle">
+                    <mj-column width="75%"  vertical-align="middle">
                         <mj-text>
                             @yield('header')
                         </mj-text>
                     </mj-column>
-                    <mj-column  vertical-align="middle">
+                    <mj-column width="25%" vertical-align="middle">
                         <mj-text align="right">
                             {{ $date->format('d/m/Y')  }}
                         </mj-text>

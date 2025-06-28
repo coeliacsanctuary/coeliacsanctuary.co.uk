@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Shop\ShopPayment;
-use App\Models\Shop\ShopPaymentResponse;
+use App\Models\Shop\ShopPaymentRefund;
 
-class ShopPaymentResponseFactory extends Factory
+class ShopPaymentRefundFactory extends Factory
 {
-    protected $model = ShopPaymentResponse::class;
+    protected $model = ShopPaymentRefund::class;
 
     public function definition()
     {
         return [
             'payment_id' => Factory::factoryForModel(ShopPayment::class),
-            'charge_id' => $this->faker->uuid,
+            'refund_id' => $this->faker->uuid,
+            'amount' => $this->faker->numberBetween(1, 10),
+            'note' => $this->faker->text,
             'response' => ['foo' => 'bar'],
         ];
     }

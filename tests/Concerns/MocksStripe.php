@@ -10,8 +10,10 @@ use Stripe\Card;
 use Stripe\Charge;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
+use Stripe\Refund;
 use Stripe\Service\ChargeService;
 use Stripe\Service\PaymentIntentService;
+use Stripe\Service\RefundService;
 use Stripe\StripeClient;
 use Tests\TestCase;
 
@@ -94,6 +96,34 @@ trait MocksStripe
             ->once();
 
         $this->getStripeClient()->charges = $charges;
+    }
+
+    protected function mockCreateRefund(string $chargeId, int $amount): Refund
+    {
+        $id = Str::password(12);
+        $token = Str::uuid()->toString();
+
+        $refunds = $this->partialMock(RefundService::class);
+
+        $this->getStripeClient()->refunds = $refunds;
+
+        $refundResponse = Refund::constructFrom([
+            'id' => $id,
+            'amount' => $amount,
+        ]);
+
+        $refunds->shouldReceive('create')
+            ->withArgs(function (array $args) use ($chargeId, $amount) {
+                $this->assertArrayHasKeys(['charge_id', 'amount'], $args);
+                $this->assertEquals($chargeId, $args['charge_id']);
+                $this->assertEquals($amount, $args['amount']);
+
+                return true;
+            })
+            ->andReturn($refundResponse)
+            ->once();
+
+        return $refundResponse;
     }
 
     protected function createCharge(?string $id = null, int $fee = 100): Charge

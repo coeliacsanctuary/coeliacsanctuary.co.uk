@@ -6,6 +6,7 @@ namespace App\Models\Shop;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ShopPayment extends Model
@@ -26,5 +27,11 @@ class ShopPayment extends Model
     public function response(): HasOne
     {
         return $this->hasOne(ShopPaymentResponse::class, 'payment_id');
+    }
+
+    /** @return HasMany<ShopPaymentRefund, $this> */
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(ShopPaymentRefund::class, 'payment_id');
     }
 }
