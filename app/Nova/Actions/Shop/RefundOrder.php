@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Nova\Actions\Shop;
 
+use App\Actions\Shop\RefundOrderAction;
+use App\DataObjects\Shop\RefundOrderDto;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use Illuminate\Support\Collection;
@@ -13,18 +15,27 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class RefundOrder extends DestructiveAction
 {
     /**
-     * Perform the action on the given models.
-     *
-     * @return mixed
+     * @var Collection<int, ShopOrder>
      */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): void
     {
-        //
+        $order = $models->first();
+
+        $dto = new RefundOrderDto(
+            $fields->float('amount') / 100,
+            $fields->string('note')->toString(),
+            $order->state_id >= OrderState::SHIPPED ? false : $fields->boolean('cancel'),
+            $fields->boolean('notify'),
+            $fields->get('reason') ? $fields->string('reason')->toString() : null,
+        );
+
+        app(RefundOrderAction::class)->handle($order, $dto);
     }
 
     /**
@@ -37,7 +48,7 @@ class RefundOrder extends DestructiveAction
         /** @var ShopOrder $order */
         $order = $this->resource;
 
-        if(!$order && $request->has('resources')) {
+        if ( ! $order && $request->has('resources')) {
             $order = ShopOrder::query()->find($request->get('resources')[0]);
         }
 
@@ -59,19 +70,23 @@ class RefundOrder extends DestructiveAction
 
             Currency::make('', 'amount')
                 ->asMinorUnits()
-                ->dependsOn(['refund_type'], fn(Currency $field, NovaRequest $request, FormData $data) => $field->readonly($data->get('refund_type') === 'full'))
+                ->dependsOn(['refund_type'], fn (Currency $field, NovaRequest $request, FormData $data) => $field->readonly($data->get('refund_type') === 'full'))
                 ->default($total)
                 ->max($total)
                 ->fullWidth()
                 ->help("Subtotal: £{$subtotal} / Postage: £{$postage} / Fee: £{$fee}"),
+
+            Textarea::make('Internal Note', 'note')
+                ->rows(2)
+                ->fullWidth(),
 
             Boolean::make('Cancel Order', 'cancel')
                 ->readonly($order->state_id >= OrderState::SHIPPED)
                 ->fullWidth(),
 
             Boolean::make('Notify Customer', 'notify')
-                ->dependsOn(['cancel'], function(Boolean $field, NovaRequest $request, FormData $data) {
-                    if($data->boolean('cancel')) {
+                ->dependsOn(['cancel'], function (Boolean $field, NovaRequest $request, FormData $data): void {
+                    if ($data->boolean('cancel')) {
                         $field->setValue(false);
                         $field->help('Customer will be automatically notified when canceling an order');
                     }
@@ -79,6 +94,19 @@ class RefundOrder extends DestructiveAction
                     $field->readonly($data->boolean('cancel'));
                 })
                 ->fullWidth(),
+
+            Textarea::make('Reason for refund', 'reason')
+                ->fullWidth()
+                ->help('Included on the email to the customer, optional')
+                ->dependsOn(['notify', 'cancel'], function (Textarea $field, NovaRequest $request, FormData $data): void {
+                    if ($data->boolean('cancel')) {
+                        $field->hide();
+                    }
+
+                    if ($data->boolean('notify') === false) {
+                        $field->readonly()->setValue(null);
+                    }
+                }),
         ];
     }
 }

@@ -121,7 +121,9 @@ class Orders extends Resource
                 ->showInline()
                 ->canRun(fn ($request, ShopOrder $order) => $order->state_id !== OrderState::SHIPPED),
             RefundOrder::make()
+                ->sole()
                 ->showInline()
+                ->canRun(fn ($request, ShopOrder $order) => $order->payment->response->charge_id !== null)
                 ->confirmText('Are you sure you want to refund this order?')
                 ->confirmButtonText('Refund Order'),
             OpenDispatchSlip::make()
@@ -147,7 +149,7 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'address', 'items'])
+            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items'])
             ->withCount(['items'])
             ->whereNotIn('state_id', [
                 OrderState::BASKET,
@@ -160,7 +162,7 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'address', 'items']);
+            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items']);
     }
 
     public function authorizedToView(Request $request): bool
