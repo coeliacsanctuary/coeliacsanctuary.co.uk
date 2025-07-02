@@ -44,6 +44,7 @@ class OrderRefundNotificationTest extends TestCase
             ->create();
 
         $this->create(ShopPaymentRefund::class, [
+            'order_id' => $this->order->id,
             'payment_id' => $this->order->payment->id,
         ]);
 

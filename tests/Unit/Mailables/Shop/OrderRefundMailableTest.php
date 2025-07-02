@@ -23,6 +23,7 @@ class OrderRefundMailableTest extends TestCase
 
         $this->order = $this->build(ShopOrder::class)->asShipped()->create();
         $this->refund = $this->create(ShopPaymentRefund::class, [
+            'order_id' => $this->order->id,
             'payment_id' => $this->order->payment->id,
         ]);
     }
