@@ -22,7 +22,7 @@
         size="small"
         @click.stop="confirmCancelOrder()"
       >
-        Cancel Order
+        Cancel and Refund Order
       </Button>
     </template>
 
@@ -33,17 +33,6 @@
       Order Cancelled
     </span>
   </div>
-
-  <ConfirmActionModal
-    :action="actionPayload"
-    :errors="{}"
-    resource-name="orders"
-    :selected-resources="[fieldValue.parent_id]"
-    :show="showCancelModal"
-    :working="working"
-    @close="showCancelModal = false"
-    @confirm="handleCancelOrder()"
-  />
 </template>
 
 <script>
@@ -55,7 +44,6 @@ export default {
   props: ['resourceName', 'field'],
 
   data: () => ({
-    showCancelModal: false,
     working: false,
   }),
 
@@ -77,57 +65,23 @@ export default {
         CANCELLED: 7,
       };
     },
-
-    actionPayload() {
-      return {
-        cancelButtonText: 'Cancel',
-        component: 'confirm-action-modal',
-        confirmButtonText: 'Run Action',
-        confirmText: 'Are you sure you want to run this action?',
-        destructive: true,
-        authorizedToRun: null,
-        name: 'Cancel Order',
-        uriKey: 'cancel-order',
-        fields: [],
-        showOnDetail: true,
-        showOnIndex: true,
-        showOnTableRow: true,
-        standalone: false,
-        modalSize: '2xl',
-        modalStyle: 'window',
-        responseType: 'json',
-        withoutConfirmation: false,
-      };
-    },
   },
 
   methods: {
     confirmCancelOrder() {
-      this.showCancelModal = true;
-    },
+      document
+        .querySelector(
+          `button[dusk="${this.fieldValue.parent_id}-control-selector"]`,
+        )
+        .click();
 
-    handleCancelOrder() {
-      Nova.$progress.start();
+      setTimeout(() => {
+        document.querySelector(`button[data-action-id="refund-order"]`).click();
 
-      const data = new FormData();
-
-      data.append('resources', this.fieldValue.parent_id);
-
-      Nova.request({
-        method: 'post',
-        url: '/nova-api/orders/action',
-        params: this.actionQueryString('cancel-order'),
-        data,
-        responseType: 'json',
-      })
-        .then(async (response) => {
-          this.showCancelModal = false;
-          this.$emit('actionExecuted');
-          Nova.$emit('refresh-resources');
-        })
-        .finally(() => {
-          Nova.$progress.done();
-        });
+        setTimeout(() => {
+          document.querySelector('#cancel-default-boolean-field').click();
+        }, 100);
+      }, 100);
     },
 
     handleShipOrder() {

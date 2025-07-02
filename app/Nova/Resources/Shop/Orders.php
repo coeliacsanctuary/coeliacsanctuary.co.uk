@@ -7,7 +7,6 @@ namespace App\Nova\Resources\Shop;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
-use App\Nova\Actions\Shop\CancelOrder;
 use App\Nova\Actions\Shop\OpenDispatchSlip;
 use App\Nova\Actions\Shop\RefundOrder;
 use App\Nova\Actions\Shop\ShipOrder;
@@ -79,6 +78,8 @@ class Orders extends Resource
             ]),
 
             ShopOrderOpenDispatchSlip::make('', 'id'),
+
+            HasMany::make('Refunds', resource: PaymentRefund::class),
         ];
     }
 
@@ -108,6 +109,8 @@ class Orders extends Resource
 
             HasOne::make('Payment', resource: Payment::class),
 
+            HasMany::make('Refunds', resource: PaymentRefund::class),
+
             HasOneThrough::make('Discount Code', resource: DiscountCode::class),
 
             HasMany::make('Items', resource: OrderItem::class),
@@ -117,13 +120,9 @@ class Orders extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            CancelOrder::make()
-                ->showInline()
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id !== OrderState::SHIPPED),
             RefundOrder::make()
                 ->sole()
                 ->showInline()
-                ->canRun(fn ($request, ShopOrder $order) => $order->payment->response->charge_id !== null)
                 ->confirmText('Are you sure you want to refund this order?')
                 ->confirmButtonText('Refund Order'),
             OpenDispatchSlip::make()

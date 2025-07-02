@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Str;
@@ -61,10 +60,10 @@ class ShopOrder extends Model
         return $this->hasOne(ShopPayment::class, 'order_id');
     }
 
-    /** @return HasManyThrough<ShopPaymentRefund, ShopPayment, $this> */
-    public function refunds(): HasManyThrough
+    /** @return HasMany<ShopPaymentRefund, $this> */
+    public function refunds(): HasMany
     {
-        return $this->hasManyThrough(ShopPaymentRefund::class, ShopPayment::class, 'order_id', 'payment_id');
+        return $this->hasMany(ShopPaymentRefund::class, 'order_id');
     }
 
     /** @return HasMany<ShopOrderItem, $this> */

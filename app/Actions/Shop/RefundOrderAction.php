@@ -10,6 +10,7 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPayment;
 use App\Models\Shop\ShopPaymentResponse;
 use App\Notifications\Shop\OrderRefundNotification;
+use Stripe\Refund;
 use Stripe\StripeClient;
 
 class RefundOrderAction
@@ -29,16 +30,24 @@ class RefundOrderAction
 
         $chargeId = $response->charge_id;
 
-        $refund = $this->stripeClient->refunds->create([
-            'charge_id' => $chargeId,
-            'amount' => $refundOrderDto->amount,
-        ]);
+        /** @var null | Refund  $refund */
+        $refund = null;
+
+        if ($chargeId) {
+            $refund = $this->stripeClient->refunds->create([
+                'charge' => $chargeId,
+                'amount' => $refundOrderDto->amount,
+            ]);
+        }
 
         $refundModel = $payment->refunds()->create([
-            'refund_id' => $refund->id,
+            'order_id' => $order->id,
+            'refund_id' => $refund?->id,
             'amount' => $refundOrderDto->amount,
             'note' => $refundOrderDto->note,
-            'response' => $refund->toJSON(),
+            'response' => $refund?->toJSON(),
+            'created_at' => $refundOrderDto->createdAt,
+            'updated_at' => $refundOrderDto->createdAt,
         ]);
 
         if ($refundOrderDto->cancelOrder) {

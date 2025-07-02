@@ -10,9 +10,11 @@ use App\DataObjects\Shop\RefundOrderDto;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPaymentRefund;
 use App\Notifications\Shop\OrderRefundNotification;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
+use Stripe\Service\RefundService;
 use Tests\Concerns\MocksStripe;
 use Tests\TestCase;
 
@@ -35,11 +37,26 @@ class RefundOrderActionTest extends TestCase
     }
 
     #[Test]
-    public function itRefundsTheOrderInStripe(): void
+    public function itRefundsTheOrderInStripeIfTheOrderHasAStripeChargeId(): void
     {
         $dto = new RefundOrderDto(100, 'foo', false, false, null);
 
         $this->mockCreateRefund($this->order->payment->response->charge_id, 100);
+
+        app(RefundOrderAction::class)->handle($this->order, $dto);
+    }
+
+    #[Test]
+    public function itDoesntRefundTheOrderInStripeIfTheOrderDoesNotHaveAStripeChargeId(): void
+    {
+        $dto = new RefundOrderDto(100, 'foo', false, false, null);
+
+        $this->order->payment->response->update(['charge_id' => null]);
+
+        $refunds = $this->partialMock(RefundService::class);
+        $this->getStripeClient()->refunds = $refunds;
+
+        $refunds->shouldNotReceive('create');
 
         app(RefundOrderAction::class)->handle($this->order, $dto);
     }
@@ -59,7 +76,7 @@ class RefundOrderActionTest extends TestCase
     }
 
     #[Test]
-    public function itStoresTheRefundData(): void
+    public function itStoresTheRefundDataFromStripeIfThereIsAChargeIdOnTheOrder(): void
     {
         $dto = new RefundOrderDto(100, 'foo', false, false, null);
 
@@ -73,6 +90,53 @@ class RefundOrderActionTest extends TestCase
         $this->assertEquals(100, $refundRow->amount);
         $this->assertEquals('foo', $refundRow->note);
         $this->assertEquals($stripeRefund->toJSON(), $refundRow->response);
+    }
+
+    #[Test]
+    public function itCanHandleTheStripeRefundDataNotExistingIfThereWasNoChargeId(): void
+    {
+        $dto = new RefundOrderDto(100, 'foo', false, false, null);
+
+        $this->order->payment->response->update(['charge_id' => null]);
+
+        $refunds = $this->partialMock(RefundService::class);
+        $this->getStripeClient()->refunds = $refunds;
+
+        $refunds->shouldNotReceive('create');
+
+        app(RefundOrderAction::class)->handle($this->order, $dto);
+
+        $refundRow = ShopPaymentRefund::query()->first();
+
+        $this->assertNull($refundRow->refund_id);
+        $this->assertEquals(100, $refundRow->amount);
+        $this->assertEquals('foo', $refundRow->note);
+        $this->assertNull($refundRow->response);
+    }
+
+    #[Test]
+    public function itWillCreateTheRefundRecordUsingTheGivenDateIfOneIsSpecified(): void
+    {
+        $createdAt = Carbon::setTestNow('2025-06-01');
+
+        $dto = new RefundOrderDto(100, 'foo', false, false, null, now());
+
+        $this->order->payment->response->update(['charge_id' => null]);
+
+        $refunds = $this->partialMock(RefundService::class);
+        $this->getStripeClient()->refunds = $refunds;
+
+        $refunds->shouldNotReceive('create');
+
+        app(RefundOrderAction::class)->handle($this->order, $dto);
+
+        $refundRow = ShopPaymentRefund::query()->first();
+
+        $this->assertNull($refundRow->refund_id);
+        $this->assertEquals(100, $refundRow->amount);
+        $this->assertEquals('foo', $refundRow->note);
+        $this->assertNull($refundRow->response);
+        $this->assertTrue($refundRow->created_at->isSameDay('2025-06-01'));
     }
 
     #[Test]

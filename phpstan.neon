@@ -8,6 +8,7 @@ parameters:
   excludePaths:
     - app/Legacy/*
     - app/Nova
+    - tests
   tmpDir: build/phpstan
   checkOctaneCompatibility: true
   checkModelProperties: true

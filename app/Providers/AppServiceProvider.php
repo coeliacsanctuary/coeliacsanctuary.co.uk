@@ -11,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Notifications\Channels\MailChannel as IlluminateMailChannel;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Mjml\Mjml;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(Mjml::class, fn () => Mjml::new());
         $this->app->register(MacroServiceProvider::class);
         $this->app->alias(MailChannel::class, IlluminateMailChannel::class);
     }

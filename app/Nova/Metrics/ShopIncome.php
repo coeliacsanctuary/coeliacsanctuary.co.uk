@@ -30,7 +30,7 @@ class ShopIncome extends Trend
                 'total',
             )
             ->prefix('£')
-            ->transform(fn ($value) => $value / 100)
+            ->transform(fn($value) => $value / 100)
             ->showSumValue();
     }
 

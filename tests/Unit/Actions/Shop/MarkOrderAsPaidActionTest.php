@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\MarkOrderAsPaidAction;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPayment;
+use App\Models\Shop\ShopPaymentResponse;
+use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\Concerns\MocksStripe;
 use Tests\TestCase;
@@ -27,6 +28,8 @@ class MarkOrderAsPaidActionTest extends TestCase
             ->asPending()
             ->has($this->build(ShopPayment::class), 'payment')
             ->create();
+
+        ShopPaymentResponse::truncate();
     }
 
     #[Test]
@@ -64,6 +67,8 @@ class MarkOrderAsPaidActionTest extends TestCase
     #[Test]
     public function itStoresThePaymentResponse(): void
     {
+        $this->assertNull($this->order->payment->response);
+
         $this->callAction(MarkOrderAsPaidAction::class, $this->order, $this->createCharge());
 
         $this->assertNotNull($this->order->payment->payment_type_id);

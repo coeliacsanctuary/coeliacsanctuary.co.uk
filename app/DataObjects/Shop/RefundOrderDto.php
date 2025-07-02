@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\DataObjects\Shop;
 
+use Carbon\Carbon;
+
 readonly class RefundOrderDto
 {
     public function __construct(
@@ -12,6 +14,7 @@ readonly class RefundOrderDto
         public bool $cancelOrder,
         public bool $notifyCustomer,
         public ?string $reason,
+        public Carbon $createdAt = new Carbon(),
     ) {
         //
     }

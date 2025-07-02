@@ -116,25 +116,42 @@
         </mj-column>
 
         <mj-column css-class="force-half-width" width="50%">
-            <mj-text line-height="1.5" padding-top="10px"><h2>Total</h2></mj-text>
+            <mj-text line-height="1.5" padding-top="10px">
+                <h2 @if($order->refunds->isNotEmpty()) style="text-decoration: line-through;" @endif>
+                    Total
+                </h2>
+            </mj-text>
         </mj-column>
         <mj-column css-class="force-half-width" width="50%">
             <mj-text line-height="1.5" align="right" padding-top="10px">
-                <h2>{{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}</h2></mj-text>
+                <h2 @if($order->refunds->isNotEmpty()) style="text-decoration: line-through;" @endif>
+                    {{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}
+                </h2>
+            </mj-text>
         </mj-column>
 
-        @foreach($order->refunds as $refund)
+        @if($order->refunds->isNotEmpty())
+            @foreach($order->refunds as $refund)
+                <mj-column css-class="force-half-width" width="50%">
+                    <mj-text line-height="1.5" padding-top="10px" css-class="red-text">
+                        <h4 class="red-text">@if($loop->first){{ Str::plural('Refund', $order->refunds->count()) }} @else &nbsp; @endif</h4>
+                    </mj-text>
+                </mj-column>
+                <mj-column css-class="force-half-width" width="50%">
+                    <mj-text line-height="1.5" align="right" padding-top="10px" css-class="red-text">
+                        <h4 class="red-text">-{{ Helpers::formatMoney(Money::GBP($refund->amount)) }}</h4>
+                    </mj-text>
+                </mj-column>
+            @endforeach
+
             <mj-column css-class="force-half-width" width="50%">
-                <mj-text line-height="1.5" padding-top="10px" css-class="red-text">
-                    <h4 class="red-text">@if($loop->first){{ Str::plural('Refund', $order->refunds->count()) }} @else &nbsp; @endif</h4>
-                </mj-text>
+                <mj-text line-height="1.5" padding-top="10px"><h2>Total</h2></mj-text>
             </mj-column>
             <mj-column css-class="force-half-width" width="50%">
-                <mj-text line-height="1.5" align="right" padding-top="10px" css-class="red-text">
-                    <h4 class="red-text">-{{ Helpers::formatMoney(Money::GBP($refund->amount)) }}</h4>
-                </mj-text>
+                <mj-text line-height="1.5" align="right" padding-top="10px">
+                    <h2>{{ Helpers::formatMoney(Money::GBP($order->payment->total - $order->refunds->sum('amount'))) }}</h2></mj-text>
             </mj-column>
-        @endforeach
+        @endif
     </mj-section>
     <!-- END: TOTALS -->
 

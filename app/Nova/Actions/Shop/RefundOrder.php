@@ -13,7 +13,9 @@ use Laravel\Nova\Actions\DestructiveAction;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
+use Laravel\Nova\Fields\Heading;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -28,11 +30,12 @@ class RefundOrder extends DestructiveAction
         $order = $models->first();
 
         $dto = new RefundOrderDto(
-            $fields->float('amount') / 100,
+            $fields->integer('amount'),
             $fields->string('note')->toString(),
             $order->state_id >= OrderState::SHIPPED ? false : $fields->boolean('cancel'),
             $fields->boolean('notify'),
             $fields->get('reason') ? $fields->string('reason')->toString() : null,
+            $fields->get('created_at') ? $fields->date('created_at') : now(),
         );
 
         app(RefundOrderAction::class)->handle($order, $dto);
@@ -45,6 +48,8 @@ class RefundOrder extends DestructiveAction
      */
     public function fields(NovaRequest $request): array
     {
+        $this->confirmButtonText = 'Foo';
+
         /** @var ShopOrder $order */
         $order = $this->resource;
 
@@ -61,7 +66,7 @@ class RefundOrder extends DestructiveAction
         $postage = number_format($order->payment->postage / 100, 2);
         $fee = number_format($order->payment->fee / 100, 2);
 
-        return [
+        $baseFields = [
             Select::make('Amount', 'refund_type')
                 ->displayUsingLabels()
                 ->options(['full' => 'Full Amount', 'partial' => 'Partial'])
@@ -79,6 +84,21 @@ class RefundOrder extends DestructiveAction
             Textarea::make('Internal Note', 'note')
                 ->rows(2)
                 ->fullWidth(),
+        ];
+
+        if ( ! $order->payment->response->charge_id) {
+            return [
+                Heading::make('<p class="text-red-500">This order can not be automatically refunded in Stripe, you can only create a manual log of the refund.</p>')->asHtml(),
+
+                ...$baseFields,
+
+                DateTime::make('Refund Date', 'created_at')
+                    ->fullWidth(),
+            ];
+        }
+
+        return [
+            ...$baseFields,
 
             Boolean::make('Cancel Order', 'cancel')
                 ->readonly($order->state_id >= OrderState::SHIPPED)

@@ -6,7 +6,6 @@ namespace App\Models\Shop;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class ShopPaymentRefund extends Model
 {
@@ -16,10 +15,10 @@ class ShopPaymentRefund extends Model
         return $this->belongsTo(ShopPayment::class, 'payment_id');
     }
 
-    /** @return HasOneThrough<ShopOrder, ShopPayment, $this> */
-    public function order(): HasOneThrough
+    /** @return BelongsTo<ShopOrder, $this> */
+    public function order(): BelongsTo
     {
-        return $this->hasOneThrough(ShopOrder::class, ShopPayment::class, 'id', 'id', 'payment_id', 'order_id');
+        return $this->belongsTo(ShopOrder::class, 'order_id');
     }
 
     protected function casts(): array

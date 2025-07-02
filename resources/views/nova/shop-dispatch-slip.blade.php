@@ -144,9 +144,39 @@ use Money\Money;
                 <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->postage)) }}</strong></td>
             </tr>
             <tr>
-                <td colspan="2"><strong>TOTAL COST</strong></td>
-                <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}</strong></td>
+                <td colspan="2">
+                    <strong @if($order->refunds->isNotEmpty()) style="text-decoration: line-through" @endif>
+                        TOTAL COST
+                    </strong>
+                </td>
+                <td>
+                    <strong @if($order->refunds->isNotEmpty()) style="text-decoration: line-through" @endif>
+                        {{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}
+                    </strong>
+                </td>
             </tr>
+            @if($order->refunds->isNotEmpty())
+                @foreach($order->refunds as $refund)
+                    <tr style="color:#E53E3E">
+                        <td colspan="2">
+                            <strong>
+                                @if($loop->first)
+                                    {{ \Illuminate\Support\Str::plural('REFUND', $order->refunds->count() )}}
+                                @else
+                                    &nbsp;
+                                @endif
+                            </strong>
+                        </td>
+                        <td>
+                            <strong>-{{ Helpers::formatMoney(Money::GBP($refund->amount)) }}</strong>
+                        </td>
+                    </tr>
+                @endforeach
+                <tr style="color:#E53E3E">
+                    <td colspan="2"><strong>TOTAL COST</strong></td>
+                    <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->total - $order->refunds->sum('amount'))) }}</strong></td>
+                </tr>
+            @endif
             </tbody>
         </table>
         <hr/>

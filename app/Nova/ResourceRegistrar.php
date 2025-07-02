@@ -42,6 +42,7 @@ use App\Nova\Resources\Shop\OrderReviewItem;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
 use App\Nova\Resources\Shop\Payment;
+use App\Nova\Resources\Shop\PaymentRefund;
 use App\Nova\Resources\Shop\PostageArea;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\ProductPrice;
@@ -99,6 +100,7 @@ class ResourceRegistrar
             Baskets::class,
             Orders::class,
             Payment::class,
+            PaymentRefund::class,
             OrderItem::class,
 
             // Shop Inventory

@@ -114,8 +114,8 @@ trait MocksStripe
 
         $refunds->shouldReceive('create')
             ->withArgs(function (array $args) use ($chargeId, $amount) {
-                $this->assertArrayHasKeys(['charge_id', 'amount'], $args);
-                $this->assertEquals($chargeId, $args['charge_id']);
+                $this->assertArrayHasKeys(['charge', 'amount'], $args);
+                $this->assertEquals($chargeId, $args['charge']);
                 $this->assertEquals($amount, $args['amount']);
 
                 return true;
