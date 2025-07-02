@@ -8,6 +8,7 @@ use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPayment;
+use App\Models\Shop\ShopPaymentResponse;
 use App\Models\Shop\ShopShippingAddress;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -50,7 +51,7 @@ class ShopOrderFactory extends Factory
         return $this
             ->forCustomer($customer)
             ->toAddress($address)
-            ->has(self::factoryForModel(ShopPayment::class), 'payment')
+            ->has(self::factoryForModel(ShopPayment::class)->has(self::factoryForModel(ShopPaymentResponse::class), 'response'), 'payment')
             ->state(fn () => [
                 'state_id' => OrderState::PENDING,
                 'payment_intent_id' => $this->faker->password,
@@ -63,7 +64,7 @@ class ShopOrderFactory extends Factory
         return $this
             ->forCustomer($customer)
             ->toAddress($address)
-            ->has(self::factoryForModel(ShopPayment::class), 'payment')
+            ->has(self::factoryForModel(ShopPayment::class)->has(self::factoryForModel(ShopPaymentResponse::class), 'response'), 'payment')
             ->state(fn () => [
                 'state_id' => OrderState::PAID,
                 'order_key' => random_int(10000000, 99999999),
@@ -75,7 +76,7 @@ class ShopOrderFactory extends Factory
         return $this
             ->forCustomer($customer)
             ->toAddress($address)
-            ->has(self::factoryForModel(ShopPayment::class), 'payment')
+            ->has(self::factoryForModel(ShopPayment::class)->has(self::factoryForModel(ShopPaymentResponse::class), 'response'), 'payment')
             ->state(fn () => [
                 'state_id' => OrderState::SHIPPED,
                 'order_key' => random_int(10000000, 99999999),

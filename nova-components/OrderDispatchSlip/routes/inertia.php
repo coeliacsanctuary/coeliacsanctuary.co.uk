@@ -18,7 +18,7 @@ Route::get('render/{ids?}', function (NovaRequest $request, Dompdf $pdf, $ids = 
             fn (Builder $builder) => $builder->where('state_id', OrderState::PAID),
             fn (Builder $builder) => $builder->whereIn('id', explode(',', $ids))
         )
-        ->with(['items', 'payment', 'address', 'discountCode'])
+        ->with(['items', 'payment', 'address', 'discountCode', 'refunds'])
         ->get();
 
     $pdf->setOptions(new Options(['isRemoteEnabled' => true]))
