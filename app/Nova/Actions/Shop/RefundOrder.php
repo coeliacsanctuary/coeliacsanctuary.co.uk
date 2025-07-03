@@ -48,8 +48,6 @@ class RefundOrder extends DestructiveAction
      */
     public function fields(NovaRequest $request): array
     {
-        $this->confirmButtonText = 'Foo';
-
         /** @var ShopOrder $order */
         $order = $this->resource;
 

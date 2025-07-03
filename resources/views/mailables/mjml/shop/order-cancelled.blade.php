@@ -54,73 +54,7 @@
         </mj-column>
     </mj-section>
 
-    <!-- BEGIN PRODUCTS -->
-    @foreach($order->items as $item)
-        <mj-section margin-bottom="{{ $loop->last ? '0' : '10px' }}">
-            <mj-column width="25%" padding="4px 0">
-                <mj-image
-                    src="{{ $item->product->main_image }}"
-                    fluid-on-mobile="true"
-                    css-class="prod-image"
-                />
-            </mj-column>
-            <mj-column width="60%" padding="4px 0">
-                <mj-text font-size="18px" line-height="1.2">
-                    <a href="{{ $item->product->link }}">{{ $item->quantity }}X {{ $item->product_title }}</a>
-                </mj-text>
-            </mj-column>
-            <mj-column width="15%" padding="4px 0">
-                <mj-text align="right">{{ Helpers::formatMoney(Money::GBP($item->product_price)) }}</mj-text>
-            </mj-column>
-        </mj-section>
-    @endforeach
-    <!-- END: PRODUCTS -->
-
-    <mj-section>
-        <mj-column>
-            <mj-text>
-                <hr color="#DBBC25"></hr>
-            </mj-text>
-        </mj-column>
-    </mj-section>
-
-    <!-- BEGIN: TOTALS -->
-    <mj-section>
-        <mj-column css-class="force-half-width" width="50%">
-            <mj-text line-height="1.5">Subtotal</mj-text>
-        </mj-column>
-        <mj-column css-class="force-half-width" width="50%">
-            <mj-text line-height="1.5"
-                     align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->subtotal)) }}</mj-text>
-        </mj-column>
-
-        @if($order->payment->discount)
-            <mj-column css-class="force-half-width" width="50%">
-                <mj-text line-height="1.5">Discount</mj-text>
-            </mj-column>
-            <mj-column css-class="force-half-width" width="50%">
-                <mj-text line-height="1.5"
-                         align="right">-{{ Helpers::formatMoney(Money::GBP($order->payment->discount)) }}</mj-text>
-            </mj-column>
-        @endif
-
-        <mj-column css-class="force-half-width" width="50%">
-            <mj-text line-height="1.5">Postage</mj-text>
-        </mj-column>
-        <mj-column css-class="force-half-width" width="50%">
-            <mj-text line-height="1.5"
-                     align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->postage)) }}</mj-text>
-        </mj-column>
-
-        <mj-column css-class="force-half-width" width="50%">
-            <mj-text line-height="1.5" padding-top="10px"><h2>Total</h2></mj-text>
-        </mj-column>
-        <mj-column css-class="force-half-width" width="50%">
-            <mj-text line-height="1.5" align="right" padding-top="10px">
-                <h2>{{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}</h2></mj-text>
-        </mj-column>
-    </mj-section>
-    <!-- END: TOTALS -->
+    <x-mjml-shop-order-table :order="$order" />
 
     <mj-section>
         <mj-column>

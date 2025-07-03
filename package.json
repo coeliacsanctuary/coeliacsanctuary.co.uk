@@ -44,7 +44,9 @@
         "build-custom-styles": "cd nova-components/CustomStyles && npm run dev",
         "build-custom-styles-prod": "cd nova-components/CustomStyles && npm run prod",
         "build-apex-charts": "cd nova-components/ApexCharts && npm run dev",
-        "build-apex-charts-prod": "cd nova-components/ApexCharts && npm run prod"
+        "build-apex-charts-prod": "cd nova-components/ApexCharts && npm run prod",
+        "build-shop-generate-resend-slip-button": "cd nova-components/ShopGenerateResendSlipButton && npm run dev",
+        "build-shop-generate-resend-slip-button-prod": "cd nova-components/ShopGenerateResendSlipButton && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",

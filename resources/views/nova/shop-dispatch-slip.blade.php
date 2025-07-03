@@ -123,10 +123,21 @@ use Money\Money;
             </thead>
             <tbody>
             @foreach($order->items as $item)
-                <tr>
+                <tr @if($resend && $overrides->get($item->id, null) === 0) style="text-decoration: line-through" @endif>
                     <td>{{ $item->product_title }}</td>
-                    <td>{{ $item->quantity }}</td>
-                    <td>{{ Helpers::formatMoney(Money::GBP($item->product_price * $item->quantity)) }}</td>
+                    <td>
+                        <span @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
+                            {{ $item->quantity }}
+                        </span>
+                        @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity)
+                            <span style="font-weight: bold; color: #29719f">{{ $overrides->get($item->id ) }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        <span @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
+                            {{ Helpers::formatMoney(Money::GBP($item->product_price * $item->quantity)) }}
+                        </span>
+                    </td>
                 </tr>
             @endforeach
             <tr>
@@ -143,7 +154,7 @@ use Money\Money;
                 <td colspan="2"><strong>Postage</strong></td>
                 <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->postage)) }}</strong></td>
             </tr>
-            <tr>
+            <tr @if($resend) style="text-decoration: line-through" @endif>
                 <td colspan="2">
                     <strong @if($order->refunds->isNotEmpty()) style="text-decoration: line-through" @endif>
                         TOTAL COST
@@ -175,6 +186,20 @@ use Money\Money;
                 <tr style="color:#E53E3E">
                     <td colspan="2"><strong>TOTAL COST</strong></td>
                     <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->total - $order->refunds->sum('amount'))) }}</strong></td>
+                </tr>
+            @endif
+            @if($resend)
+                <tr style="color:#29719f">
+                    <td colspan="2">
+                        <strong>
+                            RESEND - {{ now()->format('jS F Y') }}
+                        </strong>
+                    </td>
+                    <td>
+                        <strong>
+                            {{ Helpers::formatMoney(Money::GBP(0)) }}
+                        </strong>
+                    </td>
                 </tr>
             @endif
             </tbody>

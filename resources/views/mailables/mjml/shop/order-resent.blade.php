@@ -15,10 +15,25 @@
 @endpush
 
 @section('header')
-    <h2 style="padding: 5px 0">Thank you for your order!</h2>
+    <h2 style="padding: 5px 0">Your order has been resent!</h2>
 @endsection
 
 @section('main-content')
+    <mj-section>
+        <mj-column>
+            <mj-text mj-class="inner">Hey {{ $order->address->name }}</mj-text>
+            <mj-text mj-class="inner">
+                Good news! Your recent order at the Coeliac Sanctuary shop has been resent and is on its way to you!
+            </mj-text>
+            <mj-text mj-class="inner">
+                The details of your order can be found below.
+            </mj-text>
+            <mj-text mj-class="inner" padding-top="10px">
+                Thanks again, Alison - Coeliac Sanctuary
+            </mj-text>
+        </mj-column>
+    </mj-section>
+
     <mj-section mj-class="light-section">
         <mj-column>
             <mj-text align="center" padding-bottom="10px"><h2>Order Summary</h2></mj-text>
@@ -39,7 +54,7 @@
         </mj-column>
     </mj-section>
 
-    <x-mjml-shop-order-table :order="$order" />
+    <x-mjml-shop-order-table :order="$order" :overrides="$overrides" resend />
 
     <mj-section>
         <mj-column>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Chartables;
 
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopPaymentRefund;
 use Carbon\Carbon;
 use Jpeters8889\ApexCharts\Chartable;
 
@@ -29,7 +30,12 @@ class Income extends Chartable
                 $total += $order->payment?->total;
             });
 
-        return $total / 100;
+        $refunds = ShopPaymentRefund::query()
+            ->where('created_at', '>=', $startDate)
+            ->where('created_at', '<=', $endDate)
+            ->sum('amount');
+
+        return ($total - $refunds) / 100;
     }
 
     public function defaultDateRange(): string
