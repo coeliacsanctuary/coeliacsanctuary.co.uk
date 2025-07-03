@@ -101,7 +101,10 @@ watch(() => props.term, reset);
     :latlng="latlng"
   />
 
-  <Card class="mt-3 flex flex-col space-y-4">
+  <Card
+    v-if="items.length"
+    class="mt-3 flex flex-col space-y-4"
+  >
     <p class="prose-md prose max-w-none lg:prose-lg">
       In our comprehensive eating out guide, you will find a wide range of
       gluten-free options available at various locations around the UK, from
