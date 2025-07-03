@@ -2,7 +2,7 @@
 import Card from '@/Components/Card.vue';
 import { EateryFilters, LatLng, TownEatery } from '@/types/EateryTypes';
 import Warning from '@/Components/Warning.vue';
-import { PaginatedResponse } from '@/types/GenericTypes';
+import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
 import { Ref, ref, watch } from 'vue';
@@ -14,12 +14,13 @@ import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollecti
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import { Link } from '@inertiajs/vue3';
 import Info from '@/Components/Info.vue';
+import { pluralise } from '@/helpers';
 
 const props = defineProps<{
   term: string;
   range: 1 | 2 | 5 | 10 | 20;
   image: string;
-  eateries: PaginatedResponse<TownEatery>;
+  eateries: PaginatedCollection<TownEatery>;
   filters: EateryFilters;
   latlng?: LatLng;
   county?: { name: string; link: string };
@@ -157,6 +158,13 @@ watch(() => props.term, reset);
       </Info>
 
       <template v-if="items.length">
+        <Info
+          no-icon
+          class="mx-4 !border-0 !py-4 text-center font-semibold !shadow-none xmd:mx-0"
+        >
+          Found {{ eateries.total }} {{ pluralise('result', eateries.total) }}
+        </Info>
+
         <EateryCard
           v-for="eatery in items"
           :key="eatery.link"
