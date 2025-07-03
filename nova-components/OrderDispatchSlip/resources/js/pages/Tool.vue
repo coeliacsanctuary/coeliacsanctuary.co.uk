@@ -43,11 +43,27 @@ export default {
       required: true,
       type: String,
     },
+    resend: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
+    options: {
+      required: false,
+      type: Object,
+      default: null,
+    },
   },
 
   computed: {
     frameSrc() {
-      return '/cs-adm/order-dispatch-slip/render/' + this.id;
+      let url = '/cs-adm/order-dispatch-slip/render/' + this.id;
+
+      if (this.resend && this.options) {
+        url += `?resend=true&options=${JSON.stringify(this.options)}`;
+      }
+
+      return url;
     },
   },
 

@@ -16,7 +16,7 @@ class GetRecipeFiltersForIndexAction
      *
      * @param  class-string<TFilter>  $relation
      * @param  array{features?: string[], meals?: string[], freeFrom?: string[]}  $filters
-     * @return Collection<int, array>
+     * @return Collection<int, array<string, mixed>>
      */
     public function handle(string $relation, array $filters = []): Collection
     {
