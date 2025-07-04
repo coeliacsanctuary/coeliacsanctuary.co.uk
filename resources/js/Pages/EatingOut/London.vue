@@ -144,7 +144,7 @@ const boroughList = ref<HTMLElement | null>(null);
 
   <div
     ref="boroughList"
-    class="group mt-2 grid gap-3 md:grid-cols-2"
+    class="mt-2 grid gap-4 px-4 md:grid-cols-2"
   >
     <LondonBorough
       v-for="borough in london.boroughs"
