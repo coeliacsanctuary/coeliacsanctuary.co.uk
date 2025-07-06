@@ -11,6 +11,7 @@ import { Ref, ref } from 'vue';
 import { formatDate } from '@/helpers';
 import EateryBranchList from '@/Components/PageSpecific/EatingOut/Details/EateryBranchList.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
+import EateryAiOverview from '@/Components/PageSpecific/EatingOut/Details/EateryAiOverview.vue';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -82,6 +83,12 @@ const eateryName = (): string => {
     />
 
     <GoogleAd code="5284484376" />
+
+    <EateryAiOverview
+      :eatery-id="eatery.id"
+      :branch-id="eatery.branch?.id"
+      :eatery-name="eateryName()"
+    />
 
     <EateryAdminReview
       v-if="eatery.reviews.admin_review"
