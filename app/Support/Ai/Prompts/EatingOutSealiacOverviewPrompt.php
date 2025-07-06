@@ -69,7 +69,7 @@ class EatingOutSealiacOverviewPrompt
 
     protected function addAdminReviewIfAvailable(): void
     {
-        if ( ! $this->eatery->adminReview || ($this->branch && $this->eatery->adminReview->branch_id !== $this->branch->id)) {
+        if ( ! $this->eatery->adminReview || ($this->branch && $this->eatery->adminReview->nationwide_branch_id !== $this->branch->id)) {
             return;
         }
 
@@ -173,12 +173,12 @@ class EatingOutSealiacOverviewPrompt
         return $this->eatery->average_expense;
     }
 
-    /** @return Collection<int, string[]> */
+    /** @return Collection<int, EateryReview> */
     protected function reviews(): Collection
     {
         return once(fn () => $this->eatery
             ->reviews
             ->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)
-            ->when($this->branch, fn (Collection $reviews) => $reviews->filter(fn (EateryReview $review) => $review->branch_id === $this->branch->id)));
+            ->when($this->branch, fn (Collection $reviews) => $reviews->filter(fn (EateryReview $review) => $review->nationwide_branch_id === $this->branch?->id)));
     }
 }

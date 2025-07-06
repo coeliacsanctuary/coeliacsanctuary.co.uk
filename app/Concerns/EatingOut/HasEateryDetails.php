@@ -98,6 +98,7 @@ trait HasEateryDetails
     {
         $column = $this instanceof Eatery ? 'wheretoeat_id' : 'nationwide_branch_id';
 
+        /** @phpstan-ignore-next-line  */
         return $this->hasMany(SealiacOverview::class, $column)
             ->when($column === 'wheretoeat_id', fn (Builder $relation) => $relation->whereNull('nationwide_branch_id'));
     }
@@ -107,6 +108,7 @@ trait HasEateryDetails
     {
         $column = $this instanceof Eatery ? 'wheretoeat_id' : 'nationwide_branch_id';
 
+        /** @phpstan-ignore-next-line  */
         return $this->hasOne(SealiacOverview::class, $column)
             ->latestOfMany('created_at', 'sealiacOverviews')
             ->where('invalidated', false)

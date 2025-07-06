@@ -59,7 +59,7 @@ class GetController
                     ],
                 ]),
             ];
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error('Sealiac AI Overview failed', [
                 'message' => $e->getMessage(),
                 'eateryId' => $eatery->id,
