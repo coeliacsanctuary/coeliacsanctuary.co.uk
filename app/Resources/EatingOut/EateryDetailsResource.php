@@ -39,7 +39,7 @@ class EateryDetailsResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'closed_down' => $this->closed_down, // @todo add this to front end
+            'closed_down' => $this->closed_down,
             'county' => [
                 'id' => $this->county_id,
                 'name' => $this->county?->county,
@@ -138,6 +138,7 @@ class EateryDetailsResource extends JsonResource
             'nationwide_branches' => $this->getBranchList(),
             'last_updated' => $this->updated_at,
             'last_updated_human' => $this->updated_at?->diffForHumans(),
+            'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)->count() > 0,
         ];
     }
 

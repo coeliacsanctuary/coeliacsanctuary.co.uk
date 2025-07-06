@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\EatingOut;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\EatingOut\CreateEateryReviewAction;
 use App\Jobs\EatingOut\ProcessReviewImagesJob;
 use App\Models\EatingOut\Eatery;
@@ -12,10 +11,11 @@ use App\Models\EatingOut\EateryReview;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\RequestFactories\EateryCreateReviewRequestFactory;
 use Tests\TestCase;
 
-class CreateEateryReviewsActionTest extends TestCase
+class CreateEateryReviewActionTest extends TestCase
 {
     use WithFaker;
 

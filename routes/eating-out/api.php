@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\EatingOut\RecommendAPlace\StoreController as WhereT
 use App\Http\Controllers\Api\EatingOut\Reports\StoreController as ReportStoreController;
 use App\Http\Controllers\Api\EatingOut\ReviewImages\StoreController as ReviewImagesStoreController;
 use App\Http\Controllers\Api\EatingOut\Reviews\StoreController as ReviewStoreController;
+use App\Http\Controllers\Api\EatingOut\Sealiac\GetController as EaterySealiacController;
 use App\Http\Controllers\Api\EatingOut\SuggestEdits\IndexController as SuggestEditsIndexController;
 use App\Http\Controllers\Api\EatingOut\SuggestEdits\StoreController as SuggestEditsStoreController;
 use App\Http\Controllers\Api\EatingOut\Summary\IndexController as WhereToEatSummaryIndexController;
@@ -55,3 +56,5 @@ Route::post('{eatery}/suggest-edit', SuggestEditsStoreController::class)->name('
 Route::post('{eatery}/reviews', ReviewStoreController::class)->name('api.wheretoeat.reviews.store');
 
 Route::post('{eatery}/report', ReportStoreController::class)->name('api.wheretoeat.report.store');
+
+Route::get('{eatery}/sealiac', EaterySealiacController::class)->name('api.wheretoeat.sealiac.get');
