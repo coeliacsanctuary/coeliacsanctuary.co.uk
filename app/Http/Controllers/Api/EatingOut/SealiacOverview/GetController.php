@@ -15,12 +15,7 @@ class GetController
 {
     public function __invoke(Eatery $eatery, Request $request, GetSealiacEateryOverviewAction $getSealiacEateryOverviewAction): array
     {
-        /*
-         * todo - after front end
-         *
-         * - create endpoint(s)? to recieve thumbs up/thumbs down
-         * - plus test
-         *
+         /*
          * todo - nova
          *
          * - add ai overviews resource
