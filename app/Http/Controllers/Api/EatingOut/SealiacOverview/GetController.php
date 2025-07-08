@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\EatingOut\Sealiac;
+namespace App\Http\Controllers\Api\EatingOut\SealiacOverview;
 
 use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
 use App\Models\EatingOut\Eatery;
@@ -16,14 +16,6 @@ class GetController
     public function __invoke(Eatery $eatery, Request $request, GetSealiacEateryOverviewAction $getSealiacEateryOverviewAction): array
     {
         /*
-         * todo - front end
-         *
-         * - add error handling, if error returned, emit event to Detail page, and hide the Card with v-if
-         * - add large faded quote icons at start and end of overview text
-         * - check these on large screens?
-         * - add whats this button, open modal explaining
-         * - add thumbs up/thumbs down rating section, send axios request then hide block
-         *
          * todo - after front end
          *
          * - create endpoint(s)? to recieve thumbs up/thumbs down
@@ -53,11 +45,14 @@ class GetController
 
         try {
             return [
-                'data' => Str::markdown($getSealiacEateryOverviewAction->handle($eatery, $branch), [
-                    'renderer' => [
-                        'soft_break' => '<br />',
-                    ],
-                ]),
+                'data' => Str::of($getSealiacEateryOverviewAction->handle($eatery, $branch))
+                    ->markdown([
+                        'renderer' => [
+                            'soft_break' => '<br />',
+                        ],
+                    ])
+                    ->replaceFirst('<p>', '<p><span class="quote-elem open"><span>&ldquo;</span></span>')
+                    ->replaceLast('<p>', '<p><span class="quote-elem close"><span>&rdquo;</span></span>'),
             ];
         } catch (Exception $e) {
             Log::error('Sealiac AI Overview failed', [

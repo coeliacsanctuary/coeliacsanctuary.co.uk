@@ -11,6 +11,7 @@ const props = withDefaults(
     background?: boolean;
     onTop?: boolean;
     blur?: boolean;
+    fade?: boolean;
   }>(),
   {
     absolute: true,
@@ -20,6 +21,7 @@ const props = withDefaults(
     background: false,
     onTop: false,
     blur: false,
+    fade: false,
   },
 );
 
@@ -55,6 +57,7 @@ const classes = computed((): string[] => {
     :class="{
       absolute: absolute,
       'bg-black/50': background,
+      'bg-white/60': fade,
       'z-999': onTop,
       'backdrop-blur-xs': blur,
     }"

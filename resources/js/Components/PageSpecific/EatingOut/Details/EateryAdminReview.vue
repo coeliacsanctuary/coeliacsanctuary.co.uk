@@ -8,6 +8,7 @@ import { computed, ref } from 'vue';
 import StarRating from '@/Components/StarRating.vue';
 import ReviewImageGallery from '@/Components/PageSpecific/EatingOut/Shared/ReviewImageGallery.vue';
 import { ucfirst } from '../../../../helpers';
+import SubHeading from '@/Components/SubHeading.vue';
 
 const props = defineProps<{
   eateryName: string;
@@ -59,9 +60,9 @@ const reviewBody = computed(() => {
 
 <template>
   <Card class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8">
-    <h3 class="text-lg font-semibold lg:text-2xl">Our Review</h3>
+    <SubHeading>My review of {{ eateryName }}</SubHeading>
 
-    <div class="flex flex-col space-y-2 lg:space-y-4">
+    <div class="mt-2 flex flex-col space-y-2 lg:space-y-4">
       <ul
         v-if="hasRatings"
         class="mb-2 grid grid-cols-1 gap-1 leading-none xs:grid-cols-2 xs:gap-3 xmd:grid-cols-4 lg:text-lg"

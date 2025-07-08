@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Controllers\Api\EatingOut\Sealiac;
+namespace Tests\Feature\Http\Controllers\Api\EatingOut\SealiacOverview;
 
 use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
 use App\Models\EatingOut\Eatery;
@@ -119,13 +119,21 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsTheResponseOfTheGetSealiacEateryOverviewActionAsTheDataPropertyAsMarkdown(): void
+    public function itReturnsTheResponseOfTheGetSealiacEateryOverviewActionAsTheDataPropertyAsMarkdownWithTheCorrectAdditions(): void
     {
         $this->mock(GetSealiacEateryOverviewAction::class)
             ->shouldReceive('handle')
             ->andReturn('this is the ai overview');
 
-        $this->getJson(route('api.wheretoeat.sealiac.get', $this->eatery))->assertExactJson(['data' => Str::markdown('this is the ai overview')]);
+        $expectedResult = Str::of('this is the ai overview')->markdown([
+            'renderer' => [
+                'soft_break' => '<br />',
+            ],
+        ])
+        ->replaceFirst('<p>', '<p><span class="quote-elem open"><span>&ldquo;</span></span>')
+        ->replaceLast('<p>', '<p><span class="quote-elem close"><span>&rdquo;</span></span>');
+
+        $this->getJson(route('api.wheretoeat.sealiac.get', $this->eatery))->assertExactJson(['data' => $expectedResult]);
     }
 
     #[Test]

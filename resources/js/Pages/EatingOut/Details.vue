@@ -34,6 +34,8 @@ const eateryName = (): string => {
 
   return props.eatery.name;
 };
+
+const shouldShowAiOverview = ref(true);
 </script>
 
 <template>
@@ -85,9 +87,11 @@ const eateryName = (): string => {
     <GoogleAd code="5284484376" />
 
     <EateryAiOverview
+      v-if="eatery.qualifies_for_ai && shouldShowAiOverview"
       :eatery-id="eatery.id"
       :branch-id="eatery.branch?.id"
       :eatery-name="eateryName()"
+      @on-error="shouldShowAiOverview = false"
     />
 
     <EateryAdminReview

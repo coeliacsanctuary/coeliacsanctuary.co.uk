@@ -10,11 +10,6 @@ export default {
   ],
 
   theme: {
-    fontFamily: {
-      sans: ['Raleway', 'ui-sans-serif'],
-      coeliac: ['Hangyaboly', 'ui-sans-serif'],
-    },
-
     extend: {
       colors: {
         primary: {
@@ -53,6 +48,7 @@ export default {
 
         green: {
           DEFAULT: '#00e800',
+          dark: '#17a417',
         },
 
         rss: '#FF6600',
@@ -62,6 +58,11 @@ export default {
         xxs: '400px',
         xs: '500px',
         xmd: '860px',
+      },
+
+      fontFamily: {
+        sans: ['Raleway', 'ui-sans-serif'],
+        coeliac: ['Hangyaboly', 'ui-sans-serif'],
       },
 
       maxWidth: {
