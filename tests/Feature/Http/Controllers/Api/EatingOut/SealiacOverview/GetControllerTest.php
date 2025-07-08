@@ -125,13 +125,14 @@ class GetControllerTest extends TestCase
             ->shouldReceive('handle')
             ->andReturn('this is the ai overview');
 
-        $expectedResult = Str::of('this is the ai overview')->markdown([
-            'renderer' => [
-                'soft_break' => '<br />',
-            ],
-        ])
-        ->replaceFirst('<p>', '<p><span class="quote-elem open"><span>&ldquo;</span></span>')
-        ->replaceLast('<p>', '<p><span class="quote-elem close"><span>&rdquo;</span></span>');
+        $expectedResult = Str::of('this is the ai overview')
+            ->markdown([
+                'renderer' => [
+                    'soft_break' => '<br />',
+                ],
+            ])
+            ->replaceFirst('<p>', '<p><span class="quote-elem open"><span>&ldquo;</span></span>')
+            ->replaceLast('<p>', '<p><span class="quote-elem close"><span>&rdquo;</span></span>');
 
         $this->getJson(route('api.wheretoeat.sealiac.get', $this->eatery))->assertExactJson(['data' => $expectedResult]);
     }
