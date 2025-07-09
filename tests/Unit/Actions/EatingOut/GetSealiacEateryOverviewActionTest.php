@@ -31,12 +31,6 @@ class GetSealiacEateryOverviewActionTest extends TestCase
 
         $this->branch = $this->create(NationwideBranch::class);
 
-        $this->create(EateryReview::class, [
-           'wheretoeat_id' => $this->eatery->id,
-           'nationwide_branch_id' => $this->branch->id,
-           'approved' => true,
-        ]);
-
         OpenAI::fake();
     }
 
@@ -110,6 +104,12 @@ class GetSealiacEateryOverviewActionTest extends TestCase
             ],
         ])]);
 
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $this->eatery->id,
+            'nationwide_branch_id' => $this->branch->id,
+            'approved' => true,
+        ]);
+
         $this->mock(EatingOutSealiacOverviewPrompt::class)
             ->shouldReceive('handle')
             ->withArgs(function ($argEatery, $argBranch) {
@@ -145,6 +145,12 @@ class GetSealiacEateryOverviewActionTest extends TestCase
                 ],
             ],
         ])]);
+
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $this->branch->eatery->id,
+            'nationwide_branch_id' => $this->branch->id,
+            'approved' => true,
+        ]);
 
         $this->mock(EatingOutSealiacOverviewPrompt::class)
             ->shouldReceive('handle')
@@ -184,6 +190,12 @@ class GetSealiacEateryOverviewActionTest extends TestCase
             ],
         ])]);
 
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $this->eatery->id,
+            'nationwide_branch_id' => $this->branch->id,
+            'approved' => true,
+        ]);
+
         $this->mock(EatingOutSealiacOverviewPrompt::class)
             ->shouldReceive('handle')
             ->andReturn('This is the prompt')
@@ -215,6 +227,12 @@ class GetSealiacEateryOverviewActionTest extends TestCase
                 ],
             ],
         ])]);
+
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $this->branch->eatery->id,
+            'nationwide_branch_id' => $this->branch->id,
+            'approved' => true,
+        ]);
 
         $this->mock(EatingOutSealiacOverviewPrompt::class)
             ->shouldReceive('handle')

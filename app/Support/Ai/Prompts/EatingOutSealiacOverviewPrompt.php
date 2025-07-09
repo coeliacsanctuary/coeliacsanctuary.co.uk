@@ -145,7 +145,7 @@ class EatingOutSealiacOverviewPrompt
             $sections[] = "Value for Money: {$review->price['label']}";
         }
 
-        if($review->branch_name && !$this->branch) {
+        if ($review->branch_name && ! $this->branch) {
             $sections[] = "Branch Name: {$review->branch_name}";
         }
 
@@ -174,7 +174,7 @@ class EatingOutSealiacOverviewPrompt
             return $this->branch->full_location;
         }
 
-        if($this->eatery->county->slug === 'nationwide') {
+        if ($this->eatery->county?->slug === 'nationwide') {
             return 'Nationwide Chain';
         }
 

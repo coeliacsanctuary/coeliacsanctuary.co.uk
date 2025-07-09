@@ -15,13 +15,13 @@ class GetController
 {
     public function __invoke(Eatery $eatery, Request $request, GetSealiacEateryOverviewAction $getSealiacEateryOverviewAction): array
     {
-         /*
-         * todo - nova
-         *
-         * - add ai overviews resource
-         * - add relation to eatery/branch resources
-         * - add ability to manually invalidate an overview resource
-         */
+        /*
+        * todo - nova
+        *
+        * - add ai overviews resource
+        * - add relation to eatery/branch resources
+        * - add ability to manually invalidate an overview resource
+        */
 
         $branch = null;
 

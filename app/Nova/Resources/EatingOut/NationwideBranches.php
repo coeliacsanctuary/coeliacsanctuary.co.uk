@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\EatingOut;
 
-use App\Models\Collections\Collection as CollectionModel;
-use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryTown;
@@ -13,7 +11,6 @@ use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
-use Illuminate\Contracts\Database\Eloquent\Builder as BuilderAlias;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -23,7 +20,6 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;

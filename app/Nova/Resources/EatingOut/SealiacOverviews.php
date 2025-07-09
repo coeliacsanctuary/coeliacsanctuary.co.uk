@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\EatingOut;
 
-use App\Models\EatingOut\NationwideBranch;
 use App\Models\EatingOut\SealiacOverview;
 use App\Nova\Actions\EatingOut\InvalidateSealiacOverview;
 use App\Nova\Resource;
