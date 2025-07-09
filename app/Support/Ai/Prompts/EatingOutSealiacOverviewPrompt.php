@@ -25,6 +25,10 @@ class EatingOutSealiacOverviewPrompt
         $this->branch = $branch;
         $this->promptSections = collect();
 
+        $this->eatery->loadMissing(['area', 'town', 'county', 'country', 'adminReview', 'features', 'reviews']);
+        $this->branch?->loadMissing(['area', 'town', 'county', 'country']);
+
+
         $this->preparePromptIntroduction();
         $this->addBaseEateryDetails();
         $this->addAdminReviewIfAvailable();
@@ -43,6 +47,8 @@ class EatingOutSealiacOverviewPrompt
         using the below information and reviews.
 
         Please use a friendly, fun tone.
+
+        If you response includes the phrase gluten free, please spell it without an hyphen, just 'gluten free'
 
         Please return nothing else except your thoughts and feelings in 2 - 3 paragraphs.
         PROMPT);
@@ -139,6 +145,10 @@ class EatingOutSealiacOverviewPrompt
             $sections[] = "Value for Money: {$review->price['label']}";
         }
 
+        if($review->branch_name && !$this->branch) {
+            $sections[] = "Branch Name: {$review->branch_name}";
+        }
+
         return [
             ...$sections,
             "Overall Rating: {$review->rating} out of 5 stars.",
@@ -162,6 +172,10 @@ class EatingOutSealiacOverviewPrompt
     {
         if ($this->branch) {
             return $this->branch->full_location;
+        }
+
+        if($this->eatery->county->slug === 'nationwide') {
+            return 'Nationwide Chain';
         }
 
         return $this->eatery->full_location;

@@ -20,6 +20,13 @@ class SealiacOverview extends Model
     /** @return BelongsTo<NationwideBranch, $this> */
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(NationwideBranch::class, 'wheretoeat_nationwide_branch_id');
+        return $this->belongsTo(NationwideBranch::class, 'nationwide_branch_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'invalidated' => 'boolean',
+        ];
     }
 }

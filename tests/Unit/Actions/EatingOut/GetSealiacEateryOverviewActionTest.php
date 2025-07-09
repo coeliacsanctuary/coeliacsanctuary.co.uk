@@ -6,9 +6,11 @@ namespace Tests\Unit\Actions\EatingOut;
 
 use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\EatingOut\SealiacOverview;
 use App\Support\Ai\Prompts\EatingOutSealiacOverviewPrompt;
+use Exception;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Resources\Chat;
 use OpenAI\Responses\Chat\CreateResponse;
@@ -28,6 +30,12 @@ class GetSealiacEateryOverviewActionTest extends TestCase
         $this->eatery = $this->create(Eatery::class);
 
         $this->branch = $this->create(NationwideBranch::class);
+
+        $this->create(EateryReview::class, [
+           'wheretoeat_id' => $this->eatery->id,
+           'nationwide_branch_id' => $this->branch->id,
+           'approved' => true,
+        ]);
 
         OpenAI::fake();
     }
@@ -76,6 +84,17 @@ class GetSealiacEateryOverviewActionTest extends TestCase
         $this->assertEquals('This is the branch overview', $overview);
 
         OpenAI::assertNothingSent();
+    }
+
+    #[Test]
+    public function itWillThrowAnErrorIfNoReviewsExistWhenThereIsNoExistingRecordInTheDatabase(): void
+    {
+        EateryReview::truncate();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('No reviews found to generate overview');
+
+        app(GetSealiacEateryOverviewAction::class)->handle($this->eatery);
     }
 
     #[Test]

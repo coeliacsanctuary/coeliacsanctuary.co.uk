@@ -8,6 +8,7 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\EatingOut\SealiacOverview;
 use App\Support\Ai\Prompts\EatingOutSealiacOverviewPrompt;
+use Exception;
 use OpenAI\Laravel\Facades\OpenAI;
 
 class GetSealiacEateryOverviewAction
@@ -20,6 +21,15 @@ class GetSealiacEateryOverviewAction
 
         if ($eatery->sealiacOverview) {
             return $eatery->sealiacOverview->overview;
+        }
+
+        $reviewCheck = ($branch ?: $eatery)->reviews()
+            ->where('approved', true)
+            ->whereNot('review', '')
+            ->count();
+
+        if ($reviewCheck === 0) {
+            throw new Exception('No reviews found to generate overview');
         }
 
         $prompt = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery, $branch);

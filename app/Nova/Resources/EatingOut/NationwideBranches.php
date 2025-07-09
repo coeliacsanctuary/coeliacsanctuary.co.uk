@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Nova\Resources\EatingOut;
 
 use App\Models\Collections\Collection as CollectionModel;
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
+use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
+use Illuminate\Contracts\Database\Eloquent\Builder as BuilderAlias;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -20,6 +23,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
@@ -36,6 +40,8 @@ class NationwideBranches extends Resource
     public static $title = 'name';
 
     public static $perPageViaRelationship = 25;
+
+    public static $search = ['id', 'name', 'town', 'county'];
 
     public function authorizedToView(Request $request)
     {
@@ -107,14 +113,14 @@ class NationwideBranches extends Resource
                     ->longitudeField('lng'),
             ]),
 
+            HasMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
+
+            HasMany::make('Reviews', resource: Reviews::class),
+
             HasMany::make('Reports', resource: PlaceReports::class),
         ];
     }
 
-    /**
-     * @param  Builder<CollectionModel>  $query
-     * @return Builder<CollectionModel | Model>
-     */
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query
@@ -126,6 +132,7 @@ class NationwideBranches extends Resource
             ->with(['country', 'county',
                 'town' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
             ])
+            ->withCount(['reviews' => fn (Builder $builder) => $builder->withoutGlobalScopes()])
             ->when($request->missing('orderByDirection'), fn (Builder $builder) => $builder->reorder('order_country')->orderBy('order_county')->orderBy('order_town'));
     }
 
@@ -154,5 +161,18 @@ class NationwideBranches extends Resource
     public static function afterUpdate(NovaRequest $request, Model $model): void
     {
         $model->eatery->touch();
+    }
+
+    public function actions(NovaRequest $request): array
+    {
+        return [
+            GenerateSealiacOverview::make()
+                ->showInline()
+                ->canRun(function (NovaRequest $request, NationwideBranch $model) {
+                    $model->reviews_count ?: $model->loadCount('reviews');
+
+                    return $model->live === true && $model->reviews_count > 0;
+                }),
+        ];
     }
 }

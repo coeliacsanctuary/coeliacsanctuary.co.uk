@@ -98,7 +98,7 @@ class Reviews extends Resource
                 ])->showOnPreview(),
             ]),
 
-            ...($this->resource->eatery->county_id === 1 ? $this->getBranchPanel() : []),
+            ...($this->resource->eatery?->county_id === 1 ? $this->getBranchPanel() : []),
 
             new Panel('Review', [
                 Textarea::make('Review')->showOnPreview(),
@@ -123,7 +123,7 @@ class Reviews extends Resource
 
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->withoutGlobalScopes()->withCount(['images']);
+        return $query->withoutGlobalScopes()->with(['eatery'])->withCount(['images']);
     }
 
     protected function getBranchPanel(): array
