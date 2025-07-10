@@ -16,9 +16,11 @@ use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryOpeningTimes;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
+use App\Models\EatingOut\SealiacOverview;
 use App\Support\Helpers;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
@@ -276,5 +278,60 @@ class EateryTest extends TestCase
 
             $this->assertFalse(Cache::has($key));
         }
+    }
+
+    #[Test]
+    public function itCanHaveManySealiacOverviews(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->build(SealiacOverview::class)
+            ->count(5)
+            ->forEatery($eatery)
+            ->create();
+
+        $this->assertCount(5, $eatery->sealiacOverviews);
+    }
+
+    #[Test]
+    public function itCanGetTheLatestSealiacOverview(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->build(SealiacOverview::class)
+            ->count(5)
+            ->sequence(fn (Sequence $sequence) => [
+                'created_at' => now()->subDays($sequence->index + 1),
+            ])
+            ->forEatery($eatery)
+            ->create();
+
+        $latestOverview = $this->build(SealiacOverview::class)
+            ->forEatery($eatery)
+            ->create();
+
+        $this->assertTrue($latestOverview->is($eatery->sealiacOverview));
+    }
+
+    #[Test]
+    public function itReturnsNullForTheLatestSealiacOverviewIfItIsInvalidated(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->build(SealiacOverview::class)
+            ->count(5)
+            ->sequence(fn (Sequence $sequence) => [
+                'created_at' => now()->subDays($sequence->index + 1),
+            ])
+            ->forEatery($eatery)
+            ->invalidated()
+            ->create();
+
+        $this->build(SealiacOverview::class)
+            ->forEatery($eatery)
+            ->invalidated()
+            ->create();
+
+        $this->assertNull($eatery->sealiacOverview);
     }
 }

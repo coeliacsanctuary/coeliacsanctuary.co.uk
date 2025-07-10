@@ -8,8 +8,8 @@ return [
     'description' => 'Coeliac Sanctuary, more than a gluten free blog | Find gluten free, coeliac safe places to eat, gluten free recipes, blogs, reviews and buy coeliac travel cards and more',
 
     'tags' => [
-        'coeliac sanctuary', 'coeliac', 'celiac', 'coeliac disease', 'blog', 'gluten free blog', 'uk blog',
-        'food blog', 'gluten free food blog', 'gluten intolerance', 'lactose intolerance', 'reviews',
+        'coeliac sanctuary', 'coeliac', 'celiac', 'coeliac disease', 'blog', 'gluten free blog', 'coeliac blog',
+        'uk blog', 'food blog', 'gluten free food blog', 'gluten intolerance', 'lactose intolerance', 'reviews',
         'places to eat', 'gluten free', 'gluten', 'free from', 'free from blog', 'food intolerances',
     ],
 

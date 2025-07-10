@@ -31,7 +31,7 @@ class GetController
         LoadCompleteEateryDetailsForRequestAction $loadCompleteEateryDetailsForRequestAction,
         ComputeEateryBackLinkAction $computeEateryBackLinkAction,
     ): Response {
-        if ($area->exists()) {
+        if ($area->exists) {
             /** @var EateryCounty $county */
             $county = EateryCounty::query()->where('slug', 'london')->first();
 

@@ -202,6 +202,7 @@ export type DetailedEatery = Exclude<TownEatery, 'key'> & {
   last_updated_human: string;
   is_nationwide: boolean;
   nationwide_branches?: EateryBranchesCollection;
+  qualifies_for_ai: boolean;
 };
 
 export type EateryBranchesCollection = {

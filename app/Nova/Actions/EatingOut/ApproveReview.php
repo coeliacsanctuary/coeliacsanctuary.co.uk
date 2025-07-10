@@ -35,6 +35,10 @@ class ApproveReview extends Action
 
             $review->update(['approved' => true]);
 
+            $review->eatery->sealiacOverview?->update([
+                'invalidated' => true,
+            ]);
+
             (new AnonymousNotifiable())
                 ->route('mail', [$review->email => $review->name])
                 ->notify(new EateryReviewApprovedNotification($review));

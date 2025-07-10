@@ -12,6 +12,7 @@ import EateryAddReview from '@/Components/PageSpecific/EatingOut/Details/Reviews
 import { StarRating as StarRatingType } from '@/types/EateryTypes';
 import { router } from '@inertiajs/vue3';
 import EateryReview from '@/Components/PageSpecific/EatingOut/Details/Reviews/EateryReview.vue';
+import SubHeading from '@/Components/SubHeading.vue';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -62,8 +63,10 @@ watch(showAllReviews, (newValue) => {
 
 <template>
   <Card class="lg:rounded-lg lg:p-8">
+    <SubHeading>Visitor reviews from {{ eateryName() }}</SubHeading>
+
     <div
-      class="mx-auto md:grid md:gap-x-8 md:max-xl:grid-cols-3 xl:grid-cols-4"
+      class="mx-auto mt-2 md:grid md:gap-x-8 md:max-xl:grid-cols-3 xl:grid-cols-4"
     >
       <RatingsBreakdown
         :average="eatery.reviews.average"

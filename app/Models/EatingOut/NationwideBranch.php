@@ -203,7 +203,7 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
     /** @return HasManyThrough<EateryReview, Eatery, $this> */
     public function reviews(): HasManyThrough
     {
-        return $this->hasManyThrough(EateryReview::class, Eatery::class, 'id', 'wheretoeat_id', 'id', 'id');
+        return $this->hasManyThrough(EateryReview::class, Eatery::class, 'id', 'wheretoeat_id', 'wheretoeat_id', 'id')->where('nationwide_branch_id', $this->id);
     }
 
     /** @return HasManyThrough<EateryReviewImage, Eatery, $this> */

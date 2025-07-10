@@ -17,6 +17,7 @@ use App\Nova\Resources\EatingOut\PlaceRecommendations;
 use App\Nova\Resources\EatingOut\PlaceReports;
 use App\Nova\Resources\EatingOut\ReviewImage;
 use App\Nova\Resources\EatingOut\Reviews;
+use App\Nova\Resources\EatingOut\SealiacOverviews;
 use App\Nova\Resources\EatingOut\SuggestedEdits;
 use App\Nova\Resources\EatingOut\Towns;
 use App\Nova\Resources\Main\Blog;
@@ -90,6 +91,7 @@ class ResourceRegistrar
             SuggestedEdits::class,
             EaterySearch::class,
             EaterySearchHistory::class,
+            SealiacOverviews::class,
 
             // Search
             SearchResource::class,
