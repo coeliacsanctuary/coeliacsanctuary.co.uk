@@ -22,6 +22,7 @@ class ShowController
             'reviews' => function (HasMany $builder) use ($request) {
                 /** @var HasMany<EateryReview, Eatery> $builder */
                 return $builder->where('approved', 1)
+                    ->where('admin_review', false)
                     ->when($request->has('branchId'), fn (Builder $builder) => $builder->where('nationwide_branch_id', $request->integer('branchId')))
                     ->latest();
             }
