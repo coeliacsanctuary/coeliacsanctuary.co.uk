@@ -9,6 +9,7 @@ use App\Models\EatingOut\EateryReview;
 use App\Resources\EatingOut\EateryAppResource;
 use App\Resources\EatingOut\EateryBrowseDetailsResource;
 use App\Support\Helpers;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 
@@ -18,9 +19,11 @@ class ShowController
     {
         $eatery->load([
             'country', 'county', 'town', 'town.county', 'restaurants', 'venueType', 'type', 'cuisine',
-            'reviews' => function (HasMany $builder) {
+            'reviews' => function (HasMany $builder) use ($request) {
                 /** @var HasMany<EateryReview, Eatery> $builder */
-                return $builder->where('approved', 1)->latest();
+                return $builder->where('approved', 1)
+                    ->when($request->has('branchId'), fn (Builder $builder) => $builder->where('nationwide_branch_id', $request->integer('branchId')))
+                    ->latest();
             }
         ]);
 
