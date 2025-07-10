@@ -29,7 +29,7 @@ class GetSealiacEateryOverviewActionTest extends TestCase
 
         $this->eatery = $this->create(Eatery::class);
 
-        $this->branch = $this->create(NationwideBranch::class);
+        $this->branch = $this->build(NationwideBranch::class)->forEatery($this->eatery)->create();
 
         OpenAI::fake();
     }
@@ -104,7 +104,7 @@ class GetSealiacEateryOverviewActionTest extends TestCase
             ],
         ])]);
 
-        $this->create(EateryReview::class, [
+        $this->build(EateryReview::class)->createQuietly([
             'wheretoeat_id' => $this->eatery->id,
             'nationwide_branch_id' => $this->branch->id,
             'approved' => true,
@@ -146,8 +146,8 @@ class GetSealiacEateryOverviewActionTest extends TestCase
             ],
         ])]);
 
-        $this->create(EateryReview::class, [
-            'wheretoeat_id' => $this->branch->eatery->id,
+        $this->build(EateryReview::class)->createQuietly([
+            'wheretoeat_id' => $this->branch->wheretoeat_id,
             'nationwide_branch_id' => $this->branch->id,
             'approved' => true,
         ]);
@@ -190,7 +190,7 @@ class GetSealiacEateryOverviewActionTest extends TestCase
             ],
         ])]);
 
-        $this->create(EateryReview::class, [
+        $this->build(EateryReview::class)->createQuietly([
             'wheretoeat_id' => $this->eatery->id,
             'nationwide_branch_id' => $this->branch->id,
             'approved' => true,
@@ -228,8 +228,8 @@ class GetSealiacEateryOverviewActionTest extends TestCase
             ],
         ])]);
 
-        $this->create(EateryReview::class, [
-            'wheretoeat_id' => $this->branch->eatery->id,
+        $this->build(EateryReview::class)->createQuietly([
+            'wheretoeat_id' => $this->branch->wheretoeat_id,
             'nationwide_branch_id' => $this->branch->id,
             'approved' => true,
         ]);
