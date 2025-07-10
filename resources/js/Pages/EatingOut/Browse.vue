@@ -160,15 +160,22 @@ const getLatLng = (): LatLng => {
   };
 };
 
+let cancelGetPlaces: Ref<AbortController | undefined> = ref(undefined);
+
 const getPlaces = async (): Promise<EateryBrowseResource[]> => {
+  cancelGetPlaces.value = new AbortController();
+
   const response: AxiosResponse<DataResponse<EateryBrowseResource[]>> =
     await axios.get('/api/wheretoeat/browse', {
+      signal: cancelGetPlaces.value ? cancelGetPlaces.value.signal : undefined,
       params: {
         ...getLatLng(),
         radius: getViewableRadius(),
         ...filtersForUrl.value,
       },
     });
+
+  cancelGetPlaces.value = null;
 
   return response.data.data;
 };
@@ -495,11 +502,6 @@ const parseUrl = () => {
 
 const navigateTo = (latLng: LatLng): void => {
   const coordinates = fromLonLat([latLng.lng, latLng.lat]);
-
-  console.log({
-    current: getLatLng(),
-    new: latLng,
-  });
 
   if (
     getLatLng().lat.toFixed(5) === latLng.lat.toFixed(5) &&
