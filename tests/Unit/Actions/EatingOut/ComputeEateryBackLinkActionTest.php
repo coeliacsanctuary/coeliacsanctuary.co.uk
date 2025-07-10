@@ -10,7 +10,7 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EaterySearchTerm;
 use Database\Seeders\EateryScaffoldingSeeder;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Http\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -230,10 +230,6 @@ class ComputeEateryBackLinkActionTest extends TestCase
 
     protected function setPreviousRoute(string $previousRoute): void
     {
-        URL::shouldReceive('previous')
-            ->andReturn($previousRoute)
-            ->once()
-            ->getMock()
-            ->allows('route');
+        app(Request::class)->headers->set('referer', $previousRoute);
     }
 }

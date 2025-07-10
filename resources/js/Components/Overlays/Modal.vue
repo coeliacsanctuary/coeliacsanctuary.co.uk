@@ -44,11 +44,29 @@ const slots = useSlots();
     @close="emit('close')"
   >
     <div
+      v-if="!slots.header"
       :class="{ hidden: !closeable }"
       class="absolute top-0 right-0 z-50 pt-2 pr-2"
     >
       <button
-        class="rounded-md border border-transparent bg-white/40 text-grey-dark hover:border-grey-dark hover:bg-white/80"
+        class="cursor-pointer rounded-md border border-transparent bg-white/40 text-grey-dark hover:border-grey-dark hover:bg-white/80"
+        type="button"
+        @click="closeOverlay()"
+      >
+        <XMarkIcon class="h-6 w-6" />
+      </button>
+    </div>
+
+    <div
+      v-if="slots.header"
+      class="flex items-center justify-between border-b border-grey-off bg-grey-off-light p-2"
+    >
+      <div class="flex-1">
+        <slot name="header" />
+      </div>
+      <button
+        v-if="closeable"
+        class="cursor-pointer rounded-md border border-grey-dark bg-white/40 text-grey-dark hover:border-grey-dark/50 hover:bg-white/80"
         type="button"
         @click="closeOverlay()"
       >

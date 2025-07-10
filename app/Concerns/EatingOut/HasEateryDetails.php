@@ -9,10 +9,13 @@ use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
+use App\Models\EatingOut\SealiacOverview;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
@@ -88,6 +91,28 @@ trait HasEateryDetails
     public function country(): BelongsTo
     {
         return $this->belongsTo(EateryCountry::class, 'country_id');
+    }
+
+    /** @return HasMany<SealiacOverview, $this> */
+    public function sealiacOverviews(): HasMany
+    {
+        $column = $this instanceof Eatery ? 'wheretoeat_id' : 'nationwide_branch_id';
+
+        /** @phpstan-ignore-next-line  */
+        return $this->hasMany(SealiacOverview::class, $column)
+            ->when($column === 'wheretoeat_id', fn (Builder $relation) => $relation->whereNull('nationwide_branch_id'));
+    }
+
+    /** @return HasOne<SealiacOverview, $this> */
+    public function sealiacOverview(): HasOne
+    {
+        $column = $this instanceof Eatery ? 'wheretoeat_id' : 'nationwide_branch_id';
+
+        /** @phpstan-ignore-next-line  */
+        return $this->hasOne(SealiacOverview::class, $column)
+            ->latestOfMany('created_at', 'sealiacOverviews')
+            ->where('invalidated', false)
+            ->when($column === 'wheretoeat_id', fn (Builder $relation) => $relation->whereNull('nationwide_branch_id'));
     }
 
     /** @return Attribute<string, never> */

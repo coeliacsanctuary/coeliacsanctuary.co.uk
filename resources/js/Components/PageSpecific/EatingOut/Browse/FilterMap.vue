@@ -80,10 +80,10 @@ onMounted(() => {
 <template>
   <div
     v-show="filters"
-    class="group absolute right-0 bottom-0 z-10 flex flex-row-reverse items-center p-4 select-none md:p-6"
+    class="group absolute right-0 bottom-0 z-10 flex flex-row-reverse items-center"
   >
     <div
-      class="relative -ml-3 cursor-pointer rounded-full border-2 border-white bg-secondary p-3 text-white shadow-sm transition md:shadow-lg"
+      class="relative m-4 ml-1 cursor-pointer rounded-full border-2 border-white bg-secondary p-3 text-white shadow-sm transition md:shadow-lg"
     >
       <div
         v-if="numberOfSetFilters > 0"
@@ -98,7 +98,7 @@ onMounted(() => {
     </div>
 
     <div
-      class="mr-4 rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:text-base"
+      class="pointer-events-none absolute right-[5.3rem] rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:right-[7rem] xmd:text-base md:max-xmd:right-[6.5rem]"
     >
       Filter
     </div>

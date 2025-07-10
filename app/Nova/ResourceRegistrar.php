@@ -17,6 +17,7 @@ use App\Nova\Resources\EatingOut\PlaceRecommendations;
 use App\Nova\Resources\EatingOut\PlaceReports;
 use App\Nova\Resources\EatingOut\ReviewImage;
 use App\Nova\Resources\EatingOut\Reviews;
+use App\Nova\Resources\EatingOut\SealiacOverviews;
 use App\Nova\Resources\EatingOut\SuggestedEdits;
 use App\Nova\Resources\EatingOut\Towns;
 use App\Nova\Resources\Main\Blog;
@@ -42,6 +43,7 @@ use App\Nova\Resources\Shop\OrderReviewItem;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
 use App\Nova\Resources\Shop\Payment;
+use App\Nova\Resources\Shop\PaymentRefund;
 use App\Nova\Resources\Shop\PostageArea;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\ProductPrice;
@@ -89,6 +91,7 @@ class ResourceRegistrar
             SuggestedEdits::class,
             EaterySearch::class,
             EaterySearchHistory::class,
+            SealiacOverviews::class,
 
             // Search
             SearchResource::class,
@@ -99,6 +102,7 @@ class ResourceRegistrar
             Baskets::class,
             Orders::class,
             Payment::class,
+            PaymentRefund::class,
             OrderItem::class,
 
             // Shop Inventory

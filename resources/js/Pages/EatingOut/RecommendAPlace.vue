@@ -30,6 +30,8 @@ type FormData = {
 
 defineProps<{
   venueTypes: FormSelectGroup[];
+  previous: string;
+  name: string;
 }>();
 
 const form = useForm<FormData>('post', '/wheretoeat/recommend-a-place', {
@@ -105,7 +107,16 @@ watchDebounced(
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading>Recommend A Place</Heading>
+    <Heading
+      :back-link="{
+        href: previous,
+        label: name,
+        position: 'bottom',
+        direction: 'center',
+      }"
+    >
+      Recommend A Place
+    </Heading>
 
     <template v-if="!hasSubmitted">
       <p class="prose max-w-none md:prose-lg">

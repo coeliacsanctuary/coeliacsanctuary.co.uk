@@ -8,6 +8,7 @@ use App\Models\Collections\Collection as CollectionModel;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryVenueType;
+use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
 use App\Nova\Resources\EatingOut\PolymorphicPanels\EateryFeaturesPolymorphicPanel;
 use Illuminate\Database\Eloquent\Builder;
@@ -93,6 +94,12 @@ class NationwideEateries extends Resource
 
             HasMany::make('Branches', 'nationwideBranches', NationwideBranches::class),
 
+            HasMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
+
+            HasMany::make('Reviews', resource: Reviews::class),
+
+            HasMany::make('Suggested Edits', resource: SuggestedEdits::class),
+
             HasMany::make('Reports', resource: PlaceReports::class),
         ];
     }
@@ -125,5 +132,14 @@ class NationwideEateries extends Resource
             ->get()
             ->mapWithKeys(fn (EateryCuisine $cuisine) => [$cuisine->id => $cuisine->cuisine])
             ->toArray();
+    }
+
+    public function actions(NovaRequest $request): array
+    {
+        return [
+            GenerateSealiacOverview::make()
+                ->showInline()
+                ->canRun(fn (NovaRequest $request, Eatery $model) => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
+        ];
     }
 }

@@ -19,6 +19,8 @@ use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\Recipes\Recipe;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderItem;
+use App\Models\Shop\ShopPaymentRefund;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -42,6 +44,82 @@ Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = nu
         'key' => 'foo',
         'date' => now(),
         'order' => $order,
+        'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'notifiable' => $order->customer,
+        'relatedTitle' => 'products',
+        'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+            title: $product->title,
+            image: $product->main_image,
+            link: $product->link,
+        )),
+    ])->render();
+
+    return Mjml::new()->toHtml($content);
+});
+
+Route::get('/mail/shop/order-refund/{orderId?}', function (?int $orderId = null): string {
+    $order = ShopOrder::query()
+        ->where('state_id', OrderState::PAID)
+        ->with(['items', 'items.product.media', 'payment', 'customer', 'address'])
+        ->when(
+            $orderId,
+            fn (Builder $builder) => $builder->findOrFail($orderId),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $refunds = collect([
+        ShopPaymentRefund::query()->make([
+            'payment_id' => $order->payment->id,
+            'amount' => 50,
+            'note' => 'first',
+            'created_at' => $order->created_at->addHours(2),
+        ]),
+        ShopPaymentRefund::query()->make([
+            'payment_id' => $order->payment->id,
+            'amount' => 100,
+            'note' => 'second',
+            'created_at' => $order->created_at->addHours(3),
+        ]),
+    ]);
+
+    $order->setRelation('refunds', $refunds);
+
+    $content = view('mailables.mjml.shop.order-refund', [
+        'key' => 'foo',
+        'date' => now(),
+        'order' => $order,
+        'refund' => $refunds->first(),
+        'refundReason' => 'To test the refund email',
+        'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'notifiable' => $order->customer,
+        'relatedTitle' => 'products',
+        'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+            title: $product->title,
+            image: $product->main_image,
+            link: $product->link,
+        )),
+    ])->render();
+
+    return Mjml::new()->toHtml($content);
+});
+
+Route::get('/mail/shop/order-resent/{orderId?}', function (?int $orderId = null): string {
+    $order = ShopOrder::query()
+        ->where('state_id', '>=', OrderState::PAID)
+        ->with(['items', 'items.product.media', 'payment', 'customer', 'address'])
+        ->when(
+            $orderId,
+            fn (Builder $builder) => $builder->findOrFail($orderId),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $overrides = collect([$order->items->random()])->mapWithKeys(fn (ShopOrderItem $item) => [$item->id => $item->quantity - 1]);
+
+    $content = view('mailables.mjml.shop.order-resent', [
+        'key' => 'foo',
+        'date' => now(),
+        'order' => $order,
+        'overrides' => $overrides,
         'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
         'notifiable' => $order->customer,
         'relatedTitle' => 'products',

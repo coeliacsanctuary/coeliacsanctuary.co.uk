@@ -53,14 +53,17 @@ const eateryName = (): string => {
       }"
     >
       <div class="flex items-center">
-        <div class="mr-2 w-10 text-primary">
+        <div class="mr-4 w-10 text-primary">
           <Icon
             :name="iconName"
             class="h-10 w-10"
           />
         </div>
 
-        {{ eateryName() }}
+        <span
+          class="text-left"
+          v-text="eateryName()"
+        />
       </div>
     </Heading>
 

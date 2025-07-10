@@ -7,8 +7,9 @@ namespace App\Nova\Resources\Shop;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
-use App\Nova\Actions\Shop\CancelOrder;
 use App\Nova\Actions\Shop\OpenDispatchSlip;
+use App\Nova\Actions\Shop\RefundOrder;
+use App\Nova\Actions\Shop\ResendOrder;
 use App\Nova\Actions\Shop\ShipOrder;
 use App\Nova\Metrics\ShopDailySales;
 use App\Nova\Metrics\ShopIncome;
@@ -78,6 +79,8 @@ class Orders extends Resource
             ]),
 
             ShopOrderOpenDispatchSlip::make('', 'id'),
+
+            HasMany::make('Refunds', resource: PaymentRefund::class),
         ];
     }
 
@@ -107,6 +110,8 @@ class Orders extends Resource
 
             HasOne::make('Payment', resource: Payment::class),
 
+            HasMany::make('Refunds', resource: PaymentRefund::class),
+
             HasOneThrough::make('Discount Code', resource: DiscountCode::class),
 
             HasMany::make('Items', resource: OrderItem::class),
@@ -116,9 +121,11 @@ class Orders extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            CancelOrder::make()
+            RefundOrder::make()
+                ->sole()
                 ->showInline()
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id !== OrderState::SHIPPED),
+                ->confirmText('Are you sure you want to refund this order?')
+                ->confirmButtonText('Refund Order'),
             OpenDispatchSlip::make()
                 ->onlyInline()
                 ->withoutConfirmation(),
@@ -126,6 +133,11 @@ class Orders extends Resource
                 ->showInline()
                 ->withoutConfirmation()
                 ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::READY),
+            ResendOrder::make()
+                ->sole()
+                ->confirmButtonText('Resend Order')
+                ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::SHIPPED),
+
         ];
     }
 
@@ -142,7 +154,7 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'address', 'items'])
+            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items'])
             ->withCount(['items'])
             ->whereNotIn('state_id', [
                 OrderState::BASKET,
@@ -155,7 +167,7 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'address', 'items']);
+            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items']);
     }
 
     public function authorizedToView(Request $request): bool

@@ -56,6 +56,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
         'lat' => 'float',
         'lng' => 'float',
         'live' => 'bool',
+        'closed_down' => 'bool',
     ];
 
     protected $table = 'wheretoeat';

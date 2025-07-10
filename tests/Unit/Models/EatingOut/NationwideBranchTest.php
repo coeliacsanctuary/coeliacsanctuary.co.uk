@@ -15,7 +15,9 @@ use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
+use App\Models\EatingOut\SealiacOverview;
 use Database\Seeders\EateryScaffoldingSeeder;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -223,5 +225,60 @@ class NationwideBranchTest extends TestCase
 
             $this->assertFalse(Cache::has($key));
         }
+    }
+
+    #[Test]
+    public function itCanHaveManySealiacOverviews(): void
+    {
+        $branch = $this->create(NationwideBranch::class);
+
+        $this->build(SealiacOverview::class)
+            ->count(5)
+            ->forNationwideBranch($branch)
+            ->create();
+
+        $this->assertCount(5, $branch->sealiacOverviews);
+    }
+
+    #[Test]
+    public function itCanGetTheLatestSealiacOverview(): void
+    {
+        $branch = $this->create(NationwideBranch::class);
+
+        $this->build(SealiacOverview::class)
+            ->count(5)
+            ->sequence(fn (Sequence $sequence) => [
+                'created_at' => now()->subDays($sequence->index + 1),
+            ])
+            ->forNationwideBranch($branch)
+            ->create();
+
+        $latestOverview = $this->build(SealiacOverview::class)
+            ->forNationwideBranch($branch)
+            ->create();
+
+        $this->assertTrue($latestOverview->is($branch->sealiacOverview));
+    }
+
+    #[Test]
+    public function itReturnsNullForTheLatestSealiacOverviewIfItIsInvalidated(): void
+    {
+        $branch = $this->create(NationwideBranch::class);
+
+        $this->build(SealiacOverview::class)
+            ->count(5)
+            ->sequence(fn (Sequence $sequence) => [
+                'created_at' => now()->subDays($sequence->index + 1),
+            ])
+            ->forNationwideBranch($branch)
+            ->invalidated()
+            ->create();
+
+        $this->build(SealiacOverview::class)
+            ->forNationwideBranch($branch)
+            ->invalidated()
+            ->create();
+
+        $this->assertNull($branch->sealiacOverview);
     }
 }

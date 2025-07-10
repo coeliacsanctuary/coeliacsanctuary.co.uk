@@ -11,9 +11,11 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
+use App\Models\User;
 use App\Pipelines\EatingOut\DetermineNationwideBranchFromName\DetermineNationwideBranchFromNamePipeline;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -184,6 +186,15 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
+    public function itErrorsWithoutAReviewFieldThatIsTooLong(callable $route, callable $data, callable $before): void
+    {
+        $before($this);
+
+        $this->submitForm($route, $data([], $this)->state(['review' => Str::random(1501)])->create())->assertSessionHasErrors('review');
+    }
+
+    #[Test]
+    #[DataProvider('routesToVisit')]
     public function itErrorsWithAnInvalidFoodRatingValue(callable $route, callable $data, callable $before): void
     {
         $before($this);
@@ -255,11 +266,44 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
+    public function itErrorsIfSubmittingWithAdminReviewWithoutAUser(callable $route, callable $data, callable $before): void
+    {
+        $before($this);
+
+        $this->submitForm($route, $data(['admin_review' => 'foo'], $this)->create())->assertSessionHasErrors('admin_review');
+        $this->submitForm($route, $data(['admin_review' => false], $this)->create())->assertSessionHasErrors('admin_review');
+        $this->submitForm($route, $data(['admin_review' => true], $this)->create())->assertSessionHasErrors('admin_review');
+    }
+
+    #[Test]
+    #[DataProvider('routesToVisit')]
     public function itReturnsOk(callable $route, callable $data, callable $before): void
     {
         $before($this);
 
         $this->submitForm($route, $data([], $this)->create())->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    #[DataProvider('routesToVisit')]
+    public function itReturnsOkWithAdminReviewWhenLoggedIn(callable $route, callable $data, callable $before): void
+    {
+        $before($this);
+
+        $this->actingAs($this->create(User::class));
+
+        $this->submitForm($route, $data(['admin_review' => true], $this)->create())->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    #[DataProvider('routesToVisit')]
+    public function itReturnsOkWithAdminReviewWhenLoggedInAndAllowsNoLimitOnTheReviewBody(callable $route, callable $data, callable $before): void
+    {
+        $before($this);
+
+        $this->actingAs($this->create(User::class));
+
+        $this->submitForm($route, $data(['admin_review' => true, 'review' => Str::random(2000)], $this)->create())->assertSessionHasNoErrors();
     }
 
     #[Test]
@@ -305,6 +349,37 @@ class StoreControllerTest extends TestCase
         $review = EateryReview::query()->withoutGlobalScopes()->first();
 
         $this->assertFalse($review->approved);
+        $this->assertEquals(4, $review->rating);
+        $this->assertEquals('Foo Bar', $review->name);
+        $this->assertEquals('foo@bar.com', $review->email);
+
+        $after($this, $review);
+    }
+
+    #[Test]
+    #[DataProvider('routesToVisit')]
+    public function itCreatesAFullRatingThatIsApprovedWhenLoggedInAsAnAdminWithTheFlagSet(callable $route, callable $data, callable $before, callable $after): void
+    {
+        $before($this);
+
+        $this->actingAs($this->create(User::class));
+
+        $this->assertEmpty($this->eatery->reviews);
+
+        $this->submitForm($route, $data([], $this)
+            ->state([
+                'rating' => 4,
+                'name' => 'Foo Bar',
+                'email' => 'foo@bar.com',
+                'admin_review' => true,
+            ])
+            ->create());
+
+        $this->assertNotEmpty($this->eatery->reviews()->withoutGlobalScopes()->get());
+
+        $review = EateryReview::query()->withoutGlobalScopes()->first();
+
+        $this->assertTrue($review->approved);
         $this->assertEquals(4, $review->rating);
         $this->assertEquals('Foo Bar', $review->name);
         $this->assertEquals('foo@bar.com', $review->email);

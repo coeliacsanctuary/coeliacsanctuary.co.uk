@@ -10,6 +10,7 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
+use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
 use App\Nova\Resources\EatingOut\PolymorphicPanels\EateryFeaturesPolymorphicPanel;
 use Illuminate\Database\Eloquent\Builder;
@@ -235,6 +236,8 @@ class Eateries extends Resource
 
             DateTime::make('Last Updated', 'updated_at')->exceptOnForms(),
 
+            HasMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
+
             HasMany::make('Reviews', resource: Reviews::class),
 
             HasMany::make('Suggested Edits', resource: SuggestedEdits::class),
@@ -279,5 +282,14 @@ class Eateries extends Resource
             ->get()
             ->mapWithKeys(fn (EateryCuisine $cuisine) => [$cuisine->id => $cuisine->cuisine])
             ->toArray();
+    }
+
+    public function actions(NovaRequest $request): array
+    {
+        return [
+            GenerateSealiacOverview::make()
+                ->showInline()
+                ->canRun(fn (NovaRequest $request, Eatery $model) => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
+        ];
     }
 }

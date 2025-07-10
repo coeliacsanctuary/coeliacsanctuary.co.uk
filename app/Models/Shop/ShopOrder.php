@@ -60,6 +60,12 @@ class ShopOrder extends Model
         return $this->hasOne(ShopPayment::class, 'order_id');
     }
 
+    /** @return HasMany<ShopPaymentRefund, $this> */
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(ShopPaymentRefund::class, 'order_id');
+    }
+
     /** @return HasMany<ShopOrderItem, $this> */
     public function items(): HasMany
     {

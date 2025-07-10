@@ -38,12 +38,20 @@ const linkCards = [
     <div
       class="my-3 xxs:absolute xxs:top-4 xxs:m-0 xxs:flex xxs:w-full xxs:justify-between xxs:p-3"
     >
-      <div class="">
+      <div
+        class="h-fit w-full bg-white p-2 text-center shadow-sm xxs:w-auto xxs:rounded-sm xxs:bg-primary-light/90 xxs:text-left xxs:shadow-lg xs:p-4"
+      >
         <h1
-          class="w-full bg-white p-2 text-center text-xl font-semibold shadow-sm xxs:w-auto xxs:rounded-sm xxs:bg-primary-light/90 xxs:px-8 xxs:shadow-lg xxs:max-sm:text-lg xs:p-4 sm:max-md:text-xl md:max-lg:text-2xl lg:max-xl:text-3xl xl:text-4xl"
+          class="text-xl font-semibold xxs:max-sm:text-lg sm:max-md:text-xl md:max-lg:text-2xl lg:max-xl:text-3xl xl:text-4xl"
         >
           Gluten Free places to eat in {{ name }}
         </h1>
+
+        <span
+          class="mt-2 block text-sm font-semibold text-primary-dark hover:text-black md:text-base"
+        >
+          <Link href="/wheretoeat">Back to Eating out Guide</Link>
+        </span>
       </div>
       <div
         class="hidden min-w-[190px] grid-cols-1 gap-2 text-lg font-semibold sm:grid"

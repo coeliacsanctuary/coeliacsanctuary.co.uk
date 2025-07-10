@@ -8,6 +8,7 @@ use App\Models\Shop\ShopPayment;
 use App\Nova\Resource;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -37,6 +38,8 @@ class Payment extends Resource
             Currency::make('Fee')->asMinorUnits(),
 
             Text::make('Payment Type', 'payment_type_id'),
+
+            HasMany::make('Refunds', resource: PaymentRefund::class),
         ];
     }
 
