@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\RecommendAPlace;
 
+use App\Actions\EatingOut\ComputeRecommendAPlaceBackLinkAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Enums\EatingOut\EateryType;
 use App\Http\Response\Inertia;
@@ -14,7 +15,7 @@ use Inertia\Response;
 
 class CreateController
 {
-    public function __invoke(Inertia $inertia, GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction): Response
+    public function __invoke(Inertia $inertia, GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction, ComputeRecommendAPlaceBackLinkAction $computeRecommendAPlaceBackLinkAction): Response
     {
         $venueTypes = EateryVenueType::query()
             ->orderBy('venue_type')
@@ -30,6 +31,8 @@ class CreateController
             ])
             ->values();
 
+        [$name, $previous] = $computeRecommendAPlaceBackLinkAction->handle();
+
         return $inertia
             ->title('Recommend A Place')
             ->doNotTrack()
@@ -37,6 +40,8 @@ class CreateController
             ->metaImage($getOpenGraphImageForRouteAction->handle('eatery'))
             ->render('EatingOut/RecommendAPlace', [
                 'venueTypes' => $venueTypes,
+                'previous' => $previous,
+                'name' => $name,
             ]);
     }
 }

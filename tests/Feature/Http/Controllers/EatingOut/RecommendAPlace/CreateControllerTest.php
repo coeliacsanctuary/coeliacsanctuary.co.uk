@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\RecommendAPlace;
 
+use App\Actions\EatingOut\ComputeRecommendAPlaceBackLinkAction;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use Illuminate\Testing\TestResponse;
@@ -27,6 +28,14 @@ class CreateControllerTest extends TestCase
     public function itCallsTheGetOpenGraphImageForRouteAction(): void
     {
         $this->expectAction(GetOpenGraphImageForRouteAction::class, ['eatery']);
+
+        $this->visitPage();
+    }
+
+    #[Test]
+    public function itCallsTheComputeRecommendAPlaceBackLinkActionAction(): void
+    {
+        $this->expectAction(ComputeRecommendAPlaceBackLinkAction::class);
 
         $this->visitPage();
     }
