@@ -1,5 +1,6 @@
 export type DefaultProps = {
   [x: string]: unknown;
+  is_admin?: true;
   meta: MetaProps;
   errors: import('@inertiajs/core').Errors & import('@inertiajs/core').ErrorBag;
 };

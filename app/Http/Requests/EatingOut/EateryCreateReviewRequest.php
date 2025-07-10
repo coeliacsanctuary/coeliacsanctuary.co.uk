@@ -23,14 +23,14 @@ class EateryCreateReviewRequest extends FormRequest
             'rating' => ['required', 'numeric', 'min:1', 'max:5'],
             'name' => $this->wantsJson() ? ['nullable', 'required_with:email,comment'] : ['nullable', 'required', 'string'],
             'email' => $this->wantsJson() ? ['nullable', 'required_with:name,comment', 'email'] : ['nullable', 'required', 'email'],
-            'review' => $this->wantsJson() ? ['nullable', 'required_with:name,email'] : ['nullable', 'required', 'string'],
+            'review' => $this->wantsJson() ? ['nullable', 'required_with:name,email'] : ['nullable', 'required', 'string', ! $this->user() ? 'max:1500' : ''],
             'food_rating' => ['nullable', 'in:poor,good,excellent'],
             'service_rating' => ['nullable', 'in:poor,good,excellent'],
             'how_expensive' => ['nullable', 'numeric', 'min:1', 'max:5'],
             'images' => ['array', 'max:6'],
             'images.*' => ['string', 'exists:temporary_file_uploads,id'],
             'method' => ['in:website,app'],
-            //'admin_review' => $this->user()?->isAdmin() ? ['boolean'] : ['sometimes', 'declined'],
+            'admin_review' => $this->user() ? ['boolean'] : ['missing'],
             'branch_name' => $this->isNationwide() ? ['nullable', 'required', 'string'] : ['prohibited'],
         ];
     }

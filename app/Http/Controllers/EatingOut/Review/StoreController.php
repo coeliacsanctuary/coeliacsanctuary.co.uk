@@ -46,7 +46,7 @@ class StoreController
         $createEateryReviewAction->handle($eatery, [
             ...$requestData,
             'ip' => $request->ip(),
-            'approved' => false,
+            'approved' => $request->boolean('admin_review'),
         ]);
 
         return redirect()->back();

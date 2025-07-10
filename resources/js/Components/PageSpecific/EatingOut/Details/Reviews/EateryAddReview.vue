@@ -15,6 +15,8 @@ import UploadReviewImages from '@/Components/PageSpecific/EatingOut/Details/Revi
 import useUrl from '@/composables/useUrl';
 import { InertiaForm } from '@/types/Core';
 import FormLookup from '@/Components/Forms/FormLookup.vue';
+import { usePage } from '@inertiajs/vue3';
+import { DefaultProps } from '@/types/DefaultProps';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -36,9 +38,9 @@ type ReviewFormPayload = {
   admin_review?: boolean;
 };
 
-const isAdmin = (): boolean =>
-  // @todo
-  false;
+const isAdmin = (): boolean => {
+  return usePage<DefaultProps>().props.is_admin || false;
+};
 
 const branchName = (): string => {
   if (props.eatery.branch?.name) {
@@ -250,11 +252,12 @@ const imageError = (message: string): void => {
             name="comment"
             :rows="5"
             label="Your Comment"
-            v-bind="isAdmin() ? {} : { max: 1500 }"
+            v-bind="isAdmin() && form.admin_review ? {} : { max: 1500 }"
             :error="form.errors.review"
             borders
           />
           <span
+            v-if="!isAdmin() || (isAdmin() && !form.admin_review)"
             class="text-right text-xs"
             :class="
               characterLimit === usedCharacters ? 'font-semibold text-red' : ''
@@ -272,6 +275,7 @@ const imageError = (message: string): void => {
             v-model="form.admin_review"
             name="admin_review"
             label="Post as admin review"
+            layout="left"
           />
         </div>
 

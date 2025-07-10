@@ -41,6 +41,10 @@ class Inertia
             $this->loadCta();
         }
 
+        if (Request::user()) {
+            BaseInertia::share('is_admin', true);
+        }
+
         if (Request::hasCookie('basket_token') && ! Request::routeIs('shop.basket.checkout')) {
             $this->includeBasket();
         }
