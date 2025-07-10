@@ -98,7 +98,7 @@ onMounted(() => {
     </div>
 
     <div
-      class="pointer-events-none absolute right-[5.3rem] rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:text-base"
+      class="pointer-events-none absolute right-[5.3rem] rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:right-[7rem] xmd:text-base md:max-xmd:right-[6.5rem]"
     >
       Filter
     </div>

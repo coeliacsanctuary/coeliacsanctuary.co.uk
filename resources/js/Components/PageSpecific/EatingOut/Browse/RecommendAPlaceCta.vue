@@ -17,7 +17,7 @@ import { PlusIcon } from '@heroicons/vue/24/solid';
     </div>
 
     <div
-      class="pointer-events-none absolute left-[4.5rem] max-w-[150px] rounded-full border-2 border-white bg-secondary px-4 py-1 text-center text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:text-base"
+      class="pointer-events-none absolute left-[4.5rem] max-w-[150px] rounded-full border-2 border-white bg-secondary px-4 py-1 text-center text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:left-[7.5rem] xmd:text-base md:max-xmd:left-[6.5rem]"
     >
       Recommend a Place
     </div>
