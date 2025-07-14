@@ -104,6 +104,17 @@ export default {
                 color: theme('colors.grey.dark'),
               },
             },
+            blockquote: {
+              // @apply bg-blue-light bg-opacity-50 p-2 rounded shadow text-sm;
+              backgroundColor: theme('colors.primary.lightest'),
+              padding: theme('padding.2'),
+              borderRadius: theme('borderRadius.DEFAULT'),
+              boxShadow: theme('boxShadow.DEFAULT'),
+              fontSize: theme('text.sm'),
+              borderInlineColor: theme('colors.secondary.DEFAULT'),
+              borderInlineWidth: '0.5rem',
+              borderRight: '0',
+            },
             ol: {
               listStyle: 'auto',
             },

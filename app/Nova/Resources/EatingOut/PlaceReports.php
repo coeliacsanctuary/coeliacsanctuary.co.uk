@@ -54,12 +54,12 @@ class PlaceReports extends Resource
             BelongsTo::make('Eatery', resource: Eateries::class)
                 ->hideFromIndex(fn ($foo, EateryReport $report) => $report->eatery->county_id === 1)
                 ->hideFromDetail(fn ($foo, EateryReport $report) => $report->eatery->county_id === 1)
-                ->displayUsing(fn (Eateries $eatery) => $eatery->resource->load(['town' => fn (Relation $builder) => $builder->withoutGlobalScopes(), 'county', 'country'])->full_name),
+                ->displayUsing(fn (Eateries $eatery) => $eatery->resource->load(['area', 'town' => fn (Relation $builder) => $builder->withoutGlobalScopes(), 'county', 'country'])->full_name),
 
             BelongsTo::make('Eatery', resource: NationwideEateries::class)
                 ->hideFromIndex(fn ($foo, EateryReport $report) => $report->eatery->county_id !== 1)
                 ->hideFromDetail(fn ($foo, EateryReport $report) => $report->eatery->county_id !== 1)
-                ->displayUsing(fn (NationwideEateries $eatery) => $eatery->resource->load(['town' => fn (Relation $builder) => $builder->withoutGlobalScopes(), 'county', 'country'])->full_name),
+                ->displayUsing(fn (NationwideEateries $eatery) => $eatery->resource->load(['area', 'town' => fn (Relation $builder) => $builder->withoutGlobalScopes(), 'county', 'country'])->full_name),
 
             Select::make('Branch', 'branch_id')
                 ->displayUsingLabels()
