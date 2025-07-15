@@ -29,6 +29,7 @@ use App\Nova\Resources\Main\Collection;
 use App\Nova\Resources\Main\Comments;
 use App\Nova\Resources\Main\PopupResource;
 use App\Nova\Resources\Main\Recipe;
+use App\Nova\Resources\Main\RedirectResource;
 use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
@@ -77,6 +78,7 @@ class Menu
                 MenuItem::resource(Collection::class),
                 MenuItem::resource(Comments::class)->withBadgeIf(fn () => (string) $commentsCount, 'danger', fn () => $commentsCount > 0),
                 MenuItem::resource(PopupResource::class),
+                MenuItem::resource(RedirectResource::class),
             ])->icon('home'),
 
             MenuSection::make('Eating Out', [

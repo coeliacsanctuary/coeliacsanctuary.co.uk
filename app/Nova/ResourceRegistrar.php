@@ -30,6 +30,7 @@ use App\Nova\Resources\Main\PopupResource;
 use App\Nova\Resources\Main\Recipe;
 use App\Nova\Resources\Main\RecipeAllergens;
 use App\Nova\Resources\Main\RecipeNutritionalInformation;
+use App\Nova\Resources\Main\RedirectResource;
 use App\Nova\Resources\Search\SearchAiResponseResource;
 use App\Nova\Resources\Search\SearchHistoryResource;
 use App\Nova\Resources\Search\SearchResource;
@@ -74,6 +75,7 @@ class ResourceRegistrar
             Comments::class,
             CommentReply::class,
             PopupResource::class,
+            RedirectResource::class,
 
             // Eating Out
             Eateries::class,
