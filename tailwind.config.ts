@@ -105,7 +105,6 @@ export default {
               },
             },
             blockquote: {
-              // @apply bg-blue-light bg-opacity-50 p-2 rounded shadow text-sm;
               backgroundColor: theme('colors.primary.lightest'),
               padding: theme('padding.2'),
               borderRadius: theme('borderRadius.DEFAULT'),
