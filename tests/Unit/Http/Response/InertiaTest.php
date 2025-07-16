@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use App\Http\Response\Inertia;
 use Tests\TestCase;
 
-class InertiaResponseTest extends TestCase
+class InertiaTest extends TestCase
 {
     protected Inertia $factory;
 

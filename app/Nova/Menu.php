@@ -13,6 +13,7 @@ use App\Models\EatingOut\EaterySuggestedEdit;
 use App\Models\Shop\ShopOrder;
 use App\Nova\Dashboards\Main;
 use App\Nova\Dashboards\Shop;
+use App\Nova\Resources\AnnouncementResource;
 use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
@@ -78,6 +79,7 @@ class Menu
                 MenuItem::resource(Collection::class),
                 MenuItem::resource(Comments::class)->withBadgeIf(fn () => (string) $commentsCount, 'danger', fn () => $commentsCount > 0),
                 MenuItem::resource(PopupResource::class),
+                MenuItem::resource(AnnouncementResource::class),
                 MenuItem::resource(RedirectResource::class),
             ])->icon('home'),
 

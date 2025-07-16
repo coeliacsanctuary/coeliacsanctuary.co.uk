@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova;
 
+use App\Nova\Resources\AnnouncementResource;
 use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Countries;
@@ -75,6 +76,7 @@ class ResourceRegistrar
             Comments::class,
             CommentReply::class,
             PopupResource::class,
+            AnnouncementResource::class,
             RedirectResource::class,
 
             // Eating Out

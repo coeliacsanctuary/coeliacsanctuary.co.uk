@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import CoeliacHeader from '@/Layouts/Components/CoeliacHeader.vue';
 import CoeliacFooter from '@/Layouts/Components/CoeliacFooter.vue';
-import { MetaProps, PopupProps } from '@/types/DefaultProps';
+import { AnnouncementProps, MetaProps, PopupProps } from '@/types/DefaultProps';
 import { computed, ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import ShopBasketHeader from '@/Layouts/Components/ShopBasketHeader.vue';
@@ -9,8 +9,13 @@ import ShopFooterCta from '@/Layouts/Components/ShopFooterCta.vue';
 import PopupCta from '@/Layouts/Components/PopupCta.vue';
 import Loader from '@/Components/Loader.vue';
 import eventBus from '@/eventBus';
+import Announcement from '@/Layouts/Components/Announcement.vue';
 
-defineProps<{ meta: MetaProps; popup?: PopupProps }>();
+defineProps<{
+  meta: MetaProps;
+  popup?: PopupProps;
+  announcement?: AnnouncementProps;
+}>();
 
 const isShop = computed(
   (): boolean =>
@@ -27,6 +32,11 @@ eventBus.$on('hide-site-loader', () => (showLoader.value = false));
 </script>
 
 <template>
+  <Announcement
+    v-if="announcement"
+    :announcement="announcement"
+  />
+
   <div class="relative flex min-h-screen flex-col bg-gray-100">
     <CoeliacHeader :metas="meta" />
 
