@@ -15,11 +15,11 @@ class SearchResultItem
      * @param  class-string<IsSearchable>  $model
      */
     public function __construct(
-        readonly public int $id,
-        readonly public string $model,
-        readonly public int $score,
-        readonly public int $firstWordPosition,
-        readonly public ?int $distance = null,
+        public readonly int $id,
+        public readonly string $model,
+        public readonly int $score,
+        public readonly int $firstWordPosition,
+        public readonly ?int $distance = null,
     ) {
         //
     }

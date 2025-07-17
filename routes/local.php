@@ -9,11 +9,13 @@ use App\Actions\OpenGraphImages\GenerateTownOpenGraphImageAction;
 use App\DataObjects\NotificationRelatedObject;
 use App\Enums\EatingOut\EateryType;
 use App\Enums\Shop\OrderState;
+use App\Mailables\EatingOut\EateryRecommendationAddedMailable;
 use App\Models\Blogs\Blog;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
@@ -220,6 +222,31 @@ Route::get('/mail/eating-out/review-approved/{id?}', function (?int $id = null):
             image: $product->main_image,
             link: $product->link,
         )),
+    ])->render();
+
+    return Mjml::new()->toHtml($content);
+});
+
+Route::get('/mail/eating-out/recommendation-added/{id?}', function (?int $id = null): string {
+    $recommendation = EateryRecommendation::query()->latest()->first();
+    $eatery = Eatery::query()
+        ->when(
+            $id,
+            fn (Builder $builder) => $builder->findOrFail($id),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $mailable = invade(new EateryRecommendationAddedMailable($eatery, $recommendation));
+
+    $content = view('mailables.mjml.eating-out.recommended-eatery-added', [
+        'key' => 'foo',
+        'date' => now(),
+        'recommendation' => $recommendation,
+        'eatery' => $eatery,
+        'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'email' => $recommendation->email,
+        'nearbyEateries' => $mailable->nearbyEateries(),
+        ...$mailable->relatedItems()
     ])->render();
 
     return Mjml::new()->toHtml($content);

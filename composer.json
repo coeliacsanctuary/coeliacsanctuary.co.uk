@@ -23,7 +23,6 @@
         "jpeters8889/country-icon": "@dev",
         "jpeters8889/custom-styles": "@dev",
         "jpeters8889/eatery-opening-times": "@dev",
-        "jpeters8889/eatery-recommendation-listener": "@dev",
         "jpeters8889/order-dispatch-slip": "@dev",
         "jpeters8889/polymorphic-panel": "@dev",
         "jpeters8889/print-all-orders": "@dev",
@@ -56,7 +55,8 @@
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
         "wnx/sidecar-browsershot": "^2.6.0",
-        "jpeters8889/shop-generate-resend-slip-button": "@dev"
+        "jpeters8889/shop-generate-resend-slip-button": "@dev",
+        "jpeters8889/hidden-writable-field": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15.4",
@@ -156,6 +156,10 @@
         {
             "type": "path",
             "url": "./nova-components/ShopGenerateResendSlipButton"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/HiddenWritableField"
         }
     ],
     "autoload": {

@@ -40,9 +40,15 @@ trait HasEateryDetails
 
     protected function eateryPostcode(): string
     {
-        $address = explode('<br />', $this->address);
+        $address = explode("\n", $this->address);
 
         return array_pop($address);
+    }
+
+    /** @return Attribute<string|null, never> */
+    protected function firstLineOfAddress(): Attribute
+    {
+        return Attribute::get(fn () => Str::of($this->address)->explode("\n")->first());
     }
 
     public function generateSlug(): string

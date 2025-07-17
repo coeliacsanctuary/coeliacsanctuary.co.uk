@@ -8,8 +8,10 @@ use App\Models\Collections\Collection as CollectionModel;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryCuisine;
+use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
+use App\Notifications\EatingOut\EateryRecommendationAddedNotification;
 use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
 use App\Nova\Resources\EatingOut\PolymorphicPanels\EateryFeaturesPolymorphicPanel;
@@ -17,8 +19,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Jpeters8889\AddressField\AddressField;
 use Jpeters8889\EateryOpeningTimes\EateryOpeningTimes;
+use Jpeters8889\HiddenWritableField\HiddenWritableField;
 use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -33,7 +39,7 @@ use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<Eatery> */
+/** @extends resource<Eatery> */
 /**
  * @codeCoverageIgnore
  */
@@ -117,6 +123,7 @@ class Eateries extends Resource
                     ->fullWidth()
                     ->showCreateRelationButton()
                     ->hide()
+                    ->nullable()
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $countyId = $request->input('county');
                         $county = EateryCounty::query()->where('id', $countyId)->first();
@@ -132,6 +139,11 @@ class Eateries extends Resource
 
                 AddressField::make('Address')
                     ->required()
+                    ->default(fn () => json_encode([
+                        'address' => Arr::get(Cache::get('admin-recommend-place'), 'place_location'),
+                        'latitude' => null,
+                        'longitude' => null,
+                    ]))
                     ->latitudeField('lat')
                     ->longitudeField('lng'),
             ]),
@@ -139,7 +151,12 @@ class Eateries extends Resource
             Panel::make('Contact Details', [
                 Text::make('Phone Number', 'phone')->fullWidth()->nullable()->rules(['max:50'])->hideFromIndex(),
 
-                URL::make('Website')->fullWidth()->nullable()->rules(['max:255'])->hideFromIndex(),
+                URL::make('Website')
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_web_address'))
+                    ->fullWidth()
+                    ->nullable()
+                    ->rules(['max:255'])
+                    ->hideFromIndex(),
 
                 URL::make('GF Menu Link')->fullWidth()->nullable()->rules(['max:255'])->hideFromIndex(),
             ]),
@@ -159,6 +176,7 @@ class Eateries extends Resource
 
                 Select::make('Venue Type', 'venue_type_id')
                     ->hideFromIndex()
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_venue_type_id'))
                     ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
                         return match ($request->type_id) {
                             default => $field->options($this->getVenueTypes(1)),
@@ -182,6 +200,7 @@ class Eateries extends Resource
 
                 Textarea::make('Info')
                     ->alwaysShow()
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_info'))
                     ->dependsOn(['type_id'], function (Textarea $field, NovaRequest $request) {
                         return match ($request->type_id) {
                             2 => $field->hide()->nullable()->setValue(null),
@@ -202,11 +221,15 @@ class Eateries extends Resource
         ];
 
         return [
+            HiddenWritableField::make('Recommendation ID', 'place_recommendation_id')
+                ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_recommendation_id')),
+
             ID::make('id')->hide(),
 
             Text::make('Name', 'name')
                 ->fullWidth()
                 ->rules(['required', 'max:200'])
+                ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_name'))
                 ->sortable(),
 
             Text::make('Location', 'full_location')
@@ -291,5 +314,25 @@ class Eateries extends Resource
                 ->showInline()
                 ->canRun(fn (NovaRequest $request, Eatery $model) => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
         ];
+    }
+
+    /** @param Eatery $model */
+    public static function afterCreate(NovaRequest $request, Model $model): void
+    {
+        if ( ! $request->filled('place_recommendation_id')) {
+            return;
+        }
+
+        $placeRecommendation = EateryRecommendation::query()->find($request->get('place_recommendation_id'));
+
+        if ( ! $placeRecommendation) {
+            return;
+        }
+
+        $placeRecommendation->update(['completed' => true]);
+
+        (new AnonymousNotifiable())
+            ->route('mail', $placeRecommendation->email)
+            ->notify(new EateryRecommendationAddedNotification($placeRecommendation, $model));
     }
 }

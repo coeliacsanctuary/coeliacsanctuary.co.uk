@@ -89,7 +89,7 @@ export default {
       this.longitude = center.lng();
 
       this.marker.setPosition(
-        new google.maps.LatLng(this.latitude, this.longitude)
+        new google.maps.LatLng(this.latitude, this.longitude),
       );
     });
   },
@@ -104,11 +104,12 @@ export default {
       this.address = this.value.address;
 
       if (this.address) {
-        this.latitude = this.value.latitude;
-        this.longitude = this.value.longitude;
+        this.latitude = this.value.latitude !== 0 ? this.value.latitude : this.latitude;
+        this.longitude = this.value.longitude !== 0 ? this.value.longitude : this.longitude;
         this.zoom = 16;
       }
     },
+
     initMap() {
       this.mapOptions = {
         center: new google.maps.LatLng(this.latitude, this.longitude),

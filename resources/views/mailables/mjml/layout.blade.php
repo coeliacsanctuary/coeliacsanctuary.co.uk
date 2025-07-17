@@ -71,11 +71,13 @@
             </mj-wrapper>
             @isset($relatedTitle, $relatedItems)
                 <mj-wrapper>
-                    <mj-section padding="20px 0 0">
-                        <mj-column>
-                            <mj-text>&nbsp;</mj-text>
-                        </mj-column>
-                    </mj-section>
+                    @unless(isset($hideRelatedGap) && $hideRelatedGap === true))
+                        <mj-section padding="20px 0 0">
+                            <mj-column>
+                                <mj-text>&nbsp;</mj-text>
+                            </mj-column>
+                        </mj-section>
+                    @endunless
                     <mj-section padding="10px" padding-top="15px" background-color="#f0f0f0">
                         <mj-column>
                             <mj-text>
