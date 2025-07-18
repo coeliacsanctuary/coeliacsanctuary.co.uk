@@ -161,7 +161,7 @@ import SubHeading from '@/Components/SubHeading.vue';
 
       <ArticleImage
         title="Jamie - Coeliac Sanctuary developer and tech guru"
-        src="/images/misc/jamie.png"
+        src="/images/misc/img.png"
         position="right"
         class="max-w-60!"
       />
