@@ -36,7 +36,7 @@ class ImportBlogTagsCsvCommand extends Command
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
 
-        Str::of(File::get(storage_path('app/migration/blog-tags.csv')))
+        Str::of(File::get(resource_path('migration/blog-tags.csv')))
             ->explode(PHP_EOL)
             ->filter()
             ->map(fn (string $line) => str_getcsv($line))
