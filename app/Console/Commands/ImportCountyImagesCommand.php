@@ -13,19 +13,18 @@ class ImportCountyImagesCommand extends Command
 {
     protected $signature = 'one-time:coeliac:import-county-images {--test}';
 
-    protected $description = 'Command description';
-
     public function handle(): void
     {
         $disk = Storage::build([
             'driver' => 's3',
             'region' => 'eu-west-2',
+            'key' => config('filesystems.disks.media.key'),
+            'secret' => config('filesystems.disks.media.secret'),
             'bucket' => 'county-image-imports',
         ]);
 
         EateryCounty::query()
             ->whereNot('slug', 'Nationwide')
-            ->get()
             ->lazy()
             ->each(function (EateryCounty $county) use ($disk): void {
                 $rawImage = $disk->get($county->county . '.png');
