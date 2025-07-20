@@ -7,11 +7,7 @@ type HeroItem = { title: string; image: string };
 const items: HeroItem[] = [
   {
     title: 'Have you got your travel cards?',
-    image: '/images/travel-cards.png',
-  },
-  {
-    title: 'Have you got your gluten free stickers?',
-    image: '/images/stickers.jpg',
+    image: '/images/travel-cards-hero.png',
   },
 ];
 
@@ -33,23 +29,23 @@ setInterval(() => {
 <template>
   <div class="relative bg-primary-light/50">
     <div class="mx-auto w-full max-w-8xl">
-      <div class="relative z-10">
-        <div
-          class="relative px-6 py-10 xmd:max-lg:py-16 sm:max-md:py-12 md:max-xmd:py-14 lg:max-xl:py-20 xl:py-24"
-        >
-          <div class="mx-auto max-w-5xl">
+      <div class="relative z-10 h-[490px]">
+        <div class="relative h-full">
+          <div
+            class="mx-auto flex h-full max-w-5xl flex-col justify-between px-4 py-8 xs:px-8 xs:py-16 sm:px-6 sm:py-8"
+          >
             <h1
               class="mx-auto bg-secondary/60 px-2 py-3 text-center font-coeliac text-3xl font-semibold tracking-tight text-gray-900 sm:w-4/5 sm:text-4xl sm:leading-10"
               v-text="activeItem.title"
             />
             <p
-              class="mx-auto prose prose-lg mt-6 max-w-none bg-white/70 p-2 text-center text-lg leading-6 text-gray-600 sm:prose-xl sm:w-4/5 sm:leading-8"
+              class="mx-auto prose prose-lg max-w-none bg-white/70 p-2 text-center text-lg leading-6 text-gray-600 xs:p-4 sm:prose-xl sm:w-4/5 sm:leading-8"
             >
               Check out our online shop for some great coeliac related goodies,
               including our fantastic travel cards for when you go abroad, our
               'Gluten Free' stickers, our wristbands, and much more too!
             </p>
-            <div class="mt-10 flex items-center justify-center gap-x-6">
+            <div class="flex items-center justify-center gap-x-6">
               <CoeliacButton
                 label="View all Products"
                 href="/shop"
