@@ -6,6 +6,7 @@ import {
   TransitionRoot,
 } from '@headlessui/vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
+import { onMounted, ref } from 'vue';
 
 const emit = defineEmits(['close']);
 
@@ -19,10 +20,19 @@ withDefaults(
 );
 
 const closeOverlay = () => emit('close');
+
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport
+    v-if="isMounted"
+    to="body"
+  >
     <TransitionRoot
       :show="open"
       as="template"

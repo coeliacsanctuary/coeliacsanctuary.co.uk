@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { XMarkIcon } from '@heroicons/vue/24/outline';
-import { useSlots } from 'vue';
+import { onMounted, ref, useSlots } from 'vue';
 import OverlayFrame from '@/Components/Overlays/OverlayFrame.vue';
 
 const emit = defineEmits(['close']);
@@ -26,10 +26,17 @@ withDefaults(
 const closeOverlay = () => emit('close');
 
 const slots = useSlots();
+
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
 </script>
 
 <template>
   <OverlayFrame
+    v-if="isMounted"
     :open="open"
     :width="width"
     class="mx-[2.5%]"

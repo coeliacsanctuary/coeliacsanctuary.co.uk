@@ -1,6 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
-import { Component, createApp, h } from 'vue';
+import { Component, createSSRApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
 import Coeliac from '@/Layouts/Coeliac.vue';
@@ -30,7 +30,7 @@ void createInertiaApp({
 
   setup({ el, App, props, plugin }) {
     const pinia = createPinia();
-    const app = createApp({ render: () => h(App, props) });
+    const app = createSSRApp({ render: () => h(App, props) });
 
     const jitComponents: Record<string, { default: Component }> =
       import.meta.glob('./JitComponents/*.vue', { eager: true });
