@@ -7,7 +7,7 @@
         <mj-style>
             a {color:black;font-weight:600;text-decoration:none}
             a:hover {text-decoration:underline;}
-            h1 {font-size:25px;text-align:center;margin:0 0 10px; padding:0;color:#000;font-weight:600}
+            h1 {font-size:30px;text-align:center;margin:10px 0; padding:0;color:#000;font-weight:600}
             h2 {font-size:20px;font-weight: 600;}
             h2,h3,h4 {margin:0;padding:0;}
             h4 {font-size:18px;font-weight:600;}
@@ -53,20 +53,23 @@
                     </mj-column>
                 </mj-section>
 
-                <mj-section mj-class="yellow" padding="8px 10px" vertical-align="middle">
-                    <mj-column width="75%"  vertical-align="middle">
-                        <mj-text>
-                            @yield('header')
-                        </mj-text>
-                    </mj-column>
-                    <mj-column width="25%" vertical-align="middle">
-                        <mj-text align="right">
-                            {{ $date->format('d/m/Y')  }}
-                        </mj-text>
+                <mj-section mj-class="blue" padding="0" vertical-align="middle">
+                    <mj-column>
+                        <mj-text>&nbsp;</mj-text>
                     </mj-column>
                 </mj-section>
             </mj-wrapper>
             <mj-wrapper>
+                @hasSection('header')
+                    <mj-section>
+                        <mj-column>
+                            <mj-text align="center">
+                                <h1>@yield('header')</h1>
+                            </mj-text>
+                        </mj-column>
+                    </mj-section>
+                @endif
+
                 @yield('main-content')
             </mj-wrapper>
             @isset($relatedTitle, $relatedItems)
@@ -104,7 +107,6 @@
                 </mj-wrapper>
             @endisset
             <mj-wrapper>
-                <mj-section mj-class="yellow" padding="5px"></mj-section>
                 <mj-section mj-class="blue" padding="10px">
                     <mj-column>
                         @if(isset($reason))

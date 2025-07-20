@@ -17,7 +17,7 @@ class ReopenBasketAction
     /** @return Collection<int, string> */
     public function handle(ShopOrder $basket): Collection
     {
-        $basket->load(['items', 'items.product', 'items.variant']);
+        $basket->load(['items', 'items.product', 'items.variant', 'items.product.prices']);
 
         $basket->update(['state_id' => OrderState::BASKET]);
 

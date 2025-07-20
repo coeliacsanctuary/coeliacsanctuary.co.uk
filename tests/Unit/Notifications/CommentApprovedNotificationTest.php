@@ -38,7 +38,7 @@ class CommentApprovedNotificationTest extends TestCase
 
     #[Test]
     #[DataProvider('mailDataProvider')]
-    public function itHasTheOrderDate(callable $closure): void
+    public function itHasTheEmailData(callable $closure): void
     {
         (new AnonymousNotifiable())
             ->route('mail', $this->comment->email)
@@ -63,9 +63,6 @@ class CommentApprovedNotificationTest extends TestCase
         return [
             'has the email key' => [function (self $test, MjmlMessage $message, string $emailContent): void {
                 $test->assertStringContainsString($message->data()['key'], $emailContent);
-            }],
-            'has the date' => [function (self $test, MjmlMessage $message, string $emailContent): void {
-                $test->assertStringContainsString(now()->format('d/m/Y'), $emailContent);
             }],
             'has the comment body' => [function (self $test, MjmlMessage $message, string $emailContent): void {
                 $test->assertStringContainsString($test->comment->comment, $emailContent);
