@@ -16,7 +16,7 @@
           placeholder="Search for a location...."
         />
         <div
-          v-if="showResults"
+          v-if="showResults && value !== ''"
           class="absolute z-50 w-full border border-gray-950/20 bg-white shadow-lg"
         >
           <ul>

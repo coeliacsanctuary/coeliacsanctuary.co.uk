@@ -77,6 +77,7 @@ watch(zoomed, () => {
     closeable
     no-padding
     size="full"
+    fit-screen
     @close="zoomed = false"
   >
     <img
