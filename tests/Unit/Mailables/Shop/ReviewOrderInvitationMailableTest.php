@@ -47,7 +47,7 @@ class ReviewOrderInvitationMailableTest extends TestCase
     {
         $mailable = ReviewOrderInvitationMailable::make($this->order, 'foo', 'bar');
 
-        $this->assertEquals('mailables.mjml.shop.review-invitation', $mailable->mjml);
+        $this->assertEquals('mailables.mjml.shop.static.review-invitation', $mailable->mjml);
     }
 
     #[Test]

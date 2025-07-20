@@ -69,7 +69,7 @@ $hideRelatedGap = true;
                     </mj-text>
                 </mj-column>
                 <mj-column width="20%" vertical-align="middle">
-                    <mj-button align="center" href="{{ $nearbyEatery->absoluteLink() }}">
+                    <mj-button mj-class="blue" align="center" href="{{ $nearbyEatery->absoluteLink() }}">
                         Review?
                     </mj-button>
                 </mj-column>

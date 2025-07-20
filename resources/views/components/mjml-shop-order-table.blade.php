@@ -52,7 +52,7 @@
 <mj-section>
     <mj-column>
         <mj-text>
-            <hr color="#DBBC25"></hr>
+            <hr color="#addaf9"></hr>
         </mj-text>
     </mj-column>
 </mj-section>

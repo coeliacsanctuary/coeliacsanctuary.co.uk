@@ -15,7 +15,7 @@
 @endpush
 
 @section('header')
-    <h2 style="padding: 5px 0">Did you forget to checkout?</h2>
+   Did you forget to checkout?
 @endsection
 
 @section('main-content')

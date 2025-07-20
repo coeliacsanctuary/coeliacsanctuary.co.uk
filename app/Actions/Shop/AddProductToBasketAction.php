@@ -15,9 +15,9 @@ class AddProductToBasketAction
         $item = $order->items()->firstOrCreate([
             'product_id' => $product->id,
             'product_variant_id' => $variant->id,
+        ], [
             'product_title' => $product->title,
             'product_price' => $product->currentPrice,
-        ], [
             'quantity' => $quantity,
         ]);
 

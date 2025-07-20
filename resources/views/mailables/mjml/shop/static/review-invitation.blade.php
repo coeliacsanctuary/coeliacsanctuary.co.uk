@@ -12,7 +12,7 @@
 @endpush
 
 @section('header')
-    <h2 style="padding: 5px 0">Review your order!</h2>
+    Review your order!
 @endsection
 
 @section('main-content')
@@ -32,7 +32,7 @@
                 Leave A Review!
             </mj-button>
             <mj-text mj-class="inner">
-                If you cant see the button above copy the link below into your browser
+                If you cant see the button above, copy the link below into your browser
             </mj-text>
             <mj-text mj-class="inner" font-size="14">
                 {{ $reviewLink }}

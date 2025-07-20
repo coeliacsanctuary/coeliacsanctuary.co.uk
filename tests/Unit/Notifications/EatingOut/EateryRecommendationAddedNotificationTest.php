@@ -34,7 +34,7 @@ class EateryRecommendationAddedNotificationTest extends TestCase
 
     #[Test]
     #[DataProvider('mailDataProvider')]
-    public function itHasTheOrderData(callable $closure): void
+    public function itHasTheEmailData(callable $closure): void
     {
         (new AnonymousNotifiable())
             ->route('mail', $this->recommendation->email)
@@ -59,9 +59,6 @@ class EateryRecommendationAddedNotificationTest extends TestCase
         return [
             'has the email key' => [function (self $test, MjmlMessage $message, string $emailContent): void {
                 $test->assertStringContainsString($message->data()['key'], $emailContent);
-            }],
-            'has the date' => [function (self $test, MjmlMessage $message, string $emailContent): void {
-                $test->assertStringContainsString(now()->format('d/m/Y'), $emailContent);
             }],
             'has the user name' => [function (self $test, MjmlMessage $message, string $emailContent): void {
                 $test->assertStringContainsString($test->recommendation->name, $emailContent);

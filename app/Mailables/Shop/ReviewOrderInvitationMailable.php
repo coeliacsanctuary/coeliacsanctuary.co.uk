@@ -21,7 +21,7 @@ class ReviewOrderInvitationMailable extends BaseShopMailable
     {
         return MjmlMessage::make()
             ->subject('Review your Coeliac Sanctuary Order!')
-            ->mjml('mailables.mjml.shop.review-invitation', $this->baseData([
+            ->mjml('mailables.mjml.shop.static.review-invitation', $this->baseData([
                 'reviewLink' => $this->buildReviewLink(),
                 'delayText' => $this->delayText,
                 'reason' => 'to invite you to leave feedback on your recent purchase.',
