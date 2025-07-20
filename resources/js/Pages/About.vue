@@ -122,7 +122,7 @@ import SubHeading from '@/Components/SubHeading.vue';
 
       <ArticleImage
         title="Alison - Coeliac Sanctuary founder"
-        src="/images/misc/alison.jpg"
+        src="/images/misc/alison.png"
         position="right"
         class="max-w-60!"
       />
@@ -161,7 +161,7 @@ import SubHeading from '@/Components/SubHeading.vue';
 
       <ArticleImage
         title="Jamie - Coeliac Sanctuary developer and tech guru"
-        src="/images/misc/img.png"
+        src="/images/misc/jamie.png"
         position="right"
         class="max-w-60!"
       />

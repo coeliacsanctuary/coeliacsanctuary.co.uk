@@ -80,7 +80,7 @@ defineProps<{
       >
         <img
           alt="Alison Peters - Coeliac Sanctuary"
-          src="/images/misc/alison.jpg"
+          src="/images/misc/alison-cake.png"
           loading="lazy"
         />
 
