@@ -8,7 +8,6 @@ use ArrayAccess;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Tests\Concerns\CreatesFactories;
 use Tests\Concerns\InteractsWithActions;
 use Tests\Concerns\InteractsWithPipelines;
@@ -36,7 +35,6 @@ abstract class TestCase extends BaseTestCase
         $this->withoutVite();
 
         DB::connection()->getSchemaBuilder()->disableForeignKeyConstraints();
-        Http::preventStrayRequests();
     }
 
     protected function assertSortedAlphabetically(array $items): void

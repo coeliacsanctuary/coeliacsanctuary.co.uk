@@ -6,7 +6,9 @@
         "lint-fix": "eslint ./resources/js --cache --ext .js,.ts,.vue --fix",
         "format": "prettier --log-level log --write \"resources/js/**/*.{vue,ts}\"",
         "dev": "vite",
-        "build": "vite build && vite build --ssr"
+        "build": "vite build && vite build --ssr",
+        "build-eatery-location-search": "cd nova-components/EateryLocationSearch && npm run dev",
+        "build-eatery-location-search-prod": "cd nova-components/EateryLocationSearch && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",

@@ -23,6 +23,7 @@ use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Jpeters8889\AddressField\AddressField;
+use Jpeters8889\EateryLocationSearch\EateryLocationSearch;
 use Jpeters8889\EateryOpeningTimes\EateryOpeningTimes;
 use Jpeters8889\HiddenWritableField\HiddenWritableField;
 use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
@@ -66,10 +67,25 @@ class Eateries extends Resource
     {
         $detailsFields = [
             Panel::make('Location', [
+                EateryLocationSearch::make('Location Search', 'location', fn () => null)
+                    ->fullWidth()
+                    ->onlyOnForms(),
+
                 BelongsTo::make('Country', resource: Countries::class)
                     ->hideFromIndex()
                     ->fullWidth()
                     ->hide()
+                    ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        if ($request->filled('location')) {
+                            $location = $request->json('location');
+
+                            if (Arr::has($location, 'countryId')) {
+                                $field->setValue($location['countryId']);
+                            }
+                        }
+
+                        return $field;
+                    })
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $field->show();
 
@@ -85,14 +101,21 @@ class Eateries extends Resource
 
                 BelongsTo::make('County', resource: Counties::class)
                     ->searchable()
+                    ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        if ($request->filled('location')) {
+                            $location = $request->json('location');
+
+                            if (Arr::has($location, 'countyId')) {
+                                $field->setValue($location['countyId']);
+                            }
+                        }
+
+                        return $field;
+                    })
                     ->dependsOn('country', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('wheretoeat_counties.country_id', $data->get('country')));
                     })
-                    ->hideFromIndex()
-                    ->fullWidth()
-                    ->hide()
-                    ->displayUsing(fn ($county) => $county->county)
-                    ->dependsOn(['town'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                    ->dependsOn('town', function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $field->show();
 
                         /** @var EateryTown $town */
@@ -103,10 +126,26 @@ class Eateries extends Resource
                         }
 
                         return $field;
-                    }),
+                    })
+                    ->hideFromIndex()
+                    ->fullWidth()
+                    ->hide()
+                    ->displayUsing(fn ($county) => $county->county)
+                    ->showCreateRelationButton(),
 
                 BelongsTo::make('Town', resource: Towns::class)
                     ->searchable()
+                    ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        if ($request->filled('location')) {
+                            $location = $request->json('location');
+
+                            if (Arr::has($location, 'townId')) {
+                                $field->setValue($location['townId']);
+                            }
+                        }
+
+                        return $field;
+                    })
                     ->dependsOn('county', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('county_id', $data->get('county')));
                     })
@@ -116,14 +155,20 @@ class Eateries extends Resource
 
                 BelongsTo::make('Area', resource: Areas::class)
                     ->searchable()
+                    ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        if ($request->filled('location')) {
+                            $location = $request->json('location');
+
+                            if (Arr::has($location, 'areaId')) {
+                                $field->setValue($location['areaId']);
+                            }
+                        }
+
+                        return $field;
+                    })
                     ->dependsOn('town', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('town_id', $data->get('town')));
                     })
-                    ->hideFromIndex()
-                    ->fullWidth()
-                    ->showCreateRelationButton()
-                    ->hide()
-                    ->nullable()
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $countyId = $request->input('county');
                         $county = EateryCounty::query()->where('id', $countyId)->first();
@@ -135,7 +180,12 @@ class Eateries extends Resource
                         }
 
                         return $field;
-                    }),
+                    })
+                    ->hideFromIndex()
+                    ->fullWidth()
+                    ->showCreateRelationButton()
+                    ->hide()
+                    ->nullable(),
 
                 AddressField::make('Address')
                     ->required()
