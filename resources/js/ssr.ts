@@ -6,7 +6,6 @@ import { InertiaPage } from '@/types/Core';
 import Coeliac from '@/Layouts/Coeliac.vue';
 import { createPinia } from 'pinia';
 import { getTitle } from '@/helpers';
-import AnalyticsTrack from '@/analyticsTrack';
 
 createServer((page) =>
   createInertiaApp({
@@ -33,7 +32,7 @@ createServer((page) =>
       return page;
     },
 
-    setup({ el, App, props, plugin }) {
+    setup({ App, props, plugin }) {
       const pinia = createPinia();
       const app = createSSRApp({ render: () => h(App, props) });
 
@@ -51,9 +50,7 @@ createServer((page) =>
         app.component(kebabName, module.default);
       });
 
-      app.use(pinia).use(plugin).mount(el);
+      return app.use(pinia).use(plugin);
     },
   }),
 );
-
-AnalyticsTrack();

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -16,8 +16,14 @@ const modules = import.meta.glob('../../icons/*.svg', {
   eager: true,
 });
 
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
+
 const svg = computed(() => {
-  if (typeof document === 'undefined') {
+  if (!isMounted.value) {
     return '';
   }
 

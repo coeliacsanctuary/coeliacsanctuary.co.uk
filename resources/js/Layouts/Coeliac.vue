@@ -2,7 +2,7 @@
 import CoeliacHeader from '@/Layouts/Components/CoeliacHeader.vue';
 import CoeliacFooter from '@/Layouts/Components/CoeliacFooter.vue';
 import { AnnouncementProps, MetaProps, PopupProps } from '@/types/DefaultProps';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import ShopBasketHeader from '@/Layouts/Components/ShopBasketHeader.vue';
 import ShopFooterCta from '@/Layouts/Components/ShopFooterCta.vue';
@@ -29,6 +29,12 @@ const showLoader = ref(false);
 
 eventBus.$on('show-site-loader', () => (showLoader.value = true));
 eventBus.$on('hide-site-loader', () => (showLoader.value = false));
+
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
 </script>
 
 <template>
@@ -58,7 +64,10 @@ eventBus.$on('hide-site-loader', () => (showLoader.value = false));
     />
   </div>
 
-  <teleport to="body">
+  <teleport
+    v-if="isMounted"
+    to="body"
+  >
     <Loader
       :display="showLoader"
       size="size-24"

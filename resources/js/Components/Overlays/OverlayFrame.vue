@@ -5,6 +5,7 @@ import {
   TransitionChild,
   TransitionRoot,
 } from '@headlessui/vue';
+import { onMounted, ref } from 'vue';
 
 defineOptions({
   inheritAttrs: false,
@@ -21,10 +22,18 @@ withDefaults(
 );
 
 const emit = defineEmits(['close']);
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport
+    v-if="isMounted"
+    to="body"
+  >
     <TransitionRoot
       :show="open"
       as="template"
