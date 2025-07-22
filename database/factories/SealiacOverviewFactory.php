@@ -6,7 +6,8 @@ namespace Database\Factories;
 
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
-use App\Models\EatingOut\SealiacOverview;
+use App\Models\SealiacOverview;
+use App\Models\Shop\ShopProduct;
 
 class SealiacOverviewFactory extends Factory
 {
@@ -15,8 +16,8 @@ class SealiacOverviewFactory extends Factory
     public function definition()
     {
         return [
-            'wheretoeat_id' => 1,
-            'nationwide_branch_id' => null,
+            'model_id' => 1,
+            'model_type' => $this->faker->randomElement([Eatery::class, NationwideBranch::class, ShopProduct::class]),
             'overview' => $this->faker->paragraphs(3, true),
             'invalidated' => false,
             'thumbs_up' => 0,
@@ -27,15 +28,24 @@ class SealiacOverviewFactory extends Factory
     public function forEatery(Eatery $eatery)
     {
         return $this->state(fn () => [
-            'wheretoeat_id' => $eatery->id,
+            'model_id' => $eatery->id,
+            'model_type' => Eatery::class,
         ]);
     }
 
     public function forNationwideBranch(NationwideBranch $branch)
     {
         return $this->state(fn () => [
-            'wheretoeat_id' => $branch->wheretoeat_id,
-            'nationwide_branch_id' => $branch->id,
+            'model_type' => NationwideBranch::class,
+            'model_id' => $branch->id,
+        ]);
+    }
+
+    public function forProduct(ShopProduct $product)
+    {
+        return $this->state(fn () => [
+            'model_type' => ShopProduct::class,
+            'model_id' => $product->id,
         ]);
     }
 

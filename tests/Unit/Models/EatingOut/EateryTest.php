@@ -16,7 +16,7 @@ use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryOpeningTimes;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
-use App\Models\EatingOut\SealiacOverview;
+use App\Models\SealiacOverview;
 use App\Support\Helpers;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Database\Eloquent\Builder;

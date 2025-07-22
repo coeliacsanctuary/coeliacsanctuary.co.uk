@@ -8,7 +8,7 @@ use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
-use App\Models\EatingOut\SealiacOverview;
+use App\Models\SealiacOverview;
 use App\Support\Ai\Prompts\EatingOutSealiacOverviewPrompt;
 use Exception;
 use OpenAI\Laravel\Facades\OpenAI;

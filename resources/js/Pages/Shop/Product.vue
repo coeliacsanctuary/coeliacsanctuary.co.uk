@@ -26,6 +26,7 @@ import TravelCardProductCountries from '@/Components/PageSpecific/Shop/TravelCar
 import ProductAdditionalDetailsAccordionItem from '@/Components/PageSpecific/Shop/ProductAdditionalDetailsAccordionItem.vue';
 import StandardTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/StandardTravelCardEnglishTranslation.vue';
 import CoeliacPlusTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/CoeliacPlusTravelCardEnglishTranslation.vue';
+import ProductAiOverview from '@/Components/PageSpecific/Shop/ProductAiOverview.vue';
 
 type Product = ShopProductDetail | ShopTravelCardProductDetail;
 
@@ -54,13 +55,6 @@ const travelCardProduct = computed(() =>
 );
 
 const additionalDetails: ProductAdditionalDetailAccordionProps[] = [
-  {
-    title: 'Full Description',
-    content: props.product.long_description,
-    openByDefault: true,
-    wrapperComponent: Card as CustomComponent,
-    wrapperClasses: 'mx-3 mt-0! sm:p-4',
-  },
   travelCardProduct.value && travelCardProduct.value.countries.length
     ? {
         title: 'Where can I use this travel card?',
@@ -183,6 +177,8 @@ const loadMoreReviews = () => {
     },
   );
 };
+
+const showAiOverview = ref(true);
 </script>
 
 <template>
@@ -279,6 +275,23 @@ const loadMoreReviews = () => {
       </div>
     </div>
   </Card>
+
+  <Card class="mx-3 mt-0! sm:p-4">
+    <SubHeading as="h3">Full Description</SubHeading>
+
+    <div
+      class="prose prose-lg max-w-none"
+      v-html="product.long_description"
+    />
+  </Card>
+
+  <ProductAiOverview
+    v-if="showAiOverview"
+    class="mx-3 mt-0! sm:p-4"
+    :product-name="product.title"
+    :product-id="product.id"
+    @on-error="showAiOverview = false"
+  />
 
   <ProductAdditionalDetailsAccordionItem
     v-for="additionalDetail in additionalDetails"

@@ -6,7 +6,7 @@ namespace App\Actions\EatingOut;
 
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
-use App\Models\EatingOut\SealiacOverview;
+use App\Models\SealiacOverview;
 use App\Support\Ai\Prompts\EatingOutSealiacOverviewPrompt;
 use Exception;
 use OpenAI\Laravel\Facades\OpenAI;
@@ -45,8 +45,8 @@ class GetSealiacEateryOverviewAction
         $response = $result->choices[0]->message->content;
 
         SealiacOverview::query()->create([
-            'wheretoeat_id' => $eatery->id,
-            'nationwide_branch_id' => $branch?->id,
+            'model_type' => $branch ? NationwideBranch::class : Eatery::class,
+            'model_id' => $branch->id ?? $eatery->id,
             'overview' => $response,
         ]);
 
