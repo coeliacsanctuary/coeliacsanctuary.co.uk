@@ -37,13 +37,13 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     #[Test]
     public function itWillReturnTheLatestSealiacOverviewForAnEateryIfOneExists(): void
     {
-        $this->build(SealiacOverview::class)->forEatery($this->eatery)->create([
+        $model = $this->build(SealiacOverview::class)->forEatery($this->eatery)->create([
             'overview' => 'This is the overview',
         ]);
 
         $overview = app(GetSealiacEateryOverviewAction::class)->handle($this->eatery);
 
-        $this->assertEquals('This is the overview', $overview);
+        $this->assertTrue($model->is($overview));
 
         OpenAI::assertNothingSent();
     }
@@ -51,13 +51,13 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     #[Test]
     public function itWillReturnTheLatestSealiacOverviewForANationwideBranchIfItExists(): void
     {
-        $this->build(SealiacOverview::class)->forNationwideBranch($this->branch)->create([
+        $model = $this->build(SealiacOverview::class)->forNationwideBranch($this->branch)->create([
             'overview' => 'This is the branch overview',
         ]);
 
         $overview = app(GetSealiacEateryOverviewAction::class)->handle($this->eatery, $this->branch);
 
-        $this->assertEquals('This is the branch overview', $overview);
+        $this->assertTrue($model->is($overview));
 
         OpenAI::assertNothingSent();
     }
@@ -65,17 +65,17 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     #[Test]
     public function itWillNotReturnTheOverviewForTheEateryWhenGettingTheBranchOverview(): void
     {
-        $this->build(SealiacOverview::class)->forEatery($this->eatery)->create([
+        $eateryModel = $this->build(SealiacOverview::class)->forEatery($this->eatery)->create([
             'overview' => 'This is the eatery overview',
         ]);
 
-        $this->build(SealiacOverview::class)->forNationwideBranch($this->branch)->create([
+        $branchModel = $this->build(SealiacOverview::class)->forNationwideBranch($this->branch)->create([
             'overview' => 'This is the branch overview',
         ]);
 
         $overview = app(GetSealiacEateryOverviewAction::class)->handle($this->eatery, $this->branch);
 
-        $this->assertEquals('This is the branch overview', $overview);
+        $this->assertTrue($branchModel->is($overview));
 
         OpenAI::assertNothingSent();
     }

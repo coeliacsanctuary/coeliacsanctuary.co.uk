@@ -13,14 +13,14 @@ use OpenAI\Laravel\Facades\OpenAI;
 
 class GetSealiacEateryOverviewAction
 {
-    public function handle(Eatery $eatery, ?NationwideBranch $branch = null): string
+    public function handle(Eatery $eatery, ?NationwideBranch $branch = null): SealiacOverview
     {
         if ($branch?->sealiacOverview) {
-            return $branch->sealiacOverview->overview;
+            return $branch->sealiacOverview;
         }
 
         if ($eatery->sealiacOverview) {
-            return $eatery->sealiacOverview->overview;
+            return $eatery->sealiacOverview;
         }
 
         $reviewCheck = ($branch ?: $eatery)->reviews()
@@ -44,12 +44,10 @@ class GetSealiacEateryOverviewAction
         /** @var string $response */
         $response = $result->choices[0]->message->content;
 
-        SealiacOverview::query()->create([
+        return SealiacOverview::query()->create([
             'model_type' => $branch ? NationwideBranch::class : Eatery::class,
             'model_id' => $branch->id ?? $eatery->id,
             'overview' => $response,
         ]);
-
-        return $response;
     }
 }
