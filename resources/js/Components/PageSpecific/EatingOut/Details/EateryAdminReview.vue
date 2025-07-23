@@ -7,7 +7,7 @@ import Card from '@/Components/Card.vue';
 import { computed, ref } from 'vue';
 import StarRating from '@/Components/StarRating.vue';
 import ReviewImageGallery from '@/Components/PageSpecific/EatingOut/Shared/ReviewImageGallery.vue';
-import { ucfirst } from '../../../../helpers';
+import { ucfirst } from '@/helpers';
 import SubHeading from '@/Components/SubHeading.vue';
 
 const props = defineProps<{
@@ -60,7 +60,7 @@ const reviewBody = computed(() => {
 
 <template>
   <Card class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8">
-    <SubHeading>My review of {{ eateryName }}</SubHeading>
+    <SubHeading>Alison's review of {{ eateryName }}</SubHeading>
 
     <div class="mt-2 flex flex-col space-y-2 lg:space-y-4">
       <ul
