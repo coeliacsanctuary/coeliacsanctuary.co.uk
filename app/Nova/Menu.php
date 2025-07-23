@@ -13,7 +13,6 @@ use App\Models\EatingOut\EaterySuggestedEdit;
 use App\Models\Shop\ShopOrder;
 use App\Nova\Dashboards\Main;
 use App\Nova\Dashboards\Shop;
-use App\Nova\Resources\AnnouncementResource;
 use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
@@ -25,12 +24,14 @@ use App\Nova\Resources\EatingOut\PlaceReports;
 use App\Nova\Resources\EatingOut\Reviews;
 use App\Nova\Resources\EatingOut\SuggestedEdits;
 use App\Nova\Resources\EatingOut\Towns;
+use App\Nova\Resources\Main\AnnouncementResource;
 use App\Nova\Resources\Main\Blog;
 use App\Nova\Resources\Main\Collection;
 use App\Nova\Resources\Main\Comments;
 use App\Nova\Resources\Main\PopupResource;
 use App\Nova\Resources\Main\Recipe;
 use App\Nova\Resources\Main\RedirectResource;
+use App\Nova\Resources\Main\SealiacOverviews;
 use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
@@ -81,6 +82,7 @@ class Menu
                 MenuItem::resource(PopupResource::class),
                 MenuItem::resource(AnnouncementResource::class),
                 MenuItem::resource(RedirectResource::class),
+                MenuItem::resource(SealiacOverviews::class),
             ])->icon('home'),
 
             MenuSection::make('Eating Out', [

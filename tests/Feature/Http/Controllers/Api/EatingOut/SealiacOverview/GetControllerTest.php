@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\Api\EatingOut\SealiacOverview;
 
 use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
+use App\Actions\SealiacOverview\FormatResponseAction;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
+use App\Models\SealiacOverview;
 use Exception;
 use Illuminate\Support\Str;
 use OpenAI\Laravel\Facades\OpenAI;
@@ -86,7 +88,7 @@ class GetControllerTest extends TestCase
 
                 return true;
             })
-            ->andReturn('foo');
+            ->andReturn($this->create(SealiacOverview::class));
 
         $this->getJson(route('api.wheretoeat.sealiac.get', $this->eatery))->assertOk();
     }
@@ -103,7 +105,7 @@ class GetControllerTest extends TestCase
 
                 return true;
             })
-            ->andReturn('foo');
+            ->andReturn($this->create(SealiacOverview::class));
 
         $this->getJson(route('api.wheretoeat.sealiac.get', ['eatery' => $this->eatery, 'branchId' => $this->branch->id]))->assertOk();
     }
@@ -113,28 +115,34 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetSealiacEateryOverviewAction::class)
             ->shouldReceive('handle')
-            ->andReturn('foo');
+            ->andReturn($this->create(SealiacOverview::class));
 
-        $this->getJson(route('api.wheretoeat.sealiac.get', $this->eatery))->assertJsonStructure(['data']);
+        $this->getJson(route('api.wheretoeat.sealiac.get', $this->eatery))->assertJsonStructure(['data' => ['overview', 'id']]);
     }
 
     #[Test]
-    public function itReturnsTheResponseOfTheGetSealiacEateryOverviewActionAsTheDataPropertyAsMarkdownWithTheCorrectAdditions(): void
+    public function itCallsTheFormatResponseAction(): void
     {
+        $overview = $this->create(SealiacOverview::class, ['overview' => 'this is the ai overview']);
+
         $this->mock(GetSealiacEateryOverviewAction::class)
             ->shouldReceive('handle')
-            ->andReturn('this is the ai overview');
+            ->andReturn($overview);
 
-        $expectedResult = Str::of('this is the ai overview')
-            ->markdown([
-                'renderer' => [
-                    'soft_break' => '<br />',
-                ],
-            ])
-            ->replaceFirst('<p>', '<p><span class="quote-elem open"><span>&ldquo;</span></span>')
-            ->replaceLast('<p>', '<p><span class="quote-elem close"><span>&rdquo;</span></span>');
+        $this->mock(FormatResponseAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($argResponse) {
+                $this->assertEquals('this is the ai overview', $argResponse);
 
-        $this->getJson(route('api.wheretoeat.sealiac.get', $this->eatery))->assertExactJson(['data' => $expectedResult]);
+                return true;
+            })
+            ->once()
+            ->andReturn(Str::of('foo'));
+
+        $this->getJson(route('api.wheretoeat.sealiac.get', $this->eatery))->assertExactJson(['data' => [
+            'overview' => Str::of('foo'),
+            'id' => $overview->id,
+        ]]);
     }
 
     #[Test]

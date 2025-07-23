@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Nova\Resources;
+namespace App\Nova\Resources\Main;
 
 use App\Models\Announcement;
 use App\Nova\Resource;

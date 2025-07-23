@@ -8,6 +8,7 @@ use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
+use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
 use App\DataObjects\EatingOut\LatLng;
@@ -37,9 +38,10 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
 {
     use ClearsCache;
     use HasEateryDetails;
-
     /** @use HasOpenGraphImage<$this> */
     use HasOpenGraphImage;
+
+    use HasSealiacOverview;
 
     use Searchable;
 

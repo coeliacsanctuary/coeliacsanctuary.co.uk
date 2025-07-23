@@ -34,8 +34,6 @@ class TravelCardSearchTerms extends Resource
 
     public static $clickAction = 'view';
 
-    public static $perPageViaRelationship = 20;
-
     public function authorizedToView(Request $request)
     {
         return true;

@@ -5,24 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\EatingOut\SealiacOverview;
 
 use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
+use App\Actions\SealiacOverview\FormatResponseAction;
 use App\Models\EatingOut\Eatery;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class GetController
 {
-    public function __invoke(Eatery $eatery, Request $request, GetSealiacEateryOverviewAction $getSealiacEateryOverviewAction): array
+    public function __invoke(Eatery $eatery, Request $request, GetSealiacEateryOverviewAction $getSealiacEateryOverviewAction, FormatResponseAction $formatResponseAction): array
     {
-        /*
-        * todo - nova
-        *
-        * - add ai overviews resource
-        * - add relation to eatery/branch resources
-        * - add ability to manually invalidate an overview resource
-        */
-
         $branch = null;
 
         if ($eatery->closed_down) {
@@ -39,15 +31,13 @@ class GetController
         }
 
         try {
+            $sealiacOverview = $getSealiacEateryOverviewAction->handle($eatery, $branch);
+
             return [
-                'data' => Str::of($getSealiacEateryOverviewAction->handle($eatery, $branch))
-                    ->markdown([
-                        'renderer' => [
-                            'soft_break' => '<br />',
-                        ],
-                    ])
-                    ->replaceFirst('<p>', '<p><span class="quote-elem open"><span>&ldquo;</span></span>')
-                    ->replaceLast('<p>', '<p><span class="quote-elem close"><span>&rdquo;</span></span>'),
+                'data' => [
+                    'overview' => $formatResponseAction->handle($sealiacOverview->overview),
+                    'id' => $sealiacOverview->id,
+                ],
             ];
         } catch (Exception $e) {
             Log::error('Sealiac AI Overview failed', [

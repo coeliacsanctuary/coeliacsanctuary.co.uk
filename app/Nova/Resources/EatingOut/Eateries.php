@@ -15,6 +15,7 @@ use App\Notifications\EatingOut\EateryRecommendationAddedNotification;
 use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
 use App\Nova\Resources\EatingOut\PolymorphicPanels\EateryFeaturesPolymorphicPanel;
+use App\Nova\Resources\Main\SealiacOverviews;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -33,6 +34,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -309,7 +311,7 @@ class Eateries extends Resource
 
             DateTime::make('Last Updated', 'updated_at')->exceptOnForms(),
 
-            HasMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
+            MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
 
             HasMany::make('Reviews', resource: Reviews::class),
 
