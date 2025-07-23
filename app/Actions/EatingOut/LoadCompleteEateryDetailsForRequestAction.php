@@ -56,12 +56,13 @@ class LoadCompleteEateryDetailsForRequestAction
                 return $builder
                     ->with(['review', 'review.eatery', 'review.branch', 'review.branch.town'])
                     ->whereRelation('review', function (Builder $builder) use ($pageType, $showAllReviews, $nationwideBranch) {
-                    return $builder->where('admin_review', false)
-                        ->when(
-                            $pageType === 'branch' && $showAllReviews !== true,
-                            fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
-                        );
-                });
+                        /** @var Builder<EateryReview> $builder */
+                        return $builder->where('admin_review', false)
+                            ->when(
+                                $pageType === 'branch' && $showAllReviews !== true,
+                                fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
+                            );
+                    });
             },
             'reviews' => function (HasMany $builder) use ($pageType, $showAllReviews, $nationwideBranch) {
                 /** @var HasMany<EateryReview, Eatery> $builder */
@@ -81,7 +82,7 @@ class LoadCompleteEateryDetailsForRequestAction
         if ($pageType === 'nationwide') {
             $eatery->load([
                 'nationwideBranches.eatery', 'nationwideBranches.area', 'nationwideBranches.area.town', 'nationwideBranches.town',
-                'nationwideBranches.town.county', 'nationwideBranches.county', 'nationwideBranches.country'
+                'nationwideBranches.town.county', 'nationwideBranches.county', 'nationwideBranches.country',
             ]);
         }
 
