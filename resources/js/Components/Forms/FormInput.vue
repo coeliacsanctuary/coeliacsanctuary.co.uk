@@ -61,7 +61,7 @@ const classes = (): string[] => {
   if (props.error) {
     base.push('border-red!', 'focus:border-red-dark');
 
-    if (!props.borders && props.background) {
+    if (!props.borders && props.background && !props.hideErrorBackground) {
       base.push('bg-red/90!');
     }
   }
@@ -126,7 +126,11 @@ const classes = (): string[] => {
       >
         <ExclamationCircleIcon
           aria-hidden="true"
-          class="h-5 w-5 text-red"
+          class="h-5 w-5"
+          :class="{
+            'text-red': hideErrorBackground,
+            'text-white': !hideErrorBackground,
+          }"
         />
       </div>
     </div>

@@ -10,6 +10,7 @@ export type BaseFormProps = {
   placeholder?: string;
   borders?: boolean;
   background?: boolean;
+  hideErrorBackground?: boolean;
   hasError?: boolean;
   disabled?: boolean;
 };
@@ -21,6 +22,7 @@ export const BaseFormInputPropDefaults: Partial<BaseFormInputProps> = {
   required: false,
   borders: false,
   background: true,
+  hideErrorBackground: false,
   hasError: false,
   disabled: false,
 };
