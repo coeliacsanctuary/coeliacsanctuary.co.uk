@@ -139,7 +139,7 @@ const loadMoreComments = () => {
       <img
         alt="Alison Peters"
         class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-        src="/images/misc/alison.jpg"
+        src="/images/misc/alison.png"
       />
       <div class="prose max-w-2xl md:prose-xl">
         <strong>Alison Peters</strong> has been Coeliac since June 2014 and
