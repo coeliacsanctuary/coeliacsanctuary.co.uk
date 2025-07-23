@@ -11,6 +11,7 @@ use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
+use App\Nova\Resources\Main\SealiacOverviews;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -20,11 +21,12 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<NationwideBranch> */
+/** @extends resource<NationwideBranch> */
 /**
  * @codeCoverageIgnore
  */
@@ -109,7 +111,7 @@ class NationwideBranches extends Resource
                     ->longitudeField('lng'),
             ]),
 
-            HasMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
+            MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
 
             HasMany::make('Reviews', resource: Reviews::class),
 

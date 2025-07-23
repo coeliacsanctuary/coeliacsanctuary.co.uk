@@ -2,18 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Nova\Resources\EatingOut;
+namespace App\Nova\Resources\Main;
 
-use App\Models\EatingOut\SealiacOverview;
+use App\Models\SealiacOverview;
 use App\Nova\Actions\EatingOut\InvalidateSealiacOverview;
 use App\Nova\Resource;
+use App\Nova\Resources\EatingOut\Eateries;
+use App\Nova\Resources\EatingOut\NationwideBranches;
+use App\Nova\Resources\Shop\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -47,13 +52,15 @@ class SealiacOverviews extends Resource
         return [
             ID::make()->hide(),
 
-            Text::make('Overview')->displayUsing(function () {
-                if (app(NovaRequest::class)->filled('viaResourceId')) {
-                    return Str::limit($this->resource->overview);
-                }
+            MorphTo::make('Model')->types([
+                Eateries::class,
+                NationwideBranches::class,
+                Products::class,
+            ]),
 
-                return nl2br($this->resource->overview);
-            })->asHtml(),
+            Text::make('Overview')->displayUsing(fn () => Str::limit($this->resource->overview, 100))->onlyOnIndex(),
+
+            Textarea::make('Overview'),
 
             Badge::make('Status', 'invalidated')
                 ->map([
@@ -71,9 +78,7 @@ class SealiacOverviews extends Resource
 
             Number::make('Rating', '')->displayUsing(fn () => $this->resource->thumbs_up - $this->resource->thumbs_down),
 
-            BelongsTo::make('Eatery', resource: Eateries::class),
 
-            BelongsTo::make('Branch', resource: NationwideBranches::class),
         ];
     }
 
@@ -86,10 +91,5 @@ class SealiacOverviews extends Resource
                 ->canRun(fn ($foo, SealiacOverview $sealiacOverview) => $sealiacOverview->invalidated === false)
                 ->confirmText('Are you sure you want to invalidate this overview?'),
         ];
-    }
-
-    public static function indexQuery(NovaRequest $request, $query)
-    {
-        return $query->with(['eatery']);
     }
 }

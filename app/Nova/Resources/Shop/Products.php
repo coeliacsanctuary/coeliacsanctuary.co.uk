@@ -13,6 +13,7 @@ use App\Nova\Filters\ProductQuantity;
 use App\Nova\Filters\ShopLiveProducts;
 use App\Nova\Metrics\ProductSalesTrend;
 use App\Nova\Resource;
+use App\Nova\Resources\Main\SealiacOverviews;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -27,6 +28,7 @@ use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
@@ -166,6 +168,10 @@ class Products extends Resource
             HasMany::make('Prices', resource: ProductPrice::class),
 
             HasMany::make('Variants', resource: ProductVariant::class),
+
+            MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
+
+            HasMany::make('Reviews', resource: OrderReviewItem::class),
 
             BelongsToMany::make('Search Terms', 'travelCardSearchTerms', resource: TravelCardSearchTerms::class)->fields(fn () => [
                 Boolean::make('Show on Product Page Country List', 'card_show_on_product_page'),
