@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ReviewImage } from '@/types/EateryTypes';
-import { Ref, ref } from 'vue';
+import { computed, Ref, ref } from 'vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
 
@@ -89,6 +89,22 @@ const handleTouchEnd = (event: TouchEvent) => {
     goToNextImage();
   }
 };
+
+const imageTitle = computed(() => {
+  if (props.altText) {
+    return props.altText;
+  }
+
+  if (displayImage.value && props.images[displayImage.value].location) {
+    return `Photo of ${props.images[displayImage.value].location}`;
+  }
+
+  if (props.eateryName) {
+    return `Photo of ${props.eateryName}`;
+  }
+
+  return '';
+});
 </script>
 
 <template>
@@ -138,9 +154,9 @@ const handleTouchEnd = (event: TouchEvent) => {
       @close="closeModal()"
     >
       <div
-        v-if="altText || eateryName"
+        v-if="imageTitle"
         class="border-grey-mid relative border-b bg-grey-light p-3 pr-[34px] text-center text-sm font-semibold"
-        v-html="altText ? altText : `Photo of ${eateryName}`"
+        v-html="imageTitle"
       />
 
       <div
