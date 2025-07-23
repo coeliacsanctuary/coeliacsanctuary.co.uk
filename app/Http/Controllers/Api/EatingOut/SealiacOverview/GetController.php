@@ -32,6 +32,7 @@ class GetController
 
         try {
             $sealiacOverview = $getSealiacEateryOverviewAction->handle($eatery, $branch);
+
             return [
                 'data' => [
                     'overview' => $formatResponseAction->handle($sealiacOverview->overview),
