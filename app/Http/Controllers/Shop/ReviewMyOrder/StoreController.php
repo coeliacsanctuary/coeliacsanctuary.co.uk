@@ -8,6 +8,7 @@ use App\Http\Requests\Shop\ReviewMyOrderRequest;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderReview;
 use App\Models\Shop\ShopOrderReviewInvitation;
+use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopSource;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
@@ -43,6 +44,12 @@ class StoreController
             'rating' => $product['rating'],
             'review' => $product['review'],
         ]));
+
+        $review->products->load('product')->each(function(ShopOrderReviewItem $orderReviewItem) {
+            $orderReviewItem->product?->sealiacOverview?->update([
+                'invalidated' => true,
+            ]);
+        });
 
         return new RedirectResponse(route('shop.review-order.thanks', $invitation));
     }
