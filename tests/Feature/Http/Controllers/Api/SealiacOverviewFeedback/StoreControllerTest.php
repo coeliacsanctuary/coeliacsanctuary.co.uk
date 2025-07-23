@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Api\SealiacOverviewFeedback;
 
-use App\Models\EatingOut\Eatery;
-use App\Models\EatingOut\NationwideBranch;
 use App\Models\SealiacOverview;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

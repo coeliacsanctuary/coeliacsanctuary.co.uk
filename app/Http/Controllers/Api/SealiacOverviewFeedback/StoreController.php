@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\SealiacOverviewFeedback;
 
 use App\Http\Requests\Api\SealiacOverviewFeedback\StoreRequest;
-use App\Models\EatingOut\Eatery;
 use App\Models\SealiacOverview;
 use Exception;
 use Illuminate\Http\Response;

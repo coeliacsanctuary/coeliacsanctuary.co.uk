@@ -45,7 +45,7 @@ class StoreController
             'review' => $product['review'],
         ]));
 
-        $review->products->load('product')->each(function(ShopOrderReviewItem $orderReviewItem) {
+        $review->products->load('product')->each(function (ShopOrderReviewItem $orderReviewItem): void {
             $orderReviewItem->product?->sealiacOverview?->update([
                 'invalidated' => true,
             ]);
