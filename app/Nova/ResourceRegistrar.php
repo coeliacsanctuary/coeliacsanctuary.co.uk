@@ -44,6 +44,7 @@ use App\Nova\Resources\Shop\OrderItem;
 use App\Nova\Resources\Shop\OrderReviewItem;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
+use App\Nova\Resources\Shop\OrderSourcesResource;
 use App\Nova\Resources\Shop\Payment;
 use App\Nova\Resources\Shop\PaymentRefund;
 use App\Nova\Resources\Shop\PostageArea;
@@ -127,6 +128,7 @@ class ResourceRegistrar
             MassDiscount::class,
             OrderReviews::class,
             OrderReviewItem::class,
+            OrderSourcesResource::class,
 
             // Shop Search
             TravelCardSearchHistory::class,

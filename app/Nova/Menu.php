@@ -39,6 +39,7 @@ use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
+use App\Nova\Resources\Shop\OrderSourcesResource;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\TravelCardSearchHistory;
@@ -131,6 +132,7 @@ class Menu
                     MenuItem::resource(DiscountCode::class),
                     MenuItem::resource(PostagePrice::class),
                     MenuItem::resource(MassDiscount::class),
+                    MenuItem::resource(OrderSourcesResource::class),
                 ]),
 
                 MenuGroup::make('Search', [
