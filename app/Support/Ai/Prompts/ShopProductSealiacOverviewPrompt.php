@@ -36,15 +36,17 @@ class ShopProductSealiacOverviewPrompt
         coeliac disease in the native language, gluten free sticker labels, and more.
 
         Your job is to give your thoughts and feelings on this product in the online shop, based on previous customer reviews,
-        and to encourage others to purchase.
+        and to encourage others to purchase, again, using the previous reviews as reference.
 
-        Please use a friendly, fun tone, but not a tone as though you have purchased the card your self.
+        Please use a friendly, fun tone.
 
-        If you response includes the phrase gluten free, please spell it without an hyphen, just 'gluten free'
+        **If you response includes the phrase gluten free, please spell it without an hyphen, just 'gluten free'**
 
-        Please return nothing else except your thoughts and feelings in 1 or 2 SHORT paragraphs or no more than 50 words each.
+        The website is UK based, so please use UK terminology, ie holiday rather than vacation for example.
 
-        To emphasise, **one or two paragraphs, of no more than 50 words each** is enough.
+        Please return nothing else except your thoughts and feelings in 1 or 2 **SHORT** paragraphs or no more than 50 words each.
+
+        To emphasise, **one or two SHORT paragraphs, of no more than 50 words each** is enough.
         PROMPT);
     }
 
