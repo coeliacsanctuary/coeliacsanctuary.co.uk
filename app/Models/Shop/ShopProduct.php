@@ -35,6 +35,7 @@ use Spatie\SchemaOrg\Schema;
  * @property int $currentPrice
  * @property null | int $oldPrice
  * @property float $averageRating
+ * @property float $average_rating
  * @property array{current_price: string, old_price?: string} $price
  * @property Carbon $created_at
  */
