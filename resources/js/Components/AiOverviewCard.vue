@@ -7,6 +7,12 @@ import axios, { AxiosResponse } from 'axios';
 import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/vue/24/solid';
 import SubHeading from '@/Components/SubHeading.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
+import { DataResponse } from '@/types/GenericTypes';
+
+type OverviewResponse = {
+  overview: string;
+  id: number;
+};
 
 const props = defineProps<{ endpoint: string }>();
 
@@ -15,7 +21,7 @@ const emit = defineEmits(['onError']);
 const slots = useSlots();
 
 const isLoading = ref(true);
-const overview = ref<string | undefined>();
+const overview = ref<OverviewResponse | undefined>();
 
 const showWhatsThisModal = ref(false);
 const isSubmittingRating = ref(false);
@@ -24,7 +30,7 @@ const hasSubmittedRating = ref(false);
 const getAiOverview = () => {
   axios
     .get(props.endpoint)
-    .then((response: AxiosResponse<{ data: string }>) => {
+    .then((response: AxiosResponse<DataResponse<OverviewResponse>>) => {
       overview.value = response.data.data;
       isLoading.value = false;
     })
@@ -34,10 +40,14 @@ const getAiOverview = () => {
 };
 
 const submitRating = (rating: 'up' | 'down') => {
+  if (isLoading.value || !overview.value) {
+    return;
+  }
+
   isSubmittingRating.value = true;
 
   axios
-    .post(props.endpoint, { rating })
+    .post(`api/sealiac-overview-feedback/${overview.value.id}`, { rating })
     .then(() => {
       //
     })
@@ -56,7 +66,7 @@ onMounted(() => {
 
 <template>
   <Card v-bind="$attrs">
-    <template v-if="isLoading">
+    <template v-if="isLoading || !overview">
       <Loader
         color="primary"
         :absolute="false"
@@ -83,7 +93,7 @@ onMounted(() => {
       <div class="mt-4 flex overflow-hidden">
         <div
           class="prose flex max-w-none flex-col md:prose-lg xl:prose-xl"
-          v-html="overview"
+          v-html="overview.overview"
         />
       </div>
 
