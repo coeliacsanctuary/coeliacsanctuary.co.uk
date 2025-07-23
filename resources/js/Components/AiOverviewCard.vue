@@ -47,7 +47,7 @@ const submitRating = (rating: 'up' | 'down') => {
   isSubmittingRating.value = true;
 
   axios
-    .post(`api/sealiac-overview-feedback/${overview.value.id}`, { rating })
+    .post(`/api/sealiac-overview-feedback/${overview.value.id}`, { rating })
     .then(() => {
       //
     })
