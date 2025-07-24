@@ -17,6 +17,7 @@ import {
   BlogDetailCard as BlogDetailCardType,
   BlogTagCount,
 } from '@/types/BlogTypes';
+import useBrowser from '@/composables/useBrowser';
 
 defineProps<{
   blogs: PaginatedResponse<BlogDetailCardType>;
@@ -30,7 +31,7 @@ const page = ref(1);
 
 const refreshPage = () => {
   router.get(
-    '/blog',
+    useBrowser().currentPath(),
     {
       ...(page.value > 1 ? { page: page.value } : undefined),
     },

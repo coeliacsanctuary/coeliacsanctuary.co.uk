@@ -146,7 +146,7 @@ const classes = (page: Page): string[] => {
   <nav
     class="flex items-center justify-between border-t border-gray-200 px-4 pt-4 select-none sm:px-0"
   >
-    <div class="-mt-px flex items-center">
+    <div class="-mt-px flex w-[46px] items-center sm:w-[120px]">
       <a
         v-if="canGoBack()"
         class="inline-flex cursor-pointer items-center border-t-2 border-transparent p-3 pr-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
@@ -176,7 +176,7 @@ const classes = (page: Page): string[] => {
       </template>
     </div>
 
-    <div class="-mt-px flex justify-end">
+    <div class="-mt-px flex w-[46px] justify-end sm:w-[120px]">
       <a
         v-if="canGoForward()"
         class="inline-flex cursor-pointer items-center border-t-2 border-transparent p-3 pl-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
