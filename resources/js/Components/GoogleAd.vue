@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 withDefaults(defineProps<{ code: string; title?: string }>(), {
   title: 'Sponsored - content continues below',
@@ -7,8 +7,10 @@ withDefaults(defineProps<{ code: string; title?: string }>(), {
 
 const mounted = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
   mounted.value = true;
+
+  await nextTick();
 
   if (!window.adsbygoogle) {
     return;
@@ -30,6 +32,7 @@ onMounted(() => {
 <template>
   <div
     v-if="mounted"
+    :key="code"
     class="m-2 flex flex-col border-y border-primary-light py-2 text-center"
   >
     <p
