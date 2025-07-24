@@ -1,34 +1,35 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 withDefaults(defineProps<{ code: string; title?: string }>(), {
   title: 'Sponsored - content continues below',
 });
 
-const hasGoogle = computed(() => {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  if (!window.adsbygoogle) {
-    return false;
-  }
-
-  return true;
-});
+const mounted = ref(false);
 
 onMounted(() => {
-  if (!hasGoogle.value) {
+  mounted.value = true;
+
+  if (!window.adsbygoogle) {
     return;
   }
 
-  (adsbygoogle = window.adsbygoogle || []).push({});
+  if (!window.__abg_called) {
+    try {
+      // window.adsbygoogle = window.adsbygoogle || [];
+      window.adsbygoogle.push({});
+    } catch (e) {
+      console.error(e);
+    }
+
+    window.__abg_called = true;
+  }
 });
 </script>
 
 <template>
   <div
-    v-if="hasGoogle"
+    v-if="mounted"
     class="m-2 flex flex-col border-y border-primary-light py-2 text-center"
   >
     <p
