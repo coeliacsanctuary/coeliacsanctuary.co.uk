@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue';
 
-withDefaults(defineProps<{ code: string; title?: string }>(), {
+const props = withDefaults(defineProps<{ code: string; title?: string }>(), {
   title: 'Sponsored - content continues below',
 });
 
@@ -16,15 +16,10 @@ onMounted(async () => {
     return;
   }
 
-  if (!window.__abg_called) {
-    try {
-      // window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
-    } catch (e) {
-      console.error(e);
-    }
-
-    window.__abg_called = true;
+  try {
+    window.adsbygoogle.push({});
+  } catch (e) {
+    console.error(e);
   }
 });
 </script>
