@@ -86,10 +86,19 @@ const pages = (): Page[] => {
     pageArray.push({ type: 'page', number: props.to, static: true });
   }
 
-  return pageArray.filter(
-    (page, index) =>
-      pageArray.map((page) => page.number).indexOf(page.number) === index,
-  );
+  return pageArray
+    .filter(
+      (page, index) =>
+        pageArray.map((page) => page.number).indexOf(page.number) === index,
+    )
+    .sort((a, b) => {
+      // Dots should stay where they are, only sort pages
+      if (a.type !== 'page' || b.type !== 'page') {
+        return 0;
+      }
+
+      return (a.number ?? 0) - (b.number ?? 0);
+    });
 };
 
 const emits = defineEmits(['change']);
@@ -140,7 +149,7 @@ const classes = (page: Page): string[] => {
     <div class="-mt-px flex items-center">
       <a
         v-if="canGoBack()"
-        class="inline-flex cursor-pointer items-center border-t-2 border-transparent pr-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
+        class="inline-flex cursor-pointer items-center border-t-2 border-transparent p-3 pr-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
         @click.prevent="gotoPage('prev')"
       >
         <ArrowLongLeftIcon class="mr-3 h-5 w-5 text-gray-400" />
@@ -170,7 +179,7 @@ const classes = (page: Page): string[] => {
     <div class="-mt-px flex justify-end">
       <a
         v-if="canGoForward()"
-        class="inline-flex cursor-pointer items-center border-t-2 border-transparent pl-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
+        class="inline-flex cursor-pointer items-center border-t-2 border-transparent p-3 pl-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
         @click.prevent="gotoPage('next')"
       >
         <span class="hidden sm:inline">Next</span>
