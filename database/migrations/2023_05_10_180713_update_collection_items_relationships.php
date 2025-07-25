@@ -13,7 +13,7 @@ return new class () extends Migration {
     {
         DB::statement('UPDATE collection_items SET item_type = "App\\\Models\\\Recipes\\\Recipe" WHERE item_type = "Coeliac\\\Modules\\\Recipe\\\Models\\\Recipe"');
         DB::statement('UPDATE collection_items SET item_type = "App\\\Models\\\Blogs\\\Blog" WHERE item_type = "Coeliac\\\Modules\\\Blog\\\Models\\\Blog"');
-        DB::statement('delete from collection_items where item_type like "Coeliac\\\%"');
+        DB::statement('delete from collection_items where item_type like "Coeliac%"');
     }
 
     /**
