@@ -12,14 +12,32 @@ onMounted(async () => {
 
   await nextTick();
 
-  if (!window.adsbygoogle) {
-    return;
-  }
+  const tryInjectAd = () => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.error('Adsbygoogle push failed', e);
+    }
+  };
 
-  try {
-    window.adsbygoogle.push({});
-  } catch (e) {
-    console.error(e);
+  if (window.adsbygoogle) {
+    tryInjectAd();
+  } else {
+    // Poll every 100ms for up to 3 seconds
+    const maxRetries = 30;
+    let retries = 0;
+
+    const interval = setInterval(() => {
+      if (window.adsbygoogle) {
+        clearInterval(interval);
+        tryInjectAd();
+      }
+
+      if (++retries >= maxRetries) {
+        clearInterval(interval);
+        console.warn('adsbygoogle not available after timeout');
+      }
+    }, 100);
   }
 });
 </script>
