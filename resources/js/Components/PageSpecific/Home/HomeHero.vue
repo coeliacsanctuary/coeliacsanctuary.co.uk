@@ -67,6 +67,8 @@ setInterval(() => {
         class="h-full w-full object-cover"
         :src="activeItem.image"
         :alt="activeItem.title"
+        fetchpriority="high"
+        decoding="async"
       />
     </div>
   </div>

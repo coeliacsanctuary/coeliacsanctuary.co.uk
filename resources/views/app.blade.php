@@ -23,6 +23,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
 
+    @if (Route::is('home'))
+        <link rel="preload" as="image" href="/images/travel-cards-hero.png" fetchpriority="high" />
+    @endif
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1063051842575021" crossorigin="anonymous"></script>
 
