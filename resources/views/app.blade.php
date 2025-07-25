@@ -24,7 +24,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
 
     @if (Route::is('home'))
-        <link rel="preload" as="image" href="/images/travel-cards-hero.png" fetchpriority="high" />
+        <link rel="preload" as="image" href="/images/travel-cards-hero.webp" fetchpriority="high" />
     @endif
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>

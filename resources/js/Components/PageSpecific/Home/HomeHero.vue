@@ -7,7 +7,7 @@ type HeroItem = { title: string; image: string };
 const items: HeroItem[] = [
   {
     title: 'Have you got your travel cards?',
-    image: '/images/travel-cards-hero.png',
+    image: '/images/travel-cards-hero.webp',
   },
 ];
 
