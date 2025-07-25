@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { Ref, ref } from 'vue';
+// import { Ref, ref } from 'vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 
-type HeroItem = { title: string; image: string };
-
-const items: HeroItem[] = [
-  {
-    title: 'Have you got your travel cards?',
-    image: '/images/travel-cards-hero.webp',
-  },
-];
-
-let activeIndex: number = 0;
-const activeItem: Ref<HeroItem> = ref(items[0]);
-
-setInterval(() => {
-  if (activeIndex === items.length - 1) {
-    activeItem.value = items[0];
-    activeIndex = 0;
-
-    return;
-  }
-
-  activeIndex += 1;
-  activeItem.value = items[activeIndex];
-}, 5000);
+// type HeroItem = { title: string; image: string };
+//
+// const items: HeroItem[] = [
+//   {
+//     title: 'Have you got your travel cards?',
+//     image: '/images/travel-cards-hero.webp',
+//   },
+// ];
+//
+// let activeIndex: number = 0;
+// const activeItem: Ref<HeroItem> = ref(items[0]);
+//
+// setInterval(() => {
+//   if (activeIndex === items.length - 1) {
+//     activeItem.value = items[0];
+//     activeIndex = 0;
+//
+//     return;
+//   }
+//
+//   activeIndex += 1;
+//   activeItem.value = items[activeIndex];
+// }, 5000);
 </script>
 <template>
   <div class="relative bg-primary-light/50">
@@ -36,8 +36,9 @@ setInterval(() => {
           >
             <h1
               class="mx-auto bg-secondary/60 px-2 py-3 text-center font-coeliac text-3xl font-semibold tracking-tight text-gray-900 sm:w-4/5 sm:text-4xl sm:leading-10"
-              v-text="activeItem.title"
-            />
+            >
+              Have you got your travel cards?
+            </h1>
             <p
               class="mx-auto prose prose-lg max-w-none bg-white/70 p-2 text-center text-lg leading-6 text-gray-600 xs:p-4 sm:prose-xl sm:w-4/5 sm:leading-8"
             >
@@ -65,8 +66,8 @@ setInterval(() => {
       />
       <img
         class="h-full w-full object-cover"
-        :src="activeItem.image"
-        :alt="activeItem.title"
+        src="/images/travel-cards-hero.webp"
+        alt="Have you got your travel cards?"
         fetchpriority="high"
         decoding="async"
       />
