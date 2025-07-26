@@ -11,6 +11,7 @@ use App\Models\EatingOut\EateryVenueType;
 use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
 use App\Nova\Resources\EatingOut\PolymorphicPanels\EateryFeaturesPolymorphicPanel;
+use App\Nova\Resources\Main\SealiacOverviews;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -94,7 +96,7 @@ class NationwideEateries extends Resource
 
             HasMany::make('Branches', 'nationwideBranches', NationwideBranches::class),
 
-            HasMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
+            MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
 
             HasMany::make('Reviews', resource: Reviews::class),
 

@@ -9,12 +9,12 @@ use Illuminate\Support\Arr;
 class SearchAiResponse
 {
     public function __construct(
-        readonly public int $shop,
-        readonly public int $eatingOut,
-        readonly public int $blogs,
-        readonly public int $recipes,
-        readonly public string $reasoning,
-        readonly public ?string $location = null,
+        public readonly int $shop,
+        public readonly int $eatingOut,
+        public readonly int $blogs,
+        public readonly int $recipes,
+        public readonly string $reasoning,
+        public readonly ?string $location = null,
     ) {
         //
     }

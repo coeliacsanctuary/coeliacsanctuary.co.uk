@@ -13,7 +13,7 @@ class AbandonedBasketMailable extends BaseShopMailable
     {
         return MjmlMessage::make()
             ->subject('Your Coeliac Sanctuary order is confirmed!')
-            ->mjml('mailables.mjml.shop.abandoned-basket', $this->baseData([
+            ->mjml('mailables.mjml.shop.static.abandoned-basket', $this->baseData([
                 'link' => $this->generateMagicLink(),
                 'basket' => $this->order,
                 'reason' => 'as a reminder to complete your purchase',

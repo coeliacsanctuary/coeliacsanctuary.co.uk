@@ -15,10 +15,10 @@ class SearchResultsCollection
      * @param  Collection<int, SearchResultItem>  $shop
      */
     public function __construct(
-        readonly public Collection $blogs = new Collection(),
-        readonly public Collection $recipes = new Collection(),
-        readonly public Collection $eateries = new Collection(),
-        readonly public Collection $shop = new Collection(),
+        public readonly Collection $blogs = new Collection(),
+        public readonly Collection $recipes = new Collection(),
+        public readonly Collection $eateries = new Collection(),
+        public readonly Collection $shop = new Collection(),
     ) {
         //
     }

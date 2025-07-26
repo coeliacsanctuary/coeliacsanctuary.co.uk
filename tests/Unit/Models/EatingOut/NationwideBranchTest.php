@@ -15,7 +15,7 @@ use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
-use App\Models\EatingOut\SealiacOverview;
+use App\Models\SealiacOverview;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;

@@ -115,6 +115,10 @@ class Orders extends Resource
             HasOneThrough::make('Discount Code', resource: DiscountCode::class),
 
             HasMany::make('Items', resource: OrderItem::class),
+
+            HasMany::make('Review', 'reviews', OrderReviews::class),
+
+            HasMany::make('Where did you find us?', 'sources', OrderSourcesResource::class),
         ];
     }
 

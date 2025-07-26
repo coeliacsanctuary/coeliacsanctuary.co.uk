@@ -267,6 +267,7 @@ export type ReviewImage = {
   id: string;
   thumbnail: string;
   path: string;
+  location?: string;
 };
 
 export type StarRating =

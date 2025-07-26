@@ -20,7 +20,7 @@ withDefaults(
     </h2>
 
     <div
-      class="mx-auto my-2 h-px w-4/5 bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
+      class="mx-auto my-2 h-px w-full bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
     />
 
     <section

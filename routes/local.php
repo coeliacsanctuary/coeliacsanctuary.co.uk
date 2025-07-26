@@ -9,11 +9,13 @@ use App\Actions\OpenGraphImages\GenerateTownOpenGraphImageAction;
 use App\DataObjects\NotificationRelatedObject;
 use App\Enums\EatingOut\EateryType;
 use App\Enums\Shop\OrderState;
+use App\Mailables\EatingOut\EateryRecommendationAddedMailable;
 use App\Models\Blogs\Blog;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
@@ -32,7 +34,7 @@ use Spatie\Mjml\Mjml;
 
 Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = null): string {
     $order = ShopOrder::query()
-        ->where('state_id', OrderState::PAID)
+        ->whereIn('state_id', [OrderState::PAID, OrderState::SHIPPED])
         ->with(['items', 'items.product.media', 'payment', 'customer', 'address'])
         ->when(
             $orderId,
@@ -57,9 +59,36 @@ Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = nu
     return Mjml::new()->toHtml($content);
 });
 
+Route::get('/mail/shop/order-shipped/{orderId?}', function (?int $orderId = null): string {
+    $order = ShopOrder::query()
+        ->whereIn('state_id', [OrderState::PAID, OrderState::SHIPPED])
+        ->with(['items', 'items.product.media', 'payment', 'customer', 'address'])
+        ->when(
+            $orderId,
+            fn (Builder $builder) => $builder->findOrFail($orderId),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $content = view('mailables.mjml.shop.order-shipped', [
+        'key' => 'foo',
+        'date' => now(),
+        'order' => $order,
+        'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'notifiable' => $order->customer,
+        'relatedTitle' => 'products',
+        'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+            title: $product->title,
+            image: $product->main_image,
+            link: $product->link,
+        )),
+    ])->render();
+
+    return Mjml::new()->toHtml($content);
+});
+
 Route::get('/mail/shop/order-refund/{orderId?}', function (?int $orderId = null): string {
     $order = ShopOrder::query()
-        ->where('state_id', OrderState::PAID)
+        ->whereIn('state_id', [OrderState::PAID, OrderState::SHIPPED])
         ->with(['items', 'items.product.media', 'payment', 'customer', 'address'])
         ->when(
             $orderId,
@@ -133,10 +162,41 @@ Route::get('/mail/shop/order-resent/{orderId?}', function (?int $orderId = null)
     return Mjml::new()->toHtml($content);
 });
 
+Route::get('/mail/shop/order-cancelled/{orderId?}', function (?int $orderId = null): string {
+    $order = ShopOrder::query()
+        ->where('state_id', OrderState::CANCELLED)
+        ->with(['items', 'items.product.media', 'payment', 'customer', 'address'])
+        ->when(
+            $orderId,
+            fn (Builder $builder) => $builder->findOrFail($orderId),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $overrides = collect([$order->items->random()])->mapWithKeys(fn (ShopOrderItem $item) => [$item->id => $item->quantity - 1]);
+
+    $content = view('mailables.mjml.shop.order-cancelled', [
+        'key' => 'foo',
+        'date' => now(),
+        'order' => $order,
+        'overrides' => $overrides,
+        'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'notifiable' => $order->customer,
+        'relatedTitle' => 'products',
+        'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+            title: $product->title,
+            image: $product->main_image,
+            link: $product->link,
+        )),
+    ])->render();
+
+    return Mjml::new()->toHtml($content);
+});
+
 Route::get('/mail/shop/abandoned-cart/{orderId?}', function (?int $basketId = null): string {
     $basket = ShopOrder::query()
         ->whereIn('state_id', [OrderState::BASKET, OrderState::EXPIRED])
         ->whereHas('customer')
+        ->whereHas('items')
         ->with(['items', 'items.product.media', 'customer'])
         ->when(
             $basketId,
@@ -144,7 +204,7 @@ Route::get('/mail/shop/abandoned-cart/{orderId?}', function (?int $basketId = nu
             fn (Builder $builder) => $builder->latest()->first(),
         );
 
-    $content = view('mailables.mjml.shop.abandoned-basket', [
+    $content = view('mailables.mjml.shop.static.abandoned-basket', [
         'key' => 'foo',
         'date' => now(),
         'link' => URL::temporarySignedRoute('shop.basket.reopen', now()->addDay(), ['basket' => $basket]),
@@ -173,11 +233,11 @@ Route::get('/mail/shop/review-invitation/{orderId?}', function (?int $orderId = 
             fn (Builder $builder) => $builder->latest()->first(),
         );
 
-    $content = view('mailables.mjml.shop.review-invitation', [
+    $content = view('mailables.mjml.shop.static.review-invitation', [
         'key' => 'foo',
         'date' => now(),
         'order' => $order,
-        'reason' => 'mailables.mjml.shop.review-invitation',
+        'reason' => 'mailables.mjml.shop.static.review-invitation',
         'delayText' => '10 days',
         'reviewLink' => URL::temporarySignedRoute(
             'shop.review-order',
@@ -220,6 +280,31 @@ Route::get('/mail/eating-out/review-approved/{id?}', function (?int $id = null):
             image: $product->main_image,
             link: $product->link,
         )),
+    ])->render();
+
+    return Mjml::new()->toHtml($content);
+});
+
+Route::get('/mail/eating-out/recommendation-added/{id?}', function (?int $id = null): string {
+    $recommendation = EateryRecommendation::query()->latest()->first();
+    $eatery = Eatery::query()
+        ->when(
+            $id,
+            fn (Builder $builder) => $builder->findOrFail($id),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $mailable = invade(new EateryRecommendationAddedMailable($eatery, $recommendation));
+
+    $content = view('mailables.mjml.eating-out.recommended-eatery-added', [
+        'key' => 'foo',
+        'date' => now(),
+        'recommendation' => $recommendation,
+        'eatery' => $eatery,
+        'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'email' => $recommendation->email,
+        'nearbyEateries' => $mailable->nearbyEateries(),
+        ...$mailable->relatedItems(),
     ])->render();
 
     return Mjml::new()->toHtml($content);

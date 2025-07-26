@@ -77,6 +77,7 @@ const logExpandDiscountCode = () => {
             class="w-full"
             :borders="false"
             :error="form.errors.discount"
+            hide-error-background
           />
 
           <CoeliacButton

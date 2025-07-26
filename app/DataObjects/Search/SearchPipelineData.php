@@ -7,8 +7,8 @@ namespace App\DataObjects\Search;
 class SearchPipelineData
 {
     public function __construct(
-        readonly public SearchParameters $parameters,
-        readonly public SearchResultsCollection $results,
+        public readonly SearchParameters $parameters,
+        public readonly SearchResultsCollection $results,
     ) {
         //
     }

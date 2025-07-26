@@ -24,11 +24,14 @@ use App\Nova\Resources\EatingOut\PlaceReports;
 use App\Nova\Resources\EatingOut\Reviews;
 use App\Nova\Resources\EatingOut\SuggestedEdits;
 use App\Nova\Resources\EatingOut\Towns;
+use App\Nova\Resources\Main\AnnouncementResource;
 use App\Nova\Resources\Main\Blog;
 use App\Nova\Resources\Main\Collection;
 use App\Nova\Resources\Main\Comments;
 use App\Nova\Resources\Main\PopupResource;
 use App\Nova\Resources\Main\Recipe;
+use App\Nova\Resources\Main\RedirectResource;
+use App\Nova\Resources\Main\SealiacOverviews;
 use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
@@ -36,6 +39,7 @@ use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
+use App\Nova\Resources\Shop\OrderSourcesResource;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\TravelCardSearchHistory;
@@ -77,6 +81,9 @@ class Menu
                 MenuItem::resource(Collection::class),
                 MenuItem::resource(Comments::class)->withBadgeIf(fn () => (string) $commentsCount, 'danger', fn () => $commentsCount > 0),
                 MenuItem::resource(PopupResource::class),
+                MenuItem::resource(AnnouncementResource::class),
+                MenuItem::resource(RedirectResource::class),
+                MenuItem::resource(SealiacOverviews::class),
             ])->icon('home'),
 
             MenuSection::make('Eating Out', [
@@ -125,6 +132,7 @@ class Menu
                     MenuItem::resource(DiscountCode::class),
                     MenuItem::resource(PostagePrice::class),
                     MenuItem::resource(MassDiscount::class),
+                    MenuItem::resource(OrderSourcesResource::class),
                 ]),
 
                 MenuGroup::make('Search', [

@@ -70,7 +70,7 @@ class EateryReview extends Model
         });
     }
 
-    /** @return Attribute<int | null, never> */
+    /** @return Attribute<int<0, max> | null, never> */
     public function numberOfRatings(): Attribute
     {
         return Attribute::get(function () {

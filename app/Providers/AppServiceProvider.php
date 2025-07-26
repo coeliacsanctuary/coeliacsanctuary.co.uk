@@ -9,6 +9,7 @@ use App\Search\Eateries;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Notifications\Channels\MailChannel as IlluminateMailChannel;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Mjml\Mjml;
@@ -38,5 +39,7 @@ class AppServiceProvider extends ServiceProvider
         Eateries::bootSearchable();
 
         Vite::prefetch(concurrency: 3);
+
+        Blade::directive('preloadImage', fn () => "<?php echo app(App\Actions\PreloadHeaderImageAction::class)->handle(); ?>");
     }
 }

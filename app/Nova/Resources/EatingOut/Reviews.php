@@ -53,7 +53,7 @@ class Reviews extends Resource
             ID::make()->hide(),
 
             BelongsTo::make('eatery', resource: Eateries::class)
-                ->displayUsing(fn (Eateries $eatery) => $eatery->resource->load(['town', 'county', 'country'])->full_name)
+                ->displayUsing(fn (Eateries $eatery) => $eatery->resource->load(['area', 'town', 'county', 'country'])->full_name)
                 ->exceptOnForms(),
 
             new Panel('User', [
@@ -137,7 +137,7 @@ class Reviews extends Resource
                         ->resource
                         ->eatery
                         ->nationwideBranches()
-                        ->with(['town', 'county', 'country'])
+                        ->with(['area', 'town', 'county', 'country'])
                         ->chaperone('eatery')
                         ->get()
                         ->mapWithKeys(fn (NationwideBranch $nationwideBranch) => [$nationwideBranch->id => $nationwideBranch->full_name])

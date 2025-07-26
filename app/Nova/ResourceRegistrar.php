@@ -17,9 +17,9 @@ use App\Nova\Resources\EatingOut\PlaceRecommendations;
 use App\Nova\Resources\EatingOut\PlaceReports;
 use App\Nova\Resources\EatingOut\ReviewImage;
 use App\Nova\Resources\EatingOut\Reviews;
-use App\Nova\Resources\EatingOut\SealiacOverviews;
 use App\Nova\Resources\EatingOut\SuggestedEdits;
 use App\Nova\Resources\EatingOut\Towns;
+use App\Nova\Resources\Main\AnnouncementResource;
 use App\Nova\Resources\Main\Blog;
 use App\Nova\Resources\Main\BlogTag;
 use App\Nova\Resources\Main\Collection;
@@ -30,6 +30,8 @@ use App\Nova\Resources\Main\PopupResource;
 use App\Nova\Resources\Main\Recipe;
 use App\Nova\Resources\Main\RecipeAllergens;
 use App\Nova\Resources\Main\RecipeNutritionalInformation;
+use App\Nova\Resources\Main\RedirectResource;
+use App\Nova\Resources\Main\SealiacOverviews;
 use App\Nova\Resources\Search\SearchAiResponseResource;
 use App\Nova\Resources\Search\SearchHistoryResource;
 use App\Nova\Resources\Search\SearchResource;
@@ -42,6 +44,7 @@ use App\Nova\Resources\Shop\OrderItem;
 use App\Nova\Resources\Shop\OrderReviewItem;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
+use App\Nova\Resources\Shop\OrderSourcesResource;
 use App\Nova\Resources\Shop\Payment;
 use App\Nova\Resources\Shop\PaymentRefund;
 use App\Nova\Resources\Shop\PostageArea;
@@ -74,6 +77,8 @@ class ResourceRegistrar
             Comments::class,
             CommentReply::class,
             PopupResource::class,
+            AnnouncementResource::class,
+            RedirectResource::class,
 
             // Eating Out
             Eateries::class,
@@ -123,6 +128,7 @@ class ResourceRegistrar
             MassDiscount::class,
             OrderReviews::class,
             OrderReviewItem::class,
+            OrderSourcesResource::class,
 
             // Shop Search
             TravelCardSearchHistory::class,

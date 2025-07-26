@@ -7,12 +7,14 @@ namespace App\Http\Response;
 use App\Actions\GetPopupCtaAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Actions\Shop\ResolveBasketAction;
+use App\Models\Announcement;
 use App\Resources\Shop\ShopOrderItemResource;
 use App\Support\Helpers;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 use Inertia\DeferProp;
 use Inertia\Inertia as BaseInertia;
 use Inertia\MergeProp;
@@ -48,6 +50,8 @@ class Inertia
         if (Request::hasCookie('basket_token') && ! Request::routeIs('shop.basket.checkout')) {
             $this->includeBasket();
         }
+
+        $this->loadAnnouncement();
     }
 
     public function title(string $title): self
@@ -168,6 +172,21 @@ class Inertia
                 'link' => $popup->link,
                 'primary_image' => $popup->getMedia('primary')->random()?->getUrl(), /** @phpstan-ignore-line */
                 'secondary_image' => $popup->getMedia('secondary')->isNotEmpty() ? $popup->getMedia('secondary')->random()->getUrl() : null,
+            ]);
+        }
+    }
+
+    protected function loadAnnouncement(): void
+    {
+        $announcement = Announcement::query()
+            ->where('live', true)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if ($announcement) {
+            BaseInertia::share('announcement', [
+                'title' => $announcement->title,
+                'text' => Str::markdown($announcement->text),
             ]);
         }
     }

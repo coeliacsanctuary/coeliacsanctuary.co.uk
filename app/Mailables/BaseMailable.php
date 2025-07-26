@@ -66,7 +66,7 @@ abstract class BaseMailable
                     ->get()
                     ->map(fn (Recipe $recipe) => new NotificationRelatedObject(
                         title: $recipe->title,
-                        image: $recipe->main_image,
+                        image: $recipe->square_image ?? $recipe->main_image,
                         link: $recipe->link,
                     )),
             ],

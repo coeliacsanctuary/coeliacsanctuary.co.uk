@@ -43,7 +43,7 @@ class AssociateLondonEateryAreasCommand extends Command
             ->each($this->processLocation(...));
     }
 
-    protected function processLocation(Eatery | NationwideBranch $model): void
+    protected function processLocation(Eatery|NationwideBranch $model): void
     {
         $address = str_replace("\n", ', ', $model->address);
 
@@ -100,14 +100,14 @@ class AssociateLondonEateryAreasCommand extends Command
             $this->info("Suggested Area: {$json['area']}");
             $this->info("Reason: {$json['explanation']}");
 
-            if ($this->confirm('Set the given area?', true)) {
-                $area = EateryArea::query()->firstOrCreate([
-                    'area' => $json['area'],
-                    'town_id' => $model->town_id
-                ]);
+            //            if ($this->confirm('Set the given area?', true)) {
+            $area = EateryArea::query()->firstOrCreate([
+                'area' => $json['area'],
+                'town_id' => $model->town_id,
+            ]);
 
-                $model->updateQuietly(['area_id' => $area->id]);
-            }
+            $model->updateQuietly(['area_id' => $area->id]);
+            //            }
         }
     }
 }

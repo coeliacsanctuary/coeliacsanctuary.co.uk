@@ -49,45 +49,48 @@
     </mj-section>
 
     <mj-section padding="0 25px">
-        <mj-column mj-class="light-blue" padding="5px 10px">
+        <mj-column mj-class="light-blue" width="25%" padding="5px 10px">
             <mj-text mj-class="inner">
                 <strong>Your Rating</strong>
             </mj-text>
         </mj-column>
-        <mj-column mj-class="light-blue" padding="5px 10px">
-            <mj-text mj-class="inner">
-                <strong>Price</strong>
-            </mj-text>
-        </mj-column>
-        <mj-column mj-class="light-blue" padding="5px 10px">
-            <mj-text mj-class="inner">
-                <strong>Food</strong>
-            </mj-text>
-        </mj-column>
-        <mj-column mj-class="light-blue" padding="5px 10px">
-            <mj-text mj-class="inner">
-                <strong>Service</strong>
-            </mj-text>
-        </mj-column>
-    </mj-section>
-
-    <mj-section padding="0 25px">
-        <mj-column padding="5px 10px">
+        <mj-column height="100%" mj-class="light-section" padding="5px 10px" width="75%">
             <mj-text mj-class="inner">
                 {{ $eateryReview->rating }} Stars
             </mj-text>
         </mj-column>
-        <mj-column padding="5px 10px">
+    </mj-section>
+    <mj-section padding="0 25px">
+        <mj-column mj-class="light-blue" width="25%" padding="5px 10px">
+            <mj-text mj-class="inner">
+                <strong>Price</strong>
+            </mj-text>
+        </mj-column>
+        <mj-column mj-class="light-section" padding="5px 10px" width="75%">
             <mj-text mj-class="inner">
                 {{ $eateryReview->price['label'] }}
             </mj-text>
         </mj-column>
-        <mj-column padding="5px 10px">
+    </mj-section>
+    <mj-section padding="0 25px">
+        <mj-column mj-class="light-blue" width="25%" padding="5px 10px">
+            <mj-text mj-class="inner">
+                <strong>Food</strong>
+            </mj-text>
+        </mj-column>
+        <mj-column mj-class="light-section" padding="5px 10px" width="75%">
             <mj-text mj-class="inner">
                 {{ ucwords($eateryReview->food_rating) }}
             </mj-text>
         </mj-column>
-        <mj-column padding="5px 10px">
+    </mj-section>
+    <mj-section padding="0 25px">
+        <mj-column mj-class="light-blue" width="25%" padding="5px 10px">
+            <mj-text mj-class="inner">
+                <strong>Service</strong>
+            </mj-text>
+        </mj-column>
+        <mj-column mj-class="light-section" padding="5px 10px" width="75%">
             <mj-text mj-class="inner">
                 {{ ucwords($eateryReview->service_rating) }}
             </mj-text>

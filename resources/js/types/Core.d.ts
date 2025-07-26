@@ -10,7 +10,11 @@ export {};
 declare global {
   interface Window {
     gtag: (key: string, event: string, attributes: object = {}) => void;
-    adsbygoogle: object[];
+    adsbygoogle?: {
+      loaded: boolean;
+      push: (args: unknown) => void;
+    };
+    __abg_called?: boolean;
   }
 }
 

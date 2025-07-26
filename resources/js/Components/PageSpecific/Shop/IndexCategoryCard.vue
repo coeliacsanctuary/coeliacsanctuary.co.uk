@@ -20,18 +20,16 @@ defineProps<{
       :href="category.link"
       prefetch
     >
-      <div class="relative overflow-hidden rounded-sm xmd:h-[32rem]">
-        <div class="absolute inset-0">
+      <div class="relative overflow-hidden rounded-sm">
+        <div class="">
           <img
             :src="category.image"
             :alt="category.title"
             class="h-full w-full object-cover object-center"
           />
         </div>
-        <div class="relative h-72 w-full xmd:hidden" />
-        <div class="relative h-32 w-full xmd:hidden" />
         <div
-          class="absolute inset-x-0 bottom-0 rounded-br-lg rounded-bl-lg bg-primary-alt/75 p-4 backdrop-blur-sm backdrop-filter xs:flex xs:items-center xs:justify-between xmd:inset-x-auto xmd:inset-y-0 xmd:w-96 xmd:flex-col xmd:items-start xmd:rounded-tl-lg xmd:rounded-br-none xmd:p-6"
+          class="rounded-br-lg rounded-bl-lg bg-primary-alt/75 p-4 backdrop-blur-sm backdrop-filter xs:flex xs:items-center xs:justify-between xmd:absolute xmd:inset-x-auto xmd:inset-y-0 xmd:w-84 xmd:flex-col xmd:items-start xmd:rounded-tl-lg xmd:rounded-br-none xmd:p-6"
         >
           <div>
             <h2

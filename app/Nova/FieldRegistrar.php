@@ -8,7 +8,9 @@ use Jpeters8889\AddressField\FieldServiceProvider as AddressFieldServiceProvider
 use Jpeters8889\AdvancedNovaMediaLibrary\AdvancedNovaMediaLibraryServiceProvider;
 use Jpeters8889\Body\FieldServiceProvider as BodyFieldServiceProvider;
 use Jpeters8889\CountryIcon\FieldServiceProvider as CountryFieldServiceProvider;
+use Jpeters8889\EateryLocationSearch\FieldServiceProvider as EateryLocationSearchFieldServiceProvider;
 use Jpeters8889\EateryOpeningTimes\FieldServiceProvider as EateryOpeningTimesFieldServiceProvider;
+use Jpeters8889\HiddenWritableField\FieldServiceProvider as HiddenWritableFieldServiceProvider;
 use Jpeters8889\PolymorphicPanel\FieldServiceProvider as PolymorphicPanelFieldServiceProvider;
 use Jpeters8889\ShopGenerateResendSlipButton\FieldServiceProvider as ShopGenerateResendSlipButtonFieldServiceProvider;
 use Jpeters8889\ShopOrderOpenDispatchSlip\FieldServiceProvider as ShopDispatchSlipFieldServiceProvider;
@@ -31,6 +33,8 @@ class FieldRegistrar
             ShopDispatchSlipFieldServiceProvider::class,
             ShopShippingActionFieldServiceProvider::class,
             ShopGenerateResendSlipButtonFieldServiceProvider::class,
+            HiddenWritableFieldServiceProvider::class,
+            EateryLocationSearchFieldServiceProvider::class,
         ];
 
         foreach ($customFields as $customField) {

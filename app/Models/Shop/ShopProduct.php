@@ -6,6 +6,7 @@ namespace App\Models\Shop;
 
 use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
+use App\Concerns\HasSealiacOverview;
 use App\Concerns\LinkableModel;
 use App\Contracts\Search\IsSearchable;
 use App\Enums\Shop\OrderState;
@@ -34,6 +35,7 @@ use Spatie\SchemaOrg\Schema;
  * @property int $currentPrice
  * @property null | int $oldPrice
  * @property float $averageRating
+ * @property float $average_rating
  * @property array{current_price: string, old_price?: string} $price
  * @property Carbon $created_at
  */
@@ -42,6 +44,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     use ClearsCache;
     use DisplaysMedia;
     use HasLegacyImage;
+    use HasSealiacOverview;
     use Imageable;
 
     /** @use InteractsWithMedia<Media> */

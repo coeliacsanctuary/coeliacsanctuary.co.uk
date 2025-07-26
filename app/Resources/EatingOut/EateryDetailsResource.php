@@ -83,6 +83,7 @@ class EateryDetailsResource extends JsonResource
                     'id' => $image->id,
                     'thumbnail' => $image->thumb,
                     'path' => $image->path,
+                    'location' => $image->review?->branch && $image->review->branch->name ? "{$image->review->branch->name}, {$image->review->branch->town?->town}" : $image->review?->eatery?->name,
                 ]) : [],
                 'admin_review' => $adminReview ? [
                     'published' => $adminReview->created_at,

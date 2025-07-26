@@ -2,6 +2,8 @@ export type DefaultProps = {
   [x: string]: unknown;
   is_admin?: true;
   meta: MetaProps;
+  popup?: PopupProps;
+  announcement?: AnnouncementProps;
   errors: import('@inertiajs/core').Errors & import('@inertiajs/core').ErrorBag;
 };
 
@@ -26,4 +28,9 @@ export type PopupProps = {
   link: string;
   primary_image: string;
   secondary_image?: string;
+};
+
+export type AnnouncementProps = {
+  title: string;
+  text: string;
 };

@@ -17,7 +17,7 @@ use Inertia\Response;
 
 class IndexController
 {
-    public function __invoke(Request $request, ShopOrder $basket, ReopenBasketAction $reopenBasketAction): Response | RedirectResponse
+    public function __invoke(Request $request, ShopOrder $basket, ReopenBasketAction $reopenBasketAction): Response|RedirectResponse
     {
         if ( ! $request->hasValidSignature()) {
             $randomProducts = ShopProduct::query()

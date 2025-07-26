@@ -6,6 +6,7 @@ namespace App\Actions\EatingOut;
 
 use App\Models\EatingOut\EateryReview;
 use App\Resources\EatingOut\SimpleReviewResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
 
@@ -20,6 +21,8 @@ class GetLatestReviewsForHomepageAction
         $reviews = Cache::rememberForever(
             $key,
             fn () => SimpleReviewResource::collection(EateryReview::query()
+                /** @phpstan-ignore-next-line  */
+                ->whereHas('eatery', fn (Builder $builder) => $builder->where('live', true))
                 ->with(['eatery', 'eatery.area', 'eatery.town', 'eatery.county', 'eatery.country', 'eatery.town.county'])
                 ->take(8)
                 ->latest()

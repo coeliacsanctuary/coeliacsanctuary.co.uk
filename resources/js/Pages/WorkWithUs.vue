@@ -94,10 +94,6 @@ import Heading from '@/Components/Heading.vue';
           href: '/blog/official-launch-of-schwartz-gluten-free-flavour-sachets',
           label: 'Official Launch of Schwartz Gluten Free Flavour Sachets',
         },
-        {
-          href: '/recipe/schwartz-stuffed-peppers',
-          label: 'Schwartz Stuffed Peppers',
-        },
       ]"
     >
       When Schwartz launched their now discontinued gluten free range in 2016, I

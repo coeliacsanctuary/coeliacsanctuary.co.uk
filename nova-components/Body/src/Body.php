@@ -27,7 +27,7 @@ class Body extends Field
 
     public $showOnUpdate = true;
 
-    protected bool $mustBeValidHtml;
+    protected bool $mustBeValidHtml = false;
 
     public function __construct($name, $attribute = null, ?callable $resolveCallback = null)
     {

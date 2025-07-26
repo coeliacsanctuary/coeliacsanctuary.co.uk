@@ -39,8 +39,8 @@
         </mj-column>
     </mj-section>
 
-    <mj-section padding="0 25px 0 25px">
-        <mj-column mj-class="blue" padding="25px">
+    <mj-section mj-class="light-blue" padding="0 25px 0 25px">
+        <mj-column padding="25px">
             <mj-text mj-class="inner">
                 {{ $reply->comment_reply }}
             </mj-text>
@@ -55,8 +55,8 @@
         </mj-column>
     </mj-section>
 
-    <mj-section padding="0 25px 0 25px">
-        <mj-column mj-class="light-blue" padding="25px">
+    <mj-section mj-class="light-section" padding="0 25px 0 25px">
+        <mj-column padding="25px">
             <mj-text mj-class="inner">
                 {{ $reply->comment->comment }}
             </mj-text>
@@ -66,7 +66,7 @@
     <mj-section>
         <mj-column>
             <mj-button href="{{ $reply->comment->commentable->link }}">
-                Read more of our {{ class_basename($reply->comment->commentable_type) }}
+                Read more of our {{ class_basename($reply->comment->commentable_type) }}, and see your reply and others!
             </mj-button>
         </mj-column>
     </mj-section>

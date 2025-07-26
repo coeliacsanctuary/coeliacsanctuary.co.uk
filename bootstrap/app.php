@@ -8,6 +8,7 @@ use App\Console\Commands\CloseBasketsCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Console\Commands\PublishItemsCommand;
 use App\Console\Commands\SendAbandonedBasketEmailCommand;
+use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Response\Inertia;
 use Illuminate\Console\Scheduling\Schedule;
@@ -32,7 +33,11 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: HandleInertiaRequests::class);
+        $middleware->web(
+            prepend: AddRouteModelBindingFallbacksMiddleware::class,
+            append: HandleInertiaRequests::class
+        );
+
         $middleware->redirectGuestsTo(fn () => route('nova.pages.login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {

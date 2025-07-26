@@ -97,12 +97,7 @@ class MigrateImagesToMediaCommand extends Command
             ->each(function (ImageAssociations $image) use ($blog): void { /** @phpstan-ignore-line */
                 $media = $blog->addMediaFromUrl($image->image->image_url)->toMediaCollection('body');
 
-                $contents = Str::of($blog->body)
-                    ->when(
-                        config('app.env') !== 'production',
-                        fn ($str) => $str->replace('https://images.coeliacsanctuary.co.uk', 'https://images-develop.coeliacsanctuary.co.uk')
-                    )
-                    ->replace($image->image->image_url, $media->getUrl());
+                $contents = Str::of($blog->body)->replace($image->image->image_url, $media->getUrl());
 
                 $blog->body = $contents->toString();
 

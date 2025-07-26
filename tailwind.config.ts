@@ -55,9 +55,9 @@ export default {
       },
 
       containers: {
-        xxs: '400px',
-        xs: '500px',
-        xmd: '860px',
+        xxs: '25rem',
+        xs: '31.25rem',
+        xmd: '53.75rem',
       },
 
       fontFamily: {
@@ -74,8 +74,8 @@ export default {
       },
 
       minHeight: {
-        map: '300px',
-        'map-small': '200px',
+        map: '18.75rem',
+        'map-small': '21.5rem',
       },
 
       minWidth: {
@@ -83,13 +83,13 @@ export default {
       },
 
       screens: {
-        xxs: '400px',
-        xs: '500px',
-        xmd: '860px',
+        xxs: '25rem',
+        xs: '31.25rem',
+        xmd: '53.75rem',
       },
 
       spacing: {
-        '1.75': '11px',
+        '1.75': '0.109rem',
       },
 
       typography: ({ theme }: { theme: (prop: string) => string }) => ({
@@ -103,6 +103,16 @@ export default {
               '&:hover': {
                 color: theme('colors.grey.dark'),
               },
+            },
+            blockquote: {
+              backgroundColor: theme('colors.primary.lightest'),
+              padding: theme('padding.2'),
+              borderRadius: theme('borderRadius.DEFAULT'),
+              boxShadow: theme('boxShadow.DEFAULT'),
+              fontSize: theme('text.sm'),
+              borderInlineColor: theme('colors.secondary.DEFAULT'),
+              borderInlineWidth: '0.5rem',
+              borderRight: '0',
             },
             ol: {
               listStyle: 'auto',
