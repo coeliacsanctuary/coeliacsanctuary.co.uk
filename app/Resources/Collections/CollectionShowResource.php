@@ -16,7 +16,7 @@ class CollectionShowResource extends JsonResource
     /** @return array */
     public function toArray(Request $request)
     {
-        $items = $this->items->filter(fn (CollectionItem $collectionItem) => $collectionItem->item);
+        $items = $this->items->filter(fn (CollectionItem $collectionItem) => $collectionItem->item !== null);
 
         return [
             'id' => $this->id,

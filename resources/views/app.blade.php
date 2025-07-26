@@ -21,9 +21,7 @@
 
     @googlefonts
 
-    @if (Route::is('home'))
-        <link rel="preload" as="image" href="/images/travel-cards-hero.webp" fetchpriority="high" />
-    @endif
+    @preloadImage
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>
 {{--    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1063051842575021" crossorigin="anonymous"></script>--}}
