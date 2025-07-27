@@ -43,7 +43,6 @@
         "i18n-iso-countries": "^7.10.0",
         "laravel-precognition-vue-inertia": "^0.6.0",
         "mitt": "^3.0.1",
-        "mjml": "^4.15.3",
         "ol": "^8.2.0",
         "pinia": "^2.1.7",
         "vue": "^3.4.26"
