@@ -56,7 +56,7 @@ Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = nu
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/shop/order-shipped/{orderId?}', function (?int $orderId = null): string {
@@ -83,7 +83,7 @@ Route::get('/mail/shop/order-shipped/{orderId?}', function (?int $orderId = null
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/shop/order-refund/{orderId?}', function (?int $orderId = null): string {
@@ -129,7 +129,7 @@ Route::get('/mail/shop/order-refund/{orderId?}', function (?int $orderId = null)
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/shop/order-resent/{orderId?}', function (?int $orderId = null): string {
@@ -159,7 +159,7 @@ Route::get('/mail/shop/order-resent/{orderId?}', function (?int $orderId = null)
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/shop/order-cancelled/{orderId?}', function (?int $orderId = null): string {
@@ -189,7 +189,7 @@ Route::get('/mail/shop/order-cancelled/{orderId?}', function (?int $orderId = nu
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/shop/abandoned-cart/{orderId?}', function (?int $basketId = null): string {
@@ -219,7 +219,7 @@ Route::get('/mail/shop/abandoned-cart/{orderId?}', function (?int $basketId = nu
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/shop/review-invitation/{orderId?}', function (?int $orderId = null): string {
@@ -253,7 +253,7 @@ Route::get('/mail/shop/review-invitation/{orderId?}', function (?int $orderId = 
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/eating-out/review-approved/{id?}', function (?int $id = null): string {
@@ -282,7 +282,7 @@ Route::get('/mail/eating-out/review-approved/{id?}', function (?int $id = null):
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/eating-out/recommendation-added/{id?}', function (?int $id = null): string {
@@ -307,7 +307,7 @@ Route::get('/mail/eating-out/recommendation-added/{id?}', function (?int $id = n
         ...$mailable->relatedItems(),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/comment-approved/{id?}', function (?int $id = null): string {
@@ -334,7 +334,7 @@ Route::get('/mail/comment-approved/{id?}', function (?int $id = null): string {
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/mail/comment-reply/{id?}', function (?int $id = null): string {
@@ -360,7 +360,7 @@ Route::get('/mail/comment-reply/{id?}', function (?int $id = null): string {
         )),
     ])->render();
 
-    return Mjml::new()->toHtml($content);
+    return Mjml::new()->sidecar()->toHtml($content);
 });
 
 Route::get('/og/eating-out/town/{slug?}', function (GenerateTownOpenGraphImageAction $generateTownOpenGraphImageAction, ?string $slug = null): View {
