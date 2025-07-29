@@ -83,7 +83,7 @@ const ratings = computed((): FormSelectOption[] => [
 ]);
 
 const howExpensiveValues = computed((): FormSelectOption[] => [
-  { value: 1, label: 'Cheap and quick' },
+  { value: 1, label: 'Cheap' },
   { value: 2, label: 'Great Value' },
   { value: 3, label: 'Average' },
   { value: 4, label: 'A special treat' },

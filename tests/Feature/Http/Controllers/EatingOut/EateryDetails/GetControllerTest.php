@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\EatingOut\EateryDetails;
 
 use App\Actions\EatingOut\ComputeEateryBackLinkAction;
+use App\Actions\EatingOut\GetNearbyEateriesAction;
 use App\Actions\EatingOut\LoadCompleteEateryDetailsForRequestAction;
 use App\Models\EatingOut\EateryArea;
+use Inertia\Support\Header;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -93,6 +95,31 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
+    public function itHasTheNearbyByEateriesInADeferredResponseWhenVisitingAnEatery(): void
+    {
+        $this->mock(GetNearbyEateriesAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($eatery) {
+                $this->assertTrue($this->eatery->is($eatery));
+
+                return true;
+            })
+            ->andReturn(collect())
+            ->once();
+
+        $this->visitEatery([
+            Header::PARTIAL_ONLY => 'nearbyEateries',
+            Header::PARTIAL_COMPONENT => 'EatingOut/Details',
+        ])
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/Details')
+                    ->has('nearbyEateries')
+                    ->etc()
+            );
+    }
+
+    #[Test]
     public function itReturnsHttpGoneIfTheLocationHasClosedDown(): void
     {
         $this->eatery->update(['closed_down' => true]);
@@ -159,6 +186,33 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
+    public function itHasTheNearbyByEateriesInADeferredResponseWhenVisitingANationwidePage(): void
+    {
+        $this->mock(GetNearbyEateriesAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($eatery) {
+                $this->assertTrue($this->eatery->is($eatery));
+
+                return true;
+            })
+            ->andReturn(collect())
+            ->once();
+
+        $this
+            ->convertToNationwideEatery()
+            ->visitNationwideEatery([
+                Header::PARTIAL_ONLY => 'nearbyEateries',
+                Header::PARTIAL_COMPONENT => 'EatingOut/Details',
+            ])
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/Details')
+                    ->has('nearbyEateries')
+                    ->etc()
+            );
+    }
+
+    #[Test]
     public function itCallsTheComputeBackLinkActionOnTheNationwidePage(): void
     {
         $this->expectAction(ComputeEateryBackLinkAction::class, return: ['foo', 'bar']);
@@ -204,6 +258,33 @@ class GetControllerTest extends TestCase
                     ->component('EatingOut/Details')
                     ->has('eatery')
                     ->where('eatery.name', $this->eatery->name)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itHasTheNearbyByEateriesInADeferredResponseWhenVisitingABranch(): void
+    {
+        $this->mock(GetNearbyEateriesAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($eatery) {
+                $this->assertTrue($this->eatery->is($eatery));
+
+                return true;
+            })
+            ->andReturn(collect())
+            ->once();
+
+        $this
+            ->convertToNationwideEatery()
+            ->visitBranch([
+                Header::PARTIAL_ONLY => 'nearbyEateries',
+                Header::PARTIAL_COMPONENT => 'EatingOut/Details',
+            ])
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/Details')
+                    ->has('nearbyEateries')
                     ->etc()
             );
     }
@@ -267,6 +348,33 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
+    public function itHasTheNearbyByEateriesInADeferredResponseWhenVisitingALondonEatery(): void
+    {
+        $this->mock(GetNearbyEateriesAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($eatery) {
+                $this->assertTrue($this->eatery->is($eatery));
+
+                return true;
+            })
+            ->andReturn(collect())
+            ->once();
+
+        $this
+            ->convertToLondonEatery()
+            ->visitLondonEatery([
+                Header::PARTIAL_ONLY => 'nearbyEateries',
+                Header::PARTIAL_COMPONENT => 'EatingOut/Details',
+            ])
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/Details')
+                    ->has('nearbyEateries')
+                    ->etc()
+            );
+    }
+
+    #[Test]
     public function itCallsTheComputeBackLinkActionOnTheLondonPage(): void
     {
         $this->expectAction(ComputeEateryBackLinkAction::class, return: ['foo', 'bar']);
@@ -282,26 +390,26 @@ class GetControllerTest extends TestCase
         $this->convertToLondonEatery()->visitLondonEatery();
     }
 
-    protected function visitEatery(): TestResponse
+    protected function visitEatery(array $headers = []): TestResponse
     {
-        return $this->get(route('eating-out.show', ['county' => $this->county, 'town' => $this->town, 'eatery' => $this->eatery->slug]));
+        return $this->get(route('eating-out.show', ['county' => $this->county, 'town' => $this->town, 'eatery' => $this->eatery->slug]), $headers);
     }
 
-    protected function visitBranch(): TestResponse
+    protected function visitBranch(array $headers = []): TestResponse
     {
         return $this->get(route('eating-out.nationwide.show.branch', [
             'eatery' => $this->eatery->slug,
             'nationwideBranch' => $this->nationwideBranch->slug,
-        ]));
+        ]), $headers);
     }
 
-    protected function visitNationwideEatery(): TestResponse
+    protected function visitNationwideEatery(array $headers = []): TestResponse
     {
-        return $this->get(route('eating-out.nationwide.show', ['eatery' => $this->eatery->slug]));
+        return $this->get(route('eating-out.nationwide.show', ['eatery' => $this->eatery->slug]), $headers);
     }
 
-    protected function visitLondonEatery(): TestResponse
+    protected function visitLondonEatery(array $headers = []): TestResponse
     {
-        return $this->get(route('eating-out.london.borough.area.show', ['town' => $this->town, 'area' => $this->area, 'eatery' => $this->eatery->slug]));
+        return $this->get(route('eating-out.london.borough.area.show', ['town' => $this->town, 'area' => $this->area, 'eatery' => $this->eatery->slug]), $headers);
     }
 }

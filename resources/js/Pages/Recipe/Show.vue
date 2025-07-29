@@ -142,7 +142,7 @@ const loadMoreComments = () => {
         </p>
         <p><span class="font-semibold">Added</span> {{ recipe.published }}</p>
         <p>
-          <span class="font-semibold">Recipe by</span>
+          <span class="font-semibold">Recipe by </span>
           <span v-html="recipe.author" />
         </p>
       </div>

@@ -413,3 +413,15 @@ export type EateryBrowseResource = {
   location: LatLng;
   color: string;
 };
+
+export type NearbyEatery = {
+  id: number;
+  branch_id?: number;
+  name: string;
+  address: string;
+  info: string;
+  link: string;
+  distance: number;
+  ratings_count: number;
+  average_rating: StarRating;
+};

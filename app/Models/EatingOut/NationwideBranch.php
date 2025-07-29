@@ -33,16 +33,17 @@ use Laravel\Scout\Searchable;
  * @property Eatery $eatery
  * @property string $short_name
  * @property string $full_name
+ * @property string | null $average_rating
  */
 class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSearchable
 {
     use ClearsCache;
     use HasEateryDetails;
+
     /** @use HasOpenGraphImage<$this> */
     use HasOpenGraphImage;
 
     use HasSealiacOverview;
-
     use Searchable;
 
     protected $table = 'wheretoeat_nationwide_branches';
@@ -99,11 +100,11 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
     }
 
     /** @return Builder<static> */
-    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2): Builder
+    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2, array $additionalColumns = []): Builder
     {
         return static::query()
             ->selectRaw('(
-                        3959 * acos (
+                        6371000 * acos (
                           cos ( radians(?) )
                           * cos( radians( lat ) )
                           * cos( radians( lng ) - radians(?) )
@@ -114,8 +115,9 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
                 $latLng->lat,
                 $latLng->lng,
                 $latLng->lat,
-            ])->having('distance', '<=', $radius)
-            ->addSelect(['id', 'wheretoeat_id', 'lat', 'lng', 'name'])
+            ])
+            ->having('distance', '<=', $radius)
+            ->addSelect(['id', 'wheretoeat_id', 'lat', 'lng', 'name', ...$additionalColumns])
             ->orderBy('distance');
     }
 

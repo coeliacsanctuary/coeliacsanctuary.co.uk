@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DetailedEatery } from '@/types/EateryTypes';
+import { DetailedEatery, NearbyEatery } from '@/types/EateryTypes';
 import EateryHeading from '@/Components/PageSpecific/EatingOut/Details/EateryHeading.vue';
 import EateryDescription from '@/Components/PageSpecific/EatingOut/Details/EateryDescription.vue';
 import EateryLocation from '@/Components/PageSpecific/EatingOut/Details/EateryLocation.vue';
@@ -12,11 +12,13 @@ import { formatDate } from '@/helpers';
 import EateryBranchList from '@/Components/PageSpecific/EatingOut/Details/EateryBranchList.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
 import EateryAiOverview from '@/Components/PageSpecific/EatingOut/Details/EateryAiOverview.vue';
+import NearbyEateries from '@/Components/PageSpecific/EatingOut/Details/NearbyEateries.vue';
 
 const props = defineProps<{
   eatery: DetailedEatery;
   previous: string;
   name: string;
+  nearbyEateries?: NearbyEatery[];
 }>();
 
 const reviewsElem: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
@@ -108,5 +110,10 @@ const shouldShowAiOverview = ref(true);
     <div ref="reviewsElem">
       <EateryVisitorReviews :eatery="eatery" />
     </div>
+
+    <NearbyEateries
+      :eatery-name="eateryName()"
+      :nearby-eateries="nearbyEateries"
+    />
   </div>
 </template>
