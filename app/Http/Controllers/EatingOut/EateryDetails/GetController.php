@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\EatingOut\EateryDetails;
 
 use App\Actions\EatingOut\ComputeEateryBackLinkAction;
+use App\Actions\EatingOut\GetNearbyEateriesAction;
 use App\Actions\EatingOut\LoadCompleteEateryDetailsForRequestAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Http\Response\Inertia;
@@ -30,6 +31,7 @@ class GetController
         GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
         LoadCompleteEateryDetailsForRequestAction $loadCompleteEateryDetailsForRequestAction,
         ComputeEateryBackLinkAction $computeEateryBackLinkAction,
+        GetNearbyEateriesAction $getNearbyEateriesAction,
     ): Response {
         if ($area->exists) {
             /** @var EateryCounty $county */
@@ -65,6 +67,7 @@ class GetController
                 'eatery' => fn () => new EateryDetailsResource($eatery),
                 'previous' => $previous,
                 'name' => $name,
+                'nearbyEateries' => Inertia::defer(fn () => $getNearbyEateriesAction->handle($eatery)),
             ])
             ->toResponse($request)
             ->setStatusCode($eatery->closed_down ? Response::HTTP_GONE : Response::HTTP_OK);
