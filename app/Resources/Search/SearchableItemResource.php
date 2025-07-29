@@ -69,8 +69,14 @@ class SearchableItemResource extends JsonResource
             }
         }
 
+        $type = match ($this->resource::class) {
+            Eatery::class => EateryType::from((int) $this->resource->type_id)->name(),
+            NationwideBranch::class => 'Eatery',
+            default => Str::headline(class_basename($this->resource::class))
+        };
+
         return [
-            'type' => Str::headline(class_basename($this->resource::class)),
+            'type' => $type,
             'title' => $title,
             'description' => $description,
             'image' => $image,

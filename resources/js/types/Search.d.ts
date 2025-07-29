@@ -13,7 +13,8 @@ export type SearchableItem =
   | 'Recipe'
   | 'Shop Product'
   | 'Eatery'
-  | 'Nationwide Branch';
+  | 'Hotel'
+  | 'Attraction';
 
 export type SiteSearchResult = {
   type: SearchableItem;

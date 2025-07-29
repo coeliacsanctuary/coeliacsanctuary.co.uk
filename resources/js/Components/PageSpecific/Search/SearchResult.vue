@@ -13,7 +13,7 @@ import { pluralise } from '@/helpers';
 defineProps<{ item: SearchResult }>();
 
 const isNotEatery = (type: SearchableItem): boolean => {
-  return type !== 'Eatery' && type !== 'Nationwide Branch';
+  return type !== 'Eatery' && type !== 'Hotel' && type !== 'Attraction';
 };
 
 const formatDistance = (distance: number): string => {
@@ -43,7 +43,8 @@ const itemTypeClasses = (type: SearchableItem): string[] => {
       base.push('bg-primary-light');
       break;
     case 'Eatery':
-    case 'Nationwide Branch':
+    case 'Hotel':
+    case 'Attraction':
       base.push('bg-secondary');
       break;
     case 'Shop Product':
