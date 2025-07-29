@@ -59,6 +59,7 @@ class SearchableItemResource extends JsonResource
         };
 
         $distance = null;
+        $cuisine = null;
 
         if ($this->resource instanceof Eatery || $this->resource instanceof NationwideBranch) {
             if ($this->resource->hasAttribute('_resDistance') && $this->resource->getAttribute('_resDistance') !== null) {
@@ -67,6 +68,9 @@ class SearchableItemResource extends JsonResource
 
                 $distance = Helpers::metersToMiles($rawDistance);
             }
+
+
+            $cuisine = $this->resource instanceof NationwideBranch ? $this->resource->eatery->cuisine?->cuisine : $this->resource->cuisine?->cuisine;
         }
 
         $type = match ($this->resource::class) {
@@ -83,6 +87,7 @@ class SearchableItemResource extends JsonResource
             'link' => $link,
             'score' => $this->resource->getAttribute('_score'),
             'distance' => $distance,
+            'cuisine' => $cuisine,
         ];
     }
 }

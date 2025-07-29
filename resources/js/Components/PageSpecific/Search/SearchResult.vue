@@ -112,10 +112,17 @@ const itemTypeClasses = (type: SearchableItem): string[] => {
         </div>
 
         <div class="mt-auto flex items-end justify-between">
-          <div
-            :class="itemTypeClasses(item.type)"
-            v-text="item.type"
-          />
+          <div class="flex items-end space-x-2">
+            <div
+              :class="itemTypeClasses(item.type)"
+              v-text="item.type"
+            />
+            <div
+              v-if="(<EaterySearchResult>item)?.cuisine"
+              :class="[...itemTypeClasses(item.type), '!bg-secondary-lightest']"
+              v-text="(<EaterySearchResult>item).cuisine"
+            />
+          </div>
           <div
             v-if="(<EaterySearchResult>item)?.distance"
             class="text-sm text-grey-off-dark group-hover/item:text-grey-dark lg:text-base"

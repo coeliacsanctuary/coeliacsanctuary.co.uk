@@ -29,6 +29,7 @@ export type EaterySearchResult = Exclude<SiteSearchResult, 'image'> & {
   description: string | { name: string; info: string }[];
   image: LatLng;
   distance?: number;
+  cuisine?: string;
 };
 
 export type SearchResult = SiteSearchResult | EaterySearchResult;
