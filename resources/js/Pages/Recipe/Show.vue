@@ -143,7 +143,10 @@ const loadMoreComments = () => {
         <p><span class="font-semibold">Added</span> {{ recipe.published }}</p>
         <p>
           <span class="font-semibold">Recipe by </span>
-          <span v-html="recipe.author" />
+          <span
+            class="[&>a]:font-semibold [&>a]:text-primary-dark [&>a]:hover:text-grey-darker"
+            v-html="recipe.author"
+          />
         </p>
       </div>
 
@@ -249,6 +252,50 @@ const loadMoreComments = () => {
           class="lg:hidden"
           :nutrition="recipe.nutrition"
         />
+      </Card>
+
+      <Card
+        v-if="['Alison Peters', 'Alison Wheatley'].includes(recipe.author)"
+        faded
+        theme="primary-light"
+      >
+        <div
+          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
+        >
+          <img
+            alt="Alison Peters"
+            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
+            src="/images/misc/alison.png"
+          />
+          <div class="prose max-w-2xl md:prose-xl">
+            <strong>Alison Peters</strong> has been Coeliac since June 2014 and
+            launched Coeliac Sanctuary in August of that year, and since then
+            has aimed to provide a one stop shop for Coeliacs, from blogs, to
+            recipes, eating out guide and online shop.
+          </div>
+        </div>
+      </Card>
+
+      <Card
+        v-if="recipe.author === 'Jamie Peters'"
+        faded
+        theme="primary-light"
+      >
+        <div
+          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
+        >
+          <img
+            alt="Alison Peters"
+            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
+            src="/images/misc/jamie.png"
+          />
+          <div class="prose max-w-2xl md:prose-xl">
+            While not a coeliac, <strong>Jamie Peters</strong> is married to
+            one, he's the brains behind this website, and alongside software
+            development he has always enjoyed cooking and baking, and will adapt
+            his old family favourites so Alison can eat them too.
+          </div>
+        </div>
       </Card>
 
       <Comments

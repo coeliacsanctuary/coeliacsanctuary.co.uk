@@ -17,6 +17,7 @@ export type BlogPage = {
   description: string;
   body: string;
   hasTwitterEmbed: boolean;
+  show_author: boolean;
   tags: BlogTag[];
   featured_in?: FeaturedInCollection[];
 };

@@ -9,6 +9,7 @@ use App\Nova\Resource;
 use App\Nova\Support\Panels\VisibilityPanel;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Jpeters8889\Body\Body;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
@@ -92,6 +93,12 @@ class Blog extends Resource
                     ->mustBeValidHtml()
                     ->fullWidth()
                     ->rules(['required']),
+
+                Boolean::make('Show Author')
+                    ->default(true)
+                    ->onlyOnForms()
+                    ->fullWidth()
+                    ->help('If checked, the about Alison block will be shown at the bottom of the blog.'),
             ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),

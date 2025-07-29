@@ -132,6 +132,7 @@ const loadMoreComments = () => {
   </Card>
 
   <Card
+    v-if="blog.show_author"
     faded
     theme="primary-light"
   >
