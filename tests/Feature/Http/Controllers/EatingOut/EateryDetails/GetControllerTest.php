@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
-use Tests\Unit\Models\NotificationEmailTest;
 
 class GetControllerTest extends TestCase
 {
@@ -100,7 +99,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function($eatery) {
+            ->withArgs(function ($eatery) {
                 $this->assertTrue($this->eatery->is($eatery));
 
                 return true;
@@ -191,7 +190,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function($eatery) {
+            ->withArgs(function ($eatery) {
                 $this->assertTrue($this->eatery->is($eatery));
 
                 return true;
@@ -268,7 +267,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function($eatery) {
+            ->withArgs(function ($eatery) {
                 $this->assertTrue($this->eatery->is($eatery));
 
                 return true;
@@ -353,7 +352,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function($eatery) {
+            ->withArgs(function ($eatery) {
                 $this->assertTrue($this->eatery->is($eatery));
 
                 return true;

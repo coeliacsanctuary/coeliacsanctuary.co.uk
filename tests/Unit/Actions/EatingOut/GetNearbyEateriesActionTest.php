@@ -323,7 +323,7 @@ class GetNearbyEateriesActionTest extends TestCase
             'lng' => $london['lng'],
         ]);
 
-        $result = app(GetNearbyEateriesAction::class)->handle(new LatLng($london['lat'], $london['lng']));;
+        $result = app(GetNearbyEateriesAction::class)->handle(new LatLng($london['lat'], $london['lng']));
 
         $this->assertCount(2, $result);
 
@@ -358,7 +358,7 @@ class GetNearbyEateriesActionTest extends TestCase
 
         $expectedKeys = ['id', 'name', 'address', 'info', 'link', 'distance', 'ratings_count', 'average_rating'];
 
-        foreach($results as $result) {
+        foreach ($results as $result) {
             $this->assertArrayHasKeys($expectedKeys, $result);
         }
     }
