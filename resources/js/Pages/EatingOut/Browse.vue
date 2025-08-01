@@ -146,7 +146,7 @@ const getViewableRadius = (): number => {
     'EPSG:4326',
   );
 
-  return getDistance([latLng[0], latLng[1]], [latLng[2], latLng[3]]) / 1609;
+  return getDistance([latLng[0], latLng[1]], [latLng[2], latLng[3]]);
 };
 
 const getLatLng = (): LatLng => {
