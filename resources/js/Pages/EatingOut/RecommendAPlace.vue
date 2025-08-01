@@ -5,7 +5,7 @@ import Heading from '@/Components/Heading.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
-import { FormSelectGroup, FormSelectOption } from '@/Components/Forms/Props';
+import { FormSelectGroup } from '@/Components/Forms/Props';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
@@ -179,11 +179,16 @@ watchDebounced(
                 v-text="placeAlreadyRecommended.result"
               />
 
+              <p class="prose lg:max-xl:prose-lg xl:prose-xl">
+                It sounds like you've visited this place before, why not leave a
+                review?
+              </p>
+
               <div class="text-center">
                 <CoeliacButton
                   as="a"
-                  :href="placeAlreadyRecommended.url"
-                  :label="placeAlreadyRecommended.label"
+                  :href="`${placeAlreadyRecommended.url}#leave-review`"
+                  :label="`${placeAlreadyRecommended.label} and leave a review!`"
                   target="_blank"
                   theme="secondary"
                   size="xl"
