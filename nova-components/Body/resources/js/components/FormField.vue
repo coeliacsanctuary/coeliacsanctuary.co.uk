@@ -7,7 +7,7 @@
   >
     <template #field>
       <textarea
-        :id="field.attribute"
+        :id="field.uniqueKey"
         v-model="value"
         :rows="field.rows"
         class="form-control form-input-bordered form-input h-auto w-full py-3"

@@ -25,6 +25,7 @@
         "jpeters8889/eatery-location-search": "@dev",
         "jpeters8889/eatery-opening-times": "@dev",
         "jpeters8889/hidden-writable-field": "@dev",
+        "jpeters8889/nova-ai": "dev-main",
         "jpeters8889/order-dispatch-slip": "@dev",
         "jpeters8889/polymorphic-panel": "@dev",
         "jpeters8889/print-all-orders": "@dev",
@@ -163,6 +164,10 @@
         {
             "type": "path",
             "url": "./nova-components/EateryLocationSearch"
+        },
+        {
+            "type": "path",
+            "url": "./../nova-ai"
         }
     ],
     "autoload": {

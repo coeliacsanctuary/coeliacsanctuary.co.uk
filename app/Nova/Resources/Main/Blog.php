@@ -9,8 +9,10 @@ use App\Nova\Resource;
 use App\Nova\Support\Panels\VisibilityPanel;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Jpeters8889\Body\Body;
+use Jpeters8889\NovaAi\FieldAi;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Slug;
@@ -21,7 +23,7 @@ use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<BlogModel> */
+/** @extends resource<BlogModel> */
 /**
  * @codeCoverageIgnore
  */
@@ -67,6 +69,19 @@ class Blog extends Resource
                     ->rows(2)
                     ->fullWidth()
                     ->alwaysShow()
+                    ->usingAi(fn (FieldAi $fieldAi) => $fieldAi
+                        ->relyOn(['Title', 'Body'])
+                        ->setScenario('You are an AI helper for writing blogs on a website called Coeliac Sanctuary, the website serves the Coeliac/gluten free community.')
+                        ->prompt(fn (Textarea $field, FormData $data) => <<<Prompt
+                            Using the below blog title and blog body, please generate a meta description. Please stick to common conventions for meta descriptions, keeping SEO in mind.
+
+                            Title:
+                            {$data->get('Title')}
+
+                            Body:
+                            {$data->get('Body')}
+                            Prompt)
+                    )
                     ->rules(['required']),
             ]),
 
