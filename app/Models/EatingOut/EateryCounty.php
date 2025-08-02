@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -39,6 +40,15 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
     protected static function booted(): void
     {
         static::addGlobalScope('hasPlaces', fn (Builder $builder) => $builder->whereHas('activeTowns'));
+
+        static::creating(static function (self $county) {
+            if ( ! $county->slug) {
+                $county->slug = Str::slug($county->county);
+                $county->legacy = $county->slug;
+            }
+
+            return $county;
+        });
 
         static::saved(fn (self $county) => CreateEatingOutOpenGraphImageJob::dispatch($county));
     }
