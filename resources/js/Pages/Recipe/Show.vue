@@ -22,12 +22,18 @@ const props = defineProps<{
   backLink: string;
 }>();
 
+const header = ref<HTMLElement>();
+
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
+const isLoadingComments = ref(false);
+const hasLoadedMoreComments = ref(false);
 
 const loadMoreComments = () => {
   if (!props.comments.links.next) {
     return;
   }
+
+  isLoadingComments.value = true;
 
   router.get(
     props.comments.links.next,
@@ -38,8 +44,34 @@ const loadMoreComments = () => {
       only: ['comments'],
       preserveUrl: true,
       onSuccess: (page: Page<{ comments?: PaginatedResponse<Comment> }>) => {
+        isLoadingComments.value = false;
+        hasLoadedMoreComments.value = true;
+
         if (page.props.comments) {
           allComments.value.data.push(...page.props.comments.data);
+          allComments.value.links = page.props.comments.links;
+          allComments.value.meta = page.props.comments.meta;
+        }
+      },
+    },
+  );
+};
+
+const handleCommentReset = () => {
+  header.value?.scrollIntoView({ behavior: 'smooth' });
+
+  router.get(
+    props.comments.links.first,
+    {},
+    {
+      preserveState: true,
+      only: ['comments'],
+      preserveUrl: true,
+      onSuccess: (page: Page<{ comments?: PaginatedResponse<Comment> }>) => {
+        hasLoadedMoreComments.value = false;
+
+        if (page.props.comments) {
+          allComments.value.data = page.props.comments.data;
           allComments.value.links = page.props.comments.links;
           allComments.value.meta = page.props.comments.meta;
         }
@@ -50,6 +82,7 @@ const loadMoreComments = () => {
 </script>
 
 <template>
+  <div ref="header" />
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading
       :back-link="{
@@ -302,7 +335,10 @@ const loadMoreComments = () => {
         :id="recipe.id"
         :comments="allComments"
         module="recipe"
+        :is-loading="isLoadingComments"
+        :has-loaded-more="hasLoadedMoreComments"
         @load-more="loadMoreComments"
+        @reset="handleCommentReset"
       />
     </div>
   </div>

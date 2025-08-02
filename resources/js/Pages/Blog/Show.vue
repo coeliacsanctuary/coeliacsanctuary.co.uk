@@ -17,7 +17,11 @@ const props = defineProps<{
   comments: PaginatedResponse<Comment>;
 }>();
 
+const header = ref<HTMLElement>();
+
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
+const isLoadingComments = ref(false);
+const hasLoadedMoreComments = ref(false);
 
 onMounted(() => {
   if (props.blog.hasTwitterEmbed) {
@@ -43,6 +47,29 @@ const loadMoreComments = () => {
           allComments.value.data.push(...event.props.comments.data);
           allComments.value.links = event.props.comments.links;
           allComments.value.meta = event.props.comments.meta;
+        }
+      },
+    },
+  );
+};
+
+const handleCommentReset = () => {
+  header.value?.scrollIntoView({ behavior: 'smooth' });
+
+  router.get(
+    props.comments.links.first,
+    {},
+    {
+      preserveState: true,
+      only: ['comments'],
+      preserveUrl: true,
+      onSuccess: (page: Page<{ comments?: PaginatedResponse<Comment> }>) => {
+        hasLoadedMoreComments.value = false;
+
+        if (page.props.comments) {
+          allComments.value.data = page.props.comments.data;
+          allComments.value.links = page.props.comments.links;
+          allComments.value.meta = page.props.comments.meta;
         }
       },
     },
@@ -155,6 +182,9 @@ const loadMoreComments = () => {
     :id="blog.id"
     :comments="allComments"
     module="blog"
+    :is-loading="isLoadingComments"
+    :has-loaded-more="hasLoadedMoreComments"
     @load-more="loadMoreComments"
+    @reset="handleCommentReset"
   />
 </template>
