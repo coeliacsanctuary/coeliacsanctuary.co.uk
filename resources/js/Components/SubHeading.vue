@@ -5,17 +5,23 @@ const props = withDefaults(
   defineProps<{
     as?: string;
     classes?: string;
-    textSize?: 'base' | 'large' | 'xl';
+    textSize?: 'small' | 'base' | 'large' | 'xl';
+    border?: boolean;
   }>(),
   {
     as: 'h2',
     classes: '',
     textSize: 'base',
+    border: false,
   },
 );
 
 const headerClasses = computed(() => {
   const baseClasses = ['my-0! text-left font-coeliac font-semibold'];
+
+  if (props.textSize === 'small') {
+    baseClasses.push('text-xl md:max-lg:text-2xl lg:text-3xl');
+  }
 
   if (props.textSize === 'base') {
     baseClasses.push('text-2xl md:max-lg:text-3xl lg:text-4xl');
@@ -27,6 +33,10 @@ const headerClasses = computed(() => {
 
   if (props.textSize === 'xl') {
     baseClasses.push('text-4xl md:text-5xl');
+  }
+
+  if (props.border) {
+    baseClasses.push('border-gray-light border-b pb-2');
   }
 
   baseClasses.push(props.classes);
