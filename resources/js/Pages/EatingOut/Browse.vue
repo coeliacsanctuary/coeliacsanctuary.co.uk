@@ -1,13 +1,5 @@
 <script lang="ts" setup>
-import useScreensize from '@/composables/useScreensize';
 import { Component, computed, ComputedRef, onMounted, Ref, ref } from 'vue';
-import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
-import { Coordinate } from 'ol/coordinate';
-import { Cluster, OSM } from 'ol/source';
-import Map from 'ol/Map';
-import TileLayer from 'ol/layer/Tile';
-import { Feature, MapBrowserEvent, View } from 'ol';
-import { getDistance } from 'ol/sphere';
 import SearchMap from '@/Components/PageSpecific/EatingOut/Browse/SearchMap.vue';
 import axios, { AxiosResponse } from 'axios';
 import {
@@ -18,17 +10,11 @@ import {
   LatLng,
 } from '@/types/EateryTypes';
 import { DataResponse } from '@/types/GenericTypes';
-import BaseLayer from 'ol/layer/Base';
-import { Point } from 'ol/geom';
-import { Fill, Icon, Stroke, Style, Text } from 'ol/style';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import CircleStyle from 'ol/style/Circle';
 import { FeatureLike } from 'ol/Feature';
 import Loader from '@/Components/Loader.vue';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
-import { boundingExtent } from 'ol/extent';
-import { Pixel } from 'ol/pixel';
 import { router, usePage } from '@inertiajs/vue3';
 import { DefaultProps } from '@/types/DefaultProps';
 import 'ol/ol.css';
@@ -36,6 +22,11 @@ import PlaceDetails from '@/Components/PageSpecific/EatingOut/Browse/PlaceDetail
 import useBrowser from '@/composables/useBrowser';
 import RecommendAPlaceCta from '@/Components/PageSpecific/EatingOut/Browse/RecommendAPlaceCta.vue';
 import FilterMap from '@/Components/PageSpecific/EatingOut/Browse/FilterMap.vue';
+import { Pixel } from 'ol/pixel';
+import { UrlParameters } from '@/types/EatingOutBrowseTypes';
+import Map from '@/support/eating-out/browse/map';
+import Markers from '@/support/eating-out/browse/markers';
+import eventBus from '@/eventBus';
 
 type FilterKeys = 'category' | 'venueType' | 'feature';
 type UrlFilter = { [T in FilterKeys]?: string };
@@ -50,53 +41,23 @@ const wrapper: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 const mapFilters: Ref<Partial<EateryFilters>> = ref({});
 
-const map: Ref<Map> = ref() as Ref<Map>;
-const view: Ref<View> = ref() as Ref<View>;
-
-const processedUrl: Ref<{
-  latLng?: string;
-  zoom?: string;
-  categories?: string;
-  venueTypes?: string;
-  features?: string;
-}> = ref({});
+const processedUrl: Ref<UrlParameters> = ref({});
 
 const showPlaceDetails: Ref<false | { id: number; branchId?: number }> =
   ref(false);
 
-const { currentBreakpoint, screenIsGreaterThanOrEqualTo } = useScreensize();
+const { processMapMarkers, zoomIntoCluster, rawMarkerSource } = Markers();
 
-const initialLatLng = computed((): Coordinate => {
-  let latLng: [number, number] = [54.093409, -2.89479];
+const {
+  createMap,
+  getZoom,
+  getExtent,
+  getViewableRadius,
+  getLatLng,
+  navigateTo,
+} = Map(processedUrl, rawMarkerSource as Ref<VectorSource>);
 
-  if (processedUrl.value.latLng) {
-    latLng = processedUrl.value.latLng
-      .split(',')
-      .map((str) => parseFloat(str)) as [number, number];
-  }
-
-  return fromLonLat(latLng.reverse());
-});
-
-const initialZoom = computed((): number => {
-  if (processedUrl.value.zoom) {
-    return parseFloat(processedUrl.value.zoom);
-  }
-
-  switch (currentBreakpoint()) {
-    case 'sm':
-    case 'xmd':
-    case 'md':
-    case 'lg':
-    case 'xl':
-    case '2xl':
-      return 6;
-    case 'xs':
-    case 'xxs':
-    default:
-      return 5;
-  }
-});
+const cancelGetPlaces: Ref<AbortController | undefined> = ref(undefined);
 
 const filtersForUrl: ComputedRef<{ filter: UrlFilter }> = computed(() => {
   const filter: UrlFilter = {};
@@ -139,29 +100,6 @@ const filtersForFilterBar: ComputedRef<
   return rtr;
 });
 
-const getViewableRadius = (): number => {
-  const latLng = transformExtent(
-    map.value.getView().calculateExtent(map.value.getSize()),
-    'EPSG:3857',
-    'EPSG:4326',
-  );
-
-  return getDistance([latLng[0], latLng[1]], [latLng[2], latLng[3]]);
-};
-
-const getLatLng = (): LatLng => {
-  const latLng = toLonLat(
-    map.value.getView().getCenter() as Coordinate,
-  ).reverse();
-
-  return {
-    lat: latLng[0],
-    lng: latLng[1],
-  };
-};
-
-let cancelGetPlaces: Ref<AbortController | undefined> = ref(undefined);
-
 const getPlaces = async (): Promise<EateryBrowseResource[]> => {
   cancelGetPlaces.value = new AbortController();
 
@@ -175,165 +113,20 @@ const getPlaces = async (): Promise<EateryBrowseResource[]> => {
       },
     });
 
-  cancelGetPlaces.value = null;
+  cancelGetPlaces.value = undefined;
 
   return response.data.data;
 };
 
-const getMarkersLayer = (): VectorLayer<VectorSource> | undefined => {
-  let rtr;
-
-  map.value.getLayers().forEach((layer: BaseLayer) => {
-    if (layer.get('name') !== undefined && layer.get('name') === 'markers') {
-      rtr = layer;
-    }
-  });
-
-  return rtr;
-};
-
-const clearMarkers = (): void => {
-  map.value.removeLayer(getMarkersLayer() as VectorLayer<VectorSource>);
-  map.value.removeLayer(getMarkersLayer() as VectorLayer<VectorSource>);
-  map.value.removeLayer(getMarkersLayer() as VectorLayer<VectorSource>);
-  map.value.removeLayer(getMarkersLayer() as VectorLayer<VectorSource>);
-  map.value.removeLayer(getMarkersLayer() as VectorLayer<VectorSource>);
-};
-
-const getEateryLatLng = (eatery: EateryBrowseResource): Coordinate =>
-  [eatery.location.lng, eatery.location.lat] as Coordinate;
-
-const markerStyle = (color: string): Style =>
-  new Style({
-    image: new Icon({
-      size: [50, 50],
-      src: '/images/svg/marker.svg',
-      color,
-    }),
-  });
-
-const getZoom = (): number => map.value.getView().getZoom() as number;
-
-const clusterStyle = (feature: FeatureLike) => {
-  const size = (<Feature[]>feature.get('features')).length;
-
-  return new Style({
-    image: new CircleStyle({
-      radius: 20,
-      stroke: new Stroke({
-        color: '#000',
-      }),
-      fill: new Fill({
-        color: '#ecd14a',
-      }),
-    }),
-    text: new Text({
-      text: size.toString(),
-      fill: new Fill({
-        color: '#000',
-      }),
-      scale: 2,
-    }),
-  });
-};
-
-const zoomLimit = (): number => {
-  if (screenIsGreaterThanOrEqualTo('2xl')) {
-    return 10;
-  }
-
-  if (screenIsGreaterThanOrEqualTo('lg')) {
-    return 11;
-  }
-
-  return 13;
-};
-
-const createMaMarkerLayer = (
-  markers: Feature[],
-): VectorLayer<VectorSource> | VectorLayer<Cluster> => {
-  if (getZoom() < zoomLimit()) {
-    return new VectorLayer({
-      properties: {
-        name: 'markers',
-      },
-      source: new Cluster({
-        distance: 60,
-        minDistance: 30,
-        source: new VectorSource({
-          features: markers,
-        }),
-      }),
-      style: (feature) => clusterStyle(feature),
-    });
-  }
-
-  return new VectorLayer({
-    properties: {
-      name: 'markers',
-    },
-    source: new VectorSource({
-      features: markers,
-    }),
-  });
-};
-
 const populateMap = (): void => {
   isLoading.value = true;
-  clearMarkers();
 
   void getPlaces()
     .then((eateries: EateryBrowseResource[]) => {
-      const markers = eateries
-        .map(
-          (eatery) =>
-            new Feature({
-              id: eatery.key,
-              geometry: new Point(fromLonLat(getEateryLatLng(eatery))),
-              color: eatery.color,
-            }),
-        )
-        .map((eatery: Feature) => {
-          eatery.setStyle(markerStyle(eatery.getProperties().color as string));
-
-          return eatery;
-        });
-
-      map.value.addLayer(createMaMarkerLayer(markers));
+      processMapMarkers(eateries, getZoom(), getExtent());
     })
     .finally(() => {
       isLoading.value = false;
-    });
-};
-
-const zoomIntoCluster = (pixel: Pixel) => {
-  getMarkersLayer()
-    ?.getFeatures(pixel)
-    .then((clickedFeatures) => {
-      if (clickedFeatures.length > 0) {
-        // Get clustered Coordinates
-        const features: Feature[] = clickedFeatures[0].get(
-          'features',
-        ) as Feature[];
-
-        if (features.length > 0) {
-          const extent = boundingExtent(
-            features.map((r: Feature) =>
-              (<Point>r.get('geometry')).getCoordinates(),
-            ),
-          );
-
-          map.value
-            .getView()
-            .fit(extent, { duration: 500, padding: [50, 50, 50, 50] });
-
-          setTimeout(() => {
-            if (getZoom() >= 18) {
-              map.value.getView().setZoom(18);
-            }
-          }, 600);
-        }
-      }
     });
 };
 
@@ -392,41 +185,6 @@ const updateUrl = (latLng?: LatLng, zoom?: number) => {
   });
 };
 
-const handleMapClick = (event: MapBrowserEvent<MouseEvent>) => {
-  try {
-    void getMarkersLayer()
-      ?.getFeatures(event.pixel)
-      .then((feature) => {
-        if (!feature.length) {
-          return;
-        }
-
-        if (getZoom() < zoomLimit()) {
-          // cluster view
-          zoomIntoCluster(event.pixel);
-
-          return;
-        }
-
-        const eatery: FeatureLike = feature[0];
-        const eateryId: string = eatery.get('id') as string;
-        const splitId = eateryId.split('-');
-
-        showPlaceDetails.value = {
-          id: parseInt(splitId[0], 10),
-          branchId: splitId[1] ? parseInt(splitId[1], 10) : undefined,
-        };
-      });
-  } catch (e) {
-    //
-  }
-};
-
-const handleMapMove = () => {
-  updateUrl();
-  populateMap();
-};
-
 const handleFiltersChange = ({ filters }: { filters: EateryFilters }): void => {
   mapFilters.value = filters;
 
@@ -440,40 +198,6 @@ const handleFiltersChange = ({ filters }: { filters: EateryFilters }): void => {
   });
 
   handleMapMove();
-};
-
-const createMap = () => {
-  view.value = new View({
-    center: initialLatLng.value,
-    zoom: initialZoom.value,
-    enableRotation: false,
-  });
-
-  map.value = new Map({
-    layers: [
-      new TileLayer({
-        source: new OSM(),
-      }),
-    ],
-    target: 'map',
-    view: view.value,
-  });
-
-  map.value.on('moveend', handleMapMove);
-
-  map.value.on('click', handleMapClick);
-
-  map.value.on('pointermove', (event: MapBrowserEvent<MouseEvent>) => {
-    if (event.dragging) {
-      return;
-    }
-
-    map.value.getTargetElement().style.cursor = map.value.hasFeatureAtPixel(
-      map.value.getEventPixel(event.originalEvent),
-    )
-      ? 'pointer'
-      : '';
-  });
 };
 
 const parseUrl = () => {
@@ -500,31 +224,42 @@ const parseUrl = () => {
   });
 };
 
-const navigateTo = (latLng: LatLng): void => {
-  const coordinates = fromLonLat([latLng.lng, latLng.lat]);
+const handleMapFeatureClick = (eatery: FeatureLike) => {
+  const eateryId: string = eatery.get('id') as string;
+  const splitId = eateryId.split('-');
 
-  if (
-    getLatLng().lat.toFixed(5) === latLng.lat.toFixed(5) &&
-    getLatLng().lng.toFixed(5) === latLng.lng.toFixed(5)
-  ) {
-    isLoading.value = false;
+  showPlaceDetails.value = {
+    id: parseInt(splitId[0], 10),
+    branchId: splitId[1] ? parseInt(splitId[1], 10) : undefined,
+  };
+};
 
-    return;
-  }
+const handleMapMove = () => {
+  updateUrl();
+  populateMap();
+};
 
-  view.value.animate({
-    center: coordinates,
-    duration: 1000,
-    zoom: 13,
-  });
+const registerListeners = () => {
+  eventBus.$on<boolean>(
+    'map-loading',
+    (loading) => (isLoading.value = loading),
+  );
+
+  eventBus.$on('map-moved', handleMapMove);
+
+  eventBus.$on<{ pixel: Pixel; markerLayer: VectorLayer<VectorSource> }>(
+    'cluster-clicked',
+    zoomIntoCluster,
+  );
+
+  eventBus.$on<FeatureLike>('clicked-feature', handleMapFeatureClick);
 };
 
 onMounted(() => {
   parseUrl();
-
   createMap();
-
   populateMap();
+  registerListeners();
 });
 </script>
 
@@ -551,7 +286,7 @@ onMounted(() => {
 
     <FilterMap
       :set-filters="filtersForFilterBar"
-      @filters-updated="handleFiltersChange($event)"
+      @filters-updated="handleFiltersChange"
     />
 
     <PlaceDetails

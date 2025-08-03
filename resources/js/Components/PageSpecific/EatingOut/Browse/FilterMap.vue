@@ -17,6 +17,7 @@ const props = defineProps<{
 
 const viewSidebar = ref(false);
 const filters = ref<EateryFilters>();
+const hasEmitted = ref(false);
 
 const emits = defineEmits(['filtersUpdated']);
 
@@ -48,7 +49,11 @@ const getFilters = () => {
 
       filters.value = defaultFilters;
 
-      emits('filtersUpdated', { filters: filters.value });
+      if (hasEmitted.value) {
+        emits('filtersUpdated', { filters: filters.value });
+      }
+
+      hasEmitted.value = true;
     });
 };
 
@@ -92,13 +97,13 @@ onMounted(() => {
       />
 
       <AdjustmentsHorizontalIcon
-        class="h-8 w-8 xmd:h-14 xmd:w-14 md:max-xmd:h-12 md:max-xmd:w-12"
+        class="h-8 w-8 md:max-xmd:h-12 md:max-xmd:w-12 xmd:h-14 xmd:w-14"
         @click="viewSidebar = true"
       />
     </div>
 
     <div
-      class="pointer-events-none absolute right-[5.3rem] rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 xmd:right-[7rem] xmd:text-base md:max-xmd:right-[6.5rem]"
+      class="pointer-events-none absolute right-[5.3rem] rounded-full border-2 border-white bg-secondary px-4 py-1 text-sm leading-none font-semibold uppercase opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:delay-500 md:max-xmd:right-[6.5rem] xmd:right-[7rem] xmd:text-base"
     >
       Filter
     </div>
