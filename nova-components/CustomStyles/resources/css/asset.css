@@ -2,3 +2,15 @@
 #nova canvas#line-chart, #nova canvas#bar-chart {
     height: 70vh !important;
 }
+
+#nova .sidebar-menu h3 {
+    span.text-base {
+        font-size: 1.3rem!important;
+    }
+}
+
+#nova .sidebar-menu h4 {
+    span.text-xs {
+        font-size: 0.9rem!important;
+    }
+}

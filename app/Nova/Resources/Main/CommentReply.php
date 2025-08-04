@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Recipes\RecipeAllergen;
+use App\Notifications\CommentRepliedNotification;
 use App\Nova\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -44,5 +47,14 @@ class CommentReply extends Resource
 
             DateTime::make('Added', 'created_at'),
         ];
+    }
+
+    public static function afterCreate(NovaRequest $request, Model $model)
+    {
+        /** @var \App\Models\Comments\CommentReply $model */
+
+        (new AnonymousNotifiable())
+            ->route('mail', $model->comment->email)
+            ->notify(new CommentRepliedNotification($model));
     }
 }

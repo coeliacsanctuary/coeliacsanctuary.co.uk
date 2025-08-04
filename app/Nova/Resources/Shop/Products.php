@@ -112,7 +112,12 @@ class Products extends Resource
 
                 Boolean::make('Pinned')->onlyOnForms()->help('Pin the product to top of category page'),
 
-                Text::make('Variant Title')->fullWidth()->nullable()->help('The label displayed above the variant select, eg, size, colour etc')->suggestions(['Size', 'Colour']),
+                Text::make('Variant Title')
+                    ->fullWidth()
+                    ->nullable()
+                    ->hideFromIndex()
+                    ->help('The label displayed above the variant select, eg, size, colour etc')
+                    ->suggestions(['Size', 'Colour']),
             ]),
 
             new Panel('Sales', [
