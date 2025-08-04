@@ -10,6 +10,7 @@ use App\Nova\Actions\ApproveComment;
 use App\Nova\Actions\ReplyToComment;
 use App\Nova\Resource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
@@ -49,6 +50,11 @@ class Comments extends Resource
                 ->peekable(),
 
             Text::make('Name'),
+
+            Text::make('Comment')
+                ->onlyOnIndex()
+                ->displayUsing(fn () => "<div style=\"width: 300px; text-wrap:auto;\">{$this->resource->comment}</div>")
+                ->asHtml(),
 
             Textarea::make('Comment')->alwaysShow(),
 

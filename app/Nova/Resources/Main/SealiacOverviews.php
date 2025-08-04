@@ -57,8 +57,6 @@ class SealiacOverviews extends Resource
                 Products::class,
             ]),
 
-            Text::make('Overview')->displayUsing(fn () => Str::limit($this->resource->overview, 100))->onlyOnIndex(),
-
             Textarea::make('Overview'),
 
             Badge::make('Status', 'invalidated')
@@ -77,7 +75,7 @@ class SealiacOverviews extends Resource
 
             Number::make('Rating', '')->displayUsing(fn () => $this->resource->thumbs_up - $this->resource->thumbs_down),
 
-
+            Text::make('Overview')->displayUsing(fn () => Str::limit($this->resource->overview, 100))->onlyOnIndex(),
         ];
     }
 
