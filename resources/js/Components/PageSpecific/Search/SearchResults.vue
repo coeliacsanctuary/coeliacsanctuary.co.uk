@@ -30,7 +30,7 @@ onMounted(() => {
 const { searchForm } = useSearch();
 
 const { reset, pause, items, refreshUrl, requestOptions } =
-  useInfiniteScrollCollection<SearchResult>('results', ref(props.landmark));
+  useInfiniteScrollCollection<SearchResultType>('results', ref(props.landmark));
 
 const goToEaterySearch = () => {
   router.post('/wheretoeat/search', {

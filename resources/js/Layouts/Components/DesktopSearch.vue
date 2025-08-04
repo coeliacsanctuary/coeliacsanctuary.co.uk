@@ -7,9 +7,7 @@ import eventBus from '@/eventBus';
 const { hasError, searchForm, submitSearch } = useSearch();
 
 const processSearch = () => {
-  eventBus.$emit('show-site-loader');
-
-  submitSearch();
+  submitSearch({}, () => eventBus.$emit('show-site-loader'));
 };
 </script>
 
@@ -32,7 +30,7 @@ const processSearch = () => {
         hide-label
       />
 
-      <button>
+      <button class="cursor-pointer">
         <MagnifyingGlassIcon class="h-6 w-6" />
       </button>
     </div>
