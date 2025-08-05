@@ -30,6 +30,10 @@ const page: Page<{ basket?: { items: ShopBasketItem[]; subtotal: string } }> =
 const items = computed((): ShopBasketItem[] => page.props.basket?.items || []);
 const subtotal = computed(() => page.props.basket?.subtotal || '');
 
+const quantity = computed(() => {
+  return items.value.reduce((total, item) => total + item.quantity, 0);
+});
+
 onMounted(() => {
   if (typeof document === 'undefined') {
     return;
@@ -106,12 +110,12 @@ onMounted(() => {
           'pointer-events-none',
         ]"
       >
-        You have {{ items.length }} {{ pluralise('item', items.length) }}
+        You have {{ quantity }} {{ pluralise('item', quantity) }}
         in your basket.
       </div>
       <div
         class="absolute top-0 right-0 -mt-3 -mr-3 flex h-6 w-6 items-center justify-center rounded-full bg-red"
-        v-text="items.length"
+        v-text="quantity"
       />
       <ShoppingBagIcon
         class="h-10 w-10 xl:max-2xl:h-12 xl:max-2xl:w-12 2xl:h-14 2xl:w-14"

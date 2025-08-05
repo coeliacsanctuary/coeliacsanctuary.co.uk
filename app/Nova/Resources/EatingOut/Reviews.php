@@ -98,10 +98,10 @@ class Reviews extends Resource
                 ])->showOnPreview(),
             ]),
 
-            ...($this->resource->eatery?->county_id === 1 ? $this->getBranchPanel() : []),
+            ...($this->resource->eatery?->county_id === 1 ? $this->getBranchPanel() : [Text::make('Branch', fn () => '-')]),
 
             new Panel('Review', [
-                Textarea::make('Review')->showOnPreview(),
+                Textarea::make('Review')->showOnPreview()->alwaysShow(),
 
                 Boolean::make('Approved')->showOnPreview()->filterable(),
             ]),

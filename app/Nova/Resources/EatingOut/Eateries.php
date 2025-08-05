@@ -274,6 +274,7 @@ class Eateries extends Resource
 
         return [
             HiddenWritableField::make('Recommendation ID', 'place_recommendation_id')
+                ->onlyOnForms()
                 ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_recommendation_id')),
 
             ID::make('id')->hide(),

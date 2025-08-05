@@ -56,6 +56,7 @@
         "spatie/laravel-medialibrary": "^11.13.0",
         "spatie/laravel-sluggable": "^3.7.5",
         "spatie/mjml-php": "^1.2.5",
+        "spatie/mjml-sidecar": "^1.1",
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
         "wnx/sidecar-browsershot": "^2.6.0"

@@ -41,6 +41,7 @@ class BlogShowResource extends JsonResource
                     ],
                 ]),
             'hasTwitterEmbed' => Str::contains($this->body, $twitterReplacements),
+            'show_author' => $this->show_author,
             'tags' => new BlogTagCollection($this->tags),
             'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollections),
         ];

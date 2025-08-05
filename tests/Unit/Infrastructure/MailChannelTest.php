@@ -47,6 +47,8 @@ class MailChannelTest extends TestCase
         $this->assertDatabaseEmpty(NotificationEmail::class);
 
         $this->mock(Mjml::class)
+            ->shouldReceive('sidecar')
+            ->andReturnSelf()
             ->shouldReceive('minify')
             ->andReturnSelf()
             ->getMock()

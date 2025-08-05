@@ -76,7 +76,7 @@ watchDebounced(() => props.address, handleSearch, { debounce: 100 });
   <div class="relative">
     <slot />
 
-    <div>
+    <div v-if="country === 'United Kingdom'">
       <FormCheckbox
         v-model="useMyLocation"
         name="foo"

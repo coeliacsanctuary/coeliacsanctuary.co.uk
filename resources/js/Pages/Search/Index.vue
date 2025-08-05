@@ -54,17 +54,26 @@ const {
 } = useSearch();
 
 onMounted(() => {
+  console.log('emitting hide 1');
   eventBus.$emit('hide-site-loader');
 
   if (resultsElem.value) {
     resultsElem.value.pause = true;
   }
 
+  store.setForm(props.parameters);
+
   if (props.aiAssisted) {
+    console.log('emitting show 1');
+    eventBus.$emit('show-site-loader');
+
     const url = new URL(useBrowser().currentUrl());
     url.search = formParamsToSearchParams().toString();
 
     nextTick(() => {
+      console.log('emitting show 2');
+      eventBus.$emit('show-site-loader');
+
       router.get(
         url.toString(),
         {},
@@ -126,6 +135,9 @@ const handleSearch = () => {
         }
 
         shouldLoad.value = false;
+
+        console.log('emitting hide 3');
+        eventBus.$emit('hide-site-loader');
       },
     });
   });
@@ -183,11 +195,12 @@ watchDebounced(
 );
 
 router.on('before', (event): void => {
-  eventBus.$emit('hide-site-loader');
-
   if (!latLng.value) {
     return;
   }
+
+  console.log('should emitting hide 2');
+  // eventBus.$emit('hide-site-loader');
 
   if (event.detail.visit.only[0] === 'results') {
     event.detail.visit.headers = {

@@ -47,11 +47,11 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
 {
     use ClearsCache;
     use HasEateryDetails;
+
     /** @use HasOpenGraphImage<$this> */
     use HasOpenGraphImage;
 
     use HasSealiacOverview;
-
     use Searchable;
 
     protected $casts = [
@@ -115,11 +115,11 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     }
 
     /** @return Builder<static> */
-    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2): Builder
+    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2, array $additionalColumns = []): Builder
     {
         return static::query()
             ->selectRaw('(
-                        3959 * acos (
+                        6371000 * acos (
                           cos ( radians(?) )
                           * cos( radians( lat ) )
                           * cos( radians( lng ) - radians(?) )
@@ -132,7 +132,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
                 $latLng->lat,
             ])
             ->having('distance', '<=', $radius)
-            ->addSelect(['id', 'lat', 'lng', 'name', 'county_id', 'type_id'])
+            ->addSelect(['id', 'lat', 'lng', 'name', 'county_id', 'type_id', ...$additionalColumns])
             ->where('closed_down', false)
             ->orderBy('distance');
     }

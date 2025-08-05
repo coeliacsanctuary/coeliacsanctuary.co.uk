@@ -46,10 +46,12 @@ const optionClasses = (disabled: boolean, selected: boolean): string[] => {
   ];
 
   if (selected) {
-    base.push('bg-primary-light/50');
+    base.push('bg-primary-light/50 sm:hover:bg-primary-light/70');
+  } else if (!disabled) {
+    base.push('hover:bg-grey-light');
+  } else {
+    base.push('text-grey-off-dark');
   }
-
-  base.push(disabled ? 'text-grey-off-dark' : 'sm:hover:bg-grey-light');
 
   return base;
 };

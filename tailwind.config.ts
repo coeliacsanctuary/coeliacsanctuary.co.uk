@@ -24,6 +24,7 @@ export default {
         },
 
         secondary: {
+          lightest: '#e8d469',
           light: '#ecd14a',
           DEFAULT: '#DBBC25',
         },

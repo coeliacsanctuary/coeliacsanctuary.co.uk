@@ -20,8 +20,8 @@ class HydratePage
     protected array $relations = [
         Blog::class => ['media'],
         Recipe::class => ['media'],
-        Eatery::class => ['country', 'county', 'town', 'restaurants', 'area'],
-        NationwideBranch::class => ['eatery', 'country', 'county', 'town', 'area'],
+        Eatery::class => ['country', 'county', 'town', 'restaurants', 'area', 'cuisine'],
+        NationwideBranch::class => ['eatery', 'country', 'county', 'town', 'area', 'eatery.cuisine'],
         ShopProduct::class => ['variants', 'prices'],
     ];
 

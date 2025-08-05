@@ -19,6 +19,8 @@ export default () => {
 
   const submitSearch = (
     options: Omit<VisitOptions, 'method' | 'data'> = {},
+    before?: () => void,
+    after?: () => void,
   ) => {
     hasError.value = false;
 
@@ -28,14 +30,24 @@ export default () => {
       return;
     }
 
+    if (before) {
+      before();
+    }
+
     isSubmitting.value = true;
 
-    options = {
-      ...options,
-      onSuccess: () => {
-        isSubmitting.value = false;
-      },
-    };
+    if (!options.onSuccess) {
+      options = {
+        ...options,
+        onSuccess: () => {
+          isSubmitting.value = false;
+
+          if (after) {
+            after();
+          }
+        },
+      };
+    }
 
     if (searchForm.value.eateries) {
       navigator.geolocation.getCurrentPosition(
@@ -60,6 +72,7 @@ export default () => {
       return;
     }
 
+    console.log('submitting search in composable');
     router.get('/search', searchForm.value, {
       ...options,
       preserveState: true,

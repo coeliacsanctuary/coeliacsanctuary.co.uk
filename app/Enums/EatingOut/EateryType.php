@@ -18,4 +18,13 @@ enum EateryType: int
             self::EATERY => '#80CCFC',
         };
     }
+
+    public function name(): string
+    {
+        return match ($this) {
+            self::HOTEL => 'Hotel',
+            self::ATTRACTION => 'Attraction',
+            self::EATERY => 'Eatery',
+        };
+    }
 }

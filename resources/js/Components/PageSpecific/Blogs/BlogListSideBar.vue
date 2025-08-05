@@ -5,6 +5,7 @@ import { Link } from '@inertiajs/vue3';
 import { BlogTagCount } from '@/types/BlogTypes';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
 
 const emits = defineEmits(['close']);
 
@@ -95,6 +96,17 @@ watch(
           class="font-italic px-3"
           v-text="'No tags found...'"
         />
+
+        <div class="flex-1 p-4">
+          <CoeliacButton
+            :as="Link"
+            href="/blog/all-tags"
+            label="All Blog Tags"
+            size="lg"
+            bold
+            class="w-full justify-center"
+          />
+        </div>
       </div>
     </div>
   </Sidebar>

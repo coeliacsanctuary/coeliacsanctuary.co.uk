@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Hammerstone\Sidecar\Architecture;
+use Spatie\MjmlSidecar\MjmlFunction;
 use Wnx\SidecarBrowsershot\Functions\BrowsershotFunction;
 
 return [
@@ -11,6 +12,7 @@ return [
      */
     'functions' => [
         BrowsershotFunction::class,
+        MjmlFunction::class,
     ],
 
     /*

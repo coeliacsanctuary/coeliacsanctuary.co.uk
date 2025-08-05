@@ -10,14 +10,23 @@ import { ref } from 'vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import { ucfirst } from '@/helpers';
 
-const emits = defineEmits(['load-more']);
+const emits = defineEmits(['load-more', 'reset']);
 
-const props = defineProps<{
-  comments: PaginatedResponse<Comment>;
-  module: 'blog' | 'recipe';
-  id: number;
-}>();
+const props = withDefaults(
+  defineProps<{
+    comments: PaginatedResponse<Comment>;
+    module: 'blog' | 'recipe';
+    id: number;
+    isLoading?: boolean;
+    hasLoadedMore?: boolean;
+  }>(),
+  {
+    isLoading: false,
+    hasLoadedMore: false,
+  },
+);
 
 const form = useForm({
   module: props.module,
@@ -90,18 +99,38 @@ const submitComment = () => {
       </div>
 
       <div
-        v-if="comments.links.next"
-        class="hover:bg-primary-gradient-10 cursor-pointer border border-primary bg-linear-to-br from-primary/20 to-primary-light/20 p-1 text-center text-lg shadow-sm"
-        @click="emits('load-more')"
-        v-text="'Load more comments...'"
-      />
+        class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4"
+      >
+        <CoeliacButton
+          v-if="comments.links.next"
+          as="button"
+          theme="light"
+          size="xl"
+          label="Load more comments..."
+          class="h-full w-full flex-1 justify-center !text-xl"
+          bold
+          :loading="isLoading"
+          @click="emits('load-more')"
+        />
+
+        <CoeliacButton
+          v-if="hasLoadedMore"
+          as="button"
+          theme="secondary"
+          size="xl"
+          :label="`Back to ${ucfirst(module)}`"
+          class="h-full justify-center !text-xl"
+          bold
+          @click="emits('reset')"
+        />
+      </div>
     </div>
 
     <div
       v-else
       class="my-8 font-semibold"
     >
-      There's no comments on this blog, why not leave one?
+      There's no comments on this {{ module }}, why not leave one?
     </div>
   </Card>
 

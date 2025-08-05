@@ -13,7 +13,8 @@ export type SearchableItem =
   | 'Recipe'
   | 'Shop Product'
   | 'Eatery'
-  | 'Nationwide Branch';
+  | 'Hotel'
+  | 'Attraction';
 
 export type SiteSearchResult = {
   type: SearchableItem;
@@ -28,6 +29,7 @@ export type EaterySearchResult = Exclude<SiteSearchResult, 'image'> & {
   description: string | { name: string; info: string }[];
   image: LatLng;
   distance?: number;
+  cuisine?: string;
 };
 
 export type SearchResult = SiteSearchResult | EaterySearchResult;

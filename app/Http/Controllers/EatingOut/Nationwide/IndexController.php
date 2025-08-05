@@ -33,8 +33,8 @@ class IndexController
             ->metaImage($getOpenGraphImageAction->handle($county))
             ->render('EatingOut/Nationwide', [
                 'county' => new NationwidePageResource($county),
-                'topRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
-                'mostRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
+                'topRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
+                'mostRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
             ]);
     }
 }

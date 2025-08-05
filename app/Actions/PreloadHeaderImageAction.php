@@ -38,8 +38,12 @@ class PreloadHeaderImageAction
         }
 
         if ($this->router->is('blog.show')) {
-            /** @var ?Blog $blog */
+            /** @var null | Blog | string $blog */
             $blog = $this->request->route('blog');
+
+            if (is_string($blog)) {
+                $blog = Blog::query()->where('slug', $blog)->first();
+            }
 
             if ($blog) {
                 return $blog->main_image;
@@ -47,8 +51,12 @@ class PreloadHeaderImageAction
         }
 
         if ($this->router->is('recipe.show')) {
-            /** @var ?Recipe $recipe */
+            /** @var null | Recipe | string $recipe */
             $recipe = $this->request->route('recipe');
+
+            if (is_string($recipe)) {
+                $recipe = Recipe::query()->where('slug', $recipe)->first();
+            }
 
             if ($recipe) {
                 return $recipe->main_image ?? $recipe->square_image;
@@ -56,8 +64,12 @@ class PreloadHeaderImageAction
         }
 
         if ($this->router->is('collection.show')) {
-            /** @var ?Collection $collection */
+            /** @var null | Collection | string $collection */
             $collection = $this->request->route('collection');
+
+            if (is_string($collection)) {
+                $collection = Collection::query()->where('slug', $collection)->first();
+            }
 
             if ($collection) {
                 return $collection->main_image;
@@ -65,8 +77,12 @@ class PreloadHeaderImageAction
         }
 
         if ($this->router->is('eating-out.county')) {
-            /** @var ?EateryCounty $county */
+            /** @var null | EateryCounty | string $county */
             $county = $this->request->route('county');
+
+            if (is_string($county)) {
+                $county = EateryCounty::query()->where('slug', $county)->first();
+            }
 
             if ($county) {
                 return $county->image ?? $county->country?->image;
@@ -81,8 +97,12 @@ class PreloadHeaderImageAction
         }
 
         if ($this->router->is('eating-out.town')) {
-            /** @var ?EateryTown $town */
+            /** @var null | EateryTown | string $town */
             $town = $this->request->route('town');
+
+            if (is_string($town)) {
+                $town = EateryTown::query()->where('slug', $town)->first();
+            }
 
             if ($town) {
                 return $town->image ?? $town->county->image ?? $town->county?->country?->image;
@@ -90,8 +110,12 @@ class PreloadHeaderImageAction
         }
 
         if ($this->router->is('eating-out.london.borough')) {
-            /** @var ?EateryTown $borough */
+            /** @var null | EateryTown | string $borough */
             $borough = $this->request->route('borough');
+
+            if (is_string($borough)) {
+                $borough = EateryTown::query()->where('slug', $borough)->first();
+            }
 
             if ($borough) {
                 return $borough->image ?? $borough->county?->image;
@@ -99,9 +123,12 @@ class PreloadHeaderImageAction
         }
 
         if ($this->router->is('eating-out.london.borough.area')) {
-            /** @var ?EateryArea $area */
+            /** @var null | EateryArea | string $area */
             $area = $this->request->route('area');
 
+            if (is_string($area)) {
+                $area = EateryArea::query()->where('slug', $area)->first();
+            }
 
             if ($area) {
                 return $area->image ?? $area->town->image ?? $area->town?->county?->image;

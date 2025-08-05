@@ -51,8 +51,12 @@ const ctaItems: Cta[] = [
 
       <div
         class="my-12 flex items-center justify-center sm:m-0! sm:shrink-0 sm:p-2 sm:max-lg:w-1/4 lg:max-xl:w-full xl:w-1/4"
-        v-html="cta.icon"
-      />
+      >
+        <div
+          class="flex h-full max-h-[150px] w-full items-center justify-center"
+          v-html="cta.icon"
+        />
+      </div>
 
       <div class="sm:space-y-2">
         <h2

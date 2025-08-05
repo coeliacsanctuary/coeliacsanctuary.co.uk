@@ -4,7 +4,7 @@ import {
   EateryReview as EateryReviewType,
 } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
-import { computed, ComputedRef, ref, watch } from 'vue';
+import { computed, ComputedRef, onMounted, ref, watch } from 'vue';
 import RatingsBreakdown from '@/Components/PageSpecific/Shared/RatingsBreakdown.vue';
 import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
@@ -51,6 +51,15 @@ const filteredReviews: ComputedRef<EateryReviewType[]> = computed(() => {
 });
 
 const displayAddReviewModal = ref(false);
+
+onMounted(() => {
+  if (
+    typeof window !== 'undefined' &&
+    window.location.hash === '#leave-review'
+  ) {
+    displayAddReviewModal.value = true;
+  }
+});
 
 watch(showAllReviews, (newValue) => {
   router.reload({

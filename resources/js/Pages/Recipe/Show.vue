@@ -22,12 +22,18 @@ const props = defineProps<{
   backLink: string;
 }>();
 
+const header = ref<HTMLElement>();
+
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
+const isLoadingComments = ref(false);
+const hasLoadedMoreComments = ref(false);
 
 const loadMoreComments = () => {
   if (!props.comments.links.next) {
     return;
   }
+
+  isLoadingComments.value = true;
 
   router.get(
     props.comments.links.next,
@@ -38,8 +44,34 @@ const loadMoreComments = () => {
       only: ['comments'],
       preserveUrl: true,
       onSuccess: (page: Page<{ comments?: PaginatedResponse<Comment> }>) => {
+        isLoadingComments.value = false;
+        hasLoadedMoreComments.value = true;
+
         if (page.props.comments) {
           allComments.value.data.push(...page.props.comments.data);
+          allComments.value.links = page.props.comments.links;
+          allComments.value.meta = page.props.comments.meta;
+        }
+      },
+    },
+  );
+};
+
+const handleCommentReset = () => {
+  header.value?.scrollIntoView({ behavior: 'smooth' });
+
+  router.get(
+    props.comments.links.first,
+    {},
+    {
+      preserveState: true,
+      only: ['comments'],
+      preserveUrl: true,
+      onSuccess: (page: Page<{ comments?: PaginatedResponse<Comment> }>) => {
+        hasLoadedMoreComments.value = false;
+
+        if (page.props.comments) {
+          allComments.value.data = page.props.comments.data;
           allComments.value.links = page.props.comments.links;
           allComments.value.meta = page.props.comments.meta;
         }
@@ -50,6 +82,7 @@ const loadMoreComments = () => {
 </script>
 
 <template>
+  <div ref="header" />
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading
       :back-link="{
@@ -142,8 +175,11 @@ const loadMoreComments = () => {
         </p>
         <p><span class="font-semibold">Added</span> {{ recipe.published }}</p>
         <p>
-          <span class="font-semibold">Recipe by</span>
-          <span v-html="recipe.author" />
+          <span class="font-semibold">Recipe by </span>
+          <span
+            class="[&>a]:font-semibold [&>a]:text-primary-dark [&>a]:hover:text-grey-darker"
+            v-html="recipe.author"
+          />
         </p>
       </div>
 
@@ -251,11 +287,58 @@ const loadMoreComments = () => {
         />
       </Card>
 
+      <Card
+        v-if="['Alison Peters', 'Alison Wheatley'].includes(recipe.author)"
+        faded
+        theme="primary-light"
+      >
+        <div
+          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
+        >
+          <img
+            alt="Alison Peters"
+            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
+            src="/images/misc/alison.png"
+          />
+          <div class="prose max-w-2xl md:prose-xl">
+            <strong>Alison Peters</strong> has been Coeliac since June 2014 and
+            launched Coeliac Sanctuary in August of that year, and since then
+            has aimed to provide a one stop shop for Coeliacs, from blogs, to
+            recipes, eating out guide and online shop.
+          </div>
+        </div>
+      </Card>
+
+      <Card
+        v-if="recipe.author === 'Jamie Peters'"
+        faded
+        theme="primary-light"
+      >
+        <div
+          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
+        >
+          <img
+            alt="Alison Peters"
+            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
+            src="/images/misc/jamie.png"
+          />
+          <div class="prose max-w-2xl md:prose-xl">
+            While not a coeliac, <strong>Jamie Peters</strong> is married to
+            one, he's the brains behind this website, and alongside software
+            development he has always enjoyed cooking and baking, and will adapt
+            his old family favourites so Alison can eat them too.
+          </div>
+        </div>
+      </Card>
+
       <Comments
         :id="recipe.id"
         :comments="allComments"
         module="recipe"
+        :is-loading="isLoadingComments"
+        :has-loaded-more="hasLoadedMoreComments"
         @load-more="loadMoreComments"
+        @reset="handleCommentReset"
       />
     </div>
   </div>

@@ -13,7 +13,7 @@ import { pluralise } from '@/helpers';
 defineProps<{ item: SearchResult }>();
 
 const isNotEatery = (type: SearchableItem): boolean => {
-  return type !== 'Eatery' && type !== 'Nationwide Branch';
+  return type !== 'Eatery' && type !== 'Hotel' && type !== 'Attraction';
 };
 
 const formatDistance = (distance: number): string => {
@@ -43,7 +43,8 @@ const itemTypeClasses = (type: SearchableItem): string[] => {
       base.push('bg-primary-light');
       break;
     case 'Eatery':
-    case 'Nationwide Branch':
+    case 'Hotel':
+    case 'Attraction':
       base.push('bg-secondary');
       break;
     case 'Shop Product':
@@ -111,10 +112,17 @@ const itemTypeClasses = (type: SearchableItem): string[] => {
         </div>
 
         <div class="mt-auto flex items-end justify-between">
-          <div
-            :class="itemTypeClasses(item.type)"
-            v-text="item.type"
-          />
+          <div class="flex items-end space-x-2">
+            <div
+              :class="itemTypeClasses(item.type)"
+              v-text="item.type"
+            />
+            <div
+              v-if="(<EaterySearchResult>item)?.cuisine"
+              :class="[...itemTypeClasses(item.type), '!bg-secondary-lightest']"
+              v-text="(<EaterySearchResult>item).cuisine"
+            />
+          </div>
           <div
             v-if="(<EaterySearchResult>item)?.distance"
             class="text-sm text-grey-off-dark group-hover/item:text-grey-dark lg:text-base"
