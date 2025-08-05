@@ -3,7 +3,7 @@ import { Feature } from 'ol';
 import Supercluster, { PointFeature } from 'supercluster';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Point } from 'ol/geom';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { Marker, MarkerProps } from '@/types/EatingOutBrowseTypes';
 import VectorSource from 'ol/source/Vector';
 import { Extent } from 'ol/extent';
@@ -13,15 +13,36 @@ import { Pixel } from 'ol/pixel';
 import { FeatureLike } from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import eventBus from '@/eventBus';
+import useScreensize from '@/composables/useScreensize';
 
 export default () => {
   const rawMarkerSource = ref<VectorSource>();
   const markersOnMap = ref<Marker[]>([]);
 
+  const superClusterRadius = () => {
+    switch (useScreensize().currentBreakpoint()) {
+      case 'xxxs':
+      case 'xxs':
+      case 'xs':
+      default:
+        return 200;
+      case 'sm':
+      case 'xmd':
+        return 175;
+      case 'md':
+      case 'lg':
+        return 150;
+      case 'xl':
+        return 125;
+      case '2xl':
+        return 100;
+    }
+  };
+
   const createSupercluster = (): Supercluster<MarkerProps> => {
     return new Supercluster<MarkerProps>({
-      radius: 200,
-      maxZoom: 17,
+      radius: superClusterRadius(),
+      maxZoom: 15,
     });
   };
 
@@ -146,9 +167,11 @@ export default () => {
   const zoomIntoCluster = ({
     pixel,
     markerLayer,
+    currentZoom,
   }: {
     pixel: Pixel;
     markerLayer: VectorLayer<VectorSource>;
+    currentZoom: number;
   }) => {
     markerLayer.getFeatures(pixel).then((clickedFeatures: FeatureLike[]) => {
       if (!clickedFeatures.length) {
@@ -164,9 +187,17 @@ export default () => {
         };
 
       if (props.cluster && superCluster.value) {
-        const expansionZoom = superCluster.value.getClusterExpansionZoom(
+        let expansionZoom = superCluster.value.getClusterExpansionZoom(
           props.cluster_id,
         );
+
+        if (expansionZoom === currentZoom) {
+          expansionZoom = currentZoom + 1;
+        }
+
+        if (expansionZoom > 17) {
+          expansionZoom = 17;
+        }
 
         eventBus.$emit('map-animate-to', {
           // eslint-disable-next-line

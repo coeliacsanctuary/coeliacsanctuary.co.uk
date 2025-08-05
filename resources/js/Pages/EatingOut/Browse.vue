@@ -119,8 +119,6 @@ const getPlaces = async (): Promise<EateryBrowseResource[]> => {
 };
 
 const populateMap = (): void => {
-  isLoading.value = true;
-
   void getPlaces()
     .then((eateries: EateryBrowseResource[]) => {
       processMapMarkers(eateries, getZoom(), getExtent());

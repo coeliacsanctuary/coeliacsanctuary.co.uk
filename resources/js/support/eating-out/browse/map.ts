@@ -113,6 +113,7 @@ export default (
           eventBus.$emit('cluster-clicked', {
             pixel: event.pixel,
             markerLayer: markerLayer.value,
+            currentZoom: getZoom(),
           });
 
           return;
