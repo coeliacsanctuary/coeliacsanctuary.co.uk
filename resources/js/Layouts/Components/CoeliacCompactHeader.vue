@@ -40,7 +40,7 @@ const mobileSearchOpen = ref(false);
 
         <Link
           href="/"
-          class="lg:absolute lg:left-2"
+          class="z-[999] lg:absolute lg:left-2"
         >
           <Sealiac class="h-14 w-full" />
         </Link>
