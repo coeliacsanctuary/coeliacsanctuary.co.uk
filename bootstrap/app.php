@@ -88,5 +88,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(PrepareShopReviewInvitationsCommand::class)->everyMinute();
         $schedule->command(PublishItemsCommand::class)->everyMinute();
         $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
+
+        if (app()->environment('production')) {
+            $schedule->command('about')->thenPing('http://beats.envoyer.io/heartbeat/oKkQ7etgPUsSnOW');
+        }
     })
     ->create();

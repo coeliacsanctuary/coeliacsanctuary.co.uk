@@ -1,0 +1,17 @@
+name: Deploy Production
+on:
+  push:
+    branches:
+      - main
+
+defaults:
+  run:
+    working-directory: ./
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        run: curl ${{ secrets.DEPLOY_ENVOYER_PROD_URL }}
+
