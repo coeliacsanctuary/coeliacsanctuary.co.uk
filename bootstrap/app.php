@@ -91,6 +91,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         if (app()->environment('production')) {
             $schedule->command('about')->thenPing('http://beats.envoyer.io/heartbeat/oKkQ7etgPUsSnOW');
+
+            $schedule->command('backup:run')->hourly();
+            $schedule->command('backup:clean')->daily()->at('02:00');
         }
     })
     ->create();
