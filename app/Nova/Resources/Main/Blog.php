@@ -21,7 +21,7 @@ use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<BlogModel> */
+/** @extends resource<BlogModel> */
 /**
  * @codeCoverageIgnore
  */
@@ -110,5 +110,17 @@ class Blog extends Resource
 
             MorphMany::make('comments', resource: Comments::class),
         ];
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $blog = $fillFields[0];
+
+        $blog->live = $blog->_status === 'live';
+
+        unset($blog->_status);
+
+        return $fillFields;
     }
 }

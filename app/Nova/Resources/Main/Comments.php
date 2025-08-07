@@ -13,7 +13,6 @@ use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
@@ -23,7 +22,7 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/** @extends Resource<RecipeAllergen> */
+/** @extends resource<RecipeAllergen> */
 /**
  * @codeCoverageIgnore
  */
@@ -84,11 +83,10 @@ class Comments extends Resource
         return $query->withoutGlobalScopes()->with('reply');
     }
 
-    public static function afterUpdate(NovaRequest $request, Model $model)
+    public static function afterUpdate(NovaRequest $request, Model $model): void
     {
         /** @var Comment $model */
-
-        if ($model->approved && (bool)$model->getPrevious()['approved'] === false) {
+        if ($model->approved && (bool) $model->getPrevious()['approved'] === false) {
             (new AnonymousNotifiable())
                 ->route('mail', $model->email)
                 ->notify(new CommentApprovedNotification($model));

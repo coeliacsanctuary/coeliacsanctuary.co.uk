@@ -16,7 +16,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/** @extends Resource<RecipeAllergen> */
+/** @extends resource<RecipeAllergen> */
 /**
  * @codeCoverageIgnore
  */
@@ -49,10 +49,9 @@ class CommentReply extends Resource
         ];
     }
 
-    public static function afterCreate(NovaRequest $request, Model $model)
+    public static function afterCreate(NovaRequest $request, Model $model): void
     {
         /** @var \App\Models\Comments\CommentReply $model */
-
         (new AnonymousNotifiable())
             ->route('mail', $model->comment->email)
             ->notify(new CommentRepliedNotification($model));

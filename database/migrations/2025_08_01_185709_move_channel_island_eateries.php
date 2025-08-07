@@ -8,9 +8,14 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use Illuminate\Database\Migrations\Migration;
 
-return new class () extends Migration {
+return new class() extends Migration
+{
     public function up(): void
     {
+        if (app()->runningUnitTests()) {
+            return;
+        }
+
         $eateries = [
             [
                 'name' => 'Braye Chippy',
@@ -52,7 +57,7 @@ return new class () extends Migration {
         /** @var EateryCountry $channelIslands */
         $channelIslands = EateryCountry::query()->where('country', 'Channel Islands')->first();
 
-        foreach($eateries as $eatery) {
+        foreach ($eateries as $eatery) {
             $model = Eatery::query()
                 ->where('country_id', $channelIslands->id)
                 ->where('name', $eatery['name'])

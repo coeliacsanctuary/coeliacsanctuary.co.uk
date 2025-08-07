@@ -30,7 +30,7 @@ class RefundOrder extends DestructiveAction
         $order = $models->first();
 
         $dto = new RefundOrderDto(
-            $fields->integer('amount'),
+            $fields->integer('amount', $order->payment->total),
             $fields->string('note')->toString(),
             $order->state_id >= OrderState::SHIPPED ? false : $fields->boolean('cancel'),
             $fields->boolean('notify'),

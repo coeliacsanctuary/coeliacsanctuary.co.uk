@@ -51,7 +51,7 @@ return [
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
-            'bucket' => env('AWS_MEDIA_BUCKET', 'coeliac-media'),
+            'bucket' => env('AWS_MEDIA_BUCKET', 'prod-coeliac-media'),
             'visibility' => 'public',
             'options' => [
                 'CacheControl' => 'max-age=315360000, no-transform, public',
@@ -63,7 +63,7 @@ return [
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
-            'bucket' => env('AWS_IMAGES_BUCKET', 'coeliac-images'),
+            'bucket' => env('AWS_IMAGES_BUCKET', 'prod-coeliac-images'),
             'options' => [
                 'CacheControl' => 'max-age=315360000, no-transform, public',
             ],
@@ -74,7 +74,7 @@ return [
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
-            'bucket' => env('AWS_REVIEW_IMAGES_BUCKET', 'coeliac-review-images'),
+            'bucket' => env('AWS_REVIEW_IMAGES_BUCKET', 'prod-coeliac-review-images'),
             'options' => [
                 'CacheControl' => 'max-age=315360000, no-transform, public',
             ],
@@ -86,7 +86,15 @@ return [
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
-            'bucket' => env('AWS_FILE_UPLOADS_BUCKET', 'coeliac-file-uploads'),
+            'bucket' => env('AWS_FILE_UPLOADS_BUCKET', 'prod-coeliac-file-uploads'),
+        ],
+
+        'backups' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
+            'bucket' => env('AWS_BACKUPS_BUCKET', 'prod-coeliac-backups'),
         ],
     ],
 

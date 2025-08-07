@@ -23,7 +23,7 @@ use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<RecipeModel> */
+/** @extends resource<RecipeModel> */
 /**
  * @codeCoverageIgnore
  */
@@ -132,5 +132,17 @@ class Recipe extends Resource
             URL::make('View', fn ($recipe) => $recipe->live ? $recipe->link : null)
                 ->exceptOnForms(),
         ];
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $recipe = $fillFields[0];
+
+        $recipe->live = $recipe->_status === 'live';
+
+        unset($recipe->_status);
+
+        return $fillFields;
     }
 }
