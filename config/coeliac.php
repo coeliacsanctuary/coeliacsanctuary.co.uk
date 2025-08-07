@@ -26,6 +26,14 @@ return [
                         <li>All orders are sent by Royal Mail International Standard Post</li>
                         <li>All orders usually dispatched within 2 working days.</li>
                         <li>You will receive an email when your order has been dispatched.</li>
+                        <li>
+                          Please be aware that due to delays at Royal Mail your order might take longer than expected to arrive,
+                          while Royal Mail aim for a delivery timeframe of 7 - 10 days,
+                          <ul>
+                            <li>Orders to the Europe, including Republic of Ireland, could take up to three weeks to be delivered from date of dispatch.</li>
+                            <li>Orders to the USA, Canada, Australia, and New Zealand could up to four weeks to be delivered from date of dispatch.</li>
+                          </ul>
+                        </li>
                     </ul>
                 </li>
             </ul>
