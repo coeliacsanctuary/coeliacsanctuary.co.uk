@@ -45,7 +45,10 @@ class ReviewImage extends Resource
 
             Image::make('Image', 'raw_thumb')->disk('review-images')->onlyOnIndex(),
 
-            Image::make('Image', 'raw_path')->disk('review-images')->onlyOnPreview()->maxWidth(512),
+            Image::make('Image', 'raw_path')
+                ->disk('review-images')
+                ->onlyOnPreview()
+                ->maxWidth(512),
         ];
     }
 }

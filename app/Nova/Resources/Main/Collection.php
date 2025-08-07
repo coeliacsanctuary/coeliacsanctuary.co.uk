@@ -23,7 +23,7 @@ use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<CollectionModel> */
+/** @extends resource<CollectionModel> */
 /**
  * @codeCoverageIgnore
  */
@@ -143,5 +143,17 @@ class Collection extends Resource
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->reorder('updated_at', 'desc');
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $collection = $fillFields[0];
+
+        $collection->live = $collection->_status === 'live';
+
+        unset($collection->_status);
+
+        return $fillFields;
     }
 }

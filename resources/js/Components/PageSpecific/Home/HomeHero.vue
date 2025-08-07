@@ -42,9 +42,9 @@ import CoeliacButton from '@/Components/CoeliacButton.vue';
             <p
               class="mx-auto prose prose-lg max-w-none bg-white/70 p-2 text-center text-lg leading-6 text-gray-600 xs:p-4 sm:prose-xl sm:w-4/5 sm:leading-8"
             >
-              Check out our online shop for some great coeliac related goodies,
-              including our fantastic travel cards for when you go abroad, our
-              'Gluten Free' stickers, our wristbands, and much more too!
+              Pop over to my shop to get your gluten free travel cards. They
+              explain coeliac and eating gluten free in the local language, so
+              you can relax and enjoy your trip with less stress.
             </p>
             <div class="flex items-center justify-center gap-x-6">
               <CoeliacButton
