@@ -6,6 +6,7 @@ use App\Actions\GetPopupCtaAction;
 use App\Http\Controllers\Api\MailcoachSchedule\StoreController as MailcoachScheduleStoreController;
 use App\Http\Controllers\Api\SealiacOverviewFeedback\StoreController as SealiacOverviewFeedbackController;
 use App\Http\Middleware\MailcoachIncomingRequestMiddleware;
+use App\Models\TempMailcoachMail;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('blogs')->group(base_path('routes/blogs/api.php'));
@@ -32,6 +33,12 @@ Route::get('popup', function (GetPopupCtaAction $getPopupCtaAction) {
 
 Route::post('mailcoach-schedule', MailcoachScheduleStoreController::class)
     ->name('api.mailcoach-schedule')
+    ->middleware(MailcoachIncomingRequestMiddleware::class);
+
+Route::get('mailcoach-message/{message}', function(TempMailcoachMail $message) {
+        return $message->message;
+    })
+    ->name('api.mailcoach-message')
     ->middleware(MailcoachIncomingRequestMiddleware::class);
 
 Route::post('sealiac-overview-feedback/{sealiacOverview}', SealiacOverviewFeedbackController::class)->name('api.sealiac-overview-feedback');
