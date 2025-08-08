@@ -77,6 +77,6 @@ class MailChannel extends BaseMailChannel
             'message' => new HtmlString($this->buildMjml($message)),
         ]);
 
-        return ['html' => (string)$content->id];
+        return ['html' => new HtmlString((string)$content->id)];
     }
 }
