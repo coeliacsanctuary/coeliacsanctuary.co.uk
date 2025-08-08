@@ -38,7 +38,7 @@ return [
     'mailers' => [
         'mailcoach' => [
             'transport' => 'mailcoach',
-            'domain' => env('MAILCOACH_URL'),
+            'domain' => env('MAILER_URL'),
             'token' => env('MAILCOACH_API_TOKEN'),
         ],
 
