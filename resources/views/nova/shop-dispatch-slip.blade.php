@@ -90,7 +90,7 @@ use Money\Money;
                         @if($order->address->line_3)
                             {{ $order->address->line_3 }}<br/>
                         @endif
-                        {{ $order->address->town }}t<br/>
+                        {{ $order->address->town }}<br/>
                         @if($order->address->county)
                             {{ $order->address->county }}<br/>
                         @endif
