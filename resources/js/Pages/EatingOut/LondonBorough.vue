@@ -51,7 +51,10 @@ const areaList = ref<HTMLElement | null>(null);
     </Warning>
   </Card>
 
-  <GoogleAd code="5284484376" />
+  <GoogleAd
+    :key="$page.url"
+    code="5284484376"
+  />
 
   <div
     ref="areaList"

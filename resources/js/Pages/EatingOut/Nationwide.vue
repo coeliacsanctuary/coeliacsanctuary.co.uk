@@ -75,7 +75,10 @@ defineProps<{
     </Card>
   </template>
 
-  <GoogleAd code="5284484376" />
+  <GoogleAd
+    :key="$page.url"
+    code="5284484376"
+  />
 
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading :border="false"> List of Gluten Free Nationwide Chains </Heading>

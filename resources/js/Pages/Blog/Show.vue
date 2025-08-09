@@ -155,7 +155,10 @@ const handleCommentReset = () => {
       <RenderedString :content="blog.body" />
     </div>
 
-    <GoogleAd code="6662103082" />
+    <GoogleAd
+      :key="$page.url"
+      code="6662103082"
+    />
   </Card>
 
   <Card

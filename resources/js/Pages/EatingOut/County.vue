@@ -125,7 +125,10 @@ const townList = ref<HTMLElement | null>(null);
       </div>
     </Info>
 
-    <GoogleAd code="5284484376" />
+    <GoogleAd
+      :key="$page.url"
+      code="5284484376"
+    />
 
     <div
       ref="townList"

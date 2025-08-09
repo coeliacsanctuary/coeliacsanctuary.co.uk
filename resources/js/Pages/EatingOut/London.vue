@@ -140,7 +140,10 @@ const boroughList = ref<HTMLElement | null>(null);
     </TopPlaces>
   </template>
 
-  <GoogleAd code="5284484376" />
+  <GoogleAd
+    :key="$page.url"
+    code="5284484376"
+  />
 
   <div
     ref="boroughList"

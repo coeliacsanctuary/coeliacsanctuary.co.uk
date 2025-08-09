@@ -86,7 +86,10 @@ const shouldShowAiOverview = ref(true);
       :eatery="eatery"
     />
 
-    <GoogleAd code="5284484376" />
+    <GoogleAd
+      :key="$page.url"
+      code="5284484376"
+    />
 
     <EateryAiOverview
       v-if="eatery.qualifies_for_ai && shouldShowAiOverview"
