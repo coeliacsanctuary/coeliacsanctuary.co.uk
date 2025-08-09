@@ -146,9 +146,12 @@ const reloadEateries = () => {
     </Warning>
   </Card>
 
-  <GoogleAd code="5284484376" />
+  <GoogleAd
+    :key="$page.url"
+    code="5284484376"
+  />
 
-  <div class="relative xmd:space-x-2 md:flex">
+  <div class="relative md:flex xmd:space-x-2">
     <TownFilterSidebar
       :filters="filters"
       @filters-updated="handleFiltersChanged"

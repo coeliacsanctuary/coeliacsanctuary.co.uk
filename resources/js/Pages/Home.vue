@@ -63,7 +63,10 @@ defineProps<{
         title="Latest Blogs"
       />
 
-      <GoogleAd code="9266309021" />
+      <GoogleAd
+        :key="$page.url"
+        code="9266309021"
+      />
 
       <HomeHoverGroup
         :items="recipes"

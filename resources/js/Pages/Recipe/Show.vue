@@ -259,6 +259,7 @@ const handleCommentReset = () => {
       </Card>
 
       <GoogleAd
+        :key="$page.url"
         :title="
           useScreensize().screenIsGreaterThanOrEqualTo('lg')
             ? 'Sponsored'

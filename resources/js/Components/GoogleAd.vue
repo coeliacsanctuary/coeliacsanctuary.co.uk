@@ -8,7 +8,8 @@ const props = withDefaults(defineProps<{ code: string; title?: string }>(), {
 const mounted = ref(false);
 
 onMounted(async () => {
-  console.log('mounting ad');
+  console.log('mounting');
+
   mounted.value = true;
 
   await nextTick();
@@ -46,7 +47,7 @@ onMounted(async () => {
 <template>
   <div
     v-if="mounted"
-    :key="`${props.code}-${$page.url}`"
+    :key="code"
     class="m-2 flex flex-col border-y border-primary-light py-2 text-center"
   >
     <p

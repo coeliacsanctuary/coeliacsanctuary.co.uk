@@ -49,7 +49,10 @@ defineProps<{ collection: CollectionPage }>();
       v-html="collection.body"
     />
 
-    <GoogleAd code="7206823714" />
+    <GoogleAd
+      :key="$page.url"
+      code="7206823714"
+    />
   </Card>
 
   <CollectionItemCard
