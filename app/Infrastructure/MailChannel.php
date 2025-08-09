@@ -73,10 +73,10 @@ class MailChannel extends BaseMailChannel
      */
     protected function buildView($message)
     {
-        $content = TempMailcoachMail::query()->create([
-            'message' => new HtmlString($this->buildMjml($message)),
-        ]);
+//        $content = TempMailcoachMail::query()->create([
+//            'message' => new HtmlString($this->buildMjml($message)),
+//        ]);
 
-        return ['html' => new HtmlString((string)$content->id)];
+        return ['html' => new HtmlString($this->buildMjml($message))];
     }
 }
