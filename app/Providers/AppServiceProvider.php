@@ -12,6 +12,9 @@ use Illuminate\Notifications\Channels\MailChannel as IlluminateMailChannel;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Nightwatch\Facades\Nightwatch;
+use Laravel\Nightwatch\Records\CacheEvent;
+use Laravel\Nightwatch\Records\OutgoingRequest;
 use Spatie\Mjml\Mjml;
 
 class AppServiceProvider extends ServiceProvider
@@ -41,5 +44,9 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
 
         Blade::directive('preloadImage', fn () => "<?php echo app(App\Actions\PreloadHeaderImageAction::class)->handle(); ?>");
+
+        Nightwatch::rejectCacheEvents(fn(CacheEvent $event) => !str_contains($event->key, '.'));
+
+        Nightwatch::rejectOutgoingRequests(fn(OutgoingRequest $request) => $request->url === '127.0.0.1');
     }
 }
