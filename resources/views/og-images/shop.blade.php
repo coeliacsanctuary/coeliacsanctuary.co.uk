@@ -16,17 +16,17 @@
 
         <div class="grid gap-4 font-sans p-6 z-20 grid-cols-8">
             <div></div>
-            <div class="flex flex-col space-y-2 col-span-2">
+            <div class="flex flex-col space-y-2 col-span-3">
                 <img class="rounded-lg h-[185px] object-cover" src="{{ $spanishCard->main_image }}" />
 
                 <span class=" text-center text-xl font-semibold">Coeliac Travel Cards</span>
             </div>
-            <div class="flex flex-col space-y-2 col-span-2">
-                <img class="rounded-lg h-[185px] object-cover" src="{{ $stickers->main_image }}" />
+{{--            <div class="flex flex-col space-y-2 col-span-2">--}}
+{{--                <img class="rounded-lg h-[185px] object-cover" src="{{ $stickers->main_image }}" />--}}
 
-                <span class=" text-center text-xl font-semibold">Gluten Free Stickers</span>
-            </div>
-            <div class="flex flex-col space-y-2 col-span-2">
+{{--                <span class=" text-center text-xl font-semibold">Gluten Free Stickers</span>--}}
+{{--            </div>--}}
+            <div class="flex flex-col space-y-2 col-span-3">
                 <img class="rounded-lg h-[185px] object-cover" src="{{ $otherAllergyCard->main_image }}" />
 
                 <span class=" text-center text-xl font-semibold">Coeliac+ Other Allergen Cards</span>
