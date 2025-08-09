@@ -16,11 +16,11 @@ class IndexController
         $eateries = Eatery::query()
             ->latest()
             ->take(5)
-            ->with(['town', 'county', 'country'])
+            ->with(['area', 'town', 'county', 'country'])
             ->get();
 
         $branches = NationwideBranch::query()
-            ->with(['eatery', 'town', 'county', 'town.county', 'country'])
+            ->with(['eatery', 'area', 'town', 'county', 'town.county', 'country'])
             ->take(5)
             ->latest()
             ->get();
