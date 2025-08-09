@@ -77,7 +77,7 @@ class MyPlaces extends Resource
 
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->where('email', 'contact@coeliacsanctuary.co.uk')->reorder('completed')->orderBy('created_at');
+        return $query->where('email', 'alisondwheatley@gmail.com')->reorder('completed')->orderBy('created_at');
     }
 
     protected function getVenueTypes($typeId = null): array

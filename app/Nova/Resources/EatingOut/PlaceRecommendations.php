@@ -51,20 +51,21 @@ class PlaceRecommendations extends Resource
         return [
             ID::make()->hide(),
 
+            Boolean::make('Completed')->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
+
             Panel::make('User', [
                 Text::make('name')->showOnPreview(),
-                Email::make('email')->showOnPreview(),
+                Email::make('email')->showOnPreview()->hideFromIndex(),
             ]),
 
             Panel::make('Eatery', [
                 Text::make('Name', 'place_name')->showOnPreview(),
                 Text::make('Location', 'place_location')->showOnPreview(),
-                URL::make('URL', 'place_web_address')->showOnPreview(),
-                Select::make('Venue Type', 'place_venue_type_id')->displayUsingLabels()->options($this->getVenueTypes(1))->showOnPreview(),
+                URL::make('URL', 'place_web_address')->showOnPreview()->hideFromIndex(),
+                Select::make('Venue Type', 'place_venue_type_id')->displayUsingLabels()->options($this->getVenueTypes(1))->showOnPreview()->hideFromIndex(),
                 Textarea::make('Details', 'place_details')->alwaysShow()->showOnPreview(),
             ]),
 
-            Boolean::make('Completed')->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
 
             DateTime::make('Created', 'created_at')->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
         ];
