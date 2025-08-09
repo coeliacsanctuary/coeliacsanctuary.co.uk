@@ -143,7 +143,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
      */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
-        if (app(Request::class)->wantsJson()) {
+        if (app(Request::class)->wantsJson() || str_contains(app(Request::class)->url(), "api/")) {
             return $query->where('id', $value);
         }
 
