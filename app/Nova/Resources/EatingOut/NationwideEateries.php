@@ -144,4 +144,9 @@ class NationwideEateries extends Resource
                 ->canRun(fn (NovaRequest $request, Eatery $model) => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
         ];
     }
+
+    public static function usesScout()
+    {
+        return false;
+    }
 }
