@@ -14,7 +14,7 @@ class IndexController
     {
         $reviews = EateryReview::query()
             ->latest()
-            ->with(['eatery', 'eatery.town', 'eatery.county', 'eatery.country'])
+            ->with(['eatery', 'eatery.area', 'eatery.town', 'eatery.county', 'eatery.country'])
             ->take(5)
             ->get();
 

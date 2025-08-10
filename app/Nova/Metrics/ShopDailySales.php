@@ -44,4 +44,9 @@ class ShopDailySales extends Trend
     {
         return 'shop-daily-sales';
     }
+
+    public function name()
+    {
+        return "Total Sales Over Time Period";
+    }
 }
