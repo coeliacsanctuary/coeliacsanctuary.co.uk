@@ -11,6 +11,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
  * @codeCoverageIgnore
@@ -38,5 +39,15 @@ class ProductPrice extends Resource
 
             Date::make('End At')->fullWidth()->nullable(),
         ];
+    }
+
+    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    {
+        return '/resources/'.Products::uriKey().'/'.$resource->resource->product_id;
+    }
+
+    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    {
+        return '/resources/'.Products::uriKey().'/'.$resource->resource->product_id;
     }
 }

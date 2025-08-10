@@ -42,12 +42,13 @@
             />
           </div>
 
-          <DefaultButton
-            size="sm"
+          <Button
+            size="small"
+            class="bg-primary-500 hover:bg-primary-900"
             @click.prevent.stop="lookup()"
           >
             Lookup Address
-          </DefaultButton>
+          </Button>
         </div>
         <div
           ref="map"
@@ -62,8 +63,11 @@
 
 <script>
 import { FormField, HandlesValidationErrors } from 'laravel-nova';
+import { Button } from 'laravel-nova-ui';
 
 export default {
+  components: { Button },
+
   mixins: [FormField, HandlesValidationErrors],
 
   props: ['resourceName', 'resourceId', 'field'],
@@ -104,8 +108,10 @@ export default {
       this.address = this.value.address;
 
       if (this.address) {
-        this.latitude = this.value.latitude !== 0 ? this.value.latitude : this.latitude;
-        this.longitude = this.value.longitude !== 0 ? this.value.longitude : this.longitude;
+        this.latitude =
+          this.value.latitude !== 0 ? this.value.latitude : this.latitude;
+        this.longitude =
+          this.value.longitude !== 0 ? this.value.longitude : this.longitude;
         this.zoom = 16;
       }
     },
