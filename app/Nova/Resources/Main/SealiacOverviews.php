@@ -57,7 +57,7 @@ class SealiacOverviews extends Resource
                 Products::class,
             ]),
 
-            Textarea::make('Overview'),
+            Textarea::make('Overview')->alwaysShow(),
 
             Badge::make('Status', 'invalidated')
                 ->map([
@@ -69,11 +69,11 @@ class SealiacOverviews extends Resource
                     true => 'Invalidated',
                 ]),
 
-            Number::make('Thumbs Up Count', 'thumbs_up'),
+            Number::make('Thumbs Up Count', 'thumbs_up')->sortable(),
 
-            Number::make('Thumbs Down Count', 'thumbs_down'),
+            Number::make('Thumbs Down Count', 'thumbs_down')->sortable(),
 
-            Number::make('Rating', '')->displayUsing(fn () => $this->resource->thumbs_up - $this->resource->thumbs_down),
+            Number::make('Rating', '')->displayUsing(fn () => $this->resource->thumbs_up - $this->resource->thumbs_down)->sortable(),
 
             Text::make('Overview')->displayUsing(fn () => Str::limit($this->resource->overview, 100))->onlyOnIndex(),
         ];
