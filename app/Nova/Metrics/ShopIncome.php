@@ -36,10 +36,12 @@ class ShopIncome extends Trend
 
     public function ranges()
     {
+        $mtd = abs(now()->diffInDays(now()->startOfMonth()));
+
         return [
             7 => Nova::__('7 Days'),
             14 => Nova::__('14 Days'),
-            'MTD' => 'Month To Date',
+            $mtd => 'Month To Date',
             30 => Nova::__('30 Days'),
             60 => Nova::__('60 Days'),
             90 => Nova::__('90 Days'),
@@ -54,5 +56,10 @@ class ShopIncome extends Trend
     public function uriKey()
     {
         return 'shop-income';
+    }
+
+    public function name()
+    {
+        return "Total Income Over Time Period";
     }
 }
