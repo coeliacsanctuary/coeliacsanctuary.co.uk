@@ -22,7 +22,7 @@ const mobileSearchOpen = ref(false);
 <template>
   <CoeliacMetas :metas="metas" />
 
-  <div class="relative bg-primary shadow-lg">
+  <div class="main-header relative bg-primary shadow-lg">
     <div
       id="header"
       class="relative z-20"
@@ -75,3 +75,9 @@ const mobileSearchOpen = ref(false);
     @close="mobileSearchOpen = false"
   />
 </template>
+
+<style>
+.main-header .adsbygoogle {
+  display: none;
+}
+</style>
