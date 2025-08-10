@@ -16,7 +16,7 @@ class SimpleReviewResource extends JsonResource
     {
         return [
             'rating' => $this->rating,
-            'eatery' => new SimpleEateryResource($this->eatery),
+            'eatery' => new SimpleEateryResource($this->branch ?? $this->eatery),
             'created_at' => $this->created_at->diffForHumans(),
         ];
     }

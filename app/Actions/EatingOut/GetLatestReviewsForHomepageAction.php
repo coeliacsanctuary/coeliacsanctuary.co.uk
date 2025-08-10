@@ -23,7 +23,10 @@ class GetLatestReviewsForHomepageAction
             fn () => SimpleReviewResource::collection(EateryReview::query()
                 /** @phpstan-ignore-next-line  */
                 ->whereHas('eatery', fn (Builder $builder) => $builder->where('live', true))
-                ->with(['eatery', 'eatery.area', 'eatery.town', 'eatery.county', 'eatery.country', 'eatery.town.county'])
+                ->with([
+                    'eatery', 'eatery.area', 'eatery.town', 'eatery.county', 'eatery.country', 'eatery.town.county',
+                    'branch', 'branch.area', 'branch.town', 'branch.county', 'branch.country', 'branch.eatery',
+                ])
                 ->take(8)
                 ->latest()
                 ->get())

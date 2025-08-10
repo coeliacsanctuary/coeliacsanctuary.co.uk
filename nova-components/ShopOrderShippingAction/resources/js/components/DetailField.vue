@@ -115,8 +115,10 @@ export default {
       })
         .then(async (response) => {
           this.showCancelModal = false;
-          this.$emit('actionExecuted');
-          Nova.$emit('refresh-resources');
+          this.$nextTick(() => {
+            this.$emit('actionExecuted');
+            Nova.$emit('refresh-resources');
+          });
         })
         .finally(() => {
           Nova.$progress.done();
