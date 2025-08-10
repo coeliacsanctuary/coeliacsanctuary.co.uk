@@ -45,8 +45,8 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::directive('preloadImage', fn () => "<?php echo app(App\Actions\PreloadHeaderImageAction::class)->handle(); ?>");
 
-        Nightwatch::rejectCacheEvents(fn(CacheEvent $event) => !str_contains($event->key, '.'));
+        Nightwatch::rejectCacheEvents(fn (CacheEvent $event) => ! str_contains($event->key, '.'));
 
-        Nightwatch::rejectOutgoingRequests(fn(OutgoingRequest $request) => $request->url === '127.0.0.1');
+        Nightwatch::rejectOutgoingRequests(fn (OutgoingRequest $request) => $request->url === '127.0.0.1');
     }
 }

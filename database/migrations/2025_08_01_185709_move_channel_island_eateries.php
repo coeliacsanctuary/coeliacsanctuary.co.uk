@@ -8,8 +8,7 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use Illuminate\Database\Migrations\Migration;
 
-return new class() extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         if (app()->runningUnitTests()) {

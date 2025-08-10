@@ -33,10 +33,10 @@ class CreateShopIndexPageOpenGraphImageJob implements ShouldQueue
             ->where('title', 'like', 'spanish and italian%')
             ->firstOrFail();
 
-//        $stickers = ShopProduct::query()
-//            ->with(['media'])
-//            ->where('title', 'like', '%stickers%')
-//            ->firstOrFail();
+        //        $stickers = ShopProduct::query()
+        //            ->with(['media'])
+        //            ->where('title', 'like', '%stickers%')
+        //            ->firstOrFail();
 
         $otherAllergyCard = ShopProduct::query()
             ->with(['media'])
@@ -45,7 +45,7 @@ class CreateShopIndexPageOpenGraphImageJob implements ShouldQueue
 
         $base64Image = $renderOpenGraphImage->handle(view('og-images.shop', [
             'spanishCard' => $spanishCard,
-//            'stickers' => $stickers,
+            //            'stickers' => $stickers,
             'otherAllergyCard' => $otherAllergyCard,
         ])->render());
 

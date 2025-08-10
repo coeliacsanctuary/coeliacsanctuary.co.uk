@@ -77,7 +77,8 @@ const mobileSearchOpen = ref(false);
 </template>
 
 <style>
-.main-header .adsbygoogle, .main-header .google-auto-placed {
+.main-header .adsbygoogle,
+.main-header .google-auto-placed {
   display: none;
 }
 </style>
