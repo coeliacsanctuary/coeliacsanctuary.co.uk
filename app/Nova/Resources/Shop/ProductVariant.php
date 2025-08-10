@@ -33,7 +33,7 @@ class ProductVariant extends Resource
         return [
             ID::make()->fullWidth()->hide(),
 
-            Text::make('Title')->nullable()->fullWidth()->help('Leave empty for only one variant'),
+            Text::make('Title')->fullWidth()->help('Leave empty for only one variant')->default(''),
 
             Number::make('In Stock', 'quantity')->fullWidth()->rules(['required']),
 
