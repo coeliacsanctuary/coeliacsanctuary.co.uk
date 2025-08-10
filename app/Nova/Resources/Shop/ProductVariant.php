@@ -62,4 +62,16 @@ class ProductVariant extends Resource
                 ])),
             ]);
     }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $variant = $fillFields[0];
+
+        if ($variant->title === null) {
+            $variant->title = '';
+        }
+
+        return $fillFields;
+    }
 }
