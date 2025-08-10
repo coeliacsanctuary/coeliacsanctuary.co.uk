@@ -119,6 +119,14 @@ const imagesUploaded = (images: string[]): void => {
 const imageError = (message: string): void => {
   imageUploadError.value = message;
 };
+
+const eateryName = (): string => {
+  if (props.eatery.branch && props.eatery.branch.name) {
+    return `${props.eatery.branch.name} - ${props.eatery.name}`;
+  }
+
+  return props.eatery.name;
+};
 </script>
 
 <template>
@@ -137,14 +145,14 @@ const imageError = (message: string): void => {
       <p class="text-center text-xl">
         Thank you for leaving your
         <strong v-text="form.rating + ' star'" /> rating and review of
-        <strong v-text="eatery.name" />! Your review will be checked by an admin
-        before it goes live.
+        <strong v-text="eateryName()" />! Your review will be checked by an
+        admin before it goes live.
       </p>
     </div>
 
     <template v-else>
       <p class="prose md:max-md:prose-lg lg:max-xl:prose-xl xl:prose-2xl">
-        Have you visited <strong v-text="eatery.name" />? Let other people know
+        Have you visited <strong v-text="eateryName()" />? Let other people know
         your experience by leaving a review!
       </p>
 
