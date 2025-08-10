@@ -59,7 +59,7 @@ class MailChannel extends BaseMailChannel
         /** @phpstan-ignore-next-line  */
         $rawMessage = view($message->mjml, $message->data())->render();
 
-//        return $rawMessage;
+        //        return $rawMessage;
 
         return app(Mjml::class)
             ->sidecar()
@@ -73,9 +73,9 @@ class MailChannel extends BaseMailChannel
      */
     protected function buildView($message)
     {
-//        $content = TempMailcoachMail::query()->create([
-//            'message' => new HtmlString($this->buildMjml($message)),
-//        ]);
+        //        $content = TempMailcoachMail::query()->create([
+        //            'message' => new HtmlString($this->buildMjml($message)),
+        //        ]);
 
         return ['html' => new HtmlString($this->buildMjml($message))];
     }

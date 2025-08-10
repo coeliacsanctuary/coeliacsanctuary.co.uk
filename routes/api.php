@@ -35,9 +35,7 @@ Route::post('mailcoach-schedule', MailcoachScheduleStoreController::class)
     ->name('api.mailcoach-schedule')
     ->middleware(MailcoachIncomingRequestMiddleware::class);
 
-Route::get('mailcoach-message/{message}', function(TempMailcoachMail $message) {
-        return $message->message;
-    })
+Route::get('mailcoach-message/{message}', fn (TempMailcoachMail $message) => $message->message)
     ->name('api.mailcoach-message')
     ->middleware(MailcoachIncomingRequestMiddleware::class);
 

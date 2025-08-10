@@ -9,10 +9,8 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('temp_mailcoach_mails', function (Blueprint $table): void {
-            $table->id();
-            $table->text('message');
-            $table->timestamps(); //
+        Schema::table('shop_product_variants', function (Blueprint $table): void {
+            $table->string('title')->default('')->change();
         });
     }
 };

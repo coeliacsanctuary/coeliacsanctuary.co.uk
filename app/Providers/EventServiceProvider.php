@@ -23,6 +23,6 @@ class EventServiceProvider extends ServiceProvider
         OrderShippedEvent::class => [SendOrderShippedNotification::class],
         OrderCancelledEvent::class => [SendOrderCancellationNotification::class],
         ContactFormSubmittedEvent::class => [SendContactFormListener::class],
-//        NotificationSending::class => [PreventEmailsSendingOnNonProductionEnvironmentsListener::class],
+        //        NotificationSending::class => [PreventEmailsSendingOnNonProductionEnvironmentsListener::class],
     ];
 }
