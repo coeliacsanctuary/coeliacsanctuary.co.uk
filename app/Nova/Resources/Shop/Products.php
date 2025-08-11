@@ -37,7 +37,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<ShopProduct> */
+/** @extends resource<ShopProduct> */
 /**
  * @codeCoverageIgnore
  */
@@ -298,12 +298,22 @@ class Products extends Resource
     public function actions(NovaRequest $request)
     {
         return [
-            CreateTravelCardFullSet::make()->standalone()
+            CreateTravelCardFullSet::make()->standalone(),
         ];
     }
 
     public static function usesScout()
     {
         return false;
+    }
+
+    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    {
+        return '/resources/' . self::uriKey() . '/' . $resource->getKey();
+    }
+
+    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    {
+        return '/resources/' . self::uriKey() . '/' . $resource->getKey();
     }
 }
