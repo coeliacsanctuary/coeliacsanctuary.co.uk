@@ -388,4 +388,15 @@ class Eateries extends Resource
             ->route('mail', $placeRecommendation->email)
             ->notify(new EateryRecommendationAddedNotification($placeRecommendation, $model));
     }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $eatery = $fillFields[0];
+
+        unset($eatery->location);
+
+        return $fillFields;
+    }
+
 }
