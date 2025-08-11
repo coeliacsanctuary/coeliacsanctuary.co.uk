@@ -75,9 +75,11 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
 
     public function registerMediaCollections(): void
     {
+        $this->addMediaCollection('primary')->singleFile();
+
         $this->addMediaCollection('social')->singleFile();
 
-        $this->addMediaCollection('primary')->singleFile();
+        $this->addMediaCollection('additional');
     }
 
     /** @return BelongsToMany<ShopCategory, $this> */

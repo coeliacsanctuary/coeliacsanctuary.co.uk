@@ -27,6 +27,7 @@ import ProductAdditionalDetailsAccordionItem from '@/Components/PageSpecific/Sho
 import StandardTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/StandardTravelCardEnglishTranslation.vue';
 import CoeliacPlusTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/CoeliacPlusTravelCardEnglishTranslation.vue';
 import ProductAiOverview from '@/Components/PageSpecific/Shop/ProductAiOverview.vue';
+import ProductImageModal from '@/Components/PageSpecific/Shop/ProductImageModal.vue';
 
 type Product = ShopProductDetail | ShopTravelCardProductDetail;
 
@@ -95,7 +96,7 @@ const additionalDetails: ProductAdditionalDetailAccordionProps[] = [
   },
 ].filter((detail) => detail !== undefined);
 
-const viewImage = ref(false);
+const viewImage = ref<false | number>(false);
 
 const showReviews = ref(false);
 
@@ -200,17 +201,37 @@ const showAiOverview = ref(true);
         <div
           class="space-y-3 md:grid md:max-lg:grid-cols-2 md:max-lg:gap-3 lg:grid-cols-3 lg:max-2xl:gap-5 2xl:gap-7"
         >
-          <!-- Product image -->
-          <div
-            class="cursor-zoom-in md:col-start-1"
-            @click="viewImage = true"
-          >
-            <div class="overflow-hidden rounded-lg">
-              <img
-                :src="product.image"
-                :alt="product.title"
-                class="h-full w-full object-cover object-center"
-              />
+          <!-- Product images -->
+          <div class="flex flex-col space-y-4 md:col-start-1">
+            <div
+              class="cursor-zoom-in"
+              @click="viewImage = -1"
+            >
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  :src="product.image"
+                  :alt="product.title"
+                  class="h-full w-full object-cover object-center"
+                />
+              </div>
+            </div>
+
+            <div
+              v-if="product.additional_images?.length"
+              class="grid grid-cols-4 gap-2"
+            >
+              <div
+                v-for="(image, index) in product.additional_images"
+                :key="image"
+                class="cursor-zoom-in overflow-hidden rounded-lg"
+                @click="viewImage = index"
+              >
+                <img
+                  :src="image"
+                  :alt="product.title"
+                  class="h-full w-full object-cover object-center"
+                />
+              </div>
             </div>
           </div>
 
@@ -365,22 +386,13 @@ const showAiOverview = ref(true);
     </Disclosure>
   </Card>
 
-  <Modal
-    :open="viewImage"
-    size="full"
-    no-padding
+  <ProductImageModal
+    :title="product.title"
+    :primary-image="product.image"
+    :additional-images="product.additional_images"
+    :open="viewImage !== false"
+    :current-image="viewImage !== false ? viewImage : undefined"
     @close="viewImage = false"
-  >
-    <img
-      :src="product.image"
-      :alt="product.title"
-    />
-
-    <template #footer>
-      <span
-        class="text-xs"
-        v-text="product.title"
-      />
-    </template>
-  </Modal>
+    @change-image="(image) => (viewImage = image)"
+  />
 </template>
