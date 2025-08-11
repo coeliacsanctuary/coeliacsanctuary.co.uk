@@ -234,7 +234,7 @@ const showAiOverview = ref(true);
               </div>
 
               <div
-                v-if="product.rating"
+                v-if="product.rating && product.rating.count > 0"
                 class="group flex-1 cursor-pointer"
                 @click="scrollToReviews()"
               >

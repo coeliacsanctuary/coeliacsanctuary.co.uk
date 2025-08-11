@@ -52,6 +52,8 @@ class Products extends Resource
 
     public static $perPageViaRelationship = 20;
 
+    public static $search = ['title'];
+
     public function fields(NovaRequest $request)
     {
         return [
@@ -80,19 +82,7 @@ class Products extends Resource
                 Currency::make('Price', 'current_price')
                     ->asMinorUnits()
                     ->fullWidth()
-                    ->onlyOnIndex()
-                    ->showOnCreating()
-                    ->deferrable()
-                    ->help('In pounds, eg £2.50')
-                    ->fillUsing(function (NovaRequest $request, ShopProduct $model, $attribute): void {
-                        if ($request->method() !== 'GET') {
-                            return;
-                        }
-
-                        $model->prices()->create([
-                            'price' => $request->input($attribute),
-                        ]);
-                    }),
+                    ->onlyOnIndex(),
 
                 Stack::make('Variants', fn (ShopProduct $resource) => $resource->variants->pluck('title'))->onlyOnIndex(),
 
@@ -150,7 +140,12 @@ class Products extends Resource
             ]),
 
             new Panel('Image', [
-                Images::make('Image', 'primary')
+                Images::make('Primary Image', 'primary')
+                    ->addButtonLabel('Select Image')
+                    ->hideFromIndex()
+                    ->nullable(),
+
+                Images::make('Social Image', 'social')
                     ->addButtonLabel('Select Image')
                     ->hideFromIndex()
                     ->nullable(),
@@ -169,6 +164,8 @@ class Products extends Resource
                     ->rows(8)
                     ->rules(['required']),
             ]),
+
+            BelongsToMany::make('Categories', resource: Categories::class),
 
             HasMany::make('Prices', resource: ProductPrice::class),
 
@@ -298,5 +295,10 @@ class Products extends Resource
         return [
             CreateTravelCardFullSet::make()->standalone()
         ];
+    }
+
+    public static function usesScout()
+    {
+        return false;
     }
 }
