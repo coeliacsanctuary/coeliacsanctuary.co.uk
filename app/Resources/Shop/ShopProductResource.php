@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resources\Shop;
 
+use App\Models\Media;
 use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class ShopProductResource extends JsonResource
                 ],
             ]),
             'image' => $this->main_image,
+            'additional_images' => $this->getMedia('additional')->map(fn(Media $media) => $media->getUrl()),
             'prices' => $this->price,
             'rating' => $this->whenLoaded('reviews', [
                 'average' => $this->averageRating,

@@ -149,6 +149,11 @@ class Products extends Resource
                     ->addButtonLabel('Select Image')
                     ->hideFromIndex()
                     ->nullable(),
+
+                Images::make('Additional Images', 'additional')
+                    ->addButtonLabel('Select Image(s)')
+                    ->hideFromIndex()
+                    ->nullable(),
             ]),
 
             new Panel('Details', [

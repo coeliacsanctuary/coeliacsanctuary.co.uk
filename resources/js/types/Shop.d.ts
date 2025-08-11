@@ -13,6 +13,7 @@ export type ShopBaseProduct = {
   title: string;
   description: string;
   image: string;
+  additional_images?: string[];
   rating?: {
     average: StarRating;
     count: number;
