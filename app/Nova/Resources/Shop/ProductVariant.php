@@ -35,7 +35,7 @@ class ProductVariant extends Resource
 
             Text::make('Title')->fullWidth()->help('Leave empty for only one variant')->default(''),
 
-            Number::make('In Stock', 'quantity')->fullWidth()->rules(['required']),
+            Number::make('Quantity', 'quantity')->fullWidth()->rules(['required']),
 
             Number::make('Total Sold')->exceptOnForms(),
 
@@ -77,11 +77,11 @@ class ProductVariant extends Resource
 
     public static function redirectAfterCreate(NovaRequest $request, $resource)
     {
-        return '/resources/'.Products::uriKey().'/'.$resource->resource->product_id;
+        return '/resources/' . Products::uriKey() . '/' . $resource->resource->product_id;
     }
 
     public static function redirectAfterUpdate(NovaRequest $request, $resource)
     {
-        return '/resources/'.Products::uriKey().'/'.$resource->resource->product_id;
+        return '/resources/' . Products::uriKey() . '/' . $resource->resource->product_id;
     }
 }
