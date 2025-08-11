@@ -65,7 +65,7 @@ class Menu
         $suggestedEditsCount = EaterySuggestedEdit::query()->where('rejected', false)->where('accepted', false)->count();
 
         $basketsCount = ShopOrder::query()->where('state_id', OrderState::BASKET)->count();
-        $ordersCount = ShopOrder::query()->where('state_id', OrderState::PAID)->count();
+        $ordersCount = ShopOrder::query()->whereIn('state_id', [OrderState::PAID, OrderState::READY])->count();
 
         Nova::mainMenu(fn (Request $request) => [
             MenuSection::make('Dashboards', [
