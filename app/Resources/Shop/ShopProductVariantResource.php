@@ -16,7 +16,7 @@ class ShopProductVariantResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'quantity' => $this->quantity,
-            'icon' => $this->icon,
+            'icon' => $this->icon !== [] ? $this->icon : null,
         ];
     }
 }

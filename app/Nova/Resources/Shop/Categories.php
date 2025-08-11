@@ -30,7 +30,7 @@ class Categories extends Resource
     /** @var class-string<ShopCategory> */
     public static string $model = ShopCategory::class;
 
-    public static $title = 'category';
+    public static $title = 'title';
 
     public function fields(NovaRequest $request)
     {
@@ -63,8 +63,13 @@ class Categories extends Resource
                 ->alwaysShow()
                 ->rules(['required']),
 
-            Images::make('Image', 'primary')
+            Images::make('Primary Image', 'primary')
                 ->addButtonLabel('Select Image')
+                ->nullable(),
+
+            Images::make('Social Image', 'social')
+                ->addButtonLabel('Select Image')
+                ->hideFromIndex()
                 ->nullable(),
 
             Boolean::make('Is Live', fn ($resource) => $resource->live_products > 0)->onlyOnIndex(),
