@@ -21,7 +21,7 @@ const mobileSearchOpen = ref(false);
 <template>
   <CoeliacMetas :metas="metas" />
 
-  <div class="relative bg-primary shadow-lg">
+  <div class="main-header relative bg-primary shadow-lg">
     <div
       id="header"
       class="relative z-20"
@@ -71,3 +71,10 @@ const mobileSearchOpen = ref(false);
     />
   </div>
 </template>
+
+<style>
+.main-header .adsbygoogle,
+.main-header .google-auto-placed {
+  display: none;
+}
+</style>

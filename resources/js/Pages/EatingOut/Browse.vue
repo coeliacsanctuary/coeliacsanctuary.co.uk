@@ -264,7 +264,7 @@ onMounted(() => {
 <template>
   <div
     ref="wrapper"
-    class="relative -mb-3 flex max-h-full min-h-[500px] flex-1 overflow-hidden"
+    class="map-container relative -mb-3 flex max-h-full min-h-[500px] flex-1 overflow-hidden"
   >
     <Loader
       class="z-50"
@@ -302,6 +302,11 @@ onMounted(() => {
 </template>
 
 <style>
+.map-container .adsbygoogle,
+.map-container .google-auto-placed {
+  display: none !important;
+}
+
 .ol-zoom {
   left: auto;
   right: 0.5em;
