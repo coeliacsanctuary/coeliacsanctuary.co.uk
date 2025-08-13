@@ -176,11 +176,11 @@ class NationwideBranches extends Resource
 
     public static function redirectAfterCreate(NovaRequest $request, $resource)
     {
-        return '/resources/'.NationwideEateries::uriKey().'/'.$resource->resource->wheretoeat_id;
+        return '/resources/' . NationwideEateries::uriKey() . '/' . $resource->resource->wheretoeat_id;
     }
 
     public static function redirectAfterUpdate(NovaRequest $request, $resource)
     {
-        return '/resources/'.NationwideEateries::uriKey().'/'.$resource->resource->wheretoeat_id;
+        return '/resources/' . NationwideEateries::uriKey() . '/' . $resource->resource->wheretoeat_id;
     }
 }

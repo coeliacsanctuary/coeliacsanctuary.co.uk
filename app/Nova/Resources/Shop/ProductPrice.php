@@ -43,11 +43,11 @@ class ProductPrice extends Resource
 
     public static function redirectAfterCreate(NovaRequest $request, $resource)
     {
-        return '/resources/'.Products::uriKey().'/'.$resource->resource->product_id;
+        return '/resources/' . Products::uriKey() . '/' . $resource->resource->product_id;
     }
 
     public static function redirectAfterUpdate(NovaRequest $request, $resource)
     {
-        return '/resources/'.Products::uriKey().'/'.$resource->resource->product_id;
+        return '/resources/' . Products::uriKey() . '/' . $resource->resource->product_id;
     }
 }
