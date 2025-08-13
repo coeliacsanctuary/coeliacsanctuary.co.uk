@@ -124,7 +124,12 @@ use Money\Money;
             <tbody>
             @foreach($order->items as $item)
                 <tr @if($resend && $overrides->get($item->id, null) === 0) style="text-decoration: line-through" @endif>
-                    <td>{{ $item->product_title }}</td>
+                    <td>
+                        {{ $item->product_title }}
+                        @if($item->variant->title !== '')
+                            - {{ $item->variant->title }}
+                        @endif
+                    </td>
                     <td>
                         <span @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
                             {{ $item->quantity }}
