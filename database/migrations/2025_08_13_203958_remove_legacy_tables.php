@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 
-return new class() extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         $tables = [
@@ -66,7 +65,7 @@ return new class() extends Migration
 
         Schema::disableForeignKeyConstraints();
 
-        foreach($tables as $table) {
+        foreach ($tables as $table) {
             Schema::dropIfExists($table);
         }
 
