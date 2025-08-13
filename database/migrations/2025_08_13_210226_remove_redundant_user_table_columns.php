@@ -16,7 +16,10 @@ return new class () extends Migration {
             $table->dropColumn('user_level_id');
             $table->dropColumn('last_logged_in_at');
             $table->dropColumn('last_visited_at');
-            $table->dropColumn('welcome_valid_until');
+
+            if(in_array('welcome_valid_until', $table->getColumns())) {
+                $table->dropColumn('welcome_valid_until');
+            }
         });
     }
 };
