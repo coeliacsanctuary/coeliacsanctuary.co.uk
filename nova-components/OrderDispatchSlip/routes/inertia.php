@@ -7,6 +7,7 @@ use App\Models\Shop\ShopOrder;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -19,7 +20,11 @@ Route::get('render/{ids?}', function (NovaRequest $request, Dompdf $pdf, $ids = 
             fn (Builder $builder) => $builder->where('state_id', OrderState::PAID),
             fn (Builder $builder) => $builder->whereIn('id', explode(',', $ids))
         )
-        ->with(['items', 'payment', 'address', 'discountCode', 'refunds'])
+        ->with([
+            'items' => fn(Relation $relation) => $relation->withoutGlobalScopes(),
+            'items.variant' => fn(Relation $relation) => $relation->withoutGlobalScopes(),
+            'payment', 'address', 'discountCode', 'refunds'
+        ])
         ->get();
 
     $overrides = [];
