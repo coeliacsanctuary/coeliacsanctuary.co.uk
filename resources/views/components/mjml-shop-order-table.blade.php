@@ -31,7 +31,12 @@
                     @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity)
                         <span style="font-weight: bold; color: #29719f">{{ $overrides->get($item->id ) }}X</span>
                     @endif
-                    <span>{{ $item->product_title }}</span>
+                    <span>
+                        {{ $item->product_title }}
+                        @if($item->variant->title !== '')
+                            - {{ $item->variant->title }}
+                        @endif
+                    </span>
                 </a>
             </mj-text>
         </mj-column>
