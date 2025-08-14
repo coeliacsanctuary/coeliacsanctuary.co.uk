@@ -29,7 +29,7 @@ class PreloadHeaderImageActionTest extends TestCase
     {
         parent::setUp();
 
-        Storage::fake();
+        Storage::fake('media');
     }
 
     #[Test]
