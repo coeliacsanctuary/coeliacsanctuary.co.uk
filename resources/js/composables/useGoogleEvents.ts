@@ -1,10 +1,16 @@
 export default () => {
-  const googleEvent = (key: string, event: string, attributes: object = {}) => {
-    if (typeof window === 'undefined' || !window.gtag) {
+  const googleEvent = (
+    key: 'event',
+    event: string,
+    attributes: object = {},
+  ) => {
+    if (typeof window === 'undefined') {
       return;
     }
 
-    window.gtag(key, event, attributes);
+    console.log('pushing event to google');
+
+    window?.gtag(key, event, attributes);
   };
 
   return { googleEvent };
