@@ -14,8 +14,6 @@ use App\Contracts\Comments\HasComments;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
-use App\Legacy\HasLegacyImage;
-use App\Legacy\Imageable;
 use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Support\Collections\CanBeCollected;
@@ -47,8 +45,6 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
 
     use DisplaysDates;
     use DisplaysMedia;
-    use HasLegacyImage;
-    use Imageable;
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;

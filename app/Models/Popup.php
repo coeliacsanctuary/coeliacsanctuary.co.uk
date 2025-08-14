@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Concerns\DisplaysMedia;
-use App\Legacy\HasLegacyImage;
-use App\Legacy\Imageable;
 use App\Scopes\LiveScope;
 use Exception;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -21,8 +19,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 class Popup extends Model implements HasMedia
 {
     use DisplaysMedia;
-    use HasLegacyImage;
-    use Imageable;
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 

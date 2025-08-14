@@ -16,6 +16,7 @@ use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\SeedsWebsite;
 use Tests\TestCase;
@@ -23,6 +24,13 @@ use Tests\TestCase;
 class PreloadHeaderImageActionTest extends TestCase
 {
     use SeedsWebsite;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake('media');
+    }
 
     #[Test]
     public function itLoadsTheHomeHeroImageIfOnTheHomePage(): void

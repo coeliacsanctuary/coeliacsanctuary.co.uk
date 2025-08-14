@@ -10,8 +10,6 @@ use App\Concerns\HasSealiacOverview;
 use App\Concerns\LinkableModel;
 use App\Contracts\Search\IsSearchable;
 use App\Enums\Shop\OrderState;
-use App\Legacy\HasLegacyImage;
-use App\Legacy\Imageable;
 use App\Models\Media;
 use App\Support\Helpers;
 use Carbon\Carbon;
@@ -43,9 +41,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
 {
     use ClearsCache;
     use DisplaysMedia;
-    use HasLegacyImage;
     use HasSealiacOverview;
-    use Imageable;
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;

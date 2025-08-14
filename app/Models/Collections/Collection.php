@@ -10,8 +10,6 @@ use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
 use App\Jobs\OpenGraphImages\CreateCollectionIndexPageOpenGraphImageJob;
-use App\Legacy\HasLegacyImage;
-use App\Legacy\Imageable;
 use App\Models\Blogs\Blog;
 use App\Models\Media;
 use App\Models\Recipes\Recipe;
@@ -33,8 +31,6 @@ class Collection extends Model implements HasMedia
     use ClearsCache;
     use DisplaysDates;
     use DisplaysMedia;
-    use HasLegacyImage;
-    use Imageable;
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
     use LinkableModel;
