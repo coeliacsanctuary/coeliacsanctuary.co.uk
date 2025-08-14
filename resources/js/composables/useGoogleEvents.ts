@@ -8,8 +8,6 @@ export default () => {
       return;
     }
 
-    console.log('pushing event to google');
-
     window?.gtag(key, event, attributes);
   };
 
