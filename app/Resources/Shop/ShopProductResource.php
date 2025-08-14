@@ -26,7 +26,7 @@ class ShopProductResource extends JsonResource
                 ],
             ]),
             'image' => $this->main_image,
-            'additional_images' => $this->getMedia('additional')->map(fn(Media $media) => $media->getUrl()),
+            'additional_images' => $this->getMedia('additional')->map(fn (Media $media) => $media->getUrl()),
             'prices' => $this->price,
             'rating' => $this->whenLoaded('reviews', [
                 'average' => $this->averageRating,
