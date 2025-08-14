@@ -53,7 +53,7 @@ class Eateries extends Resource
 
     public static $title = 'name';
 
-    public static $search = ['id', 'name', 'town', 'county'];
+    public static $search = ['id', 'name', 'town.town', 'county.county'];
 
     public function authorizedToReplicate(Request $request)
     {
@@ -399,4 +399,8 @@ class Eateries extends Resource
         return $fillFields;
     }
 
+    public static function usesScout()
+    {
+        return false;
+    }
 }
