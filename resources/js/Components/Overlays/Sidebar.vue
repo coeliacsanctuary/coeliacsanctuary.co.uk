@@ -39,7 +39,7 @@ onMounted(() => {
     >
       <Dialog
         as="div"
-        class="relative z-50"
+        class="relative z-[9999999999]"
         @close="closeOverlay()"
       >
         <TransitionChild

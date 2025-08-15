@@ -28,9 +28,10 @@
     border-color: var(--color-gray-200, currentColor);
   }
 }
-
 @layer components {
-    .google-auto-placed:before, .adsbygoogle.adsbygoogle-noablate:before {
+    .google-auto-placed::before,
+    .adsbygoogle.adsbygoogle-noablate::before,
+    [id^="google_ads_iframe_"]::before {
         content: "Sponsored";
         font-weight: 600;
         font-size: var(--text-xs);
@@ -38,12 +39,34 @@
         padding: 5px;
         position: absolute;
         width: 100%;
-        z-index: 999;
+        z-index: 1;
         margin-top: -25px;
+        background: #fff; /* avoid overlay artifacts */
     }
 
-    .google-auto-placed:after, .adsbygoogle.adsbygoogle-noablate:after {
+    .google-auto-placed::after,
+    .adsbygoogle.adsbygoogle-noablate::after,
+    [id^="google_ads_iframe_"]::after {
         border-bottom: 1px solid #addaf9;
         padding: 5px 0;
+        content: "";
+        display: block;
+    }
+
+    /* keep selectors broad—Google changes classnames */
+    body.no-auto-ads .google-auto-placed,
+    body.no-auto-ads .adsbygoogle-noablate,
+    body.no-auto-ads [id^="google_ads_iframe_"],
+    body.no-auto-ads [id^="aswift_"],
+    body.no-auto-ads ins.adsbygoogle[data-ad-client],
+    body.no-auto-ads [data-ad-client][data-adtest] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        pointer-events: none !important;
+        border: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
