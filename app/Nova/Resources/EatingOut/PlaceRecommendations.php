@@ -89,7 +89,7 @@ class PlaceRecommendations extends Resource
 
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->where('email', '!=', 'contact@coeliacsanctuary.co.uk')
+        return $query->where('email', '!=', 'alisondwheatley@gmail.com')
             ->reorder('completed')
             ->orderByDesc('created_at');
     }
