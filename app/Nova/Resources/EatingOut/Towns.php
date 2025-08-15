@@ -20,7 +20,7 @@ use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/** @extends Resource<EateryCounty> */
+/** @extends resource<EateryCounty> */
 /**
  * @codeCoverageIgnore
  */
@@ -42,14 +42,12 @@ class Towns extends Resource
 
             Text::make('Name', 'town')->fullWidth()->rules(['required', 'max:200'])->sortable(),
 
-            Slug::make('Slug')->from('Name')
+            Slug::make('Slug')->from('town')
                 ->hideFromIndex()
                 ->hideWhenUpdating()
                 ->showOnCreating()
                 ->fullWidth()
                 ->rules(['required', 'max:200', 'unique:wheretoeat_towns,slug']),
-
-            Text::make('Lat / Lng', 'latlng')->fullWidth()->rules(['required']),
 
             BelongsTo::make('County', resource: Counties::class)
                 ->filterable()
@@ -61,6 +59,8 @@ class Towns extends Resource
 
                     return $county->country->country . ' - ' . $county->county;
                 }),
+
+            Text::make('Lat / Lng', 'latlng')->fullWidth(),
 
             Images::make('Image', 'primary')
                 ->onlyOnForms()
@@ -86,5 +86,15 @@ class Towns extends Resource
             ->with(['county', 'county.country'])
             ->withCount(['eateries' => fn (Builder $relation) => $relation->where('live', true)])
             ->when($request->missing('orderByDirection'), fn (Builder $builder) => $builder->reorder('town'));
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $town = $fillFields[0];
+
+        $town->legacy = '';
+
+        return $fillFields;
     }
 }

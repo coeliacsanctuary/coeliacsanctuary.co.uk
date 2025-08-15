@@ -9,6 +9,7 @@ use App\Concerns\HasOpenGraphImage;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\Media;
+use App\Services\EatingOut\LocationSearchService;
 use Error;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -50,6 +51,14 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
         static::creating(static function (self $area) {
             if ( ! $area->slug) {
                 $area->slug = Str::slug($area->area);
+            }
+
+            if ( ! $area->latlng) {
+                /** @phpstan-ignore-next-line  */
+                $name = "{$area->area}, {$area->town->town}, {$area->town->county?->county}, {$area->town->county?->country?->country}";
+                $latLng = app(LocationSearchService::class)->getLatLng($name, force: true);
+
+                $area->latlng = $latLng->toString();
             }
 
             return $area;

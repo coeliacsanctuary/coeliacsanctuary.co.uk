@@ -21,7 +21,7 @@ use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/** @extends Resource<EateryCounty> */
+/** @extends resource<EateryCounty> */
 /**
  * @codeCoverageIgnore
  */
@@ -45,20 +45,20 @@ class Counties extends Resource
 
             Text::make('Name', 'county')->fullWidth()->rules(['required', 'max:200'])->sortable(),
 
-            Slug::make('Slug')->from('Name')
+            Slug::make('Slug')->from('county')
                 ->hideFromIndex()
                 ->hideWhenUpdating()
                 ->showOnCreating()
                 ->fullWidth()
                 ->rules(['required', 'max:200', 'unique:wheretoeat_counties,slug']),
 
-            Text::make('Lat / Lng', 'latlng')->fullWidth()->rules(['required']),
-
             Select::make('Country', 'country_id')
                 ->displayUsingLabels()
                 ->filterable()
                 ->fullWidth()
                 ->options($countries),
+
+            Text::make('Lat / Lng', 'latlng')->fullWidth(),
 
             Images::make('Image', 'primary')
                 ->addButtonLabel('Select Image')
@@ -100,5 +100,15 @@ class Counties extends Resource
     public function authorizedToView(Request $request)
     {
         return true;
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $county = $fillFields[0];
+
+        $county->legacy = '';
+
+        return $fillFields;
     }
 }

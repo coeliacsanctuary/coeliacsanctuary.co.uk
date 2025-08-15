@@ -40,19 +40,19 @@ class Areas extends Resource
 
             Text::make('Name', 'area')->fullWidth()->rules(['required', 'max:200'])->sortable(),
 
-            Slug::make('Slug')->from('Name')
+            Slug::make('Slug')->from('area')
                 ->hideFromIndex()
                 ->hideWhenUpdating()
                 ->showOnCreating()
                 ->fullWidth()
                 ->rules(['required', 'max:200', 'unique:wheretoeat_areas,slug']),
 
-            Text::make('Lat / Lng', 'latlng')->fullWidth()->rules(['required']),
-
             BelongsTo::make('Borough', 'town', resource: Towns::class)
                 ->filterable()
                 ->fullWidth()
                 ->displayUsing(fn ($town) => $town->town),
+
+            Text::make('Lat / Lng', 'latlng')->fullWidth(),
 
             Images::make('Image', 'primary')
                 ->onlyOnForms()
