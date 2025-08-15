@@ -31,11 +31,15 @@
 
 @layer components {
     .google-auto-placed:before, .adsbygoogle.adsbygoogle-noablate:before {
-        border-top: 1px solid #addaf9;
-        padding: 5px 0;
-        content: 'Sponsored';
+        content: "Sponsored";
         font-weight: 600;
         font-size: var(--text-xs);
+        border-top: 1px solid #addaf9;
+        padding: 5px;
+        position: absolute;
+        width: 100%;
+        z-index: 999;
+        margin-top: -25px;
     }
 
     .google-auto-placed:after, .adsbygoogle.adsbygoogle-noablate:after {
