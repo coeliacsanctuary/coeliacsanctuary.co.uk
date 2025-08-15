@@ -38,7 +38,11 @@ onMounted(() => {
   router.on('success', () => {
     document
       .querySelector('body')
-      ?.classList.toggle('no-auto-ads', usePage().url.includes('/shop'));
+      ?.classList.toggle(
+        'no-auto-ads',
+        usePage().url.includes('/shop') ||
+          usePage().url.includes('/wheretoeat/browse'),
+      );
   });
 });
 </script>
