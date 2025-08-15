@@ -30,7 +30,7 @@
 }
 
 @layer components {
-    .google-auto-placed:before {
+    .google-auto-placed:before, .adsbygoogle.adsbygoogle-noablate:before {
         border-top: 1px solid #addaf9;
         padding: 5px 0;
         content: 'Sponsored';
@@ -38,7 +38,7 @@
         font-size: var(--text-xs);
     }
 
-    .google-auto-placed:after {
+    .google-auto-placed:after, .adsbygoogle.adsbygoogle-noablate:after {
         border-bottom: 1px solid #addaf9;
         padding: 5px 0;
     }
