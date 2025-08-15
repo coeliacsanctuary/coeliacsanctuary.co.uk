@@ -252,7 +252,7 @@ class Eateries extends Resource
 
                 Textarea::make('Info')
                     ->alwaysShow()
-                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_info'))
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_details'))
                     ->dependsOn(['type_id'], function (Textarea $field, NovaRequest $request) {
                         return match ($request->type_id) {
                             2 => $field->hide()->nullable()->setValue(null),
