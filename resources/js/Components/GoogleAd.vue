@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
-const props = withDefaults(defineProps<{ code: string; title?: string }>(), {
+withDefaults(defineProps<{ code: string; title?: string }>(), {
   title: 'Sponsored - content continues below',
 });
 
 const mounted = ref(false);
 
-onMounted(async () => {
-  console.log('mounting');
+const url = computed(() => usePage().url);
 
-  mounted.value = true;
+watch(url, async () => {
+  await renderAd();
+});
 
+const renderAd = async () => {
   await nextTick();
 
   const tryInjectAd = () => {
@@ -24,30 +27,38 @@ onMounted(async () => {
 
   if (window.adsbygoogle) {
     tryInjectAd();
-  } else {
-    // Poll every 100ms for up to 3 seconds
-    const maxRetries = 30;
-    let retries = 0;
 
-    const interval = setInterval(() => {
-      if (window.adsbygoogle) {
-        clearInterval(interval);
-        tryInjectAd();
-      }
-
-      if (++retries >= maxRetries) {
-        clearInterval(interval);
-        console.warn('adsbygoogle not available after timeout');
-      }
-    }, 100);
+    return;
   }
+
+  // Poll every 100ms for up to 3 seconds
+  const maxRetries = 30;
+  let retries = 0;
+
+  const interval = setInterval(() => {
+    if (window.adsbygoogle) {
+      clearInterval(interval);
+      tryInjectAd();
+    }
+
+    if (++retries >= maxRetries) {
+      clearInterval(interval);
+      console.warn('adsbygoogle not available after timeout');
+    }
+  }, 100);
+};
+
+onMounted(async () => {
+  mounted.value = true;
+
+  await renderAd();
 });
 </script>
 
 <template>
   <div
     v-if="mounted"
-    :key="code"
+    :key="`${url}-${code}`"
     class="m-2 flex flex-col border-y border-primary-light py-2 text-center"
   >
     <p
