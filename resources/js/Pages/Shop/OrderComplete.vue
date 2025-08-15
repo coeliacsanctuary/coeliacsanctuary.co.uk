@@ -5,8 +5,9 @@ import { Link } from '@inertiajs/vue3';
 import { OrderCompleteProps } from '@/types/Shop';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useScreensize from '@/composables/useScreensize';
+import useGoogleEvents from '@/composables/useGoogleEvents';
 
-defineProps<{ order: OrderCompleteProps }>();
+const props = defineProps<{ order: OrderCompleteProps }>();
 
 const { removeFromLocalStorage } = useLocalStorage();
 
@@ -18,6 +19,8 @@ if (typeof document !== 'undefined') {
   document.cookie =
     'basket_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
+
+useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
 </script>
 
 <template>

@@ -6,6 +6,7 @@ namespace App\Resources\Shop;
 
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPayment;
 use App\Models\Shop\ShopShippingAddress;
 use App\Support\Helpers;
@@ -56,6 +57,22 @@ class ShopOrderCompleteResource extends JsonResource
                 $shipping->country,
             ]),
             'payment' => $this->getPaymentDetails((string) $payment->payment_type_id),
+            'event' => [
+                'transaction_id' => $this->order_key,
+                'value' => $payment->subtotal / 100,
+                'currency' => 'GBP',
+                'shipping' => $payment->postage / 100,
+                'tax' => 0,
+                'affiliation' => 'Coeliac Sanctuary',
+                'items' => $this->items->map(fn (ShopOrderItem $item) => [
+                    'id' => $item->product_id,
+                    'sku' => "{$item->product_id} - {$item->product_variant_id}",
+                    'name' => $item->product_title,
+                    'variant' => $item->product_variant_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->product_price / 100,
+                ]),
+            ],
         ];
     }
 

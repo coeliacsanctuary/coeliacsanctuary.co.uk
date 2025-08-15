@@ -131,6 +131,9 @@ export type OrderCompleteProps = {
   discount: null | { amount: string; name: string };
   products: ShopBasketItem[];
   payment: CardPayment | PaypalPayment;
+  event: {
+    [T: string]: string | number | [];
+  };
 };
 
 type CardPayment = {
