@@ -9,6 +9,7 @@ use App\Concerns\HasOpenGraphImage;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\Media;
+use App\Services\EatingOut\LocationSearchService;
 use Error;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -45,6 +46,12 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
             if ( ! $county->slug) {
                 $county->slug = Str::slug($county->county);
                 $county->legacy = $county->slug;
+            }
+
+            if ( ! $county->latlng) {
+                $latLng = app(LocationSearchService::class)->getLatLng("{$county->county}, {$county->country?->country}", force: true);
+
+                $county->latlng = $latLng->toString();
             }
 
             return $county;

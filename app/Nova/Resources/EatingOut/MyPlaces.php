@@ -30,7 +30,14 @@ class MyPlaces extends Resource
 
     public static $clickAction = 'preview';
 
+    public static $search = ['place_name', 'place_location', 'place_details'];
+
     public function authorizedToView(Request $request)
+    {
+        return true;
+    }
+
+    public function authorizedToDelete(Request $request): bool
     {
         return true;
     }

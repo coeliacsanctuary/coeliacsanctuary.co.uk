@@ -31,6 +31,8 @@ class PlaceRecommendations extends Resource
 
     public static $clickAction = 'preview';
 
+    public static $search = ['place_name', 'place_location', 'place_details'];
+
     public function authorizedToView(Request $request)
     {
         return true;
@@ -46,6 +48,11 @@ class PlaceRecommendations extends Resource
         return false;
     }
 
+    public function authorizedToDelete(Request $request): bool
+    {
+        return true;
+    }
+
     public function fields(Request $request): array
     {
         return [
@@ -54,18 +61,21 @@ class PlaceRecommendations extends Resource
             Boolean::make('Completed')->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
 
             Panel::make('User', [
-                Text::make('name')->showOnPreview(),
+                Text::make('name')->showOnPreview()->hideFromIndex(),
                 Email::make('email')->showOnPreview()->hideFromIndex(),
             ]),
 
             Panel::make('Eatery', [
                 Text::make('Name', 'place_name')->showOnPreview(),
-                Text::make('Location', 'place_location')->showOnPreview(),
+                Text::make('Location', 'place_location')->displayUsing(fn ($address) => str_replace(',', '<br />', $address))->showOnPreview()->asHtml(),
                 URL::make('URL', 'place_web_address')->showOnPreview()->hideFromIndex(),
                 Select::make('Venue Type', 'place_venue_type_id')->displayUsingLabels()->options($this->getVenueTypes(1))->showOnPreview()->hideFromIndex(),
                 Textarea::make('Details', 'place_details')->alwaysShow()->showOnPreview(),
+                Text::make('Details')
+                    ->onlyOnIndex()
+                    ->displayUsing(fn () => "<div style=\"width: 300px; text-wrap:auto;\">{$this->resource->place_details}</div>")
+                    ->asHtml(),
             ]),
-
 
             DateTime::make('Created', 'created_at')->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
         ];
