@@ -15,7 +15,8 @@ Route::post('/search', function (Request $request): Collection {
         return collect();
     }
 
-    $countyResults = EateryCounty::query()
+    $countyResults = EateryCounty::withoutGlobalScopes()
+        ->query()
         ->whereLike('county', "%{$request->input('term')}%")
         ->with(['country'])
         ->get()
@@ -28,7 +29,8 @@ Route::post('/search', function (Request $request): Collection {
             townId: null,
         ));
 
-    $townResults = EateryTown::query()
+    $townResults = EateryTown::withoutGlobalScopes()
+        ->query()
         ->whereLike('town', "%{$request->input('term')}%")
         ->with(['county', 'county.country'])
         ->get()
@@ -41,7 +43,8 @@ Route::post('/search', function (Request $request): Collection {
             townId: $town->id,
         ));
 
-    $areaResults = EateryArea::query()
+    $areaResults = EateryArea::withoutGlobalScopes()
+        ->query()
         ->whereLike('area', "%{$request->input('term')}%")
         ->with(['town', 'town.county', 'town.county.country'])
         ->get()
