@@ -29,16 +29,12 @@
   }
 }
 @layer components {
-    .google-auto-placed,
-    .adsbygoogle.adsbygoogle-noablate,
-    [id^="google_ads_iframe_"] {
+    .google-auto-placed {
         position: relative!important;
         margin-top: 30px!important;
     }
 
-    .google-auto-placed::before,
-    .adsbygoogle.adsbygoogle-noablate::before,
-    [id^="google_ads_iframe_"]::before {
+    .google-auto-placed::before {
         content: "Sponsored";
         font-weight: 600;
         font-size: var(--text-xs);
