@@ -29,12 +29,16 @@
   }
 }
 @layer components {
-    .google-auto-placed {
+    .google-auto-placed,
+    .adsbygoogle.adsbygoogle-noablate,
+    [id^="google_ads_iframe_"] {
         position: relative!important;
         margin-top: 30px!important;
     }
 
-    .google-auto-placed::before {
+    .google-auto-placed::before,
+    .adsbygoogle.adsbygoogle-noablate::before,
+    [id^="google_ads_iframe_"]::before {
         content: "Sponsored";
         font-weight: 600;
         font-size: var(--text-xs);
@@ -44,6 +48,11 @@
         margin: 0 auto;
         display: block;
         max-width: 88rem;
+    }
+
+    .google-auto-placed:has(.adsbygoogle-noablate)::before {
+        content: none !important;
+        display: none !important;
     }
 
     /* keep selectors broad—Google changes classnames */
