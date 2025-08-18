@@ -86,11 +86,12 @@ class StoreController
                 }
             }
 
-            $basket->payment()->create([
+            $basket->payment()->updateOrCreate([], [
                 'subtotal' => $subtotal,
                 'postage' => $postage,
                 'discount' => $discount ?? 0,
                 'total' => $total,
+                'created_at' => now(),
             ]);
 
             $basket->update([
