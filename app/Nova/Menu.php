@@ -59,7 +59,7 @@ class Menu
     {
         $commentsCount = Comment::withoutGlobalScopes()->where('approved', false)->count();
         $reviewCount = EateryReview::withoutGlobalScopes()->where('approved', false)->count();
-        $reportsCount = EateryReport::query()->where('completed', false)->count();
+        $reportsCount = EateryReport::query()->where('completed', false)->where('ignored', false)->count();
         $myPlacesCount = EateryRecommendation::query()->where('email', 'alisondwheatley@gmail.com')->where('completed', false)->count();
         $recommendationsCount = EateryRecommendation::query()->where('email', '!=', 'alisondwheatley@gmail.com')->where('completed', false)->count();
         $suggestedEditsCount = EaterySuggestedEdit::query()->where('rejected', false)->where('accepted', false)->count();
