@@ -19,7 +19,10 @@ class PlaceRequests extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->result(EateryRecommendation::query()->withoutGlobalScopes()->where('completed', false)->count());
+        return $this->result(EateryRecommendation::query()
+            ->withoutGlobalScopes()
+            ->whereNot('email', 'alisondwheatley@gmail.com')
+            ->where('completed', false)->count());
     }
 
     public function name()

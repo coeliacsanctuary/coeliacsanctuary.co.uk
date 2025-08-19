@@ -149,6 +149,17 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
+    public function itUsesAnExistingPaymentRecord(): void
+    {
+        $payment = $this->create(ShopPayment::class, ['order_id' => $this->basket->id, 'total' => 1]);
+
+        $this->makeRequest()->assertCreated();
+
+        $this->assertDatabaseCount(ShopPayment::class, 1);
+        $this->assertNotEquals(1, $payment->refresh()->total);
+    }
+
+    #[Test]
     public function itUpdatesTheOrder(): void
     {
         $this->assertNull($this->basket->customer_id);
