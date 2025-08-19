@@ -7,6 +7,7 @@ namespace App\Nova\Resources\EatingOut;
 use App\Models\EatingOut\EateryReport;
 use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
+use App\Nova\Actions\EatingOut\IgnoreReport;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -44,6 +45,11 @@ class PlaceReports extends Resource
     public function authorizedToUpdate(Request $request)
     {
         return false;
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return true;
     }
 
     public function fields(Request $request): array
@@ -94,7 +100,13 @@ class PlaceReports extends Resource
             HasOne::make('Branch', 'branch', resource: NationwideBranches::class)
                 ->showOnDetail(fn ($foo, EateryReport $report) => $report->branch_id !== null),
 
-            Boolean::make('Completed')->showOnPreview(),
+            Boolean::make('Completed')
+                ->filterable()
+                ->showOnPreview(),
+
+            Boolean::make('Ignored')
+                ->filterable()
+                ->showOnPreview(),
 
             DateTime::make('Created', 'created_at')->showOnPreview(),
         ];
@@ -106,7 +118,12 @@ class PlaceReports extends Resource
             CompleteReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryReport $report) => $report->completed === false),
+                ->canRun(fn ($request, EateryReport $report) => $report->completed === false && $report->ignored === false),
+
+            IgnoreReport::make()
+                ->showInline()
+                ->withoutConfirmation()
+                ->canRun(fn ($request, EateryReport $report) => $report->completed === false && $report->ignored === false),
         ];
     }
 

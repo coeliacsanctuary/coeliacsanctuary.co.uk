@@ -36,9 +36,9 @@ class BasketOrders extends Chartable
 
             $orders->count(),
 
-            $orders->where('sent_abandoned_basket_email', false)->count(),
+            $orders->clone()->where('sent_abandoned_basket_email', false)->count(),
 
-            $orders->where('sent_abandoned_basket_email', true)->count(),
+            $orders->clone()->where('sent_abandoned_basket_email', true)->count(),
         ];
     }
 
