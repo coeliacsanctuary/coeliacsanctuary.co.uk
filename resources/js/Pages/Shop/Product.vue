@@ -2,16 +2,17 @@
 import Card from '@/Components/Card.vue';
 import {
   ProductAdditionalDetailAccordionProps,
+  ShopPrices,
   ShopProductDetail,
   ShopProductReview,
+  ShopProductVariant,
   ShopTravelCardProductDetail,
 } from '@/types/Shop';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import StarRating from '@/Components/StarRating.vue';
-import { computed, nextTick, Ref, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
-import Modal from '@/Components/Overlays/Modal.vue';
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/outline';
 import ProductReviews from '@/Components/PageSpecific/Shop/ProductReviews.vue';
 import ProductAddBasketForm from '@/Components/PageSpecific/Shop/ProductAddBasketForm.vue';
@@ -96,6 +97,8 @@ const additionalDetails: ProductAdditionalDetailAccordionProps[] = [
   },
 ].filter((detail) => detail !== undefined);
 
+const selectedVariant = ref<undefined | ShopProductVariant>(undefined);
+
 const viewImage = ref<false | number>(false);
 
 const showReviews = ref(false);
@@ -115,6 +118,14 @@ const reviewFilter = ref<undefined | StarRatingType>(props.currentReviewFilter);
 const allReviews: Ref<PaginatedResponse<ShopProductReview>> = ref(
   props.reviews,
 );
+
+const pricing = computed<ShopPrices>(() => {
+  if (selectedVariant.value) {
+    return selectedVariant.value.prices;
+  }
+
+  return props.product.prices;
+});
 
 const loadReviews = (
   url: string,
@@ -180,6 +191,12 @@ const loadMoreReviews = () => {
 };
 
 const showAiOverview = ref(true);
+
+onMounted(() => {
+  if (props.product.variants[0].primary_variant) {
+    selectedVariant.value = props.product.variants[0];
+  }
+});
 </script>
 
 <template>
@@ -240,17 +257,17 @@ const showAiOverview = ref(true);
               class="flex flex-col items-center space-y-2 border-b pb-5 md:items-start"
             >
               <div class="flex flex-col">
-                <p v-if="product.prices.old_price">
+                <p v-if="pricing.old_price">
                   was
                   <span
                     class="font-semibold text-red line-through"
-                    v-text="product.prices.old_price"
+                    v-text="pricing.old_price"
                   />
                   now
                 </p>
                 <p
                   class="text-3xl leading-none font-semibold xs:text-4xl"
-                  v-text="product.prices.current_price"
+                  v-text="pricing.current_price"
                 />
               </div>
 
@@ -290,7 +307,11 @@ const showAiOverview = ref(true);
             </div>
 
             <!-- Product form -->
-            <ProductAddBasketForm :product="product" />
+            <ProductAddBasketForm
+              :product="product"
+              :default-variant="selectedVariant"
+              @selected-variant="(variant) => (selectedVariant = variant)"
+            />
           </section>
         </div>
       </div>

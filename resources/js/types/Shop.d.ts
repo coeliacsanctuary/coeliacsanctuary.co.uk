@@ -24,19 +24,23 @@ export type ShopProductIndex = ShopBaseProduct & {
   id: number;
   link: string;
   price: string;
+  has_multiple_prices: boolean;
   number_of_variants: number;
   primary_variant: number;
   primary_variant_quantity: number;
 };
 
+export type ShopPrices = {
+  current_price: string;
+  old_price?: string;
+};
+
 export type ShopProductDetail = ShopBaseProduct & {
   id: number;
   long_description: string;
-  prices: {
-    current_price: string;
-    old_price?: string;
-  };
+  prices: ShopPrices;
   variant_title: string;
+  has_multiple_prices: boolean;
   variants: ShopProductVariant[];
   category: {
     title: string;
@@ -56,11 +60,14 @@ export type ShopTravelCardProductDetail = ShopProductDetail & {
 export type ShopProductVariant = {
   id: number;
   title: string;
+  description?: string;
   icon?: {
     component: string;
     color: string;
   };
   quantity: number;
+  primary_variant: boolean;
+  prices: ShopPrices;
 };
 
 export type ShopProductRating = {

@@ -7,7 +7,7 @@ namespace App\Models\Shop;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ShopProductPrice extends Model
+class ShopPrice extends Model
 {
     protected $casts = [
         'start_at' => 'datetime',
@@ -18,5 +18,11 @@ class ShopProductPrice extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(ShopProduct::class, 'product_id');
+    }
+
+    /** @return BelongsTo<ShopProductVariant, $this> */
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(ShopProductVariant::class, 'product_id');
     }
 }

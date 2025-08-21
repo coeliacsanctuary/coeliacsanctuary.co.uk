@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Actions\Shop\CalculateOrderTotalsAction;
 use App\Actions\Shop\GetOrderItemsAction;
@@ -14,11 +13,12 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopPostagePrice;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -145,7 +145,7 @@ class CalculateOrderTotalsActionTest extends TestCase
                 'shipping_method_id' => ShippingMethod::LARGE_PARCEL->value,
             ])
             ->has($this->build(ShopProductVariant::class), 'variants')
-            ->has($this->build(ShopProductPrice::class), 'prices')
+            ->has($this->build(ShopPrice::class), 'prices')
             ->create();
 
         $this->callAction(AddProductToBasketAction::class, $this->order, $product, $product->variants[0], 1);

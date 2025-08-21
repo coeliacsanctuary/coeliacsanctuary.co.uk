@@ -17,7 +17,7 @@ class AddProductToBasketAction
             'product_variant_id' => $variant->id,
         ], [
             'product_title' => $product->title,
-            'product_price' => $product->currentPrice,
+            'product_price' => $variant->currentPrice,
             'quantity' => $quantity,
         ]);
 

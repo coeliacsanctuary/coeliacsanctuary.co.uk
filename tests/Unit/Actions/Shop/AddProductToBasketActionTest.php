@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AddProductToBasketActionTest extends TestCase
@@ -54,7 +54,7 @@ class AddProductToBasketActionTest extends TestCase
             'product_id' => $this->product->id,
             'product_title' => $this->product->title,
             'product_variant_id' => $this->variant->id,
-            'product_price' => $this->product->current_price,
+            'product_price' => $this->variant->current_price,
             'quantity' => 1,
         ]);
 

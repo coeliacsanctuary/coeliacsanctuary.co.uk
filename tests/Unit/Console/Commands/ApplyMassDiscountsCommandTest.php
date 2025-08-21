@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Console\Commands;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Console\Commands\ApplyMassDiscountsCommand;
 use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopMassDiscount;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ApplyMassDiscountsCommandTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -25,11 +25,11 @@ class ApplyMassDiscountsCommandTest extends TestCase
     #[Test]
     public function itDoesntDoAnythingIfThereAreNoMassDiscountsToProcess(): void
     {
-        $count = ShopProductPrice::query()->count();
+        $count = ShopPrice::query()->count();
 
         $this->artisan(ApplyMassDiscountsCommand::class);
 
-        $this->assertDatabaseCount(ShopProductPrice::class, $count);
+        $this->assertDatabaseCount(ShopPrice::class, $count);
     }
 
     #[Test]
@@ -39,11 +39,11 @@ class ApplyMassDiscountsCommandTest extends TestCase
             'start_at' => Carbon::now()->addWeek(),
         ]);
 
-        $count = ShopProductPrice::query()->count();
+        $count = ShopPrice::query()->count();
 
         $this->artisan(ApplyMassDiscountsCommand::class);
 
-        $this->assertDatabaseCount(ShopProductPrice::class, $count);
+        $this->assertDatabaseCount(ShopPrice::class, $count);
     }
 
     #[Test]

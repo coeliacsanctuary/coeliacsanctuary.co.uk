@@ -7,6 +7,7 @@ namespace App\Resources\Shop;
 use App\Models\Media;
 use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
+use App\Models\Shop\ShopProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -16,6 +17,14 @@ class ShopProductResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $variants = $this->variants->sortBy(function (ShopProductVariant $variant) {
+            if ($variant->primary_variant) {
+                return -1;
+            }
+
+            return $variant->id;
+        });
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -27,7 +36,8 @@ class ShopProductResource extends JsonResource
             ]),
             'image' => $this->main_image,
             'additional_images' => $this->getMedia('additional')->map(fn (Media $media) => $media->getUrl()),
-            'prices' => $this->price,
+            'prices' => $this->primaryVariant()->price,
+            'has_multiple_prices' => $this->hasMultiplePrices(),
             'rating' => $this->whenLoaded('reviews', [
                 'average' => $this->averageRating,
                 'count' => $this->reviews->count(),
@@ -41,7 +51,7 @@ class ShopProductResource extends JsonResource
                 'link' => $this->categories->first()?->link,
             ]),
             'variant_title' => $this->variant_title,
-            'variants' => ShopProductVariantResource::collection($this->variants),
+            'variants' => ShopProductVariantResource::collection($variants),
         ];
     }
 }

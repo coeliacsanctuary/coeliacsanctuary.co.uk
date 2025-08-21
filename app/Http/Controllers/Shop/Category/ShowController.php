@@ -15,7 +15,7 @@ class ShowController
     public function __invoke(ShopCategory $category, Inertia $inertia): Response
     {
         $products = $category->products()
-            ->with(['media', 'variants', 'prices', 'reviews'])
+            ->with(['media', 'variants', 'variants.prices', 'reviews'])
             ->orderByDesc('pinned')
             ->orderBy('title')
             ->get();

@@ -35,7 +35,7 @@ class ShowController
         $resource = ShopProductResource::class;
 
         /** @var string[] | array{string, mixed} $relations */
-        $relations = ['categories', 'prices', 'variants', 'media', 'reviews'];
+        $relations = ['categories', 'variants', 'variants.prices', 'media', 'reviews'];
 
         if ($product->categories->pluck('title')->containsAny(['Coeliac Gluten Free Travel Cards', 'Coeliac+ Other Allergen Travel Cards'])) {
             $resource = ShopTravelCardProductResource::class;

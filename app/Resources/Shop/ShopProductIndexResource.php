@@ -21,14 +21,15 @@ class ShopProductIndexResource extends JsonResource
             'description' => $this->description,
             'link' => $this->link,
             'image' => $this->main_image,
-            'price' => Helpers::formatMoney(Money::GBP($this->currentPrice)),
+            'price' => Helpers::formatMoney(Money::GBP($this->from_price)),
+            'has_multiple_prices' => $this->hasMultiplePrices(),
             'rating' => $this->whenLoaded('reviews', [
                 'average' => $this->averageRating,
                 'count' => $this->reviews->count(),
             ]),
             'number_of_variants' => $this->variants->count(),
-            'primary_variant' => $this->variants->first()?->id,
-            'primary_variant_quantity' => $this->variants->first()?->quantity,
+            'primary_variant' => $this->primaryVariant()->id,
+            'primary_variant_quantity' => $this->primaryVariant()->quantity,
         ];
     }
 }

@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopFeedback;
 use App\Models\Shop\ShopOrderReviewItem;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use App\Models\Shop\ShopProductVariant;
 use App\Models\Shop\ShopShippingMethod;
 use App\Models\Shop\TravelCardSearchTerm;
@@ -17,6 +16,8 @@ use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
+use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
 class ShopProductTest extends TestCase
@@ -97,19 +98,6 @@ class ShopProductTest extends TestCase
     }
 
     #[Test]
-    public function itHasManyPrices(): void
-    {
-        $product = $this->create(ShopProduct::class);
-
-        $this->build(ShopProductPrice::class)
-            ->count(5)
-            ->forProduct($product)
-            ->create();
-
-        $this->assertInstanceOf(Collection::class, $product->refresh()->prices);
-    }
-
-    #[Test]
     public function itHasFeedback(): void
     {
         $product = $this->create(ShopProduct::class);
@@ -150,122 +138,98 @@ class ShopProductTest extends TestCase
     }
 
     #[Test]
-    public function itCanGetACollectionOfCurrentPrices(): void
+    public function itReturnsThePrimaryVariant(): void
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->ended()
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
             ->create();
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
+        $primaryVariant = $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->isPrimary()
             ->create();
 
-        $this->assertCount(1, $product->currentPrices());
+        $this->assertFalse($primaryVariant->is($product->variants->first()));
+
+        $this->assertTrue($primaryVariant->is($product->primaryVariant()));
     }
 
     #[Test]
-    public function itCanGetTheCurrentPrice(): void
+    public function itReturnsTheFirstVariantAsThePrimaryVariantIfNoneAreSetAsPrimary(): void
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->ended()
-            ->create([
-                'price' => 200,
-            ]);
+        $firstVariant = $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->create();
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->create([
-                'price' => 100,
-            ]);
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->create();
 
-        $this->assertEquals(100, $product->currentPrice);
+        $this->assertTrue($firstVariant->is($product->variants->first()));
+
+        $this->assertTrue($firstVariant->is($product->primaryVariant()));
     }
 
     #[Test]
-    public function itReturnsTheOldPrice(): void
+    public function itGetsTheLowestVariantPriceAsTheFromPrice(): void
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->onSale()
-            ->create([
-                'price' => 100,
-            ]);
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->has($this->build(ShopPrice::class)->state(['price' => 200]), 'prices')
+            ->create();
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->create([
-                'price' => 200,
-            ]);
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->has($this->build(ShopPrice::class)->state(['price' => 100]), 'prices')
+            ->create();
 
-        $this->assertEquals(200, $product->oldPrice);
+        $this->assertEquals(100, $product->from_price);
     }
 
     #[Test]
-    public function itReturnsTheOldPriceAsNullIfNotOnSale(): void
+    public function itShowsWhetherAProductHasMultiplePrices(): void
     {
+        TestTime::setTestNow('2025-01-01');
+
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->create([
-                'price' => 100,
-            ]);
+        $variant = $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->has($this->build(ShopPrice::class)->state(['price' => 200]), 'prices')
+            ->create();
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->create([
-                'price' => 200,
-            ]);
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->has($this->build(ShopPrice::class)->state(['price' => 100]), 'prices')
+            ->create();
 
-        $this->assertNull($product->oldPrice);
-    }
+                $this->assertTrue($product->hasMultiplePrices());
 
-    #[Test]
-    public function itReturnsAPriceObject(): void
-    {
-        $product = $this->create(ShopProduct::class);
+        TestTime::addDays(1);
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->onSale()
-            ->create([
-                'price' => 100,
-            ]);
+        $variant->prices()->first()->update(['price' => 100]);
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->create([
-                'price' => 200,
-            ]);
+                $this->assertFalse($product->refresh()->hasMultiplePrices());
 
-        $this->assertEquals(['current_price' => '£1.00', 'old_price' => '£2.00'], $product->price);
-    }
+        TestTime::addDays(1);
 
-    #[Test]
-    public function itReturnsAPriceObjectWithoutAnOldPrice(): void
-    {
-        $product = $this->create(ShopProduct::class);
+        $variant->prices()->first()->update(['price' => 200]);
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->create([
-                'price' => 100,
-            ]);
+                $this->assertTrue($product->refresh()->hasMultiplePrices());
 
-        $this->build(ShopProductPrice::class)
-            ->forProduct($product)
-            ->create([
-                'price' => 200,
-            ]);
+        TestTime::addDays(1);
 
-        $this->assertEquals(['current_price' => '£1.00'], $product->price);
+        $this->build(ShopPrice::class)->forVariant($variant)->create([
+            'price' => '100',
+            'sale_price' => true,
+        ]);
+
+        $this->assertFalse($product->refresh()->hasMultiplePrices());
     }
 }
