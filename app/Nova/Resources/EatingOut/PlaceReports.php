@@ -7,7 +7,7 @@ namespace App\Nova\Resources\EatingOut;
 use App\Models\EatingOut\EateryReport;
 use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
-use App\Nova\Actions\EatingOut\IgnoreReport;
+use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -120,7 +120,7 @@ class PlaceReports extends Resource
                 ->withoutConfirmation()
                 ->canRun(fn ($request, EateryReport $report) => $report->completed === false && $report->ignored === false),
 
-            IgnoreReport::make()
+            IgnoreReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
                 ->canRun(fn ($request, EateryReport $report) => $report->completed === false && $report->ignored === false),
@@ -134,7 +134,8 @@ class PlaceReports extends Resource
                 'eatery' => fn (Relation $builder) => $builder->withoutGlobalScopes()->with(['town', 'county', 'country']),
                 'branch' => fn (Relation $builder) => $builder->withoutGlobalScopes()->with(['town', 'county', 'country']),
             ])
-            ->reorder('completed')
+            ->reorder()
+            ->orderByRaw('(completed = 1 or ignored = 1) asc')
             ->orderByDesc('created_at');
     }
 }

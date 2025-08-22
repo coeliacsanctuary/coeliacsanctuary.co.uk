@@ -142,7 +142,7 @@ class Collection extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->reorder('updated_at', 'desc');
+        return $query->withoutGlobalScopes()->reorder('updated_at', 'desc');
     }
 
     protected static function fillFields(NovaRequest $request, $model, $fields): array
