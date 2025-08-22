@@ -13,6 +13,7 @@ class EateryRecommendation extends Model
 
     protected $casts = [
         'completed' => 'bool',
+        'ignored' => 'bool',
     ];
 
     /** @return BelongsTo<EateryVenueType, $this> */

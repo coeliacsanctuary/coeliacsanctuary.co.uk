@@ -8,6 +8,7 @@ use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryVenueType;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
 use App\Nova\Actions\EatingOut\ConvertRecommendationToEatery;
+use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -58,7 +59,11 @@ class PlaceRecommendations extends Resource
         return [
             ID::make()->hide(),
 
-            Boolean::make('Completed')->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
+            Boolean::make('Completed')->filterable()->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
+
+            Boolean::make('Ignored')
+                ->filterable()
+                ->showOnPreview(),
 
             Panel::make('User', [
                 Text::make('name')->showOnPreview()->hideFromIndex(),
@@ -88,19 +93,25 @@ class PlaceRecommendations extends Resource
                 ->showInline()
                 ->withoutConfirmation()
                 ->sole()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
 
             CompleteReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryRecommendation $report) => $report->completed === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
+
+            IgnoreReportOrRecommendation::make()
+                ->showInline()
+                ->withoutConfirmation()
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
         ];
     }
 
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->where('email', '!=', 'alisondwheatley@gmail.com')
-            ->reorder('completed')
+            ->reorder()
+            ->orderByRaw('(completed = 1 or ignored = 1) asc')
             ->orderByDesc('created_at');
     }
 
