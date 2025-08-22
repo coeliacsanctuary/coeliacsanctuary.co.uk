@@ -29,13 +29,24 @@ class CollectionItem extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-            MorphTo::make('Item')->types([
+            MorphTo::make('Item')->searchable()->types([
                 Blog::class,
                 Recipe::class,
             ]),
 
             Sortable::make('Position')->onlyOnIndex(),
         ];
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        /** @var CollectionItemModel $item */
+        $item = $fillFields[0];
+
+        $item->description = $item->item->meta_description;
+
+        return $fillFields;
     }
 
     public static function afterCreate(NovaRequest $request, Model $model): void

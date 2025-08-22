@@ -13,7 +13,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 /**
  * @codeCoverageIgnore
  */
-class IgnoreReport extends Action
+class IgnoreReportOrRecommendation extends Action
 {
     public $name = 'Ignore';
 
@@ -26,7 +26,7 @@ class IgnoreReport extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $models->each(function (EateryReport $model): void {
+        $models->each(function (EateryReport|EateryRecommendation $model): void {
             if ($model->ignored) {
                 return;
             }

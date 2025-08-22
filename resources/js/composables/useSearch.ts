@@ -72,7 +72,6 @@ export default () => {
       return;
     }
 
-    console.log('submitting search in composable');
     router.get('/search', searchForm.value, {
       ...options,
       preserveState: true,
