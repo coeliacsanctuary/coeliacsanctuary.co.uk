@@ -209,19 +209,19 @@ class ShopProductTest extends TestCase
             ->has($this->build(ShopPrice::class)->state(['price' => 100]), 'prices')
             ->create();
 
-                $this->assertTrue($product->hasMultiplePrices());
+        $this->assertTrue($product->hasMultiplePrices());
 
         TestTime::addDays(1);
 
         $variant->prices()->first()->update(['price' => 100]);
 
-                $this->assertFalse($product->refresh()->hasMultiplePrices());
+        $this->assertFalse($product->refresh()->hasMultiplePrices());
 
         TestTime::addDays(1);
 
         $variant->prices()->first()->update(['price' => 200]);
 
-                $this->assertTrue($product->refresh()->hasMultiplePrices());
+        $this->assertTrue($product->refresh()->hasMultiplePrices());
 
         TestTime::addDays(1);
 
