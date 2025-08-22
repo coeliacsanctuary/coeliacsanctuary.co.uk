@@ -29,6 +29,7 @@ use Spatie\SchemaOrg\Schema;
 /**
  * @property float $averageRating
  * @property float $average_rating
+ * @property int $from_price
  * @property Carbon $created_at
  */
 class ShopProduct extends Model implements HasMedia, IsSearchable
@@ -94,7 +95,10 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     {
         $this->loadMissing('variants');
 
-        return $this->variants->firstWhere('primary_variant', true) ?? $this->variants->first();
+        /** @var ShopProductVariant $variant */
+        $variant = $this->variants->firstWhere('primary_variant', true) ?? $this->variants->first();
+
+        return $variant;
     }
 
     /** @return HasMany<ShopPrice, $this> */
@@ -213,7 +217,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
             ->image($this->main_image)
             ->offers(
                 Schema::offer()
-                    ->price($this->variants->first()->currentPrice / 100)
+                    ->price($this->primaryVariant()->currentPrice / 100)
                     ->availability($this->isInStock() ? Schema::itemAvailability()::InStock : Schema::itemAvailability()::OutOfStock)
                     ->priceCurrency('GBP')
                     ->url($this->absolute_link)

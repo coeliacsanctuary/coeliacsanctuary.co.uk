@@ -9,6 +9,7 @@ use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopMassDiscount;
 use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
+use App\Models\Shop\ShopProductVariant;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -57,13 +58,21 @@ class ApplyMassDiscountsCommandTest extends TestCase
                 'start_at' => Carbon::now()->subMinute(),
             ]);
 
-        $category->products()->each(fn (ShopProduct $product) => $this->assertCount(1, $product->prices));
+        $category->products->each(function (ShopProduct $product): void {
+            $product->variants->each(function (ShopProductVariant $variant): void {
+                $this->assertCount(1, $variant->prices);
+            });
+        });
 
         $this->artisan(ApplyMassDiscountsCommand::class);
 
-        $category->products()->each(function (ShopProduct $product): void {
-            $this->assertCount(2, $product->prices);
-            $this->assertCount(1, $product->prices->where('sale_price', true));
+        $category->refresh();
+
+        $category->products->each(function (ShopProduct $product): void {
+            $product->variants->each(function (ShopProductVariant $variant): void {
+                $this->assertCount(2, $variant->prices);
+                $this->assertCount(1, $variant->prices->where('sale_price', true));
+            });
         });
     }
 
@@ -79,13 +88,33 @@ class ApplyMassDiscountsCommandTest extends TestCase
                 'start_at' => Carbon::now()->subMinute(),
             ]);
 
-        $category->products()->each(fn (ShopProduct $product) => $this->assertCount(1, $product->prices));
-        $otherCategory->products()->each(fn (ShopProduct $product) => $this->assertCount(1, $product->prices));
+        $category->products->each(function (ShopProduct $product): void {
+            $product->variants->each(function (ShopProductVariant $variant): void {
+                $this->assertCount(1, $variant->prices);
+            });
+        });
+
+        $otherCategory->products->each(function (ShopProduct $product): void {
+            $product->variants->each(function (ShopProductVariant $variant): void {
+                $this->assertCount(1, $variant->prices);
+            });
+        });
 
         $this->artisan(ApplyMassDiscountsCommand::class);
 
-        $category->products()->each(fn (ShopProduct $product) => $this->assertCount(2, $product->prices));
-        $otherCategory->products()->each(fn (ShopProduct $product) => $this->assertCount(1, $product->prices));
+        $category->refresh();
+
+        $category->products->each(function (ShopProduct $product): void {
+            $product->variants->each(function (ShopProductVariant $variant): void {
+                $this->assertCount(2, $variant->prices);
+            });
+        });
+
+        $otherCategory->products()->each(function (ShopProduct $product): void {
+            $product->variants->each(function (ShopProductVariant $variant): void {
+                $this->assertCount(1, $variant->prices);
+            });
+        });
     }
 
     #[Test]
@@ -100,10 +129,20 @@ class ApplyMassDiscountsCommandTest extends TestCase
                 'start_at' => Carbon::now()->subMinute(),
             ]);
 
-        $category->products()->each(fn (ShopProduct $product) => $this->assertCount(1, $product->prices));
+        $category->products->each(function (ShopProduct $product): void {
+            $product->variants->each(function (ShopProductVariant $variant): void {
+                $this->assertCount(1, $variant->prices);
+            });
+        });
 
         $this->artisan(ApplyMassDiscountsCommand::class);
 
-        $category->products()->each(fn (ShopProduct $product) => $this->assertCount(1, $product->prices));
+        $category->refresh();
+
+        $category->products->each(function (ShopProduct $product): void {
+            $product->variants->each(function (ShopProductVariant $variant): void {
+                $this->assertCount(1, $variant->prices);
+            });
+        });
     }
 }
