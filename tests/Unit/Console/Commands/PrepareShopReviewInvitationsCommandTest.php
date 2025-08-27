@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Console\Commands;
 
+use App\Models\Shop\ShopPaymentRefund;
 use PHPUnit\Framework\Attributes\Test;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Jobs\Shop\SendReviewInvitationJob;
@@ -52,6 +53,21 @@ class PrepareShopReviewInvitationsCommandTest extends TestCase
         /** @var ShopOrder $order */
         $order = $this->build(ShopOrder::class)->asShipped()->create();
         $order->reviewInvitation()->create();
+
+        $this->artisan(PrepareShopReviewInvitationsCommand::class);
+
+        Bus::assertNothingDispatched();
+    }
+
+    #[Test]
+    public function itDoesntDispatchTheJobForOrdersThatHaveRefunds(): void
+    {
+        /** @var ShopOrder $order */
+        $order = $this->build(ShopOrder::class)->asShipped()->create();
+
+        $this->create(ShopPaymentRefund::class, [
+            'order_id' => $order->id,
+        ]);
 
         $this->artisan(PrepareShopReviewInvitationsCommand::class);
 
