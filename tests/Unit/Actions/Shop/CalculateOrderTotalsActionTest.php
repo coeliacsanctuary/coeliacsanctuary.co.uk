@@ -144,8 +144,7 @@ class CalculateOrderTotalsActionTest extends TestCase
             ->state(fn () => [
                 'shipping_method_id' => ShippingMethod::LARGE_PARCEL->value,
             ])
-            ->has($this->build(ShopProductVariant::class), 'variants')
-            ->has($this->build(ShopPrice::class), 'prices')
+            ->has($this->build(ShopProductVariant::class)->has($this->build(ShopPrice::class), 'prices'), 'variants')
             ->create();
 
         $this->callAction(AddProductToBasketAction::class, $this->order, $product, $product->variants[0], 1);

@@ -51,7 +51,7 @@ class ShopOrderItemFactory extends Factory
             'product_id' => $productVariant->product->id,
             'product_variant_id' => $productVariant->id,
             'product_title' => $productVariant->product->title,
-            'product_price' => $productVariant->product->currentPrice,
+            'product_price' => $productVariant->currentPrice,
             'quantity' => $quantity,
         ]);
     }

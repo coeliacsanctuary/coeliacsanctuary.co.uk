@@ -11,10 +11,13 @@ use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -28,12 +31,30 @@ class ProductVariant extends Resource
 
     public static $title = 'title';
 
+    public static $clickAction = 'view';
+
+    public function authorizedToView(Request $request)
+    {
+        return true;
+    }
+
     public function fields(Request $request): array
     {
         return [
             ID::make()->fullWidth()->hide(),
 
             Text::make('Title')->fullWidth()->help('Leave empty for only one variant')->default(''),
+
+            Textarea::make('Description', 'short_description')
+                ->maxlength(255)
+                ->nullable()
+                ->fullWidth()
+                ->alwaysShow(),
+
+            Currency::make('Price', 'current_price')
+                ->asMinorUnits()
+                ->fullWidth()
+                ->onlyOnIndex(),
 
             Number::make('Quantity', 'quantity')->fullWidth()->rules(['required']),
 
@@ -43,15 +64,27 @@ class ProductVariant extends Resource
 
             Boolean::make('Live')->fullWidth(),
 
+            Currency::make('Price', 'prices.price')
+                ->asMinorUnits()
+                ->required()
+                ->fullWidth()
+                ->deferrable()
+                ->hideWhenUpdating()
+                ->hideFromIndex()
+                ->hideFromDetail(),
+
             KeyValue::make('Icon')
                 ->nullable()
                 ->help('Leave blank for most occasions, lets you set an icon to display with the variant select, eg coloured circles on stickers.'),
+
+            HasMany::make('Prices', resource: ProductPrice::class),
         ];
     }
 
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
         return $query
+            ->with(['prices', 'product'])
             ->addSelect(['total_sold' => ShopOrderItem::query()
                 ->selectRaw('sum(quantity)')
                 ->whereColumn('product_variant_id', 'shop_product_variants.id')
