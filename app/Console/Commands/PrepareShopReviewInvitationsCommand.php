@@ -24,6 +24,7 @@ class PrepareShopReviewInvitationsCommand extends Command
             ->where('shipped_at', '>=', $rule->date->startOfDay())
             ->whereRelation('postageCountry', fn (Builder $relation) => $relation->whereIn('postage_area_id', $rule->areas))
             ->whereDoesntHave('reviewInvitation')
+            ->whereDoesntHave('refunds')
             ->get()
             ->each(fn (ShopOrder $order) => SendReviewInvitationJob::dispatch($order, $rule->text)));
     }
