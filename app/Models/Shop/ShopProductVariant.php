@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use App\Enums\Shop\ProductVariantType;
 use App\Scopes\LiveScope;
 use App\Support\Helpers;
 use Carbon\Carbon;
@@ -25,6 +26,7 @@ class ShopProductVariant extends Model
         'icon' => 'json',
         'live' => 'bool',
         'primary_variant' => 'bool',
+        'variant_type' => ProductVariantType::class,
     ];
 
     protected static function booted(): void

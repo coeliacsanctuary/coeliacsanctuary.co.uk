@@ -27,6 +27,8 @@ class AddProductToBasketAction
 
         $variant->decrement('quantity', $quantity);
 
+        app(CheckIfBasketHasDigitalProductsAction::class)->handle($order);
+
         $order->touch();
     }
 }

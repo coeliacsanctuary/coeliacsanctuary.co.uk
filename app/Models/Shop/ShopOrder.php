@@ -19,6 +19,8 @@ class ShopOrder extends Model
         'state_id' => OrderState::class,
         'shipped_at' => 'datetime',
         'sent_abandoned_basket_email' => 'boolean',
+        'has_digital_products' => 'boolean',
+        'is_digital_only' => 'boolean',
     ];
 
     protected static function booted(): void

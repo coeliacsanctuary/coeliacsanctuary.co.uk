@@ -22,6 +22,8 @@ class ShopOrderFactory extends Factory
         return [
             'token' => Str::random(8),
             'sent_abandoned_basket_email' => false,
+            'has_digital_products' => false,
+            'is_digital_only' => false,
         ];
     }
 
@@ -43,6 +45,21 @@ class ShopOrderFactory extends Factory
     {
         return $this->state(fn () => [
             'state_id' => OrderState::BASKET,
+        ]);
+    }
+
+    public function hasDigitalProducts(): self
+    {
+        return $this->state(fn () => [
+            'has_digital_products' => true,
+        ]);
+    }
+
+    public function isDigitalOnly(): self
+    {
+        return $this->state(fn () => [
+            'has_digital_products' => true,
+            'is_digital_only' => true,
         ]);
     }
 

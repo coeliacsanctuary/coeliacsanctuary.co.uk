@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProductVariant;
 use App\Nova\Resource;
@@ -16,6 +17,7 @@ use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -44,6 +46,10 @@ class ProductVariant extends Resource
             ID::make()->fullWidth()->hide(),
 
             Text::make('Title')->fullWidth()->help('Leave empty for only one variant')->default(''),
+
+            Select::make('Variant Type')
+                ->options(ProductVariantType::class)
+                ->default(ProductVariantType::PHYSICAL),
 
             Textarea::make('Description', 'short_description')
                 ->maxlength(255)

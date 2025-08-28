@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\Basket;
 
+use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
 use App\Actions\Shop\ResolveBasketAction;
 use App\Models\Shop\ShopOrderItem;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +26,8 @@ class DestroyController
         $item->variant?->increment('quantity', $item->quantity);
 
         $item->order?->touch();
+
+        app(CheckIfBasketHasDigitalProductsAction::class)->handle($item->order);
 
         return redirect()->back();
     }

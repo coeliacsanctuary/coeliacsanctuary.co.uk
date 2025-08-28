@@ -26,6 +26,8 @@ class AlterItemQuantityAction
             $orderItem->increment('quantity');
             $variant->decrement('quantity');
 
+            app(CheckIfBasketHasDigitalProductsAction::class)->handle($orderItem->order);
+
             return;
         }
 
@@ -35,5 +37,7 @@ class AlterItemQuantityAction
         if ($orderItem->quantity === 0) {
             $orderItem->delete();
         }
+
+        app(CheckIfBasketHasDigitalProductsAction::class)->handle($orderItem->order);
     }
 }

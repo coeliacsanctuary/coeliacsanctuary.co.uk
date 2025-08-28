@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop;
 
-use App\Exceptions\QuantityException;
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AlterItemQuantityAction;
+use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
+use App\Exceptions\QuantityException;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
@@ -87,6 +88,21 @@ class AlterItemQuantityActionTest extends TestCase
     }
 
     #[Test]
+    public function itCallsTheCheckIfBasketHasDigitalProductsActionWhenCallingToIncrease(): void
+    {
+        $this->mock(CheckIfBasketHasDigitalProductsAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($order) {
+                $this->assertTrue($this->order->is($order));
+
+                return true;
+            })
+            ->once();
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'increase');
+    }
+
+    #[Test]
     public function itUpdatesTheItemQuantityWhenCallingToDecrease(): void
     {
         $this->item->update(['quantity' => 2]);
@@ -101,6 +117,21 @@ class AlterItemQuantityActionTest extends TestCase
         $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
 
         $this->assertEquals(2, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function itCallsTheCheckIfBasketHasDigitalProductsActionWhenCallingToDecrease(): void
+    {
+        $this->mock(CheckIfBasketHasDigitalProductsAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($order) {
+                $this->assertTrue($this->order->is($order));
+
+                return true;
+            })
+            ->once();
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
     }
 
     #[Test]

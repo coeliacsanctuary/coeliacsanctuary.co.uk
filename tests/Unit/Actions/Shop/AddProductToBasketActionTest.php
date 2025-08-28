@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\Shop;
 
 use App\Actions\Shop\AddProductToBasketAction;
+use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
@@ -77,5 +78,20 @@ class AddProductToBasketActionTest extends TestCase
         $this->variant->refresh();
 
         $this->assertEquals(1, $this->variant->quantity);
+    }
+
+    #[Test]
+    public function itCallsTheCheckIfBasketHasDigitalProductsAction(): void
+    {
+        $this->mock(CheckIfBasketHasDigitalProductsAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($order) {
+                $this->assertTrue($this->order->is($order));
+
+                return true;
+            })
+            ->once();
+
+        $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 
@@ -16,6 +17,7 @@ class ShopProductVariantFactory extends Factory
         return [
             'live' => true,
             'primary_variant' => false,
+            'variant_type' => ProductVariantType::PHYSICAL,
             'title' => $this->faker->words(3, true),
             'weight' => $this->faker->numberBetween(1, 20),
             'quantity' => $this->faker->numberBetween(1, 500),
