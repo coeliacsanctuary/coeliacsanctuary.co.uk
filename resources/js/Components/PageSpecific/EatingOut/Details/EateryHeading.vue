@@ -33,7 +33,11 @@ const averageRating = (): StarRatingType =>
   parseFloat(props.eatery.reviews.average) as StarRatingType;
 
 const eateryName = (): string => {
-  if (props.eatery.branch && props.eatery.branch.name) {
+  if (
+    props.eatery.branch &&
+    props.eatery.branch.name &&
+    props.eatery.name !== props.eatery.branch.name
+  ) {
     return `${props.eatery.branch.name} - ${props.eatery.name}`;
   }
 
