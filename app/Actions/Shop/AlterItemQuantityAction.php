@@ -6,6 +6,7 @@ namespace App\Actions\Shop;
 
 use App\Enums\Shop\ProductVariantType;
 use App\Exceptions\QuantityException;
+use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProductVariant;
 
@@ -21,23 +22,26 @@ class AlterItemQuantityAction
             throw QuantityException::notEnoughAvailable();
         }
 
-        $orderItem->order?->touch();
+        /** @var ShopOrder $basket */
+        $basket = $orderItem->order;
+
+        $basket->touch();
 
         if ($mode === 'increase') {
             $orderItem->increment('quantity');
 
-            if($variant->variant_type !== ProductVariantType::DIGITAL) {
+            if ($variant->variant_type !== ProductVariantType::DIGITAL) {
                 $variant->decrement('quantity');
             }
 
-            app(CheckIfBasketHasDigitalProductsAction::class)->handle($orderItem->order);
+            app(CheckIfBasketHasDigitalProductsAction::class)->handle($basket);
 
             return;
         }
 
         $orderItem->decrement('quantity');
 
-        if($variant->variant_type !== ProductVariantType::DIGITAL) {
+        if ($variant->variant_type !== ProductVariantType::DIGITAL) {
             $variant->increment('quantity');
         }
 
@@ -45,6 +49,6 @@ class AlterItemQuantityAction
             $orderItem->delete();
         }
 
-        app(CheckIfBasketHasDigitalProductsAction::class)->handle($orderItem->order);
+        app(CheckIfBasketHasDigitalProductsAction::class)->handle($basket);
     }
 }

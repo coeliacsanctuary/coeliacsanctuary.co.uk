@@ -68,7 +68,7 @@ class AddToBasketRequest extends FormRequest
             function (Validator $validator): void {
                 $variant = ShopProductVariant::query()->find($this->integer('variant_id'));
 
-                if($variant && $variant->variant_type === ProductVariantType::DIGITAL && $this->integer('quantity') > 1) {
+                if ($variant && $variant->variant_type === ProductVariantType::DIGITAL && $this->integer('quantity') > 1) {
                     $validator->errors()->add('quantity', 'Digital products can only be added in one quantity');
                 }
             }

@@ -7,7 +7,7 @@ namespace App\Actions\Shop;
 use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class CheckIfBasketHasDigitalProductsAction
 {

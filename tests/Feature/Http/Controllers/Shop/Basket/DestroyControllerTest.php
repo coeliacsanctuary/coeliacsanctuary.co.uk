@@ -102,7 +102,7 @@ class DestroyControllerTest extends TestCase
     {
         $this->mock(CheckIfBasketHasDigitalProductsAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function($order) {
+            ->withArgs(function ($order) {
                 $this->assertTrue($this->order->is($order));
 
                 return true;

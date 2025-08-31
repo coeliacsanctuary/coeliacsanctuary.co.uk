@@ -25,13 +25,13 @@ class DestroyController
 
         $item->delete();
 
-        if($item->variant?->variant_type !== ProductVariantType::DIGITAL) {
+        if ($item->variant?->variant_type !== ProductVariantType::DIGITAL) {
             $item->variant?->increment('quantity', $item->quantity);
         }
 
-        $item->order?->touch();
+        $basket->touch();
 
-        app(CheckIfBasketHasDigitalProductsAction::class)->handle($item->order);
+        app(CheckIfBasketHasDigitalProductsAction::class)->handle($basket);
 
         return redirect()->back();
     }

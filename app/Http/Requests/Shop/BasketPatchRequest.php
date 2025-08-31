@@ -71,7 +71,7 @@ class BasketPatchRequest extends FormRequest
                     return;
                 }
 
-                if($itemInBasket->variant->variant_type === ProductVariantType::DIGITAL) {
+                if ($itemInBasket->variant?->variant_type === ProductVariantType::DIGITAL) {
                     $validator->errors()->add('item_id', "This product can't be altered");
                 }
             },

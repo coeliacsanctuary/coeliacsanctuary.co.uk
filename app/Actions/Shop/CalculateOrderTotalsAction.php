@@ -32,6 +32,9 @@ class CalculateOrderTotalsAction
         ];
     }
 
+    /**
+     * @param Collection<int, ShopOrderItemResource> $items
+     */
     protected function calculatePostagePrice(Collection $items, ShopPostageCountry $country): int
     {
         $shippingMethod = $items->max(function (ShopOrderItemResource $resource) {

@@ -110,7 +110,8 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itReturnsAValidationErrorIfTheProductVariantIsDigitalOnlyAndTheRequestQuantityIsGreaterThanOne(): void
     {
-        $this->variant->update(['variant_type' => ProductVariantType::DIGITAL, 'quantity' => 1]);;
+        $this->variant->update(['variant_type' => ProductVariantType::DIGITAL, 'quantity' => 1]);
+        ;
 
         $this->makeRequest(['quantity' => 2])->assertSessionHasErrors('quantity');
     }
