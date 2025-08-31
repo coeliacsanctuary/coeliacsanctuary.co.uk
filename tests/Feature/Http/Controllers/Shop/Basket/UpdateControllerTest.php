@@ -7,6 +7,7 @@ namespace Tests\Feature\Http\Controllers\Shop\Basket;
 use App\Actions\Shop\AlterItemQuantityAction;
 use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\VerifyDiscountCodeAction;
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopOrder;
@@ -157,6 +158,20 @@ class UpdateControllerTest extends TestCase
                 'item_id' => 123,
             ])
             ->assertSessionHasErrors(['item_id' => "This product isn't in your basket"]);
+    }
+
+    #[Test]
+    public function itErrorsIfTheItemIsDigitalOnlyAndIsAlreadyInBasket(): void
+    {
+        $this->item->variant->update(['variant_type' => ProductVariantType::DIGITAL]);
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'action' => 'increase',
+                'item_id' => $this->item->id,
+            ])
+            ->assertSessionHasErrors(['item_id' => "This product can't be altered"]);
     }
 
     #[Test]

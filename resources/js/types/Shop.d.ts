@@ -68,6 +68,7 @@ export type ShopProductVariant = {
   quantity: number;
   primary_variant: boolean;
   prices: ShopPrices;
+  variant_type: 'physical' | 'digital' | 'bundle';
 };
 
 export type ShopProductRating = {
@@ -90,12 +91,14 @@ export type ShopProductReview = {
 export type ShopBasketItem = {
   id: number;
   title: string;
+  description?: string;
   link: string;
   variant: string;
   item_price: string;
   line_price: string;
   quantity: number;
   image: string;
+  variant_type: 'physical' | 'digital' | 'bundle';
 };
 
 export type CheckoutContactStep = {
@@ -134,6 +137,8 @@ export type OrderCompleteProps = {
   subtotal: string;
   postage: string;
   total: string;
+  is_digital_only: boolean;
+  has_digital_products: boolean;
   shipping: string[];
   discount: null | { amount: string; name: string };
   products: ShopBasketItem[];

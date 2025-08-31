@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resources\Shop;
 
+use App\Enums\Shop\ProductVariantType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,10 +17,11 @@ class ShopProductVariantResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->short_description,
-            'quantity' => $this->quantity,
+            'quantity' => $this->variant_type === ProductVariantType::DIGITAL ? 999 : $this->quantity,
             'icon' => $this->icon !== [] ? $this->icon : null,
             'prices' => $this->price,
             'primary_variant' => $this->primary_variant,
+            'variant_type' => $this->variant_type->value,
         ];
     }
 }

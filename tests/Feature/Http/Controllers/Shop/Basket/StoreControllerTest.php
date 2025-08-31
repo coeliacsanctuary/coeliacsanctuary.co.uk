@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Basket;
 
+use App\Enums\Shop\ProductVariantType;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Actions\Shop\ResolveBasketAction;
@@ -104,6 +105,14 @@ class StoreControllerTest extends TestCase
     public function itReturnsAValidationErrorWithADodgyScientificNumber(): void
     {
         $this->makeRequest(['quantity' => '123e4'])->assertSessionHasErrors('quantity');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorIfTheProductVariantIsDigitalOnlyAndTheRequestQuantityIsGreaterThanOne(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::DIGITAL, 'quantity' => 1]);;
+
+        $this->makeRequest(['quantity' => 2])->assertSessionHasErrors('quantity');
     }
 
     #[Test]

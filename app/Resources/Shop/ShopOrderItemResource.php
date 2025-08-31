@@ -26,12 +26,14 @@ class ShopOrderItemResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->product_title,
+            'description' => $variant->short_description,
             'link' => $product->link,
             'variant' => $variant->title,
             'item_price' => Helpers::formatMoney(Money::GBP($this->product_price)),
             'line_price' => Helpers::formatMoney(Money::GBP($this->product_price * $this->quantity)),
             'quantity' => $this->quantity,
             'image' => $product->main_image,
+            'variant_type' => $variant->variant_type->value,
         ];
     }
 }

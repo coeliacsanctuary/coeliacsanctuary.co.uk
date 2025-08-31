@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Shop;
 
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Foundation\Http\FormRequest;
@@ -62,6 +63,15 @@ class AddToBasketRequest extends FormRequest
                     $validator->errors()->add('quantity', 'The product doesn\'t have the requested quantity available');
                 }
             },
+
+            // Variant is not digital
+            function (Validator $validator): void {
+                $variant = ShopProductVariant::query()->find($this->integer('variant_id'));
+
+                if($variant && $variant->variant_type === ProductVariantType::DIGITAL && $this->integer('quantity') > 1) {
+                    $validator->errors()->add('quantity', 'Digital products can only be added in one quantity');
+                }
+            }
         ];
     }
 }

@@ -11,8 +11,10 @@ use App\Models\Shop\ShopProductVariant;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Files;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
@@ -51,6 +53,21 @@ class ProductVariant extends Resource
                 ->options(ProductVariantType::class)
                 ->default(ProductVariantType::PHYSICAL),
 
+            Files::make('Digital Download', 'download')
+                ->addButtonLabel('Select File')
+                ->setAllowedFileTypes(['application/pdf'])
+                ->customHeaders([
+                    'ACL' => null,
+                ])
+                ->nullable()
+                ->dependsOn('variant_type', function (Files $field, NovaRequest $request, FormData $formData): void {
+                    if ($formData->get('variant_type') !== ProductVariantType::PHYSICAL->value) {
+                        $field->show()->rules(['required']);
+                    } else {
+                        $field->hide()->rules([]);
+                    }
+                }),
+
             Textarea::make('Description', 'short_description')
                 ->maxlength(255)
                 ->nullable()
@@ -62,11 +79,27 @@ class ProductVariant extends Resource
                 ->fullWidth()
                 ->onlyOnIndex(),
 
-            Number::make('Quantity', 'quantity')->fullWidth()->rules(['required']),
+            Number::make('Quantity', 'quantity')
+                ->fullWidth()
+                ->dependsOn('variant_type', function (Number $field, NovaRequest $request, FormData $formData): void {
+                    if ($formData->get('variant_type') !== ProductVariantType::DIGITAL->value) {
+                        $field->show()->rules(['required']);
+                    } else {
+                        $field->hide()->rules([]);
+                    }
+                }),
 
             Number::make('Total Sold')->exceptOnForms(),
 
-            Number::make('Weight')->fullWidth()->rules(['required']),
+            Number::make('Weight')
+                ->fullWidth()
+                ->dependsOn('variant_type', function (Number $field, NovaRequest $request, FormData $formData): void {
+                    if ($formData->get('variant_type') !== ProductVariantType::DIGITAL->value) {
+                        $field->show()->rules(['required']);
+                    } else {
+                        $field->hide()->rules([]);
+                    }
+                }),
 
             Boolean::make('Live')->fullWidth(),
 
@@ -105,10 +138,17 @@ class ProductVariant extends Resource
     protected static function fillFields(NovaRequest $request, $model, $fields): array
     {
         $fillFields = parent::fillFields($request, $model, $fields);
+
+        /** @var ShopProductVariant $variant */
         $variant = $fillFields[0];
 
         if ($variant->title === null) {
             $variant->title = '';
+        }
+
+        if ($variant->variant_type === ProductVariantType::DIGITAL) {
+            $variant->quantity = 999;
+            $variant->weight = 1;
         }
 
         return $fillFields;

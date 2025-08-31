@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Order;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\ApplyDiscountCodeAction;
 use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\Checkout\CreateShippingAddressAction;
@@ -28,6 +26,8 @@ use App\Models\Shop\ShopShippingAddress;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\RequestFactories\ShopCompleteOrderRequestFactory;
 use Tests\TestCase;
 
@@ -41,7 +41,7 @@ class StoreControllerTest extends TestCase
 
     protected ShopProductVariant $variant;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -77,8 +77,11 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsAnErrorIfTheBasketIsntABasketState(): void
+    #[DataProvider('orderStateDataProvider')]
+    public function itReturnsAnErrorIfTheBasketIsntABasketState(callable $before): void
     {
+        $before($this);
+
         $this->basket->update(['state_id' => OrderState::PENDING]);
 
         $this->makeRequest()->assertSessionHasErrors('basket');
@@ -86,22 +89,45 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('validationDataProvider')]
-    public function itHandlesFieldValidationRules(array $data, string|array $key): void
+    public function itHandlesFieldValidationRulesForNormalOrders(array $data, string|array $key): void
     {
         $this->makeRequest($data)->assertSessionHasErrors($key);
     }
 
     #[Test]
-    public function itCallsTheResolveBasketAction(): void
+    #[DataProvider('digitalOnlyValidationDataProvider')]
+    public function itHandlesFieldValidationRulesForDigitalOnlyOrders(array $data, string|array $key): void
     {
+        $this->basket->update(['is_digital_only' => true]);
+
+        $this->makeRequest($data)->assertSessionHasErrors($key);
+    }
+
+    #[Test]
+    public function itDoesntReturnAValidationErrorForMissingShippingDataForDigitalOrders(): void
+    {
+        $this->basket->update(['is_digital_only' => true]);
+
+        $this->makeRequest(['contact' => null])->assertSessionDoesntHaveErrors('shipping');
+    }
+
+    #[Test]
+    #[DataProvider('orderStateDataProvider')]
+    public function itCallsTheResolveBasketAction(callable $before): void
+    {
+        $before($this);
+
         $this->expectAction(ResolveBasketAction::class, once: false, return: $this->basket);
 
         $this->makeRequest()->assertCreated();
     }
 
     #[Test]
-    public function itCallsTheCreateUserAction(): void
+    #[DataProvider('orderStateDataProvider')]
+    public function itCallsTheCreateUserAction(callable $before): void
     {
+        $before($this);
+
         $this->expectAction(CreateCustomerAction::class, [PendingOrderCustomerDetails::class], return: $this->create(ShopCustomer::class));
 
         $this->makeRequest()->assertCreated();
@@ -116,8 +142,21 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
-    public function itCallsTheApplyDiscountCodeActionIfADiscountCodeIsPresentInTheSession(): void
+    public function itDoesntCallTheCreateUserAddressActionForDigitalOnlyOrders(): void
     {
+        $this->dontExpectAction(CreateShippingAddressAction::class);
+
+        $this->basket->update(['is_digital_only' => true]);
+
+        $this->makeRequest()->assertCreated();
+    }
+
+    #[Test]
+    #[DataProvider('orderStateDataProvider')]
+    public function itCallsTheApplyDiscountCodeActionIfADiscountCodeIsPresentInTheSession(callable $before): void
+    {
+        $before($this);
+
         $this->expectAction(ApplyDiscountCodeAction::class);
 
         $this->create(ShopDiscountCode::class, ['code' => 'foobar']);
@@ -126,8 +165,11 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
-    public function itCreatesADiscountCodeUsedRecordIfADiscountCodeIsPresent(): void
+    #[DataProvider('orderStateDataProvider')]
+    public function itCreatesADiscountCodeUsedRecordIfADiscountCodeIsPresent(callable $before): void
     {
+        $before($this);
+
         $this->create(ShopDiscountCode::class, ['code' => 'foobar']);
 
         $this->assertDatabaseEmpty(ShopDiscountCodesUsed::class);
@@ -138,8 +180,11 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
-    public function itCreatesAShopPaymentRecord(): void
+    #[DataProvider('orderStateDataProvider')]
+    public function itCreatesAShopPaymentRecord(callable $before): void
     {
+        $before($this);
+
         $this->assertDatabaseEmpty(ShopPayment::class);
 
         $this->makeRequest()->assertCreated();
@@ -149,8 +194,11 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
-    public function itUsesAnExistingPaymentRecord(): void
+    #[DataProvider('orderStateDataProvider')]
+    public function itUsesAnExistingPaymentRecord(callable $before): void
     {
+        $before($this);
+
         $payment = $this->create(ShopPayment::class, ['order_id' => $this->basket->id, 'total' => 1]);
 
         $this->makeRequest()->assertCreated();
@@ -160,8 +208,11 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
-    public function itUpdatesTheOrder(): void
+    #[DataProvider('orderStateDataProvider')]
+    public function itUpdatesTheOrder(callable $before): void
     {
+        $before($this);
+
         $this->assertNull($this->basket->customer_id);
         $this->assertNull($this->basket->shipping_address_id);
         $this->assertNull($this->basket->order_key);
@@ -172,14 +223,25 @@ class StoreControllerTest extends TestCase
         $this->basket->refresh();
 
         $this->assertNotNull($this->basket->customer_id);
-        $this->assertNotNull($this->basket->shipping_address_id);
+
+        if ( ! $this->basket->is_digital_only) {
+            $this->assertNotNull($this->basket->shipping_address_id);
+        } else {
+            $this->assertNull($this->basket->shipping_address_id);
+        }
+
+        $this->assertNotNull($this->basket->order_key);
+        $this->assertEquals(OrderState::PENDING, $this->basket->state_id);
         $this->assertNotNull($this->basket->order_key);
         $this->assertEquals(OrderState::PENDING, $this->basket->state_id);
     }
 
     #[Test]
-    public function itCreatesAKeyThatIsEightDigitsLong(): void
+    #[DataProvider('orderStateDataProvider')]
+    public function itCreatesAKeyThatIsEightDigitsLong(callable $before): void
     {
+        $before($this);
+
         $this->makeRequest()->assertCreated();
 
         $this->basket->refresh();
@@ -189,10 +251,16 @@ class StoreControllerTest extends TestCase
 
     protected function makeRequest(array $data = [], array $session = []): TestResponse
     {
+        $payload = ShopCompleteOrderRequestFactory::new($data);
+
+        if ($this->basket->is_digital_only) {
+            $payload->digitalOnly();
+        }
+
         return $this
             ->withCookie('basket_token', $this->basket->token)
             ->withSession($session)
-            ->post(route('shop.order.complete'), ShopCompleteOrderRequestFactory::new($data)->create());
+            ->post(route('shop.order.complete'), $payload->create());
     }
 
     public static function validationDataProvider(): array
@@ -249,6 +317,40 @@ class StoreControllerTest extends TestCase
             'shipping postcode is numeric' => [['shipping.postcode' => 123], 'shipping.postcode'],
             'shipping postcode is bool' => [['shipping.postcode' => true], 'shipping.postcode'],
             'shipping postcode is invalid' => [['shipping.postcode' => 'foo'], 'shipping.postcode'],
+        ];
+    }
+
+    public static function digitalOnlyValidationDataProvider(): array
+    {
+        return [
+            // contact details
+            'missing contact object' => [['contact' => null], 'contact'],
+
+            // contact name
+            'missing contact name' => [['contact.name' => null], 'contact.name'],
+            'contact name is numeric' => [['contact.name' => 123], 'contact.name'],
+            'contact name is bool' => [['contact.name' => true], 'contact.name'],
+
+            // contact email
+            'missing contact email' => [['contact.email' => null], 'contact.email'],
+            'contact email is numeric' => [['contact.email' => 123], 'contact.email'],
+            'contact email is bool' => [['contact.email' => true], 'contact.email'],
+            'contact email is not an email address' => [['contact.email' => 'foobar'], 'contact.email'],
+
+            // contact email confirmation
+            'missing contact email confirmation' => [['contact.email_confirmation' => null], ['contact.email']],
+            'contact email confirmation is numeric' => [['contact.email_confirmation' => 123], ['contact.email']],
+            'contact email confirmation is bool' => [['contact.email_confirmation' => true], ['contact.email']],
+            'contact email confirmation is not an email address' => [['contact.email_confirmation' => 'foobar'], ['contact.email']],
+            'contact email and email confirmation do not match' => [['contact.email' => 'foo@bar.com', 'contact.email_confirmation' => 'bar@baz.com'], ['contact.email']],
+        ];
+    }
+
+    public static function orderStateDataProvider(): array
+    {
+        return [
+            'normal' => [fn () => null],
+            'digital' => [fn (self $test) => $test->basket->update(['is_digital_only' => true])],
         ];
     }
 }

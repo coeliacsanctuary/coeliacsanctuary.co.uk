@@ -6,6 +6,7 @@ namespace Tests\Unit\Actions\Shop;
 
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
@@ -78,6 +79,21 @@ class AddProductToBasketActionTest extends TestCase
         $this->variant->refresh();
 
         $this->assertEquals(1, $this->variant->quantity);
+    }
+
+    #[Test]
+    public function itDoesntDeductTheQuantityFromTheVariantIfTheVariantIsDigitalOnly(): void
+    {
+        $this->variant->update([
+            'quantity' => 2,
+            'variant_type' => ProductVariantType::DIGITAL,
+        ]);
+
+        $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1);
+
+        $this->variant->refresh();
+
+        $this->assertEquals(2, $this->variant->quantity);
     }
 
     #[Test]

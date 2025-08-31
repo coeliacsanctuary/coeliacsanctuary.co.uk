@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Shop\Basket;
 
 use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
 use App\Actions\Shop\ResolveBasketAction;
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrderItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +24,10 @@ class DestroyController
         abort_if($item->order_id !== $basket->id, RedirectResponse::HTTP_NOT_FOUND);
 
         $item->delete();
-        $item->variant?->increment('quantity', $item->quantity);
+
+        if($item->variant?->variant_type !== ProductVariantType::DIGITAL) {
+            $item->variant?->increment('quantity', $item->quantity);
+        }
 
         $item->order?->touch();
 

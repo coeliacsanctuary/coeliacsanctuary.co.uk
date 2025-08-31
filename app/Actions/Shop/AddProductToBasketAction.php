@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
@@ -25,7 +26,9 @@ class AddProductToBasketAction
             $item->increment('quantity', $quantity);
         }
 
-        $variant->decrement('quantity', $quantity);
+        if ($variant->variant_type !== ProductVariantType::DIGITAL) {
+            $variant->decrement('quantity', $quantity);
+        }
 
         app(CheckIfBasketHasDigitalProductsAction::class)->handle($order);
 

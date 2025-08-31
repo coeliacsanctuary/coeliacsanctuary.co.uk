@@ -14,14 +14,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Money\Money;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $currentPrice
  * @property null | int $oldPrice
  * @property array{current_price: string, old_price?: string} $price
  */
-class ShopProductVariant extends Model
+class ShopProductVariant extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+
     protected $casts = [
         'icon' => 'json',
         'live' => 'bool',
@@ -32,6 +36,13 @@ class ShopProductVariant extends Model
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('download')
+            ->useDisk('digital-products')
+            ->singleFile();
     }
 
     /** @return BelongsTo<ShopProduct, $this> */

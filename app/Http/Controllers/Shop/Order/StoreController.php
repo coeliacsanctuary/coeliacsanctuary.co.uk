@@ -55,13 +55,17 @@ class StoreController
             DB::beginTransaction();
 
             $customer = $createUserAction->handle(PendingOrderCustomerDetails::createFromRequest($request));
-            $address = $createAddressAction->handle(
-                $customer,
-                PendingOrderShippingAddressDetails::createFromRequest($request, $country->country),
-            );
+            $address = null;
+
+            if ($basket->is_digital_only === false) {
+                $address = $createAddressAction->handle(
+                    $customer,
+                    PendingOrderShippingAddressDetails::createFromRequest($request, $country->country),
+                );
+            }
 
             $discount = null;
-            ['subtotal' => $subtotal, 'postage' => $postage] = $calculateOrderTotalsAction->handle($collection, $country);
+            ['subtotal' => $subtotal, 'postage' => $postage] = $calculateOrderTotalsAction->handle($basket, $collection, $country);
             $total = $subtotal + $postage;
 
             if ($request->session()->has('discountCode')) {
@@ -96,7 +100,7 @@ class StoreController
 
             $basket->update([
                 'customer_id' => $customer->id,
-                'shipping_address_id' => $address->id,
+                'shipping_address_id' => $address?->id,
                 'order_key' => Str::of(Str::password(8, letters: false, symbols: false))->padLeft(8, '0'),
                 'state_id' => OrderState::PENDING,
             ]);

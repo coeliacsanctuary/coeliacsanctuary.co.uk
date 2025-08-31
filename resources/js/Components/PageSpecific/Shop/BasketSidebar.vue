@@ -8,7 +8,11 @@ import useGoogleEvents from '@/composables/useGoogleEvents';
 import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySwitcher.vue';
 import Loader from '@/Components/Loader.vue';
 
-defineProps<{ items: ShopBasketItem[]; subtotal: string }>();
+defineProps<{
+  items: ShopBasketItem[];
+  subtotal: string;
+  digitalOnly: boolean;
+}>();
 
 defineEmits(['close']);
 
@@ -114,13 +118,23 @@ const alterQuantity = (
             </div>
 
             <div class="flex flex-1 items-center justify-between">
-              <div class="flex flex-1 items-center space-x-2">
+              <div
+                v-if="item.variant_type !== 'digital'"
+                class="flex flex-1 items-center space-x-2"
+              >
                 <p>Quantity</p>
 
                 <QuantitySwitcher
                   :quantity="item.quantity"
                   @alter="(mode) => alterQuantity(item, mode)"
                 />
+              </div>
+
+              <div
+                v-else
+                class="flex flex-1 items-center space-x-2 text-sm font-semibold"
+              >
+                Digital Download Only
               </div>
 
               <CoeliacButton
@@ -157,7 +171,12 @@ const alterQuantity = (
       />
     </div>
 
-    <p class="mt-0.5 text-sm">Postage price calculated at checkout.</p>
+    <p
+      v-if="digitalOnly === false"
+      class="mt-0.5 text-sm"
+    >
+      Postage price calculated at checkout.
+    </p>
 
     <div class="mt-6 flex">
       <CoeliacButton

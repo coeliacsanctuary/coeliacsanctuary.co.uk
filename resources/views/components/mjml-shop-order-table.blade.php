@@ -3,6 +3,7 @@
     use App\Support\Helpers;
     use Illuminate\Support\Str;
     use Money\Money;
+    use App\Enums\Shop\ProductVariantType;
     /** @var ShopOrder $order */
 @endphp
 
@@ -25,18 +26,27 @@
                     href="{{ $item->product->link }}" @if($overrides->get($item->id, null) === 0)
                     style="text-decoration: line-through" @endif
                 >
-                    <span @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
-                        {{ $item->quantity }}X
-                    </span>
-                    @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity)
-                        <span style="font-weight: bold; color: #29719f">{{ $overrides->get($item->id ) }}X</span>
+                    @unless($item->variant->variant_type === ProductVariantType::DIGITAL)
+                        <span
+                            @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
+                            {{ $item->quantity }}X
+                        </span>
+                        @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity)
+                            <span style="font-weight: bold; color: #29719f">{{ $overrides->get($item->id ) }}X</span>
+                        @endif
                     @endif
+
                     <span>
                         {{ $item->product_title }}
                         @if($item->variant->title !== '')
                             - {{ $item->variant->title }}
                         @endif
                     </span>
+                    @if($item->variant->short_description)
+                        <br /><span style="font-weight: normal; font-size: 12px">
+                            {{ $item->variant->short_description }}
+                        </span>
+                    @endif
                 </a>
             </mj-text>
         </mj-column>
@@ -64,38 +74,56 @@
 
 <!-- BEGIN: TOTALS -->
 <mj-section>
-    <mj-column css-class="force-half-width" width="50%">
-        <mj-text line-height="1.5">Subtotal</mj-text>
-    </mj-column>
-    <mj-column css-class="force-half-width" width="50%">
-        <mj-text line-height="1.5" align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->subtotal)) }}</mj-text>
-    </mj-column>
+    @if($order->is_digital_only === false || ($order->is_digital_only && $order->payment->discount))
+        <mj-column css-class="force-half-width" width="50%">
+            <mj-text line-height="1.5">Subtotal</mj-text>
+        </mj-column>
+        <mj-column css-class="force-half-width" width="50%">
+            <mj-text line-height="1.5"
+                     align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->subtotal)) }}</mj-text>
+        </mj-column>
+    @endif
 
     @if($order->payment->discount)
         <mj-column css-class="force-half-width" width="50%">
             <mj-text line-height="1.5">Discount</mj-text>
         </mj-column>
         <mj-column css-class="force-half-width" width="50%">
-            <mj-text line-height="1.5" align="right">-{{ Helpers::formatMoney(Money::GBP($order->payment->discount)) }}</mj-text>
+            <mj-text line-height="1.5" align="right">
+                -{{ Helpers::formatMoney(Money::GBP($order->payment->discount)) }}</mj-text>
         </mj-column>
     @endif
 
-    <mj-column css-class="force-half-width" width="50%">
-        <mj-text line-height="1.5">Postage</mj-text>
-    </mj-column>
-    <mj-column css-class="force-half-width" width="50%">
-        <mj-text line-height="1.5" align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->postage)) }}</mj-text>
-    </mj-column>
+    @unless($order->is_digital_only)
+        <mj-column css-class="force-half-width" width="50%">
+            <mj-text line-height="1.5">Postage</mj-text>
+        </mj-column>
+        <mj-column css-class="force-half-width" width="50%">
+            <mj-text line-height="1.5"
+                     align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->postage)) }}</mj-text>
+        </mj-column>
+    @endunless
 
     <mj-column css-class="force-half-width" width="50%">
-        <mj-text line-height="1.5" padding-top="10px">
+        <mj-text
+            line-height="1.5"
+            @if($order->is_digital_only === false || ($order->is_digital_only && $order->payment->discount))
+                padding-top="10px"
+            @endif
+        >
             <h2 @if($order->refunds->isNotEmpty()) style="text-decoration: line-through;" @endif>
                 Total
             </h2>
         </mj-text>
     </mj-column>
     <mj-column css-class="force-half-width" width="50%">
-        <mj-text line-height="1.5" align="right" padding-top="10px">
+        <mj-text
+            line-height="1.5"
+            align="right"
+            @if($order->is_digital_only === false || ($order->is_digital_only && $order->payment->discount))
+                padding-top="10px"
+            @endif
+        >
             <h2 @if($order->refunds->isNotEmpty()) style="text-decoration: line-through;" @endif>
                 {{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}
             </h2>
@@ -106,7 +134,11 @@
         @foreach($order->refunds as $refund)
             <mj-column css-class="force-half-width" width="50%">
                 <mj-text line-height="1.5" padding-top="10px" css-class="red-text">
-                    <h4 class="red-text">@if($loop->first){{ Str::plural('Refund', $order->refunds->count()) }} @else &nbsp; @endif</h4>
+                    <h4 class="red-text">@if($loop->first)
+                            {{ Str::plural('Refund', $order->refunds->count()) }}
+                        @else
+                            &nbsp;
+                        @endif</h4>
                 </mj-text>
             </mj-column>
             <mj-column css-class="force-half-width" width="50%">

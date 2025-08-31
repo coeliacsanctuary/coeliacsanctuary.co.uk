@@ -105,7 +105,10 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
         :has-multiple-prices="product.has_multiple_prices"
       />
 
-      <div class="w-full *:w-full sm:flex sm:justify-between">
+      <div
+        v-if="selectedVariant?.variant_type !== 'digital'"
+        class="w-full *:w-full sm:flex sm:justify-between"
+      >
         <ProductQuantitySwitcher
           v-model.number="quantity"
           label="Quantity"
@@ -119,6 +122,13 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
           "
           :error="addBasketForm.errors.quantity"
         />
+      </div>
+
+      <div
+        v-else
+        class="font-semibold"
+      >
+        Please note, this product is a digital download only.
       </div>
 
       <div

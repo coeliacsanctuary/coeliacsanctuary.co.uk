@@ -16,13 +16,15 @@ class CheckIfBasketHasDigitalProductsAction
         /** @var Collection<int, ShopOrderItem> $items */
         $items = $basket->items;
 
+        $items->loadMissing(['variant', 'product']);
+
         $digitalProducts = $items->filter(fn (ShopOrderItem $item) => $item->variant?->variant_type !== ProductVariantType::PHYSICAL);
 
-        $digitalOnlyProducts = $digitalProducts->filter(fn (ShopOrderItem $item) => $item->variant?->variant_type === ProductVariantType::DIGITAL);
+        $nonDigitalProducts = $items->reject(fn (ShopOrderItem $item) => $item->variant?->variant_type === ProductVariantType::DIGITAL);
 
         $basket->update([
             'has_digital_products' => $digitalProducts->isNotEmpty(),
-            'is_digital_only' => $digitalOnlyProducts->isNotEmpty(),
+            'is_digital_only' => $nonDigitalProducts->isEmpty(),
         ]);
     }
 }

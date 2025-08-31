@@ -4,8 +4,10 @@ import useLocalStorage from '@/composables/useLocalStorage';
 import { Link } from '@inertiajs/vue3';
 import { OrderCompleteProps } from '@/types/Shop';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
+import Heading from '@/Components/Heading.vue';
 import useScreensize from '@/composables/useScreensize';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import SubHeading from '@/Components/SubHeading.vue';
 
 const props = defineProps<{ order: OrderCompleteProps }>();
 
@@ -32,12 +34,14 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
     <div class="mx-auto flex max-w-3xl flex-col space-y-4 bg-white p-4">
       <div class="flex flex-col space-y-4">
         <div class="flex flex-col space-y-2">
-          <h1 class="text-sm font-semibold text-primary-dark">
-            Payment successful!
-          </h1>
-          <p class="text-4xl font-semibold tracking-tight sm:text-5xl">
-            Thanks for ordering
-          </p>
+          <Heading :border="false"> Thanks for ordering! </Heading>
+
+          <SubHeading
+            text-size="xs"
+            classes="!text-center mt-2"
+          >
+            Your payment was successful.
+          </SubHeading>
 
           <p class="prose prose-lg mt-4 max-w-none text-base">
             Your Order has been completed, you will receive an email
@@ -45,9 +49,17 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
             please check your Spam or Junk folders. If you still haven't
             received it please get in touch.
           </p>
+
+          <p
+            v-if="order.has_digital_products"
+            class="prose prose-lg mt-4 max-w-none text-center text-xl font-semibold"
+          >
+            You will receive a separate email with a link to download your
+            digital products.
+          </p>
         </div>
 
-        <dl class="font-semibold">
+        <dl class="flex space-x-2 font-semibold">
           <dt class="text-gray-900">Order Number</dt>
           <dd
             class="text-primary-dark"
@@ -79,23 +91,39 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
                 target="_blank"
               >
                 {{ product.title }}
+
+                <template v-if="product.variant">
+                  - {{ product.variant }}
+                </template>
               </Link>
             </h3>
+
             <p
-              v-if="product.variant"
+              v-if="product.description"
+              class="text-grey-darker"
+              v-text="product.description"
+            />
+
+            <p
+              v-if="product.variant_type !== 'digital'"
               class="text-grey-darker"
             >
-              {{ product.variant }}
+              Quantity: {{ product.quantity }}
             </p>
-            <p class="text-grey-darker">Quantity: {{ product.quantity }}</p>
           </div>
-          <p class="flex-none font-semibold">
-            {{ product.line_price }}
-          </p>
+          <p
+            class="flex-none font-semibold"
+            v-text="product.line_price"
+          />
         </li>
       </ul>
 
-      <dl class="space-y-2 border-t border-secondary pt-3">
+      <dl
+        v-if="
+          !order.is_digital_only || (order.is_digital_only && order.discount)
+        "
+        class="space-y-2 border-t border-secondary pt-3"
+      >
         <div class="flex justify-between">
           <dt class="font-semibold">Subtotal</dt>
           <dd v-text="order.subtotal" />
@@ -115,7 +143,10 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
           <dd v-text="`-${order.discount.amount}`" />
         </div>
 
-        <div class="flex justify-between">
+        <div
+          v-if="!order.is_digital_only"
+          class="flex justify-between"
+        >
           <dt class="font-semibold">Postage</dt>
           <dd v-text="order.postage" />
         </div>
@@ -128,8 +159,11 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
         </div>
       </dl>
 
-      <dl class="grid gap-4 border-t border-secondary pt-4 xs:grid-cols-2">
-        <div>
+      <dl
+        class="grid gap-4 border-t border-secondary pt-4 xs:grid-cols-2"
+        :class="order.is_digital_only ? 'xs:grid-cols-4' : ''"
+      >
+        <div v-if="!order.is_digital_only">
           <dt class="text-lg font-semibold text-primary-dark">
             Shipping Address
           </dt>
@@ -145,7 +179,9 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
           </dd>
         </div>
 
-        <div>
+        <div
+          :class="order.is_digital_only ? 'xs:col-span-2 xs:col-start-2' : ''"
+        >
           <dt class="text-lg font-semibold text-primary-dark">
             Payment Information
           </dt>

@@ -6,6 +6,7 @@ namespace Tests\Unit\Actions\Shop;
 
 use App\Actions\Shop\AlterItemQuantityAction;
 use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
+use App\Enums\Shop\ProductVariantType;
 use App\Exceptions\QuantityException;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
@@ -88,6 +89,16 @@ class AlterItemQuantityActionTest extends TestCase
     }
 
     #[Test]
+    public function itDoesntUpdateTheRemainingVariantQuantityWhenCallingToIncreaseWhenTheVariantIsDigitalOnly(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::DIGITAL]);
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'increase');
+
+        $this->assertEquals(1, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
     public function itCallsTheCheckIfBasketHasDigitalProductsActionWhenCallingToIncrease(): void
     {
         $this->mock(CheckIfBasketHasDigitalProductsAction::class)
@@ -117,6 +128,16 @@ class AlterItemQuantityActionTest extends TestCase
         $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
 
         $this->assertEquals(2, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function itDoesntUpdateTheRemainingVariantQuantityWhenCallingToDecreaseWhenTheItemIsDigitalOnly(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::DIGITAL]);
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
+
+        $this->assertEquals(1, $this->variant->refresh()->quantity);
     }
 
     #[Test]

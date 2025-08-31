@@ -11,7 +11,7 @@
         "algolia/algoliasearch-client-php": "^3.4.2",
         "algolia/scout-extended": "^3.2.2",
         "aws/aws-sdk-php": "3.351.9",
-        "coeliacsanctuary/advanced-nova-media-library": "^1.1",
+        "coeliacsanctuary/advanced-nova-media-library": "^1.2",
         "coeliacsanctuary/nova-field-sortable": "^1.0.2",
         "dompdf/dompdf": "^2.0.8",
         "guzzlehttp/guzzle": "^7.9.3",

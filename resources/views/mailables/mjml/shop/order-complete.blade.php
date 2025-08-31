@@ -1,6 +1,8 @@
 @php
     use App\Models\Shop\ShopOrder;
     /** @var ShopOrder $order */
+
+$newOrder = true;
 @endphp
 
 @extends('mailables.mjml.shop.layout')
@@ -10,7 +12,7 @@
 @endsection
 
 @section('intro')
-    <mj-text mj-class="inner">Hey {{ $order->address->name }}</mj-text>
+    <mj-text mj-class="inner">Hey {{ $order->address->name ?? $order->customer->name }}</mj-text>
     <mj-text mj-class="inner">
         Thanks a bunch for your recent order at the Coeliac Sanctuary shop! Check out the details of your order
         below.

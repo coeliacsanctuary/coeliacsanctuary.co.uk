@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Order\Done;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\GetPaymentIntentAction;
 use App\Actions\Shop\GetStripeChargeAction;
 use App\Actions\Shop\MarkOrderAsPaidAction;
@@ -14,6 +13,7 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPayment;
 use Illuminate\Support\Facades\Event;
 use Inertia\Testing\AssertableInertia as Assert;
+use PHPUnit\Framework\Attributes\Test;
 use Stripe\Charge;
 use Stripe\PaymentIntent;
 use Tests\Concerns\MocksStripe;
@@ -156,8 +156,6 @@ class ShowControllerTest extends TestCase
     {
         $this->mockRetrievePaymentIntent('foo', params: ['latest_charge' => 'bar']);
         $this->mockRetrieveCharge('bar');
-
-        $this->withoutExceptionHandling();
 
         $this->get(route('shop.basket.done', [
             'payment_intent' => 'foo',

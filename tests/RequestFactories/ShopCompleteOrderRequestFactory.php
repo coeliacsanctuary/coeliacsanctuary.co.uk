@@ -28,4 +28,9 @@ class ShopCompleteOrderRequestFactory extends RequestFactory
             ],
         ];
     }
+
+    public function digitalOnly(): self
+    {
+        return $this->without('shipping');
+    }
 }

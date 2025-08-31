@@ -92,6 +92,9 @@ const removeItem = (item: ShopBasketItem) => {
                   class="font-semibold hover:text-primary-dark"
                 >
                   {{ item.title }}
+                  <template v-if="item.variant !== ''">
+                    - {{ item.variant }}
+                  </template>
                 </Link>
               </h3>
               <p
@@ -101,20 +104,30 @@ const removeItem = (item: ShopBasketItem) => {
             </div>
 
             <p
-              v-if="item.variant !== ''"
+              v-if="item.description"
               class="mt-1 text-sm text-gray-500"
-              v-text="item.variant"
+              v-text="item.description"
             />
           </div>
 
           <div class="flex flex-1 items-center justify-between">
-            <div class="flex flex-1 items-center space-x-1">
+            <div
+              v-if="item.variant_type !== 'digital'"
+              class="flex flex-1 items-center space-x-1"
+            >
               <p>Quantity</p>
 
               <QuantitySwitcher
                 :quantity="item.quantity"
                 @alter="(mode) => alterQuantity(item, mode)"
               />
+            </div>
+
+            <div
+              v-else
+              class="flex flex-1 items-center space-x-1 text-sm font-semibold"
+            >
+              Please note, this is a digital product only.
             </div>
 
             <CoeliacButton

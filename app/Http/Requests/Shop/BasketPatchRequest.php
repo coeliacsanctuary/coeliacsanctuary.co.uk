@@ -6,6 +6,7 @@ namespace App\Http\Requests\Shop;
 
 use App\Actions\Shop\VerifyDiscountCodeAction;
 use App\Enums\Shop\OrderState;
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
@@ -55,16 +56,23 @@ class BasketPatchRequest extends FormRequest
 
                 $itemInBasket = ShopOrderItem::query()
                     ->where('id', $this->integer('item_id'))
+                    ->with(['variant'])
                     ->whereRelation('order', function (Builder $builder) {
                         /** @var Builder<ShopOrder> $builder */
                         return $builder
                             ->where('state_id', OrderState::BASKET)
                             ->where('token', $this->cookie('basket_token'));
                     })
-                    ->exists();
+                    ->first();
 
                 if ( ! $itemInBasket) {
                     $validator->errors()->add('item_id', "This product isn't in your basket");
+
+                    return;
+                }
+
+                if($itemInBasket->variant->variant_type === ProductVariantType::DIGITAL) {
+                    $validator->errors()->add('item_id', "This product can't be altered");
                 }
             },
 

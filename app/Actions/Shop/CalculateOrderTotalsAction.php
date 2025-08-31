@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopPostagePrice;
 use App\Models\Shop\ShopProduct;
@@ -18,11 +19,21 @@ class CalculateOrderTotalsAction
      * @param  Collection<int, ShopOrderItemResource>  $items
      * @return array{subtotal: int, postage: int}
      */
-    public function handle(Collection $items, ShopPostageCountry $country): array
+    public function handle(ShopOrder $basket, Collection $items, ShopPostageCountry $country): array
     {
         /** @var int $subtotal */
         $subtotal = $items->map(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity)->sum();
 
+        $postage = $basket->is_digital_only ? 0 : $this->calculatePostagePrice($items, $country);
+
+        return [
+            'subtotal' => $subtotal,
+            'postage' => $postage,
+        ];
+    }
+
+    protected function calculatePostagePrice(Collection $items, ShopPostageCountry $country): int
+    {
         $shippingMethod = $items->max(function (ShopOrderItemResource $resource) {
             /** @var ShopProduct $product */
             $product = $resource->product;
@@ -45,11 +56,6 @@ class CalculateOrderTotalsAction
             ->orderBy('max_weight')
             ->firstOr(fn () => throw new RuntimeException('Can not calculate postage'));
 
-        $postage = $postagePrice->price;
-
-        return [
-            'subtotal' => $subtotal,
-            'postage' => $postage,
-        ];
+        return $postagePrice->price;
     }
 }
