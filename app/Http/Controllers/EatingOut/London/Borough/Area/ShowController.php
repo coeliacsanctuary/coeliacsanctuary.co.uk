@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\EatingOut\London\Borough\Area;
 
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
@@ -66,6 +67,13 @@ class ShowController
             ->metaDescription("Coeliac Sanctuary gluten free places in the {$area->area}, {$borough->town} London | Places can cater to Coeliac and Gluten Free diets in {$borough->town}, {$county->county}!")
             ->metaTags(array_unique(array_merge($area->keywords(), $borough->keywords())))
             ->metaImage($getOpenGraphImageAction->handle($area))
+            ->breadcrumbs(collect([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Eating Out', route('eating-out.index')),
+                new BreadcrumbItemData('London', route('eating-out.london')),
+                new BreadcrumbItemData($borough->town, route('eating-out.london.borough', $borough)),
+                new BreadcrumbItemData($area->area),
+            ]))
             ->render('EatingOut/LondonArea', [
                 'area' => fn () => new LondonAreaPageResource($area),
                 'alternateAreas' => fn () => $otherAreas,

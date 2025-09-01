@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\Category;
 
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\Shop\ShopCategory;
 use App\Resources\Shop\ShopCategoryIndexResource;
@@ -25,6 +26,11 @@ class ShowController
             ->metaDescription($category->meta_description)
             ->metaTags(explode(',', $category->meta_keywords))
             ->metaImage($category->social_image)
+            ->breadcrumbs(collect([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Shop', route('shop.index')),
+                new BreadcrumbItemData($category->title),
+            ]))
             ->render('Shop/Category', [
                 'category' => new ShopCategoryIndexResource($category),
                 'products' => ShopProductIndexResource::collection($products),

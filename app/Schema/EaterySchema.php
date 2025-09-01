@@ -122,12 +122,13 @@ class EaterySchema
     {
         $reviewSchema = Schema::review()
             ->reviewBody($review->review)
+            ->author($isAdmin ? $this->getCoeliacOrganisation() : Schema::person()->name($review->name ?? 'Anonymous'))
             ->reviewRating(
                 Schema::rating()
                     ->bestRating(5)
                     ->worstRating(1)
                     ->ratingValue($review->rating)
-                    ->author($isAdmin ? $this->getCoeliacOrganisation() : Schema::person()->name((string)$review->name))
+                    ->author($isAdmin ? $this->getCoeliacOrganisation() : Schema::person()->name($review->name ?? 'Anonymous'))
             );
 
         /** @phpstan-ignore-next-line  */

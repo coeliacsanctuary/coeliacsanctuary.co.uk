@@ -134,6 +134,8 @@ export type TownEatery = Eatery & {
   isNationwideBranch?: boolean;
   branch?: EateryNationwideBranch;
   distance?: number;
+  last_updated: string;
+  last_updated_human: string;
 };
 
 export type EateryLocation = LatLng & {
