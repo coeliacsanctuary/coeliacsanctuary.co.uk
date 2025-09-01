@@ -7,8 +7,10 @@ namespace App\Http\Response;
 use App\Actions\GetPopupCtaAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Actions\Shop\ResolveBasketAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Models\Announcement;
 use App\Resources\Shop\ShopOrderItemResource;
+use App\Schema\BreadcrumbSchema;
 use App\Support\Helpers;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
@@ -25,6 +27,8 @@ use Spatie\SchemaOrg\Schema;
 class Inertia
 {
     protected bool $hasSchema = false;
+
+    protected array $schema = [];
 
     public function __construct()
     {
@@ -50,6 +54,8 @@ class Inertia
         if (Request::hasCookie('basket_token') && ! Request::routeIs('shop.basket.checkout')) {
             $this->includeBasket();
         }
+
+        $this->schema = [$this->baseSchema()];
 
         $this->loadAnnouncement();
     }
@@ -95,9 +101,19 @@ class Inertia
 
         $schema = Arr::wrap($schema);
 
-        $schema = Arr::prepend($schema, $this->baseSchema());
+        $this->schema = array_merge($this->schema, $schema);
 
-        BaseInertia::share('meta.schema', $schema);
+        BaseInertia::share('meta.schema', fn () => $this->schema);
+
+        return $this;
+    }
+
+    /** @param Collection<int, BreadcrumbItemData> $breadcrumbs */
+    public function breadcrumbs(Collection $breadcrumbs): self
+    {
+        $schema = BreadcrumbSchema::make($breadcrumbs);
+
+        $this->schema($schema->toScript());
 
         return $this;
     }

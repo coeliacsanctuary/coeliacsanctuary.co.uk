@@ -39,6 +39,8 @@ class ApproveReview extends Action
                 'invalidated' => true,
             ]);
 
+            $review->eatery->touch();
+
             (new AnonymousNotifiable())
                 ->route('mail', [$review->email => $review->name])
                 ->notify(new EateryReviewApprovedNotification($review));

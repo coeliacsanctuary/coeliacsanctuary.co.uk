@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Recipes;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Recipes\GetRecipeFiltersForIndexAction;
 use App\Actions\Recipes\GetRecipesForIndexAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
@@ -40,6 +41,10 @@ class IndexController
             ->metaTags(['coeliac sanctuary recipes', 'recipe index', 'recipe list', 'gluten free recipes', 'recipes', 'coeliac recipes'])
             ->metaImage($getOpenGraphImageForRouteAction->handle('recipe'))
             ->metaFeed(route('recipe.feed'))
+            ->breadcrumbs(collect([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Recipes'),
+            ]))
             ->render('Recipe/Index', [
                 'recipes' => fn () => $getRecipesForIndexAction->handle($filters),
                 'features' => fn () => $getRecipeFiltersForIndexAction->handle(RecipeFeature::class, $filters),
