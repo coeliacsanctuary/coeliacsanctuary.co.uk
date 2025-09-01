@@ -56,13 +56,21 @@ onMounted(() => {
   <div class="relative flex min-h-screen flex-col bg-gray-100">
     <CoeliacHeader :metas="meta" />
 
+    <div
+      class="h-0 overflow-hidden"
+      data-ad-break="off"
+    />
+
     <ShopBasketHeader v-if="isShop" />
 
-    <section
-      class="mx-auto mb-3 flex w-full max-w-8xl flex-1 flex-col space-y-4"
-    >
+    <div
+      class="h-0 overflow-hidden"
+      data-ad-break="off"
+    />
+
+    <main class="mx-auto mb-3 flex w-full max-w-8xl flex-1 flex-col space-y-4">
       <slot />
-    </section>
+    </main>
 
     <CoeliacFooter />
 
