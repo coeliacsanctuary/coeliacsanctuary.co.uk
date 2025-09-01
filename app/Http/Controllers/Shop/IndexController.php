@@ -29,10 +29,10 @@ class IndexController
                 'gluten free stickers', 'gluten free wristbands', 'gluten free waterproof stickers', 'coeliac shop',
             ])
             ->metaImage($getOpenGraphImageForRouteAction->handle('shop'))
-            ->breadcrumbs(collect(array_filter([
+            ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Shop'),
-            ])))
+            ]))
             ->render('Shop/Index', [
                 'categories' => ShopCategoryIndexResource::collection($categories),
             ]);

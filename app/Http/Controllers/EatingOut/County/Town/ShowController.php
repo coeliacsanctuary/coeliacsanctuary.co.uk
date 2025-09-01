@@ -17,10 +17,6 @@ use App\Services\EatingOut\Filters\GetFiltersForTown;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Inertia\Response;
-use Spatie\SchemaOrg\ItemList;
-use Spatie\SchemaOrg\ListItem;
-use Spatie\SchemaOrg\LocalBusiness;
-use Spatie\SchemaOrg\PostalAddress;
 
 class ShowController
 {
@@ -45,6 +41,9 @@ class ShowController
 
         $pipeline = $getEateriesPipeline->run($town, $filters);
 
+        /** @var Collection<int, PendingEatery> $eateries */
+        $eateries = $getEateriesPipeline->rawData()->eateries;
+
         return $inertia
             ->title("Gluten Free Places to Eat in {$town->town}, {$county->county}")
             ->metaDescription("Coeliac Sanctuary gluten free places in {$town->town}, {$county->county} | Places can cater to Coeliac and Gluten Free diets in {$town->town}, {$county->county}!")
@@ -56,7 +55,7 @@ class ShowController
                 new BreadcrumbItemData($county->county, route('eating-out.county', $county)),
                 new BreadcrumbItemData($town->town),
             ]))
-            ->schema(PendingEaterySchema::make($getEateriesPipeline->rawData()->eateries, $town->town)->toScript())
+            ->schema(PendingEaterySchema::make($eateries, $town->town)->toScript())
             ->render('EatingOut/Town', [
                 'town' => fn () => new TownPageResource($town),
                 'eateries' => $pipeline,

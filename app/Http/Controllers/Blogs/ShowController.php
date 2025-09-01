@@ -29,11 +29,11 @@ class ShowController
                 'article.tags' => $blog->meta_tags,
             ])
             ->schema($blog->schema()->toScript())
-            ->breadcrumbs(collect(array_filter([
+            ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Blogs', route('blog.index')),
                 new BreadcrumbItemData($blog->title),
-            ])))
+            ]))
             ->metaFeed(route('blog.feed'))
             ->render('Blog/Show', [
                 'blog' => new BlogShowResource($blog),

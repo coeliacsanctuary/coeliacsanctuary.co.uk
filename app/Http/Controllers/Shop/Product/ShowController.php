@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Shop\Product;
 use App\DataObjects\BreadcrumbItemData;
 use App\Http\Requests\Shop\ProductShowRequest;
 use App\Http\Response\Inertia;
+use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopProduct;
 use App\Resources\Shop\ShopProductResource;
 use App\Resources\Shop\ShopProductReviewResource;
@@ -51,18 +52,21 @@ class ShowController
             ->latest()
             ->paginate(7);
 
+        /** @var ShopCategory $primaryCategory */
+        $primaryCategory = $product->categories->first();
+
         return $inertia
             ->title($product->title)
             ->metaDescription($product->meta_description)
             ->metaTags(explode(',', $product->meta_keywords))
             ->metaImage($product->social_image)
             ->schema($product->schema()->toScript())
-            ->breadcrumbs(collect(array_filter([
+            ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Shop', route('shop.index')),
-                new BreadcrumbItemData($product->categories->first()->title, route('shop.category', $product->categories->first())),
+                new BreadcrumbItemData($primaryCategory->title, route('shop.category', $primaryCategory)),
                 new BreadcrumbItemData($product->title),
-            ])))
+            ]))
             ->render('Shop/Product', [
                 'product' => new $resource($product),
                 'reviews' => fn () => ShopProductReviewResource::collection($reviews),

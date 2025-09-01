@@ -40,10 +40,11 @@ class IndexController
             ->metaDescription('Coeliac Sanctuary gluten free recipe list, all of our fabulous gluten free recipes which I have been tried and tested! ')
             ->metaTags(['coeliac sanctuary recipes', 'recipe index', 'recipe list', 'gluten free recipes', 'recipes', 'coeliac recipes'])
             ->metaImage($getOpenGraphImageForRouteAction->handle('recipe'))
-            ->metaFeed(route('recipe.feed'))            ->breadcrumbs(collect(array_filter([
+            ->metaFeed(route('recipe.feed'))
+            ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Recipes'),
-            ])))
+            ]))
             ->render('Recipe/Index', [
                 'recipes' => fn () => $getRecipesForIndexAction->handle($filters),
                 'features' => fn () => $getRecipeFiltersForIndexAction->handle(RecipeFeature::class, $filters),

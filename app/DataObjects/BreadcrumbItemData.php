@@ -9,5 +9,6 @@ final readonly class BreadcrumbItemData
     public function __construct(
         public string $title,
         public ?string $url = null,
-    ) {}
+    ) {
+    }
 }

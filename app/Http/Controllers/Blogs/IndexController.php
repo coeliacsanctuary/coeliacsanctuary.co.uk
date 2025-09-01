@@ -28,10 +28,10 @@ class IndexController
             ->metaTags(['coeliac sanctuary blog', 'blog', 'coeliac blog', 'gluten free blog', ...($tag->exists ? ["{$tag->tag} blogs"] : [])])
             ->metaImage($getOpenGraphImageForRouteAction->handle('blog'))
             ->metaFeed(route('blog.feed'))
-            ->breadcrumbs(collect(array_filter([
+            ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Blogs'),
-            ])))
+            ]))
             ->render('Blog/Index', [
                 'blogs' => fn () => $getBlogsForBlogIndexAction->handle($tag),
                 'tags' => Inertia::defer(fn () => $getBlogTagsAction->handle()),

@@ -40,11 +40,11 @@ class ShowController
                 'article.tags' => $recipe->meta_tags,
             ])
             ->metaFeed(route('recipe.feed'))
-            ->breadcrumbs(collect(array_filter([
+            ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Recipes', route('recipe.index')),
                 new BreadcrumbItemData($recipe->title),
-            ])))
+            ]))
             ->render('Recipe/Show', [
                 'recipe' => new RecipeShowResource($recipe),
                 'comments' => fn () => $getCommentsForItemAction->handle($recipe),
