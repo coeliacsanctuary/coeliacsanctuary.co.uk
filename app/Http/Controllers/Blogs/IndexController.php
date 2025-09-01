@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Blogs;
 use App\Actions\Blogs\GetBlogsForBlogIndexAction;
 use App\Actions\Blogs\GetBlogTagsAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\Blogs\BlogTag;
 use Illuminate\Support\Str;
@@ -27,6 +28,10 @@ class IndexController
             ->metaTags(['coeliac sanctuary blog', 'blog', 'coeliac blog', 'gluten free blog', ...($tag->exists ? ["{$tag->tag} blogs"] : [])])
             ->metaImage($getOpenGraphImageForRouteAction->handle('blog'))
             ->metaFeed(route('blog.feed'))
+            ->breadcrumbs(collect(array_filter([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Blogs'),
+            ])))
             ->render('Blog/Index', [
                 'blogs' => fn () => $getBlogsForBlogIndexAction->handle($tag),
                 'tags' => Inertia::defer(fn () => $getBlogTagsAction->handle()),

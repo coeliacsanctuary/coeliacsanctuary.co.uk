@@ -8,6 +8,7 @@ use App\Actions\EatingOut\ComputeEateryBackLinkAction;
 use App\Actions\EatingOut\GetNearbyEateriesAction;
 use App\Actions\EatingOut\LoadCompleteEateryDetailsForRequestAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
@@ -63,6 +64,14 @@ class GetController
             ->metaTags($eatery->keywords())
             ->metaImage($getOpenGraphImageAction->handle($eatery))
             ->schema($eatery->schema()->toScript())
+            ->breadcrumbs(collect(array_filter([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Eating Out', route('eating-out.index')),
+                $county->exists ? new BreadcrumbItemData($county->county, route('eating-out.county', $county)) : null,
+                $county->exists ? new BreadcrumbItemData($town->town, route('eating-out.town', ['county' => $county, 'town' => $town])) : null,
+                $area->exists ? new BreadcrumbItemData($area->area, route('eating-out.london.borough.area', ['borough' => $town, 'area' => $area])) : null,
+                new BreadcrumbItemData($eatery->full_name),
+            ])))
             ->render('EatingOut/Details', [
                 'eatery' => fn () => new EateryDetailsResource($eatery),
                 'previous' => $previous,

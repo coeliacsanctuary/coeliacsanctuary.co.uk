@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Recipes;
 
 use App\Actions\Comments\GetCommentsForItemAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\Recipes\Recipe;
 use App\Resources\Recipes\RecipeShowResource;
@@ -39,6 +40,11 @@ class ShowController
                 'article.tags' => $recipe->meta_tags,
             ])
             ->metaFeed(route('recipe.feed'))
+            ->breadcrumbs(collect(array_filter([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Recipes', route('recipe.index')),
+                new BreadcrumbItemData($recipe->title),
+            ])))
             ->render('Recipe/Show', [
                 'recipe' => new RecipeShowResource($recipe),
                 'comments' => fn () => $getCommentsForItemAction->handle($recipe),

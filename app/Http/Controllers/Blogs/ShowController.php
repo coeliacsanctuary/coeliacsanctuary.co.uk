@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Blogs;
 
 use App\Actions\Comments\GetCommentsForItemAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\Blogs\Blog;
 use App\Resources\Blogs\BlogShowResource;
@@ -28,6 +29,11 @@ class ShowController
                 'article.tags' => $blog->meta_tags,
             ])
             ->schema($blog->schema()->toScript())
+            ->breadcrumbs(collect(array_filter([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Blogs', route('blog.index')),
+                new BreadcrumbItemData($blog->title),
+            ])))
             ->metaFeed(route('blog.feed'))
             ->render('Blog/Show', [
                 'blog' => new BlogShowResource($blog),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\Product;
 
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Requests\Shop\ProductShowRequest;
 use App\Http\Response\Inertia;
 use App\Models\Shop\ShopProduct;
@@ -56,6 +57,12 @@ class ShowController
             ->metaTags(explode(',', $product->meta_keywords))
             ->metaImage($product->social_image)
             ->schema($product->schema()->toScript())
+            ->breadcrumbs(collect(array_filter([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Shop', route('shop.index')),
+                new BreadcrumbItemData($product->categories->first()->title, route('shop.category', $product->categories->first())),
+                new BreadcrumbItemData($product->title),
+            ])))
             ->render('Shop/Product', [
                 'product' => new $resource($product),
                 'reviews' => fn () => ShopProductReviewResource::collection($reviews),

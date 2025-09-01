@@ -107,10 +107,14 @@ const reloadEateries = () => {
 
   <Card class="mt-3 flex flex-col space-y-4">
     <p class="prose-md prose max-w-none lg:prose-lg">
-      In our comprehensive eating out guide, you will find a wide range of
-      gluten-free options available at various locations in
-      <span class="font-semibold">{{ town.name }}, {{ town.county.name }}</span
-      >. From cafes, restaurants, attractions, to hotels, we've got you covered.
+      Looking for gluten free in {{ town.name }}? In our comprehensive eating
+      out guide, you will find a wide range of gluten free options available at
+      various locations in
+      <span
+        class="font-semibold"
+        v-text="town.name"
+      />. From cafes, restaurants, attractions, to hotels, we've got you
+      covered.
     </p>
 
     <p class="prose-md prose max-w-none lg:prose-lg">
