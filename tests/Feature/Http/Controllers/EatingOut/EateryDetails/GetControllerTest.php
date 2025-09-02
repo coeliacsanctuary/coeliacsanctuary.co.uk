@@ -267,8 +267,8 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($eatery) {
-                $this->assertTrue($this->eatery->is($eatery));
+            ->withArgs(function ($branch) {
+                $this->assertTrue($this->nationwideBranch->is($branch));
 
                 return true;
             })
