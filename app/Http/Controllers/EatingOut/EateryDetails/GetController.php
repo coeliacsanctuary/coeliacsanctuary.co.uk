@@ -76,7 +76,7 @@ class GetController
                 'eatery' => fn () => new EateryDetailsResource($eatery),
                 'previous' => $previous,
                 'name' => $name,
-                'nearbyEateries' => Inertia::defer(fn () => $getNearbyEateriesAction->handle($eatery)),
+                'nearbyEateries' => Inertia::defer(fn () => $getNearbyEateriesAction->handle($nationwideBranch->exists ? $nationwideBranch : $eatery)),
             ])
             ->toResponse($request)
             ->setStatusCode($eatery->closed_down ? Response::HTTP_GONE : Response::HTTP_OK);

@@ -36,8 +36,18 @@ class ComputeEateryBackLinkAction
             'eating-out.search.show', 'search.index' => 'Back to search results',
             'eating-out.index' => 'Back to eating out guide',
             'eating-out.town', 'eating-out.london.borough' => "Back to {$town->town}",
+            'eating-out.show' => 'Back to {eatery}',
             default => $area ? "Back to {$area->area}" : "Back to {$town->town}"
         };
+
+        if ($name === 'Back to {eatery}') {
+            $eatery = $town->eateries()
+                ->where('slug', $route?->parameter('eatery'))
+                ->whereNot('slug', $eatery->slug)
+                ->first();
+
+            $name = $eatery ? "Back to {$eatery->name}" : "Back to {$town->town}";
+        }
 
         if ($name === "Back to {$town->town}") {
             $previous = $town->absoluteLink();
