@@ -103,7 +103,10 @@ export default {
      * Set the initial, internal value for the field.
      */
     setInitialValue() {
-      this.value = JSON.parse(this.field.value);
+      this.value =
+        typeof this.field.value === 'string'
+          ? JSON.parse(this.field.value)
+          : this.field.value;
 
       this.address = this.value.address;
 

@@ -68,8 +68,12 @@ class AddressField extends Field
         return count(array_filter($value)) === 0;
     }
 
-    //    public function resolveDefaultCallback(NovaRequest $request): mixed
-    //    {
-    //        return \call_user_func($this->defaultCallback, $request);
-    //    }
+    public function resolveDefaultCallback(NovaRequest $request): mixed
+    {
+        if ( ! $this->defaultCallback) {
+            return parent::resolveDefaultCallback($request);
+        }
+
+        return call_user_func($this->defaultCallback, $request);
+    }
 }
