@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Nova\Dashboards;
 
+use App\Nova\Chartables\EateryRatings;
+use App\Nova\Chartables\EmailsSent;
 use App\Nova\Metrics\Comments;
 use App\Nova\Metrics\PlaceRequests;
 use App\Nova\Metrics\Ratings;
@@ -23,13 +25,11 @@ class Main extends Dashboard
     public function cards()
     {
         return [
-            Comments::make(),
-            Ratings::make(),
-            PlaceRequests::make(),
-            //            EmailsSent::make(),
-            ApexChart::make(\App\Nova\Chartables\EmailsSent::class)->fullWidth(),
-            ApexChart::make(\App\Nova\Chartables\EateryRatings::class)->fullWidth(),
-            //            EateryRatings::make(),
+            Comments::make()->route('nova.pages.index', ['resource' => 'comments']),
+            Ratings::make()->route('nova.pages.index', ['resource' => 'reviews']),
+            PlaceRequests::make()->route('nova.pages.index', ['resource' => 'place-recomendations']),
+            ApexChart::make(EmailsSent::class)->fullWidth(),
+            ApexChart::make(EateryRatings::class)->fullWidth(),
         ];
     }
 }
