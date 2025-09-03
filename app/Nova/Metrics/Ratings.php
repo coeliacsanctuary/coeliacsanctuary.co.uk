@@ -7,9 +7,12 @@ namespace App\Nova\Metrics;
 use App\Models\EatingOut\EateryReview;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
+use SaintSystems\Nova\LinkableMetrics\LinkableValue;
 
 class Ratings extends Value
 {
+    use LinkableValue;
+
     public $icon = 'star';
 
     /**

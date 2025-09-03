@@ -42,7 +42,7 @@ class ApproveReview extends Action
             $review->eatery->touch();
 
             (new AnonymousNotifiable())
-                ->route('mail', [$review->email => $review->name])
+                ->route('mail', $review->email)
                 ->notify(new EateryReviewApprovedNotification($review));
         });
     }

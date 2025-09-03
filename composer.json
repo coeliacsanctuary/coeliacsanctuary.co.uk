@@ -47,6 +47,7 @@
         "moneyphp/money": "^4.7.1",
         "nesbot/carbon": "^3.10.2",
         "openai-php/laravel": "^0.11",
+        "saintsystems/nova-linkable-metrics": "^5.0",
         "spatie/browsershot": "^4.4",
         "spatie/eloquent-sortable": "^4.5.0",
         "spatie/geocoder": "^3.16.1",
