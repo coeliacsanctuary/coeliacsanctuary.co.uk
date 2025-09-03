@@ -9,8 +9,6 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class MjmlMessage extends MailMessage
 {
-    //    use StoresMail;
-
     public string $mjml;
 
     public static function make(?string $view = null, array|EmailDataCast $data = []): self
@@ -29,8 +27,6 @@ class MjmlMessage extends MailMessage
         $this->mjml = $this->view = $view;
         $this->markdown = null;
         $this->viewData = (array) $data;
-
-        //        $this->store();
 
         return $this;
     }

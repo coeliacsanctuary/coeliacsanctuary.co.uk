@@ -113,9 +113,9 @@ class Recipe extends Resource
 
             HasOne::make('Nutritional Information', 'nutrition', RecipeNutritionalInformation::class)->onlyOnForms()->fullWidth(),
 
-            new Panel('Free From', [
+            new Panel('Allergens', [
                 PolymorphicPanel::make('Allergens', new RecipeAllergenPanel())->display('row'),
-            ]),
+            ])->help('Tick the allergens that apply to this recipe.'),
 
             new Panel('Meals', [
                 PolymorphicPanel::make('Meals', new RecipeMealPanel())->display('row'),

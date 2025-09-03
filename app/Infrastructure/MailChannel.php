@@ -6,7 +6,6 @@ namespace App\Infrastructure;
 
 use App\Models\NotificationEmail;
 use App\Models\Shop\ShopCustomer;
-use App\Models\TempMailcoachMail;
 use Illuminate\Mail\SentMessage;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
@@ -50,7 +49,6 @@ class MailChannel extends BaseMailChannel
 
         $notification->setKey($model->key);
 
-
         return parent::send($notifiable, $notification);
     }
 
@@ -58,8 +56,6 @@ class MailChannel extends BaseMailChannel
     {
         /** @phpstan-ignore-next-line  */
         $rawMessage = view($message->mjml, $message->data())->render();
-
-        //        return $rawMessage;
 
         return app(Mjml::class)
             ->sidecar()
@@ -73,10 +69,6 @@ class MailChannel extends BaseMailChannel
      */
     protected function buildView($message)
     {
-        //        $content = TempMailcoachMail::query()->create([
-        //            'message' => new HtmlString($this->buildMjml($message)),
-        //        ]);
-
         return ['html' => new HtmlString($this->buildMjml($message))];
     }
 }
