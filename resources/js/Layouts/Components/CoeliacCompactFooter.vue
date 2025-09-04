@@ -4,6 +4,7 @@ import TwitterIcon from '@/Icons/TwitterIcon.vue';
 import InstagramIcon from '@/Icons/InstagramIcon.vue';
 import { Link } from '@inertiajs/vue3';
 import BlueskyIcon from '@/Icons/BlueskyIcon.vue';
+import TiktokIcon from '@/Icons/TiktokIcon.vue';
 
 const year = new Date().getFullYear();
 
@@ -65,6 +66,12 @@ const navigation: { links: { label: string; url: string }[] } = {
           target="_blank"
         >
           <TwitterIcon />
+        </a>
+        <a
+          href="https://www.tiktok.com/@coeliac.sanctuary"
+          target="_blank"
+        >
+          <TiktokIcon />
         </a>
       </div>
     </div>
