@@ -17,7 +17,7 @@ class ShopCategoryIndexResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'link' => $this->link,
-            'image' => $this->main_image,
+            'image' => $this->main_image_as_webp ?? $this->main_image,
             'travelCardSearch' => $this->id === 1 || $this->id === 11,
         ];
     }

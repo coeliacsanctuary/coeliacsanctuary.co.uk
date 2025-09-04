@@ -177,12 +177,25 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
         $this->addMediaCollection('primary')->singleFile();
     }
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if ( ! $media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary')
+            ->nonQueued()
+            ->format('webp');
+    }
+
     /** @return Attribute<non-falsy-string | null, never> */
     public function image(): Attribute
     {
         return Attribute::get(function () { /** @phpstan-ignore-line */
             try {
-                return $this->main_image;
+                return $this->main_image_as_webp;
             } catch (Error $exception) { /** @phpstan-ignore-line */
                 return null;
             }

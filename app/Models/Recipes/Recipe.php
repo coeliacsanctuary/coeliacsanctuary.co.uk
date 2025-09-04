@@ -103,6 +103,19 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         $this->addMediaCollection('body');
     }
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if ( ! $media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary', 'square')
+            ->nonQueued()
+            ->format('webp');
+    }
+
     /** @return BelongsToMany<RecipeAllergen, $this> */
     public function allergens(): BelongsToMany
     {

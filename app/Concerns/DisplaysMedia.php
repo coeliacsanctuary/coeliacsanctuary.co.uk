@@ -12,8 +12,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 /**
  * @property string $main_image
+ * @property string $main_image_as_webp
  * @property string $social_image
  * @property string $square_image
+ * @property string $square_image_as_webp
  * @property string $first_image
  *
  * @mixin HasMedia
@@ -49,6 +51,24 @@ trait DisplaysMedia
         });
     }
 
+    /**
+     * @return Attribute<string, never>
+     *
+     * @throws Exception
+     */
+    public function mainImageAsWebp(): Attribute
+    {
+        return Attribute::get(function () {
+            /** @var MediaCollection<int, Media> $collection */
+            $collection = $this->getMedia('primary');
+
+            /** @var Media $item */
+            $item = $collection->first();
+
+            return $item->getUrl('webp');
+        });
+    }
+
     /** @return Attribute<string, never> */
     public function socialImage(): Attribute
     {
@@ -71,6 +91,17 @@ trait DisplaysMedia
             $collection = $this->getMedia('square');
 
             return isset($collection[0]) ? $collection[0]->getUrl() : null;
+        });
+    }
+
+    /** @return Attribute<string | null, never> */
+    public function squareImageAsWebp(): Attribute
+    {
+        return Attribute::get(function () {
+            /** @var MediaCollection<int, Media> $collection */
+            $collection = $this->getMedia('square');
+
+            return isset($collection[0]) ? $collection[0]->getUrl('webp') : null;
         });
     }
 }
