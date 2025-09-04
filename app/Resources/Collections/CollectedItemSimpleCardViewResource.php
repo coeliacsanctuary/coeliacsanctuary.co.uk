@@ -25,8 +25,8 @@ class CollectedItemSimpleCardViewResource extends JsonResource
             'type' => class_basename($item),
             'title' => $item->title,
             'link' => $item->link,
-            'image' => $item->main_image,
-            'square_image' => $item->square_image,
+            'image' => $item->main_image_as_webp ?? $item->main_image,
+            'square_image' => $item->square_image_as_webp ?? $item->square_image,
         ];
     }
 }
