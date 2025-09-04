@@ -72,7 +72,7 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if (!$media || $media->extension === 'webp') {
+        if ( ! $media || $media->extension === 'webp') {
             return;
         }
 

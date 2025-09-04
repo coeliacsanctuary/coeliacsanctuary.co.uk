@@ -80,7 +80,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if (!$media || $media->extension === 'webp') {
+        if ( ! $media || $media->extension === 'webp') {
             return;
         }
 

@@ -94,7 +94,7 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if (!$media || $media->extension === 'webp') {
+        if ( ! $media || $media->extension === 'webp') {
             return;
         }
 
