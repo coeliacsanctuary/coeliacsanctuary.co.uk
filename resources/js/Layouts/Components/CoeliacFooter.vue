@@ -10,6 +10,7 @@ import useNewsletter from '@/composables/useNewsletter';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import { ref } from 'vue';
 import BlueskyIcon from '@/Icons/BlueskyIcon.vue';
+import TiktokIcon from '@/Icons/TiktokIcon.vue';
 
 const year = new Date().getFullYear();
 
@@ -156,6 +157,12 @@ const { subscribeForm } = useNewsletter();
             target="_blank"
           >
             <TwitterIcon />
+          </a>
+          <a
+            href="https://www.tiktok.com/@coeliac.sanctuary"
+            target="_blank"
+          >
+            <TiktokIcon />
           </a>
         </div>
         <p class="mt-8 text-center text-xs leading-5 sm:mt-0 sm:text-left">
