@@ -51,6 +51,19 @@ class ShopCategory extends Model implements HasMedia
         $this->addMediaCollection('primary')->singleFile();
     }
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if (!$media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary')
+            ->nonQueued()
+            ->format('webp');
+    }
+
     public function getRouteKey()
     {
         return 'slug';

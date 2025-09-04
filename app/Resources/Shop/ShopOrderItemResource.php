@@ -31,7 +31,7 @@ class ShopOrderItemResource extends JsonResource
             'item_price' => Helpers::formatMoney(Money::GBP($this->product_price)),
             'line_price' => Helpers::formatMoney(Money::GBP($this->product_price * $this->quantity)),
             'quantity' => $this->quantity,
-            'image' => $product->main_image,
+            'image' => $product->main_image_as_webp ?? $product->main_image,
         ];
     }
 }

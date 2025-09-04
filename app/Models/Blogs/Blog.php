@@ -92,6 +92,19 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
         $this->addMediaCollection('body');
     }
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if (!$media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary')
+            ->nonQueued()
+            ->format('webp');
+    }
+
     /** @return BelongsToMany<BlogTag, $this> */
     public function tags(): BelongsToMany
     {
