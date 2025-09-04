@@ -50,7 +50,7 @@ class CountyPageResourceTest extends TestCase
 
         $resource = (new CountyPageResource($this->county))->toArray(request());
 
-        $this->assertStringContainsString('county.jpg', $resource['image']);
+        $this->assertStringContainsString('county-webp.webp', $resource['image']);
     }
 
     #[Test]
