@@ -115,6 +115,9 @@ class PaymentProviders extends Chartable
                     'opacityTo'=> 0.8,
                 ],
             ],
+            'dataLabels' => [
+                'enabled' => false,
+            ]
         ];
     }
 }
