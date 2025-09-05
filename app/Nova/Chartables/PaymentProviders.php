@@ -53,7 +53,7 @@ class PaymentProviders extends Chartable
             'Card' => '#DBBC25',
             'Link' => '#80CCFC',
             'PayPal' => '#addaf9',
-            'Apple Pay' => '#787878',
+            'Apple Pay' => '#17a417',
             'Google Pay' => '#237cbd',
         ];
 
@@ -104,6 +104,16 @@ class PaymentProviders extends Chartable
         return [
             'chart' => [
                 'stacked' => true,
+            ],
+            'stroke' => [
+                'curve' => 'monotoneCubic'
+            ],
+            'fill' => [
+                'type'=> 'gradient',
+                'gradient'=> [
+                    'opacityFrom'=> 0.6,
+                    'opacityTo'=> 0.8,
+                ],
             ],
         ];
     }
