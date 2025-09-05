@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Chartables;
 
+use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPaymentRefund;
 use Carbon\Carbon;
@@ -24,6 +25,7 @@ class Income extends Chartable
             ->where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $endDate)
             ->whereNotNull('order_key')
+            ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
             ->with('payment')
             ->get()
             ->map(function (ShopOrder $order) use (&$total): void {

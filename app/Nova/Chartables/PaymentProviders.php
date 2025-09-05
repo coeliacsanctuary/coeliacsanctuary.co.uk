@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Chartables;
 
+use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -23,6 +24,7 @@ class PaymentProviders extends Chartable
         return [ShopOrder::query()
             ->where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $endDate)
+            ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
             ->whereNotNull('order_key')
             ->with('payment')
             ->get()
