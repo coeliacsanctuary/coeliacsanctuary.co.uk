@@ -29,6 +29,7 @@ class ShopIncome extends Trend
                     ])),
                 'total',
             )
+            ->format(['average' => false])
             ->prefix('£')
             ->transform(fn ($value) => $value / 100)
             ->showSumValue();
@@ -60,6 +61,6 @@ class ShopIncome extends Trend
 
     public function name()
     {
-        return "Total Income Over Time Period";
+        return 'Total Income Over Time Period';
     }
 }

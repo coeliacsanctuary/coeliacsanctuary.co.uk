@@ -21,7 +21,9 @@ class ShopDailySales extends Trend
             OrderState::PAID,
             OrderState::READY,
             OrderState::SHIPPED,
-        ]))->showSumValue();
+        ]))
+            ->format(['average' => false])
+            ->showSumValue();
     }
 
     public function ranges()
@@ -47,6 +49,6 @@ class ShopDailySales extends Trend
 
     public function name()
     {
-        return "Total Sales Over Time Period";
+        return 'Total Sales Over Time Period';
     }
 }
