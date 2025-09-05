@@ -15,13 +15,14 @@ class PaymentProviders extends Chartable
 {
     public function type(): string
     {
-        return static::LINE_CHART;
+        return static::AREA_CHART;
     }
 
     /** @return array<Collection<string, Collection<int, ShopOrder>>> */
     public function getData(Carbon $startDate, Carbon $endDate): array
     {
-        return [ShopOrder::query()
+        return [
+            ShopOrder::query()
             ->where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $endDate)
             ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
@@ -57,6 +58,7 @@ class PaymentProviders extends Chartable
         ];
 
         $dataLength = count($data);
+
         $results = [
             'Card' => array_fill(0, $dataLength, 0),
             'Link' => array_fill(0, $dataLength, 0),
@@ -68,21 +70,21 @@ class PaymentProviders extends Chartable
         foreach ($data as $index => $day) {
             foreach ($day as $collection) {
                 $collection->each(function (Collection $orders, string $provider) use (&$results, $index): void {
-                    if($provider === 'stripe') {
+                    if ($provider === 'stripe') {
                         $provider = 'Card';
                     }
 
-                    if($provider === 'paypal') {
+                    if ($provider === 'paypal') {
                         $provider = 'PayPal';
                     }
 
-                    $results[$provider][$index] =  $this->formatResult($orders);
+                    $results[$provider][$index] += $this->formatResult($orders);
                 });
             }
         }
 
         return collect($results)
-            ->reject(fn(array $items) => empty(array_filter($items)))
+            ->reject(fn (array $items) => empty(array_filter($items)))
             ->map(fn (array $items, string $provider) => [
                 'name' => $provider,
                 'data' => $items,
@@ -95,5 +97,14 @@ class PaymentProviders extends Chartable
     public function defaultDateRange(): string
     {
         return self::DATE_RANGE_PAST_MONTH;
+    }
+
+    protected function options(): array
+    {
+        return [
+            'chart' => [
+                'stacked' => true,
+            ],
+        ];
     }
 }

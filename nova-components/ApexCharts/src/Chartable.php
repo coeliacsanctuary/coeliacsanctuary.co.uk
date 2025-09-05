@@ -14,6 +14,8 @@ abstract class Chartable
 
     public const string LINE_CHART = 'line';
 
+    public const string AREA_CHART = 'area';
+
     public const string DATE_RANGE_TODAY = 'today';
 
     public const string DATE_RANGE_YESTERDAY = 'yesterday';
