@@ -1,0 +1,97 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Nova\Chartables;
+
+use App\Models\Shop\ShopOrder;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Jpeters8889\ApexCharts\Chartable;
+use Jpeters8889\ApexCharts\DTO\DateRange;
+
+class PaymentProviders extends Chartable
+{
+    public function type(): string
+    {
+        return static::LINE_CHART;
+    }
+
+    /** @return array<Collection<string, Collection<int, ShopOrder>>> */
+    public function getData(Carbon $startDate, Carbon $endDate): array
+    {
+        return [ShopOrder::query()
+            ->where('created_at', '>=', $startDate)
+            ->where('created_at', '<=', $endDate)
+            ->whereNotNull('order_key')
+            ->with('payment')
+            ->get()
+            ->groupBy('payment.payment_type_id'),
+        ];
+    }
+
+    /** @param Collection<int, ShopOrder> $collection */
+    protected function formatResult(Collection $collection): int|float
+    {
+        $total = 0;
+
+        $collection->each(function (ShopOrder $item) use (&$total): void {
+            $total += $item->payment->total;
+        });
+
+        return $total / 100;
+    }
+
+    protected function data(DateRange $dateRange): array
+    {
+        $data = $this->calculateData($dateRange);
+
+        $colours = [
+            'Card' => '#DBBC25',
+            'Link' => '#80CCFC',
+            'PayPal' => '#addaf9',
+            'Apple Pay' => '#787878',
+            'Google Pay' => '#237cbd',
+        ];
+
+        $dataLength = count($data);
+        $results = [
+            'Card' => array_fill(0, $dataLength, 0),
+            'Link' => array_fill(0, $dataLength, 0),
+            'PayPal' => array_fill(0, $dataLength, 0),
+            'Apple Pay' => array_fill(0, $dataLength, 0),
+            'Google Pay' => array_fill(0, $dataLength, 0),
+        ];
+
+        foreach ($data as $index => $day) {
+            foreach ($day as $collection) {
+                $collection->each(function (Collection $orders, string $provider) use (&$results, $index): void {
+                    if($provider === 'stripe') {
+                        $provider = 'Card';
+                    }
+
+                    if($provider === 'paypal') {
+                        $provider = 'PayPal';
+                    }
+
+                    $results[$provider][$index] =  $this->formatResult($orders);
+                });
+            }
+        }
+
+        return collect($results)
+            ->reject(fn(array $items) => empty(array_filter($items)))
+            ->map(fn (array $items, string $provider) => [
+                'name' => $provider,
+                'data' => $items,
+                'color' => $colours[$provider],
+            ])
+            ->values()
+            ->toArray();
+    }
+
+    public function defaultDateRange(): string
+    {
+        return self::DATE_RANGE_PAST_MONTH;
+    }
+}

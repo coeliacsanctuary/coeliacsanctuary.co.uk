@@ -8,6 +8,7 @@ use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Jpeters8889\ApexCharts\Chartable;
 use Jpeters8889\ApexCharts\DTO\DateRange;
@@ -15,7 +16,7 @@ use Jpeters8889\ApexCharts\DTO\DateRange;
 class ProductSales extends Chartable
 {
     protected array $colours = [
-        1 => '#80CCFC', //cards
+        1 => '#80CCFC', // cards
         2 => '#addaf9', // multi
         3 => '#f26522', // cals
         4 => '#ff0000', // wristbands
@@ -32,11 +33,11 @@ class ProductSales extends Chartable
 
     protected function products(): Collection
     {
-        return once(fn () => ShopProduct::query()
-            ->with('categories')
+        return once(fn () => ShopProduct::withoutGlobalScopes()
+            ->with(['categories' => fn (Relation $builder) => $builder->withoutGlobalScopes()])
             ->orderBy('title')
             ->get()
-            ->map(fn (ShopProduct $product) => ['id' => $product->id, 'title' => $product->title, 'category_id' => $product->categories[0]->id]));
+            ->map(fn (ShopProduct $product) => ['id' => $product->id, 'title' => $product->title, 'category_id' => $product->categories[0]->id ?? null]));
     }
 
     protected function getLabels(DateRange $dateRange): array
@@ -109,7 +110,7 @@ class ProductSales extends Chartable
             'chart' => [
                 'redrawOnParentResize' => false,
                 'redrawOnWindowResize' => false,
-            ]
+            ],
         ];
     }
 
