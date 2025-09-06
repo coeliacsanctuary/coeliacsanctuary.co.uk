@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad081de97e54e875152b6dba12c22584",
+    "content-hash": "56347e8a6c4a1b7b1d1766ab2ed7a303",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -586,52 +586,6 @@
                 "source": "https://github.com/coeliacsanctuary/advanced-nova-media-library/tree/1.1.0"
             },
             "time": "2025-03-23T14:24:35+00:00"
-        },
-        {
-            "name": "coeliacsanctuary/nova-field-sortable",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/coeliacsanctuary/nova-field-sortable.git",
-                "reference": "534060048bf57e55feeb74fed5371eb9c9349993"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/coeliacsanctuary/nova-field-sortable/zipball/534060048bf57e55feeb74fed5371eb9c9349993",
-                "reference": "534060048bf57e55feeb74fed5371eb9c9349993",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/nova": "^5.0",
-                "php": ">=8.0",
-                "spatie/eloquent-sortable": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CoeliacSanctuary\\NovaFieldSortable\\FieldServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CoeliacSanctuary\\NovaFieldSortable\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Nova field for ordering resources.",
-            "keywords": [
-                "eloquent-sortable",
-                "laravel",
-                "nova"
-            ],
-            "support": {
-                "source": "https://github.com/coeliacsanctuary/nova-field-sortable/tree/1.0.2"
-            },
-            "time": "2025-02-05T20:40:37+00:00"
         },
         {
             "name": "composer/semver",
@@ -5388,6 +5342,114 @@
                 "source": "https://github.com/orchestral/sidekick/tree/v1.2.13"
             },
             "time": "2025-06-23T05:09:50+00:00"
+        },
+        {
+            "name": "outl1ne/nova-sortable",
+            "version": "4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/outl1ne/nova-sortable.git",
+                "reference": "e95e6156b889f039b8dee7087bc8528a2d498303"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/outl1ne/nova-sortable/zipball/e95e6156b889f039b8dee7087bc8528a2d498303",
+                "reference": "e95e6156b889f039b8dee7087bc8528a2d498303",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": "^5.0",
+                "outl1ne/nova-translations-loader": "^5.0",
+                "php": ">=8.1",
+                "spatie/eloquent-sortable": "^4.0"
+            },
+            "require-dev": {
+                "laravel/nova-devtool": "^1.0.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Outl1ne\\NovaSortable\\ToolServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Outl1ne\\NovaSortable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "This Laravel Nova package allows you to reorder models in a Nova resource's index view using drag & drop.",
+            "keywords": [
+                "eloquent-sortable",
+                "laravel",
+                "nova",
+                "optimistdigital",
+                "outl1ne"
+            ],
+            "support": {
+                "issues": "https://github.com/outl1ne/nova-sortable/issues",
+                "source": "https://github.com/outl1ne/nova-sortable/tree/4.0.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/outl1ne",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-02-26T07:48:36+00:00"
+        },
+        {
+            "name": "outl1ne/nova-translations-loader",
+            "version": "5.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/outl1ne/nova-translations-loader.git",
+                "reference": "87be6da40633e0cd0b9276cf494f0ca8954eccc0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/outl1ne/nova-translations-loader/zipball/87be6da40633e0cd0b9276cf494f0ca8954eccc0",
+                "reference": "87be6da40633e0cd0b9276cf494f0ca8954eccc0",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": "^4.0|^5.0",
+                "php": ">=8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": [],
+                    "providers": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Outl1ne\\NovaTranslationsLoader\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "This Laravel Nova package helps developers load translations into their packages.",
+            "keywords": [
+                "laravel",
+                "nova",
+                "optimistdigital",
+                "outl1ne",
+                "translations"
+            ],
+            "support": {
+                "issues": "https://github.com/outl1ne/nova-translations-loader/issues",
+                "source": "https://github.com/outl1ne/nova-translations-loader/tree/5.0.3"
+            },
+            "time": "2024-10-22T08:19:08+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",

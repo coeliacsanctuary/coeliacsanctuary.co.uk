@@ -10,7 +10,9 @@ use CoeliacSanctuary\NovaFieldSortable\Concerns\SortsIndexEntries;
 use CoeliacSanctuary\NovaFieldSortable\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\MorphTo;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Outl1ne\NovaSortable\Traits\HasSortableRows;
 
 /** @extends Resource<CollectionItemModel> */
 /**
@@ -18,13 +20,11 @@ use Laravel\Nova\Http\Requests\NovaRequest;
  */
 class CollectionItem extends Resource
 {
-    use SortsIndexEntries;
-
-    public static string $defaultSortField = 'position';
+    use HasSortableRows;
 
     public static string $model = CollectionItemModel::class;
 
-    public static $perPageViaRelationship = 20;
+    public static $perPageViaRelationship = 200;
 
     public function fields(NovaRequest $request)
     {
@@ -34,8 +34,13 @@ class CollectionItem extends Resource
                 Recipe::class,
             ]),
 
-            Sortable::make('Position')->onlyOnIndex(),
+            Number::make('Position'),
         ];
+    }
+
+    public static function canSort(NovaRequest $request, $resource)
+    {
+        return true;
     }
 
     protected static function fillFields(NovaRequest $request, $model, $fields): array

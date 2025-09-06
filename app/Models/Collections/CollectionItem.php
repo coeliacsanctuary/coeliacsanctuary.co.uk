@@ -26,6 +26,7 @@ class CollectionItem extends Model implements Sortable
     public array $sortable = [
         'order_column_name' => 'position',
         'sort_when_creating' => true,
+        'sort_on_has_many' => true,
     ];
 
     /** @return BelongsTo<Collection, $this> */
