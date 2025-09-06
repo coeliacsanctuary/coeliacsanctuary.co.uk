@@ -34,8 +34,8 @@ class ShopProductResource extends JsonResource
                     'soft_break' => '<br />',
                 ],
             ]),
-            'image' => $this->main_image,
-            'additional_images' => $this->getMedia('additional')->map(fn (Media $media) => $media->getUrl()),
+            'image' => $this->main_image_as_webp ?? $this->main_image,
+            'additional_images' => $this->getMedia('additional')->map(fn (Media $media) => $media->getUrl('webp')),
             'prices' => $this->primaryVariant()->price,
             'has_multiple_prices' => $this->hasMultiplePrices(),
             'rating' => $this->whenLoaded('reviews', [

@@ -21,7 +21,7 @@ class CollectionShowResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'image' => $this->main_image,
+            'image' => $this->main_image_as_webp ?? $this->main_image,
             'published' => $this->published,
             'updated' => $this->lastUpdated,
             'description' => $this->description,

@@ -23,7 +23,7 @@ class ShopProductApiResource extends JsonResource
             'description' => $this->description,
             'meta_description' => $this->meta_description,
             'link' => route('shop.product', ['product' => $this]),
-            'main_image' => $this->main_image,
+            'main_image' => $this->main_image_as_webp ?? $this->main_image,
             'price' => Helpers::formatMoney(Money::GBP($this->from_price)),
             'created_at' => $this->created_at,
         ];

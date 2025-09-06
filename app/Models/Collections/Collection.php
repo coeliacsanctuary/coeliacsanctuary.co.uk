@@ -31,8 +31,10 @@ class Collection extends Model implements HasMedia
     use ClearsCache;
     use DisplaysDates;
     use DisplaysMedia;
+
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use LinkableModel;
 
     protected $casts = [
@@ -63,6 +65,19 @@ class Collection extends Model implements HasMedia
         $this->addMediaCollection('social')->singleFile();
 
         $this->addMediaCollection('primary')->singleFile()->withResponsiveImages();
+    }
+
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if ( ! $media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary')
+            ->nonQueued()
+            ->format('webp');
     }
 
     /** @return HasMany<CollectionItem, $this> */

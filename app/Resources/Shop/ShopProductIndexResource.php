@@ -20,7 +20,7 @@ class ShopProductIndexResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'link' => $this->link,
-            'image' => $this->main_image,
+            'image' => $this->main_image_as_webp ?? $this->main_image,
             'price' => Helpers::formatMoney(Money::GBP($this->from_price)),
             'has_multiple_prices' => $this->hasMultiplePrices(),
             'rating' => $this->whenLoaded('reviews', [

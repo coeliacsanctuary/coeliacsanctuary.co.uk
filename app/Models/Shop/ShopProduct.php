@@ -73,6 +73,19 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         $this->addMediaCollection('additional');
     }
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if ( ! $media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary', 'additional')
+            ->nonQueued()
+            ->format('webp');
+    }
+
     /** @return BelongsToMany<ShopCategory, $this> */
     public function categories(): BelongsToMany
     {
