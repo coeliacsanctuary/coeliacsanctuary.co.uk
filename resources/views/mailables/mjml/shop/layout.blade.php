@@ -21,66 +21,68 @@
         </mj-column>
     </mj-section>
 
-    <mj-section mj-class="light-section">
-        <mj-column>
-            <mj-text align="center" padding-bottom="10px"><h2>Order Summary</h2></mj-text>
-            <mj-text align="center" padding-bottom="4px">
-                <strong>Order Number:</strong> {{ $order->order_key }}<br/>
-            </mj-text>
-            <mj-text align="center" padding-bottom="4px">
-                <strong>Order Total:</strong> {{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}<br/>
-            </mj-text>
-            <mj-text align="center">
-                <strong>Order Date:</strong> {{ $order->payment->created_at->format('d/m/Y') }}<br/>
-            </mj-text>
-            @if($order->shipped_at)
-                <mj-text align="center" padding-top="4px">
-                    <strong>Shipped On</strong> {{ $order->shipped_at->format('d/m/Y') }}<br/>
+    @unless(isset($minimal) && $minimal === true)
+        <mj-section mj-class="light-section">
+            <mj-column>
+                <mj-text align="center" padding-bottom="10px"><h2>Order Summary</h2></mj-text>
+                <mj-text align="center" padding-bottom="4px">
+                    <strong>Order Number:</strong> {{ $order->order_key }}<br/>
                 </mj-text>
-            @endif
-        </mj-column>
-    </mj-section>
+                <mj-text align="center" padding-bottom="4px">
+                    <strong>Order Total:</strong> {{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}<br/>
+                </mj-text>
+                <mj-text align="center">
+                    <strong>Order Date:</strong> {{ $order->payment->created_at->format('d/m/Y') }}<br/>
+                </mj-text>
+                @if($order->shipped_at)
+                    <mj-text align="center" padding-top="4px">
+                        <strong>Shipped On</strong> {{ $order->shipped_at->format('d/m/Y') }}<br/>
+                    </mj-text>
+                @endif
+            </mj-column>
+        </mj-section>
 
-    <mj-section>
-        <mj-column>
-            <mj-text mj-class="inner">
-                <h2>Order Details</h2>
-            </mj-text>
-        </mj-column>
-    </mj-section>
-
-    <x-mjml-shop-order-table :order="$order" />
-
-    <mj-section>
-        <mj-column>
-            <mj-text>
-                <hr color="#addaf9"></hr>
-            </mj-text>
-        </mj-column>
-    </mj-section>
-
-    @if($order->has_digital_products && isset($newOrder))
         <mj-section>
             <mj-column>
                 <mj-text mj-class="inner">
-                    <span style="line-height:1.4; font-weight: bold; text-align: center;">
-                        You will receive a separate email with the download link for your digital products.
-                    </span>
+                    <h2>Order Details</h2>
                 </mj-text>
             </mj-column>
         </mj-section>
-    @endunless
 
-    @unless($order->is_digital_only)
+        <x-mjml-shop-order-table :order="$order" />
+
         <mj-section>
             <mj-column>
-                <mj-text><h2>Postage Address</h2></mj-text>
-                <mj-text mj-class="inner">
-                    <span style="line-height:1.4">
-                        {!! Str::markdown($order->address->formattedAddress, ['renderer' => ['soft_break' => "<br/>"]]) !!}
-                    </span>
+                <mj-text>
+                    <hr color="#addaf9"></hr>
                 </mj-text>
             </mj-column>
         </mj-section>
+
+        @if($order->has_digital_products && isset($newOrder))
+            <mj-section>
+                <mj-column>
+                    <mj-text mj-class="inner">
+                        <span style="line-height:1.4; font-weight: bold; text-align: center;">
+                            You will receive a separate email with the download link for your digital products.
+                        </span>
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+        @endunless
+
+        @unless($order->is_digital_only)
+            <mj-section>
+                <mj-column>
+                    <mj-text><h2>Postage Address</h2></mj-text>
+                    <mj-text mj-class="inner">
+                        <span style="line-height:1.4">
+                            {!! Str::markdown($order->address->formattedAddress, ['renderer' => ['soft_break' => "<br/>"]]) !!}
+                        </span>
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+        @endunless
     @endunless
 @endsection

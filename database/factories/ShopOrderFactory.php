@@ -115,6 +115,13 @@ class ShopOrderFactory extends Factory
         ]);
     }
 
+    public function asCancelled(): self
+    {
+        return $this->asPaid()->state(fn () => [
+            'state_id' => OrderState::CANCELLED,
+        ]);
+    }
+
     public function beenSentAbandonedBasketEmail(): self
     {
         return $this->state(fn () => [

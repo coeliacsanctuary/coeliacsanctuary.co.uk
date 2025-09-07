@@ -109,4 +109,10 @@ class ShopOrder extends Model
     {
         return $this->belongsToMany(ShopSource::class, 'shop_order_sources', 'order_id', 'source_id');
     }
+
+    /** @return HasMany<ShopOrderDownloadLink, $this> */
+    public function downloadLinks(): HasMany
+    {
+        return $this->hasMany(ShopOrderDownloadLink::class, 'order_id');
+    }
 }
