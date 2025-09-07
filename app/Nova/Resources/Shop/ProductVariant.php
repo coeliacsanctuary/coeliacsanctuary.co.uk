@@ -47,7 +47,7 @@ class ProductVariant extends Resource
         return [
             ID::make()->fullWidth()->hide(),
 
-            Text::make('Title')->fullWidth()->help('Leave empty for only one variant')->default(''),
+            Text::make('Title')->fullWidth()->help('Leave empty for only one variant, or to use the variant type if is a digital variant etc')->default(''),
 
             Select::make('Variant Type')
                 ->options(ProductVariantType::class)

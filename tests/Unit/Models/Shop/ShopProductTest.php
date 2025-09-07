@@ -175,7 +175,26 @@ class ShopProductTest extends TestCase
     }
 
     #[Test]
-    public function itGetsTheLowestVariantPriceAsTheFromPrice(): void
+    public function itGetsThePrimaryVariantPriceAsTheFromPrice(): void
+    {
+        $product = $this->create(ShopProduct::class);
+
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->isPrimary()
+            ->has($this->build(ShopPrice::class)->state(['price' => 200]), 'prices')
+            ->create();
+
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->has($this->build(ShopPrice::class)->state(['price' => 100]), 'prices')
+            ->create();
+
+        $this->assertEquals(200, $product->from_price);
+    }
+
+    #[Test]
+    public function itGetsTheLowestVariantPriceAsTheFromPriceIfNoPrimaryVariantIsSet(): void
     {
         $product = $this->create(ShopProduct::class);
 
@@ -193,7 +212,28 @@ class ShopProductTest extends TestCase
     }
 
     #[Test]
-    public function itShowsWhetherAProductHasMultiplePrices(): void
+    public function itReturnsFalseForAProductHavingMultiplePricesIfAPrimaryVariantExists(): void
+    {
+        TestTime::setTestNow('2025-01-01');
+
+        $product = $this->create(ShopProduct::class);
+
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->isPrimary()
+            ->has($this->build(ShopPrice::class)->state(['price' => 200]), 'prices')
+            ->create();
+
+        $this->build(ShopProductVariant::class)
+            ->belongsToProduct($product)
+            ->has($this->build(ShopPrice::class)->state(['price' => 100]), 'prices')
+            ->create();
+
+        $this->assertFalse($product->hasMultiplePrices());
+    }
+
+    #[Test]
+    public function itDeterminesWhetherAProductHasMultiplePricesIfNoPrimaryIsSet(): void
     {
         TestTime::setTestNow('2025-01-01');
 

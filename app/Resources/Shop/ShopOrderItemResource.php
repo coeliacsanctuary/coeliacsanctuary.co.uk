@@ -28,12 +28,25 @@ class ShopOrderItemResource extends JsonResource
             'title' => $this->product_title,
             'description' => $variant->short_description,
             'link' => $product->link,
-            'variant' => $variant->title,
+            'variant' => $this->variantName($variant),
             'item_price' => Helpers::formatMoney(Money::GBP($this->product_price)),
             'line_price' => Helpers::formatMoney(Money::GBP($this->product_price * $this->quantity)),
             'quantity' => $this->quantity,
             'image' => $product->main_image_as_webp ?? $product->main_image,
             'variant_type' => $variant->variant_type->value,
         ];
+    }
+
+    protected function variantName(ShopProductVariant $variant): string
+    {
+        if ($variant->title !== '') {
+            return $variant->title;
+        }
+
+        if ($this->product->variants->count() > 1) {
+            return $variant->variant_type->label();
+        }
+
+        return '';
     }
 }

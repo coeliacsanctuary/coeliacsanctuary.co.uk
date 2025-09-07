@@ -31,6 +31,7 @@
             <mj-class name="light-blue" background-color="#addaf9"></mj-class>
             <mj-class name="yellow" background-color="#DBBC25"></mj-class>
             <mj-class name="inner" padding="7px 0" line-height="1.2"></mj-class>
+            <mj-class name="small" line-height="1.0" font-size="14px"></mj-class>
             <mj-class name="social" padding="0"></mj-class>
             <mj-class name="light-section" background-color="#e7f4fe" margin="-10px 0" padding="15px" />
         </mj-attributes>
@@ -73,13 +74,7 @@
                 @yield('main-content')
 
                 @hasSection('footer')
-                    <mj-section>
-                        <mj-column>
-                            <mj-text align="center">
-                                <h1>@yield('footer')</h1>
-                            </mj-text>
-                        </mj-column>
-                    </mj-section>
+                    @yield('footer')
                 @endif
             </mj-wrapper>
             @isset($relatedTitle, $relatedItems)

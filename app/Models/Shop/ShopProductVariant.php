@@ -66,10 +66,15 @@ class ShopProductVariant extends Model implements HasMedia
             ->sortByDesc('start_at');
     }
 
-    /** @return Attribute<null | int, never> */
+    /** @return Attribute<int, never> */
     public function currentPrice(): Attribute
     {
-        return Attribute::get(fn () => $this->currentPrices()->first()?->price);
+        return Attribute::get(function () {
+            /** @var ShopPrice $price */
+            $price = $this->currentPrices()->first();
+
+            return $price->price;
+        });
     }
 
     /** @return Attribute<null | int, never> */

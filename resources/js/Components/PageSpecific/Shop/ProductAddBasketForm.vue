@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  RadioGroup,
-  RadioGroupDescription,
-  RadioGroupLabel,
-  RadioGroupOption,
-} from '@headlessui/vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import Icon from '@/Components/Icon.vue';
 import { ShopProductDetail, ShopProductVariant } from '@/types/Shop';
 import { computed, nextTick, onMounted, ref, Ref, watch } from 'vue';
 import useAddToBasket from '@/composables/useAddToBasket';

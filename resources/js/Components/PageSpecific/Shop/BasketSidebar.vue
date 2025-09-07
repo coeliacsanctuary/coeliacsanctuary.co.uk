@@ -134,7 +134,7 @@ const alterQuantity = (
                 v-else
                 class="flex flex-1 items-center space-x-2 text-sm font-semibold"
               >
-                Digital Download Only
+                Please note this product is a digital Download Only
               </div>
 
               <CoeliacButton

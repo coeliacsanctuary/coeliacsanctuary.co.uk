@@ -23,13 +23,13 @@ $minimal = true;
 
 @section('footer')
     <mj-section mj-class="light-section">
-        <mj-column>
-            <mj-button href="{{ $downloadLink }}">
+        <mj-column >
+            <mj-button padding-top="20px" font-size="20px" padding-bottom="30px" href="{{ $downloadLink }}">
                 Download Your Products!
             </mj-button>
 
-            <mj-text>Link not working? Copy this into your browser.</mj-text>
-            <mj-text padding-top="10px" font-weight="bold">{{ $downloadLink }}</mj-text>
+            <mj-text mj-class="small" align="center" padding-top="0">Link not working? Copy this into your browser.</mj-text>
+            <mj-text mj-class="small" align="center" padding-top="5px" font-weight="bold">{{ $downloadLink }}</mj-text>
         </mj-column>
     </mj-section>
 @endsection

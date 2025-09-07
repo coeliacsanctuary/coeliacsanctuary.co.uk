@@ -40,6 +40,8 @@
                         {{ $item->product_title }}
                         @if($item->variant->title !== '')
                             - {{ $item->variant->title }}
+                        @elseif($item->product->variants->count() > 1)
+                            - {{ $item->variant->variant_type->label() }}
                         @endif
                     </span>
                     @if($item->variant->short_description)

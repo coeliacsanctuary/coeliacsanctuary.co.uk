@@ -104,12 +104,17 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         return $this->hasMany(ShopProductVariant::class, 'product_id');
     }
 
-    public function primaryVariant(): ShopProductVariant
+    /** @return ($fallbackToFirstVariant is true ? ShopProductVariant : ?ShopProductVariant) */
+    public function primaryVariant(bool $fallbackToFirstVariant = true): ?ShopProductVariant
     {
         $this->loadMissing('variants');
 
-        /** @var ShopProductVariant $variant */
-        $variant = $this->variants->firstWhere('primary_variant', true) ?? $this->variants->first();
+        /** @var ?ShopProductVariant $variant */
+        $variant = $this->variants->firstWhere('primary_variant', true);
+
+        if ( ! $variant && $fallbackToFirstVariant) {
+            $variant = $this->variants->first();
+        }
 
         return $variant;
     }
@@ -205,6 +210,10 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         return Attribute::get(function () {
             $this->loadMissing('variants.prices');
 
+            if ($this->primaryVariant(false)) {
+                return (int) $this->primaryVariant(false)->currentPrice;
+            }
+
             return $this->variants->pluck('prices')->flatten()->sortBy('price')->first()->price;
         });
     }
@@ -212,6 +221,10 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     public function hasMultiplePrices(): bool
     {
         $this->loadMissing('variants.prices');
+
+        if ($this->primaryVariant(false)) {
+            return false;
+        }
 
         return $this->variants->pluck('price.current_price')->unique()->count() > 1;
     }

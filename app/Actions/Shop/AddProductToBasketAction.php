@@ -26,6 +26,10 @@ class AddProductToBasketAction
             $item->increment('quantity', $quantity);
         }
 
+        if ($variant->variant_type === ProductVariantType::DIGITAL) {
+            $item->update(['quantity' => 1]);
+        }
+
         if ($variant->variant_type !== ProductVariantType::DIGITAL) {
             $variant->decrement('quantity', $quantity);
         }
