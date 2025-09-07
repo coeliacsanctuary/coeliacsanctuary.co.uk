@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners\Shop;
 
 use App\Events\Shop\OrderPaidEvent;
+use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
 use App\Notifications\Shop\DownloadYourProductsNotification;
 
@@ -23,6 +24,9 @@ class PrepareOrderDigitalDownload
             'expires_at' => now()->addMonth(),
         ]);
 
-        $order->customer->notify(new DownloadYourProductsNotification($downloadLink));
+        /** @var ShopCustomer $customer */
+        $customer = $order->customer;
+
+        $customer->notify(new DownloadYourProductsNotification($downloadLink));
     }
 }

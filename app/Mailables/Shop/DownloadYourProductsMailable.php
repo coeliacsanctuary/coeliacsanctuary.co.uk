@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Mailables\Shop;
 
 use App\Infrastructure\MjmlMessage;
+use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDownloadLink;
 
 class DownloadYourProductsMailable extends BaseShopMailable
 {
     public function __construct(protected ShopOrderDownloadLink $downloadLink, protected string $key)
     {
-        parent::__construct($this->downloadLink->order, $key);
+        /** @var ShopOrder $order */
+        $order = $this->downloadLink->order;
+
+        parent::__construct($order, $key);
     }
 
     protected function generateLink(): string

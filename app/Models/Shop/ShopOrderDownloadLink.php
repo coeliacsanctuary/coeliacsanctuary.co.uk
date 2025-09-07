@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Models\Shop;
 
 use App\Enums\Shop\OrderState;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
+/**
+ * @property Carbon $expires_at
+ */
 class ShopOrderDownloadLink extends Model
 {
     use HasUuids;

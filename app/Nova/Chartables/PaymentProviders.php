@@ -23,13 +23,13 @@ class PaymentProviders extends Chartable
     {
         return [
             ShopOrder::query()
-            ->where('created_at', '>=', $startDate)
-            ->where('created_at', '<=', $endDate)
-            ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
-            ->whereNotNull('order_key')
-            ->with('payment')
-            ->get()
-            ->groupBy('payment.payment_type_id'),
+                ->where('created_at', '>=', $startDate)
+                ->where('created_at', '<=', $endDate)
+                ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
+                ->whereNotNull('order_key')
+                ->with('payment')
+                ->get()
+                ->groupBy('payment.payment_type_id'),
         ];
     }
 
@@ -109,10 +109,10 @@ class PaymentProviders extends Chartable
                 'curve' => 'monotoneCubic'
             ],
             'fill' => [
-                'type'=> 'gradient',
-                'gradient'=> [
-                    'opacityFrom'=> 0.6,
-                    'opacityTo'=> 0.8,
+                'type' => 'gradient',
+                'gradient' => [
+                    'opacityFrom' => 0.6,
+                    'opacityTo' => 0.8,
                 ],
             ],
             'dataLabels' => [

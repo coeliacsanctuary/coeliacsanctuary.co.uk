@@ -6,8 +6,6 @@ namespace App\Nova\Resources\Main;
 
 use App\Models\Collections\CollectionItem as CollectionItemModel;
 use App\Nova\Resource;
-use CoeliacSanctuary\NovaFieldSortable\Concerns\SortsIndexEntries;
-use CoeliacSanctuary\NovaFieldSortable\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Fields\Number;
