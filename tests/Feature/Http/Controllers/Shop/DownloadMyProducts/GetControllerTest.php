@@ -112,22 +112,28 @@ class GetControllerTest extends TestCase
 
         $this
             ->get($url)
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Shop/DownloadMyProducts/DownloadMyProducts')
-                ->where('expires', $downloadLink->expires_at->format('jS F Y \a\t H:i'))
-                ->has('order', fn (Assert $page) => $page
-                    ->where('number', (string) $order->order_key)
-                    ->where('name', $order->customer->name)
-                    ->where('date', $order->payment->created_at->format('d/m/Y'))
-                )
-                ->has('items', 1, fn (Assert $page) => $page
-                    ->where('id', $orderItem->id)
-                    ->where('title', $orderItem->product->title)
-                    ->where('image', $orderItem->product->main_image_as_webp)
-                    ->where('variant_title', $this->variant->title)
-                    ->where('variant_description', $this->variant->short_description)
-                    ->whereNotNull('download_link')
-                )
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('Shop/DownloadMyProducts/DownloadMyProducts')
+                    ->where('expires', $downloadLink->expires_at->format('jS F Y \a\t H:i'))
+                    ->has(
+                        'order',
+                        fn (Assert $page) => $page
+                            ->where('number', (string) $order->order_key)
+                            ->where('name', $order->customer->name)
+                            ->where('date', $order->payment->created_at->format('d/m/Y'))
+                    )
+                    ->has(
+                        'items',
+                        1,
+                        fn (Assert $page) => $page
+                            ->where('id', $orderItem->id)
+                            ->where('title', $orderItem->product->title)
+                            ->where('image', $orderItem->product->main_image_as_webp)
+                            ->where('variant_title', $this->variant->title)
+                            ->where('variant_description', $this->variant->short_description)
+                            ->whereNotNull('download_link')
+                    )
             );
     }
 
