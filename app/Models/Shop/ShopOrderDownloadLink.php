@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
@@ -68,6 +69,12 @@ class ShopOrderDownloadLink extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(ShopOrder::class, 'order_id');
+    }
+
+    /** @return HasMany<ShopOrderDownloadViews, $this> */
+    public function views(): HasMany
+    {
+        return $this->hasMany(ShopOrderDownloadViews::class, 'shop_order_download_link_id');
     }
 
     protected function casts(): array

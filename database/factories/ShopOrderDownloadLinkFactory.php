@@ -18,4 +18,11 @@ class ShopOrderDownloadLinkFactory extends Factory
             'expires_at' => now()->addMonth(),
         ];
     }
+
+    public function forOrder(ShopOrder $order): self
+    {
+        return $this->state(fn () => [
+            'order_id' => $order->id,
+        ]);
+    }
 }

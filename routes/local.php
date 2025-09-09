@@ -74,7 +74,7 @@ Route::get('/mail/shop/digital-download-ready/{orderId?}', function (?int $order
         'key' => 'foo',
         'date' => now(),
         'order' => $order,
-        'downloadLink' => 'https://www.google.com',
+        'downloadLink' => URL::temporarySignedRoute('shop.download-my-products', now()->addMonth(), $order->downloadLinks->first()),
         'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
         'notifiable' => $order->customer,
         'relatedTitle' => 'products',

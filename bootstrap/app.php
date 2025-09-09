@@ -11,11 +11,13 @@ use App\Console\Commands\SendAbandonedBasketEmailCommand;
 use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Response\Inertia;
+use App\Models\Shop\ShopOrderDownloadLink;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,6 +43,25 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(fn () => route('nova.pages.login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (InvalidSignatureException $exception, Request $request) {
+            if ($request->routeIs('shop.download-my-products')) {
+                /** @var ?ShopOrderDownloadLink $downloadLink */
+                $downloadLink = $request->route('downloadLink');
+
+                if ($downloadLink?->expires_at->isPast()) {
+                    return app(Inertia::class)
+                        ->title('Link expired')
+                        ->metaTags([], false)
+                        ->doNotTrack()
+                        ->render('Shop/DownloadMyProducts/Error')
+                        ->toResponse($request)
+                        ->setStatusCode(Response::HTTP_FORBIDDEN);
+                }
+            }
+
+            return null;
+        });
+
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
             $errorStatusCodes = [
                 Response::HTTP_INTERNAL_SERVER_ERROR,
