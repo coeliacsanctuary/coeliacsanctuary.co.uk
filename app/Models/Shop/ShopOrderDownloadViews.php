@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShopOrderDownloadViews extends Model
 {
+    /** @return BelongsTo<ShopOrderDownloadLink, $this> */
     public function downloadLink(): BelongsTo
     {
         return $this->belongsTo(ShopOrderDownloadLink::class, 'shop_order_download_link_id');
