@@ -130,7 +130,7 @@ trait SeedsWebsite
                 $this->build(ShopProduct::class)
                     ->count($products)
                     ->sequence(fn (Sequence $sequence) => [
-                        'id' => $category->id . ($sequence->index + 1),
+                        'id' => $category->id . ($sequence->index + 1) . fake()->numberBetween(1, 100),
                         'title' => "Product {$sequence->index}",
                         'created_at' => Carbon::now()->subDays($sequence->index),
                     ])
@@ -146,7 +146,7 @@ trait SeedsWebsite
                             ->has($this->build(ShopPrice::class), 'prices')
                             ->belongsToProduct($product)
                             ->sequence(fn (Sequence $sequence) => [
-                                'id' => $product->id . ($sequence->index + 1),
+                                'id' => $product->id . ($sequence->index + 1) . fake()->numberBetween(1, 999),
                                 'title' => "Variant {$sequence->index}",
                                 'created_at' => Carbon::now()->subDays($sequence->index),
                             ])

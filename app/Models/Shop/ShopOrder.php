@@ -18,6 +18,7 @@ class ShopOrder extends Model
     protected $casts = [
         'state_id' => OrderState::class,
         'shipped_at' => 'datetime',
+        'digital_products_sent_at' => 'datetime',
         'sent_abandoned_basket_email' => 'boolean',
         'has_digital_products' => 'boolean',
         'is_digital_only' => 'boolean',

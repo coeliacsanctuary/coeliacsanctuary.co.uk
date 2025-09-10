@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listeners\Shop;
 
+use App\Enums\Shop\OrderState;
 use App\Events\Shop\OrderPaidEvent;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
@@ -27,6 +28,11 @@ class PrepareOrderDigitalDownload
         /** @var ShopCustomer $customer */
         $customer = $order->customer;
 
-        $customer->notify(new DownloadYourProductsNotification($downloadLink));
+        $customer->notifyNow(new DownloadYourProductsNotification($downloadLink));
+
+        $order->update([
+            'digital_products_sent_at' => now(),
+            'state_id' => $order->is_digital_only ? OrderState::SHIPPED : $order->state_id,
+        ]);
     }
 }

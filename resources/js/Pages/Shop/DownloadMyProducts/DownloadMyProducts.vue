@@ -61,7 +61,7 @@ const downloadAll = () => {
   </Card>
 
   <Card
-    v-if="true || items.length > 1"
+    v-if="items.length > 1"
     class="mx-auto flex w-full max-w-4xl !bg-transparent sm:justify-end"
     no-flex
     :shadow="false"
