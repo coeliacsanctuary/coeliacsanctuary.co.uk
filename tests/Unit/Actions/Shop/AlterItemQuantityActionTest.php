@@ -10,6 +10,7 @@ use App\Enums\Shop\ProductVariantType;
 use App\Exceptions\QuantityException;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
@@ -99,6 +100,27 @@ class AlterItemQuantityActionTest extends TestCase
     }
 
     #[Test]
+    public function ifTheVariantIsBundleItUpdatesThePhysicalSibblingVariantWhenCallingToIncrease(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::PHYSICAL]);
+
+        $bundleVariant = $this->build(ShopProductVariant::class)
+            ->has($this->build(ShopPrice::class), 'prices')
+            ->belongsToProduct($this->product)
+            ->isBundle()
+            ->create([
+                'quantity' => 100,
+            ]);
+
+        $this->item->update(['product_variant_id' => $bundleVariant->id]);
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'increase');
+
+        $this->assertEquals(0, $this->variant->refresh()->quantity);
+        $this->assertEquals(100, $bundleVariant->refresh()->quantity);
+    }
+
+    #[Test]
     public function itCallsTheCheckIfBasketHasDigitalProductsActionWhenCallingToIncrease(): void
     {
         $this->mock(CheckIfBasketHasDigitalProductsAction::class)
@@ -139,6 +161,28 @@ class AlterItemQuantityActionTest extends TestCase
 
         $this->assertEquals(1, $this->variant->refresh()->quantity);
     }
+
+    #[Test]
+    public function ifTheVariantIsBundleItUpdatesThePhysicalSibblingVariantWhenCallingToDecrease(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::PHYSICAL]);
+
+        $bundleVariant = $this->build(ShopProductVariant::class)
+            ->has($this->build(ShopPrice::class), 'prices')
+            ->belongsToProduct($this->product)
+            ->isBundle()
+            ->create([
+                'quantity' => 100,
+            ]);
+
+        $this->item->update(['product_variant_id' => $bundleVariant->id]);
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
+
+        $this->assertEquals(2, $this->variant->refresh()->quantity);
+        $this->assertEquals(100, $bundleVariant->refresh()->quantity);
+    }
+
 
     #[Test]
     public function itCallsTheCheckIfBasketHasDigitalProductsActionWhenCallingToDecrease(): void

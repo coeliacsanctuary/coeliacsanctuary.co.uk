@@ -16,17 +16,32 @@ use Laravel\Nova\Nova;
  */
 class ShopIncome extends Trend
 {
+    protected ?bool $onlyDigital = null;
+
+    public function nonDigital(): self
+    {
+        $this->onlyDigital = false;
+
+        return $this;
+    }
+
+    public function digitalProducts(): self
+    {
+        $this->onlyDigital = true;
+
+        return $this;
+    }
+
     public function calculate(NovaRequest $request)
     {
         return $this
             ->sumByDays(
                 $request,
                 ShopPayment::query()
-                    ->whereHas('order', fn (Builder $builder) => $builder->whereIn('state_id', [
-                        OrderState::PAID,
-                        OrderState::READY,
-                        OrderState::SHIPPED,
-                    ])),
+                    ->whereHas('order', fn (Builder $builder) => $builder
+                        ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
+                        ->when($this->onlyDigital !== null, fn (Builder $query) => $query->where('is_digital_only', $this->onlyDigital))
+                    ),
                 'total',
             )
             ->format(['average' => false])

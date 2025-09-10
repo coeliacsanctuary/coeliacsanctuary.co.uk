@@ -6,6 +6,7 @@ namespace Tests\Feature\Http\Controllers\Shop\Basket;
 
 use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
 use App\Enums\Shop\ProductVariantType;
+use App\Models\Shop\ShopPrice;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\ResolveBasketAction;
 use App\Models\Shop\ShopOrder;
@@ -95,6 +96,28 @@ class DestroyControllerTest extends TestCase
         $this->makeRequest();
 
         $this->assertEquals($quantity, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function ifTheVariantIsABundleItIncreasesThePhysicalVariantQuantity(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::PHYSICAL]);
+
+        $bundleVariant = $this->build(ShopProductVariant::class)
+            ->has($this->build(ShopPrice::class), 'prices')
+            ->belongsToProduct($this->product)
+            ->isBundle()
+            ->create([
+                'quantity' => 100,
+            ]);
+
+        $this->item->update(['product_variant_id' => $bundleVariant->id]);
+
+        $quantity = $this->variant->quantity;
+
+        $this->makeRequest();
+
+        $this->assertEquals($quantity + 1, $this->variant->refresh()->quantity);
     }
 
     #[Test]

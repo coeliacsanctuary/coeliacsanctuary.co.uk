@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\Shop\OrderState;
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrder;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -21,9 +22,9 @@ Route::get('render/{ids?}', function (NovaRequest $request, Dompdf $pdf, $ids = 
             fn (Builder $builder) => $builder->whereIn('id', explode(',', $ids))
         )
         ->with([
-            'items' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
+            'items' => fn (Relation $relation) => $relation->withoutGlobalScopes()->whereRelation('variant', 'variant_type', '!=', ProductVariantType::DIGITAL),
             'items.variant' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
-            'payment', 'address', 'discountCode', 'refunds'
+            'payment', 'address', 'discountCode', 'refunds',
         ])
         ->get();
 

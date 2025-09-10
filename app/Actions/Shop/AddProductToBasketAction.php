@@ -30,8 +30,14 @@ class AddProductToBasketAction
             $item->update(['quantity' => 1]);
         }
 
-        if ($variant->variant_type !== ProductVariantType::DIGITAL) {
+        if ($variant->variant_type === ProductVariantType::PHYSICAL) {
             $variant->decrement('quantity', $quantity);
+        }
+
+        if ($variant->variant_type === ProductVariantType::BUNDLE) {
+            $physicalVariant = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->first();
+
+            $physicalVariant->decrement('quantity', $quantity);
         }
 
         app(CheckIfBasketHasDigitalProductsAction::class)->handle($order);

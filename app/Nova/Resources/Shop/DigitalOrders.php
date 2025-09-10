@@ -7,18 +7,12 @@ namespace App\Nova\Resources\Shop;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
-use App\Nova\Actions\Shop\OpenDispatchSlip;
-use App\Nova\Actions\Shop\RefundOrder;
-use App\Nova\Actions\Shop\ResendOrder;
-use App\Nova\Actions\Shop\ShipOrder;
+use App\Nova\Actions\Shop\ResendDownloadLink;
 use App\Nova\Metrics\ShopDailySales;
 use App\Nova\Metrics\ShopIncome;
 use App\Nova\Resource;
 use Illuminate\Http\Request;
-use Jpeters8889\CountryIcon\CountryIcon;
-use Jpeters8889\PrintAllOrders\PrintAllOrders;
-use Jpeters8889\ShopOrderOpenDispatchSlip\ShopOrderOpenDispatchSlip;
-use Jpeters8889\ShopOrderShippingAction\ShopOrderShippingAction;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
@@ -33,14 +27,14 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 /**
  * @codeCoverageIgnore
  */
-class Orders extends Resource
+class DigitalOrders extends Resource
 {
     /** @var class-string<ShopOrder> */
     public static string $model = ShopOrder::class;
 
     public static $clickAction = 'view';
 
-    public static $search = ['id', 'order_key', 'customer.name', 'address.line_1', 'address.town', 'address.postcode'];
+    public static $search = ['id', 'order_key', 'customer.name'];
 
     public static $perPageViaRelationship = 10;
 
@@ -53,9 +47,9 @@ class Orders extends Resource
 
             DateTime::make('Order Date', fn (ShopOrder $order) => $order->payment->created_at),
 
-            Text::make('Address', fn (ShopOrder $order) => nl2br($order->address->formatted_address))->asHtml(),
-
             Number::make('Items', fn (ShopOrder $order) => $order->items->sum('quantity')),
+
+            Boolean::make('Digital Only', 'is_digital_only'),
 
             ...$request->query('viaResource') === 'discount-codes'
                 ? [Currency::make('Discount', fn (ShopOrder $order) => $order->payment->discount)->asMinorUnits()]
@@ -67,20 +61,7 @@ class Orders extends Resource
 
             Currency::make('Processing Fee', fn (ShopOrder $order) => $order->payment->fee)->asMinorUnits(),
 
-            CountryIcon::make('Country', fn (ShopOrder $order) => [
-                'name' => $order->postageCountry->country,
-                'code' => $order->postageCountry->iso_code,
-            ]),
-
-            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order) => [
-                'parent_id' => $order->id,
-                'state_id' => $order->state_id->value,
-                'shipped_at' => $order->shipped_at?->format('jS M y'),
-            ]),
-
-            ShopOrderOpenDispatchSlip::make('', 'id'),
-
-            HasMany::make('Refunds', resource: PaymentRefund::class),
+            DateTime::make('Sent At', 'digital_products_sent_at'),
         ];
     }
 
@@ -91,26 +72,13 @@ class Orders extends Resource
 
             DateTime::make('Order Date', fn (ShopOrder $order) => $order->payment->created_at),
 
-            CountryIcon::make('Country', fn (ShopOrder $order) => [
-                'name' => $order->postageCountry->country,
-                'code' => $order->postageCountry->iso_code,
-            ])->withLabel(),
+            DateTime::make('Sent At', 'digital_products_sent_at'),
 
-            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order) => [
-                'parent_id' => $order->id,
-                'state_id' => $order->state_id->value,
-                'shipped_at' => $order->shipped_at?->format('jS M y'),
-            ]),
-
-            ShopOrderOpenDispatchSlip::make('', 'id'),
+            Boolean::make('Digital Only', 'is_digital_only'),
 
             HasOne::make('Customer', resource: Customer::class),
 
-            HasOne::make('Address', resource: ShippingAddress::class),
-
             HasOne::make('Payment', resource: Payment::class),
-
-            HasMany::make('Refunds', resource: PaymentRefund::class),
 
             HasOneThrough::make('Discount Code', resource: DiscountCode::class),
 
@@ -125,32 +93,17 @@ class Orders extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            RefundOrder::make()
+            ResendDownloadLink::make()
                 ->sole()
-                ->showInline()
-                ->confirmText('Are you sure you want to refund this order?')
-                ->confirmButtonText('Refund Order'),
-            OpenDispatchSlip::make()
-                ->onlyInline()
-                ->withoutConfirmation(),
-            ShipOrder::make()
-                ->showInline()
-                ->withoutConfirmation()
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::READY),
-            ResendOrder::make()
-                ->sole()
-                ->confirmButtonText('Resend Order')
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::SHIPPED),
-
+                ->confirmButtonText('Send new Download Link'),
         ];
     }
 
     public function cards(NovaRequest $request): array
     {
         return [
-            ShopDailySales::make()->nonDigital()->refreshWhenActionsRun()->width('1/2'),
-            ShopIncome::make()->nonDigital()->refreshWhenActionsRun()->width('1/2')->help('Including Postage'),
-            PrintAllOrders::make(),
+            ShopDailySales::make()->digitalProducts()->refreshWhenActionsRun()->width('1/2'),
+            ShopIncome::make()->digitalProducts()->refreshWhenActionsRun()->width('1/2')->help('Including Postage'),
         ];
     }
 
@@ -158,9 +111,9 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items'])
+            ->with(['payment', 'payment.response', 'items'])
             ->withCount(['items'])
-            ->where('is_digital_only', false)
+            ->where('has_digital_products', true)
             ->whereNotIn('state_id', [
                 OrderState::BASKET,
                 OrderState::PENDING,
@@ -172,7 +125,7 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items']);
+            ->with(['payment', 'payment.response', 'items']);
     }
 
     public function authorizedToView(Request $request): bool

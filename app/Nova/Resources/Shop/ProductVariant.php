@@ -50,7 +50,25 @@ class ProductVariant extends Resource
             Text::make('Title')->fullWidth()->help('Leave empty for only one variant, or to use the variant type if is a digital variant etc')->default(''),
 
             Select::make('Variant Type')
-                ->options(ProductVariantType::class)
+                ->options(function () {
+                    $options = [
+                        ProductVariantType::PHYSICAL->value => ProductVariantType::PHYSICAL->label(),
+                        ProductVariantType::DIGITAL->value => ProductVariantType::DIGITAL->label(),
+                    ];
+
+                    if (request()->get('viaResourceId')) {
+                        $hasPhysicalVariant = ShopProductVariant::query()
+                            ->where('product_id', request()->get('viaResourceId'))
+                            ->where('variant_type', ProductVariantType::PHYSICAL)
+                            ->exists();
+
+                        if ($hasPhysicalVariant) {
+                            $options[ProductVariantType::BUNDLE->value] = ProductVariantType::BUNDLE->label();
+                        }
+                    }
+
+                    return $options;
+                })
                 ->default(ProductVariantType::PHYSICAL),
 
             Files::make('Digital Download', 'download')
@@ -61,7 +79,7 @@ class ProductVariant extends Resource
                 ])
                 ->nullable()
                 ->dependsOn('variant_type', function (Files $field, NovaRequest $request, FormData $formData): void {
-                    if ($formData->get('variant_type') !== ProductVariantType::PHYSICAL->value) {
+                    if ($formData->get('variant_type') === ProductVariantType::DIGITAL->value) {
                         $field->show()->rules(['required']);
                     } else {
                         $field->hide()->rules([]);
@@ -81,8 +99,9 @@ class ProductVariant extends Resource
 
             Number::make('Quantity', 'quantity')
                 ->fullWidth()
+                ->displayUsing(fn () => $this->model()->variant_type === ProductVariantType::PHYSICAL ? $this->model()->quantity : '-')
                 ->dependsOn('variant_type', function (Number $field, NovaRequest $request, FormData $formData): void {
-                    if ($formData->get('variant_type') !== ProductVariantType::DIGITAL->value) {
+                    if ($formData->get('variant_type') === ProductVariantType::PHYSICAL->value) {
                         $field->show()->rules(['required']);
                     } else {
                         $field->hide()->rules([]);
@@ -93,8 +112,9 @@ class ProductVariant extends Resource
 
             Number::make('Weight')
                 ->fullWidth()
+                ->displayUsing(fn () => $this->model()->variant_type === ProductVariantType::PHYSICAL ? $this->model()->weight : '-')
                 ->dependsOn('variant_type', function (Number $field, NovaRequest $request, FormData $formData): void {
-                    if ($formData->get('variant_type') !== ProductVariantType::DIGITAL->value) {
+                    if ($formData->get('variant_type') === ProductVariantType::PHYSICAL->value) {
                         $field->show()->rules(['required']);
                     } else {
                         $field->hide()->rules([]);
@@ -135,6 +155,11 @@ class ProductVariant extends Resource
             ]);
     }
 
+    public static function detailQuery(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder $query)
+    {
+        return self::indexQuery($request, $query);
+    }
+
     protected static function fillFields(NovaRequest $request, $model, $fields): array
     {
         $fillFields = parent::fillFields($request, $model, $fields);
@@ -146,7 +171,7 @@ class ProductVariant extends Resource
             $variant->title = '';
         }
 
-        if ($variant->variant_type === ProductVariantType::DIGITAL) {
+        if ($variant->variant_type !== ProductVariantType::PHYSICAL) {
             $variant->quantity = 999;
             $variant->weight = 1;
         }

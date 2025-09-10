@@ -32,6 +32,11 @@ class ShopProductVariantFactory extends Factory
         ]);
     }
 
+    public function isBundle(): self
+    {
+        return $this->state(['variant_type' => ProductVariantType::BUNDLE]);
+    }
+
     public function isPrimary(): self
     {
         return $this->state(['primary_variant' => true]);

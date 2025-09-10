@@ -13,7 +13,7 @@ enum ProductVariantType: string
     public function label(): string
     {
         return match ($this) {
-            self::PHYSICAL => 'Physical Product',
+            self::PHYSICAL => 'Physical Product Only',
             self::DIGITAL => 'Digital Download Only',
             self::BUNDLE => 'Physical and Digital Bundle',
         };

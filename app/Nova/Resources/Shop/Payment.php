@@ -13,7 +13,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/** @extends Resource<ShopPayment> */
+/** @extends resource<ShopPayment> */
 /**
  * @codeCoverageIgnore
  */
@@ -33,7 +33,7 @@ class Payment extends Resource
 
             Currency::make('Subtotal')->asMinorUnits(),
             Currency::make('Discount')->asMinorUnits(),
-            Currency::make('Postage')->asMinorUnits(),
+            Currency::make('Postage')->asMinorUnits()->canSee(fn () => $this->model()->order->is_digital_only === false),
             Currency::make('Total')->asMinorUnits(),
             Currency::make('Fee')->asMinorUnits(),
 

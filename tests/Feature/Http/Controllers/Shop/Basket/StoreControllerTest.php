@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\Shop\Basket;
 
 use App\Enums\Shop\ProductVariantType;
+use App\Models\Shop\ShopPrice;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Actions\Shop\ResolveBasketAction;
@@ -114,6 +115,22 @@ class StoreControllerTest extends TestCase
         ;
 
         $this->makeRequest(['quantity' => 2])->assertSessionHasErrors('quantity');
+    }
+
+    #[Test]
+    public function ifTheVariantIsABundleButThePhysicalProductDoesntHaveEnoughQuantityItReturnsAnError(): void
+    {
+        $this->variant->update(['quantity' => 1]);
+
+        $bundleVariant = $this->build(ShopProductVariant::class)
+            ->has($this->build(ShopPrice::class), 'prices')
+            ->belongsToProduct($this->product)
+            ->isBundle()
+            ->create([
+                'quantity' => 100,
+            ]);
+
+        $this->makeRequest(['quantity' => 2, 'variant_id' => $bundleVariant->id])->assertSessionHasErrors('quantity');
     }
 
     #[Test]

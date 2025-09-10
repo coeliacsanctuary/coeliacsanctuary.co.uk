@@ -6,6 +6,7 @@ namespace App\Nova\Metrics;
 
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
+use Illuminate\Database\Eloquent\Builder;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Trend;
 use Laravel\Nova\Nova;
@@ -15,13 +16,29 @@ use Laravel\Nova\Nova;
  */
 class ShopDailySales extends Trend
 {
+    protected ?bool $onlyDigital = null;
+
+    public function nonDigital(): self
+    {
+        $this->onlyDigital = false;
+
+        return $this;
+    }
+
+    public function digitalProducts(): self
+    {
+        $this->onlyDigital = true;
+
+        return $this;
+    }
+
     public function calculate(NovaRequest $request)
     {
-        return $this->countByDays($request, ShopOrder::query()->whereIn('state_id', [
-            OrderState::PAID,
-            OrderState::READY,
-            OrderState::SHIPPED,
-        ]))
+        return $this
+            ->countByDays($request, ShopOrder::query()
+                ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
+                ->when($this->onlyDigital !== null, fn (Builder $query) => $query->where('is_digital_only', $this->onlyDigital))
+            )
             ->format(['average' => false])
             ->showSumValue();
     }

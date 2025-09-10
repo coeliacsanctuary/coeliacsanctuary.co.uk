@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
@@ -17,14 +18,35 @@ class ReopenBasketAction
     /** @return Collection<int, string> */
     public function handle(ShopOrder $basket): Collection
     {
-        $basket->load(['items', 'items.product', 'items.variant', 'items.product.prices']);
+        $basket->load(['items', 'items.product', 'items.product.variants', 'items.variant', 'items.product.prices']);
 
         $basket->update(['state_id' => OrderState::BASKET]);
 
         /** @var Collection<int, ShopOrderItem> $items */
         $items = $basket->items;
 
-        if ($items->reject(fn (ShopOrderItem $item) => $item->variant?->quantity === 0)->isEmpty()) {
+        $inStockItems = $items->reject(function (ShopOrderItem $item) {
+            /** @var ShopProductVariant $variant */
+            $variant = $item->variant;
+
+            if($variant->variant_type === ProductVariantType::DIGITAL) {
+                return false;
+            }
+
+            if($variant->variant_type === ProductVariantType::BUNDLE) {
+                /** @var ShopProduct $product */
+                $product = $item->product;
+
+                /** @var ShopProductVariant $physicalVariant */
+                $physicalVariant = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->first();
+
+                return $physicalVariant->quantity === 0;
+            }
+
+            return $variant->quantity === 0;
+        });
+
+        if ($inStockItems->isEmpty()) {
             return collect(['All of the items in your basket have gone out of stock']);
         }
 
@@ -41,13 +63,19 @@ class ReopenBasketAction
             /** @var ShopProduct $product */
             $product = $item->product;
 
-            if ($variant->quantity === 0) {
+            $variantQuantity = $variant->quantity;
+
+            if($variant->variant_type === ProductVariantType::BUNDLE) {
+                $variantQuantity = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->firstOrFail()->quantity;
+            }
+
+            if ($variantQuantity === 0) {
                 $warnings->add($this->getWarningMessage($variant, $product));
 
                 return;
             }
 
-            if ($variant->quantity < $item->quantity) {
+            if ($variantQuantity < $item->quantity) {
                 $warnings->add($this->getWarningMessage($variant, $product));
             }
 
