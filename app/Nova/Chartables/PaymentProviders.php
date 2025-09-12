@@ -23,26 +23,20 @@ class PaymentProviders extends Chartable
     {
         return [
             ShopOrder::query()
-            ->where('created_at', '>=', $startDate)
-            ->where('created_at', '<=', $endDate)
-            ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
-            ->whereNotNull('order_key')
-            ->with('payment')
-            ->get()
-            ->groupBy('payment.payment_type_id'),
+                ->where('created_at', '>=', $startDate)
+                ->where('created_at', '<=', $endDate)
+                ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
+                ->whereNotNull('order_key')
+                ->with(['payment'])
+                ->get()
+                ->groupBy('payment.payment_type_id'),
         ];
     }
 
     /** @param Collection<int, ShopOrder> $collection */
     protected function formatResult(Collection $collection): int|float
     {
-        $total = 0;
-
-        $collection->each(function (ShopOrder $item) use (&$total): void {
-            $total += $item->payment->total;
-        });
-
-        return $total / 100;
+        return $collection->count();
     }
 
     protected function data(DateRange $dateRange): array
@@ -106,18 +100,18 @@ class PaymentProviders extends Chartable
                 'stacked' => true,
             ],
             'stroke' => [
-                'curve' => 'monotoneCubic'
+                'curve' => 'monotoneCubic',
             ],
             'fill' => [
-                'type'=> 'gradient',
-                'gradient'=> [
-                    'opacityFrom'=> 0.6,
-                    'opacityTo'=> 0.8,
+                'type' => 'gradient',
+                'gradient' => [
+                    'opacityFrom' => 0.6,
+                    'opacityTo' => 0.8,
                 ],
             ],
             'dataLabels' => [
                 'enabled' => false,
-            ]
+            ],
         ];
     }
 }
