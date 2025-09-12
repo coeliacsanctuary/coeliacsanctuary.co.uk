@@ -16,7 +16,7 @@ use App\Schema\PendingEaterySchema;
 use App\Services\EatingOut\Filters\GetFiltersForTown;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 class ShowController
 {
@@ -57,9 +57,12 @@ class ShowController
             ]))
             ->schema(PendingEaterySchema::make($eateries, $town->town)->toScript())
             ->render('EatingOut/Town', [
+                'live_eateries_count' => $town->liveEateries->count(),
                 'town' => fn () => new TownPageResource($town),
                 'eateries' => $pipeline,
                 'filters' => fn () => $getFiltersForTown->setTown($town)->handle($filters),
-            ]);
+            ])
+            ->toResponse($request)
+            ->setStatusCode($town->liveEateries->count() === 0 ? Response::HTTP_GONE : Response::HTTP_OK);
     }
 }

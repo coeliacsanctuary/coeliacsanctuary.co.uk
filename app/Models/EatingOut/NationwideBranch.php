@@ -152,15 +152,21 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
             return $query->where('id', $value);
         }
 
-        if(app(Request::class)->route('eatery')) {
+        if (app(Request::class)->route('eatery')) {
             $eatery = app(Request::class)->route('eatery');
 
             if ($eatery instanceof Eatery) {
-                return $eatery->nationwideBranches()->where('slug', $value);
+                /** @var Builder<static> $query */
+                $query = $eatery->nationwideBranches()->where('slug', $value);
+
+                return $query;
             }
 
-            if(is_string($eatery)) {
-                return Eatery::query()->where('slug', $eatery)->firstOrFail()->nationwideBranches()->where('slug', $value);
+            if (is_string($eatery)) {
+                /** @var Builder<static> $query */
+                $query = Eatery::query()->where('slug', $eatery)->firstOrFail()->nationwideBranches()->where('slug', $value);
+
+                return $query;
             }
         }
 
