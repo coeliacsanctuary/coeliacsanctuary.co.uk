@@ -45,11 +45,14 @@ class StoreController
             'review' => $product['review'],
         ]));
 
-        $review->products->load('product')->each(function (ShopOrderReviewItem $orderReviewItem): void {
-            $orderReviewItem->product?->sealiacOverview?->update([
-                'invalidated' => true,
-            ]);
-        });
+        $review
+            ->products
+            ->load(['product', 'product.sealiacOverview'])
+            ->each(function (ShopOrderReviewItem $orderReviewItem): void {
+                $orderReviewItem->product?->sealiacOverview?->update([
+                    'invalidated' => true,
+                ]);
+            });
 
         return new RedirectResponse(route('shop.review-order.thanks', $invitation));
     }
