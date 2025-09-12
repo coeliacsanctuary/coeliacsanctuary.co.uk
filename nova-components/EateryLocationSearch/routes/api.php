@@ -30,7 +30,7 @@ Route::post('/search', function (Request $request): Collection {
 
     $townResults = EateryTown::withoutGlobalScopes()
         ->whereLike('town', "%{$request->input('term')}%")
-        ->with(['county' => fn($query) => $query->withoutGlobalScopes(), 'county.country'])
+        ->with(['county' => fn ($query) => $query->withoutGlobalScopes(), 'county.country'])
         ->get()
         ->map(fn (EateryTown $town) => new ResultDto(
             type: $town->county->slug === 'london' ? 'borough' : 'town',
@@ -43,7 +43,7 @@ Route::post('/search', function (Request $request): Collection {
 
     $areaResults = EateryArea::withoutGlobalScopes()
         ->whereLike('area', "%{$request->input('term')}%")
-        ->with(['town' => fn($query) => $query->withoutGlobalScopes(), 'town.county' => fn($query) => $query->withoutGlobalScopes(), 'town.county.country'])
+        ->with(['town' => fn ($query) => $query->withoutGlobalScopes(), 'town.county' => fn ($query) => $query->withoutGlobalScopes(), 'town.county.country'])
         ->get()
         ->map(fn (EateryArea $area) => new ResultDto(
             type: 'area',

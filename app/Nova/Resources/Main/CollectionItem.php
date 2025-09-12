@@ -6,15 +6,13 @@ namespace App\Nova\Resources\Main;
 
 use App\Models\Collections\CollectionItem as CollectionItemModel;
 use App\Nova\Resource;
-use CoeliacSanctuary\NovaFieldSortable\Concerns\SortsIndexEntries;
-use CoeliacSanctuary\NovaFieldSortable\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Outl1ne\NovaSortable\Traits\HasSortableRows;
 
-/** @extends Resource<CollectionItemModel> */
+/** @extends resource<CollectionItemModel> */
 /**
  * @codeCoverageIgnore
  */

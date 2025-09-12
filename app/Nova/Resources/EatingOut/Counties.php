@@ -66,7 +66,7 @@ class Counties extends Resource
 
             Boolean::make('Live', fn () => $this->eateries_count > 0)->onlyOnIndex(),
 
-            Number::make('Towns', 'active_towns_count')->onlyOnIndex()->sortable(),
+            Number::make('Towns', 'towns_count')->onlyOnIndex()->sortable(),
 
             Number::make('Eateries', 'eateries_count')->onlyOnIndex()->sortable(),
 
@@ -82,7 +82,7 @@ class Counties extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->withCount(['activeTowns', 'eateries' => fn (Builder $relation) => $relation->where('live', true)])
+            ->withCount(['towns', 'eateries' => fn (Builder $relation) => $relation->where('live', true)])
             ->when($request->missing('orderByDirection'), fn (Builder $builder) => $builder->reorder('county'));
     }
 
