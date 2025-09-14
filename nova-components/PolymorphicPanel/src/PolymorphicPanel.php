@@ -59,8 +59,8 @@ class PolymorphicPanel extends Field
         $relationship = $resource->{$this->polymorphicResource->relationship()}()->get();
 
         collect($this->fields)
-            ->map(function (Field $field) use ($relationship) {
-                $field->setValue($this->polymorphicResource->check($field->attribute, $relationship));
+            ->map(function (Field $field) use ($relationship, $resource) {
+                $field->setValue($this->polymorphicResource->check($field->attribute, $relationship, $resource));
 
                 return $field;
             });

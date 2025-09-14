@@ -7,6 +7,7 @@ namespace App\Nova\Resources\Main;
 use App\Models\Blogs\Blog as BlogModel;
 use App\Nova\Resource;
 use App\Nova\Support\Panels\VisibilityPanel;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Jpeters8889\Body\Body;
 use Laravel\Nova\Fields\Boolean;
@@ -122,5 +123,10 @@ class Blog extends Resource
         unset($blog->_status);
 
         return $fillFields;
+    }
+
+    public static function indexQuery(NovaRequest $request, Builder $query)
+    {
+        return $query->withoutGlobalScopes();
     }
 }

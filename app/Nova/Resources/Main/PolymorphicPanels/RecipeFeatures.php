@@ -30,7 +30,7 @@ class RecipeFeatures implements PolymorphicResource
         return 'features';
     }
 
-    public function check($key, Collection $relationship): bool
+    public function check($key, Collection $relationship, Model $resource): bool
     {
         return $relationship
             ->filter(fn (RecipeFeature $feature): bool => $feature->feature === Str::headline($key)) /** @phpstan-ignore-line  */

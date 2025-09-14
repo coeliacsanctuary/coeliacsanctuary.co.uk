@@ -30,8 +30,13 @@ class RecipeAllergens implements PolymorphicResource
         return 'allergens';
     }
 
-    public function check($key, Collection $relationship): bool
+    /** @param Recipe $resource */
+    public function check($key, Collection $relationship, Model $resource): bool
     {
+        if(!$resource->exists) {
+            return false;
+        }
+
         return $relationship
             ->filter(fn (RecipeAllergen $allergen): bool => $allergen->allergen === Str::headline($key)) /** @phpstan-ignore-line  */
             ->count() === 0;
