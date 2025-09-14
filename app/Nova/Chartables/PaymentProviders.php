@@ -27,7 +27,7 @@ class PaymentProviders extends Chartable
                 ->where('created_at', '<=', $endDate)
                 ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
                 ->whereNotNull('order_key')
-                ->with('payment')
+                ->with(['payment'])
                 ->get()
                 ->groupBy('payment.payment_type_id'),
         ];
@@ -36,13 +36,7 @@ class PaymentProviders extends Chartable
     /** @param Collection<int, ShopOrder> $collection */
     protected function formatResult(Collection $collection): int|float
     {
-        $total = 0;
-
-        $collection->each(function (ShopOrder $item) use (&$total): void {
-            $total += $item->payment->total;
-        });
-
-        return $total / 100;
+        return $collection->count();
     }
 
     protected function data(DateRange $dateRange): array
@@ -106,7 +100,7 @@ class PaymentProviders extends Chartable
                 'stacked' => true,
             ],
             'stroke' => [
-                'curve' => 'monotoneCubic'
+                'curve' => 'monotoneCubic',
             ],
             'fill' => [
                 'type' => 'gradient',
@@ -117,7 +111,7 @@ class PaymentProviders extends Chartable
             ],
             'dataLabels' => [
                 'enabled' => false,
-            ]
+            ],
         ];
     }
 }

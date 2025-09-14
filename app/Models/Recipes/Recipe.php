@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -176,6 +177,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
 
         return Schema::recipe()
             ->name($this->title)
+            ->description($this->meta_description)
             ->image($this->main_image)
             ->author(Schema::person()->name('Alison Peters'))
             ->dateModified($this->updated_at)
@@ -193,7 +195,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
                     ->fiberContent("{$this->nutrition->fibre} grams") /** @phpstan-ignore-line */
                     ->servingSize($this->portion_size)
             )
-            ->recipeIngredient(explode("\n", $this->ingredients))
+            ->recipeIngredient(Str::of($this->ingredients)->explode("\n")->map(fn (string $ingredient) => Str::limit($ingredient, 130))->toArray())
             ->recipeInstructions(explode("\n\n", $this->method))
             ->suitableForDiet($this->richTextSuitableFor())
             ->keywords($this->meta_tags)
@@ -217,7 +219,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
 
     protected function formatTimeToIso(string $time): string
     {
-        $time = str_ireplace([' and', ' a', ' half'], '', $time);
+        $time = str_ireplace([' and', ' a', ' half', ' (plus cooling)', ' or Overnight'], '', $time);
         $bits = explode(' ', $time);
 
         if (count($bits) === 4) {

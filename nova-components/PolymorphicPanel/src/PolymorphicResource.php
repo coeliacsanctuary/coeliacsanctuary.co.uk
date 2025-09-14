@@ -17,7 +17,7 @@ interface PolymorphicResource
      * @param string $key
      * @param Collection<int, Model> $relationship
      */
-    public function check(string $key, Collection $relationship): bool;
+    public function check(string $key, Collection $relationship, Model $resource): bool;
 
     /**
      * @param Collection<string, Model> $values

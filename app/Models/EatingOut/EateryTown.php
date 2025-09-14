@@ -94,12 +94,17 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
         if (app(Request::class)->route('county')) {
             /** @var ?EateryCounty $county | string */
             $county = app(Request::class)->route('county');
+
             if ( ! $county instanceof EateryCounty) {
                 $county = EateryCounty::query()->where('slug', $county)->firstOrFail();
             }
 
             /** @var Builder<static> $return */
             $return = $county->towns()->where('slug', $value)->getQuery();
+
+            if ($return->count() === 0) {
+                $return = $return->withoutGlobalScopes();
+            }
 
             return $return;
         }

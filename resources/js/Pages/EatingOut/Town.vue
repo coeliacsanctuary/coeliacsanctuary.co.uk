@@ -7,7 +7,7 @@ import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
 import { Ref, ref } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, Link } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
 import GoogleAd from '@/Components/GoogleAd.vue';
@@ -16,6 +16,7 @@ import useBrowser from '@/composables/useBrowser';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 
 defineProps<{
+  live_eateries_count: number;
   town: TownPage;
   eateries: PaginatedCollection<TownEatery>;
   filters: EateryFilters;
@@ -105,7 +106,10 @@ const reloadEateries = () => {
     :latlng="town.latlng"
   />
 
-  <Card class="mt-3 flex flex-col space-y-4">
+  <Card
+    v-if="live_eateries_count > 0"
+    class="mt-3 flex flex-col space-y-4"
+  >
     <p class="prose-md prose max-w-none lg:prose-lg">
       Looking for gluten free in {{ town.name }}? In our comprehensive eating
       out guide, you will find a wide range of gluten free options available at
@@ -141,18 +145,21 @@ const reloadEateries = () => {
   </Card>
 
   <GoogleAd
+    v-if="live_eateries_count > 0"
     :key="$page.url"
     code="5284484376"
   />
 
   <div class="relative md:flex xmd:space-x-2">
     <TownFilterSidebar
+      v-if="live_eateries_count > 0"
       :filters="filters"
       @filters-updated="handleFiltersChanged"
       @sidebar-closed="reloadEateries"
     />
 
     <div
+      v-if="live_eateries_count > 0"
       ref="placeList"
       class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1"
     >
@@ -172,6 +179,19 @@ const reloadEateries = () => {
       </Card>
       <div ref="landmark" />
     </div>
+
+    <Card
+      v-else
+      class="flex w-full flex-col space-y-4 px-8 py-8 text-center"
+    >
+      <p class="prose prose-xl max-w-none">
+        Sorry, we don't have any places listed in {{ town.name }}.
+      </p>
+
+      <p class="prose prose-xl max-w-none">
+        <Link :href="town.county.link">Back to {{ town.county.name }}</Link>
+      </p>
+    </Card>
   </div>
 
   <JumpToContentButton

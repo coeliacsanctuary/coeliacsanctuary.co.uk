@@ -21,6 +21,7 @@ use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Http\Requests\ResourceIndexRequest;
+use Throwable;
 
 /** @extends resource<ShopOrderItem> */
 /**
@@ -30,8 +31,6 @@ class OrderItem extends Resource
 {
     /** @var class-string<ShopOrderItem> */
     public static string $model = ShopOrderItem::class;
-
-    public static $with = ['product', 'variant', 'product.media'];
 
     public static $perPageViaRelationship = 10;
 
@@ -46,7 +45,13 @@ class OrderItem extends Resource
 
             Hidden::make('old_variant_id', 'product_variant_id'),
 
-            Image::make('Image', fn (ShopOrderItem $item) => $item->product->main_image)
+            Image::make('Image', function (ShopOrderItem $item) {
+                try {
+                    return $item->product?->main_image;
+                } catch (Throwable) {
+                    return null;
+                }
+            })
                 ->disk('media')
                 ->preview(fn ($value) => $value)
                 ->thumbnail(fn ($value) => $value)
@@ -154,6 +159,11 @@ class OrderItem extends Resource
     public static function redirectAfterUpdate(NovaRequest $request, $resource)
     {
         return "resources/orders/{$resource->order_id}";
+    }
+
+    public static function indexQuery(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder $query)
+    {
+        return $query->with(['product' => fn ($query) => $query->withoutGlobalScopes(), 'variant' => fn ($query) => $query->withoutGlobalScopes(), 'product.media']);
     }
 
     public function authorizedToView(Request $request): bool

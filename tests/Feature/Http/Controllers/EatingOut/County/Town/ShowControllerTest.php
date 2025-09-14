@@ -51,11 +51,11 @@ class ShowControllerTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsNotFoundForATownThatHasNoLiveEateries(): void
+    public function itReturnsHttpGoneForATownThatHasNoLiveEateries(): void
     {
         $town = $this->create(EateryTown::class);
 
-        $this->get(route('eating-out.town', ['county' => $this->county, 'town' => $town]))->assertNotFound();
+        $this->get(route('eating-out.town', ['county' => $this->county, 'town' => $town]))->assertGone();
     }
 
     #[Test]

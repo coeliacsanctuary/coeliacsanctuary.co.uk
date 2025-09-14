@@ -12,7 +12,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Outl1ne\NovaSortable\Traits\HasSortableRows;
 
-/** @extends Resource<CollectionItemModel> */
+/** @extends resource<CollectionItemModel> */
 /**
  * @codeCoverageIgnore
  */
