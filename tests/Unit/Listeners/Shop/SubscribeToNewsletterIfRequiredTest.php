@@ -5,14 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Listeners\Shop;
 
 use App\Actions\SignUpToNewsletterAction;
-use App\Enums\Shop\OrderState;
 use App\Events\Shop\OrderPaidEvent;
-use App\Listeners\Shop\PrepareOrderDigitalDownload;
 use App\Listeners\Shop\SubscribeToNewsletterIfRequired;
 use App\Models\Shop\ShopOrder;
-use App\Models\Shop\ShopOrderDownloadLink;
-use App\Notifications\Shop\DownloadYourProductsNotification;
-use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
