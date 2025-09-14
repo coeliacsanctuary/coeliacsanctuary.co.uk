@@ -35,6 +35,7 @@ class AddProductToBasketAction
         }
 
         if ($variant->variant_type === ProductVariantType::BUNDLE) {
+            /** @var ShopProductVariant $physicalVariant */
             $physicalVariant = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->first();
 
             $physicalVariant->decrement('quantity', $quantity);

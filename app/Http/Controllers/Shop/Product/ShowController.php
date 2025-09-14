@@ -37,10 +37,11 @@ class ShowController
         $resource = ShopProductResource::class;
 
         /** @var string[] | array{string, mixed} $relations */
-        $relations = ['categories', 'variants' => fn (Relation $query) => $query->chaperone(), 'variants.prices', 'media', 'reviews'];
+        $relations = ['categories', 'variants' => fn (Relation $query) => $query->chaperone(), 'variants.prices', 'media', 'reviews']; /** @phpstan-ignore-line  */
 
         if ($product->categories->pluck('title')->containsAny(['Coeliac Gluten Free Travel Cards', 'Coeliac+ Other Allergen Travel Cards'])) {
             $resource = ShopTravelCardProductResource::class;
+
             $relations['travelCardSearchTerms'] = fn (Relation $builder) => $builder->where('type', 'country'); /** @phpstan-ignore-line  */
         }
 

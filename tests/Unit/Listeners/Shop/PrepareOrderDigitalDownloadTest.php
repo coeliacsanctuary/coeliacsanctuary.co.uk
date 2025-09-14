@@ -12,7 +12,6 @@ use App\Models\Shop\ShopOrderDownloadLink;
 use App\Notifications\Shop\DownloadYourProductsNotification;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
-use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
 class PrepareOrderDigitalDownloadTest extends TestCase

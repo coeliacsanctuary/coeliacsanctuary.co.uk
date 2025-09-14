@@ -39,6 +39,7 @@ class AlterItemQuantityAction
                 /** @var ShopProduct $product */
                 $product = $orderItem->product;
 
+                /** @var ShopProductVariant $physicalVariant */
                 $physicalVariant = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->first();
 
                 $physicalVariant->decrement('quantity');
@@ -59,6 +60,7 @@ class AlterItemQuantityAction
             /** @var ShopProduct $product */
             $product = $orderItem->product;
 
+            /** @var ShopProductVariant $physicalVariant */
             $physicalVariant = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->first();
 
             $physicalVariant->increment('quantity');

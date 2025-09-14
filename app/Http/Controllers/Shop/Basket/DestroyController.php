@@ -9,6 +9,7 @@ use App\Actions\Shop\ResolveBasketAction;
 use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
+use App\Models\Shop\ShopProductVariant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -26,14 +27,18 @@ class DestroyController
 
         $item->delete();
 
-        if ($item->variant?->variant_type === ProductVariantType::PHYSICAL) {
-            $item->variant?->increment('quantity', $item->quantity);
+        /** @var ShopProductVariant $variant */
+        $variant = $item->variant;
+
+        if ($variant->variant_type === ProductVariantType::PHYSICAL) {
+            $variant->increment('quantity', $item->quantity);
         }
 
-        if ($item->variant->variant_type === ProductVariantType::BUNDLE) {
+        if ($variant->variant_type === ProductVariantType::BUNDLE) {
             /** @var ShopProduct $product */
             $product = $item->product;
 
+            /** @var ShopProductVariant $physicalVariant */
             $physicalVariant = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->first();
 
             $physicalVariant->increment('quantity', $item->quantity);

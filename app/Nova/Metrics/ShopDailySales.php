@@ -35,9 +35,11 @@ class ShopDailySales extends Trend
     public function calculate(NovaRequest $request)
     {
         return $this
-            ->countByDays($request, ShopOrder::query()
-                ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
-                ->when($this->onlyDigital !== null, fn (Builder $query) => $query->where('is_digital_only', $this->onlyDigital))
+            ->countByDays(
+                $request,
+                ShopOrder::query()
+                    ->whereIn('state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED])
+                    ->when($this->onlyDigital !== null, fn (Builder $query) => $query->where('is_digital_only', $this->onlyDigital))
             )
             ->format(['average' => false])
             ->showSumValue();

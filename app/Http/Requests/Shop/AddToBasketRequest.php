@@ -57,9 +57,14 @@ class AddToBasketRequest extends FormRequest
 
             // Quantity Available
             function (Validator $validator): void {
+                /** @var ?ShopProductVariant $variant */
                 $variant = ShopProductVariant::query()->find($this->integer('variant_id'));
 
-                if($variant->variant_type === ProductVariantType::BUNDLE) {
+                if ( ! $variant) {
+                    return;
+                }
+
+                if ($variant->variant_type === ProductVariantType::BUNDLE) {
                     $variant = ShopProductVariant::query()
                         ->where('product_id', $this->integer('product_id'))
                         ->where('variant_type', ProductVariantType::PHYSICAL)

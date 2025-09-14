@@ -29,11 +29,11 @@ class ReopenBasketAction
             /** @var ShopProductVariant $variant */
             $variant = $item->variant;
 
-            if($variant->variant_type === ProductVariantType::DIGITAL) {
+            if ($variant->variant_type === ProductVariantType::DIGITAL) {
                 return false;
             }
 
-            if($variant->variant_type === ProductVariantType::BUNDLE) {
+            if ($variant->variant_type === ProductVariantType::BUNDLE) {
                 /** @var ShopProduct $product */
                 $product = $item->product;
 
@@ -65,7 +65,7 @@ class ReopenBasketAction
 
             $variantQuantity = $variant->quantity;
 
-            if($variant->variant_type === ProductVariantType::BUNDLE) {
+            if ($variant->variant_type === ProductVariantType::BUNDLE) {
                 $variantQuantity = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->firstOrFail()->quantity;
             }
 

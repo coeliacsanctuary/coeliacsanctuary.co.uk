@@ -12,11 +12,6 @@ use Tests\TestCase;
 
 class ShopPriceTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     #[Test]
     public function itBelongsToAProduct(): void
     {
