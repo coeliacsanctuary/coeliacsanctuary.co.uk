@@ -10,6 +10,7 @@ use App\Nova\Resources\Main\PolymorphicPanels\RecipeAllergens as RecipeAllergenP
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeFeatures as RecipeFeaturePanel;
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeMeals as RecipeMealPanel;
 use App\Nova\Support\Panels\VisibilityPanel;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Jpeters8889\Body\Body;
 use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
@@ -113,9 +114,9 @@ class Recipe extends Resource
 
             HasOne::make('Nutritional Information', 'nutrition', RecipeNutritionalInformation::class)->onlyOnForms()->fullWidth(),
 
-            new Panel('Allergens', [
+            (new Panel('Allergens', [
                 PolymorphicPanel::make('Allergens', new RecipeAllergenPanel())->display('row'),
-            ])->help('Tick the allergens that apply to this recipe.'),
+            ]))->help('Tick the allergens that apply to this recipe.'),
 
             new Panel('Meals', [
                 PolymorphicPanel::make('Meals', new RecipeMealPanel())->display('row'),
@@ -144,5 +145,10 @@ class Recipe extends Resource
         unset($recipe->_status);
 
         return $fillFields;
+    }
+
+    public static function indexQuery(NovaRequest $request, Builder $query)
+    {
+        return $query->withoutGlobalScopes();
     }
 }

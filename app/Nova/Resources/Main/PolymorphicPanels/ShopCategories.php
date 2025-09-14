@@ -30,7 +30,7 @@ class ShopCategories implements PolymorphicResource
         return 'assignedCategories';
     }
 
-    public function check($key, Collection $relationship): bool
+    public function check($key, Collection $relationship, Model $resource): bool
     {
         return $relationship
             ->filter(fn (ShopCategory $category): bool => $category->title === Str::headline($key)) /** @phpstan-ignore-line  */
