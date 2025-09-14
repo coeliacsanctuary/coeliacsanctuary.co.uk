@@ -106,6 +106,7 @@ export type CheckoutContactStep = {
   email: string;
   email_confirmation: string;
   phone?: string;
+  subscribeToNewsletter: boolean;
 };
 
 export type CheckoutShippingStep = {

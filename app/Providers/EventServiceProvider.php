@@ -13,6 +13,7 @@ use App\Listeners\Shop\PrepareOrderDigitalDownload;
 use App\Listeners\Shop\SendOrderCancellationNotification;
 use App\Listeners\Shop\SendOrderConfirmationMails;
 use App\Listeners\Shop\SendOrderShippedNotification;
+use App\Listeners\Shop\SubscribeToNewsletterIfRequired;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -21,6 +22,7 @@ class EventServiceProvider extends ServiceProvider
         OrderPaidEvent::class => [
             SendOrderConfirmationMails::class,
             PrepareOrderDigitalDownload::class,
+            SubscribeToNewsletterIfRequired::class
         ],
         OrderShippedEvent::class => [SendOrderShippedNotification::class],
         OrderCancelledEvent::class => [SendOrderCancellationNotification::class],

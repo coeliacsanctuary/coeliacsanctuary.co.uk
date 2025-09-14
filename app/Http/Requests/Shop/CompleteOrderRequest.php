@@ -32,6 +32,7 @@ class CompleteOrderRequest extends FormRequest
             'contact.name' => ['required', 'string'],
             'contact.email' => ['required', 'string', 'email', 'confirmed'],
             'contact.phone' => ['nullable'],
+            'contact.subscribeToNewsletter' => ['nullable', 'boolean'],
         ];
     }
 

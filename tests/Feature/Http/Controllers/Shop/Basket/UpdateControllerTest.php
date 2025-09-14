@@ -330,6 +330,17 @@ class UpdateControllerTest extends TestCase
     }
 
     #[Test]
+    public function itErrorsIfContactSubscribeToNewsletterIsNotABoolean(): void
+    {
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => ['subscribeToNewsletter' => 'foo'],
+            ])
+            ->assertSessionHasErrors('contact.subscribeToNewsletter');
+    }
+
+    #[Test]
     public function itCallsTheCreateCustomerActionWithValidCustomerDetails(): void
     {
         $this->expectAction(CreateCustomerAction::class, return: $this->create(ShopCustomer::class));
@@ -366,5 +377,28 @@ class UpdateControllerTest extends TestCase
 
         $this->assertNotNull($this->order->refresh()->customer_id);
         $this->assertTrue($this->order->customer->is($customer));
+    }
+
+    #[Test]
+    public function itSetsTheSubscribeToNewsletterValue(): void
+    {
+        $customer = $this->create(ShopCustomer::class);
+
+        $this->expectAction(CreateCustomerAction::class, return: $customer);
+
+        $this->assertNull($this->order->customer_id);
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->patch(route('shop.basket.patch'), [
+                'contact' => [
+                    'name' => 'foo',
+                    'email' => 'foo@bar.com',
+                    'email_confirmation' => 'foo@bar.com',
+                    'subscribeToNewsletter' => true,
+                ],
+            ]);
+
+        $this->assertTrue($this->order->refresh()->newsletter_signup);
     }
 }

@@ -249,6 +249,19 @@ class StoreControllerTest extends TestCase
         $this->assertSame(Str::length($this->basket->order_key), 8);
     }
 
+    #[Test]
+    #[DataProvider('orderStateDataProvider')]
+    public function itSetsTheSubscribeToNewsletterValue(callable $before): void
+    {
+        $before($this);
+
+        $this->makeRequest(['contact.subscribeToNewsletter' => true])->assertCreated();
+
+        $this->basket->refresh();
+
+        $this->assertTrue($this->basket->newsletter_signup);
+    }
+
     protected function makeRequest(array $data = [], array $session = []): TestResponse
     {
         $payload = ShopCompleteOrderRequestFactory::new($data);
@@ -286,6 +299,9 @@ class StoreControllerTest extends TestCase
             'contact email confirmation is bool' => [['contact.email_confirmation' => true], ['contact.email']],
             'contact email confirmation is not an email address' => [['contact.email_confirmation' => 'foobar'], ['contact.email']],
             'contact email and email confirmation do not match' => [['contact.email' => 'foo@bar.com', 'contact.email_confirmation' => 'bar@baz.com'], ['contact.email']],
+
+            // contact subscribe to newsletter
+            'contact subscribe to email is not a bool' => [['contact.subscribeToNewsletter' => 'foo'], ['contact.subscribeToNewsletter']],
 
             // shipping details
             'missing shipping object' => [['shipping' => null], 'shipping'],
@@ -343,6 +359,9 @@ class StoreControllerTest extends TestCase
             'contact email confirmation is bool' => [['contact.email_confirmation' => true], ['contact.email']],
             'contact email confirmation is not an email address' => [['contact.email_confirmation' => 'foobar'], ['contact.email']],
             'contact email and email confirmation do not match' => [['contact.email' => 'foo@bar.com', 'contact.email_confirmation' => 'bar@baz.com'], ['contact.email']],
+
+            // contact subscribe to newsletter
+            'contact subscribe to email is not a bool' => [['contact.subscribeToNewsletter' => 'foo'], ['contact.subscribeToNewsletter']],
         ];
     }
 
