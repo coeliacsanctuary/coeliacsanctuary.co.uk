@@ -32,6 +32,7 @@ export type HomepageCollection = {
   title: string;
   description: string;
   link: string;
+  items_to_display: 1 | 2 | 3 | 4 | 6 | 8;
   items: HomepageCollectedItem[];
 };
 

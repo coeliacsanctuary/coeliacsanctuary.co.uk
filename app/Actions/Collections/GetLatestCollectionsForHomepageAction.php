@@ -23,7 +23,7 @@ class GetLatestCollectionsForHomepageAction
             fn () => CollectionSimpleCardViewResource::collection(Collection::query()
                 ->where('display_on_homepage', true)
                 ->latest('updated_at')
-                ->with(['media', 'items' => fn (Relation $relation) => $relation->take(3), 'items.item', 'items.item.media'])
+                ->with(['media', 'items' => fn (Relation $relation) => $relation->take(8), 'items.item', 'items.item.media'])
                 ->get())
         );
 
