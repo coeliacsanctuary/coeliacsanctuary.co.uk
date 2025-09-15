@@ -25,7 +25,10 @@ class PlaceRequests extends Value
         return $this->result(EateryRecommendation::query()
             ->withoutGlobalScopes()
             ->whereNot('email', 'alisondwheatley@gmail.com')
-            ->where('completed', false)->count());
+            ->where('completed', false)
+            ->where('ignored', false)
+            ->count()
+        );
     }
 
     public function name()
