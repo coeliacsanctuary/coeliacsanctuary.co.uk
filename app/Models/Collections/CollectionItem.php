@@ -40,4 +40,9 @@ class CollectionItem extends Model implements Sortable
     {
         return $this->morphTo('item');
     }
+
+    public function buildSortQuery()
+    {
+        return static::query()->where('collection_id', $this->collection_id);
+    }
 }
