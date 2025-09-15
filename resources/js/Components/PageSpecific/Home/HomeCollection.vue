@@ -3,8 +3,37 @@ import { HomepageCollection } from '@/types/CollectionTypes';
 import Card from '@/Components/Card.vue';
 import HomeHoverItem from '@/Components/PageSpecific/Home/HomeHoverItem.vue';
 import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
-defineProps<{ collection: HomepageCollection }>();
+const props = defineProps<{ collection: HomepageCollection }>();
+
+const collectionWrapperClasses = computed(() => {
+  const base = ['group', 'grid', 'grid-cols-1'];
+
+  if (
+    props.collection.items_to_display === 2 ||
+    props.collection.items_to_display === 4 ||
+    props.collection.items_to_display === 8
+  ) {
+    base.push('sm:grid-cols-2');
+  }
+
+  if (
+    props.collection.items_to_display === 3 ||
+    props.collection.items_to_display === 6
+  ) {
+    base.push('sm:grid-cols-3');
+  }
+
+  if (
+    props.collection.items_to_display === 4 ||
+    props.collection.items_to_display === 8
+  ) {
+    base.push('xmd:grid-cols-4');
+  }
+
+  return base;
+});
 </script>
 
 <template>
@@ -22,7 +51,7 @@ defineProps<{ collection: HomepageCollection }>();
       class="mx-auto my-2 h-px w-4/5 bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
     />
 
-    <section class="group grid grid-cols-1 sm:grid-cols-3">
+    <section :class="collectionWrapperClasses">
       <HomeHoverItem
         v-for="item in collection.items"
         :key="item.link"

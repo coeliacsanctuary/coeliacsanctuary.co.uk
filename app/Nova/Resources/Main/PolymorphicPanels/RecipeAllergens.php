@@ -33,7 +33,7 @@ class RecipeAllergens implements PolymorphicResource
     /** @param Recipe $resource */
     public function check($key, Collection $relationship, Model $resource): bool
     {
-        if(!$resource->exists) {
+        if ( ! $resource->exists) {
             return false;
         }
 
