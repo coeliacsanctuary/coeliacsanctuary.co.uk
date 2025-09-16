@@ -26,7 +26,7 @@ const value = defineModel<boolean>();
           'font-semibold text-primary-dark': highlight,
         }"
         :for="name"
-        class="text-sm select-none xmd:text-base"
+        class="text-base select-none sm:text-lg"
         v-text="label"
       />
     </div>

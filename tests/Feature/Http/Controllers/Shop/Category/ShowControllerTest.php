@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Category;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\Shop\ShopCategory;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ShowControllerTest extends TestCase
@@ -90,8 +90,7 @@ class ShowControllerTest extends TestCase
     {
         $this->build(ShopProduct::class)
             ->inCategory($this->category)
-            ->has($this->build(ShopProductVariant::class), 'variants')
-            ->has($this->build(ShopProductPrice::class), 'prices')
+            ->has($this->build(ShopProductVariant::class)->has($this->build(ShopPrice::class), 'prices'), 'variants')
             ->pinned()
             ->state(fn () => ['title' => 'This is a Pinned Product'])
             ->afterCreating(function (ShopProduct $product): void {

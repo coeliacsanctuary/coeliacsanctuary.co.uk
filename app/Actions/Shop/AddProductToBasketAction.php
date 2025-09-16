@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
@@ -17,7 +18,7 @@ class AddProductToBasketAction
             'product_variant_id' => $variant->id,
         ], [
             'product_title' => $product->title,
-            'product_price' => $product->currentPrice,
+            'product_price' => $variant->currentPrice,
             'quantity' => $quantity,
         ]);
 
@@ -25,7 +26,22 @@ class AddProductToBasketAction
             $item->increment('quantity', $quantity);
         }
 
-        $variant->decrement('quantity', $quantity);
+        if ($variant->variant_type === ProductVariantType::DIGITAL) {
+            $item->update(['quantity' => 1]);
+        }
+
+        if ($variant->variant_type === ProductVariantType::PHYSICAL) {
+            $variant->decrement('quantity', $quantity);
+        }
+
+        if ($variant->variant_type === ProductVariantType::BUNDLE) {
+            /** @var ShopProductVariant $physicalVariant */
+            $physicalVariant = $product->variants->where('variant_type', ProductVariantType::PHYSICAL)->first();
+
+            $physicalVariant->decrement('quantity', $quantity);
+        }
+
+        app(CheckIfBasketHasDigitalProductsAction::class)->handle($order);
 
         $order->touch();
     }

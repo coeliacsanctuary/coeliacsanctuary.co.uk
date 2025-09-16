@@ -36,7 +36,15 @@ class BasketOrders extends Chartable
 
             $orders->count(),
 
-            $orders->clone()->where('sent_abandoned_basket_email', false)->count(),
+            $orders->clone()
+                ->where('is_digital_only', false)
+                ->where('sent_abandoned_basket_email', false)
+                ->count(),
+
+            $orders->clone()
+                ->where('is_digital_only', true)
+                ->where('sent_abandoned_basket_email', false)
+                ->count(),
 
             $orders->clone()->where('sent_abandoned_basket_email', true)->count(),
         ];
@@ -54,7 +62,8 @@ class BasketOrders extends Chartable
         $baskets = array_map(fn (array $a) => $a[0], $data);
         $allOrders = array_map(fn (array $a) => $a[1], $data);
         $orders = array_map(fn (array $a) => $a[2], $data);
-        $ordersFromAbandonedBaskets = array_map(fn (array $a) => $a[3], $data);
+        $digitalOnlyOrders = array_map(fn (array $a) => $a[3], $data);
+        $ordersFromAbandonedBaskets = array_map(fn (array $a) => $a[4], $data);
 
         return [
             [
@@ -68,9 +77,14 @@ class BasketOrders extends Chartable
                 'color' => '#80CCFC',
             ],
             [
-                'name' => 'Orders',
+                'name' => 'Physical Orders',
                 'data' => $orders,
                 'color' => '#addaf9',
+            ],
+            [
+                'name' => 'Digital Orders',
+                'data' => $digitalOnlyOrders,
+                'color' => '#237cbd',
             ],
             [
                 'name' => 'Orders from abandoned baskets',

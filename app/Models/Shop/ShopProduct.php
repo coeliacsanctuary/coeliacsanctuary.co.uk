@@ -11,7 +11,6 @@ use App\Concerns\LinkableModel;
 use App\Contracts\Search\IsSearchable;
 use App\Enums\Shop\OrderState;
 use App\Models\Media;
-use App\Support\Helpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -20,9 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Laravel\Scout\Searchable;
-use Money\Money;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\SchemaOrg\Contracts\ReviewContract;
@@ -30,11 +27,9 @@ use Spatie\SchemaOrg\Product as ProductSchema;
 use Spatie\SchemaOrg\Schema;
 
 /**
- * @property int $currentPrice
- * @property null | int $oldPrice
  * @property float $averageRating
  * @property float $average_rating
- * @property array{current_price: string, old_price?: string} $price
+ * @property int $from_price
  * @property Carbon $created_at
  */
 class ShopProduct extends Model implements HasMedia, IsSearchable
@@ -109,10 +104,25 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         return $this->hasMany(ShopProductVariant::class, 'product_id');
     }
 
-    /** @return HasMany<ShopProductPrice, $this> */
+    /** @return ($fallbackToFirstVariant is true ? ShopProductVariant : ?ShopProductVariant) */
+    public function primaryVariant(bool $fallbackToFirstVariant = true): ?ShopProductVariant
+    {
+        $this->loadMissing('variants');
+
+        /** @var ?ShopProductVariant $variant */
+        $variant = $this->variants->firstWhere('primary_variant', true);
+
+        if ( ! $variant && $fallbackToFirstVariant) {
+            $variant = $this->variants->first();
+        }
+
+        return $variant;
+    }
+
+    /** @return HasMany<ShopPrice, $this> */
     public function prices(): HasMany
     {
-        return $this->hasMany(ShopProductPrice::class, 'product_id');
+        return $this->hasMany(ShopPrice::class, 'product_id');
     }
 
     /** @return HasMany<ShopFeedback, $this> */
@@ -141,47 +151,6 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     public function getScoutKey(): mixed
     {
         return $this->id;
-    }
-
-    /** @return Collection<int, ShopProductPrice> */
-    public function currentPrices(): Collection
-    {
-        return $this->prices
-            ->filter(fn (ShopProductPrice $price) => $price->start_at->lessThan(Carbon::now()))
-            ->filter(fn (ShopProductPrice $price) => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
-            ->sortByDesc('start_at');
-    }
-
-    /** @return Attribute<null | int, never> */
-    public function currentPrice(): Attribute
-    {
-        return Attribute::get(fn () => $this->currentPrices()->first()?->price);
-    }
-
-    /** @return Attribute<null | int, never> */
-    public function oldPrice(): Attribute
-    {
-        return Attribute::get(function () {
-            if ((bool) $this->currentPrices()->first()?->sale_price === true) {
-                return $this->currentPrices()->skip(1)->first()?->price;
-            }
-
-            return null;
-        });
-    }
-
-    /** @return Attribute<array{current_price: string, old_price?: string}, never> */
-    public function price(): Attribute
-    {
-        return Attribute::get(function () {
-            $rtr = ['current_price' => Helpers::formatMoney(Money::GBP($this->currentPrice))];
-
-            if ($this->oldPrice !== null && $this->oldPrice !== 0) {
-                $rtr['old_price'] = Helpers::formatMoney(Money::GBP($this->oldPrice));
-            }
-
-            return $rtr;
-        });
     }
 
     /** @return Attribute<float, never> */
@@ -235,6 +204,31 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
             ->price ?? 0;
     }
 
+    /** @return Attribute<int, never> */
+    public function fromPrice(): Attribute
+    {
+        return Attribute::get(function () {
+            $this->loadMissing('variants.prices');
+
+            if ($this->primaryVariant(false)) {
+                return (int) $this->primaryVariant(false)->currentPrice;
+            }
+
+            return $this->variants->pluck('prices')->flatten()->sortBy('price')->first()->price;
+        });
+    }
+
+    public function hasMultiplePrices(): bool
+    {
+        $this->loadMissing('variants.prices');
+
+        if ($this->primaryVariant(false)) {
+            return false;
+        }
+
+        return $this->variants->pluck('price.current_price')->unique()->count() > 1;
+    }
+
     public function schema(): ProductSchema
     {
         return Schema::product()
@@ -249,8 +243,8 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
             ->image($this->main_image)
             ->offers(
                 Schema::offer()
-                    ->price($this->currentPrice / 100)
-                    ->priceValidUntil($this->currentPrices()->first()->end_at ?? now()->addYear())
+                    ->price($this->primaryVariant()->currentPrice / 100)
+                    ->priceValidUntil($this->primaryVariant()->currentPrices()->first()->end_at ?? now()->addYear())
                     ->availability($this->isInStock() ? Schema::itemAvailability()::InStock : Schema::itemAvailability()::OutOfStock)
                     ->priceCurrency('GBP')
                     ->url($this->absolute_link)

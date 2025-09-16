@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Jobs\OpenGraphImages;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Jobs\OpenGraphImages\CreateShopIndexPageOpenGraphImageJob;
 use App\Models\OpenGraphImage;
 use App\Models\Shop\ShopProduct;
 use App\Services\RenderOpenGraphImage;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CreateShopIndexPageOpenGraphImageJobTest extends TestCase
@@ -21,13 +21,12 @@ class CreateShopIndexPageOpenGraphImageJobTest extends TestCase
         Storage::fake('media');
 
         config()->set('coeliac.generate_og_images', true);
-        $this->withCategoriesAndProducts(products: 3);
+        $this->withCategoriesAndProducts(products: 2);
 
         $products = ShopProduct::query()->get();
 
         $products->first()->update(['title' => 'spanish and italian']);
-        $products->second()->update(['title' => 'stickers']);
-        $products->third()->update(['title' => 'coeliac+']);
+        $products->second()->update(['title' => 'coeliac+']);
     }
 
     #[Test]

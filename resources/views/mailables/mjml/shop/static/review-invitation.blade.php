@@ -40,9 +40,11 @@
             <mj-text mj-class="inner" padding-top="10px">
                 Thanks again, Alison - Coeliac Sanctuary
             </mj-text>
-            <mj-text mj-class="inner">
-                <strong>This email was automatically sent {{ $delayText }} after your order was dropped in the postbox, if you haven't received your order yet, please let me know and I'll try my best to sort it out for you, hopefully its not got lost in the post somewhere!</strong>
-            </mj-text>
+            @unless($order->is_digital_only)
+                <mj-text mj-class="inner">
+                    <strong>This email was automatically sent {{ $delayText }} after your order was dropped in the postbox, if you haven't received your order yet, please let me know and I'll try my best to sort it out for you, hopefully its not got lost in the post somewhere!</strong>
+                </mj-text>
+            @endunless
         </mj-column>
     </mj-section>
 @endsection

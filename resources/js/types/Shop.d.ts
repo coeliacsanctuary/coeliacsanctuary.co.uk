@@ -24,19 +24,23 @@ export type ShopProductIndex = ShopBaseProduct & {
   id: number;
   link: string;
   price: string;
+  has_multiple_prices: boolean;
   number_of_variants: number;
   primary_variant: number;
   primary_variant_quantity: number;
 };
 
+export type ShopPrices = {
+  current_price: string;
+  old_price?: string;
+};
+
 export type ShopProductDetail = ShopBaseProduct & {
   id: number;
   long_description: string;
-  prices: {
-    current_price: string;
-    old_price?: string;
-  };
+  prices: ShopPrices;
   variant_title: string;
+  has_multiple_prices: boolean;
   variants: ShopProductVariant[];
   category: {
     title: string;
@@ -56,11 +60,15 @@ export type ShopTravelCardProductDetail = ShopProductDetail & {
 export type ShopProductVariant = {
   id: number;
   title: string;
+  description?: string;
   icon?: {
     component: string;
     color: string;
   };
   quantity: number;
+  primary_variant: boolean;
+  prices: ShopPrices;
+  variant_type: 'physical' | 'digital' | 'bundle';
 };
 
 export type ShopProductRating = {
@@ -83,12 +91,14 @@ export type ShopProductReview = {
 export type ShopBasketItem = {
   id: number;
   title: string;
+  description?: string;
   link: string;
   variant: string;
   item_price: string;
   line_price: string;
   quantity: number;
   image: string;
+  variant_type: 'physical' | 'digital' | 'bundle';
 };
 
 export type CheckoutContactStep = {
@@ -96,6 +106,7 @@ export type CheckoutContactStep = {
   email: string;
   email_confirmation: string;
   phone?: string;
+  subscribeToNewsletter: boolean;
 };
 
 export type CheckoutShippingStep = {
@@ -127,6 +138,8 @@ export type OrderCompleteProps = {
   subtotal: string;
   postage: string;
   total: string;
+  is_digital_only: boolean;
+  has_digital_products: boolean;
   shipping: string[];
   discount: null | { amount: string; name: string };
   products: ShopBasketItem[];

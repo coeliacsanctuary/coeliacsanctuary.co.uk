@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop;
 
-use App\Exceptions\QuantityException;
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AlterItemQuantityAction;
+use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
+use App\Enums\Shop\ProductVariantType;
+use App\Exceptions\QuantityException;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
@@ -87,6 +90,52 @@ class AlterItemQuantityActionTest extends TestCase
     }
 
     #[Test]
+    public function itDoesntUpdateTheRemainingVariantQuantityWhenCallingToIncreaseWhenTheVariantIsDigitalOnly(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::DIGITAL]);
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'increase');
+
+        $this->assertEquals(1, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function ifTheVariantIsBundleItUpdatesThePhysicalSibblingVariantWhenCallingToIncrease(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::PHYSICAL]);
+
+        $bundleVariant = $this->build(ShopProductVariant::class)
+            ->has($this->build(ShopPrice::class), 'prices')
+            ->belongsToProduct($this->product)
+            ->isBundle()
+            ->create([
+                'quantity' => 100,
+            ]);
+
+        $this->item->update(['product_variant_id' => $bundleVariant->id]);
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'increase');
+
+        $this->assertEquals(0, $this->variant->refresh()->quantity);
+        $this->assertEquals(100, $bundleVariant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function itCallsTheCheckIfBasketHasDigitalProductsActionWhenCallingToIncrease(): void
+    {
+        $this->mock(CheckIfBasketHasDigitalProductsAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($order) {
+                $this->assertTrue($this->order->is($order));
+
+                return true;
+            })
+            ->once();
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'increase');
+    }
+
+    #[Test]
     public function itUpdatesTheItemQuantityWhenCallingToDecrease(): void
     {
         $this->item->update(['quantity' => 2]);
@@ -101,6 +150,53 @@ class AlterItemQuantityActionTest extends TestCase
         $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
 
         $this->assertEquals(2, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function itDoesntUpdateTheRemainingVariantQuantityWhenCallingToDecreaseWhenTheItemIsDigitalOnly(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::DIGITAL]);
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
+
+        $this->assertEquals(1, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function ifTheVariantIsBundleItUpdatesThePhysicalSibblingVariantWhenCallingToDecrease(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::PHYSICAL]);
+
+        $bundleVariant = $this->build(ShopProductVariant::class)
+            ->has($this->build(ShopPrice::class), 'prices')
+            ->belongsToProduct($this->product)
+            ->isBundle()
+            ->create([
+                'quantity' => 100,
+            ]);
+
+        $this->item->update(['product_variant_id' => $bundleVariant->id]);
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
+
+        $this->assertEquals(2, $this->variant->refresh()->quantity);
+        $this->assertEquals(100, $bundleVariant->refresh()->quantity);
+    }
+
+
+    #[Test]
+    public function itCallsTheCheckIfBasketHasDigitalProductsActionWhenCallingToDecrease(): void
+    {
+        $this->mock(CheckIfBasketHasDigitalProductsAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($order) {
+                $this->assertTrue($this->order->is($order));
+
+                return true;
+            })
+            ->once();
+
+        $this->callAction(AlterItemQuantityAction::class, $this->item, 'decrease');
     }
 
     #[Test]

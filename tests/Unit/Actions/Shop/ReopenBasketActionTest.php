@@ -10,6 +10,7 @@ use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Database\Eloquent\Model;
@@ -61,6 +62,26 @@ class ReopenBasketActionTest extends TestCase
     public function itReturnsAMessageSayingAllItemsAreOutOfStockIfAllItemsAreOutOfStock(): void
     {
         $this->variant->update(['quantity' => 0]);
+
+        $warnings = app(ReopenBasketAction::class)->handle($this->basket);
+
+        $this->assertEquals('All of the items in your basket have gone out of stock', $warnings->first());
+    }
+
+    #[Test]
+    public function itReturnsAMessageSayingAllItemsAreOutOfStockIfAllItemsAreOutOfStockIfItIsABundleVariant(): void
+    {
+        $this->variant->update(['quantity' => 0]);
+
+        $bundleVariant = $this->build(ShopProductVariant::class)
+            ->has($this->build(ShopPrice::class), 'prices')
+            ->belongsToProduct($this->product)
+            ->isBundle()
+            ->create([
+                'quantity' => 100,
+            ]);
+
+        $this->basket->items->first()->update(['product_variant_id' => $bundleVariant->id]);
 
         $warnings = app(ReopenBasketAction::class)->handle($this->basket);
 

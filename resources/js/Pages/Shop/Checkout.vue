@@ -41,6 +41,7 @@ type SectionComponent = {
   key: SectionKeys;
   next: SectionKeys;
   additionalProps: Record<string, unknown>;
+  hidden?: boolean;
 };
 
 type NoBasketProps = {
@@ -55,6 +56,8 @@ type BasketProps = {
   has_basket: true;
   countries: FormSelectOption[];
   basket: {
+    has_digital_products: boolean;
+    is_digital_only: boolean;
     items: ShopBasketItem[];
     selected_country: number;
     delivery_timescale: string;
@@ -287,10 +290,11 @@ const sectionComponents: SectionComponent[] = [
   {
     component: ContactDetails as Component,
     key: 'details',
-    next: 'shipping',
+    next: props.basket?.is_digital_only ? 'payment' : 'shipping',
     additionalProps: {},
   },
   {
+    hidden: props.basket?.is_digital_only,
     component: ShippingDetails as Component,
     key: 'shipping',
     next: 'payment',
@@ -304,6 +308,7 @@ const sectionComponents: SectionComponent[] = [
     next: '_complete',
     additionalProps: {
       paymentToken: props.payment_intent,
+      isDigitalOnly: props.basket?.is_digital_only,
     },
   },
 ];
@@ -361,6 +366,7 @@ onMounted(() => {
           :discount="basket.discount"
           :total="basket.total"
           :subtotal="basket.subtotal"
+          :is-digital-only="basket.is_digital_only"
         />
 
         <TestModeDetails />
@@ -368,17 +374,19 @@ onMounted(() => {
 
       <Card class="xl:col-span-2">
         <div class="flex flex-col gap-5 divide-y divide-grey-off-light">
-          <component
-            :is="section.component"
-            v-for="section in sectionComponents"
-            :key="section.key"
-            :show="sections[section.key].active"
-            :completed="sections[section.key].complete"
-            :error="sections[section.key].error"
-            v-bind="section.additionalProps"
-            @continue="completeSection(section.key, section.next)"
-            @toggle="toggleSection(section.key)"
-          />
+          <template v-for="section in sectionComponents">
+            <component
+              :is="section.component"
+              v-if="section.hidden !== true"
+              :key="section.key"
+              :show="sections[section.key].active"
+              :completed="sections[section.key].complete"
+              :error="sections[section.key].error"
+              v-bind="section.additionalProps"
+              @continue="completeSection(section.key, section.next)"
+              @toggle="toggleSection(section.key)"
+            />
+          </template>
 
           <p
             v-if="errors?.basket"

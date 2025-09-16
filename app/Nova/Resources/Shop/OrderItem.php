@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
@@ -65,6 +66,10 @@ class OrderItem extends Resource
 
                     $item = ShopOrderItem::query()->find($request->resourceId);
 
+                    if ($item->variant->variant_type === ProductVariantType::DIGITAL) {
+                        return true;
+                    }
+
                     $editableStates = [
                         OrderState::PAID,
                         OrderState::READY,
@@ -90,14 +95,23 @@ class OrderItem extends Resource
                 ->canSee(function (NovaRequest $request) {
                     $item = ShopOrderItem::query()->find($request->resourceId);
 
+                    if ($item?->product->variants->count() > 1) {
+                        return true;
+                    }
+
                     return $item?->product?->variants()->first()->title !== '';
                 })
+                ->displayUsing(fn (ProductVariant $resource) => $resource->model()->title !== '' ? $resource->model()->title : $resource->model()->variant_type->label())
                 ->readonly(function (NovaRequest $request) {
                     if ($request instanceof ResourceIndexRequest) {
                         return true;
                     }
 
                     $item = ShopOrderItem::query()->find($request->resourceId);
+
+                    if ($item->variant->variant_type === ProductVariantType::DIGITAL) {
+                        return true;
+                    }
 
                     $editableStates = [
                         OrderState::PAID,

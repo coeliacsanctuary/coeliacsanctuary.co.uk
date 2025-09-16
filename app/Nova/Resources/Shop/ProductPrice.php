@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\Shop;
 
-use App\Models\Shop\ShopProductPrice;
+use App\Models\Shop\ShopPrice;
 use App\Nova\Resource;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
@@ -18,7 +18,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
  */
 class ProductPrice extends Resource
 {
-    public static $model = ShopProductPrice::class;
+    public static $model = ShopPrice::class;
 
     public static $searchable = false;
 
@@ -31,7 +31,7 @@ class ProductPrice extends Resource
                 ->asMinorUnits()
                 ->fullWidth(),
 
-            Boolean::make('Current Price', fn (ShopProductPrice $price) => now()->between($price->start_at, $price->end_at ?? now())),
+            Boolean::make('Current Price', fn (ShopPrice $price) => now()->between($price->start_at, $price->end_at ?? now())),
 
             Boolean::make('Is a Sale Price', 'sale_price')->fullWidth(),
 

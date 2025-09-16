@@ -56,7 +56,7 @@ class ShowController
             /** @var Collection<int, ShopOrderItemResource> $collection */
             $collection = $items->collection;
 
-            ['subtotal' => $subtotal, 'postage' => $postage] = $calculateOrderTotalsAction->handle($collection, $country);
+            ['subtotal' => $subtotal, 'postage' => $postage] = $calculateOrderTotalsAction->handle($basket, $collection, $country);
 
             $total = $subtotal + $postage;
 
@@ -89,6 +89,8 @@ class ShowController
                         'label' => $postageCountry->country,
                     ]),
                 'basket' => fn () => [
+                    'has_digital_products' => $basket->has_digital_products,
+                    'is_digital_only' => $basket->is_digital_only,
                     'items' => $items,
                     'selected_country' => $basket->postage_country_id,
                     'delivery_timescale' => $basket->postageCountry?->area?->delivery_timescale,

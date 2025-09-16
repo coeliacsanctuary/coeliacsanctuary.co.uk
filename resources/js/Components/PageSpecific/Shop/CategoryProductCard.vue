@@ -64,12 +64,18 @@ const addToBasket = () => {
         v-text="product.description"
       />
 
-      <div class="flex flex-1 items-end justify-between">
-        <p
-          class="text-2xl font-semibold text-gray-900 md:max-xl:text-3xl xl:text-4xl"
-        >
-          {{ product.price }}
-        </p>
+      <div class="mt-2 flex flex-1 items-end justify-between">
+        <div class="flex flex-col">
+          <p
+            v-if="product.has_multiple_prices"
+            class="text-xs font-semibold text-gray-900 uppercase"
+            v-text="'from'"
+          />
+          <p
+            class="text-2xl font-semibold text-gray-900 md:max-xl:text-3xl xl:text-4xl"
+            v-text="product.price"
+          />
+        </div>
 
         <div
           v-if="product.rating && product.rating.count > 0"

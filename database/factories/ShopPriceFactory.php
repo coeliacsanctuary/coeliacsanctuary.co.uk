@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
+use App\Models\Shop\ShopProductVariant;
 use Carbon\Carbon;
 
-class ShopProductPriceFactory extends Factory
+class ShopPriceFactory extends Factory
 {
-    protected $model = ShopProductPrice::class;
+    protected $model = ShopPrice::class;
 
     public function definition()
     {
         return [
             'product_id' => self::factoryForModel(ShopProduct::class),
+            'variant_id' => self::factoryForModel(ShopProductVariant::class),
             'price' => $this->faker->numberBetween(100, 1500),
             'start_at' => Carbon::now()->subHour(),
             'sale_price' => false,
@@ -26,6 +28,15 @@ class ShopProductPriceFactory extends Factory
     {
         return $this->state(fn () => [
             'product_id' => $product->id,
+            'variant_id' => $product->variants->first()->id,
+        ]);
+    }
+
+    public function forVariant(ShopProductVariant $variant)
+    {
+        return $this->state(fn () => [
+            'variant_id' => $variant->id,
+            'product_id' => $variant->product_id,
         ]);
     }
 

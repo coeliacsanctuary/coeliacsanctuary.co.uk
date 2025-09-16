@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Basket;
 
+use App\Actions\Shop\CheckIfBasketHasDigitalProductsAction;
+use App\Enums\Shop\ProductVariantType;
+use App\Models\Shop\ShopPrice;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\ResolveBasketAction;
 use App\Models\Shop\ShopOrder;
@@ -14,7 +17,7 @@ use Illuminate\Testing\TestResponse;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
-class DestroyController extends TestCase
+class DestroyControllerTest extends TestCase
 {
     protected ShopOrder $order;
 
@@ -74,13 +77,62 @@ class DestroyController extends TestCase
     }
 
     #[Test]
-    public function itIncreasesTheProductQuantity(): void
+    public function itIncreasesTheVariantQuantity(): void
     {
         $quantity = $this->variant->quantity;
 
         $this->makeRequest();
 
         $this->assertEquals($quantity + 1, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function itDoesntIncreaseTheVariantQuantityIfItIsDigitalOnly(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::DIGITAL]);
+
+        $quantity = $this->variant->quantity;
+
+        $this->makeRequest();
+
+        $this->assertEquals($quantity, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function ifTheVariantIsABundleItIncreasesThePhysicalVariantQuantity(): void
+    {
+        $this->variant->update(['variant_type' => ProductVariantType::PHYSICAL]);
+
+        $bundleVariant = $this->build(ShopProductVariant::class)
+            ->has($this->build(ShopPrice::class), 'prices')
+            ->belongsToProduct($this->product)
+            ->isBundle()
+            ->create([
+                'quantity' => 100,
+            ]);
+
+        $this->item->update(['product_variant_id' => $bundleVariant->id]);
+
+        $quantity = $this->variant->quantity;
+
+        $this->makeRequest();
+
+        $this->assertEquals($quantity + 1, $this->variant->refresh()->quantity);
+    }
+
+    #[Test]
+    public function itCallsTheCheckForDigitalProductsAction(): void
+    {
+        $this->mock(CheckIfBasketHasDigitalProductsAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($order) {
+                $this->assertTrue($this->order->is($order));
+
+                return true;
+            })
+            ->once();
+
+        $this->makeRequest();
     }
 
     #[Test]

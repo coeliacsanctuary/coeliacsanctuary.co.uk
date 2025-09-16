@@ -16,6 +16,7 @@ class ShopCompleteOrderRequestFactory extends RequestFactory
                 'email' => $email = $this->faker->email,
                 'email_confirmation' => $email,
                 'phone' => $this->faker->phoneNumber,
+                'subscribeToNewsletter' => false,
             ],
 
             'shipping' => [
@@ -27,5 +28,10 @@ class ShopCompleteOrderRequestFactory extends RequestFactory
                 'postcode' => 'a12bc',
             ],
         ];
+    }
+
+    public function digitalOnly(): self
+    {
+        return $this->without('shipping');
     }
 }

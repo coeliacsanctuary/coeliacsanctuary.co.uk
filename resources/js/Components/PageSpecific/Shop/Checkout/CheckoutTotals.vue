@@ -19,6 +19,7 @@ const props = defineProps<{
   postage: string;
   discount?: string;
   total: string;
+  isDigitalOnly: boolean;
 }>();
 
 const store = useShopStore();
@@ -89,48 +90,51 @@ watch(
           v-text="subtotal"
         />
       </div>
-      <div class="relative flex justify-between">
-        <Loader
-          :display="isLoading"
-          absolute
-          on-top
-          blur
-          color="secondary"
-          size="size-12"
-          width="border-8"
-        />
+      <template v-if="isDigitalOnly === false">
+        <div class="relative flex justify-between">
+          <Loader
+            :display="isLoading"
+            absolute
+            on-top
+            blur
+            color="secondary"
+            size="size-12"
+            width="border-8"
+          />
 
-        <dt class="flex-1 pr-2 xs:pr-4">
-          <div
-            class="flex flex-col sm:w-full sm:flex-row sm:items-center sm:space-x-3 lg:max-xl:text-lg xl:text-xl"
+          <dt class="flex-1 pr-2 xs:pr-4">
+            <div
+              class="flex flex-col sm:w-full sm:flex-row sm:items-center sm:space-x-3 lg:max-xl:text-lg xl:text-xl"
+            >
+              <span>Postage to</span>
+              <FormSelect
+                v-model="countryForm.postage_country_id"
+                class="sm:flex-1"
+                name="country"
+                :options="countries"
+              />
+            </div>
+          </dt>
+          <dd
+            class="shrink-0 text-lg font-semibold lg:max-xl:text-xl xl:text-2xl"
+            v-text="postage"
+          />
+        </div>
+        <div>
+          <small
+            class="mt-2 block leading-tight xl:text-base"
+            v-text="deliveryEstimate"
+          />
+          <small
+            v-if="selectedCountry > 1"
+            class="mt-2 block font-semibold xl:text-base"
           >
-            <span>Postage to</span>
-            <FormSelect
-              v-model="countryForm.postage_country_id"
-              class="sm:flex-1"
-              name="country"
-              :options="countries"
-            />
-          </div>
-        </dt>
-        <dd
-          class="shrink-0 text-lg font-semibold lg:max-xl:text-xl xl:text-2xl"
-          v-text="postage"
-        />
-      </div>
-      <div>
-        <small
-          class="mt-2 block leading-tight xl:text-base"
-          v-text="deliveryEstimate"
-        />
-        <small
-          v-if="selectedCountry > 1"
-          class="mt-2 block font-semibold xl:text-base"
-        >
-          Please note, you may be required to pay any applicable customs charges
-          for any items coming from the UK.
-        </small>
-      </div>
+            Please note, you may be required to pay any applicable customs
+            charges for any items coming from the UK.
+          </small>
+        </div>
+      </template>
+
       <div
         v-if="discount"
         class="flex justify-between"

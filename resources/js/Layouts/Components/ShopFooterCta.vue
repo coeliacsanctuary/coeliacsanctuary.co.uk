@@ -22,13 +22,18 @@ const openSidebar = () => {
   });
 };
 
+type BasketProps = {
+  basket?: { items: ShopBasketItem[]; subtotal: string; digital_only: boolean };
+};
+
 EventBus.$on('product-added-to-basket', openSidebar);
 EventBus.$on('open-basket', openSidebar);
-const page: Page<{ basket?: { items: ShopBasketItem[]; subtotal: string } }> =
-  usePage();
+
+const page: Page<BasketProps> = usePage();
 
 const items = computed((): ShopBasketItem[] => page.props.basket?.items || []);
 const subtotal = computed(() => page.props.basket?.subtotal || '');
+const isDigitalOnly = computed(() => page.props.basket?.digital_only || false);
 
 const quantity = computed(() => {
   return items.value.reduce((total, item) => total + item.quantity, 0);
@@ -134,6 +139,7 @@ onMounted(() => {
         v-if="items.length > 0"
         :items="items"
         :subtotal="subtotal"
+        :digital-only="isDigitalOnly"
         @close="viewSideBar = false"
       />
 

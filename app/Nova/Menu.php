@@ -37,6 +37,7 @@ use App\Nova\Resources\Main\SealiacOverviews;
 use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
+use App\Nova\Resources\Shop\DigitalOrders;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderReviews;
@@ -126,6 +127,7 @@ class Menu
                 MenuGroup::make('Sales', [
                     MenuItem::resource(Baskets::class)->withBadgeIf(fn () => (string) $basketsCount, 'danger', fn () => $basketsCount > 0),
                     MenuItem::resource(Orders::class)->withBadgeIf(fn () => (string) $ordersCount, 'danger', fn () => $ordersCount > 0),
+                    MenuItem::resource(DigitalOrders::class),
                     MenuItem::make('Daily Stock')->path('/shop-daily-stock'),
                     MenuItem::resource(OrderReviews::class),
                 ]),

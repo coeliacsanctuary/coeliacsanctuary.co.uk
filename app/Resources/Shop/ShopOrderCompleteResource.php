@@ -46,7 +46,7 @@ class ShopOrderCompleteResource extends JsonResource
             ] : null,
             'postage' => Helpers::formatMoney(Money::GBP($payment->postage)),
             'total' => Helpers::formatMoney(Money::GBP($payment->total)),
-            'shipping' => array_filter([
+            'shipping' => $this->is_digital_only ? null : array_filter([
                 $shipping->name,
                 $shipping->line_1,
                 $shipping->line_2,
@@ -56,6 +56,8 @@ class ShopOrderCompleteResource extends JsonResource
                 $shipping->postcode,
                 $shipping->country,
             ]),
+            'is_digital_only' => $this->is_digital_only,
+            'has_digital_products' => $this->has_digital_products,
             'payment' => $this->getPaymentDetails((string) $payment->payment_type_id),
             'event' => [
                 'transaction_id' => $this->order_key,

@@ -23,7 +23,7 @@ Route::get('render/{ids?}', function (NovaRequest $request, Dompdf $pdf, $ids = 
         ->with([
             'items' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
             'items.variant' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
-            'payment', 'address', 'discountCode', 'refunds'
+            'payment', 'address', 'discountCode', 'refunds',
         ])
         ->get();
 

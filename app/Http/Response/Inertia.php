@@ -168,11 +168,12 @@ class Inertia
         $items = app(GetOrderItemsAction::class)->handle($basket);
 
         /** @var Collection<int, ShopOrderItemResource> $collection */
-        $collection = app(GetOrderItemsAction::class)->handle($basket)->collection;
+        $collection = $items->collection;
 
         /** @var int $subtotal */
         $subtotal = $collection->map(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity)->sum();
 
+        BaseInertia::share('basket.digital_only', $basket->is_digital_only);
         BaseInertia::share('basket.items', $items);
         BaseInertia::share('basket.subtotal', Helpers::formatMoney(Money::GBP($subtotal)));
     }

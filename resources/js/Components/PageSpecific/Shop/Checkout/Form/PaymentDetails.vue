@@ -10,7 +10,12 @@ import FormSelect from '@/Components/Forms/FormSelect.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import eventBus from '@/eventBus';
 
-defineProps<{ show: boolean; completed: boolean; paymentToken: string }>();
+const props = defineProps<{
+  show: boolean;
+  completed: boolean;
+  paymentToken: string;
+  isDigitalOnly: boolean;
+}>();
 
 const emits = defineEmits(['continue', 'toggle']);
 
@@ -20,11 +25,13 @@ const shippingDetails = computed(() => store.shippingDetails);
 
 let fields = reactive<CheckoutBillingStep>({
   name: store.customerName,
-  country: store.selectedCountry,
+  country: props.isDigitalOnly ? '' : store.selectedCountry,
   ...shippingDetails.value,
 });
 
-const billingAddressSelect = ref<'same' | 'other'>('same');
+const billingAddressSelect = ref<'same' | 'other'>(
+  props.isDigitalOnly ? 'other' : 'same',
+);
 
 const selectOptions: FormSelectOption[] = [
   { value: 'same', label: 'Same as shipping address' },
@@ -117,12 +124,24 @@ eventBus.$on('payment-failed', () => {
     </h2>
 
     <template v-if="show">
-      <p class="prose mt-2! max-w-none xl:prose-lg">
+      <p
+        v-if="isDigitalOnly === false"
+        class="prose mt-2! max-w-none xl:prose-lg"
+      >
         Thanks for letting us know where you went your order shipped, finally we
         need to know how you'd like to pay.
       </p>
 
+      <p
+        v-else
+        class="prose mt-2! max-w-none xl:prose-lg"
+      >
+        Thanks {{ store.customerName }}, finally we need to know how you'd like
+        to pay.
+      </p>
+
       <FormSelect
+        v-if="isDigitalOnly === false"
         v-model="billingAddressSelect"
         label="Billing Address"
         name="billing_address"

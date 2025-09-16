@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Shop\ProductVariantType;
 use App\Models\Shop\ShopOrder;
 use App\Support\Helpers;
 use Money\Money;
@@ -30,7 +31,7 @@ use Money\Money;
         img {
             width: 50%;
             height: auto;
-            margin-top:-12px;
+            margin-top: -12px;
         }
 
         table.orderTable {
@@ -73,45 +74,45 @@ use Money\Money;
 @foreach($orders as $order)
     <div class="page">
         <div style="width:100%;">
-            <img src="{{ asset('/images/dispatch_logo.png') }}"/>
+            <img src="{{ asset('/images/dispatch_logo.png') }}" />
         </div>
 
-        <hr/>
+        <hr />
 
         <table style="width:100%">
             <tr>
                 <td style="width:60%;vertical-align:top;">
                     <div class="address">
-                        {{ $order->address->name }}<br/>
-                        {{ $order->address->line_1 }}<br/>
+                        {{ $order->address->name }}<br />
+                        {{ $order->address->line_1 }}<br />
                         @if($order->address->line_2)
-                            {{ $order->address->line_2 }}<br/>
+                            {{ $order->address->line_2 }}<br />
                         @endif
                         @if($order->address->line_3)
-                            {{ $order->address->line_3 }}<br/>
+                            {{ $order->address->line_3 }}<br />
                         @endif
-                        {{ $order->address->town }}<br/>
+                        {{ $order->address->town }}<br />
                         @if($order->address->county)
-                            {{ $order->address->county }}<br/>
+                            {{ $order->address->county }}<br />
                         @endif
-                        {{ $order->address->postcode }}<br/>
+                        {{ $order->address->postcode }}<br />
                         {{ $order->address->country }}
                     </div>
                 </td>
                 <td>
-                    <strong>Return Address</strong><br/>
-                    Coeliac Sanctuary<br/>
-                    PO Box 643<br/>
-                    Crewe<br/>
-                    CW1 9LJ<br/>
-                    England<br/>
-                    contact@coeliacsanctuary.co.uk<br/><br/>
-                    <strong>{{ $order->payment->created_at->format('jS F Y') }}</strong><br/>
-                    <strong>Order ID: </strong>{{ $order->order_key }}<br/>
+                    <strong>Return Address</strong><br />
+                    Coeliac Sanctuary<br />
+                    PO Box 643<br />
+                    Crewe<br />
+                    CW1 9LJ<br />
+                    England<br />
+                    contact@coeliacsanctuary.co.uk<br /><br />
+                    <strong>{{ $order->payment->created_at->format('jS F Y') }}</strong><br />
+                    <strong>Order ID: </strong>{{ $order->order_key }}<br />
                 </td>
             </tr>
         </table>
-        <hr/>
+        <hr />
         <p>Thank you for ordering from Coeliac Sanctuary. Please find details of your order below.</p>
         <table class="orderTable">
             <thead>
@@ -123,28 +124,38 @@ use Money\Money;
             </thead>
             <tbody>
             @foreach($order->items as $item)
-                <tr @if($resend && $overrides->get($item->id, null) === 0) style="text-decoration: line-through" @endif>
-                    <td>
-                        {{ $item->product_title }}
-                        @if($item->variant->title !== '')
-                            - {{ $item->variant->title }}
-                        @endif
-                    </td>
-                    <td>
-                        <span @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
+                @unless($item->variant->variant_type === ProductVariantType::DIGITAL)
+                    <tr @if($resend && $overrides->get($item->id, null) === 0) style="text-decoration: line-through" @endif>
+                        <td>
+                            {{ $item->product_title }}
+                            @if($item->variant->title !== '')
+                                - {{ $item->variant->title }}
+                            @endif
+                        </td>
+                        <td>
+                        <span
+                            @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
                             {{ $item->quantity }}
                         </span>
-                        @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity)
-                            <span style="font-weight: bold; color: #29719f">{{ $overrides->get($item->id ) }}</span>
-                        @endif
-                    </td>
-                    <td>
-                        <span @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
+                            @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity)
+                                <span style="font-weight: bold; color: #29719f">{{ $overrides->get($item->id ) }}</span>
+                            @endif
+                        </td>
+                        <td>
+                        <span
+                            @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
                             {{ Helpers::formatMoney(Money::GBP($item->product_price * $item->quantity)) }}
                         </span>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                @endunless
             @endforeach
+            @if($order->digitalTotal)
+                <tr>
+                    <td colspan="2"><em>Plus digital products delivered over email</em></td>
+                    <td><em>{{ Helpers::formatMoney(Money::GBP($order->digitalTotal)) }}</em></td>
+                </tr>
+            @endif
             <tr>
                 <td colspan="2"><strong>Subtotal</strong></td>
                 <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->subtotal)) }}</strong></td>
@@ -190,7 +201,9 @@ use Money\Money;
                 @endforeach
                 <tr style="color:#E53E3E">
                     <td colspan="2"><strong>TOTAL COST</strong></td>
-                    <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->total - $order->refunds->sum('amount'))) }}</strong></td>
+                    <td>
+                        <strong>{{ Helpers::formatMoney(Money::GBP($order->payment->total - $order->refunds->sum('amount'))) }}</strong>
+                    </td>
                 </tr>
             @endif
             @if($resend)
@@ -209,7 +222,7 @@ use Money\Money;
             @endif
             </tbody>
         </table>
-        <hr/>
+        <hr />
         <p>Problem with your order? Please contact us via email and quote your order number if you wish to return your
             item within 14 days of delivery.</p>
         <p>For full Terms and Conditions please see <strong>www.coeliacsanctuary.co.uk/shop/terms</strong></p>

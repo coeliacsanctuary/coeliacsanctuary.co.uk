@@ -13,8 +13,8 @@ use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeMeal;
 use App\Models\Recipes\RecipeNutrition;
 use App\Models\Shop\ShopCategory;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use App\Models\Shop\ShopProductVariant;
 use App\Models\User;
 use Carbon\Carbon;
@@ -130,11 +130,10 @@ trait SeedsWebsite
                 $this->build(ShopProduct::class)
                     ->count($products)
                     ->sequence(fn (Sequence $sequence) => [
-                        'id' => $category->id . ($sequence->index + 1),
+                        'id' => $category->id . ($sequence->index + 1) . fake()->numberBetween(1, 100),
                         'title' => "Product {$sequence->index}",
                         'created_at' => Carbon::now()->subDays($sequence->index),
                     ])
-                    ->has($this->build(ShopProductPrice::class), 'prices')
                     ->create()
                     ->each(function (ShopProduct $product) use ($category, $variants): void {
                         $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('primary');
@@ -144,9 +143,10 @@ trait SeedsWebsite
 
                         $this->build(ShopProductVariant::class)
                             ->count($variants)
+                            ->has($this->build(ShopPrice::class), 'prices')
                             ->belongsToProduct($product)
                             ->sequence(fn (Sequence $sequence) => [
-                                'id' => $product->id . ($sequence->index + 1),
+                                'id' => $product->id . ($sequence->index + 1) . fake()->numberBetween(1, 999),
                                 'title' => "Variant {$sequence->index}",
                                 'created_at' => Carbon::now()->subDays($sequence->index),
                             ])

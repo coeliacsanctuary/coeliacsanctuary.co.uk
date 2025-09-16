@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Enums\Shop\ProductVariantType;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -18,7 +20,11 @@ class ShopOrder extends Model
     protected $casts = [
         'state_id' => OrderState::class,
         'shipped_at' => 'datetime',
+        'digital_products_sent_at' => 'datetime',
         'sent_abandoned_basket_email' => 'boolean',
+        'has_digital_products' => 'boolean',
+        'is_digital_only' => 'boolean',
+        'newsletter_signup' => 'boolean'
     ];
 
     protected static function booted(): void
@@ -106,5 +112,23 @@ class ShopOrder extends Model
     public function sources(): BelongsToMany
     {
         return $this->belongsToMany(ShopSource::class, 'shop_order_sources', 'order_id', 'source_id');
+    }
+
+    /** @return HasMany<ShopOrderDownloadLink, $this> */
+    public function downloadLinks(): HasMany
+    {
+        return $this->hasMany(ShopOrderDownloadLink::class, 'order_id');
+    }
+
+    /** @return Attribute<int, never> */
+    public function digitalTotal(): Attribute
+    {
+        return Attribute::get(fn () => $this->items->sum(function (ShopOrderItem $item) {
+            if ( ! $item->variant || $item->variant->variant_type !== ProductVariantType::DIGITAL) {
+                return 0;
+            }
+
+            return $item->quantity * $item->product_price;
+        }));
     }
 }

@@ -29,7 +29,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/** @extends Resource<ShopProduct> */
+/** @extends resource<ShopProduct> */
 /**
  * @codeCoverageIgnore
  */
@@ -148,8 +148,8 @@ class Orders extends Resource
     public function cards(NovaRequest $request): array
     {
         return [
-            ShopDailySales::make()->refreshWhenActionsRun()->width('1/2'),
-            ShopIncome::make()->refreshWhenActionsRun()->width('1/2')->help('Including Postage'),
+            ShopDailySales::make()->nonDigital()->refreshWhenActionsRun()->width('1/2'),
+            ShopIncome::make()->nonDigital()->refreshWhenActionsRun()->width('1/2')->help('Including Postage'),
             PrintAllOrders::make(),
         ];
     }
@@ -160,6 +160,7 @@ class Orders extends Resource
             ->withoutGlobalScopes()
             ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items'])
             ->withCount(['items'])
+            ->where('is_digital_only', false)
             ->whereNotIn('state_id', [
                 OrderState::BASKET,
                 OrderState::PENDING,

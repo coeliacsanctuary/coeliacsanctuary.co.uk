@@ -79,11 +79,6 @@ class Products extends Resource
                     ->fullWidth()
                     ->onlyOnIndex(),
 
-                Currency::make('Price', 'current_price')
-                    ->asMinorUnits()
-                    ->fullWidth()
-                    ->onlyOnIndex(),
-
                 Stack::make('Variants', fn (ShopProduct $resource) => $resource->variants->pluck('title'))->onlyOnIndex(),
 
                 Stack::make('Quantity', fn (ShopProduct $resource) => $resource->variants->pluck('quantity'))
@@ -107,24 +102,23 @@ class Products extends Resource
                     ->nullable()
                     ->hideFromIndex()
                     ->help('The label displayed above the variant select, eg, size, colour etc')
+                    ->default('Option')
                     ->suggestions(['Size', 'Colour']),
+
+                Textarea::make('Description')
+                    ->rows(3)
+                    ->fullWidth()
+                    ->alwaysShow()
+                    ->rules(['required']),
+
+                Textarea::make('Long Description')
+                    ->alwaysShow()
+                    ->fullWidth()
+                    ->rows(8)
+                    ->rules(['required']),
             ]),
 
-            new Panel('Sales', [
-                Number::make('Quantity Available', fn (ShopProduct $product) => $product->variants->sum('quantity'))
-                    ->hideFromIndex()
-                    ->showOnDetail(),
-
-                Number::make('Total Sold', 'total_sold')
-                    ->sortable()
-                    ->exceptOnForms()
-                    ->showOnDetail(),
-
-                Number::make('Sold in last month', 'sold_last_month')
-                    ->sortable()
-                    ->exceptOnForms()
-                    ->showOnDetail(),
-            ]),
+            HasMany::make('Variants', resource: ProductVariant::class),
 
             new Panel('Metas', [
                 Text::make('Meta Keywords')
@@ -156,25 +150,50 @@ class Products extends Resource
                     ->nullable(),
             ]),
 
-            new Panel('Details', [
-                Textarea::make('Description')
-                    ->rows(3)
+            new Panel('Initial Variant', [
+                Text::make('Title', 'variants.title')
                     ->fullWidth()
-                    ->alwaysShow()
-                    ->rules(['required']),
+                    ->help('Leave empty for only one variant')
+                    ->default('')
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
 
-                Textarea::make('Long Description')
-                    ->alwaysShow()
+                Number::make('Quantity', 'variants.quantity')
                     ->fullWidth()
-                    ->rows(8)
-                    ->rules(['required']),
+                    ->required()
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
+
+                Number::make('Weight', 'variants.weight')
+                    ->fullWidth()
+                    ->required()
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
+
+                Boolean::make('Live', 'variants.live')
+                    ->fullWidth()
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
+
+                Currency::make('Price', 'variants.prices.price')
+                    ->asMinorUnits()
+                    ->required()
+                    ->fullWidth()
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
             ]),
 
             BelongsToMany::make('Categories', resource: Categories::class),
-
-            HasMany::make('Prices', resource: ProductPrice::class),
-
-            HasMany::make('Variants', resource: ProductVariant::class),
 
             MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
 
@@ -248,9 +267,8 @@ class Products extends Resource
     {
         return $query->withoutGlobalScopes()
             ->with([
-                'prices',
                 'categories' => fn (Relation $builder) => $builder->withoutGlobalScopes(),
-                'variants' => fn (Relation $builder) => $builder->withoutGlobalScopes(),
+                'variants' => fn (Relation $builder) => $builder->withoutGlobalScopes()->with(['prices']),
             ])
             ->addSelect(['total_sold' => ShopOrderItem::query()
                 ->selectRaw('sum(quantity)')

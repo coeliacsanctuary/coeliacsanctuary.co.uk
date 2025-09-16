@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Nova\Actions\EatingOut;
 
-use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReport;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
