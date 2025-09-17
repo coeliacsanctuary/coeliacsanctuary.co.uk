@@ -48,7 +48,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
                 ->orWhereHas('liveBranches')
         );
 
-        static::creating(static function (self $town) {
+        static::saving(static function (self $town) {
             if ( ! $town->slug) {
                 $town->slug = Str::slug($town->town);
                 $town->legacy = $town->slug;

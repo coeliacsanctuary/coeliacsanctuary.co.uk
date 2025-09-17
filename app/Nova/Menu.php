@@ -116,6 +116,10 @@ class Menu
                 MenuGroup::make('Misc', [
                     MenuItem::resource(EateryAiDescriptionResource::class)->withBadgeIf(fn () => (string) $eateryAiDescriptionsCount, 'danger', fn () => $eateryAiDescriptionsCount > 0),
                 ]),
+
+                MenuGroup::make('Imports', [
+                    MenuItem::make('Nationwide Branch Import')->path('/wte-nationwide-branch-import'),
+                ]),
             ])->icon('map'),
 
             MenuSection::make('Search', [
