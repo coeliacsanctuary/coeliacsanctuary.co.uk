@@ -19,6 +19,7 @@ use App\Scopes\LiveScope;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
@@ -119,6 +120,12 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     protected function linkRoot(): string
     {
         return 'blog';
+    }
+
+    /** @return Attribute<array{content: string}, never> */
+    public function editableContent(): Attribute
+    {
+        return Attribute::get(fn() => ['content' => $this->body]);
     }
 
     public function schema(): BlogSchema
