@@ -16,10 +16,14 @@ class LondonBoroughResource extends JsonResource
     /** @return array{name: string, description: string|null, latlng:LatLng, link: string, area_count: int, top_areas: Collection<int, string>, locations: int} */
     public function toArray(Request $request)
     {
+        if ($this->areas->first() === null) {
+            dd($this->resource, $this->areas);
+        }
+
         return [
             'name' => $this->town,
             'description' => $this->description,
-            'latlng' => LatLng::fromString((string)$this->latlng),
+            'latlng' => LatLng::fromString((string) $this->latlng),
             /** @phpstan-ignore-next-line  */
             'link' => $this->areas->count() > 1 ? $this->link() : $this->areas->first()->link(),
             'area_count' => $this->areas->count(),
