@@ -3,18 +3,21 @@ import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { Link, router } from '@inertiajs/vue3';
 import Comments from '@/Components/PageSpecific/Shared/Comments.vue';
-import { onMounted, ref, Ref } from 'vue';
-import { BlogPage } from '@/types/BlogTypes';
+import { computed, onMounted, ref, Ref } from 'vue';
+import { BlogPage, RelatedBlogSimpleCard } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
 import RenderedString from '@/Components/RenderedString.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
 import { Page } from '@inertiajs/core';
 import { loadScript } from '@/helpers';
+import BlogSimpleCard from '@/Components/PageSpecific/Blogs/BlogSimpleCard.vue';
+import collect, { Collection } from 'collect.js';
 
 const props = defineProps<{
   blog: BlogPage;
   comments: PaginatedResponse<Comment>;
+  relatedBlogs: RelatedBlogSimpleCard[];
 }>();
 
 const header = ref<HTMLElement>();
@@ -75,6 +78,19 @@ const handleCommentReset = () => {
     },
   );
 };
+
+type GroupedBlogs = {
+  tag: RelatedBlogSimpleCard['related_tag'];
+  blogs: Collection<RelatedBlogSimpleCard>;
+};
+
+const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
+  return collect(props.relatedBlogs)
+    .groupBy('related_tag')
+    .map((blogs, tag: string) => ({ tag, blogs }))
+    .values()
+    .all() as GroupedBlogs[];
+});
 </script>
 
 <template>
@@ -150,44 +166,79 @@ const handleCommentReset = () => {
     </ul>
   </Card>
 
-  <Card>
-    <div class="prose prose-lg max-w-none md:prose-xl">
-      <RenderedString :content="blog.body" />
-    </div>
-
-    <GoogleAd
-      :key="$page.url"
-      code="6662103082"
-    />
-  </Card>
-
-  <Card
-    v-if="blog.show_author"
-    faded
-    theme="primary-light"
+  <div
+    class="flex w-full flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
-    <div class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4">
-      <img
-        alt="Alison Peters"
-        class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-        src="/images/misc/alison.png"
-      />
-      <div class="prose max-w-2xl md:prose-xl">
-        <strong>Alison Peters</strong> has been Coeliac since June 2014 and
-        launched Coeliac Sanctuary in August of that year, and since then has
-        aimed to provide a one stop shop for Coeliacs, from blogs, to recipes,
-        eating out guide and online shop.
-      </div>
-    </div>
-  </Card>
+    <div class="flex-1">
+      <Card>
+        <div class="prose prose-lg max-w-none md:prose-xl">
+          <RenderedString :content="blog.body" />
+        </div>
 
-  <Comments
-    :id="blog.id"
-    :comments="allComments"
-    module="blog"
-    :is-loading="isLoadingComments"
-    :has-loaded-more="hasLoadedMoreComments"
-    @load-more="loadMoreComments"
-    @reset="handleCommentReset"
-  />
+        <GoogleAd
+          :key="$page.url"
+          code="6662103082"
+        />
+      </Card>
+
+      <Card
+        v-if="blog.show_author"
+        faded
+        theme="primary-light"
+      >
+        <div
+          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
+        >
+          <img
+            alt="Alison Peters"
+            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
+            src="/images/misc/alison.png"
+          />
+          <div class="prose max-w-2xl md:prose-xl">
+            <strong>Alison Peters</strong> has been Coeliac since June 2014 and
+            launched Coeliac Sanctuary in August of that year, and since then
+            has aimed to provide a one stop shop for Coeliacs, from blogs, to
+            recipes, eating out guide and online shop.
+          </div>
+        </div>
+      </Card>
+
+      <Comments
+        :id="blog.id"
+        :comments="allComments"
+        module="blog"
+        :is-loading="isLoadingComments"
+        :has-loaded-more="hasLoadedMoreComments"
+        @load-more="loadMoreComments"
+        @reset="handleCommentReset"
+      />
+    </div>
+
+    <div class="flex flex-1 flex-col space-y-3 lg:max-w-[350px]">
+      <template
+        v-for="group in groupedRelatedBlogs"
+        :key="group.tag"
+      >
+        <Card class="flex w-full flex-col space-y-3">
+          <h3 class="text-lg font-semibold">
+            Other blogs tagged with {{ group.tag }}
+          </h3>
+
+          <BlogSimpleCard
+            v-for="groupBlog in group.blogs"
+            :key="groupBlog.title"
+            :blog="groupBlog"
+            :hover="false"
+          />
+
+          <Link
+            :href="group.blogs.first().related_tag_url"
+            class="mt-5 text-lg font-semibold text-primary-dark hover:text-grey-darker"
+          >
+            View more blogs tagged with {{ group.tag }}
+          </Link>
+        </Card>
+      </template>
+    </div>
+  </div>
 </template>

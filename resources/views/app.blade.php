@@ -36,7 +36,9 @@
         gtag('config', 'G-5PWV6VHY13');
     </script>
 
-    <script type="text/javascript" async="async" data-noptimize="1" data-cfasync="false" src="https://scripts.scriptwrapper.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"></script>
+    @if(config('coeliac.show_ads'))
+        <script type="text/javascript" async="async" data-noptimize="1" data-cfasync="false" src="https://scripts.scriptwrapper.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"></script>
+    @endif
 
     <script data-grow-initializer="">
         !(function() {

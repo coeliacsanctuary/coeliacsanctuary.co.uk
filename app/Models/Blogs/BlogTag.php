@@ -30,4 +30,9 @@ class BlogTag extends Model
     {
         return $this->newQuery()->where('slug', $value)->firstOrFail();
     }
+
+    public function link(): string
+    {
+        return route('blog.index.tags', $this->slug);
+    }
 }

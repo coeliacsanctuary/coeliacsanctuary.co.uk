@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Blogs;
 
+use App\Actions\Blogs\FindRelatedBlogsAction;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Comments\GetCommentsForItemAction;
 use App\Models\Blogs\Blog;
@@ -53,6 +54,14 @@ class ShowControllerTest extends TestCase
     public function itCallsTheGetCommentsForItemAction(): void
     {
         $this->expectAction(GetCommentsForItemAction::class, [Blog::class]);
+
+        $this->visitBlog();
+    }
+
+    #[Test]
+    public function itCallsTheFindRelatedBlogsAction(): void
+    {
+        $this->expectAction(FindRelatedBlogsAction::class, [Blog::class]);
 
         $this->visitBlog();
     }
