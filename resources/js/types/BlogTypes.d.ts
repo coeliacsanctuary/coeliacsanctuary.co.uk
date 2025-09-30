@@ -1,6 +1,13 @@
 import { HomeHoverItem } from '@/types/Types';
 import { FeaturedInCollection } from '@/types/CollectionTypes';
 
+export type BlogSimpleCard = Exclude<HomeHoverItem, 'type' & 'square_image'>;
+
+export type RelatedBlogSimpleCard = BlogSimpleCard & {
+  related_tag: string;
+  related_tag_url: string;
+};
+
 export type BlogDetailCard = HomeHoverItem & {
   description: string;
   date: string;

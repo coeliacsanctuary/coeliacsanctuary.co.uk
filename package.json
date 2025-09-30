@@ -43,6 +43,7 @@
         "@vueuse/core": "^10.5.0",
         "any-number-to-words": "^2.0.5",
         "axios": "^1.1.2",
+        "collect.js": "^4.36.1",
         "i18n-iso-countries": "^7.10.0",
         "laravel-precognition-vue-inertia": "^0.6.0",
         "mitt": "^3.0.1",

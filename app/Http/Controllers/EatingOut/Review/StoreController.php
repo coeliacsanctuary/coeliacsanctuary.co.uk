@@ -29,6 +29,7 @@ class StoreController
         /** @var array $requestData */
         $requestData = $request->validated();
 
+        /** @phpstan-ignore-next-line  */
         if ($nationwideBranch->exists() && $nationwideBranch->id !== null) {
             abort_if($nationwideBranch->wheretoeat_id !== $eatery->id, RedirectResponse::HTTP_NOT_FOUND);
         }
