@@ -43,6 +43,8 @@ abstract class EditableField
 
     abstract public function getCurrentValue(Eatery $eatery): ?string;
 
+    abstract public function commitSuggestedValue(Eatery $eatery): void;
+
     public function getSuggestedValue(): string|int|null
     {
         return $this->transformForSaving();

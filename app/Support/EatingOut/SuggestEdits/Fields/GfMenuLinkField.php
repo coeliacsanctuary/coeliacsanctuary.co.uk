@@ -17,4 +17,9 @@ class GfMenuLinkField extends EditableField
     {
         return $eatery->gf_menu_link;
     }
+
+    public function commitSuggestedValue(Eatery $eatery): void
+    {
+        $eatery->update(['gf_menu_link' => $this->value]);
+    }
 }

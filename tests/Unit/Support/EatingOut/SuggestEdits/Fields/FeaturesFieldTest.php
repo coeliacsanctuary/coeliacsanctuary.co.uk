@@ -58,4 +58,33 @@ class FeaturesFieldTest extends TestCase
 
         $this->assertEquals(json_encode($data), $field->getSuggestedValue());
     }
+
+    #[Test]
+    public function itCanCommitTheSuggestedValue(): void
+    {
+        $allFeatures = EateryFeature::query()->get();
+
+        $payload = $allFeatures->map(fn (EateryFeature $feature, int $index) => [
+            'key' => $index + 1,
+            'label' => $feature->feature,
+            'selected' => $index > 2,
+        ]);
+
+        $this->eatery->features()->attach($allFeatures->first());
+
+        $field = FeaturesField::make(json_encode($payload));
+
+        $this->assertCount(1, $this->eatery->features);
+        $this->assertTrue($this->eatery->features->contains('id', $allFeatures->first()->id));
+        $this->assertFalse($this->eatery->features->contains('id', $allFeatures->last()->id));
+
+        $field->commitSuggestedValue($this->eatery);
+
+        $this->eatery->refresh();
+
+        $this->assertCount(2, $this->eatery->features);
+
+        $this->assertFalse($this->eatery->features->contains('id', $allFeatures->first()->id));
+        $this->assertTrue($this->eatery->features->contains('id', $allFeatures->last()->id));
+    }
 }
