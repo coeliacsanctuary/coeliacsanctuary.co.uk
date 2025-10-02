@@ -34,7 +34,10 @@ class ProductSalesTrend extends Trend
                     OrderState::READY,
                     OrderState::SHIPPED,
                 ])),
-        )->showLatestValue()->showSumValue();
+        )
+            ->format(['average' => false])
+            ->showLatestValue()
+            ->showSumValue();
     }
 
     /**

@@ -165,7 +165,7 @@ class HomepageTest extends TestCase
                         'collections',
                         1,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'link', 'items'])
+                            ->hasAll(['title', 'description', 'link', 'items', 'items_to_display'])
                     )
                     ->where('collections.0.title', 'Collection 0')
                     ->etc()

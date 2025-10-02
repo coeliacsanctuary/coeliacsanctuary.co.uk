@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Shop;
 
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\Shop\ShopCategory;
 use App\Resources\Shop\ShopCategoryIndexResource;
@@ -28,6 +29,10 @@ class IndexController
                 'gluten free stickers', 'gluten free wristbands', 'gluten free waterproof stickers', 'coeliac shop',
             ])
             ->metaImage($getOpenGraphImageForRouteAction->handle('shop'))
+            ->breadcrumbs(collect([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Shop'),
+            ]))
             ->render('Shop/Index', [
                 'categories' => ShopCategoryIndexResource::collection($categories),
             ]);

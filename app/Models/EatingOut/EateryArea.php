@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
@@ -48,7 +49,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
                 ->orWhereHas('liveBranches')
         );
 
-        static::creating(static function (self $area) {
+        static::saving(static function (self $area) {
             if ( ! $area->slug) {
                 $area->slug = Str::slug($area->area);
             }
@@ -84,7 +85,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
      * @param  Builder<static>  $query
      * @param  string  $value
      * @param  ?string  $field
-     * @return Builder<static>
+     * @return Builder<static> | RedirectResponse
      */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
@@ -102,6 +103,14 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
 
             /** @var Builder<static> $return */
             $return = $borough->areas()->where('slug', $value)->getQuery();
+
+            if ($return->count() === 0) {
+                $eateryCheck = $borough->liveEateries()->where('slug', $value)->first();
+
+                if ($eateryCheck) {
+                    abort(redirect($eateryCheck->absoluteLink()));
+                }
+            }
 
             return $return;
         }
@@ -177,12 +186,25 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
         $this->addMediaCollection('primary')->singleFile();
     }
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if ( ! $media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary')
+            ->nonQueued()
+            ->format('webp');
+    }
+
     /** @return Attribute<non-falsy-string | null, never> */
     public function image(): Attribute
     {
         return Attribute::get(function () { /** @phpstan-ignore-line */
             try {
-                return $this->main_image;
+                return $this->main_image_as_webp;
             } catch (Error $exception) { /** @phpstan-ignore-line */
                 return null;
             }

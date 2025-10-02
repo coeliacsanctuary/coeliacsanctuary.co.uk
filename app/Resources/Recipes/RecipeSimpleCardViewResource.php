@@ -17,7 +17,7 @@ class RecipeSimpleCardViewResource extends JsonResource
         return [
             'title' => $this->title,
             'link' => $this->link,
-            'image' => $this->square_image,
+            'image' => $this->square_image_as_webp ?? $this->square_image,
         ];
     }
 }

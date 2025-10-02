@@ -23,6 +23,10 @@ class CreateEateryReviewAction
             ProcessReviewImagesJob::dispatch($review, $images);
         }
 
+        if ($review->approved) {
+            $eatery->touch();
+        }
+
         return $review;
     }
 }

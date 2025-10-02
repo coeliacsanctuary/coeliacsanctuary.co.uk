@@ -78,6 +78,19 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         $this->addMediaCollection('additional');
     }
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if ( ! $media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary', 'additional')
+            ->nonQueued()
+            ->format('webp');
+    }
+
     /** @return BelongsToMany<ShopCategory, $this> */
     public function categories(): BelongsToMany
     {
@@ -228,7 +241,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
             ->sku((string) $this->id)
             ->name($this->title)
             ->brand(
-                Schema::organization()
+                Schema::brand()
                     ->name('Coeliac Sanctuary')
                     ->logo(asset('/images/logo.svg'))
             )
@@ -237,6 +250,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
             ->offers(
                 Schema::offer()
                     ->price($this->currentPrice / 100)
+                    ->priceValidUntil($this->currentPrices()->first()->end_at ?? now()->addYear())
                     ->availability($this->isInStock() ? Schema::itemAvailability()::InStock : Schema::itemAvailability()::OutOfStock)
                     ->priceCurrency('GBP')
                     ->url($this->absolute_link)
@@ -256,8 +270,8 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
                                             ])
                                     )
                                     ->cutoffTime(Carbon::createFromTime(14))
-                                    ->handlingTime(Schema::quantitativeValue()->minValue(0)->maxValue(1))
-                                    ->transitTime(Schema::quantitativeValue()->minValue(1)->maxValue(3))
+                                    ->handlingTime(Schema::quantitativeValue()->minValue(0)->maxValue(1)->unitCode('DAY'))
+                                    ->transitTime(Schema::quantitativeValue()->minValue(1)->maxValue(3)->unitCode('DAY'))
                             )
                             ->shippingRate(
                                 Schema::monetaryAmount()

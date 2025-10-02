@@ -17,4 +17,9 @@ class AddressField extends EditableField
     {
         return $eatery->address;
     }
+
+    public function commitSuggestedValue(Eatery $eatery): void
+    {
+        $eatery->update(['address' => $this->value]);
+    }
 }

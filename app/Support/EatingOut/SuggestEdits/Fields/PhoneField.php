@@ -12,4 +12,9 @@ class PhoneField extends EditableField
     {
         return $eatery->phone;
     }
+
+    public function commitSuggestedValue(Eatery $eatery): void
+    {
+        $eatery->update(['phone' => $this->value]);
+    }
 }

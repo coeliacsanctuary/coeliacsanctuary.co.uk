@@ -48,4 +48,16 @@ class VenueTypeFieldTest extends TestCase
 
         $this->assertEquals($venueType->venue_type, $field->getSuggestedValue());
     }
+
+    #[Test]
+    public function itCanCommitTheSuggestedValue(): void
+    {
+        $field = VenueTypeField::make(5);
+
+        $this->assertNotEquals(5, $this->eatery->venue_type_id);
+
+        $field->commitSuggestedValue($this->eatery);
+
+        $this->assertEquals(5, $this->eatery->refresh()->venue_type_id);
+    }
 }

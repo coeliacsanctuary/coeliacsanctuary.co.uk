@@ -82,6 +82,8 @@ class EateryListResource extends JsonResource
                 'average' => $this->average_rating,
             ],
             'distance' => $branch->distance ?? $this->distance,
+            'last_updated' => $branch->updated_at ?? $this->updated_at,
+            'last_updated_human' => $branch?->updated_at?->diffForHumans() ?? $this->updated_at?->diffForHumans(),
         ];
     }
 }

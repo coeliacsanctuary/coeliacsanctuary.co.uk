@@ -22,7 +22,7 @@ class BlogApiResource extends JsonResource
             'description' => $this->description,
             'meta_description' => $this->meta_description,
             'link' => route('blog.show', ['blog' => $this]),
-            'main_image' => $this->main_image,
+            'main_image' => $this->main_image_as_webp ?? $this->main_image,
             'created_at' => $this->published,
         ];
     }

@@ -6,6 +6,7 @@ namespace App\Nova;
 
 use App\Enums\Shop\OrderState;
 use App\Models\Comments\Comment;
+use App\Models\EateryAiDescription;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReport;
 use App\Models\EatingOut\EateryReview;
@@ -16,6 +17,7 @@ use App\Nova\Dashboards\Shop;
 use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
+use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideEateries;
@@ -60,9 +62,10 @@ class Menu
         $commentsCount = Comment::withoutGlobalScopes()->where('approved', false)->count();
         $reviewCount = EateryReview::withoutGlobalScopes()->where('approved', false)->count();
         $reportsCount = EateryReport::query()->where('completed', false)->where('ignored', false)->count();
-        $myPlacesCount = EateryRecommendation::query()->where('email', 'alisondwheatley@gmail.com')->where('completed', false)->count();
-        $recommendationsCount = EateryRecommendation::query()->where('email', '!=', 'alisondwheatley@gmail.com')->where('completed', false)->count();
+        $myPlacesCount = EateryRecommendation::query()->where('email', 'alisondwheatley@gmail.com')->where('completed', false)->where('ignored', false)->count();
+        $recommendationsCount = EateryRecommendation::query()->where('email', '!=', 'alisondwheatley@gmail.com')->where('completed', false)->where('ignored', false)->count();
         $suggestedEditsCount = EaterySuggestedEdit::query()->where('rejected', false)->where('accepted', false)->count();
+        $eateryAiDescriptionsCount = EateryAiDescription::query()->count();
 
         $basketsCount = ShopOrder::query()->where('state_id', OrderState::BASKET)->count();
         $ordersCount = ShopOrder::query()->whereIn('state_id', [OrderState::PAID, OrderState::READY])->count();
@@ -73,7 +76,7 @@ class Menu
                 MenuItem::dashboard(Shop::class),
             ])->icon('chart-bar'),
 
-            MenuItem::externalLink('Mailcoach', config('mail.mailers.mailcoach.domain'))->openInNewTab(),
+            MenuItem::externalLink('Mailcoach', config('mail.mailers.mailcoach.url'))->openInNewTab(),
 
             MenuSection::make('Main Site', [
                 MenuItem::resource(Blog::class),
@@ -108,6 +111,14 @@ class Menu
 
                 MenuGroup::make('Search', [
                     MenuItem::resource(EaterySearch::class),
+                ]),
+
+                MenuGroup::make('Misc', [
+                    MenuItem::resource(EateryAiDescriptionResource::class)->withBadgeIf(fn () => (string) $eateryAiDescriptionsCount, 'danger', fn () => $eateryAiDescriptionsCount > 0),
+                ]),
+
+                MenuGroup::make('Imports', [
+                    MenuItem::make('Nationwide Branch Import')->path('/wte-nationwide-branch-import'),
                 ]),
             ])->icon('map'),
 

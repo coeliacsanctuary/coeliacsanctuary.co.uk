@@ -70,6 +70,10 @@ class AddressField extends Field
 
     public function resolveDefaultCallback(NovaRequest $request): mixed
     {
-        return \call_user_func($this->defaultCallback, $request);
+        if ( ! $this->defaultCallback) {
+            return parent::resolveDefaultCallback($request);
+        }
+
+        return call_user_func($this->defaultCallback, $request);
     }
 }

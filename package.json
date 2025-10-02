@@ -8,7 +8,9 @@
         "dev": "vite",
         "build": "vite build && vite build --ssr",
         "build-eatery-location-search": "cd nova-components/EateryLocationSearch && npm run dev",
-        "build-eatery-location-search-prod": "cd nova-components/EateryLocationSearch && npm run prod"
+        "build-eatery-location-search-prod": "cd nova-components/EateryLocationSearch && npm run prod",
+        "build-wte-nationwide-branch-import": "cd nova-components/WteNationwideBranchImport && npm run dev",
+        "build-wte-nationwide-branch-import-prod": "cd nova-components/WteNationwideBranchImport && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",
@@ -41,6 +43,7 @@
         "@vueuse/core": "^10.5.0",
         "any-number-to-words": "^2.0.5",
         "axios": "^1.1.2",
+        "collect.js": "^4.36.1",
         "i18n-iso-countries": "^7.10.0",
         "laravel-precognition-vue-inertia": "^0.6.0",
         "mitt": "^3.0.1",

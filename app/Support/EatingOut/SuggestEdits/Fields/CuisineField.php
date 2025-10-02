@@ -26,4 +26,9 @@ class CuisineField extends EditableField
 
         return $cuisine->cuisine;
     }
+
+    public function commitSuggestedValue(Eatery $eatery): void
+    {
+        $eatery->update(['cuisine_id' => $this->value]);
+    }
 }

@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
     <meta data-rh="true" name="theme-color" content="#80CCFC">
 
-    <meta name="author" content="Coeliac Sanctuary"/>
+    <meta name="author" content="Coeliac Sanctuary" />
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <meta name="google-site-verification" content="MkXdbyO1KF2xCS7VFkP7v5ZaWw3WObMUJDFxX0z7_4w"/>
+    <meta name="google-site-verification" content="MkXdbyO1KF2xCS7VFkP7v5ZaWw3WObMUJDFxX0z7_4w" />
 
-    <meta property="article:publisher" content="https://www.facebook.com/CoeliacSanctuary"/>
+    <meta property="article:publisher" content="https://www.facebook.com/CoeliacSanctuary" />
 
-    <meta property="og:updated_time" content="{{ date('c') }}"/>
+    <meta property="og:updated_time" content="{{ date('c') }}" />
 
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -28,32 +28,28 @@
     @preloadImage
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>
-
     <script>
         window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-
+        function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-5PWV6VHY13'); // GA-4
+        gtag('config', 'G-5PWV6VHY13');
+    </script>
 
-        // Delay adsbygoogle.js until idle or after 3s fallback
-        function loadAdsScript() {
-            const script = document.createElement('script');
-            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1063051842575021';
-            script.async = true;
-            script.crossOrigin = 'anonymous';
-            document.head.appendChild(script);
-        }
+    @if(config('coeliac.show_ads'))
+        <script type="text/javascript" async="async" data-noptimize="1" data-cfasync="false" src="https://scripts.scriptwrapper.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"></script>
+    @endif
 
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(loadAdsScript, { timeout: 3000 });
-        } else {
-            setTimeout(loadAdsScript, 3000);
-        }
+    <script data-grow-initializer="">
+        !(function() {
+            window.growMe || ((window.growMe = function(e) {
+                window.growMe._.push(e);
+            }), (window.growMe._ = []));
+            var e = document.createElement('script');
+            (e.type = 'text/javascript'), (e.src = 'https://faves.grow.me/main.js'), (e.defer = !0), e.setAttribute('data-grow-faves-site-id', 'U2l0ZTo4YjkwNzRkNS1mYjI3LTRjODUtYTFjYS1mNzlhZjI4OTlmMzc=');
+            var t = document.getElementsByTagName('script')[0];
+            t.parentNode.insertBefore(e, t);
+        })();
     </script>
 
     @vite('resources/js/app.ts')

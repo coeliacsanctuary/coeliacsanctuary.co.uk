@@ -22,7 +22,7 @@ const mobileSearchOpen = ref(false);
 <template>
   <CoeliacMetas :metas="metas" />
 
-  <div class="main-header relative bg-primary shadow-lg">
+  <header class="main-header relative bg-primary shadow-lg">
     <div
       id="header"
       class="relative z-20"
@@ -63,7 +63,7 @@ const mobileSearchOpen = ref(false);
 
       <MainNav @open-search="mobileSearchOpen = true" />
     </div>
-  </div>
+  </header>
 
   <MobileNav
     :open="mobileNavOpen"

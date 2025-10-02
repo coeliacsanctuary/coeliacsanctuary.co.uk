@@ -15,12 +15,13 @@ class CollectionSimpleCardViewResource extends JsonResource
     /** @return array{title: string, link: string, description: string} */
     public function toArray(Request $request)
     {
-        $this->load(['items' => fn (Relation $relation) => $relation->take(3), 'items.item', 'items.item.media']);
+        $this->load(['items' => fn (Relation $relation) => $relation->take($this->items_to_display), 'items.item', 'items.item.media']);
 
         return [
             'title' => $this->title,
             'link' => route('collection.show', ['collection' => $this]),
             'description' => $this->meta_description,
+            'items_to_display' => $this->items_to_display,
             'items' => CollectedItemSimpleCardViewResource::collection($this->items),
         ];
     }

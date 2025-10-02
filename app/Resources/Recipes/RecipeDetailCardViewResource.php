@@ -22,8 +22,8 @@ class RecipeDetailCardViewResource extends JsonResource
         return [
             'title' => $this->title,
             'link' => $this->link,
-            'image' => $this->main_image,
-            'square_image' => $this->square_image,
+            'image' => $this->main_image_as_webp ?? $this->main_image,
+            'square_image' => $this->square_image_as_webp ?? $this->square_image,
             'date' => $this->published,
             'description' => $this->meta_description,
             'features' => $this->features->only(['feature']),

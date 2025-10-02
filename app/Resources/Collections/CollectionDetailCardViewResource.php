@@ -17,7 +17,7 @@ class CollectionDetailCardViewResource extends JsonResource
         return [
             'title' => $this->title,
             'link' => $this->link,
-            'image' => $this->main_image,
+            'image' => $this->main_image_as_wepb ?? $this->main_image,
             'date' => $this->lastUpdated,
             'description' => $this->meta_description,
             'number_of_items' => $this->items_count,

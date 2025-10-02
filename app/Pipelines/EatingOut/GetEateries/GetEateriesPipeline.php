@@ -22,6 +22,8 @@ use Illuminate\Pipeline\Pipeline;
 
 class GetEateriesPipeline
 {
+    protected ?GetEateriesPipelineData $pipelineData = null;
+
     /**
      * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
      * @param  class-string<JsonResource>  $jsonResource
@@ -53,9 +55,19 @@ class GetEateriesPipeline
             ->through($pipes)
             ->thenReturn();
 
+        $this->pipelineData = $pipeline;
+
         /** @var LengthAwarePaginator<int, JsonResource> $serialisedEateries */
         $serialisedEateries = $pipeline->serialisedEateries;
 
         return $serialisedEateries;
+    }
+
+    public function rawData(): GetEateriesPipelineData
+    {
+        /** @var GetEateriesPipelineData $data */
+        $data = $this->pipelineData;
+
+        return $data;
     }
 }

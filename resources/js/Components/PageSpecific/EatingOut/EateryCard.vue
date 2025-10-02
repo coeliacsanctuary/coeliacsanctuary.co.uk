@@ -71,6 +71,10 @@ const eateryLink = computed(() => {
         >
           Around {{ eatery.distance }} miles away...
         </p>
+
+        <span class="mt-2 text-xs italic">
+          Last updated {{ eatery.last_updated_human }}
+        </span>
       </div>
 
       <div

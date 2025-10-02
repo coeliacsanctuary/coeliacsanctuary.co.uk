@@ -7,6 +7,7 @@ namespace App\Http\Controllers\EatingOut\London;
 use App\Actions\EatingOut\GetMostRatedPlacesInCountyAction;
 use App\Actions\EatingOut\GetTopRatedPlacesInCountyAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCounty;
 use App\Resources\EatingOut\LondonPageResource;
@@ -30,6 +31,11 @@ class IndexController
                 'coeliac london', 'gluten free london', 'eating gluten free in london',
                 'gluten free places to eat at chains in london', ...$county->keywords(),
             ])
+            ->breadcrumbs(collect([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Eating Out', route('eating-out.index')),
+                new BreadcrumbItemData('London'),
+            ]))
             ->metaImage($getOpenGraphImageAction->handle($county))
             ->render('EatingOut/London', [
                 'london' => new LondonPageResource($county),

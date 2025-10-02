@@ -48,7 +48,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
                 ->orWhereHas('liveBranches')
         );
 
-        static::creating(static function (self $town) {
+        static::saving(static function (self $town) {
             if ( ! $town->slug) {
                 $town->slug = Str::slug($town->town);
                 $town->legacy = $town->slug;
@@ -94,12 +94,17 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
         if (app(Request::class)->route('county')) {
             /** @var ?EateryCounty $county | string */
             $county = app(Request::class)->route('county');
+
             if ( ! $county instanceof EateryCounty) {
                 $county = EateryCounty::query()->where('slug', $county)->firstOrFail();
             }
 
             /** @var Builder<static> $return */
             $return = $county->towns()->where('slug', $value)->getQuery();
+
+            if ($return->count() === 0) {
+                $return = $return->withoutGlobalScopes();
+            }
 
             return $return;
         }
@@ -184,12 +189,25 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
         $this->addMediaCollection('primary')->singleFile();
     }
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if ( ! $media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary')
+            ->nonQueued()
+            ->format('webp');
+    }
+
     /** @return Attribute<non-falsy-string | null, never> */
     public function image(): Attribute
     {
         return Attribute::get(function () { /** @phpstan-ignore-line */
             try {
-                return $this->main_image;
+                return $this->main_image_as_webp;
             } catch (Error $exception) { /** @phpstan-ignore-line */
                 return null;
             }

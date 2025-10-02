@@ -7,9 +7,12 @@ namespace App\Nova\Metrics;
 use App\Models\EatingOut\EateryRecommendation;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
+use SaintSystems\Nova\LinkableMetrics\LinkableValue;
 
 class PlaceRequests extends Value
 {
+    use LinkableValue;
+
     public $icon = 'document-add';
 
     /**
@@ -19,10 +22,14 @@ class PlaceRequests extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->result(EateryRecommendation::query()
-            ->withoutGlobalScopes()
-            ->whereNot('email', 'alisondwheatley@gmail.com')
-            ->where('completed', false)->count());
+        return $this->result(
+            EateryRecommendation::query()
+                ->withoutGlobalScopes()
+                ->whereNot('email', 'alisondwheatley@gmail.com')
+                ->where('completed', false)
+                ->where('ignored', false)
+                ->count()
+        );
     }
 
     public function name()

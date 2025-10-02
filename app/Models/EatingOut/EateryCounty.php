@@ -42,7 +42,7 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
     {
         static::addGlobalScope('hasPlaces', fn (Builder $builder) => $builder->whereHas('activeTowns'));
 
-        static::creating(static function (self $county) {
+        static::saving(static function (self $county) {
             if ( ! $county->slug) {
                 $county->slug = Str::slug($county->county);
                 $county->legacy = $county->slug;
@@ -68,6 +68,19 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('primary')->singleFile();
+    }
+
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        if ( ! $media || $media->extension === 'webp') {
+            return;
+        }
+
+        $this
+            ->addMediaConversion('webp')
+            ->performOnCollections('primary')
+            ->nonQueued()
+            ->format('webp');
     }
 
     /** @return HasMany<EateryTown, $this> */
@@ -126,7 +139,7 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
     {
         return Attribute::get(function () { /** @phpstan-ignore-line */
             try {
-                return $this->main_image;
+                return $this->main_image_as_webp;
             } catch (Error $exception) { /** @phpstan-ignore-line */
                 return null;
             }

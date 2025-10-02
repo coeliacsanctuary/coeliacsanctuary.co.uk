@@ -4,16 +4,23 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Blogs;
 
+use App\Actions\Blogs\FindRelatedBlogsAction;
 use App\Actions\Comments\GetCommentsForItemAction;
+use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\Blogs\Blog;
 use App\Resources\Blogs\BlogShowResource;
+use App\Resources\Blogs\RelatedBlogSimpleCardViewResource;
 use Inertia\Response;
 
 class ShowController
 {
-    public function __invoke(Blog $blog, Inertia $inertia, GetCommentsForItemAction $commentsForItemAction): Response
-    {
+    public function __invoke(
+        Blog $blog,
+        Inertia $inertia,
+        FindRelatedBlogsAction $findRelatedBlogsAction,
+        GetCommentsForItemAction $commentsForItemAction,
+    ): Response {
         return $inertia
             ->title($blog->title)
             ->metaDescription($blog->meta_description)
@@ -28,9 +35,15 @@ class ShowController
                 'article.tags' => $blog->meta_tags,
             ])
             ->schema($blog->schema()->toScript())
+            ->breadcrumbs(collect([
+                new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
+                new BreadcrumbItemData('Blogs', route('blog.index')),
+                new BreadcrumbItemData($blog->title),
+            ]))
             ->metaFeed(route('blog.feed'))
             ->render('Blog/Show', [
                 'blog' => new BlogShowResource($blog),
+                'relatedBlogs' => RelatedBlogSimpleCardViewResource::collection($findRelatedBlogsAction->handle($blog)),
                 'comments' => fn () => $commentsForItemAction->handle($blog),
             ]);
     }

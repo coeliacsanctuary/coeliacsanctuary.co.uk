@@ -16,6 +16,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -82,6 +83,24 @@ class Collection extends Resource
                         }
                     })
                     ->nullable(),
+
+                Select::make('Number of items to show on homepage', 'items_to_display')
+                    ->dependsOn('display_on_homepage', function (Select $field, NovaRequest $request, FormData $formData): void {
+                        /** @phpstan-ignore-next-line */
+                        if ($formData->display_on_homepage === false) {
+                            $field->hide();
+                        }
+                    })
+                    ->default(3)
+                    ->options([
+                        '1' => '1 item',
+                        '2' => '2 items',
+                        '3' => '3 items',
+                        '4' => '4 items',
+                        '6' => '6 items',
+                        '8' => '8 items',
+                    ])
+                    ->displayUsingLabels()
             ]),
 
             new Panel('Metas', [
@@ -142,7 +161,7 @@ class Collection extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->reorder('updated_at', 'desc');
+        return $query->withoutGlobalScopes()->reorder('updated_at', 'desc');
     }
 
     protected static function fillFields(NovaRequest $request, $model, $fields): array

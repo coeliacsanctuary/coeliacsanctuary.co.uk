@@ -23,9 +23,8 @@ defineProps<{
       <p
         v-if="restaurants.length === 0"
         class="prose max-w-none md:prose-lg"
-      >
-        {{ info }}
-      </p>
+        v-html="info"
+      />
 
       <div
         v-if="isNotNationwide"
@@ -40,8 +39,8 @@ defineProps<{
         <span
           v-if="phone"
           class="md:text-lg"
-          >{{ phone }}</span
-        >
+          v-text="phone"
+        />
       </div>
     </div>
   </div>

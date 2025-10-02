@@ -30,7 +30,7 @@ class RecipeMeals implements PolymorphicResource
         return 'meals';
     }
 
-    public function check(string $key, Collection $relationship): bool
+    public function check(string $key, Collection $relationship, Model $resource): bool
     {
         return $relationship
             ->filter(fn (RecipeMeal $meal): bool => $meal->meal === Str::headline($key)) /** @phpstan-ignore-line  */
