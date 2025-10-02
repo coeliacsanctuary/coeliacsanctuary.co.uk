@@ -98,6 +98,7 @@ class EateryReview extends Model
 
             return [
                 'value' => $this->how_expensive,
+                /** @phpstan-ignore-next-line  */
                 'label' => self::HOW_EXPENSIVE_LABELS[$this->how_expensive],
             ];
         });

@@ -8,6 +8,7 @@ use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EaterySuggestedEdit;
 use App\Models\EatingOut\EateryVenueType;
+use App\Nova\Actions\EatingOut\AcceptAndImplementEdit;
 use App\Nova\Actions\EatingOut\AcceptEdit;
 use App\Nova\Actions\EatingOut\RejectEdit;
 use App\Nova\Resource;
@@ -116,7 +117,7 @@ class SuggestedEdits extends Resource
         }
 
         $suggestedEdit = EaterySuggestedEdit::query()
-            ->with(['eatery', 'eatery.features'])
+            ->with(['eatery' => fn ($query) => $query->withoutGlobalScopes()->with(['features'])])
             ->findOrFail($request->resourceId);
 
         $currentValue = Text::make('Current Value', function (EaterySuggestedEdit $edit) {
@@ -189,6 +190,10 @@ class SuggestedEdits extends Resource
                 ->showInline()
                 ->withoutConfirmation()
                 ->canRun(fn ($request, EaterySuggestedEdit $edit) => $edit->accepted === false && $edit->rejected === false),
+
+            AcceptAndImplementEdit::make()
+                ->showInline()
+                ->canRun(fn ($request, EaterySuggestedEdit $edit) => $edit->accepted === false && $edit->rejected === false && $edit->field !== 'info'),
 
             RejectEdit::make()
                 ->showInline()

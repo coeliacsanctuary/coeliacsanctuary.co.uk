@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Collections;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -41,7 +42,8 @@ class CollectionItem extends Model implements Sortable
         return $this->morphTo('item');
     }
 
-    public function buildSortQuery()
+    /** @return Builder<static> */
+    public function buildSortQuery(): Builder
     {
         return static::query()->where('collection_id', $this->collection_id);
     }

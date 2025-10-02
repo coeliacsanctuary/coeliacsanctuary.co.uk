@@ -49,7 +49,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
                 ->orWhereHas('liveBranches')
         );
 
-        static::creating(static function (self $area) {
+        static::saving(static function (self $area) {
             if ( ! $area->slug) {
                 $area->slug = Str::slug($area->area);
             }

@@ -48,4 +48,16 @@ class CuisineFieldTest extends TestCase
 
         $this->assertEquals($cuisine->cuisine, $field->getSuggestedValue());
     }
+
+    #[Test]
+    public function itCanCommitTheSuggestedValue(): void
+    {
+        $field = CuisineField::make(5);
+
+        $this->assertNotEquals(5, $this->eatery->cuisine_id);
+
+        $field->commitSuggestedValue($this->eatery);
+
+        $this->assertEquals(5, $this->eatery->refresh()->cuisine_id);
+    }
 }

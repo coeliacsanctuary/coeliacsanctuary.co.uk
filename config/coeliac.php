@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 return [
+    'show_ads' => env('SHOW_ADS', true),
+
     'images_url' => env('IMAGES_URL'),
 
     'shop' => [

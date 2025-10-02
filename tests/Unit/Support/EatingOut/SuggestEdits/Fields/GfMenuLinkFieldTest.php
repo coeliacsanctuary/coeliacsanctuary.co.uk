@@ -46,4 +46,16 @@ class GfMenuLinkFieldTest extends TestCase
 
         $this->assertEquals('Foo', $field->getSuggestedValue());
     }
+
+    #[Test]
+    public function itCanCommitTheSuggestedValue(): void
+    {
+        $field = GfMenuLinkField::make('Foo');
+
+        $this->assertNotEquals('Foo', $this->eatery->gf_menu_link);
+
+        $field->commitSuggestedValue($this->eatery);
+
+        $this->assertEquals('Foo', $this->eatery->refresh()->gf_menu_link);
+    }
 }

@@ -46,4 +46,16 @@ class PhoneFieldTest extends TestCase
 
         $this->assertEquals('Foo', $field->getSuggestedValue());
     }
+
+    #[Test]
+    public function itCanCommitTheSuggestedValue(): void
+    {
+        $field = PhoneField::make('Foo');
+
+        $this->assertNotEquals('Foo', $this->eatery->phone);
+
+        $field->commitSuggestedValue($this->eatery);
+
+        $this->assertEquals('Foo', $this->eatery->refresh()->phone);
+    }
 }

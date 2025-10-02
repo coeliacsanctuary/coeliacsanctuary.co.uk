@@ -46,4 +46,16 @@ class WebsiteFieldTest extends TestCase
 
         $this->assertEquals('Foo', $field->getSuggestedValue());
     }
+
+    #[Test]
+    public function itCanCommitTheSuggestedValue(): void
+    {
+        $field = WebsiteField::make('Foo');
+
+        $this->assertNotEquals('Foo', $this->eatery->website);
+
+        $field->commitSuggestedValue($this->eatery);
+
+        $this->assertEquals('Foo', $this->eatery->refresh()->website);
+    }
 }

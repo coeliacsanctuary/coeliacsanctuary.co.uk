@@ -17,4 +17,9 @@ class WebsiteField extends EditableField
     {
         return $eatery->website;
     }
+
+    public function commitSuggestedValue(Eatery $eatery): void
+    {
+        $eatery->update(['website' => $this->value]);
+    }
 }

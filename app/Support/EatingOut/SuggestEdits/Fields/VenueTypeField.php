@@ -26,4 +26,9 @@ class VenueTypeField extends EditableField
 
         return $venueType->venue_type;
     }
+
+    public function commitSuggestedValue(Eatery $eatery): void
+    {
+        $eatery->update(['venue_type_id' => $this->value]);
+    }
 }

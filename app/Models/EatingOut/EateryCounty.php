@@ -42,7 +42,7 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
     {
         static::addGlobalScope('hasPlaces', fn (Builder $builder) => $builder->whereHas('activeTowns'));
 
-        static::creating(static function (self $county) {
+        static::saving(static function (self $county) {
             if ( ! $county->slug) {
                 $county->slug = Str::slug($county->county);
                 $county->legacy = $county->slug;

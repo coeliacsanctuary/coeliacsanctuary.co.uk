@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use App\Models\EatingOut\Eatery;
 use App\Support\EatingOut\SuggestEdits\Fields\InfoField;
 use Database\Seeders\EateryScaffoldingSeeder;
+use RuntimeException;
 use Tests\TestCase;
 
 class InfoFieldTest extends TestCase
@@ -45,5 +46,15 @@ class InfoFieldTest extends TestCase
         $field = InfoField::make('Foo');
 
         $this->assertEquals('Foo', $field->getSuggestedValue());
+    }
+
+    #[Test]
+    public function itCanNotCommitTheSuggestedValue(): void
+    {
+        $field = InfoField::make('Foo');
+
+        $this->expectException(RuntimeException::class);
+
+        $field->commitSuggestedValue($this->eatery);
     }
 }

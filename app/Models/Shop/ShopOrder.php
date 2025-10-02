@@ -24,6 +24,7 @@ class ShopOrder extends Model
     protected static function booted(): void
     {
         self::creating(function (self $order): void {
+            /** @phpstan-ignore-next-line  */
             if ($order->state_id === null) {
                 $order->state_id = OrderState::BASKET;
             }

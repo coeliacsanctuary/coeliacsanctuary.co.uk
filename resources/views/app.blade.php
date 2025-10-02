@@ -28,33 +28,17 @@
     @preloadImage
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>
-
     <script>
         window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-
+        function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-5PWV6VHY13'); // GA-4
-
-        // Delay adsbygoogle.js until idle or after 3s fallback
-        function loadAdsScript() {
-            const script = document.createElement('script');
-            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1063051842575021';
-            script.async = true;
-            script.crossOrigin = 'anonymous';
-            document.head.appendChild(script);
-        }
-
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(loadAdsScript, { timeout: 3000 });
-        } else {
-            setTimeout(loadAdsScript, 3000);
-        }
+        gtag('config', 'G-5PWV6VHY13');
     </script>
+
+    @if(config('coeliac.show_ads'))
+        <script type="text/javascript" async="async" data-noptimize="1" data-cfasync="false" src="https://scripts.scriptwrapper.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"></script>
+    @endif
 
     <script data-grow-initializer="">
         !(function() {

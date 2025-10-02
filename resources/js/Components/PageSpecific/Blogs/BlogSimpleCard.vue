@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
-import { BlogDetailCard } from '@/types/BlogTypes';
+import { BlogDetailCard, BlogSimpleCard } from '@/types/BlogTypes';
 
-defineProps<{ blog: BlogDetailCard }>();
+withDefaults(defineProps<{ blog: BlogSimpleCard; hover?: boolean }>(), {
+  hover: true,
+});
 </script>
 
 <template>
   <Card
     :shadow="false"
-    class="scale-95 transform transition duration-500 hover:scale-105 hover:opacity-100!"
+    class="transition duration-500"
+    :class="{ 'scale-95 transform hover:scale-105 hover:opacity-100!': hover }"
   >
     <Link
       :href="blog.link"

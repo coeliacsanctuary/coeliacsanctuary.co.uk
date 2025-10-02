@@ -10,6 +10,7 @@ use App\Models\Shop\ShopProduct;
 use App\Nova\Actions\Shop\OpenDispatchSlip;
 use App\Nova\Actions\Shop\RefundOrder;
 use App\Nova\Actions\Shop\ResendOrder;
+use App\Nova\Actions\Shop\ResetPrintStatus;
 use App\Nova\Actions\Shop\ShipOrder;
 use App\Nova\Metrics\ShopDailySales;
 use App\Nova\Metrics\ShopIncome;
@@ -53,7 +54,7 @@ class Orders extends Resource
 
             DateTime::make('Order Date', fn (ShopOrder $order) => $order->payment->created_at),
 
-            Text::make('Address', fn (ShopOrder $order) => nl2br($order->address->formatted_address))->asHtml(),
+            Text::make('Address', fn (ShopOrder $order) => nl2br($order->address->formatted_address ?? ''))->asHtml(),
 
             Number::make('Items', fn (ShopOrder $order) => $order->items->sum('quantity')),
 
@@ -125,23 +126,29 @@ class Orders extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
+            ResetPrintStatus::make()
+                ->standalone()
+                ->confirmText('Are you sure you want to reset the print status?'),
+
             RefundOrder::make()
                 ->sole()
                 ->showInline()
                 ->confirmText('Are you sure you want to refund this order?')
                 ->confirmButtonText('Refund Order'),
+
             OpenDispatchSlip::make()
                 ->onlyInline()
                 ->withoutConfirmation(),
+
             ShipOrder::make()
                 ->showInline()
                 ->withoutConfirmation()
                 ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::READY),
+
             ResendOrder::make()
                 ->sole()
                 ->confirmButtonText('Resend Order')
                 ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::SHIPPED),
-
         ];
     }
 

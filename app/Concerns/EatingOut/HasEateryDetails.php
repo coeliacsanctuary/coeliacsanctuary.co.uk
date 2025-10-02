@@ -55,7 +55,7 @@ trait HasEateryDetails
         }
 
         /** @var EateryTown $town */
-        $town = $this->town;
+        $town = $this->town()->withoutGlobalScopes()->first();
 
         return Str::of($this->name ?: $town->town)
             ->when(
