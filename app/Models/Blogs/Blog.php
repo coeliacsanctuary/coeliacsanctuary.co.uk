@@ -18,11 +18,14 @@ use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
+use Illuminate\Support\HtmlString;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -33,7 +36,7 @@ use Spatie\SchemaOrg\Schema;
  * @implements Collectable<$this>
  * @implements HasComments<$this>
  */
-class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearchable
+class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearchable, HasRichContent
 {
     /** @use CanBeCollected<$this> */
     use CanBeCollected;
@@ -49,6 +52,8 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
+    use InteractsWithRichContent;
 
     use LinkableModel;
     use Searchable;
@@ -122,10 +127,15 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
         return 'blog';
     }
 
-    /** @return Attribute<array{content: string}, never> */
+    /** @return Attribute<HtmlString, never> */
     public function editableContent(): Attribute
     {
-        return Attribute::get(fn() => ['content' => $this->body]);
+        return Attribute::get(fn() => new HtmlString($this->body));
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('editable_content');
     }
 
     public function schema(): BlogSchema

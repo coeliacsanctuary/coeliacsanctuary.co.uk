@@ -11,6 +11,7 @@ use App\Filament\Forms\Shared\VisibilitySection;
 use App\Models\Blogs\BlogTag;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -64,7 +65,7 @@ class BlogForm
                 ->columnStart(1)
                 ->columnSpanFull()
                 ->schema([
-                    SpatieMediaLibraryFileUpload::make('body')
+                    SpatieMediaLibraryFileUpload::make('body_images')
                         ->hiddenLabel()
                         ->collection('body')
                         ->multiple()
@@ -78,10 +79,18 @@ class BlogForm
             Section::make('Content')
                 ->columnSpanFull()
                 ->schema([
-                    RichEditor::make('body')
-                        ->formatStateUsing(fn(string $state) => $state)
-                        ->hiddenLabel()
-                        ->required(),
+                    Textarea::make('body'),
+
+//                    RichEditor::make('body')
+//                        ->toolbarButtons([
+//                            ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
+//                            ['h2', 'h3'],
+//                            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+//                            ['table', 'attachFiles'],
+//                            ['undo', 'redo'],
+//                        ])
+//                        ->hiddenLabel()
+//                        ->required(),
                 ]),
         ];
     }
