@@ -140,6 +140,10 @@ class Recipe extends Resource
         $fillFields = parent::fillFields($request, $model, $fields);
         $recipe = $fillFields[0];
 
+        if ($recipe->_status === 'draft') {
+            $recipe->publish_at = null;
+        }
+
         $recipe->live = $recipe->_status === 'live';
 
         unset($recipe->_status);
