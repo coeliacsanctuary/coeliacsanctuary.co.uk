@@ -34,7 +34,7 @@ class HydrateBranchesAction implements GetEateriesPipelineActionContract
 
         $hydratedBranches = NationwideBranch::query()
             ->whereIn('id', $branchIds)
-            ->with(['county', 'town', 'country'])
+            ->with(['county', 'town', 'country', 'reviews'])
             ->get();
 
         $pipelineData->hydratedBranches = $hydratedBranches;

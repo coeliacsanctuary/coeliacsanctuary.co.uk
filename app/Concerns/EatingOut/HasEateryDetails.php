@@ -99,7 +99,7 @@ trait HasEateryDetails
     /** @return Attribute<string, never> */
     public function formattedAddress(): Attribute
     {
-        return Attribute::get(fn () => Str::of($this->address)->explode('<br />')->join(', '));
+        return Attribute::get(fn () => Str::of($this->address)->explode("\n")->map(fn(string $line) => trim($line))->join(', '));
     }
 
     /** @return Attribute<non-falsy-string | null, never> */

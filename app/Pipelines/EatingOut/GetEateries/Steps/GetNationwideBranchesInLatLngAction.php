@@ -10,6 +10,7 @@ use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryType;
 use App\Models\EatingOut\NationwideBranch;
+use App\Support\Helpers;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -28,7 +29,7 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
         }
 
         /** @var Builder<NationwideBranch> $idQuery */
-        $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, $pipelineData->latLng->radius)
+        $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, Helpers::milesToMeters($pipelineData->latLng->radius))
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
                 /** @var Builder<Eatery> $query */
                 $query->where('closed_down', false); /** @phpstan-ignore-line */

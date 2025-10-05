@@ -35,7 +35,7 @@ class HydrateEateriesAction implements GetEateriesPipelineActionContract
                 'reviews' => function (HasMany $builder) {
                     /** @var HasMany<EateryReview, Eatery> $builder */
                     return $builder
-                        ->select(['id', 'wheretoeat_id', 'rating', 'nationwide_branch_id'])
+                        ->select(['id', 'wheretoeat_id', 'rating', 'nationwide_branch_id', 'how_expensive'])
                         ->where('approved', 1)
                         ->latest();
                 },

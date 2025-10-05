@@ -20,7 +20,7 @@ class IndexController
             ->toArray();
 
         return [
-            'data' => $getNearbyEateriesPipeline->run(new LatLng($latLng[0], $latLng[1], radius: 5), NearbyEateryResource::class),
+            'data' => $getNearbyEateriesPipeline->run(new LatLng($latLng[0], $latLng[1], radius: 10), NearbyEateryResource::class),
         ];
     }
 }
