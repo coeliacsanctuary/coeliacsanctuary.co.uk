@@ -106,7 +106,7 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
 
     <p
       class="prose prose-lg max-w-none font-semibold md:prose-xl"
-      v-text="blog.description"
+      v-html="blog.description"
     />
 
     <div
