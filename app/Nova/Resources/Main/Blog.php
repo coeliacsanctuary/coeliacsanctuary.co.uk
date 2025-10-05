@@ -118,6 +118,10 @@ class Blog extends Resource
         $fillFields = parent::fillFields($request, $model, $fields);
         $blog = $fillFields[0];
 
+        if ($blog->_status === 'draft') {
+            $blog->publish_at = null;
+        }
+
         $blog->live = $blog->_status === 'live';
 
         unset($blog->_status);
