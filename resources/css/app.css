@@ -28,3 +28,10 @@
     border-color: var(--color-gray-200, currentColor);
   }
 }
+
+@layer utilities {
+    .safe-bottom {
+        margin-bottom: var(--mv-journey-height, 0);
+        transition: margin-bottom 0.3s ease;
+    }
+}
