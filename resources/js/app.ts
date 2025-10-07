@@ -8,6 +8,26 @@ import { InertiaPage } from '@/types/Core';
 import { getTitle } from '@/helpers';
 import AnalyticsTrack from '@/analyticsTrack';
 
+const setAdOffset = () => {
+  const el: HTMLDivElement | null = document.querySelector(
+    '#adhesion_desktop_wrapper',
+  );
+
+  const height = el?.offsetHeight ?? 0;
+
+  document.documentElement.style.setProperty(
+    '--mv-journey-height',
+    `${height}px`,
+  );
+};
+
+setAdOffset();
+
+new MutationObserver(setAdOffset).observe(document.body, {
+  childList: true,
+  subtree: true,
+});
+
 void createInertiaApp({
   title: getTitle,
 
