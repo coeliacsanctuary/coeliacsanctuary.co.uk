@@ -30,6 +30,7 @@ class NearbyEateryResource extends JsonResource
             'number_of_ratings' => $branch?->reviews->count() ?? $this->reviews->count(),
             'distance' => Helpers::metersToMiles($branch->distance ?? $this->distance ?? 0),
             'venueType' => $this->venueType?->venue_type,
+            'cuisine' => $this->cuisine?->cuisine,
             'average_expense' => $this->average_expense,
         ];
     }
