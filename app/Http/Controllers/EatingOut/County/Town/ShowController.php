@@ -57,12 +57,12 @@ class ShowController
             ]))
             ->schema(PendingEaterySchema::make($eateries, $town->town)->toScript())
             ->render('EatingOut/Town', [
-                'live_eateries_count' => $town->liveEateries->count(),
+                'live_eateries_count' => $town->liveEateries->count() + $town->liveBranches->count(),
                 'town' => fn () => new TownPageResource($town),
                 'eateries' => $pipeline,
                 'filters' => fn () => $getFiltersForTown->setTown($town)->handle($filters),
             ])
             ->toResponse($request)
-            ->setStatusCode($town->liveEateries->count() === 0 ? Response::HTTP_GONE : Response::HTTP_OK);
+            ->setStatusCode($town->liveEateries->count() === 0 && $town->liveBranches->count() === 0 ? Response::HTTP_GONE : Response::HTTP_OK);
     }
 }
