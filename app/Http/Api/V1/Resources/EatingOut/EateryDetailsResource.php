@@ -55,9 +55,9 @@ class EateryDetailsResource extends JsonResource
             ],
             'phone' => $this->phone,
             'reviews' => [
-                'number' => $this->reviews->count(),
-                'average' => $this->average_rating,
-                'expense' => $this->average_expense,
+                'number' => $branch ? $branch->reviews->count() : $this->reviews->count(),
+                'average' => $branch ? $branch->average_rating : $this->average_rating,
+                'expense' => $branch ? $branch->average_expense : $this->average_expense,
             ],
             'features' => $features->map(fn (EateryFeature $feature) => [
                 'name' => $feature->feature,
@@ -85,7 +85,7 @@ class EateryDetailsResource extends JsonResource
             'name' => $branch->name ?: $this->name,
             'county' => $branch->county?->county,
             'town' => $branch->town?->town,
-            'area' =>  $branch->area?->area,
+            'area' => $branch->area?->area,
             'location' => [
                 'address' => collect(explode("\n", $branch->address))
                     ->map(fn (string $line) => mb_trim($line))

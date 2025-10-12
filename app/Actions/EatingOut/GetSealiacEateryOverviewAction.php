@@ -19,7 +19,7 @@ class GetSealiacEateryOverviewAction
             return $branch->sealiacOverview;
         }
 
-        if ($eatery->sealiacOverview) {
+        if ( ! $branch && $eatery->sealiacOverview) {
             return $eatery->sealiacOverview;
         }
 
@@ -29,6 +29,10 @@ class GetSealiacEateryOverviewAction
             ->count();
 
         if ($reviewCheck === 0) {
+            if ($branch && $eatery->sealiacOverview) {
+                return $eatery->sealiacOverview;
+            }
+
             throw new Exception('No reviews found to generate overview');
         }
 

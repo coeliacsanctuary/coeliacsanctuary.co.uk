@@ -45,6 +45,8 @@ class RelateEateriesAndBranchesAction implements GetEateriesPipelineActionContra
             /** @var NationwideBranch $currentBranch */
             $currentBranch = $hydratedBranches->firstWhere('id', $currentPendingEatery->branchId);
 
+            $currentBranch->reviews = $currentBranch->reviews->merge($eatery->reviews)->unique('id')->sortByDesc('created_at');
+
             $eatery->setRelation('branch', $currentBranch);
             $currentBranch->setRelation('eatery', $eatery);
 

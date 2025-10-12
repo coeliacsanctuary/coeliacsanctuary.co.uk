@@ -143,7 +143,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
      */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
-        if (app(Request::class)->wantsJson() || str_contains(app(Request::class)->url(), "api/")) {
+        if (app(Request::class)->wantsJson() || str_contains(app(Request::class)->url(), 'api/')) {
             return $query->where('id', $value);
         }
 
@@ -295,41 +295,6 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     public function suggestedEdits(): HasMany
     {
         return $this->hasMany(EaterySuggestedEdit::class, 'wheretoeat_id', 'id');
-    }
-
-    /** @return Attribute<array{value: string, label: string} | null, never> */
-    public function averageExpense(): Attribute
-    {
-        return Attribute::get(function () {
-            if ( ! $this->relationLoaded('reviews')) {
-                return null;
-            }
-
-            $reviewsWithHowExpense = array_filter($this->reviews->flatten()->pluck('how_expensive')->toArray());
-
-            if (count($reviewsWithHowExpense) === 0) {
-                return null;
-            }
-
-            $average = round(Arr::average($reviewsWithHowExpense));
-
-            return [
-                'value' => (string) $average,
-                'label' => EateryReview::HOW_EXPENSIVE_LABELS[$average],
-            ];
-        });
-    }
-
-    /** @return Attribute<string | null, never> */
-    public function averageRating(): Attribute
-    {
-        return Attribute::get(function () {
-            if ( ! $this->relationLoaded('reviews')) {
-                return null;
-            }
-
-            return (string) Arr::average($this->reviews->pluck('rating')->toArray());
-        });
     }
 
     /** @return Attribute<string, never> */

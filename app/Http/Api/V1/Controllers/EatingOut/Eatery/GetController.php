@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Api\V1\Controllers\EatingOut;
+namespace App\Http\Api\V1\Controllers\EatingOut\Eatery;
 
 use App\Http\Api\V1\Resources\EatingOut\EateryDetailsResource;
 use App\Models\EatingOut\Eatery;
@@ -26,6 +26,6 @@ class GetController
 
         return [
             'data' => EateryDetailsResource::make($eatery),
-            ];
+        ];
     }
 }

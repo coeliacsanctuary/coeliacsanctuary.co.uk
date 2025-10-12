@@ -9,6 +9,7 @@ use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\NationwideBranch;
 use Closure;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use RuntimeException;
 
 class HydrateBranchesAction implements GetEateriesPipelineActionContract
@@ -34,7 +35,12 @@ class HydrateBranchesAction implements GetEateriesPipelineActionContract
 
         $hydratedBranches = NationwideBranch::query()
             ->whereIn('id', $branchIds)
-            ->with(['county', 'town', 'country', 'reviews'])
+            ->with([
+                'county', 'town', 'country',
+                'reviews' => fn (Relation $builder) => $builder
+                    ->select(['wheretoeat_reviews.id', 'wheretoeat_id', 'rating', 'nationwide_branch_id', 'how_expensive'])
+                    ->latest('wheretoeat_reviews.created_at'),
+            ])
             ->get();
 
         $pipelineData->hydratedBranches = $hydratedBranches;
