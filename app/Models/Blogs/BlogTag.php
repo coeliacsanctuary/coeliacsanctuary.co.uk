@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Blogs;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Sluggable\HasSlug;
@@ -29,6 +30,12 @@ class BlogTag extends Model
     public function resolveRouteBinding($value, $field = null): self
     {
         return $this->newQuery()->where('slug', $value)->firstOrFail();
+    }
+
+    /** @return Attribute<string, never> */
+    public function novaTitle(): Attribute
+    {
+        return Attribute::get(fn() => "{$this->tag} - ({$this->blogs()->count()} blogs)");
     }
 
     public function link(): string

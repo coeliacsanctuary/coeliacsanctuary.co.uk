@@ -18,7 +18,7 @@ class BlogTag extends Resource
 {
     public static string $model = BlogTagModel::class;
 
-    public static $title = 'tag';
+    public static $title = 'novaTitle';
 
     public static $search = ['tag'];
 
