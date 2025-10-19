@@ -9,6 +9,7 @@ use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Countries;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
+use App\Nova\Resources\EatingOut\EateryAttractionRestaurantResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
 use App\Nova\Resources\EatingOut\MyPlaces;
@@ -99,6 +100,7 @@ class ResourceRegistrar
             EaterySearchHistory::class,
             SealiacOverviews::class,
             EateryAiDescriptionResource::class,
+            EateryAttractionRestaurantResource::class,
 
             // Search
             SearchResource::class,
