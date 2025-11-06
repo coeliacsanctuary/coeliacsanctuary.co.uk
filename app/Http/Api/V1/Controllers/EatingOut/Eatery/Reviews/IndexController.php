@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Api\V1\Controllers\EatingOut\Eatery\Reviews;
 
-use App\Http\Api\V1\Controllers\EatingOut\Reviews\Builder;
 use App\Http\Api\V1\Resources\EatingOut\EateryReviewResource;
 use App\Models\EatingOut\Eatery;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 

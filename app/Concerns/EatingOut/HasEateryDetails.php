@@ -37,7 +37,7 @@ trait HasEateryDetails
             ->count() > 1;
     }
 
-    protected function eateryPostcode(): string
+    public function eateryPostcode(): string
     {
         $address = explode("\n", $this->address);
 

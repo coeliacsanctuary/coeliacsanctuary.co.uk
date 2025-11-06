@@ -72,6 +72,8 @@ class CheckIfNationwideEatery extends AbstractStepAction
                 $data->reason = "It looks like you're recommending {$name}, {$branch->short_location}, but we've already got it listed!";
                 $data->url = $branch->link();
                 $data->label = "Check out {$name}";
+                $data->id = $eatery->id;
+                $data->branchId = $branch->id;
 
                 return;
             }
@@ -81,5 +83,6 @@ class CheckIfNationwideEatery extends AbstractStepAction
         $data->reason = "It looks like you're recommending {$eatery->name}, did you know they're already listed on our Nationwide Eateries page?";
         $data->url = route('eating-out.nationwide.show', ['eatery' => $eatery->slug]);
         $data->label = "Check out {$eatery->name}";
+        $data->id = $eatery->id;
     }
 }

@@ -20,7 +20,7 @@ class MapToResponseAction implements TemporaryFileUploadPipelineActionContract
 
         $pipelineData->returnData = [
             'id' => $model->id,
-            'path' => Storage::disk('uploads')->temporaryUrl((string) $pipelineData->path, Carbon::now()->addMinute()),
+            'path' => Storage::disk('uploads')->temporaryUrl((string) $pipelineData->path, Carbon::now()->addMinutes(5)),
         ];
 
         return $next($pipelineData);

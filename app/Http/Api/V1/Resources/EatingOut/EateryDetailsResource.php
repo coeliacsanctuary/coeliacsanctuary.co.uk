@@ -75,6 +75,7 @@ class EateryDetailsResource extends JsonResource
             'last_updated' => $this->updated_at,
             'last_updated_human' => $this->updated_at?->diffForHumans(),
             'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)->count() > 0,
+            'number_of_branches' => $this->nationwideBranches()->count(),
         ];
     }
 

@@ -6,9 +6,9 @@ namespace App\Http\Api\V1\Controllers\EatingOut\Eatery\SealiacOverview\Feedback;
 
 use App\Http\Api\V1\Requests\EatingOut\SealiacOverviewFeedbackRequest;
 use App\Models\EatingOut\Eatery;
-use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class StoreController
 {
@@ -18,7 +18,7 @@ class StoreController
             $eatery->sealiacOverview->increment($request->string('rating')->toString() === 'up' ? 'thumbs_up' : 'thumbs_down');
 
             return response()->noContent();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             Log::error('Sealiac Rating failed', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
