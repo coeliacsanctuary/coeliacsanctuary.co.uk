@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Nova\Repeaters;
 
 use App\Models\EatingOut\EateryAttractionRestaurant;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Repeater\Repeatable;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -23,7 +22,7 @@ class AttractionRestaurant extends Repeatable
     public function fields(NovaRequest $request): array
     {
         return [
-            Text::make('Restaurant Name')->default('')->fillUsing(function($request, $model, $attribute, $requestAttribute) {
+            Text::make('Restaurant Name')->default('')->fillUsing(function ($request, $model, $attribute, $requestAttribute): void {
                 $model->{$attribute} = $request->input($attribute) ?: '';
             }),
 

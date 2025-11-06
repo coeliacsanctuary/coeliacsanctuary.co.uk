@@ -35,7 +35,7 @@ class BlogTag extends Model
     /** @return Attribute<string, never> */
     public function novaTitle(): Attribute
     {
-        return Attribute::get(fn() => "{$this->tag} - ({$this->blogs()->count()} blogs)");
+        return Attribute::get(fn () => "{$this->tag} - ({$this->blogs()->count()} blogs)");
     }
 
     public function link(): string

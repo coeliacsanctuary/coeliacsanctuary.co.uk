@@ -14,9 +14,11 @@ class IndexController
     public function __invoke(Request $request, Eatery $eatery): array
     {
         $images = $eatery->reviewImages()
-            ->whereHas('review', fn ($query) => $query
-                ->where('admin_review', false)
-                ->when($request->filled('branchId'), fn (Builder $builder) => $builder->where('nationwide_branch_id', $request->integer('branchId')))
+            ->whereHas(
+                'review',
+                fn ($query) => $query
+                    ->where('admin_review', false)
+                    ->when($request->filled('branchId'), fn (Builder $builder) => $builder->where('nationwide_branch_id', $request->integer('branchId')))
             )
             ->get();
 

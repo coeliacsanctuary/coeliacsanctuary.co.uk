@@ -9,8 +9,9 @@ use App\Models\EatingOut\Eatery;
 
 class GetController
 {
-    public function __invoke(Eatery $eatery): array {
-        abort_if(!$eatery->openingTimes, 404);
+    public function __invoke(Eatery $eatery): array
+    {
+        abort_if( ! $eatery->openingTimes, 404);
 
         return [
             'data' => EateryOpeningTimesResource::make($eatery->openingTimes->first()),
