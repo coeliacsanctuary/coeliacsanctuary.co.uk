@@ -24,7 +24,7 @@ class AttractionRestaurant extends Repeatable
     {
         return [
             Text::make('Restaurant Name')->default('')->fillUsing(function($request, $model, $attribute, $requestAttribute) {
-                $model->{$attribute} = $request->input($attribute) ?: '';
+                $model->{$attribute} = $request->input($requestAttribute) ?: '';
             }),
 
             Textarea::make('Info'),
