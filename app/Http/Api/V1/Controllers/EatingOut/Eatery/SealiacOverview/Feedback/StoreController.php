@@ -17,7 +17,7 @@ class StoreController
         abort_if(!$eatery->sealiacOverview, Response::HTTP_NOT_FOUND);
 
         try {
-            $eatery->sealiacOverview?->increment($request->string('rating')->toString() === 'up' ? 'thumbs_up' : 'thumbs_down');
+            $eatery->sealiacOverview->increment($request->string('rating')->toString() === 'up' ? 'thumbs_up' : 'thumbs_down');
 
             return response()->noContent();
         } catch (Throwable $e) {
