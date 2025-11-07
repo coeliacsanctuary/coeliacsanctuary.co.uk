@@ -8,11 +8,13 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
@@ -35,7 +37,7 @@ trait HasEateryDetails
             ->count() > 1;
     }
 
-    protected function eateryPostcode(): string
+    public function eateryPostcode(): string
     {
         $address = explode("\n", $this->address);
 
@@ -99,7 +101,7 @@ trait HasEateryDetails
     /** @return Attribute<string, never> */
     public function formattedAddress(): Attribute
     {
-        return Attribute::get(fn () => Str::of($this->address)->explode('<br />')->join(', '));
+        return Attribute::get(fn () => Str::of($this->address)->explode("\n")->map(fn (string $line) => mb_trim($line))->join(', '));
     }
 
     /** @return Attribute<non-falsy-string | null, never> */
@@ -139,6 +141,41 @@ trait HasEateryDetails
                 $this->town->town,
                 $this->county->county,
             ]));
+        });
+    }
+
+    /** @return Attribute<array{value: string, label: string} | null, never> */
+    public function averageExpense(): Attribute
+    {
+        return Attribute::get(function () {
+            if ( ! $this->relationLoaded('reviews')) {
+                return null;
+            }
+
+            $reviewsWithHowExpense = array_filter($this->reviews->flatten()->pluck('how_expensive')->toArray());
+
+            if (count($reviewsWithHowExpense) === 0) {
+                return null;
+            }
+
+            $average = round(Arr::average($reviewsWithHowExpense));
+
+            return [
+                'value' => (string) $average,
+                'label' => EateryReview::HOW_EXPENSIVE_LABELS[$average],
+            ];
+        });
+    }
+
+    /** @return Attribute<string | null, never> */
+    public function averageRating(): Attribute
+    {
+        return Attribute::get(function () {
+            if ( ! $this->relationLoaded('reviews')) {
+                return null;
+            }
+
+            return (string) Arr::average($this->reviews->pluck('rating')->toArray());
         });
     }
 

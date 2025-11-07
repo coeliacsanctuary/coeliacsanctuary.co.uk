@@ -8,6 +8,7 @@ use App\Console\Commands\CloseBasketsCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Console\Commands\PublishItemsCommand;
 use App\Console\Commands\SendAbandonedBasketEmailCommand;
+use App\Http\Api\V1\Middleware\ExternalApiSourceMiddleware;
 use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Response\Inertia;
@@ -25,6 +26,11 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__ . '/../routes/web.php',
         health: '/up',
         then: function (): void {
+            Route::middleware(['api', ExternalApiSourceMiddleware::class])
+                ->prefix('api/v1')
+                ->name('api.v1.')
+                ->group(base_path('routes/api/v1.php'));
+
             if (config('app.env') === 'local') {
                 Route::middleware('web')
                     ->prefix('__dev')

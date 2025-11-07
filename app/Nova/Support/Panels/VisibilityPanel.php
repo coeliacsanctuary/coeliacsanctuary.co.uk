@@ -47,7 +47,8 @@ class VisibilityPanel
             DateTime::make('Or Publish At', 'publish_at')
                 ->onlyOnForms()
                 ->default(fn () => Carbon::now()->addDay())
-                ->fillUsing(fn ($request, $model, $attribute, $requestAttribute) =>
+                ->fillUsing(
+                    fn ($request, $model, $attribute, $requestAttribute) =>
                     $model->{$attribute} = $request->get($requestAttribute)
                         ? Carbon::parse($request->get($requestAttribute))
                         : null

@@ -7,6 +7,7 @@ namespace App\Models\EatingOut;
 use App\Concerns\ClearsCache;
 use App\Scopes\LiveScope;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,7 +41,10 @@ class EateryReview extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new LiveScope('approved'));
+        static::addGlobalScope(new LiveScope(function (Builder $builder) {
+            /** @var Builder<$this> $builder */
+            return $builder->where('approved', true)->orWhereNull('review');
+        }));
     }
 
     /** @return BelongsTo<Eatery, $this> */

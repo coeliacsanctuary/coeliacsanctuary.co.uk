@@ -34,6 +34,7 @@ use Laravel\Scout\Searchable;
  * @property string $short_name
  * @property string $full_name
  * @property string | null $average_rating
+ * @property array{value: string, label: string} | null $average_expense
  */
 class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSearchable
 {
@@ -222,16 +223,16 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
         return $this->hasMany(EateryReport::class, 'branch_id');
     }
 
-    /** @return HasManyThrough<EateryReview, Eatery, $this> */
-    public function reviews(): HasManyThrough
+    /** @return HasMany<EateryReview, $this> */
+    public function reviews(): HasMany
     {
-        return $this->hasManyThrough(EateryReview::class, Eatery::class, 'id', 'wheretoeat_id', 'wheretoeat_id', 'id')->where('nationwide_branch_id', $this->id);
+        return $this->hasMany(EateryReview::class, 'nationwide_branch_id');
     }
 
-    /** @return HasManyThrough<EateryReviewImage, Eatery, $this> */
+    /** @return HasManyThrough<EateryReviewImage, EateryReview, $this> */
     public function reviewImages(): HasManyThrough
     {
-        return $this->hasManyThrough(EateryReviewImage::class, Eatery::class, 'id', 'wheretoeat_id', 'id', 'id');
+        return $this->hasManyThrough(EateryReviewImage::class, EateryReview::class, 'id', 'wheretoeat_review_id', 'id', 'id');
     }
 
     /** @return Attribute<non-falsy-string, never> */
