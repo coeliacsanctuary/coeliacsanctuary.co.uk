@@ -22,7 +22,7 @@ class AttractionRestaurant extends Repeatable
     public function fields(NovaRequest $request): array
     {
         return [
-            Text::make('Restaurant Name')->default('')->fillUsing(function($request, $model, $attribute, $requestAttribute) {
+            Text::make('Restaurant Name')->default('')->fillUsing(function ($request, $model, $attribute, $requestAttribute): void {
                 $model->{$attribute} = $request->input($requestAttribute) ?: '';
             }),
 
