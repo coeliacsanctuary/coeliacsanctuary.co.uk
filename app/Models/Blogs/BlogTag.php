@@ -32,10 +32,10 @@ class BlogTag extends Model
         return $this->newQuery()->where('slug', $value)->firstOrFail();
     }
 
-    /** @return Attribute<string, never> */
+    /** @return Attribute<non-falsy-string, never> */
     public function novaTitle(): Attribute
     {
-        return Attribute::get(fn() => "{$this->tag} - ({$this->blogs()->count()} blogs)");
+        return Attribute::get(fn () => "{$this->tag} - ({$this->blogs()->count()} blogs)");
     }
 
     public function link(): string

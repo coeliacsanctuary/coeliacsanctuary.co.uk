@@ -13,6 +13,8 @@ class RecommendAPlaceExistsCheckData
         public ?string $reason = null,
         public ?string $url = null,
         public ?string $label = null,
+        public ?int $id = null,
+        public ?int $branchId = null,
     ) {
         //
     }
