@@ -41,7 +41,10 @@ class EateryReview extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new LiveScope(fn (Builder $builder) => $builder->where('approved', true)->orWhereNull('review')));
+        static::addGlobalScope(new LiveScope(function (Builder $builder) {
+            /** @var Builder<$this> $builder */
+            return $builder->where('approved', true)->orWhereNull('review');
+        }));
     }
 
     /** @return BelongsTo<Eatery, $this> */

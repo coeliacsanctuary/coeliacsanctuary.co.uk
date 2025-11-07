@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class ExternalApiSourceMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if ( ! $request->hasHeader('X-Coeliac-Source')) {
             abort(403);

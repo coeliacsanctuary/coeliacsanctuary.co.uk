@@ -14,7 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
     {
         return [
             'id' => $this->id,
-            'name' => $this->name !== '' ? $this->name : $this->eatery?->name,
+            'name' => $this->name !== '' ? $this->name : $this->eatery->name,
             'full_name' => $this->full_name,
             'county' => $this->county?->county,
             'town' => $this->town?->town,

@@ -36,6 +36,7 @@ use Spatie\SchemaOrg\Restaurant;
  * @implements HasOpenGraphImageContract<$this>
  *
  * @property string | null $average_rating
+ * @property string | null $formatted_address
  * @property array{value: string, label: string} | null $average_expense
  * @property bool | null $has_been_rated
  * @property int | null $rating

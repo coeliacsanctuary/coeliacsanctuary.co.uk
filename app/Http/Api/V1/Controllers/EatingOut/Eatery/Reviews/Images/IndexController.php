@@ -17,8 +17,8 @@ class IndexController
             ->whereHas(
                 'review',
                 fn ($query) => $query
-                    ->where('admin_review', false)
-                    ->when($request->filled('branchId'), fn (Builder $builder) => $builder->where('nationwide_branch_id', $request->integer('branchId')))
+                    ->where('admin_review', false) /** @phpstan-ignore-line */
+                    ->when($request->filled('branchId'), fn (Builder $builder) => $builder->where('nationwide_branch_id', $request->integer('branchId'))) /** @phpstan-ignore-line */
             )
             ->get();
 

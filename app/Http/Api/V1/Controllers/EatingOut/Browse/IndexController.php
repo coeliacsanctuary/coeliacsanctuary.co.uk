@@ -12,8 +12,11 @@ class IndexController
 {
     public function __invoke(BrowseRequest $request, BrowseEateriesPipeline $browseEateriesPipeline): array
     {
+        /** @var array{categories: array<string>|null, features: array<string>|null, venueTypes: array<string>|null, county: int|string|null} $filters */
+        $filters = $request->filters();
+
         return [
-            'data' => $browseEateriesPipeline->run($request->latLng(), $request->filters(), EateryBrowseResource::class),
+            'data' => $browseEateriesPipeline->run($request->latLng(), $filters, EateryBrowseResource::class),
         ];
     }
 }

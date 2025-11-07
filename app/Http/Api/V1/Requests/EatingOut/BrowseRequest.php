@@ -27,7 +27,7 @@ class BrowseRequest extends FormRequest
         );
     }
 
-    /** @return array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null } */
+    /** @return array{categories: non-empty-list<string>|null, venueTypes: non-empty-list<string>|null, features: non-empty-list<string>|null} */
     public function filters(): array
     {
         return [

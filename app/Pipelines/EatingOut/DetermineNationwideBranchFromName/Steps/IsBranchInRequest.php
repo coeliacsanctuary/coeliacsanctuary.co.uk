@@ -14,8 +14,6 @@ class IsBranchInRequest extends BaseStep
             return $next($data);
         }
 
-        dd('here');
-
         if ($data->requestBranch?->wheretoeat_id === $data->eatery->id) {
             $data->branch = $data->requestBranch;
             $data->passed = true;

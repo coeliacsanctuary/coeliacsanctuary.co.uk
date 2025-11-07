@@ -20,6 +20,7 @@ class IndexController
     ): array {
         $searchTerm = $createSearchAction->handle($request->string('search')->toString(), $request->integer('range', 10));
 
+        /** @var array{categories: array<string>|null, features: array<string>|null, venueTypes: array<string>|null, county: int|string|null} $filters */
         $filters = [
             'categories' => $request->filled('filter.category') ? explode(',', $request->string('filter.category')->toString()) : null,
             'venueTypes' => $request->filled('filter.venueType') ? explode(',', $request->string('filter.venueType')->toString()) : null,

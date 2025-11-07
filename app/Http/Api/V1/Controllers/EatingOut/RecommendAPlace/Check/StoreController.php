@@ -20,7 +20,7 @@ class StoreController
 
         $result = $checkedRecommendedPlacePipeline->run($data);
 
-        if ($result && $result->id !== null) {
+        if ($result->id !== null) {
             return [
                 'data' => [
                     'result' => $result->reason,

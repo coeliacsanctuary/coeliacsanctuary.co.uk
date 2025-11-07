@@ -15,7 +15,7 @@ class StoreController
     public function __invoke(Eatery $eatery, SealiacOverviewFeedbackRequest $request): Response
     {
         try {
-            $eatery->sealiacOverview->increment($request->string('rating')->toString() === 'up' ? 'thumbs_up' : 'thumbs_down');
+            $eatery->sealiacOverview?->increment($request->string('rating')->toString() === 'up' ? 'thumbs_up' : 'thumbs_down');
 
             return response()->noContent();
         } catch (Throwable $e) {

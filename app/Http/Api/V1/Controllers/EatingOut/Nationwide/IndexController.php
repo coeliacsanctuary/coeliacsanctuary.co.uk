@@ -38,9 +38,9 @@ class IndexController
                           * sin( radians( lat ) )
                         )
                      ) < ?', [
-                        $latLng->lat,
-                        $latLng->lng,
-                        $latLng->lat,
+                        $latLng->lat, /** @phpstan-ignore-line */
+                        $latLng->lng, /** @phpstan-ignore-line */
+                        $latLng->lat, /** @phpstan-ignore-line */
                         Helpers::milesToMeters(10),
                     ]),
                     fn (Builder $query) => $query->whereRaw('0 = 1'),

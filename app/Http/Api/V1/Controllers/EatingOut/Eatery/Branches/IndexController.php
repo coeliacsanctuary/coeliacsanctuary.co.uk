@@ -36,7 +36,7 @@ class IndexController
                 ->with($relations)
                 ->whereIn('id', $rawNearbyBranches->pluck('id'))
                 ->get()
-                ->map(fn (NationwideBranch $branch) => $branch->setAttribute('distance', Helpers::metersToMiles($rawNearbyBranches->find($branch->id)?->distance ?? 0)))
+                ->map(fn (NationwideBranch $branch) => $branch->setAttribute('distance', Helpers::metersToMiles((float) ($rawNearbyBranches->find($branch->id)->distance ?? 0))))
                 ->sortBy('distance');
         }
 

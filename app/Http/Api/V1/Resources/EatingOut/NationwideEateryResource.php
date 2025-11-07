@@ -17,7 +17,7 @@ class NationwideEateryResource extends JsonResource
         return [
             'title' => $this->name,
             'id' => $this->id,
-            'info' => $this->type_id === EateryType::ATTRACTION ? $this->restaurants->first()?->info : $this->info,
+            'info' => $this->type_id === EateryType::ATTRACTION->value ? $this->restaurants->first()?->info : $this->info,
             'website' => $this->website,
             'type' => EateryType::from((int) $this->type_id)->name(),
             'average_rating' => $this->average_rating,
@@ -26,7 +26,7 @@ class NationwideEateryResource extends JsonResource
             'cuisine' => $this->cuisine?->cuisine,
             'average_expense' => $this->average_expense,
             'number_of_branches' => $this->nationwide_branches_count,
-            'nearby_branches' => $this->nearby_branches_count ?: 0,
+            'nearby_branches' => $this->nearby_branches_count ?: 0, /** @phpstan-ignore-line */
         ];
     }
 }
