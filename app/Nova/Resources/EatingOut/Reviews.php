@@ -41,7 +41,7 @@ class Reviews extends Resource
         'id',
     ];
 
-    public static $clickAction = 'preview';
+    public static $clickAction = 'detail';
 
     public function authorizedToView(Request $request)
     {
@@ -51,6 +51,11 @@ class Reviews extends Resource
     public static function authorizedToCreate(Request $request)
     {
         return false;
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return true;
     }
 
     public function fields(Request $request): array
