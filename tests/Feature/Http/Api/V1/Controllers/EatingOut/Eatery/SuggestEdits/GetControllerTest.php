@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Http\Api\V1\Controllers\EatingOut\Eatery\SuggestEdits;
+namespace Tests\Feature\Http\Api\V1\Controllers\EatingOut\Eatery\SuggestEdits;
 
 use App\Models\EatingOut\Eatery;
 use Database\Seeders\EateryScaffoldingSeeder;
