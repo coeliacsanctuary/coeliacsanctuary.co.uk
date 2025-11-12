@@ -115,14 +115,12 @@ class Body extends Field
     {
         $value = $request[$requestAttribute];
 
-        if ($this->canHaveImages()) {
+        if ($this->canHaveImages) {
             /** @var HasMedia $model */
             $model->getMedia('body')->each(function (Media $media) use (&$value): void {
                 $value = str_replace($media->file_name, $media->getUrl(), $value);
             });
         }
-
-        $value = $value;
 
         $model->$attribute = $value;
     }

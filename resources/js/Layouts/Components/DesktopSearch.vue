@@ -28,6 +28,7 @@ const processSearch = () => {
         placeholder="Search..."
         class="flex-1"
         hide-label
+        :max="255"
       />
 
       <button class="cursor-pointer">

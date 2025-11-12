@@ -52,6 +52,7 @@ watch(
           hide-label
           size="large"
           input-classes="text-xl!  p-2!"
+          :max="255"
         />
 
         <button>

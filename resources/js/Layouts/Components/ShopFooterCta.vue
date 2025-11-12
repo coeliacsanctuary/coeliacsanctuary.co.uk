@@ -57,6 +57,7 @@ onMounted(() => {
     <div
       v-if="isVisible"
       :class="[
+        'safe-bottom',
         'translate',
         'group',
         'fixed',

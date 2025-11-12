@@ -17,7 +17,7 @@ class RecipeApiResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'link' => $this->link,
+            'link' => route('recipe.show', ['recipe' => $this]),
             'main_image' => $this->main_image_as_webp ?? $this->main_image,
             'created_at' => $this->published,
             'meta_description' => $this->meta_description,

@@ -234,6 +234,7 @@ router.on('before', (event): void => {
             class="flex-1"
             hide-label
             borders
+            :max="255"
           />
 
           <p

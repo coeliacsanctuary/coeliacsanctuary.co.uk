@@ -11,7 +11,7 @@ class SearchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'q' => ['required', 'string', 'min:3'],
+            'q' => ['required', 'string', 'min:3', 'max:255'],
             'blogs' => ['bool'],
             'recipes' => ['bool'],
             'eateries' => ['bool'],

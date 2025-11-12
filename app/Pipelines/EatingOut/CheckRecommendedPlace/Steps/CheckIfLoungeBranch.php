@@ -41,6 +41,8 @@ class CheckIfLoungeBranch extends AbstractStepAction
                 $data->reason = "It looks like you're recommending {$branch->name}, {$branch->full_location}, part of The Lounge's chain, but we've already got them listed!";
                 $data->url = $branch->link();
                 $data->label = "Check out {$branch->name}";
+                $data->id = $eatery->id;
+                $data->branchId = $branch->id;
             }
         }
     }

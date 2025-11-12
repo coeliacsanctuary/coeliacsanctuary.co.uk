@@ -13,6 +13,7 @@ use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryVenueType;
 use App\Notifications\EatingOut\EateryRecommendationAddedNotification;
 use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
+use App\Nova\Repeaters\AttractionRestaurant;
 use App\Nova\Resource;
 use App\Nova\Resources\EatingOut\PolymorphicPanels\EateryFeaturesPolymorphicPanel;
 use App\Nova\Resources\Main\SealiacOverviews;
@@ -35,6 +36,7 @@ use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\Repeater;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -231,24 +233,22 @@ class Eateries extends Resource
                     ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_venue_type_id'))
                     ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
                         return match ($request->type_id) {
-                            default => $field->options($this->getVenueTypes(1)),
-                            2 => $field->options($this->getVenueTypes(2)),
+                            default => $field->options($this->getVenueTypes(1))->rules(['required']),
+                            2 => $field->options($this->getVenueTypes(2))->rules(['required']),
                             3 => $field->hide()->setValue(26),
                         };
                     })
-                    ->fullWidth()
-                    ->rules(['required']),
+                    ->fullWidth(),
 
                 Select::make('Cuisine', 'cuisine_id')
                     ->hideFromIndex()
                     ->fullWidth()
                     ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
                         return match ($request->type_id) {
-                            1 => $field->options($this->getCuisines()),
+                            1 => $field->options($this->getCuisines())->rules(['required']),
                             default => $field->hide()->setValue(29),
                         };
-                    })
-                    ->rules(['required']),
+                    }),
 
                 Textarea::make('Info')
                     ->alwaysShow()
@@ -256,14 +256,21 @@ class Eateries extends Resource
                     ->dependsOn(['type_id'], function (Textarea $field, NovaRequest $request) {
                         return match ($request->type_id) {
                             2 => $field->hide()->nullable()->setValue(null),
-                            default => $field->show()->rules(['required']),
+                            default => $field->show(),
                         };
                     })
                     ->fullWidth(),
 
+                Repeater::make('Attraction Restaurants', 'restaurants')
+                    ->asHasMany(EateryAttractionRestaurantResource::class)
+                    ->fullWidth()
+                    ->repeatables([
+                        AttractionRestaurant::make(),
+                    ]),
+
                 EateryOpeningTimes::make('Opening Times', 'openingTimes')
                     ->dependsOn(['type_id'], function (EateryOpeningTimes $field, NovaRequest $request) {
-                        if ($request->type_id === 3) {
+                        if ($request->type_id !== 1) {
                             $field->hide();
                         }
 

@@ -17,7 +17,7 @@ defineEmits(['filtersUpdated', 'sidebarClosed']);
 </script>
 
 <template>
-  <div class="fixed right-0 bottom-0 z-10 p-4 xmd:hidden">
+  <div class="safe-bottom fixed right-0 bottom-0 z-10 p-4 xmd:hidden">
     <div
       class="-ml-3 rounded-full border-2 border-white bg-primary p-3 text-white shadow-sm transition"
     >
@@ -45,6 +45,7 @@ defineEmits(['filtersUpdated', 'sidebarClosed']);
     "
   >
     <TownFilterSidebarContent
+      class="!h-full"
       :filters="filters"
       @updated="$emit('filtersUpdated', $event)"
     />

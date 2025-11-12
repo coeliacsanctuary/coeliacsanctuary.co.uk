@@ -21,7 +21,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <body class="flex min-h-screen flex-col bg-gray-100">
+  <div
+    class="flex min-h-[calc(100vh-var(--mv-journey-height))] flex-col bg-gray-100"
+  >
     <CoeliacCompactHeader :metas="meta" />
 
     <section class="mx-auto mb-3 flex w-full flex-1 flex-col space-y-3">
@@ -29,5 +31,5 @@ onMounted(() => {
     </section>
 
     <CoeliacCompactFooter />
-  </body>
+  </div>
 </template>

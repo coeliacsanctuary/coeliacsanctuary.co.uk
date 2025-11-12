@@ -61,6 +61,7 @@ class CheckIfStandardEatery extends AbstractStepAction
             $data->reason = "It looks like you're recommending {$eatery->name}, {$eatery->short_location}, did you know they're already listed in our eating out guide?";
             $data->url = $eatery->link();
             $data->label = "Check out {$eatery->name}";
+            $data->id = $eatery->id;
         }
     }
 }
