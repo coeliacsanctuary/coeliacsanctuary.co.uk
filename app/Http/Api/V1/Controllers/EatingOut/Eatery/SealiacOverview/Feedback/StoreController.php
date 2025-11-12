@@ -14,7 +14,7 @@ class StoreController
 {
     public function __invoke(Eatery $eatery, SealiacOverviewFeedbackRequest $request): Response
     {
-        abort_if(!$eatery->sealiacOverview, Response::HTTP_NOT_FOUND);
+        abort_if( ! $eatery->sealiacOverview, Response::HTTP_NOT_FOUND);
 
         try {
             $eatery->sealiacOverview->increment($request->string('rating')->toString() === 'up' ? 'thumbs_up' : 'thumbs_down');
