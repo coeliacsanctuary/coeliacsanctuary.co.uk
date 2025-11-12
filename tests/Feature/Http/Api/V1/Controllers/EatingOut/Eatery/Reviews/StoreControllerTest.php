@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Http\Api\V1\Controllers\EatingOut\Eatery\Reviews;
+namespace Tests\Feature\Http\Api\V1\Controllers\EatingOut\Eatery\Reviews;
 
 use App\Actions\EatingOut\CreateEateryReviewAction;
 use App\Models\EatingOut\Eatery;

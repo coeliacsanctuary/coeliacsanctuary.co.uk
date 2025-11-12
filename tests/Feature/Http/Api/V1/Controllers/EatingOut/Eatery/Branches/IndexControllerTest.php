@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Http\Api\V1\Controllers\EatingOut\Eatery\Branches;
+namespace Tests\Feature\Http\Api\V1\Controllers\EatingOut\Eatery\Branches;
 
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
