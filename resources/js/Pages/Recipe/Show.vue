@@ -211,7 +211,7 @@ const handleCommentReset = () => {
   <div
     class="relative flex flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
-    <div
+    <aside
       class="space-y-3 lg:ml-3 lg:grid lg:w-[350px] lg:flex-shrink-0 lg:grid-cols-1 lg:self-start lg:overflow-auto"
     >
       <Card
@@ -267,7 +267,7 @@ const handleCommentReset = () => {
         "
         code="2137793897"
       />
-    </div>
+    </aside>
 
     <div class="flex flex-col space-y-3">
       <Card class="space-y-3">
