@@ -214,7 +214,7 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
       />
     </div>
 
-    <div class="flex flex-1 flex-col space-y-3 lg:max-w-[350px]">
+    <aside class="flex flex-1 flex-col space-y-3 lg:max-w-[350px]">
       <template
         v-for="group in groupedRelatedBlogs"
         :key="group.tag"
@@ -239,6 +239,6 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
           </Link>
         </Card>
       </template>
-    </div>
+    </aside>
   </div>
 </template>

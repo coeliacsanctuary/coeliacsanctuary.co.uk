@@ -75,7 +75,7 @@ defineProps<{
       />
     </div>
 
-    <div class="flex w-full flex-col space-y-4 lg:w-1/4">
+    <aside class="flex w-full flex-col space-y-4 lg:w-1/4">
       <Card
         class="space-y-4"
         faded
@@ -109,6 +109,6 @@ defineProps<{
       <HomeLatestReviews :reviews="latestReviews" />
 
       <HomeLatestEateries :eateries="latestEateries" />
-    </div>
+    </aside>
   </div>
 </template>
