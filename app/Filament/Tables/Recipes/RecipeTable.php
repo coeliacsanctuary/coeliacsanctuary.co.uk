@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Tables\Blogs;
+namespace App\Filament\Tables\Recipes;
 
 use App\Filament\Fields\Status\Table\StatusColumn;
-use App\Models\Blogs\Blog;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\TextColumn;
 
-class BlogTable
+class RecipeTable
 {
     /** @return Column[] */
     public static function make(): array

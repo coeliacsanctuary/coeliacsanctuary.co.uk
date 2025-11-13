@@ -321,7 +321,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
 
     public function toSearchableArray(): array
     {
-        return $this->transform([
+        return [
             'title' => $this->title,
             'description' => $this->description,
             'ingredients' => $this->ingredients,
@@ -329,7 +329,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
             'updated_at' => $this->updated_at,
             'freefrom' => $this->allergens()->get()->map(fn (RecipeAllergen $allergen) => $allergen->allergen)->join(', '),
             'features' => $this->features()->get()->map(fn (RecipeFeature $feature) => $feature->feature)->join(', '),
-        ]);
+        ];
     }
 
     public function shouldBeSearchable(): bool
