@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Fields\Status\Table;
 
 use App\Models\Blogs\Blog;
+use App\Models\Collections\Collection;
 use App\Models\Recipes\Recipe;
 use Filament\Tables\Columns\TextColumn;
 
@@ -14,7 +15,7 @@ class StatusColumn
     {
         return TextColumn::make('status')
             ->badge()
-            ->state(function (Blog|Recipe $record): string {
+            ->state(function (Blog|Recipe|Collection $record): string {
                 if ($record->live) {
                     return 'Live';
                 }

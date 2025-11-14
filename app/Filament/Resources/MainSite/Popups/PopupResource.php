@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources\MainSite\Popups;
+
+use App\Filament\Resources\MainSite\Popups\Pages\CreatePopup;
+use App\Filament\Resources\MainSite\Popups\Pages\EditPopup;
+use App\Filament\Resources\MainSite\Popups\Pages\ListPopups;
+use App\Filament\Resources\MainSite\Popups\Schemas\PopupForm;
+use App\Filament\Resources\MainSite\Popups\Tables\PopupsTable;
+use App\Models\Popup;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use UnitEnum;
+
+class PopupResource extends Resource
+{
+    protected static ?string $model = Popup::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?int $navigationSort = 5;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Main Site';
+
+    public static function form(Schema $schema): Schema
+    {
+        return PopupForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return PopupsTable::configure($table);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPopups::route('/'),
+            'create' => CreatePopup::route('/create'),
+            'edit' => EditPopup::route('/{record}/edit'),
+        ];
+    }
+}

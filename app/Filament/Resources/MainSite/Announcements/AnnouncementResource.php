@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources\MainSite\Announcements;
+
+use App\Filament\Resources\MainSite\Announcements\Pages\CreateAnnouncement;
+use App\Filament\Resources\MainSite\Announcements\Pages\EditAnnouncement;
+use App\Filament\Resources\MainSite\Announcements\Pages\ListAnnouncements;
+use App\Filament\Resources\MainSite\Announcements\Schemas\AnnouncementForm;
+use App\Filament\Resources\MainSite\Announcements\Tables\AnnouncementsTable;
+use App\Models\Announcement;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use UnitEnum;
+
+class AnnouncementResource extends Resource
+{
+    protected static ?string $model = Announcement::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    protected static ?int $navigationSort = 6;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Main Site';
+
+    public static function form(Schema $schema): Schema
+    {
+        return AnnouncementForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return AnnouncementsTable::configure($table);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListAnnouncements::route('/'),
+            'create' => CreateAnnouncement::route('/create'),
+            'edit' => EditAnnouncement::route('/{record}/edit'),
+        ];
+    }
+}

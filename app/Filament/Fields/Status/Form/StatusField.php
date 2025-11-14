@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Fields\Status\Form;
 
 use App\Models\Blogs\Blog;
+use App\Models\Collections\Collection;
 use App\Models\Recipes\Recipe;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Utilities\Set;
@@ -17,12 +20,12 @@ class StatusField
                 'live' => 'Live',
                 'scheduled' => 'Scheduled',
             ])
-            ->formatStateUsing(function (Blog|Recipe $record): string {
-                if ($record->live) {
+            ->formatStateUsing(function (Blog|Recipe|Collection|null $record): string {
+                if ($record?->live) {
                     return 'live';
                 }
 
-                if ($record->publish_at) {
+                if ($record?->publish_at) {
                     return 'scheduled';
                 }
 
