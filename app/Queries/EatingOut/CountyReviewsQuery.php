@@ -18,6 +18,7 @@ class CountyReviewsQuery
     {
         return $county->eateries()
             ->whereHas('reviews')
+            ->where('closed_down', false)
             ->leftJoin('wheretoeat_reviews', fn (JoinClause $join) => $join->on('wheretoeat_reviews.wheretoeat_id', 'wheretoeat.id')->where('approved', true))
             ->select('wheretoeat.*')
             ->addSelect(DB::raw('avg(rating) as rating'))
