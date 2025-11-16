@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Comments;
 
-use App\Filament\Resources\CommentResource\Pages;
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Comments\Tables\CommentsTable;
 use App\Models\Comments\Comment;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class CommentResource extends Resource
+class CommentResource extends BaseResource
 {
     protected static ?string $model = Comment::class;
 
@@ -31,7 +30,7 @@ class CommentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\MainSite\Comments\Pages\ListComments::route('/'),
+            'index' => Pages\ListComments::route('/'),
         ];
     }
 

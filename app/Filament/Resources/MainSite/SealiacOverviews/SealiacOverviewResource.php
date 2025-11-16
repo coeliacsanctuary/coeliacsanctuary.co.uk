@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\SealiacOverviews;
 
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\SealiacOverviews\Pages\ListSealiacOverviews;
 use App\Filament\Resources\MainSite\SealiacOverviews\Tables\SealiacOverviewsTable;
 use App\Models\SealiacOverview;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class SealiacOverviewResource extends Resource
+class SealiacOverviewResource extends BaseResource
 {
     protected static ?string $model = SealiacOverview::class;
 

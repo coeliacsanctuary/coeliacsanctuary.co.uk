@@ -4,23 +4,20 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Blogs;
 
-use App\Filament\Resources\MainSite\Blogs\Shemas\BlogForm;
-use App\Filament\Resources\BlogResource\Pages;
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Blogs\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\MainSite\Blogs\Shemas\BlogForm;
 use App\Filament\Resources\MainSite\Blogs\Tables\BlogsTable;
 use App\Filament\Transformers\StatusTransformer;
 use App\Models\Blogs\Blog;
 use BackedEnum;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-class BlogResource extends Resource
+class BlogResource extends BaseResource
 {
     protected static ?string $model = Blog::class;
 
@@ -50,9 +47,9 @@ class BlogResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\MainSite\Blogs\Pages\ListBlogs::route('/'),
-            'create' => \App\Filament\Resources\MainSite\Blogs\Pages\CreateBlog::route('/create'),
-            'edit' => \App\Filament\Resources\MainSite\Blogs\Pages\EditBlog::route('/{record}/edit'),
+            'index' => Pages\ListBlogs::route('/'),
+            'create' => Pages\CreateBlog::route('/create'),
+            'edit' => Pages\EditBlog::route('/{record}/edit'),
         ];
     }
 

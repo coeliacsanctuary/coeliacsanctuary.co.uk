@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Redirects;
 
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Redirects\Pages\CreateRedirect;
 use App\Filament\Resources\MainSite\Redirects\Pages\EditRedirect;
 use App\Filament\Resources\MainSite\Redirects\Pages\ListRedirects;
@@ -11,13 +12,12 @@ use App\Filament\Resources\MainSite\Redirects\Schemas\RedirectForm;
 use App\Filament\Resources\MainSite\Redirects\Tables\RedirectsTable;
 use App\Models\Redirect;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class RedirectResource extends Resource
+class RedirectResource extends BaseResource
 {
     protected static ?string $model = Redirect::class;
 

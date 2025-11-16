@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Announcements;
 
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Announcements\Pages\CreateAnnouncement;
 use App\Filament\Resources\MainSite\Announcements\Pages\EditAnnouncement;
 use App\Filament\Resources\MainSite\Announcements\Pages\ListAnnouncements;
@@ -11,13 +12,12 @@ use App\Filament\Resources\MainSite\Announcements\Schemas\AnnouncementForm;
 use App\Filament\Resources\MainSite\Announcements\Tables\AnnouncementsTable;
 use App\Models\Announcement;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class AnnouncementResource extends Resource
+class AnnouncementResource extends BaseResource
 {
     protected static ?string $model = Announcement::class;
 

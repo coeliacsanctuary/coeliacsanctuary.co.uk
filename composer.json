@@ -11,6 +11,7 @@
         "algolia/algoliasearch-client-php": "^3.4.2",
         "algolia/scout-extended": "^3.2.2",
         "aws/aws-sdk-php": "3.351.9",
+        "cheesegrits/filament-google-maps": "v4.x-dev",
         "coeliacsanctuary/advanced-nova-media-library": "^1.2",
         "dompdf/dompdf": "^2.0.8",
         "filament/filament": "^4.0.15",
@@ -94,6 +95,10 @@
         {
             "type": "composer",
             "url": "https://satis.spatie.be"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/jpeters8889/filament-google-maps"
         },
         {
             "url": "https://github.com/coeliacsanctuary/advanced-nova-media-library.git",

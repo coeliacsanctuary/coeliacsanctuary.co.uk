@@ -4,23 +4,20 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Recipes;
 
-use App\Filament\Resources\MainSite\Recipes\Schemas\RecipeForm;
-use App\Filament\Resources\RecipeResource\Pages;
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Recipes\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\MainSite\Recipes\Schemas\RecipeForm;
 use App\Filament\Resources\MainSite\Recipes\Tables\RecipesTable;
 use App\Filament\Transformers\StatusTransformer;
 use App\Models\Recipes\Recipe;
 use BackedEnum;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-class RecipeResource extends Resource
+class RecipeResource extends BaseResource
 {
     protected static ?string $model = Recipe::class;
 
@@ -50,9 +47,9 @@ class RecipeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\MainSite\Recipes\Pages\ListRecipes::route('/'),
-            'create' => \App\Filament\Resources\MainSite\Recipes\Pages\CreateRecipe::route('/create'),
-            'edit' => \App\Filament\Resources\MainSite\Recipes\Pages\EditRecipe::route('/{record}/edit'),
+            'index' => Pages\ListRecipes::route('/'),
+            'create' => Pages\CreateRecipe::route('/create'),
+            'edit' => Pages\EditRecipe::route('/{record}/edit'),
         ];
     }
 

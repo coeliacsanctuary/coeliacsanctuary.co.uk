@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Collections;
 
-use App\Filament\Resources\CollectionResource\Pages;
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Collections\RelationManagers\ItemsRelationManager;
 use App\Filament\Resources\MainSite\Collections\Schemas\CollectionForm;
 use App\Filament\Resources\MainSite\Collections\Tables\CollectionsTable;
 use App\Filament\Transformers\StatusTransformer;
 use App\Models\Collections\Collection;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-class CollectionResource extends Resource
+class CollectionResource extends BaseResource
 {
     protected static ?string $model = Collection::class;
 
@@ -48,9 +47,9 @@ class CollectionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\MainSite\Collections\Pages\ListCollections::route('/'),
-            'create' => \App\Filament\Resources\MainSite\Collections\Pages\CreateCollection::route('/create'),
-            'edit' => \App\Filament\Resources\MainSite\Collections\Pages\EditCollection::route('/{record}/edit'),
+            'index' => Pages\ListCollections::route('/'),
+            'create' => Pages\CreateCollection::route('/create'),
+            'edit' => Pages\EditCollection::route('/{record}/edit'),
         ];
     }
 

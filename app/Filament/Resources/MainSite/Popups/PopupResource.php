@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Popups;
 
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Popups\Pages\CreatePopup;
 use App\Filament\Resources\MainSite\Popups\Pages\EditPopup;
 use App\Filament\Resources\MainSite\Popups\Pages\ListPopups;
@@ -11,13 +12,12 @@ use App\Filament\Resources\MainSite\Popups\Schemas\PopupForm;
 use App\Filament\Resources\MainSite\Popups\Tables\PopupsTable;
 use App\Models\Popup;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class PopupResource extends Resource
+class PopupResource extends BaseResource
 {
     protected static ?string $model = Popup::class;
 
