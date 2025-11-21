@@ -21,3 +21,8 @@ yarn-error.log
 /.phpunit.cache/
 /bootstrap/ssr
 .eslintcache
+/.mcp.json
+/CLAUDE.md
+/AGENTS.md
+/.junie
+/boost.json
