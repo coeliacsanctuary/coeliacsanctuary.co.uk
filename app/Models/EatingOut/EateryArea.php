@@ -124,6 +124,12 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
         return $this->hasMany(Eatery::class, 'area_id');
     }
 
+    /** @return HasMany<NationwideBranch, $this> */
+    public function nationwideBranches(): HasMany
+    {
+        return $this->hasMany(NationwideBranch::class, 'area_id');
+    }
+
     /** @return HasMany<Eatery, $this> */
     public function liveEateries(): HasMany
     {

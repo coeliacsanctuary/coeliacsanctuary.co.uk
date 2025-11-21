@@ -15,17 +15,12 @@ use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use UnitEnum;
 
 class RedirectResource extends BaseResource
 {
     protected static ?string $model = Redirect::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static ?int $navigationSort = 7;
-
-    protected static string|UnitEnum|null $navigationGroup = 'Main Site';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUturnDown;
 
     public static function form(Schema $schema): Schema
     {

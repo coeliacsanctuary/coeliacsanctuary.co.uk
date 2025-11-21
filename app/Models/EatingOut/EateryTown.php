@@ -118,6 +118,12 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
         return $this->hasMany(Eatery::class, 'town_id');
     }
 
+    /** @return HasMany<NationwideBranch, $this> */
+    public function nationwideBranches(): HasMany
+    {
+        return $this->hasMany(NationwideBranch::class, 'town_id');
+    }
+
     /** @return HasMany<Eatery, $this> */
     public function liveEateries(): HasMany
     {

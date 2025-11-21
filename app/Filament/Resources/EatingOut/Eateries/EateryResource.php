@@ -8,6 +8,7 @@ use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\EatingOut\Eateries\Pages\CreateEatery;
 use App\Filament\Resources\EatingOut\Eateries\Pages\EditEatery;
 use App\Filament\Resources\EatingOut\Eateries\Pages\ListEateries;
+use App\Filament\Resources\EatingOut\Eateries\RelationManagers\BranchesRelationManager;
 use App\Filament\Resources\EatingOut\Eateries\Schemas\EateryForm;
 use App\Filament\Resources\EatingOut\Eateries\Tables\EateriesTable;
 use App\Models\EatingOut\Eatery;
@@ -16,19 +17,14 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use UnitEnum;
 
 class EateryResource extends BaseResource
 {
     protected static ?string $model = Eatery::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingStorefront;
 
     protected static ?string $recordTitleAttribute = 'name';
-
-    protected static ?int $navigationSort = 1;
-
-    protected static string|UnitEnum|null $navigationGroup = 'Eating Out';
 
     public static function form(Schema $schema): Schema
     {
@@ -43,8 +39,17 @@ class EateryResource extends BaseResource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['area', 'town', 'county', 'country', 'reviews'])
-            ->withCount(['reviews']);
+            ->with([
+                'area' => fn ($query) => $query->withoutGlobalScopes(),
+                'town' => fn ($query) => $query->withoutGlobalScopes(),
+                'county' => fn ($query) => $query->withoutGlobalScopes(),
+                'country' => fn ($query) => $query->withoutGlobalScopes(),
+                'reviews' => fn ($query) => $query->withoutGlobalScopes(),
+            ])
+            ->withCount([
+                'nationwideBranches' => fn ($query) => $query->withoutGlobalScopes(),
+                'reviews' => fn ($query) => $query->withoutGlobalScopes(),
+            ]);
     }
 
     public static function getPages(): array
@@ -54,5 +59,10 @@ class EateryResource extends BaseResource
             'create' => CreateEatery::route('/create'),
             'edit' => EditEatery::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [BranchesRelationManager::class];
     }
 }

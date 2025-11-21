@@ -15,19 +15,14 @@ use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use UnitEnum;
 
 class AnnouncementResource extends BaseResource
 {
     protected static ?string $model = Announcement::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedExclamationTriangle;
 
     protected static ?string $recordTitleAttribute = 'title';
-
-    protected static ?int $navigationSort = 6;
-
-    protected static string|UnitEnum|null $navigationGroup = 'Main Site';
 
     public static function form(Schema $schema): Schema
     {

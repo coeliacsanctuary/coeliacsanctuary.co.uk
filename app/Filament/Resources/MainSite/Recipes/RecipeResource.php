@@ -15,17 +15,12 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use UnitEnum;
 
 class RecipeResource extends BaseResource
 {
     protected static ?string $model = Recipe::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static ?int $navigationSort = 2;
-
-    protected static string|UnitEnum|null $navigationGroup = 'Main Site';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCake;
 
     protected static ?string $recordTitleAttribute = 'title';
 

@@ -23,6 +23,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -174,7 +175,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             return $return;
         }
 
-        return $query->where('slug', $value);
+        return $query->where('slug', $value)->orWhere('id', $value);
     }
 
     public function link(): string
@@ -206,10 +207,10 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
         return config('app.url') . $this->link();
     }
 
-    /** @return HasOne<EateryCuisine, $this> */
-    public function cuisine(): HasOne
+    /** @return BelongsTo<EateryCuisine, $this> */
+    public function cuisine(): BelongsTo
     {
-        return $this->hasOne(EateryCuisine::class, 'id', 'cuisine_id');
+        return $this->belongsTo(EateryCuisine::class, 'cuisine_id');
     }
 
     /** @return BelongsToMany<EateryFeature, $this> */
@@ -280,16 +281,16 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             ->whereRelation('review', 'approved', true);
     }
 
-    /** @return HasOne<EateryType, $this> */
-    public function type(): HasOne
+    /** @return BelongsTo<EateryType, $this> */
+    public function type(): BelongsTo
     {
-        return $this->hasOne(EateryType::class, 'id', 'type_id');
+        return $this->belongsTo(EateryType::class, 'type_id');
     }
 
-    /** @return HasOne<EateryVenueType, $this> */
-    public function venueType(): HasOne
+    /** @return BelongsTo<EateryVenueType, $this> */
+    public function venueType(): BelongsTo
     {
-        return $this->hasOne(EateryVenueType::class, 'id', 'venue_type_id');
+        return $this->belongsTo(EateryVenueType::class, 'venue_type_id');
     }
 
     /** @return HasMany<EaterySuggestedEdit, $this> */
@@ -402,7 +403,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     {
         $this->loadMissing(['area', 'town', 'county', 'country']);
 
-        return $this->transform([
+        return [
             'title' => $this->relationLoaded('town') && $this->town ? $this->name . ', ' . $this->town->town : $this->name,
             'location' => $this->relationLoaded('town') && $this->town && $this->relationLoaded('county') && $this->county ? $this->town->town . ', ' . $this->county->county : '',
             'area' => $this->relationLoaded('area') && $this->area ? $this->area->area : '',
@@ -414,7 +415,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
                 'lat' => $this->lat,
                 'lng' => $this->lng,
             ],
-        ]);
+        ];
     }
 
     public function shouldBeSearchable(): bool
