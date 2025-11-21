@@ -81,7 +81,7 @@ class LoadCompleteEateryDetailsForRequestAction
 
         if ($pageType === 'nationwide') {
             $eatery->load([
-                'nationwideBranches' => fn($query) => $query->where('live', true),
+                'nationwideBranches' => fn ($query) => $query->where('live', true),
                 'nationwideBranches.eatery', 'nationwideBranches.area', 'nationwideBranches.area.town', 'nationwideBranches.town',
                 'nationwideBranches.town.county', 'nationwideBranches.county', 'nationwideBranches.country',
             ]);
