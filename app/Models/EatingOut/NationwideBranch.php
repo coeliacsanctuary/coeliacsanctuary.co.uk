@@ -16,6 +16,7 @@ use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
+use App\Scopes\LiveScope;
 use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -60,6 +61,8 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
 
     public static function booted(): void
     {
+        static::addGlobalScope(new LiveScope('wheretoeat_nationwide_branches.live'));
+
         static::saving(function (self $eatery) {
             if ( ! $eatery->slug) {
                 $eatery->slug = $eatery->generateSlug();

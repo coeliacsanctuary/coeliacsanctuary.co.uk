@@ -25,7 +25,7 @@ class GetLatestReviewsForHomepageAction
                 ->whereHas('eatery', fn (Builder $builder) => $builder->where('live', true))
                 ->with([
                     'eatery', 'eatery.area', 'eatery.town', 'eatery.county', 'eatery.country', 'eatery.town.county',
-                    'branch', 'branch.area', 'branch.town', 'branch.county', 'branch.country', 'branch.eatery',
+                    'branch', 'branch.area', 'branch.town', 'branch.county', 'branch.country', 'branch.eatery', 'branch.town.county',
                 ])
                 ->take(8)
                 ->latest()
