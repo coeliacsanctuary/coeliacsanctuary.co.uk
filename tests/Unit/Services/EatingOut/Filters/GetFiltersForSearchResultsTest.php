@@ -75,17 +75,17 @@ class GetFiltersForSearchResultsTest extends GetFiltersTest
         $ids = $this->branches->pluck('id')->join(', ');
 
         $this->assertStringContainsString(
-            "(select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_types`.`id` = `wheretoeat`.`type_id` and `live` = 1))",
+            "(select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_types`.`id` = `wheretoeat`.`type_id` and `live` = 1) and `wheretoeat_nationwide_branches`.`live` = 1)",
             $queries[0]['query']
         );
 
         $this->assertStringContainsString(
-            "(select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_venue_types`.`id` = `wheretoeat`.`venue_type_id` and `live` = 1))",
+            "(select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_venue_types`.`id` = `wheretoeat`.`venue_type_id` and `live` = 1) and `wheretoeat_nationwide_branches`.`live` = 1)",
             $queries[1]['query']
         );
 
         $this->assertStringContainsString(
-            " (select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` left join `wheretoeat_assigned_features` on `wheretoeat`.`id` = `wheretoeat_assigned_features`.`wheretoeat_id` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_features`.`id` = `wheretoeat_assigned_features`.`feature_id` and `live` = 1))",
+            " (select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` left join `wheretoeat_assigned_features` on `wheretoeat`.`id` = `wheretoeat_assigned_features`.`wheretoeat_id` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_features`.`id` = `wheretoeat_assigned_features`.`feature_id` and `live` = 1) and `wheretoeat_nationwide_branches`.`live` = 1)",
             $queries[2]['query']
         );
     }
@@ -114,7 +114,7 @@ class GetFiltersForSearchResultsTest extends GetFiltersTest
 
         foreach (app('db')->getQueryLog() as $query) {
             $this->assertStringContainsString(
-                ')) as eateries_count from',
+                ') as eateries_count from',
                 $query['query']
             );
         }
