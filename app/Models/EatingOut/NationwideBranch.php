@@ -174,7 +174,7 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
             }
         }
 
-        return $query->where('slug', $value);
+        return $query->where('slug', $value)->orWhere('id', $value);
     }
 
     public function toSearchableArray(): array

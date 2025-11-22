@@ -8,6 +8,7 @@ use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\EatingOut\NationwideBranches\Pages\CreateNationwideBranch;
 use App\Filament\Resources\EatingOut\NationwideBranches\Pages\EditNationwideBranch;
 use App\Filament\Resources\EatingOut\NationwideBranches\Pages\ListNationwideBranches;
+use App\Filament\Resources\EatingOut\NationwideBranches\RelationManagers\ReviewsRelationManager;
 use App\Filament\Resources\EatingOut\NationwideBranches\Schemas\NationwideBranchForm;
 use App\Filament\Resources\EatingOut\NationwideBranches\Tables\NationwideBranchesTable;
 use App\Models\EatingOut\NationwideBranch;
@@ -58,5 +59,10 @@ class NationwideBranchResource extends BaseResource
             'create' => CreateNationwideBranch::route('/create'),
             'edit' => EditNationwideBranch::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [ReviewsRelationManager::class];
     }
 }

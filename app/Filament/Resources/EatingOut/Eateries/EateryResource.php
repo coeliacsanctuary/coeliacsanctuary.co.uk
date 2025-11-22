@@ -9,6 +9,7 @@ use App\Filament\Resources\EatingOut\Eateries\Pages\CreateEatery;
 use App\Filament\Resources\EatingOut\Eateries\Pages\EditEatery;
 use App\Filament\Resources\EatingOut\Eateries\Pages\ListEateries;
 use App\Filament\Resources\EatingOut\Eateries\RelationManagers\BranchesRelationManager;
+use App\Filament\Resources\EatingOut\Eateries\RelationManagers\ReviewsRelationManager;
 use App\Filament\Resources\EatingOut\Eateries\Schemas\EateryForm;
 use App\Filament\Resources\EatingOut\Eateries\Tables\EateriesTable;
 use App\Models\EatingOut\Eatery;
@@ -63,6 +64,9 @@ class EateryResource extends BaseResource
 
     public static function getRelations(): array
     {
-        return [BranchesRelationManager::class];
+        return [
+            ReviewsRelationManager::class,
+            BranchesRelationManager::class,
+        ];
     }
 }

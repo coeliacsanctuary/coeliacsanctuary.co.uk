@@ -7,6 +7,8 @@ namespace App\Filament;
 use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\EatingOut\EateryAreas\EateryAreaResource;
 use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
+use App\Filament\Resources\EatingOut\EateryReports\EateryReportResource;
+use App\Filament\Resources\EatingOut\EateryReviews\EateryReviewResource;
 use App\Filament\Resources\EatingOut\EateryTowns\EateryTownResource;
 use App\Filament\Resources\EatingOut\NationwideBranches\NationwideBranchResource;
 use App\Filament\Resources\MainSite\Announcements\AnnouncementResource;
@@ -44,6 +46,12 @@ class Menu
                     ...EateryCountyResource::getNavigationItems(),
                     ...EateryTownResource::getNavigationItems(),
                     ...EateryAreaResource::getNavigationItems(),
+                ]),
+
+            NavigationGroup::make('Eating Out Feedback')
+                ->items([
+                    ...EateryReviewResource::getNavigationItems(),
+                    ...EateryReportResource::getNavigationItems(),
                 ]),
         ]);
     }
