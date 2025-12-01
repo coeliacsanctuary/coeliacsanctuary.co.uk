@@ -64,7 +64,8 @@
         "spatie/mjml-sidecar": "^1.1.1",
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
-        "wnx/sidecar-browsershot": "^2.6.1"
+        "wnx/sidecar-browsershot": "^2.6.1",
+        "ziffmedia/nova-select-plus": "^2.1@beta"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16.0",

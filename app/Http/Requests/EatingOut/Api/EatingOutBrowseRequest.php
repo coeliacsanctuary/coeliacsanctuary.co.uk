@@ -56,25 +56,28 @@ class EatingOutBrowseRequest extends FormRequest
             ]);
         }
 
-        if ($this->array('filter.category')) {
+        if ($this->filled('filter.category')) {
             $this->merge([
                 'filter' => [
+                    ...$this->array('filter'),
                     'category' => $this->string('filter.category')->explode(',')->toArray(),
                 ],
             ]);
         }
 
-        if ($this->array('filter.feature')) {
+        if ($this->filled('filter.feature')) {
             $this->merge([
                 'filter' => [
+                    ...$this->array('filter'),
                     'feature' => $this->string('filter.feature')->explode(',')->toArray(),
                 ],
             ]);
         }
 
-        if ($this->array('filter.venueType')) {
+        if ($this->filled('filter.venueType')) {
             $this->merge([
                 'filter' => [
+                    ...$this->array('filter'),
                     'venueType' => $this->string('filter.venueType')
                         ->explode(',')
                         ->map(function (mixed $venueType) {
