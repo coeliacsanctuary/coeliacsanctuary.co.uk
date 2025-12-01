@@ -134,7 +134,7 @@ class PlaceRecommendations extends Resource
         return $query->where('email', '!=', 'alisondwheatley@gmail.com')
             ->reorder()
             ->orderByRaw('(completed = 1 or ignored = 1) asc')
-            ->orderByDesc('created_at');
+            ->orderByDesc('updated_at');
     }
 
     protected function getVenueTypes($typeId = null): array
