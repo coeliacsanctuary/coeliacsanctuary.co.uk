@@ -35,10 +35,6 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         $models->each(function (EateryRecommendation $model) use ($fields) {
-            if ($model->ignored) {
-                return;
-            }
-
             $eateryInfo = json_decode($fields->get('eatery_id'), true);
             $eatery = Eatery::query()->find($eateryInfo[0]['value']);
 
