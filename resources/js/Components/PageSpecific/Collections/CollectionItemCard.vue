@@ -3,12 +3,27 @@ import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import { CollectionItem } from '@/types/CollectionTypes';
 import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
-defineProps<{ item: CollectionItem }>();
+const props = defineProps<{ item: CollectionItem }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'CollectionItemCard',
+  {
+    title: props.item.title,
+    type: props.item.type,
+  },
+);
 </script>
 
 <template>
-  <Card class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
+  <Card
+    ref="card"
+    class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4"
+  >
     <div class="md:max-w-16 md:min-w-1/4">
       <Link
         :href="item.link"

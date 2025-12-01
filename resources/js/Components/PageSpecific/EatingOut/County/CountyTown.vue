@@ -2,8 +2,9 @@
 import { CountyPageTown } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import { numberToWords } from '@/helpers';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{ town: CountyPageTown }>();
 
@@ -52,15 +53,31 @@ const info = computed((): string => {
     last ? ` and ${last}` : ''
   } listed in our eating out guide.`;
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'CountyTown',
+  {
+    town: props.town.name,
+  },
+);
 </script>
 
 <template>
   <Card
+    ref="card"
     class="flex flex-col bg-linear-to-br from-primary/50 to-primary-light/50 hover:from-primary/70 hover:to-primary-light/70"
   >
     <Link
       :href="town.link"
       prefetch="click"
+      :on-before="
+        () =>
+          useJourneyTracking().logEvent('clicked', 'CountyTown/TownLink', {
+            town: town.name,
+          })
+      "
     >
       <h3 class="mb-4 text-lg font-semibold md:max-lg:text-xl lg:text-2xl">
         {{ town.name }}

@@ -11,6 +11,7 @@ use App\Console\Commands\SendAbandonedBasketEmailCommand;
 use App\Http\Api\V1\Middleware\ExternalApiSourceMiddleware;
 use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\LogPageViewMiddleware;
 use App\Http\Response\Inertia;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
@@ -41,7 +42,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(
             prepend: AddRouteModelBindingFallbacksMiddleware::class,
-            append: HandleInertiaRequests::class
+            append: [
+                HandleInertiaRequests::class,
+                LogPageViewMiddleware::class,
+            ]
         );
 
         $middleware->redirectGuestsTo(fn () => route('nova.pages.login'));

@@ -87,4 +87,12 @@ return [
             'site-map' => 'coeliac.shop.products.site-map',
         ],
     ],
+
+    'journey' => [
+        'enabled' => env('JOURNEY_ENABLED', true),
+
+        'dont-track' => [
+            'static/map/{latlng}',
+        ],
+    ],
 ];

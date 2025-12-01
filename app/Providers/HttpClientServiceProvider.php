@@ -18,5 +18,11 @@ class HttpClientServiceProvider extends ServiceProvider
         $apiKey = config('services.getAddress.key');
 
         Http::macro('getAddress', fn () => Http::baseUrl($url)->withBasicAuth('http', $apiKey));
+
+        Http::macro('journeyTracker', fn() => Http::baseUrl(config('journey.host'))
+            ->withToken(config('journey.token'))
+            ->withoutVerifying()
+            ->acceptJson()
+        );
     }
 }

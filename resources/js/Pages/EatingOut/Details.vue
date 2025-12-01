@@ -7,12 +7,13 @@ import EateryAdminReview from '@/Components/PageSpecific/EatingOut/Details/Eater
 import EateryVisitorPhotos from '@/Components/PageSpecific/EatingOut/Details/EateryVisitorPhotos.vue';
 import EateryVisitorReviews from '@/Components/PageSpecific/EatingOut/Details/EateryVisitorReviews.vue';
 import EateryFeedbackLinks from '@/Components/PageSpecific/EatingOut/Details/EateryFeedbackLinks.vue';
-import { Ref, ref } from 'vue';
+import { Ref, ref, ShallowRef, useTemplateRef } from 'vue';
 import { formatDate } from '@/helpers';
 import EateryBranchList from '@/Components/PageSpecific/EatingOut/Details/EateryBranchList.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
 import EateryAiOverview from '@/Components/PageSpecific/EatingOut/Details/EateryAiOverview.vue';
 import NearbyEateries from '@/Components/PageSpecific/EatingOut/Details/NearbyEateries.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -105,6 +106,7 @@ const shouldShowAiOverview = ref(true);
 
     <EateryAdminReview
       v-if="eatery.reviews.admin_review"
+      :eatery-id="eatery.id"
       :eatery-name="eateryName()"
       :review="eatery.reviews.admin_review"
     />

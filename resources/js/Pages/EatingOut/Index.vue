@@ -9,11 +9,12 @@ import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEater
 import EateryCountryCard from '@/Components/PageSpecific/EatingOut/Index/EateryCountryCard.vue';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import Heading from '@/Components/Heading.vue';
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import Info from '@/Components/Info.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { Link } from '@inertiajs/vue3';
 import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{
   countries: EateryCountryListProp;
@@ -22,6 +23,12 @@ defineProps<{
 }>();
 
 const guide = ref<null | { $el: Element }>(null);
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('guide'),
+  'scrolled_into_view',
+  'WhereToEatIndexCountryList',
+);
 </script>
 
 <template>

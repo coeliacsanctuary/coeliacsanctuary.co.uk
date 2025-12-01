@@ -6,7 +6,7 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { Ref, ref } from 'vue';
+import { Ref, ref, useTemplateRef } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
@@ -14,6 +14,7 @@ import GoogleAd from '@/Components/GoogleAd.vue';
 import { RequestPayload } from '@inertiajs/core';
 import useBrowser from '@/composables/useBrowser';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{
   live_eateries_count: number;
@@ -96,6 +97,12 @@ const reloadEateries = () => {
     preserveScroll: true,
   });
 };
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('placeList'),
+  'scrolled_into_view',
+  'WhereToEatTownList',
+);
 </script>
 
 <template>

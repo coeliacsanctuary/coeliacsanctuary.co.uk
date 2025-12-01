@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import { TownEatery } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
-import { computed } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 import StaticMap from '@/Components/Maps/StaticMap.vue';
 import EateryIntroduction from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryIntroduction.vue';
 import EateryReviews from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryReviews.vue';
 import EateryInfoBlock from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryInfoBlock.vue';
+import { useElementVisibility } from '@vueuse/core';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{ eatery: TownEatery }>();
 
@@ -32,16 +34,27 @@ const eateryLink = computed(() => {
 
   return props.eatery.link;
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('eateryCard'),
+  'scrolled_into_view',
+  'EateryCard',
+  {
+    eateryId: props.eatery.id,
+    branchId: props.eatery.branch?.id,
+  },
+);
 </script>
 
 <template>
-  <Card>
+  <Card ref="eateryCard">
     <div class="flex w-full">
       <div
         :class="{ 'sm:max-lg:w-3/5 lg:w-2/3': isNotNationwide }"
         class="flex w-full flex-col"
       >
         <EateryIntroduction
+          :id="eatery.id"
           :cuisine="eatery.cuisine"
           :is-not-nationwide="isNotNationwide"
           :link="eateryLink"

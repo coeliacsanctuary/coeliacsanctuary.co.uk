@@ -14,6 +14,7 @@ import { FeatureLike } from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import eventBus from '@/eventBus';
 import useScreensize from '@/composables/useScreensize';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 export default () => {
   const rawMarkerSource = ref<VectorSource>();
@@ -128,6 +129,12 @@ export default () => {
       const feature = new Feature({
         geometry: new Point(fromLonLat(c.geometry.coordinates)),
       });
+
+      if (!c.properties?.cluster) {
+        useJourneyTracking().logEvent('other', 'WhereToEatMap/Marker', {
+          eaterId: c.properties.id as number,
+        });
+      }
 
       feature.setProperties(c.properties);
 

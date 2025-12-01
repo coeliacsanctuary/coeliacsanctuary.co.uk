@@ -61,6 +61,7 @@ export type NationwideEatery = {
 };
 
 export type Eatery = {
+  id: number;
   name: string;
   link: string;
   county: {
@@ -114,6 +115,7 @@ export type EateryFilters = {
 };
 
 export type TownEatery = Eatery & {
+  id: number;
   key: string;
   is_fully_gf?: boolean;
   link: string;

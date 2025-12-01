@@ -4,7 +4,14 @@ import {
   EateryReview as EateryReviewType,
 } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
-import { computed, ComputedRef, onMounted, ref, watch } from 'vue';
+import {
+  computed,
+  ComputedRef,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import RatingsBreakdown from '@/Components/PageSpecific/Shared/RatingsBreakdown.vue';
 import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
@@ -13,6 +20,7 @@ import { StarRating as StarRatingType } from '@/types/EateryTypes';
 import { router } from '@inertiajs/vue3';
 import EateryReview from '@/Components/PageSpecific/EatingOut/Details/Reviews/EateryReview.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -68,10 +76,23 @@ watch(showAllReviews, (newValue) => {
     replace: true,
   });
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'EateryDetails/VisitorReviews',
+  {
+    eateryId: props.eatery.id,
+    branchId: props.eatery.branch?.id,
+  },
+);
 </script>
 
 <template>
-  <Card class="lg:rounded-lg lg:p-8">
+  <Card
+    ref="card"
+    class="lg:rounded-lg lg:p-8"
+  >
     <SubHeading>Visitor reviews from {{ eateryName() }}</SubHeading>
 
     <div

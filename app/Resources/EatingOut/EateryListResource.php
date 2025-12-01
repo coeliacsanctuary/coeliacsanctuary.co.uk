@@ -33,6 +33,7 @@ class EateryListResource extends JsonResource
         }
 
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'key' => $this->id . ($branch ? '-' . $branch->id : null),
             'isNationwideBranch' => $this->relationLoaded('branch'),
