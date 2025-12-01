@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\EatingOut;
 
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryVenueType;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
 use App\Nova\Actions\EatingOut\ConvertRecommendationToEatery;
+use App\Nova\Actions\EatingOut\IgnoreAndSendPlaceAlreadyExists;
 use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +24,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
+use ZiffMedia\NovaSelectPlus\SelectPlus;
 
 /**
  * @codeCoverageIgnore
@@ -83,6 +86,21 @@ class PlaceRecommendations extends Resource
             ]),
 
             DateTime::make('Created', 'created_at')->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
+
+            SelectPlus::make('eatery_id')
+                ->onlyOnForms()
+                ->options(fn(Request $request) => Eatery::query()
+                    ->with(['area', 'town', 'county', 'country'])
+                    ->whereLike('name', "%{$request->get('search')}%")
+                    ->get()
+                    ->map(fn(Eatery $eatery) => ['value' => $eatery->id, 'label' => $eatery->full_name])
+                )
+                ->ajaxSearchable(fn ($search) => Eatery::query()
+                    ->with(['area', 'town', 'county', 'country'])
+                    ->whereLike('name', "%{$search}%")
+                    ->get()
+                    ->map(fn (Eatery $eatery) => ['value' => $eatery->id, 'label' => $eatery->full_name])
+                ),
         ];
     }
 
@@ -99,6 +117,10 @@ class PlaceRecommendations extends Resource
                 ->showInline()
                 ->withoutConfirmation()
                 ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
+
+            IgnoreAndSendPlaceAlreadyExists::make()
+                ->showInline()
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
 
             IgnoreReportOrRecommendation::make()
                 ->showInline()
