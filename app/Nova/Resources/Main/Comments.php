@@ -37,7 +37,7 @@ class Comments extends Resource
         return true;
     }
 
-    public function authorizedToDelete(Request $request)
+    public function authorizedToDelete(Request $request): bool
     {
         return true;
     }
