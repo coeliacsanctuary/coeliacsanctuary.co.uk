@@ -145,6 +145,21 @@ class NationwideEateries extends Resource
         ];
     }
 
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $eatery = $fillFields[0];
+
+        $eatery->address = '';
+        $eatery->lat = 0;
+        $eatery->lng = 0;
+        $eatery->country_id = 1;
+        $eatery->county_id = 1;
+        $eatery->town_id = 529;
+
+        return $fillFields;
+    }
+
     public static function usesScout()
     {
         return false;
