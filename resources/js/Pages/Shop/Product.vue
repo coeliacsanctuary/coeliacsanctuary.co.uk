@@ -9,7 +9,7 @@ import {
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import StarRating from '@/Components/StarRating.vue';
-import { computed, nextTick, Ref, ref, watch } from 'vue';
+import { computed, nextTick, Ref, ref, useTemplateRef, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import Modal from '@/Components/Overlays/Modal.vue';
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/outline';
@@ -28,6 +28,7 @@ import StandardTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop
 import CoeliacPlusTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/CoeliacPlusTravelCardEnglishTranslation.vue';
 import ProductAiOverview from '@/Components/PageSpecific/Shop/ProductAiOverview.vue';
 import ProductImageModal from '@/Components/PageSpecific/Shop/ProductImageModal.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 type Product = ShopProductDetail | ShopTravelCardProductDetail;
 
@@ -180,6 +181,24 @@ const loadMoreReviews = () => {
 };
 
 const showAiOverview = ref(true);
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('description'),
+  'scrolled_into_view',
+  'ShopProduct/Description',
+  {
+    title: props.product.title,
+  },
+);
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('reviews'),
+  'scrolled_into_view',
+  'ShopProduct/Reviews',
+  {
+    title: props.product.title,
+  },
+);
 </script>
 
 <template>
@@ -224,7 +243,19 @@ const showAiOverview = ref(true);
                 v-for="(image, index) in product.additional_images"
                 :key="image"
                 class="cursor-zoom-in overflow-hidden rounded-lg"
-                @click="viewImage = index"
+                @click="
+                  () => {
+                    viewImage = index;
+
+                    useJourneyTracking().logEvent(
+                      'clicked',
+                      'ShopProduct\ViewImage',
+                      {
+                        image: index,
+                      },
+                    );
+                  }
+                "
               >
                 <img
                   :src="image"
@@ -297,7 +328,10 @@ const showAiOverview = ref(true);
     </div>
   </Card>
 
-  <Card class="mx-3 mt-0! sm:p-4">
+  <Card
+    ref="description"
+    class="mx-3 mt-0! sm:p-4"
+  >
     <SubHeading as="h3">Full Description</SubHeading>
 
     <div
@@ -320,7 +354,10 @@ const showAiOverview = ref(true);
     v-bind="additionalDetail"
   />
 
-  <Card class="mx-3 mt-0! mb-3 sm:p-4 lg:mt-1!">
+  <Card
+    ref="reviews"
+    class="mx-3 mt-0! mb-3 sm:p-4 lg:mt-1!"
+  >
     <Disclosure
       v-if="product.rating"
       as="div"

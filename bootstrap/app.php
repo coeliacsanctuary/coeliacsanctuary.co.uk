@@ -11,7 +11,6 @@ use App\Console\Commands\SendAbandonedBasketEmailCommand;
 use App\Http\Api\V1\Middleware\ExternalApiSourceMiddleware;
 use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\LogPageViewMiddleware;
 use App\Http\Response\Inertia;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
@@ -19,6 +18,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))

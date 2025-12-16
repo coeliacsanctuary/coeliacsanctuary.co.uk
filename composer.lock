@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e872042fdaef06142d134970a04a020c",
+    "content-hash": "55e204ba5bb05e7f47544a647ab3d083",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2048,7 +2048,7 @@
         },
         {
             "name": "jpeters8889/address-field",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/AddressField",
@@ -2084,7 +2084,7 @@
         },
         {
             "name": "jpeters8889/apex-charts",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ApexCharts",
@@ -2120,7 +2120,7 @@
         },
         {
             "name": "jpeters8889/body",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Body",
@@ -2156,7 +2156,7 @@
         },
         {
             "name": "jpeters8889/country-icon",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CountryIcon",
@@ -2192,7 +2192,7 @@
         },
         {
             "name": "jpeters8889/custom-styles",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CustomStyles",
@@ -2228,7 +2228,7 @@
         },
         {
             "name": "jpeters8889/eatery-location-search",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryLocationSearch",
@@ -2269,7 +2269,7 @@
         },
         {
             "name": "jpeters8889/eatery-opening-times",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryOpeningTimes",
@@ -2305,7 +2305,7 @@
         },
         {
             "name": "jpeters8889/hidden-writable-field",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/HiddenWritableField",
@@ -2345,8 +2345,44 @@
             }
         },
         {
+            "name": "jpeters8889/journey-tracker-laravel",
+            "version": "0.0.1",
+            "dist": {
+                "type": "path",
+                "url": "../packages/journey-tracker-laravel",
+                "reference": "5532ec812e96999d1f39da40391c974182377a03"
+            },
+            "require": {
+                "laravel/framework": "^12.0",
+                "php": "^8.3",
+                "spatie/laravel-package-tools": "^1.92"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jpeters8889\\JourneyTrackerLaravel\\JourneyTrackerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jpeters8889\\JourneyTrackerLaravel\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Jamie Peters",
+                    "email": "jamie@jamie-peters.co.uk"
+                }
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "jpeters8889/order-dispatch-slip",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/OrderDispatchSlip",
@@ -2382,7 +2418,7 @@
         },
         {
             "name": "jpeters8889/polymorphic-panel",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PolymorphicPanel",
@@ -2418,7 +2454,7 @@
         },
         {
             "name": "jpeters8889/print-all-orders",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PrintAllOrders",
@@ -2454,7 +2490,7 @@
         },
         {
             "name": "jpeters8889/shop-daily-stock",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopDailyStock",
@@ -2490,7 +2526,7 @@
         },
         {
             "name": "jpeters8889/shop-generate-resend-slip-button",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopGenerateResendSlipButton",
@@ -2531,7 +2567,7 @@
         },
         {
             "name": "jpeters8889/shop-order-open-dispatch-slip",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderOpenDispatchSlip",
@@ -2567,7 +2603,7 @@
         },
         {
             "name": "jpeters8889/shop-order-shipping-action",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderShippingAction",
@@ -2603,7 +2639,7 @@
         },
         {
             "name": "jpeters8889/wte-nationwide-branch-import",
-            "version": "dev-develop",
+            "version": "dev-feature/journey-tracking",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/WteNationwideBranchImport",

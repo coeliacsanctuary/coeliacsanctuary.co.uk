@@ -7,6 +7,7 @@ import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySwitcher.vue';
 import Loader from '@/Components/Loader.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{ items: ShopBasketItem[]; subtotal: string }>();
 
@@ -23,6 +24,10 @@ const removeItem = (item: ShopBasketItem) => {
       useGoogleEvents().googleEvent('event', 'remove-item-from-cart', {
         itemId: item.id,
       });
+
+      useJourneyTracking().logEvent('clicked', 'ShopBasketSideBar/DeleteItem', {
+        title: item.title,
+      });
     },
   });
 };
@@ -36,6 +41,11 @@ const alterQuantity = (
 ) => {
   hasError.value = false;
   loadingItem.value = item.id;
+
+  useJourneyTracking().logEvent('clicked', 'ShopBasketSideBar/AlterQuantity', {
+    title: item.title,
+    action,
+  });
 
   router.patch(
     '/shop/basket',

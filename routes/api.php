@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Actions\GetPopupCtaAction;
-use App\Http\Controllers\Api\Journey\Event\StoreController as JourneyEventStoreController;
 use App\Http\Controllers\Api\MailcoachSchedule\StoreController as MailcoachScheduleStoreController;
 use App\Http\Controllers\Api\SealiacOverviewFeedback\StoreController as SealiacOverviewFeedbackController;
 use App\Http\Middleware\MailcoachIncomingRequestMiddleware;
@@ -41,5 +40,3 @@ Route::get('mailcoach-message/{message}', fn (TempMailcoachMail $message) => $me
     ->middleware(MailcoachIncomingRequestMiddleware::class);
 
 Route::post('sealiac-overview-feedback/{sealiacOverview}', SealiacOverviewFeedbackController::class)->name('api.sealiac-overview-feedback');
-
-Route::post('journey/event', JourneyEventStoreController::class)->name('api.journey.event.store');

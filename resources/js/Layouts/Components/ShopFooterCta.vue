@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import EventBus from '@/eventBus';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
 import { ShopBasketItem } from '@/types/Shop';
 import { Page } from '@inertiajs/core';
@@ -10,6 +10,7 @@ import BasketSidebar from '@/Components/PageSpecific/Shop/BasketSidebar.vue';
 import { ShoppingCartIcon, NoSymbolIcon } from '@heroicons/vue/24/outline';
 import { pluralise } from '../../helpers';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const viewSideBar = ref(false);
 const isVisible = ref(false);
@@ -42,6 +43,12 @@ onMounted(() => {
   new IntersectionObserver((entries) => {
     isVisible.value = entries[0].intersectionRatio === 0;
   }).observe(<Element>document.querySelector('#header-basket-detail'));
+});
+
+watch(viewSideBar, () => {
+  if (viewSideBar.value) {
+    useJourneyTracking().logEvent('clicked', 'ShopSideBarBasket');
+  }
 });
 </script>
 

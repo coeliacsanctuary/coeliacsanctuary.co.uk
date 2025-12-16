@@ -55,9 +55,8 @@ class Inertia
             $this->includeBasket();
         }
 
-        if (request()->hasHeader('X-Journey-Id') && request()->header('X-Pageview-Id')) {
-            BaseInertia::share('journey.id', request()->header('X-Journey-Id'));
-            BaseInertia::share('journey.pageViewId', request()->header('X-Pageview-Id'));
+        if (request()->hasHeader('X-Journey-Token')) {
+            BaseInertia::share('journey.token', request()->header('X-Journey-Token'));
         }
 
         $this->schema = [$this->baseSchema()];

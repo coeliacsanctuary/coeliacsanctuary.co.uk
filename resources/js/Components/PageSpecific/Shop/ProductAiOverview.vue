@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import AiOverviewCard from '@/Components/AiOverviewCard.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
 const props = defineProps<{
   productName: string;
@@ -11,12 +13,22 @@ const emit = defineEmits(['onError']);
 const getEndpoint = (): string => {
   return `/api/shop/products/${props.productId}/sealiac`;
 };
+
+// useJourneyTracking().logWhenVisible(
+//   useTemplateRef('card'),
+//   'scrolled_into_view',
+//   'ShopProduct/AiOverview',
+//   {
+//     title: props.productName,
+//   },
+// );
 </script>
 
 <template>
   <AiOverviewCard
-    :endpoint="getEndpoint()"
     v-bind="$attrs"
+    ref="card"
+    :endpoint="getEndpoint()"
     @on-error="$emit('onError')"
   >
     <template #title>

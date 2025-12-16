@@ -3,11 +3,12 @@ import { pluralise } from '@/helpers';
 import StarRating from '@/Components/StarRating.vue';
 import { ShopProductIndex } from '@/types/Shop';
 import { Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useScreensize from '@/composables/useScreensize';
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import useAddToBasket from '@/composables/useAddToBasket';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   product: ShopProductIndex;
@@ -31,14 +32,29 @@ const { addBasketForm, prepareAddBasketForm, submitAddBasketForm } =
 prepareAddBasketForm(props.product.id, props.product.primary_variant);
 
 const addToBasket = () => {
+  useJourneyTracking().logEvent('clicked', 'ShopProductCard/AddToBasket', {
+    title: props.product.title,
+    id: props.product.id,
+  });
+
   submitAddBasketForm({
     only: ['basket'],
   });
 };
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'ShopProductCard',
+  {
+    title: props.product.title,
+  },
+);
 </script>
 
 <template>
   <div
+    ref="card"
     class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
   >
     <Link

@@ -7,6 +7,7 @@ import { ref } from 'vue';
 import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySwitcher.vue';
 import Loader from '@/Components/Loader.vue';
 import eventBus from '@/eventBus';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{ items: ShopBasketItem[] }>();
 
@@ -33,6 +34,15 @@ const alterQuantity = (
       onFinish: () => {
         loadingItem.value = null;
         eventBus.$emit('refresh-payment-element');
+
+        useJourneyTracking().logEvent(
+          'clicked',
+          'Checkout/Items/AlterQuantity',
+          {
+            title: item.title,
+            action,
+          },
+        );
       },
       onError: (e) => {
         if (e?.quantity) {
@@ -50,6 +60,10 @@ const removeItem = (item: ShopBasketItem) => {
     preserveScroll: true,
     only: ['basket', 'has_basket', 'payment_intent'],
     onSuccess: () => {
+      useJourneyTracking().logEvent('clicked', 'Checkout/Items/DeleteItem', {
+        title: item.title,
+      });
+
       eventBus.$emit('refresh-payment-element');
     },
   });

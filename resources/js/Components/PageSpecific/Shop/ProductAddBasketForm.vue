@@ -13,6 +13,7 @@ import useAddToBasket from '@/composables/useAddToBasket';
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import useScreensize from '@/composables/useScreensize';
 import ProductQuantitySwitcher from '@/Components/PageSpecific/Shop/ProductQuantitySwitcher.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{ product: ShopProductDetail }>();
 
@@ -52,6 +53,15 @@ watch(selectedVariant, () => {
   );
 
   quantity.value = 1;
+
+  useJourneyTracking().logEvent(
+    'clicked',
+    'ShopProduct/AddBasketForm/ChangedVariant',
+    {
+      title: props.product.title,
+      variant: selectedVariant.value?.title,
+    },
+  );
 });
 
 watch(quantity, () => {
@@ -60,11 +70,30 @@ watch(quantity, () => {
     (<ShopProductVariant>selectedVariant.value).id,
     quantity.value,
   );
+
+  console.log('quantity');
+
+  useJourneyTracking().logEvent(
+    'clicked',
+    'ShopProduct/AddBasketForm/ChangedQuantity',
+    {
+      title: props.product.title,
+      quantity: quantity.value,
+    },
+  );
+
+  console.log('quantity2');
 });
 
 const addToBasket = () => {
   submitAddBasketForm({
     only: ['basket', 'errors'],
+  });
+
+  useJourneyTracking().logEvent('clicked', 'ShopProduct/AddBasketForm/Submit', {
+    title: props.product.title,
+    variant: selectedVariant.value?.title,
+    quantity,
   });
 };
 
