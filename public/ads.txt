@@ -1,8 +1,8 @@
-# Ads.txt v20251112
+# Ads.txt v20251215
 managerdomain=journeymv.com
 contact=sales@journeymv.com
 ownerdomain=coeliacsanctuary.co.uk
-journeymv.com, 8b9074d5-fb27-4c85-a1ca-f79af2899f37, DIRECT, 1363c924529b3998
+journeymv.com, fc15287c7a98ab61f747eb3ef2b93f8b, DIRECT, 1363c924529b3998
 
 google.com, pub-1601477034266482, DIRECT, f08c47fec0942fa0
 google.com, pub-1601477034266482, RESELLER, f08c47fec0942fa0
@@ -27,7 +27,7 @@ gumgum.com, 15958, RESELLER, ffdef49475d318a9
 rubiconproject.com, 26278, DIRECT, 0bfd66d529a55807
 indexexchange.com, 207882, DIRECT, 50b1c356f2c5c8fc
 indexexchange.com, 208002, DIRECT, 50b1c356f2c5c8fc
-indexexchange.com, 214230, DIRECT, 50b1c356f2c5c8fc 
+indexexchange.com, 214230, DIRECT, 50b1c356f2c5c8fc
 kargo.com, 8851, DIRECT
 rubiconproject.com, 11864, RESELLER, 0bfd66d529a55807
 appnexus.com, 8173, RESELLER, f5ab79cb980f11d1
@@ -156,5 +156,18 @@ openx.com, 559680764, RESELLER
 sharethrough.com, a6a34444, RESELLER
 smartadserver.com, 5277, DIRECT, 060d053dcf45cbf3
 trustedstack.com, TSUKNZU26, DIRECT
+insticator.com, 43219255-112b-4498-9611-d971f8327962, DIRECT, b3511ffcafb23a32
+rubiconproject.com, 17062, DIRECT, 0bfd66d529a55807
+sharethrough.com, Q9IzHdvp, DIRECT, d53b998a7bd4ecd2
+lijit.com, 257618, DIRECT, fafdf38b16bf6b2b
+pubmatic.com, 95054, DIRECT, 5d62403b186f2ace
+triplelift.com, 6998, DIRECT, 6c33edb13117fd86
+themediagrid.com, DQ6AMB, DIRECT, 35d5010d7789b49d
+video.unrulymedia.com, 136898039, DIRECT
+loopme.com, 11530, DIRECT, 6c8d5f95897a5a3b
+adform.com, 2996, DIRECT
+risecodes.com, 6124caed9c7adb0001c028d8, DIRECT
+minutemedia.com, 01garg96c88b, DIRECT
+
 
 
