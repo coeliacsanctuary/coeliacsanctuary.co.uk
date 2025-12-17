@@ -30,8 +30,14 @@
 }
 
 @layer utilities {
-    .safe-bottom {
-        margin-bottom: var(--mv-journey-height, 0);
-        transition: margin-bottom 0.3s ease;
+    /*.safe-bottom {*/
+    /*    margin-bottom: var(--mv-journey-height, 0);*/
+    /*    transition: margin-bottom 0.3s ease;*/
+    /*}*/
+
+    @media only screen and (min-width: 1024px) {
+        main div.flex-col > aside.space-y-3:has(+ div.flex-col) {
+            overflow: unset;
+        }
     }
 }
