@@ -43,7 +43,7 @@ class EateryOpeningTimes extends Model
             $closesAt = Carbon::now()->clone()->setTime(...$todaysClosingTime);
 
             if ($closesAt->hour < $opensAt->hour) {
-                $closesAt->addDay()->startOfDay();
+                $closesAt->addDay();
             }
 
             return Carbon::now()->isBetween($opensAt, $closesAt);
@@ -94,11 +94,11 @@ class EateryOpeningTimes extends Model
             return 'Closed';
         }
 
-        if ($time[0] === 0) {
+        if ($time[0] === 0 && $time[1] === 0) {
             return 'midnight';
         }
 
-        if ($time[0] === 12) {
+        if ($time[0] === 12 && $time[1] === 0) {
             return 'midday';
         }
 
