@@ -238,7 +238,7 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     /** @return HasOne<EateryOpeningTimes, $this> */
     public function openingTimes(): HasOne
     {
-        return $this->hasOne(EateryOpeningTimes::class, 'wheretoeat_id', 'id');
+        return $this->hasOne(EateryOpeningTimes::class, 'id', 'wheretoeat_id');
     }
 
     /** @return HasMany<EateryReport, $this> */
