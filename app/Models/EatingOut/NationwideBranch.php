@@ -51,7 +51,7 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
     protected $table = 'wheretoeat_nationwide_branches';
 
     /** @phpstan-ignore-next-line */
-    protected $appends = ['formattedAddress', 'fullLocation'];
+    protected $appends = ['formatted_address', 'full_location'];
 
     protected $casts = [
         'lat' => 'float',

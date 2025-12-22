@@ -344,6 +344,7 @@ class Eateries extends Resource
             ->selectSub('select town from wheretoeat_towns where wheretoeat_towns.id = wheretoeat.town_id', 'order_town')
             ->with(['country', 'county',
                 'town' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
+                'area' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
                 'type', 'county.country', 'openingTimes',
             ])
             ->withCount(['reviews' => fn (Builder $builder) => $builder->withoutGlobalScopes()])

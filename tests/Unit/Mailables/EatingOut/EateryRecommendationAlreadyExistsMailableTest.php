@@ -18,7 +18,7 @@ class EateryRecommendationAlreadyExistsMailableTest extends TestCase
     {
         $this->assertInstanceOf(
             MjmlMessage::class,
-            EateryRecommendationAlreadyExistsMailable::make($this->create(Eatery::class), $this->create(EateryRecommendation::class), 'foo'),
+            EateryRecommendationAlreadyExistsMailable::make($this->create(Eatery::class), null, $this->create(EateryRecommendation::class), 'foo'),
         );
     }
 
@@ -31,7 +31,7 @@ class EateryRecommendationAlreadyExistsMailableTest extends TestCase
         /** @var EateryRecommendation $recommendation */
         $recommendation = $this->create(EateryRecommendation::class);
 
-        $mailable = EateryRecommendationAlreadyExistsMailable::make($eatery, $recommendation, 'foo');
+        $mailable = EateryRecommendationAlreadyExistsMailable::make($eatery, null, $recommendation, 'foo');
 
         $this->assertEquals("Your recommendation of {$eatery->name} already exists in the Coeliac Sanctuary eating out guide!", $mailable->subject);
     }
@@ -39,7 +39,7 @@ class EateryRecommendationAlreadyExistsMailableTest extends TestCase
     #[Test]
     public function itHasTheCorrectView(): void
     {
-        $mailable = EateryRecommendationAlreadyExistsMailable::make($this->create(Eatery::class), $this->create(EateryRecommendation::class), 'foo');
+        $mailable = EateryRecommendationAlreadyExistsMailable::make($this->create(Eatery::class), null, $this->create(EateryRecommendation::class), 'foo');
 
         $this->assertEquals('mailables.mjml.eating-out.recommended-eatery-already-exists', $mailable->mjml);
     }
@@ -60,7 +60,7 @@ class EateryRecommendationAlreadyExistsMailableTest extends TestCase
             'reason' => fn ($reason) => $this->assertEquals('to let you know that the place you suggested already exists in the Coeliac Sanctuary eating out guide.', $reason),
         ];
 
-        $mailable = EateryRecommendationAlreadyExistsMailable::make($eatery, $recomendation, 'foo');
+        $mailable = EateryRecommendationAlreadyExistsMailable::make($eatery, null, $recomendation, 'foo');
         $emailData = $mailable->data();
 
         foreach ($data as $key => $closure) {
