@@ -116,11 +116,12 @@ trait HasEateryDetails
                 return "{$this->name}, Nationwide";
             }
 
-            return implode(', ', [
+            return implode(', ', array_filter([
+                $this->area?->area,
                 $this->town->town,
                 $this->county->county,
                 $this->country->country,
-            ]);
+            ]));
         });
     }
 

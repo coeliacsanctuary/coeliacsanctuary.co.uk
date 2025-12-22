@@ -7,6 +7,7 @@ namespace App\Nova\Resources\EatingOut;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryVenueType;
+use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
 use App\Nova\Actions\EatingOut\ConvertRecommendationToEatery;
 use App\Nova\Actions\EatingOut\IgnoreAndSendPlaceAlreadyExists;
@@ -14,6 +15,7 @@ use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Email;
@@ -89,19 +91,36 @@ class PlaceRecommendations extends Resource
 
             SelectPlus::make('eatery_id')
                 ->onlyOnForms()
-                ->options(fn(Request $request) => Eatery::query()
-                    ->with(['area', 'town', 'county', 'country'])
-                    ->whereLike('name', "%{$request->get('search')}%")
-                    ->get()
-                    ->map(fn(Eatery $eatery) => ['value' => $eatery->id, 'label' => $eatery->full_name])
-                )
-                ->ajaxSearchable(fn ($search) => Eatery::query()
-                    ->with(['area', 'town', 'county', 'country'])
-                    ->whereLike('name', "%{$search}%")
-                    ->get()
-                    ->map(fn (Eatery $eatery) => ['value' => $eatery->id, 'label' => $eatery->full_name])
-                ),
+                ->options(fn (Request $request) => $this->searchLocations($request->get('search')))
+                ->ajaxSearchable($this->searchLocations(...)),
         ];
+    }
+
+    protected function searchLocations(string $search): Collection
+    {
+        $eateries = Eatery::query()
+            ->with(['area', 'town', 'county', 'country'])
+            ->whereLike('name', "%{$search}%")
+            ->get();
+
+        $branches = NationwideBranch::query()
+            ->with(['area', 'town', 'county', 'country', 'eatery'])
+            ->whereLike('name', "%{$search}%")
+            ->orWhere(function (Builder $query) use ($search): void {
+                $query
+                    ->where('name', '')
+                    ->whereRelation('town', 'town', 'like', "%{$search}%");
+            })
+            ->get();
+
+        return $eateries
+            ->merge($branches)
+            ->sortBy(fn (Eatery|NationwideBranch $location) => $location->full_name)
+            ->values()
+            ->map(fn (Eatery|NationwideBranch $location) => [
+                'value' => $location->wheretoeat_id ? "{$location->wheretoeat_id}:{$location->id}" : "{$location->id}:",
+                'label' => $location->full_name
+            ]);
     }
 
     public function actions(NovaRequest $request): array

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Nova\Actions\EatingOut;
 
-use App\Mailables\EatingOut\EateryRecommendationAlreadyExistsMailable;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryRecommendation;
-use App\Notifications\EatingOut\EateryRecommendationAddedNotification;
 use App\Notifications\EatingOut\EateryRecommendationAlreadyExistsNotification;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\AnonymousNotifiable;
@@ -34,13 +32,20 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $models->each(function (EateryRecommendation $model) use ($fields) {
+        $models->each(function (EateryRecommendation $model) use ($fields): void {
             $eateryInfo = json_decode($fields->get('eatery_id'), true);
-            $eatery = Eatery::query()->find($eateryInfo[0]['value']);
+            [$eateryId, $branchId] = explode(':', $eateryInfo[0]['value']);
+
+            $eatery = Eatery::query()->find($eateryId);
+            $branch = null;
+
+            if ($branchId) {
+                $branch = $eatery->nationwideBranches()->find($branchId);
+            }
 
             (new AnonymousNotifiable())
                 ->route('mail', $model->email)
-                ->notify(new EateryRecommendationAlreadyExistsNotification($model, $eatery));
+                ->notify(new EateryRecommendationAlreadyExistsNotification($model, $eatery, $branch));
 
             $model->update(['ignored' => true]);
         });
@@ -55,7 +60,7 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
     {
         return [
             SelectPlus::make('eatery_id')
-                ->fillUsing(function (Request $request, Fluent $fluent, $attribute, $requestAttribute) {
+                ->fillUsing(function (Request $request, Fluent $fluent, $attribute, $requestAttribute): void {
                     $fluent->set($attribute, $request->get($requestAttribute));
                 })
                 ->options([])
