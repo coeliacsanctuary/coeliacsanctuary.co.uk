@@ -7,6 +7,7 @@ use App\Http\Controllers\Comments\GetController;
 use App\Http\Controllers\Contact\IndexController as ContactIndexController;
 use App\Http\Controllers\Contact\StoreController as ContactStoreController;
 use App\Http\Controllers\CookiePolicy\IndexController as CookiePolicyIndexController;
+use App\Http\Controllers\Email\ShowController as EmailShowController;
 use App\Http\Controllers\FallbackController;
 use App\Http\Controllers\Feed\IndexController as FeedController;
 use App\Http\Controllers\HomeController;
@@ -51,6 +52,8 @@ Route::post('popup/{popup}', PopupActivityStoreController::class)->name('popup.a
 Route::post('newsletter', NewsletterStoreController::class)
     ->middleware(HandlePrecognitiveRequests::class)
     ->name('newsletter.store');
+
+Route::get('email/{email:key}', EmailShowController::class)->name('email.show');
 
 Route::get('feed', FeedController::class)->name('feed');
 Route::get('sitemap.xml', SiteMapController::class)->name('sitemap');

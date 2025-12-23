@@ -104,7 +104,7 @@ trait HasEateryDetails
         return Attribute::get(fn () => Str::of($this->address)->explode("\n")->map(fn (string $line) => mb_trim($line))->join(', '));
     }
 
-    /** @return Attribute<non-falsy-string | null, never> */
+    /** @return Attribute<string | null, never> */
     public function fullLocation(): Attribute
     {
         return Attribute::get(function () {
