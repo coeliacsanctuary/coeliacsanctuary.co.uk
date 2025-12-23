@@ -75,7 +75,7 @@ class PlaceReports extends Resource
                         ->resource
                         ->eatery
                         ?->nationwideBranches()
-                        ->with(['town', 'county', 'country'])
+                        ->with(['area', 'town', 'county', 'country'])
                         ->chaperone('eatery')
                         ->get()
                         ->mapWithKeys(fn (NationwideBranch $nationwideBranch) => [$nationwideBranch->id => $nationwideBranch->full_name])
