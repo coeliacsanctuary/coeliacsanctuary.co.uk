@@ -131,8 +131,8 @@ class PlaceReports extends Resource
     {
         return $query->withoutGlobalScopes()
             ->with([
-                'eatery' => fn (Relation $builder) => $builder->withoutGlobalScopes()->with(['town', 'county', 'country']),
-                'branch' => fn (Relation $builder) => $builder->withoutGlobalScopes()->with(['town', 'county', 'country']),
+                'eatery' => fn (Relation $builder) => $builder->withoutGlobalScopes()->with(['area', 'town', 'county', 'country']),
+                'branch' => fn (Relation $builder) => $builder->withoutGlobalScopes()->with(['area', 'town', 'county', 'country']),
             ])
             ->reorder()
             ->orderByRaw('(completed = 1 or ignored = 1) asc')
