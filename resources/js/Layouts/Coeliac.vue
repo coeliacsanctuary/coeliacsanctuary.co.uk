@@ -32,19 +32,19 @@ eventBus.$on('hide-site-loader', () => (showLoader.value = false));
 
 const isMounted = ref(false);
 
-onMounted(() => {
-  isMounted.value = true;
-
-  router.on('success', () => {
-    document
-      .querySelector('body')
-      ?.classList.toggle(
-        'no-auto-ads',
-        usePage().url.includes('/shop') ||
-          usePage().url.includes('/wheretoeat/browse'),
-      );
-  });
-});
+// onMounted(() => {
+//   isMounted.value = true;
+//
+//   router.on('success', () => {
+//     document
+//       .querySelector('body')
+//       ?.classList.toggle(
+//         'no-auto-ads',
+//         usePage().url.includes('/shop') ||
+//           usePage().url.includes('/wheretoeat/browse'),
+//       );
+//   });
+// });
 </script>
 
 <template>
