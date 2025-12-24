@@ -50,9 +50,9 @@ trait HasEateryDetails
         return Attribute::get(fn () => Str::of($this->address)->explode("\n")->first());
     }
 
-    public function generateSlug(): string
+    public function generateSlug(bool $force = false): string
     {
-        if ($this->slug) {
+        if ($this->slug && ! $force) {
             return $this->slug;
         }
 

@@ -21,7 +21,7 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
     use Importable;
 
     /**
-     * @param Collection<int, Collection<int, array>> $collection
+     * @param  Collection<int, Collection<int, array>>  $collection
      * @return Collection<int, Collection<int|string, mixed>>
      */
     public function collection(Collection $collection): Collection
@@ -126,6 +126,10 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
             }
         }
 
+        if ( ! $town && $item['county']['id'] === 'NEW') {
+            $town = EateryTown::query()->make(['town' => $townName]);
+        }
+
         if ( ! $town) {
             throw new Exception("Can't find town - {$townName})");
         }
@@ -162,6 +166,10 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
             }
         }
 
+        if ( ! $area && $item['town']['id'] === 'NEW') {
+            $area = EateryArea::query()->make(['area' => $areaName]);
+        }
+
         if ( ! $area) {
             throw new Exception("Can't find area - {$areaName})");
         }
@@ -173,7 +181,7 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
     }
 
     /**
-     * @param Collection<int, array> $item
+     * @param  Collection<int, array>  $item
      * @return array<string, mixed>
      */
     protected function buildBaseObject(Collection $item): array
