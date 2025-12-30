@@ -127,11 +127,13 @@ class NationwideBranches extends Resource
             ->selectSub('select country from wheretoeat_countries where wheretoeat_countries.id = wheretoeat_nationwide_branches.country_id', 'order_country')
             ->selectSub('select county from wheretoeat_counties where wheretoeat_counties.id = wheretoeat_nationwide_branches.county_id', 'order_county')
             ->selectSub('select town from wheretoeat_towns where wheretoeat_towns.id = wheretoeat_nationwide_branches.town_id', 'order_town')
+            ->selectSub('select area from wheretoeat_areas where wheretoeat_areas.id = wheretoeat_nationwide_branches.area_id', 'order_area')
             ->with(['country', 'county',
                 'town' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
+                'area' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
             ])
             ->withCount(['reviews' => fn (Builder $builder) => $builder->withoutGlobalScopes()])
-            ->when($request->missing('orderByDirection'), fn (Builder $builder) => $builder->reorder('order_country')->orderBy('order_county')->orderBy('order_town'));
+            ->when($request->missing('orderByDirection'), fn (Builder $builder) => $builder->reorder('order_country')->orderBy('order_county')->orderBy('order_town')->orderBy('order_area'));
     }
 
     protected function getVenueTypes($typeId = null): array
