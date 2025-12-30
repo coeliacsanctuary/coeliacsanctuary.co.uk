@@ -60,6 +60,8 @@ type BasketProps = {
     delivery_timescale: string;
     subtotal: string;
     postage: string;
+    fees: { fee: string; description?: string }[];
+    totalFees: string;
     discount?: string;
     total: string;
   };
@@ -359,6 +361,8 @@ onMounted(() => {
           :delivery-timescale="basket.delivery_timescale"
           :postage="basket.postage"
           :discount="basket.discount"
+          :fees="basket.fees"
+          :total-fees="basket.totalFees"
           :total="basket.total"
           :subtotal="basket.subtotal"
         />

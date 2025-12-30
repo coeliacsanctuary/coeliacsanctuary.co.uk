@@ -87,6 +87,25 @@
         <mj-text line-height="1.5" align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->postage)) }}</mj-text>
     </mj-column>
 
+    @if(count($order->payment->fees_breakdown ?? []) > 0)
+        @foreach($order->payment->fees_breakdown as $fee)
+            <mj-column css-class="force-half-width" width="50%">
+                <mj-text line-height="1.5">{{ $fee['description'] ?? 'Customs Fee' }}</mj-text>
+            </mj-column>
+            <mj-column css-class="force-half-width" width="50%">
+                <mj-text line-height="1.5" align="right">{{ Helpers::formatMoney(Money::GBP($fee['fee'])) }}</mj-text>
+            </mj-column>
+        @endforeach
+        @if(count($order->payment->fees_breakdown) > 1)
+            <mj-column css-class="force-half-width" width="50%">
+                <mj-text line-height="1.5">Total Fees</mj-text>
+            </mj-column>
+            <mj-column css-class="force-half-width" width="50%">
+                <mj-text line-height="1.5" align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->custom_fees)) }}</mj-text>
+            </mj-column>
+        @endif
+    @endif
+
     <mj-column css-class="force-half-width" width="50%">
         <mj-text line-height="1.5" padding-top="10px">
             <h2 @if($order->refunds->isNotEmpty()) style="text-decoration: line-through;" @endif>
