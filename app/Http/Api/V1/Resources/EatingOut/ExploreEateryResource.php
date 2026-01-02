@@ -7,6 +7,7 @@ namespace App\Http\Api\V1\Resources\EatingOut;
 use App\Enums\EatingOut\EateryType;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
+use App\Support\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,9 +28,11 @@ class ExploreEateryResource extends JsonResource
             'type' => EateryType::from((int) $this->type_id)->name(),
             'average_rating' => $branch->average_rating ?? $this->average_rating,
             'number_of_ratings' => $branch?->reviews->count() ?? $this->reviews->count(),
+            'distance' => Helpers::metersToMiles((float)($branch->distance ?? $this->distance ?? 0)),
             'venueType' => $this->venueType?->venue_type,
             'cuisine' => $this->cuisine?->cuisine,
             'average_expense' => $this->average_expense,
+            'is_fully_gf' => $this->features()->where('feature', '100% Gluten Free')->exists(),
         ];
     }
 }
