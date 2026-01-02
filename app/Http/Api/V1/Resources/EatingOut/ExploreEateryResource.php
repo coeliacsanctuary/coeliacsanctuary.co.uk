@@ -28,7 +28,6 @@ class ExploreEateryResource extends JsonResource
             'type' => EateryType::from((int) $this->type_id)->name(),
             'average_rating' => $branch->average_rating ?? $this->average_rating,
             'number_of_ratings' => $branch?->reviews->count() ?? $this->reviews->count(),
-            'distance' => $this->distance ?? 0.0,
             'venueType' => $this->venueType?->venue_type,
             'cuisine' => $this->cuisine?->cuisine,
             'average_expense' => $this->average_expense,
