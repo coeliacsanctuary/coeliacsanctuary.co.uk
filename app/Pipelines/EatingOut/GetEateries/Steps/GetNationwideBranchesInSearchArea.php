@@ -81,7 +81,7 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
         $pendingEateries = $pendingEateries->map(fn (object $eatery) => new PendingEatery(
             id: $eatery->id,
             branchId: $eatery->branch_id,
-            ordering: $ids->firstWhere('id', $eatery->branch_id)?->distance ? (string) $ids->firstWhere('id', $eatery->branch_id)->distance : $eatery->ordering,
+            ordering: $ids->firstWhere('id', $eatery->branch_id)?->distance ? (float) $ids->firstWhere('id', $eatery->branch_id)->distance : $eatery->ordering,
             distance: (float) $ids->firstWhere('id', $eatery->branch_id)?->distance,
         ));
 
