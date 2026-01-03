@@ -10,6 +10,7 @@ use App\DataObjects\EatingOut\LatLng;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Services\EatingOut\LocationSearchService;
+use App\Support\Helpers;
 use App\Support\State\EatingOut\Search\LatLngState;
 use Closure;
 use Exception;
@@ -55,7 +56,9 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             ->values();
 
         /** @var Builder<Eatery> $query */
-        $query = Eatery::query()->whereIn('id', $ids->pluck('id'));
+        $query = Eatery::query()
+            ->selectDistance($latLng, ['id', 'name'])
+            ->whereIn('id', $ids->pluck('id'));
 
         if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
             $query = $query->hasCategories($pipelineData->filters['categories']);
@@ -69,15 +72,19 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             $query = $query->hasFeatures($pipelineData->filters['features']);
         }
 
-        /** @var Collection<int, object{id: int, name: string}> $pendingEateries */
-        $pendingEateries = $query->get(['id', 'name']);
+        /** @var Collection<int, object{id: int, name: string, distance: null | float}> $pendingEateries */
+        $pendingEateries = $query->get(['id', 'name', 'distance']);
 
         $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids) {
-            /** @var Eatery $searchRecord */
-            $searchRecord = $ids->firstWhere('id', $eatery->id);
+            $distance = Helpers::metersToMiles($eatery->distance ?? 0);
 
-            /** @var string | null $distance */
-            $distance = Arr::get($searchRecord->attributesToArray(), 'distance');
+            if ( ! $distance) {
+                /** @var Eatery $searchRecord */
+                $searchRecord = $ids->firstWhere('id', $eatery->id);
+
+                /** @var string | null $distance */
+                $distance = Arr::get($searchRecord->attributesToArray(), 'distance');
+            }
 
             return new PendingEatery(
                 id: $eatery->id,

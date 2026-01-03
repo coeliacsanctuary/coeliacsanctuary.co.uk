@@ -10,6 +10,7 @@ use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Services\EatingOut\LocationSearchService;
+use App\Support\Helpers;
 use App\Support\State\EatingOut\Search\LatLngState;
 use Closure;
 use Exception;
@@ -49,6 +50,7 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
 
         /** @var Builder<Eatery> $query */
         $query = NationwideBranch::query()
+            ->selectDistance($latLng)
             /** @lang mysql */
             ->selectRaw(Arr::join([
                 'wheretoeat.id as id',
@@ -75,15 +77,24 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
                 return $query;
             });
 
-        /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string}> $pendingEateries */
+        /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string, distance: null | float}> $pendingEateries */
         $pendingEateries = $query->toBase()->get();
 
-        $pendingEateries = $pendingEateries->map(fn (object $eatery) => new PendingEatery(
-            id: $eatery->id,
-            branchId: $eatery->branch_id,
-            ordering: $ids->firstWhere('id', $eatery->branch_id)?->distance ? (float) $ids->firstWhere('id', $eatery->branch_id)->distance : $eatery->ordering,
-            distance: (float) $ids->firstWhere('id', $eatery->branch_id)?->distance,
-        ));
+        $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids) {
+            $distance = Helpers::metersToMiles($eatery->distance ?? 0);
+
+            if ( ! $distance) {
+                /** @var string | null $distance */
+                $distance = $ids->firstWhere('id', $eatery->branch_id)?->distance;
+            }
+
+            return new PendingEatery(
+                id: $eatery->id,
+                branchId: $eatery->branch_id,
+                ordering: $distance ?: $eatery->ordering,
+                distance: (float)$distance,
+            );
+        });
 
         if ( ! $pipelineData->eateries instanceof Collection) {
             $pipelineData->eateries = new Collection();
