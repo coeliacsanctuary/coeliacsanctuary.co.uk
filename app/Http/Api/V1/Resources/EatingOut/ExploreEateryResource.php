@@ -7,7 +7,6 @@ namespace App\Http\Api\V1\Resources\EatingOut;
 use App\Enums\EatingOut\EateryType;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
-use App\Support\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

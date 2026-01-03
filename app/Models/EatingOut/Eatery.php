@@ -139,6 +139,28 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     }
 
     /**
+     *@param Builder<self> $query
+     *@return Builder<self>
+     */
+    public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
+    {
+        return $this->selectRaw('(
+                        6371000 * acos (
+                          cos ( radians(?) )
+                          * cos( radians( lat ) )
+                          * cos( radians( lng ) - radians(?) )
+                          + sin ( radians(?) )
+                          * sin( radians( lat ) )
+                        )
+                     ) AS distance', [
+            $latLng->lat,
+            $latLng->lng,
+            $latLng->lat,
+        ])
+            ->addSelect($columns);
+    }
+
+    /**
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
