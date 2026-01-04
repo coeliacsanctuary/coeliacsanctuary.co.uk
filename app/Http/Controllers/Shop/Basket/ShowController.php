@@ -56,9 +56,9 @@ class ShowController
             /** @var Collection<int, ShopOrderItemResource> $collection */
             $collection = $items->collection;
 
-            ['subtotal' => $subtotal, 'postage' => $postage] = $calculateOrderTotalsAction->handle($collection, $country);
+            ['subtotal' => $subtotal, 'postage' => $postage, 'fees' => $fees, 'total_fees' => $totalFees] = $calculateOrderTotalsAction->handle($collection, $country);
 
-            $total = $subtotal + $postage;
+            $total = $subtotal + $postage + $totalFees;
 
             $discount = null;
 
@@ -95,6 +95,11 @@ class ShowController
                     'subtotal' => Helpers::formatMoney(Money::GBP($subtotal)),
                     'postage' => Helpers::formatMoney(Money::GBP($postage)),
                     'discount' => $discount ? Helpers::formatMoney(Money::GBP($discount)) : null,
+                    'fees' => $fees->map(fn (array $fee) => [
+                        ...$fee,
+                        'fee' => Helpers::formatMoney(Money::GBP($fee['fee'])),
+                    ]),
+                    'total_fees' => Helpers::formatMoney(Money::GBP($totalFees)),
                     'total' => Helpers::formatMoney(Money::GBP($total)),
                 ],
                 'payment_intent' => app(CreatePaymentIntentAction::class)->handle($basket, $total),
