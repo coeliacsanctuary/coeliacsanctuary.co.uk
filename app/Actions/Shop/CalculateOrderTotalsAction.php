@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Models\Shop\ShopCustomsFee;
 use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopPostagePrice;
 use App\Models\Shop\ShopProduct;
@@ -16,7 +17,7 @@ class CalculateOrderTotalsAction
 {
     /**
      * @param  Collection<int, ShopOrderItemResource>  $items
-     * @return array{subtotal: int, postage: int}
+     * @return array{subtotal: int, postage: int, fees: Collection<int, array{fee: int, description: string|null}>, total_fees: int}
      */
     public function handle(Collection $items, ShopPostageCountry $country): array
     {
@@ -47,8 +48,18 @@ class CalculateOrderTotalsAction
 
         $postage = $postagePrice->price;
 
+        $fees = ShopCustomsFee::query()
+            ->where('postage_country_id', $country->id)
+            ->get()
+            ->map(fn (ShopCustomsFee $fee) => [
+                'fee' => $fee->fee,
+                'description' => $fee->description,
+            ]);
+
         return [
             'subtotal' => $subtotal,
+            'fees' => $fees,
+            'total_fees' => (int)$fees->sum('fee'),
             'postage' => $postage,
         ];
     }

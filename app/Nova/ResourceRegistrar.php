@@ -40,6 +40,7 @@ use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
+use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderItem;
@@ -50,6 +51,7 @@ use App\Nova\Resources\Shop\OrderSourcesResource;
 use App\Nova\Resources\Shop\Payment;
 use App\Nova\Resources\Shop\PaymentRefund;
 use App\Nova\Resources\Shop\PostageArea;
+use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\ProductPrice;
 use App\Nova\Resources\Shop\Products;
@@ -127,7 +129,9 @@ class ResourceRegistrar
 
             // Shop Admin
             DiscountCode::class,
+            PostageCountry::class,
             PostagePrice::class,
+            CustomsFee::class,
             PostageArea::class,
             MassDiscount::class,
             OrderReviews::class,

@@ -37,11 +37,13 @@ use App\Nova\Resources\Main\SealiacOverviews;
 use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
+use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
 use App\Nova\Resources\Shop\OrderSourcesResource;
+use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\TravelCardSearchHistory;
@@ -141,7 +143,9 @@ class Menu
 
                 MenuGroup::make('Admin', [
                     MenuItem::resource(DiscountCode::class),
+                    MenuItem::resource(PostageCountry::class),
                     MenuItem::resource(PostagePrice::class),
+                    MenuItem::resource(CustomsFee::class),
                     MenuItem::resource(MassDiscount::class),
                     MenuItem::resource(OrderSourcesResource::class),
                 ]),

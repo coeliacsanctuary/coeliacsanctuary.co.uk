@@ -12,6 +12,7 @@ use App\Models\Shop\ShopShippingAddress;
 use App\Support\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Money\Money;
 use Stripe\Card;
@@ -40,6 +41,11 @@ class ShopOrderCompleteResource extends JsonResource
             'id' => $this->order_key,
             'products' => ShopOrderItemResource::collection($this->items),
             'subtotal' => Helpers::formatMoney(Money::GBP($payment->subtotal)),
+            'fees' => Arr::map($payment->fees_breakdown ?? [], fn (array $fee) => [
+                ... $fee,
+                'fee' => Helpers::formatMoney(Money::GBP($fee['fee']))
+            ]),
+            'total_fees' => Helpers::formatMoney(Money::GBP($payment->custom_fees)),
             'discount' => $payment->discount && $discount ? [
                 'amount' => Helpers::formatMoney(Money::GBP($payment->discount)),
                 'name' => $discount->name,

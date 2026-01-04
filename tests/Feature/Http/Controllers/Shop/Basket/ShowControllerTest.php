@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Basket;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\ApplyDiscountCodeAction;
 use App\Actions\Shop\CalculateOrderTotalsAction;
 use App\Actions\Shop\CheckForPendingOrderAction;
@@ -25,6 +24,7 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Inertia\Testing\AssertableInertia as Assert;
 use Money\Money;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
 use Tests\Concerns\MocksStripe;
 use Tests\TestCase;
@@ -238,6 +238,27 @@ class ShowControllerTest extends TestCase
                         'basket',
                         fn (Assert $page) => $page
                             ->where('total', '£3.00')
+                            ->etc()
+                    )
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itPassesTheFeesToTheComponent(): void
+    {
+        $this->expectAction(CreatePaymentIntentAction::class);
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->has(
+                        'basket',
+                        fn (Assert $page) => $page
+                            ->has('fees')
+                            ->has('total_fees')
                             ->etc()
                     )
                     ->etc()
