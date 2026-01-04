@@ -7,6 +7,7 @@ use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
 use App\Console\Commands\CloseBasketsCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Console\Commands\PublishItemsCommand;
+use App\Console\Commands\RemoveCollectionsFromHomepageCommand;
 use App\Console\Commands\SendAbandonedBasketEmailCommand;
 use App\Http\Api\V1\Middleware\ExternalApiSourceMiddleware;
 use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
@@ -93,6 +94,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(ApplyMassDiscountsCommand::class)->everyMinute();
         $schedule->command(PrepareShopReviewInvitationsCommand::class)->everyMinute();
         $schedule->command(PublishItemsCommand::class)->everyMinute();
+        $schedule->command(RemoveCollectionsFromHomepageCommand::class)->everyMinute();
         $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
 
         if (app()->environment('production')) {
