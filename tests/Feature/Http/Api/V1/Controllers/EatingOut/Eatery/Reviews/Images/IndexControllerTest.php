@@ -20,7 +20,7 @@ class IndexControllerTest extends TestCase
     {
         parent::setUp();
 
-        Storage::fake('media');
+        Storage::fake('review-images');
 
         $this->seed(EateryScaffoldingSeeder::class);
 
