@@ -48,7 +48,7 @@ class Body extends Field
                 libxml_use_internal_errors(true);
 
                 $dom = new DOMDocument();
-                $allowedCustomTags = ['article-header', 'article-image', 'article-iframe'];
+                $allowedCustomTags = ['article-header', 'article-image', 'article-iframe', 'article-button'];
                 $dom->loadHTML("<div>{$value}</div>");
 
                 $xmlErrors = collect(libxml_get_errors())
