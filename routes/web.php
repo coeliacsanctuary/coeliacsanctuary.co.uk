@@ -62,4 +62,6 @@ Route::get('static/map/{latlng}', StaticMapGetController::class)
     ->name('static.map')
     ->where('latlng', '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$');
 
+Route::view('cs-adm/preview-button', 'static.button-preview');
+
 Route::fallback(FallbackController::class)->name('fallback');

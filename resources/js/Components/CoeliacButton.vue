@@ -133,7 +133,7 @@ const isLinkComponent = computed(() => {
     <span
       v-if="!iconOnly"
       :class="{ 'opacity-0': loading }"
-      v-text="label"
+      v-html="label"
     />
 
     <component
