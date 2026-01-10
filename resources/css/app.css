@@ -35,6 +35,10 @@
     /*    transition: margin-bottom 0.3s ease;*/
     /*}*/
 
+    .content_hint, .content_desktop_hint, .content_mobile_hint {
+        display: none;
+    }
+
     @media only screen and (min-width: 1024px) {
         main div.flex-col > aside.space-y-3:has(+ div.flex-col) {
             overflow: unset;
