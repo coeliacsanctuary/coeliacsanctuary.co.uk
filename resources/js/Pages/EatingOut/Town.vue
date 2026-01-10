@@ -164,11 +164,17 @@ const reloadEateries = () => {
       class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1"
     >
       <template v-if="items.length">
-        <EateryCard
-          v-for="eatery in items"
+        <template
+          v-for="(eatery, index) in items"
           :key="eatery.link"
-          :eatery="eatery"
-        />
+        >
+          <EateryCard :eatery="eatery" />
+
+          <div
+            v-if="index > 0 && index % 4 === 0"
+            class="content_hint"
+          />
+        </template>
       </template>
 
       <Card

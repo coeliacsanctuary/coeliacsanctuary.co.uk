@@ -15,6 +15,7 @@ import CoeliacButton from '@/Components/CoeliacButton.vue';
 import Info from '@/Components/Info.vue';
 import { ref } from 'vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 
 defineProps<{
   county: CountyPage;
@@ -92,6 +93,8 @@ const townList = ref<HTMLElement | null>(null);
     </TopPlaces>
   </template>
 
+  <div class="content_hint"></div>
+
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading> Gluten Free {{ county.name }} </Heading>
 
@@ -134,11 +137,17 @@ const townList = ref<HTMLElement | null>(null);
       ref="townList"
       class="group grid gap-3 md:grid-cols-3"
     >
-      <CountyTown
-        v-for="town in county.towns"
+      <template
+        v-for="(town, index) in county.towns"
         :key="town.name"
-        :town="town"
-      />
+      >
+        <CountyTown :town="town" />
+
+        <div
+          v-if="index > 0 && index % 3 === 0"
+          class="content_mobile_hint"
+        />
+      </template>
     </div>
   </Card>
 
