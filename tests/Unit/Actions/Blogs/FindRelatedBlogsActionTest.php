@@ -13,7 +13,38 @@ use Tests\TestCase;
 class FindRelatedBlogsActionTest extends TestCase
 {
     #[Test]
-    public function itDoesntIncludeTheGivenBlog(): void
+    public function itUsesThePrimaryTagIfSet(): void
+    {
+        $blog = $this->build(Blog::class)
+            ->hasAttached($this->build(BlogTag::class)->count(2), relationship: 'tags')
+            ->create();
+
+        $blog->update(['primary_tag_id' => $blog->tags->first()->id]);
+
+        $otherBlog = $this->create(Blog::class);
+        $otherBlog->tags()->attach($blog->tags->first());
+
+        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+
+        $this->assertNotEmpty($relatedBlogs);
+    }
+
+    #[Test]
+    public function itDoesntIncludeTheGivenBlogWhenPullingThePrimaryTag(): void
+    {
+        $blog = $this->build(Blog::class)
+            ->hasAttached($this->build(BlogTag::class), relationship: 'tags')
+            ->create();
+
+        $blog->update(['primary_tag_id' => $blog->tags->first()->id]);
+
+        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+
+        $this->assertEmpty($relatedBlogs);
+    }
+
+    #[Test]
+    public function itDoesntIncludeTheGivenBlogWhenPullingFromAllTags(): void
     {
         $blog = $this->build(Blog::class)
             ->hasAttached($this->build(BlogTag::class), relationship: 'tags')
@@ -33,6 +64,24 @@ class FindRelatedBlogsActionTest extends TestCase
             ->count(2)
             ->hasAttached($tag, relationship: 'tags')
             ->create();
+
+        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blogs->first());
+
+        $this->assertCount(1, $relatedBlogs);
+        $this->assertTrue($relatedBlogs->contains('id', $blogs->last()->id));
+    }
+
+    #[Test]
+    public function itGetsOtherBlogsForThatBlogsPrimaryTag(): void
+    {
+        $tag = $this->create(BlogTag::class);
+
+        $blogs = $this->build(Blog::class)
+            ->count(2)
+            ->hasAttached($tag, relationship: 'tags')
+            ->create();
+
+        $blogs->first()->update(['primary_tag_id' => $tag->id]);
 
         $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blogs->first());
 

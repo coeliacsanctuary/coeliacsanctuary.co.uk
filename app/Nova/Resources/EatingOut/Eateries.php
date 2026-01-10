@@ -231,7 +231,7 @@ class Eateries extends Resource
                 Select::make('Venue Type', 'venue_type_id')
                     ->hideFromIndex()
                     ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_venue_type_id'))
-                    ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
+                    ->dependsOn(['type_id'], function (Select $field, NovaRequest $request): void {
                         match ($request->type_id) {
                             default => $field->options($this->getVenueTypes(1))->rules(['required']),
                             2 => $field->options($this->getVenueTypes(2))->rules(['required']),
