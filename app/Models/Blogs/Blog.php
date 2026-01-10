@@ -20,6 +20,7 @@ use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
 use Laravel\Scout\Searchable;
@@ -114,6 +115,12 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
             'blog_id',
             'tag_id'
         )->withTimestamps();
+    }
+
+    /** @return BelongsTo<BlogTag, $this> */
+    public function primaryTag(): BelongsTo
+    {
+        return $this->belongsTo(BlogTag::class, 'primary_tag_id');
     }
 
     protected function linkRoot(): string
