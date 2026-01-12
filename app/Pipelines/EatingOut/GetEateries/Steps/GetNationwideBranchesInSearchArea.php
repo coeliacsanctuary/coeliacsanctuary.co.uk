@@ -88,6 +88,10 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
                 $distance = $ids->firstWhere('id', $eatery->branch_id)?->distance;
             }
 
+            if ($distance === 0.0) {
+                $distance = 0.01;
+            }
+
             return new PendingEatery(
                 id: $eatery->id,
                 branchId: $eatery->branch_id,

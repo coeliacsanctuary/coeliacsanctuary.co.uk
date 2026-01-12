@@ -16,6 +16,7 @@ use App\Resources\EatingOut\EateryListResource;
 use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
 use App\Support\State\EatingOut\Search\LatLngState;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Response;
 
 class ShowController
@@ -72,7 +73,7 @@ class ShowController
             ->metaImage($getOpenGraphImageForRouteAction->handle('eatery'))
             ->doNotTrack()
             ->render('EatingOut/SearchResults', [
-                'term' => fn () => $eaterySearchTerm->term,
+                'term' => fn () => Str::apa($eaterySearchTerm->term),
                 'range' => fn () => $eaterySearchTerm->range,
                 'image' => fn () => $image,
                 'eateries' => fn () => $eateries,

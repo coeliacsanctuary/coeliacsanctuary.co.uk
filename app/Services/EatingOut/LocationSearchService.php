@@ -43,12 +43,14 @@ class LocationSearchService
 
     protected function isValidResult(array $result, string $term): bool
     {
-        $keys = ['locality', 'archipelago'];
+        return true;
 
-        if (in_array(Arr::get($result, 'types.0'), $keys)) {
-            return true;
-        }
-
-        return (bool) (Str::of(Arr::get($result, 'formatted_address'))->lower()->contains(Str::lower($term)));
+        //        $keys = ['locality', 'archipelago'];
+        //
+        //        if (in_array(Arr::get($result, 'types.0'), $keys)) {
+        //            return true;
+        //        }
+        //
+        //        return (bool) (Str::of(Arr::get($result, 'formatted_address'))->lower()->contains(Str::lower($term)));
     }
 }
