@@ -29,6 +29,14 @@ export default <T>(propName: string, landmark: Ref<Element> | null = null) => {
       return;
     }
 
+    let data = {};
+
+    if (requestOptions.value.data) {
+      data = requestOptions.value.data;
+
+      delete requestOptions.value.data;
+    }
+
     const options: VisitOptions = {
       ...requestOptions.value,
       preserveState: true,
@@ -43,7 +51,7 @@ export default <T>(propName: string, landmark: Ref<Element> | null = null) => {
     };
 
     /** @ts-ignore */
-    router.get(<string>value().next_page_url, {}, options);
+    router.get(<string>value().next_page_url, data, options);
   };
 
   if (landmark !== null) {

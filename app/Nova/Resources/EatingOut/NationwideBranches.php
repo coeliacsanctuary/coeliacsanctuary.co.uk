@@ -62,6 +62,10 @@ class NationwideBranches extends Resource
                 ->fullWidth()
                 ->exceptOnForms(),
 
+            Text::make('Address')
+                ->fullWidth()
+                ->exceptOnForms(),
+
             Boolean::make('Live'),
 
             Panel::make('Location', [
