@@ -25,12 +25,19 @@ class GetNationwideBranchesInTownAction implements GetEateriesPipelineActionCont
 
         /** @var Builder<Eatery> $query */
         $query = NationwideBranch::query()
-            /** @lang mysql */
-            ->selectRaw(Arr::join([
-                'wheretoeat.id as id',
-                'wheretoeat_nationwide_branches.id as branch_id',
-                'if(wheretoeat_nationwide_branches.name = "" or wheretoeat_nationwide_branches.name is null, concat(wheretoeat.name, "-", wheretoeat.id), concat(wheretoeat_nationwide_branches.name, " ", wheretoeat.name)) as ordering',
-            ], ','))
+            ->when(
+                $pipelineData->sort === 'rating',
+                fn (Builder $query) => $query->selectRaw(Arr::join([
+                    'wheretoeat.id as id',
+                    'wheretoeat_nationwide_branches.id as branch_id',
+                    'coalesce((select (round(avg(r.rating) * 2) / 2) + (count(r.rating) * 0.001) from wheretoeat_reviews r where r.approved = 1 and r.nationwide_branch_id = wheretoeat_nationwide_branches.id), 0) as ordering',
+                ], ',')),
+                fn (Builder $query) => $query->selectRaw(Arr::join([
+                    'wheretoeat.id as id',
+                    'wheretoeat_nationwide_branches.id as branch_id',
+                    'if(wheretoeat_nationwide_branches.name = "" or wheretoeat_nationwide_branches.name is null, concat(wheretoeat.name, "-", wheretoeat.id), concat(wheretoeat_nationwide_branches.name, " ", wheretoeat.name)) as ordering',
+                ], ','))
+            )
             ->where('wheretoeat_nationwide_branches.town_id', $pipelineData->town->id)
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
