@@ -15,6 +15,8 @@ import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.v
 import { Link } from '@inertiajs/vue3';
 import Info from '@/Components/Info.vue';
 import { pluralise } from '@/helpers';
+import { FormSelectOption } from '@/Components/Forms/Props';
+import FormSelect from '@/Components/Forms/FormSelect.vue';
 
 const props = defineProps<{
   term: string;
@@ -24,14 +26,19 @@ const props = defineProps<{
   filters: EateryFilters;
   latlng?: LatLng;
   county?: { name: string; link: string };
+  sort: {
+    current: string;
+    options: FormSelectOption[];
+  };
 }>();
 
 const landmark: Ref<Element> = ref();
+const sortOption = ref(props.sort.current);
 
-const { items, reset } = useInfiniteScrollCollection<TownEatery>(
-  'eateries',
-  landmark,
-);
+const { items, reset, requestOptions } =
+  useInfiniteScrollCollection<TownEatery>('eateries', landmark);
+
+requestOptions.value = { data: { sort: sortOption.value } };
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
@@ -91,6 +98,16 @@ const reloadEateries = () => {
 };
 
 watch(() => props.term, reset);
+
+watch(sortOption, () => {
+  requestOptions.value = { data: { sort: sortOption.value } };
+
+  router.reload({
+    only: ['eateries', 'sort'],
+    data: { sort: sortOption.value },
+    onSuccess: () => reset(),
+  });
+});
 </script>
 
 <template>
@@ -139,7 +156,7 @@ watch(() => props.term, reset);
     :range="range"
   />
 
-  <div class="relative xmd:space-x-2 md:flex">
+  <div class="relative md:flex xmd:space-x-2">
     <TownFilterSidebar
       :filters="filters"
       @filters-updated="handleFiltersChanged"
@@ -167,6 +184,24 @@ watch(() => props.term, reset);
         >
           Found {{ eateries.total }} {{ pluralise('result', eateries.total) }}
         </Info>
+
+        <Card
+          class="flex space-y-2 xs:flex-row xs:items-center xs:justify-between xs:space-y-0"
+        >
+          <div class="font-semibold sm:text-lg">
+            Showing eateries in {{ sort.current }} order
+          </div>
+
+          <FormSelect
+            v-model="sortOption"
+            name="sort"
+            :options="sort.options"
+            label="Sort by"
+            borders
+            class="flex items-center space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+            size="small"
+          />
+        </Card>
 
         <EateryCard
           v-for="eatery in items"

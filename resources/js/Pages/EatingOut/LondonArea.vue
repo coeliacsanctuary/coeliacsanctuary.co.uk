@@ -6,7 +6,7 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { Ref, ref } from 'vue';
+import { Ref, ref, watch } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
@@ -16,6 +16,8 @@ import useBrowser from '@/composables/useBrowser';
 import Info from '@/Components/Info.vue';
 import { pluralise } from '@/helpers';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import { FormSelectOption } from '@/Components/Forms/Props';
+import FormSelect from '@/Components/Forms/FormSelect.vue';
 
 type AlternateArea = {
   borough: string;
@@ -23,20 +25,25 @@ type AlternateArea = {
   locations: number;
 };
 
-defineProps<{
+const props = defineProps<{
   area: LondonAreaPage;
   alternateAreas?: AlternateArea[];
   eateries: PaginatedCollection<TownEatery>;
   filters: EateryFilters;
+  sort: {
+    current: string;
+    options: FormSelectOption[];
+  };
 }>();
 
 const placeList = ref<HTMLElement | null>(null);
 const landmark: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
-const { items, reset } = useInfiniteScrollCollection<TownEatery>(
-  'eateries',
-  landmark,
-);
+const sortOption = ref(props.sort.current);
+const { items, reset, requestOptions } =
+  useInfiniteScrollCollection<TownEatery>('eateries', landmark);
+
+requestOptions.value = { data: { sort: sortOption.value } };
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
@@ -104,6 +111,16 @@ const reloadEateries = () => {
     preserveScroll: true,
   });
 };
+
+watch(sortOption, () => {
+  requestOptions.value = { data: { sort: sortOption.value } };
+
+  router.reload({
+    only: ['eateries', 'sort'],
+    data: { sort: sortOption.value },
+    onSuccess: () => reset(),
+  });
+});
 </script>
 
 <template>
@@ -146,10 +163,7 @@ const reloadEateries = () => {
     </Warning>
   </Card>
 
-  <GoogleAd
-    :key="$page.url"
-    code="5284484376"
-  />
+  <div class="content_hint" />
 
   <div class="relative md:flex xmd:space-x-2">
     <TownFilterSidebar
@@ -188,6 +202,24 @@ const reloadEateries = () => {
           </ul>
         </div>
       </Info>
+
+      <Card
+        class="flex space-y-2 xs:flex-row xs:items-center xs:justify-between xs:space-y-0"
+      >
+        <div class="font-semibold sm:text-lg">
+          Showing eateries in {{ sort.current }} order
+        </div>
+
+        <FormSelect
+          v-model="sortOption"
+          name="sort"
+          :options="sort.options"
+          label="Sort by"
+          borders
+          class="flex items-center space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+          size="small"
+        />
+      </Card>
 
       <template v-if="items.length">
         <template

@@ -29,7 +29,7 @@ class IndexController
 
         return [
             'data' => [
-                'eateries' => $getSearchResultsPipeline->run($searchTerm, $filters, ExploreEateryResource::class),
+                'eateries' => $getSearchResultsPipeline->run($searchTerm, $filters, 'distance', ExploreEateryResource::class),
                 'filters' => $getFiltersForSearchResults->usingSearchKey($searchTerm->key)->handle($filters),
             ],
         ];

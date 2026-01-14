@@ -24,7 +24,11 @@ class GetEateriesInAreaAction implements GetEateriesPipelineActionContract
 
         /** @var Builder<Eatery> $query */
         $query = Eatery::query()
-            ->selectRaw('wheretoeat.id, null as branch_id, wheretoeat.name as ordering')
+            ->when(
+                $pipelineData->sort === 'rating',
+                fn (Builder $query) => $query->selectRaw('wheretoeat.id, null as branch_id, coalesce((select (round(avg(r.rating) * 2) / 2) + (count(r.rating) * 0.001) from wheretoeat_reviews r where r.approved = 1 and r.wheretoeat_id = wheretoeat.id), 0) as ordering'),
+                fn (Builder $query) => $query->selectRaw('wheretoeat.id, null as branch_id, wheretoeat.name as ordering')
+            )
             ->where('area_id', $pipelineData->area->id)
             ->where('closed_down', false)
             ->orderBy('ordering');
