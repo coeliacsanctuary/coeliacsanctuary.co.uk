@@ -108,7 +108,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(GetSearchResultsPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($latlng, $filters, $resource) {
+            ->withArgs(function ($latlng, $filters, $sort, $resource) {
                 $this->assertEquals(ExploreEateryResource::class, $resource);
 
                 return true;
