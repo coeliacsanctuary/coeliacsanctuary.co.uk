@@ -110,7 +110,7 @@ export type FormSelectProps = BaseFormProps & {
   placeholder?: string;
   hideLabel?: boolean;
   error?: string;
-  size?: 'default' | 'large';
+  size?: 'small' | 'default' | 'large';
   inputClasses?: string;
 };
 

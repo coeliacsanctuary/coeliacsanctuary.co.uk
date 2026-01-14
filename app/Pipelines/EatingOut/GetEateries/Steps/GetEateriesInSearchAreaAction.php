@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
@@ -58,6 +59,7 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
         /** @var Builder<Eatery> $query */
         $query = Eatery::query()
             ->selectDistance($latLng, ['id', 'name'])
+            ->addSelect(DB::raw('coalesce((select (round(avg(r.rating) * 2) / 2) + (count(r.rating) * 0.001) from wheretoeat_reviews r where r.approved = 1 and r.wheretoeat_id = wheretoeat.id), 0) as rating'))
             ->whereIn('id', $ids->pluck('id'));
 
         if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
@@ -72,10 +74,10 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             $query = $query->hasFeatures($pipelineData->filters['features']);
         }
 
-        /** @var Collection<int, object{id: int, name: string, distance: null | float}> $pendingEateries */
+        /** @var Collection<int, object{id: int, name: string, distance: null | float, rating: float}> $pendingEateries */
         $pendingEateries = $query->get(['id', 'name', 'distance']);
 
-        $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids) {
+        $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids, $pipelineData) {
             $distance = Helpers::metersToMiles($eatery->distance ?? 0);
 
             if ( ! $distance) {
@@ -86,10 +88,16 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
                 $distance = Arr::get($searchRecord->attributesToArray(), 'distance');
             }
 
+            $ordering = match (true) {
+                $distance && $pipelineData->sort === 'distance' => $distance,
+                $pipelineData->sort === 'rating' => $eatery->rating,
+                default => $eatery->name,
+            };
+
             return new PendingEatery(
                 id: $eatery->id,
                 branchId: null,
-                ordering: $distance ?? $eatery->name,
+                ordering: $ordering,
                 distance: (float) $distance,
             );
         });

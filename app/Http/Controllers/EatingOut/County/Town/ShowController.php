@@ -38,8 +38,9 @@ class ShowController
 
         $county->load(['country']);
         $town->setRelation('county', $county);
+        $sort = $request->string('sort', 'alphabetical')->toString();
 
-        $pipeline = $getEateriesPipeline->run($town, $filters);
+        $pipeline = $getEateriesPipeline->run($town, $filters, $sort);
 
         /** @var Collection<int, PendingEatery> $eateries */
         $eateries = $getEateriesPipeline->rawData()->eateries;
@@ -61,6 +62,19 @@ class ShowController
                 'town' => fn () => new TownPageResource($town),
                 'eateries' => $pipeline,
                 'filters' => fn () => $getFiltersForTown->setTown($town)->handle($filters),
+                'sort' => [
+                    'current' => $sort,
+                    'options' => [
+                        [
+                            'label' => 'Alphabetical',
+                            'value' => 'alphabetical',
+                        ],
+                        [
+                            'label' => 'Top Rated',
+                            'value' => 'rating',
+                        ],
+                    ],
+                ],
             ])
             ->toResponse($request)
             ->setStatusCode($town->liveEateries->count() === 0 && $town->liveBranches->count() === 0 ? Response::HTTP_GONE : Response::HTTP_OK);

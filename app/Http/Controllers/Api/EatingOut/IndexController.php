@@ -42,7 +42,6 @@ class IndexController
             }
         }
 
-
         return [
             'data' => $getFilteredEateriesPipeline->run($filters, EateryAppResource::class), // @phpstan-ignore-line
         ];

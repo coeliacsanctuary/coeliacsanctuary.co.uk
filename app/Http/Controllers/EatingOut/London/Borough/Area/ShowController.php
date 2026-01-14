@@ -39,6 +39,7 @@ class ShowController
         }
 
         $borough->setRelation('county', $county);
+        $sort = $request->string('sort', 'alphabetical')->toString();
 
         /** @var array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters */
         $filters = [
@@ -77,8 +78,21 @@ class ShowController
             ->render('EatingOut/LondonArea', [
                 'area' => fn () => new LondonAreaPageResource($area),
                 'alternateAreas' => fn () => $otherAreas,
-                'eateries' => fn () => $getEateriesPipeline->run($area, $filters),
+                'eateries' => fn () => $getEateriesPipeline->run($area, $filters, $sort),
                 'filters' => fn () => $getFiltersForLondonArea->setArea($area)->handle($filters),
+                'sort' => [
+                    'current' => $sort,
+                    'options' => [
+                        [
+                            'label' => 'Alphabetical',
+                            'value' => 'alphabetical',
+                        ],
+                        [
+                            'label' => 'Top Rated',
+                            'value' => 'rating',
+                        ],
+                    ],
+                ],
             ]);
     }
 }
