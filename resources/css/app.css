@@ -30,11 +30,6 @@
 }
 
 @layer utilities {
-    /*.safe-bottom {*/
-    /*    margin-bottom: var(--mv-journey-height, 0);*/
-    /*    transition: margin-bottom 0.3s ease;*/
-    /*}*/
-
     .content_hint, .content_desktop_hint, .content_mobile_hint {
         display: none;
     }

@@ -2,22 +2,8 @@
 import CoeliacCompactHeader from '@/Layouts/Components/CoeliacCompactHeader.vue';
 import CoeliacCompactFooter from '@/Layouts/Components/CoeliacCompactFooter.vue';
 import { MetaProps } from '@/types/DefaultProps';
-import { onMounted } from 'vue';
-import { router, usePage } from '@inertiajs/vue3';
 
 defineProps<{ meta: MetaProps }>();
-
-// onMounted(() => {
-//   router.on('success', () => {
-//     document
-//       .querySelector('body')
-//       ?.classList.toggle(
-//         'no-auto-ads',
-//         usePage().url.includes('/shop') ||
-//           usePage().url.includes('/wheretoeat/browse'),
-//       );
-//   });
-// });
 </script>
 
 <template>

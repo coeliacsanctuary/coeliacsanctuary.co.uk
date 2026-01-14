@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Services\EatingOut;
 
 use App\DataObjects\EatingOut\LatLng;
-use Illuminate\Support\Arr;
+use App\Models\GoogleGeocodeCache;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use RuntimeException;
 use Spatie\Geocoder\Geocoder;
 
@@ -18,16 +17,60 @@ class LocationSearchService
         //
     }
 
-    public function getLatLng(string $term, bool $force = false): LatLng
+    /**
+     * @param callable(array, string): bool $checkResult
+     * @return ($nullIfEmpty is true ? null | ($raw is true ? array<string, mixed> : LatLng) : ($raw is true ? array<string, mixed> : LatLng))
+     */
+    public function getLatLng(string $term, bool $force = false, bool $raw = false, bool $nullIfEmpty = false, ?callable $checkResult = null): null | LatLng | array
     {
+        if ($this->termIsCached($term)) {
+            /** @var GoogleGeocodeCache $result */
+            $result = GoogleGeocodeCache::query()->where('term', $term)->first();
+
+            $result->update([
+                'hits' => $result->hits + 1,
+                'most_recent_hit' => now(),
+            ]);
+
+            if ($raw) {
+                return $result->response;
+            }
+
+            return $result->toLatLng();
+        }
+
         /** @var array{lat: float, lng: float} $result */
-        $result = $this->callSearchService($term, $force)->first();
+        $result = $this->callSearchService($term, $force, $checkResult)->first();
+
+        /** @phpstan-ignore-next-line  */
+        if ($nullIfEmpty && ! $result) {
+            return null;
+        }
+
+        $this->cacheResult($term, $result);
+
+        if ($raw) {
+            return $result;
+        }
 
         return new LatLng((float) $result['lat'], (float) $result['lng']);
     }
 
+    protected function termIsCached(string $term): bool
+    {
+        return GoogleGeocodeCache::query()->where('term', $term)->exists();
+    }
+
+    protected function cacheResult(string $term, array $result): void
+    {
+        GoogleGeocodeCache::query()->create([
+            'term' => $term,
+            'response' => $result,
+        ]);
+    }
+
     /** @return Collection<int, array{lat: float, lng: float}> */
-    protected function callSearchService(string $term, bool $force): Collection
+    protected function callSearchService(string $term, bool $force, ?callable $checkResult = null): Collection
     {
         /** @var array{lat: float, lng: float}[] $response */
         $response = $this->geocoder->getAllCoordinatesForAddress($term);
@@ -37,20 +80,16 @@ class LocationSearchService
         }
 
         return collect($response)
-            ->filter(fn (array $result) => $force || $this->isValidResult($result, $term))
+            ->filter(fn (array $result) => $force || $this->isValidResult($result, $term, $checkResult))
             ->values();
     }
 
-    protected function isValidResult(array $result, string $term): bool
+    protected function isValidResult(array $result, string $term, ?callable $checkResult = null): bool
     {
-        return true;
+        if ($checkResult) {
+            return $checkResult($result, $term);
+        }
 
-        //        $keys = ['locality', 'archipelago'];
-        //
-        //        if (in_array(Arr::get($result, 'types.0'), $keys)) {
-        //            return true;
-        //        }
-        //
-        //        return (bool) (Str::of(Arr::get($result, 'formatted_address'))->lower()->contains(Str::lower($term)));
+        return true;
     }
 }

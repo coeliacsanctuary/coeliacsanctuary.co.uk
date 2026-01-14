@@ -9,12 +9,12 @@ use App\DataObjects\Search\SearchResultItem;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Search\Eateries;
+use App\Services\EatingOut\LocationSearchService;
 use App\Support\Helpers;
 use App\Support\State\Search\SearchState;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Spatie\Geocoder\Facades\Geocoder;
 
 class SearchEateries
 {
@@ -31,11 +31,15 @@ class SearchEateries
 
             $geoResults = collect();
 
-            $geocoder = Geocoder::getCoordinatesForAddress($searchPipelineData->parameters->locationSearch ?: $searchPipelineData->parameters->term);
+            $geocoder = app(LocationSearchService::class)->getLatLng(
+                $searchPipelineData->parameters->locationSearch ?: $searchPipelineData->parameters->term,
+                raw: true,
+                nullIfEmpty: true,
+                checkResult: fn ($result) => $this->geocoderIsValid($result, $searchPipelineData),
+            );
 
-            if ($this->geocoderIsValid($geocoder, $searchPipelineData)) {
-                /** @phpstan-ignore-next-line  */
-                $searchPipelineData->parameters->locationSearch = Arr::first($geocoder['address_components'])->long_name;
+            if ($geocoder) {
+                $searchPipelineData->parameters->locationSearch = data_get($geocoder, 'address_components.0.long_name');
 
                 $geoResults = $this->performGeoSearch(implode(', ', [$geocoder['lat'], $geocoder['lng']]));
 
