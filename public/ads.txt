@@ -1,4 +1,4 @@
-# Mediavine Ads.txt v20251215
+# Mediavine Ads.txt v20260113
 managerdomain=mediavine.com
 contact=sales@mediavine.com
 ownerdomain=coeliacsanctuary.co.uk
@@ -49,6 +49,7 @@ conversantmedia.com, 41025, DIRECT, 03113cd04947736d
 smartadserver.com, 3860, DIRECT
 appnexus.com, 10490, RESELLER, f5ab79cb980f11d1
 sharethrough.com, 47b99924, DIRECT, d53b998a7bd4ecd2
+sharethrough.com, 3860, RESELLER, d53b998a7bd4ecd2
 nativo.com, 5705, DIRECT, 59521ca7cc5e9fee
 nativo.com, 6078, DIRECT, 59521ca7cc5e9fee
 themediagrid.com, 8CAIJY, DIRECT, 35d5010d7789b49d
