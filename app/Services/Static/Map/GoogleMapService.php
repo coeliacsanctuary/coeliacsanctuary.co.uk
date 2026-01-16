@@ -66,9 +66,7 @@ class GoogleMapService
 
     protected function getImageFromGoogle(string $latLng, array $params): string
     {
-        $imageRequest = Http::get($this->getGoogleMapUrl($latLng, $params));
-
-        return $imageRequest->getBody()->getContents();
+        return Http::get($this->getGoogleMapUrl($latLng, $params))->body();
     }
 
     protected function hasCachedImage(): bool

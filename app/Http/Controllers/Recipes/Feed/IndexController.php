@@ -19,7 +19,7 @@ class IndexController
         $recipes = $getRecipesForIndexAction
             ->handle()
             ->collection
-            ->map(fn (JsonResource $resource) => $resource->resource);
+            ?->map(fn (JsonResource $resource) => $resource->resource);
 
         return new Response(
             $recipeFeed->render($recipes),
