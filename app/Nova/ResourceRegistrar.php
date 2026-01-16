@@ -53,7 +53,7 @@ use App\Nova\Resources\Shop\PaymentRefund;
 use App\Nova\Resources\Shop\PostageArea;
 use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
-use App\Nova\Resources\Shop\ProductPrice;
+use App\Nova\Resources\Shop\Price;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\ProductVariant;
 use App\Nova\Resources\Shop\ShippingAddress;
@@ -120,7 +120,7 @@ class ResourceRegistrar
             Categories::class,
             Products::class,
             ShippingMethod::class,
-            ProductPrice::class,
+            Price::class,
             ProductVariant::class,
 
             // Shop Customers

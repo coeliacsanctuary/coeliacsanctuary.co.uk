@@ -172,7 +172,7 @@ class Products extends Resource
 
             BelongsToMany::make('Categories', resource: Categories::class),
 
-            HasMany::make('Prices', resource: ProductPrice::class),
+            MorphMany::make('Prices', resource: Price::class),
 
             HasMany::make('Variants', resource: ProductVariant::class),
 

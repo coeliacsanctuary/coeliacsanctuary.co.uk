@@ -8,6 +8,7 @@ use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasSealiacOverview;
 use App\Concerns\LinkableModel;
+use App\Concerns\Shop\HasPrices;
 use App\Contracts\Search\IsSearchable;
 use App\Enums\Shop\OrderState;
 use App\Models\Media;
@@ -41,6 +42,10 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
 {
     use ClearsCache;
     use DisplaysMedia;
+
+    /** @use HasPrices<$this> */
+    use HasPrices;
+
     use HasSealiacOverview;
 
     /** @use InteractsWithMedia<Media> */
@@ -109,12 +114,6 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         return $this->hasMany(ShopProductVariant::class, 'product_id');
     }
 
-    /** @return HasMany<ShopProductPrice, $this> */
-    public function prices(): HasMany
-    {
-        return $this->hasMany(ShopProductPrice::class, 'product_id');
-    }
-
     /** @return HasMany<ShopFeedback, $this> */
     public function feedback(): HasMany
     {
@@ -143,12 +142,12 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         return $this->id;
     }
 
-    /** @return Collection<int, ShopProductPrice> */
+    /** @return Collection<int, ShopPrice> */
     public function currentPrices(): Collection
     {
         return $this->prices
-            ->filter(fn (ShopProductPrice $price) => $price->start_at->lessThan(Carbon::now()))
-            ->filter(fn (ShopProductPrice $price) => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
+            ->filter(fn (ShopPrice $price) => $price->start_at->lessThan(Carbon::now()))
+            ->filter(fn (ShopPrice $price) => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
             ->sortByDesc('start_at');
     }
 
