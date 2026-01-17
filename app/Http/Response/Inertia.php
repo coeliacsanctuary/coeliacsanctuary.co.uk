@@ -168,7 +168,7 @@ class Inertia
         $items = app(GetOrderItemsAction::class)->handle($basket);
 
         /** @var Collection<int, ShopOrderItemResource> $collection */
-        $collection = app(GetOrderItemsAction::class)->handle($basket)->collection;
+        $collection = $items->collection;
 
         /** @var int $subtotal */
         $subtotal = $collection->map(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity)->sum();

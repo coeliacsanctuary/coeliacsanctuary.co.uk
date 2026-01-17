@@ -6,6 +6,8 @@ import { OrderCompleteProps } from '@/types/Shop';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useScreensize from '@/composables/useScreensize';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import Heading from '../../../../vendor/laravel/nova/resources/js/components/Heading.vue';
+import SubHeading from '@/Components/SubHeading.vue';
 
 const props = defineProps<{ order: OrderCompleteProps }>();
 
@@ -32,12 +34,14 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
     <div class="mx-auto flex max-w-3xl flex-col space-y-4 bg-white p-4">
       <div class="flex flex-col space-y-4">
         <div class="flex flex-col space-y-2">
-          <h1 class="text-sm font-semibold text-primary-dark">
-            Payment successful!
-          </h1>
-          <p class="text-4xl font-semibold tracking-tight sm:text-5xl">
-            Thanks for ordering
-          </p>
+          <Heading :border="false"> Thanks for ordering! </Heading>
+
+          <SubHeading
+            text-size="xs"
+            classes="!text-center mt-2"
+          >
+            Your payment was successful.
+          </SubHeading>
 
           <p class="prose prose-lg mt-4 max-w-none text-base">
             Your Order has been completed, you will receive an email

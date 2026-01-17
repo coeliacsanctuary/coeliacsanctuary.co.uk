@@ -12,7 +12,6 @@ use App\Concerns\Shop\HasPrices;
 use App\Contracts\Search\IsSearchable;
 use App\Enums\Shop\OrderState;
 use App\Models\Media;
-use App\Support\Helpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -20,10 +19,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Laravel\Scout\Searchable;
-use Money\Money;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\SchemaOrg\Contracts\ReviewContract;
@@ -126,6 +124,12 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         return $this->hasMany(ShopOrderReviewItem::class, 'product_id');
     }
 
+    /** @return HasOne<ShopProductAddOn, $this> */
+    public function addOns(): HasOne
+    {
+        return $this->hasOne(ShopProductAddOn::class, 'product_id');
+    }
+
     /** @return BelongsToMany<TravelCardSearchTerm, $this> */
     public function travelCardSearchTerms(): BelongsToMany
     {
@@ -140,47 +144,6 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     public function getScoutKey(): mixed
     {
         return $this->id;
-    }
-
-    /** @return Collection<int, ShopPrice> */
-    public function currentPrices(): Collection
-    {
-        return $this->prices
-            ->filter(fn (ShopPrice $price) => $price->start_at->lessThan(Carbon::now()))
-            ->filter(fn (ShopPrice $price) => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
-            ->sortByDesc('start_at');
-    }
-
-    /** @return Attribute<null | int, never> */
-    public function currentPrice(): Attribute
-    {
-        return Attribute::get(fn () => $this->currentPrices()->first()?->price);
-    }
-
-    /** @return Attribute<null | int, never> */
-    public function oldPrice(): Attribute
-    {
-        return Attribute::get(function () {
-            if ((bool) $this->currentPrices()->first()?->sale_price === true) {
-                return $this->currentPrices()->skip(1)->first()?->price;
-            }
-
-            return null;
-        });
-    }
-
-    /** @return Attribute<array{current_price: string, old_price?: string}, never> */
-    public function price(): Attribute
-    {
-        return Attribute::get(function () {
-            $rtr = ['current_price' => Helpers::formatMoney(Money::GBP($this->currentPrice))];
-
-            if ($this->oldPrice !== null && $this->oldPrice !== 0) {
-                $rtr['old_price'] = Helpers::formatMoney(Money::GBP($this->oldPrice));
-            }
-
-            return $rtr;
-        });
     }
 
     /** @return Attribute<float, never> */

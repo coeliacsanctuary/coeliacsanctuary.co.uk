@@ -4,6 +4,7 @@ import {
   ProductAdditionalDetailAccordionProps,
   ShopProductDetail,
   ShopProductReview,
+  ShopProductVariant,
   ShopTravelCardProductDetail,
 } from '@/types/Shop';
 import { PaginatedResponse } from '@/types/GenericTypes';
@@ -95,6 +96,8 @@ const additionalDetails: ProductAdditionalDetailAccordionProps[] = [
     wrapperClasses: 'mx-3 mt-0! sm:p-4',
   },
 ].filter((detail) => detail !== undefined);
+
+const selectedVariant = ref<undefined | ShopProductVariant>(undefined);
 
 const viewImage = ref<false | number>(false);
 
@@ -290,7 +293,10 @@ const showAiOverview = ref(true);
             </div>
 
             <!-- Product form -->
-            <ProductAddBasketForm :product="product" />
+            <ProductAddBasketForm
+              :product="product"
+              @selected-variant="(variant) => (selectedVariant = variant)"
+            />
           </section>
         </div>
       </div>

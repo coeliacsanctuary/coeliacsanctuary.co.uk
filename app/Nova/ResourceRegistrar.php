@@ -54,6 +54,7 @@ use App\Nova\Resources\Shop\PostageArea;
 use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\Price;
+use App\Nova\Resources\Shop\ProductAddOn;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\ProductVariant;
 use App\Nova\Resources\Shop\ShippingAddress;
@@ -122,6 +123,7 @@ class ResourceRegistrar
             ShippingMethod::class,
             Price::class,
             ProductVariant::class,
+            ProductAddOn::class,
 
             // Shop Customers
             Customer::class,

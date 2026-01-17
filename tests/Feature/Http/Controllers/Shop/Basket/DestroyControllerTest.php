@@ -14,7 +14,7 @@ use Illuminate\Testing\TestResponse;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
-class DestroyController extends TestCase
+class DestroyControllerTest extends TestCase
 {
     protected ShopOrder $order;
 

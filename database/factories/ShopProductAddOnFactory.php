@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Shop\ShopProduct;
-use App\Models\ShopProductAddOn;
+use App\Models\Shop\ShopProductAddOn;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
