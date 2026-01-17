@@ -102,6 +102,7 @@ class StoreController
                 'shipping_address_id' => $address->id,
                 'order_key' => Str::of(Str::password(8, letters: false, symbols: false))->padLeft(8, '0'),
                 'state_id' => OrderState::PENDING,
+                'newsletter_signup' => $request->boolean('contact.subscribeToNewsletter'),
             ]);
 
             DB::commit();

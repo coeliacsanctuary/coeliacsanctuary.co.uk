@@ -19,6 +19,7 @@ class ShopOrder extends Model
         'state_id' => OrderState::class,
         'shipped_at' => 'datetime',
         'sent_abandoned_basket_email' => 'boolean',
+        'newsletter_signup' => 'boolean',
     ];
 
     protected static function booted(): void

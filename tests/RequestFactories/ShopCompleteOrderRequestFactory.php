@@ -16,6 +16,7 @@ class ShopCompleteOrderRequestFactory extends RequestFactory
                 'email' => $email = $this->faker->email,
                 'email_confirmation' => $email,
                 'phone' => $this->faker->phoneNumber,
+                'subscribeToNewsletter' => false,
             ],
 
             'shipping' => [

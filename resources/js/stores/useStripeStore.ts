@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
 
 type State = {
+  paymentToken?: string;
   instantiated: boolean;
   stateStripe: Stripe;
   stateElements: StripeElements;
@@ -22,6 +23,7 @@ const useStripeStore = defineStore<'stripe', State, Getters, Actions>(
   'stripe',
   {
     state: () => ({
+      paymentToken: undefined,
       instantiated: false,
       stateStripe: {} as Stripe,
       stateElements: {} as StripeElements,
@@ -38,12 +40,13 @@ const useStripeStore = defineStore<'stripe', State, Getters, Actions>(
         this.instantiated = false;
       },
       async instantiate(clientSecret: string) {
-        if (this.instantiated) {
+        if (this.instantiated && this.paymentToken === clientSecret) {
           return;
         }
 
         const key: string = import.meta.env.VITE_STRIPE_PUBLIC_KEY as string;
 
+        this.paymentToken = clientSecret;
         this.stateStripe = (await loadStripe(key)) as Stripe;
         this.stateElements = this.stateStripe.elements({
           clientSecret,
