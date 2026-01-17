@@ -15,6 +15,7 @@ class ShopProductVariantResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'description' => $this->short_description,
             'quantity' => $this->quantity,
             'icon' => $this->icon !== [] ? $this->icon : null,
         ];

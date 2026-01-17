@@ -92,6 +92,9 @@ const removeItem = (item: ShopBasketItem) => {
                   class="font-semibold hover:text-primary-dark"
                 >
                   {{ item.title }}
+                  <template v-if="item.variant !== ''">
+                    - {{ item.variant }}
+                  </template>
                 </Link>
               </h3>
               <p
@@ -101,9 +104,9 @@ const removeItem = (item: ShopBasketItem) => {
             </div>
 
             <p
-              v-if="item.variant !== ''"
+              v-if="item.description"
               class="mt-1 text-sm text-gray-500"
-              v-text="item.variant"
+              v-text="item.description"
             />
           </div>
 
