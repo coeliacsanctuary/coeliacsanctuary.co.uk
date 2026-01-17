@@ -43,9 +43,9 @@ class ShopProductResource extends JsonResource
             'variant_title' => $this->variant_title,
             'variants' => ShopProductVariantResource::collection($this->variants),
             'add-ons' => $this->whenLoaded('addOns', [
-                'name' => $this->addOns->name,
-                'description' => $this->addOns->description,
-                'price' => $this->addOns->price,
+                'name' => $this->addOns?->name,
+                'description' => $this->addOns?->description,
+                'price' => $this->addOns?->price,
             ]),
         ];
     }

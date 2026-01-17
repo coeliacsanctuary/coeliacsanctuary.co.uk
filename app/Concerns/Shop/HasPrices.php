@@ -17,6 +17,9 @@ use Money\Money;
  * @template T of Model
  *
  * @mixin Model
+ *
+ * @property int $currentPrice
+ * @property null | int $oldPrice
  */
 trait HasPrices
 {
