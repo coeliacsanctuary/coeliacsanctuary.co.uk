@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Static\Map;
 
 use App\Models\GoogleStaticMap;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -66,6 +67,7 @@ class GoogleMapService
 
     protected function getImageFromGoogle(string $latLng, array $params): string
     {
+        /** @var Response $imageRequest */
         $imageRequest = Http::get($this->getGoogleMapUrl($latLng, $params));
 
         return $imageRequest->getBody()->getContents();

@@ -19,6 +19,7 @@ class IndexController
         GetFiltersForSearchResults $getFiltersForSearchResults,
     ): array {
         $searchTerm = $createSearchAction->handle($request->string('search')->toString(), $request->integer('range', 10));
+        $sort = $request->string('sort', 'distance')->toString();
 
         /** @var array{categories: array<string>|null, features: array<string>|null, venueTypes: array<string>|null, county: int|string|null} $filters */
         $filters = [
@@ -29,8 +30,25 @@ class IndexController
 
         return [
             'data' => [
-                'eateries' => $getSearchResultsPipeline->run($searchTerm, $filters, 'distance', ExploreEateryResource::class),
+                'eateries' => $getSearchResultsPipeline->run($searchTerm, $filters, $sort, ExploreEateryResource::class),
                 'filters' => $getFiltersForSearchResults->usingSearchKey($searchTerm->key)->handle($filters),
+                'sort' => [
+                    'current' => $sort,
+                    'options' => [
+                        [
+                            'label' => 'Alphabetical',
+                            'value' => 'alphabetical',
+                        ],
+                        [
+                            'label' => 'Top Rated',
+                            'value' => 'rating',
+                        ],
+                        [
+                            'label' => 'Distance',
+                            'value' => 'distance',
+                        ],
+                    ],
+                ],
             ],
         ];
     }
