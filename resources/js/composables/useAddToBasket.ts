@@ -9,6 +9,7 @@ type AddBasketPayload = {
   product_id: number;
   variant_id: number;
   quantity: number;
+  include_add_on: boolean;
 };
 
 export default () => {
@@ -19,6 +20,7 @@ export default () => {
       product_id: undefined,
       variant_id: undefined,
       quantity: 1,
+      include_add_on: false,
     },
   ) as InertiaForm<Partial<AddBasketPayload>>;
 
@@ -26,10 +28,12 @@ export default () => {
     productId: number,
     variantId: number,
     quantity: number = 1,
+    includeAddOn: boolean = false,
   ) => {
     addBasketForm.product_id = productId;
     addBasketForm.variant_id = variantId;
     addBasketForm.quantity = quantity;
+    addBasketForm.include_add_on = includeAddOn;
   };
 
   const submitAddBasketForm = (

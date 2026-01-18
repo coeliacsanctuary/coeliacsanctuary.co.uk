@@ -75,6 +75,7 @@ export const TextareaPropsDefaults: Partial<TextareaProps> = {
 
 export type CheckboxProps = BaseFormProps & {
   label: string;
+  hideLabel?: boolean;
   layout?: 'left' | 'right';
   xl?: boolean;
   highlight?: boolean;
@@ -84,6 +85,7 @@ export const CheckboxPropsDefault: Partial<CheckboxProps> = <
   Partial<CheckboxProps>
 >{
   ...BaseFormInputPropDefaults,
+  hideLabel: false,
   layout: 'right',
   xl: false,
   highlight: false,

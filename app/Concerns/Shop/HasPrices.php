@@ -56,11 +56,14 @@ trait HasPrices
         });
     }
 
-    /** @return Attribute<array{current_price: string, old_price?: string}, never> */
+    /** @return Attribute<array{current_price: string, raw_price: float, old_price?: string}, never> */
     public function price(): Attribute
     {
         return Attribute::get(function () {
-            $rtr = ['current_price' => Helpers::formatMoney(Money::GBP($this->currentPrice))];
+            $rtr = [
+                'current_price' => Helpers::formatMoney(Money::GBP($this->currentPrice)),
+                'raw_price' => $this->currentPrice,
+            ];
 
             if ($this->oldPrice !== null && $this->oldPrice !== 0) {
                 $rtr['old_price'] = Helpers::formatMoney(Money::GBP($this->oldPrice));

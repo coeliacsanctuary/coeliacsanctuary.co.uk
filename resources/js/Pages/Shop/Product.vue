@@ -242,7 +242,7 @@ const showAiOverview = ref(true);
             <div
               class="flex flex-col items-center space-y-2 border-b pb-5 md:items-start"
             >
-              <div class="flex flex-col">
+              <div class="mb-4 flex flex-col">
                 <p v-if="product.prices.old_price">
                   was
                   <span

@@ -40,17 +40,18 @@ export type ShopProductDetail = ShopBaseProduct & {
     link: string;
   };
   rating?: ShopProductRating;
-  addOn?: ShopProductAddOn;
+  add_ons?: ShopProductAddOn;
 };
 
 export type ShopProductAddOn = {
-  title: string;
+  name: string;
   description: string;
   price: ShopProductPrice;
 };
 
 export type ShopProductPrice = {
   current_price: string;
+  raw_price: number;
   old_price?: string;
 };
 

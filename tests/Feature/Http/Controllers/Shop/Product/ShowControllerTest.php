@@ -60,7 +60,7 @@ class ShowControllerTest extends TestCase
                 fn (Assert $page) => $page
                     ->component('Shop/Product')
                     ->has('product', fn (Assert $page) => $page->hasAll([
-                        'id', 'title', 'description', 'long_description', 'image', 'additional_images', 'prices', 'rating', 'variants', 'category', 'variant_title', 'add-ons'
+                        'id', 'title', 'description', 'long_description', 'image', 'additional_images', 'prices', 'rating', 'variants', 'category', 'variant_title', 'add_ons'
                     ]))
             );
     }
