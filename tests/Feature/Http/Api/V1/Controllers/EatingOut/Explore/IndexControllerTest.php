@@ -29,6 +29,12 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
+    public function itErrorsAnInvalidSortTerm(): void
+    {
+        $this->makeRequest(sort: 'foobar')->assertJsonValidationErrorFor('sort');
+    }
+
+    #[Test]
     public function itCallsTheCreateSearchAction(): void
     {
         $this->mock(CreateSearchAction::class)
@@ -104,6 +110,22 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
+    public function itPassesTheSortKeyToThePipeline(): void
+    {
+        $this->mock(GetSearchResultsPipeline::class)
+            ->shouldReceive('run')
+            ->withArgs(function ($latlng, $filters, $sort, $resource) {
+                $this->assertEquals('rating', $sort);
+
+                return true;
+            })
+            ->once()
+            ->andReturn(collect()->paginate());
+
+        $this->makeRequest(sort: 'rating')->assertOk();
+    }
+
+    #[Test]
     public function itPassesTheCorrectJsonResourceToThePipeline(): void
     {
         $this->mock(GetSearchResultsPipeline::class)
@@ -143,13 +165,13 @@ class IndexControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertOk()
-            ->assertJsonStructure(['data' => ['eateries' => [], 'filters' => []]]);
+            ->assertJsonStructure(['data' => ['eateries' => [], 'filters' => [], 'sort' => ['current', 'options' => [['label', 'value']]]]]);
     }
 
-    protected function makeRequest(mixed $search = 'foo', string $source = 'bar', array $filters = []): TestResponse
+    protected function makeRequest(mixed $search = 'foo', string $source = 'bar', array $filters = [], string $sort = 'distance'): TestResponse
     {
         return $this->getJson(
-            route('api.v1.eating-out.explore', ['search' => $search, 'filter' => $filters]),
+            route('api.v1.eating-out.explore', ['search' => $search, 'filter' => $filters, 'sort' => $sort]),
             ['x-coeliac-source' => $source],
         );
     }
