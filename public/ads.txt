@@ -78,8 +78,8 @@ appnexus.com, 9979, RESELLER
 openx.com, 540731760, RESELLER, 6a698e2ec38604c6
 adform.com, 2657, RESELLER, 9f5210a2f0999e32
 pubmatic.com, 160557, RESELLER, 5d62403b186f2ace
-e-planning.net,e4ff9f6416211a05,DIRECT,c1ba615865ed87b2
-connatix.com, 2114078464564569, DIRECT, 2af98acdee0e81ed
+e-planning.net,e4ff9f6416211a05,DIRECT,c1ba615865ed87b2  
+connatix.com, 2114078464564569, DIRECT, 2af98acdee0e81ed 
 connatix.com, 2122661585266952, RESELLER, 2af98acdee0e81ed
 video.unrulymedia.com, 687806135, RESELLER
 pubmatic.com, 156592, RESELLER, 5d62403b186f2ace
@@ -95,5 +95,6 @@ triplelift.com, 6998, DIRECT, 6c33edb13117fd86
 themediagrid.com, DQ6AMB, DIRECT, 35d5010d7789b49d
 loopme.com, 11530, DIRECT, 6c8d5f95897a5a3b
 adform.com, 2996 , DIRECT
+
 
 
