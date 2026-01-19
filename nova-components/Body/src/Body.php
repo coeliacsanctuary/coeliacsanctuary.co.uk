@@ -56,6 +56,7 @@ class Body extends Field
                     ->reject(fn (string $error) => collect($allowedCustomTags)->filter(fn (string $tag) => Str::contains(mb_strtolower($error), $tag))->isNotEmpty())
                     ->reject(fn (string $error) => Str::contains($error, 'htmlParseEntityRef: no name'))
                     ->reject(fn (string $error) => Str::contains($error, 'htmlParseEntityRef: expecting \';'))
+                    ->values()
                     ->toArray();
 
                 libxml_clear_errors();

@@ -169,6 +169,34 @@ class FindRelatedBlogsActionTest extends TestCase
     }
 
     #[Test]
+    public function itMergesMultiplePrimaryTagBlogsWithOtherTagBlogs(): void
+    {
+        $primaryTag = $this->create(BlogTag::class);
+        $otherTag = $this->create(BlogTag::class);
+
+        // Create 3 blogs with the primary tag (less than the default limit of 10)
+        $primaryTagBlogs = $this->build(Blog::class)
+            ->count(3)
+            ->hasAttached($primaryTag, relationship: 'tags')
+            ->create();
+
+        // Create blogs with a different tag
+        $otherTagBlogs = $this->build(Blog::class)
+            ->count(3)
+            ->hasAttached($otherTag, relationship: 'tags')
+            ->create();
+
+        $blog = $primaryTagBlogs->first();
+        $blog->update(['primary_tag_id' => $primaryTag->id]);
+        $blog->tags()->attach($otherTag);
+
+        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+
+        // Should have 2 from primary tag + 3 from other tag = 5 total
+        $this->assertCount(5, $relatedBlogs);
+    }
+
+    #[Test]
     public function itWillDeduplicateBlogsThatShareMultipleTags(): void
     {
         $firstTag = $this->create(BlogTag::class);
