@@ -19,4 +19,11 @@ class ShopProductAddOnFactory extends Factory
             'description' => $this->faker->text(),
         ];
     }
+
+    public function forProduct(ShopProduct $product): self
+    {
+        return $this->state(fn () => [
+            'product_id' => $product->id,
+        ]);
+    }
 }
