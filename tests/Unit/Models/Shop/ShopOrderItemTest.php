@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
+use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
 use Tests\TestCase;
 
@@ -47,5 +48,17 @@ class ShopOrderItemTest extends TestCase
             ->create();
 
         $this->assertInstanceOf(ShopProductVariant::class, $item->refresh()->variant);
+    }
+
+    #[Test]
+    public function itBelongsToAnAddOn(): void
+    {
+        $addOn = $this->create(ShopProductAddOn::class);
+
+        $item = $this->build(ShopOrderItem::class)
+            ->withAddOn($addOn)
+            ->create();
+
+        $this->assertInstanceOf(ShopProductAddOn::class, $item->refresh()->addOn);
     }
 }

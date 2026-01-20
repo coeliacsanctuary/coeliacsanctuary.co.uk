@@ -6,7 +6,6 @@ namespace Database\Factories;
 
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductAddOn;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 class ShopProductAddOnFactory extends Factory
@@ -16,12 +15,9 @@ class ShopProductAddOnFactory extends Factory
     public function definition(): array
     {
         return [
+            'product_id' => Factory::factoryForModel(ShopProduct::class),
             'name' => $this->faker->name(),
             'description' => $this->faker->text(),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-
-            'product_id' => ShopProduct::factory(),
         ];
     }
 }

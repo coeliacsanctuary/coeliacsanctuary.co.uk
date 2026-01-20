@@ -8,6 +8,7 @@ use App\Concerns\Shop\HasPrices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -28,6 +29,12 @@ class ShopProductAddOn extends Model implements HasMedia
     public function product(): BelongsTo
     {
         return $this->belongsTo(ShopProduct::class, 'product_id');
+    }
+
+    /** @return HasMany<ShopOrderItem, $this> */
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(ShopOrderItem::class, 'product_add_on_id');
     }
 
     public function registerMediaCollections(): void

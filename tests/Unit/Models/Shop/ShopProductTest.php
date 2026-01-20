@@ -246,7 +246,7 @@ class ShopProductTest extends TestCase
                 'price' => 200,
             ]);
 
-        $this->assertEquals(['current_price' => '£1.00', 'old_price' => '£2.00'], $product->price);
+        $this->assertEquals(['current_price' => '£1.00', 'old_price' => '£2.00', 'raw_price' => 100], $product->price);
     }
 
     #[Test]
@@ -266,6 +266,6 @@ class ShopProductTest extends TestCase
                 'price' => 200,
             ]);
 
-        $this->assertEquals(['current_price' => '£1.00'], $product->price);
+        $this->assertEquals(['current_price' => '£1.00', 'raw_price' => 100], $product->price);
     }
 }
