@@ -56,7 +56,7 @@ trait HasPrices
         });
     }
 
-    /** @return Attribute<array{current_price: string, raw_price: float, old_price?: string}, never> */
+    /** @return Attribute<array{current_price: string, raw_price: int, old_price?: string}, never> */
     public function price(): Attribute
     {
         return Attribute::get(function () {
