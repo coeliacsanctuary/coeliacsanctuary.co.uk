@@ -46,7 +46,7 @@ class FindRelatedBlogsAction
                     ->setAttribute('related_tag_url', $blogTag->link()))
             )
             ->pluck('blogs')
-            ->when($primaryTag->isNotEmpty(), fn (Collection $collection) => $collection->prepend(...$primaryTag))
+            ->when($primaryTag->isNotEmpty(), fn (Collection $collection) => $primaryTag->concat($collection))
             ->flatten()
             ->unique('id')
             ->values()
