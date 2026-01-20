@@ -38,7 +38,7 @@ class AddProductToBasketAction
                     'product_add_on_price' => $addOn->currentPrice,
                 ]);
             },
-            fn($item) => $item->update([
+            fn ($item) => $item->update([
                 'product_add_on_id' => null,
                 'product_add_on_title' => null,
                 'product_add_on_price' => null,

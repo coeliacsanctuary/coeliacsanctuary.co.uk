@@ -65,14 +65,14 @@ class AddToBasketRequest extends FormRequest
             },
 
             // product has an add on
-            function(Validator $validator): void {
-                if(!$this->boolean('include_add_on')) {
+            function (Validator $validator): void {
+                if ( ! $this->boolean('include_add_on')) {
                     return;
                 }
 
                 $product = ShopProduct::query()->find($this->integer('product_id'));
 
-                if(!$product || !$product->addOns) {
+                if ( ! $product || ! $product->addOns) {
                     $validator->errors()->add('include_add_on', 'This product does not have an add on.');
                 }
             }
