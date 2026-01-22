@@ -8,6 +8,7 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
+use Illuminate\Database\Eloquent\Builder;
 
 class AddProductToBasketAction
 {
@@ -26,24 +27,16 @@ class AddProductToBasketAction
             $item->increment('quantity', $quantity);
         }
 
-        $item->when(
-            $includeAddOn,
-            function ($item) use ($product) {
-                /** @var ShopProductAddOn $addOn */
-                $addOn = $product->addOns;
+        if ($includeAddOn) {
+            /** @var ShopProductAddOn $addOn */
+            $addOn = $product->addOns;
 
-                return $item->update([
-                    'product_add_on_id' => $addOn->id,
-                    'product_add_on_title' => $addOn->name,
-                    'product_add_on_price' => $addOn->currentPrice,
-                ]);
-            },
-            fn ($item) => $item->update([
-                'product_add_on_id' => null,
-                'product_add_on_title' => null,
-                'product_add_on_price' => null,
-            ]),
-        );
+            $item->update([
+                'product_add_on_id' => $addOn->id,
+                'product_add_on_title' => $addOn->name,
+                'product_add_on_price' => $addOn->currentPrice,
+            ]);
+        }
 
         $variant->decrement('quantity', $quantity);
 

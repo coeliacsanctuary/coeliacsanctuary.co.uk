@@ -24,8 +24,9 @@ const openSidebar = () => {
 
 EventBus.$on('product-added-to-basket', openSidebar);
 EventBus.$on('open-basket', openSidebar);
-const page: Page<{ basket?: { items: ShopBasketItem[]; subtotal: string } }> =
-  usePage();
+
+type PageProps = { basket?: { items: ShopBasketItem[]; subtotal: string } };
+const page: Page<PageProps> = usePage<PageProps>();
 
 const items = computed((): ShopBasketItem[] => page.props.basket?.items || []);
 const subtotal = computed(() => page.props.basket?.subtotal || '');

@@ -95,6 +95,10 @@ export type ShopBasketItem = {
   id: number;
   title: string;
   description?: string;
+  add_on?: {
+    title: string;
+    price: string;
+  };
   link: string;
   variant: string;
   item_price: string;

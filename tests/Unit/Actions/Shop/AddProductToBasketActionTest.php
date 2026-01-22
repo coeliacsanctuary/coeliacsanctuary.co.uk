@@ -92,29 +92,6 @@ class AddProductToBasketActionTest extends TestCase
     }
 
     #[Test]
-    public function itCanRemoveTheAddOnIfTheItemIsInTheBasketWithAnAddOnAndAddOnIsFalse(): void
-    {
-        $item = $this->order->items()->create([
-            'product_id' => $this->product->id,
-            'product_title' => $this->product->title,
-            'product_variant_id' => $this->variant->id,
-            'product_price' => $this->product->current_price,
-            'quantity' => 1,
-            'product_add_on_id' => 123,
-            'product_add_on_title' => 'Foo',
-            'product_add_on_price' => 100,
-        ]);
-
-        $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1, false);
-
-        $item->refresh();
-
-        $this->assertNull($item->product_add_on_id);
-        $this->assertNull($item->product_add_on_title);
-        $this->assertNull($item->product_add_on_price);
-    }
-
-    #[Test]
     public function itDeductsTheQuantityFromTheVariant(): void
     {
         $this->variant->update(['quantity' => 2]);
