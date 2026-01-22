@@ -20,8 +20,8 @@ class DestroyController
 
         abort_if( ! $basket, RedirectResponse::HTTP_NOT_FOUND);
         abort_if($item->order_id !== $basket->id, RedirectResponse::HTTP_NOT_FOUND);
-        abort_if(!$item->product_add_on_id, RedirectResponse::HTTP_NOT_FOUND);
-        abort_if(!$item->product->addOns, RedirectResponse::HTTP_NOT_FOUND);
+        abort_if( ! $item->product_add_on_id, RedirectResponse::HTTP_NOT_FOUND);
+        abort_if( ! $item->product->addOns, RedirectResponse::HTTP_NOT_FOUND);
         abort_if($item->product->addOns->id !== $item->product_add_on_id, RedirectResponse::HTTP_NOT_FOUND);
 
         $item->update([
