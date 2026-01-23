@@ -82,9 +82,21 @@ class CalculateOrderTotalsActionTest extends TestCase
     #[Test]
     public function itCalculatesTheSubtotal(): void
     {
+
         ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
 
         $this->assertEquals(600, $subtotal);
+    }
+
+    #[Test]
+    public function itIncludesProductAddOnsInTheSubtotalCalculation(): void
+    {
+        $this->item->update(['product_add_on_price' => 50]);
+        $this->itemsCollection = $this->callAction(GetOrderItemsAction::class, $this->order)->collection;
+
+        ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+
+        $this->assertEquals(650, $subtotal);
     }
 
     #[Test]

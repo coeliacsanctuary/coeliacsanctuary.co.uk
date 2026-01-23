@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Controllers\Shop\Basket\AddOn;
+namespace Feature\Http\Controllers\Shop\Basket\AddOn;
 
 use App\Actions\Shop\ResolveBasketAction;
 use App\Models\Shop\ShopOrder;
@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
-class DestroyControllerTest extends TestCase
+class StoreControllerTest extends TestCase
 {
     protected ShopOrder $order;
 
@@ -39,7 +39,6 @@ class DestroyControllerTest extends TestCase
         $this->addOn = $this->create(ShopProductAddOn::class, ['product_id' => $this->product->id]);
 
         $this->item = $this->build(ShopOrderItem::class)
-            ->withAddOn($this->addOn)
             ->create([
                 'order_id' => $this->order->id,
                 'product_id' => $this->product->id,
@@ -72,18 +71,6 @@ class DestroyControllerTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsNotFoundIfTheItemDoesntHaveAnAddOn(): void
-    {
-        $this->item->update([
-            'product_add_on_id' => null,
-            'product_add_on_title' => null,
-            'product_add_on_price' => null,
-        ]);
-
-        $this->makeRequest()->assertNotFound();
-    }
-
-    #[Test]
     public function itReturnsNotFoundIfTheProductDoesntHaveAnAddOn(): void
     {
         $this->addOn->delete();
@@ -92,35 +79,15 @@ class DestroyControllerTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsNotFoundIfTheProductAddOnDoesntMatchTheItemAddOn(): void
-    {
-        $differentAddOn = $this->create(ShopProductAddOn::class);
-
-        $this->item->update([
-            'product_add_on_id' => $differentAddOn->id,
-        ]);
-
-        $this->makeRequest()->assertNotFound();
-    }
-
-    #[Test]
-    public function itRemovesTheAddOnFromTheOrderItem(): void
+    public function itAddOnTheAddOnToTheOrderItem(): void
     {
         $this->makeRequest();
 
         $this->item->refresh();
 
-        $this->assertNull($this->item->product_add_on_id);
-        $this->assertNull($this->item->product_add_on_title);
-        $this->assertNull($this->item->product_add_on_price);
-    }
-
-    #[Test]
-    public function itDoesNotDeleteTheOrderItem(): void
-    {
-        $this->makeRequest();
-
-        $this->assertModelExists($this->item);
+        $this->assertEquals($this->addOn->id, $this->item->product_add_on_id);
+        $this->assertEquals($this->addOn->name, $this->item->product_add_on_title);
+        $this->assertEquals($this->addOn->current_price, $this->item->product_add_on_price);
     }
 
     #[Test]
@@ -145,6 +112,6 @@ class DestroyControllerTest extends TestCase
     protected function makeRequest(?int $item = null): TestResponse
     {
         return $this->withCookie('basket_token', $this->order->token)
-            ->delete(route('shop.basket.add-on.remove', ['item' => $item ?? $this->item->id]));
+            ->post(route('shop.basket.add-on.store', ['item' => $item ?? $this->item->id]));
     }
 }

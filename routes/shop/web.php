@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Shop\Basket\DestroyController as BasketDestroyController;
 use App\Http\Controllers\Shop\Basket\AddOn\DestroyController as BasketAddOnDestroyController;
+use App\Http\Controllers\Shop\Basket\AddOn\StoreController as BasketAddOnStoreController;
+use App\Http\Controllers\Shop\Basket\DestroyController as BasketDestroyController;
 use App\Http\Controllers\Shop\Basket\Discount\DestroyController as DiscountDestroyController;
 use App\Http\Controllers\Shop\Basket\Reopen\IndexController as ReopenBasketIndexController;
 use App\Http\Controllers\Shop\Basket\ShowController as BasketShowController;
@@ -44,7 +45,8 @@ Route::middleware(ShopBasketTokenMiddleware::class)->group(function (): void {
 
         Route::delete('/discount', DiscountDestroyController::class)->name('shop.basket.discount.remove');
         Route::delete('/{item}', BasketDestroyController::class)->name('shop.basket.remove');
-        Route::delete('/{item}/add-on', BasketAddOnDestroyController::class)->name('shop.basket.add-on,remove');
+        Route::post('/{item}/add-on', BasketAddOnStoreController::class)->name('shop.basket.add-on.store');
+        Route::delete('/{item}/add-on', BasketAddOnDestroyController::class)->name('shop.basket.add-on.remove');
 
         Route::get('/{basket:token}/reopen', ReopenBasketIndexController::class)
             ->name('shop.basket.reopen');

@@ -76,129 +76,128 @@ const alterQuantity = (
   <div class="flex-1 p-4">
     <div class="flow-root">
       <ul class="-my-3 divide-y divide-gray-200">
-        <template
+        <li
           v-for="item in items"
           :key="item.id"
+          class="relative"
         >
-          <li class="relative">
-            <Loader
-              :display="loadingItem === item.id"
-              absolute
-              on-top
-              blur
-              color="dark"
-              size="size-12"
-              width="border-8"
-            />
+          <Loader
+            :display="loadingItem === item.id"
+            absolute
+            on-top
+            blur
+            color="dark"
+            size="size-12"
+            width="border-8"
+          />
 
+          <div
+            class="relative flex py-3"
+            :class="{ '!border-b-0': !!item.add_on }"
+          >
             <div
-              class="relative flex py-3"
-              :class="{ '!border-b-0': !!item.add_on }"
+              class="hidden h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200 sm:block"
             >
-              <div
-                class="hidden h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200 sm:block"
-              >
-                <img
-                  :src="item.image"
-                  :alt="item.title"
-                  class="h-full w-full object-cover object-center"
+              <img
+                :src="item.image"
+                :alt="item.title"
+                class="h-full w-full object-cover object-center"
+              />
+            </div>
+
+            <div class="flex flex-1 flex-col sm:ml-4">
+              <div>
+                <div
+                  class="flex justify-between text-base font-medium text-gray-900"
+                >
+                  <h3>
+                    <Link
+                      :href="item.link"
+                      class="font-semibold hover:text-primary-dark"
+                    >
+                      {{ item.title }}
+                    </Link>
+                  </h3>
+                  <p
+                    class="ml-4"
+                    v-text="item.line_price"
+                  />
+                </div>
+
+                <p
+                  v-if="item.variant !== ''"
+                  class="mt-1 text-sm text-gray-500"
+                  v-text="item.variant"
                 />
               </div>
 
-              <div class="flex flex-1 flex-col sm:ml-4">
-                <div>
-                  <div
-                    class="flex justify-between text-base font-medium text-gray-900"
-                  >
-                    <h3>
-                      <Link
-                        :href="item.link"
-                        class="font-semibold hover:text-primary-dark"
-                      >
-                        {{ item.title }}
-                      </Link>
-                    </h3>
+              <div class="flex flex-1 items-center justify-between">
+                <div class="flex flex-1 items-center space-x-2">
+                  <p>Quantity</p>
+
+                  <QuantitySwitcher
+                    :quantity="item.quantity"
+                    @alter="(mode) => alterQuantity(item, mode)"
+                  />
+                </div>
+
+                <CoeliacButton
+                  theme="faded"
+                  icon-only
+                  :icon="TrashIcon"
+                  size="xxl"
+                  as="button"
+                  type="button"
+                  classes="p-1! hover:text-primary-dark !shadow-none"
+                  :loading="deletingItem === item.id"
+                  @click="removeItem(item)"
+                />
+              </div>
+
+              <span
+                v-if="hasError === item.id"
+                class="text-sm font-semibold text-red"
+              >
+                Sorry, there isn't enough quantity available...
+              </span>
+            </div>
+          </div>
+          <div
+            v-if="item.add_on && item.add_on.in_basket"
+            class="relative -mt-1 flex pb-3"
+          >
+            <div class="hidden w-24 shrink-0 sm:block" />
+
+            <div class="flex flex-1 flex-col sm:ml-4">
+              <div>
+                <div
+                  class="flex items-center justify-between text-base font-medium text-gray-900"
+                >
+                  <h3 v-text="item.add_on.title" />
+
+                  <div class="flex items-center space-x-4">
                     <p
                       class="ml-4"
-                      v-text="item.line_price"
+                      v-text="`+${item.add_on.price}`"
                     />
-                  </div>
 
-                  <p
-                    v-if="item.variant !== ''"
-                    class="mt-1 text-sm text-gray-500"
-                    v-text="item.variant"
-                  />
-                </div>
-
-                <div class="flex flex-1 items-center justify-between">
-                  <div class="flex flex-1 items-center space-x-2">
-                    <p>Quantity</p>
-
-                    <QuantitySwitcher
-                      :quantity="item.quantity"
-                      @alter="(mode) => alterQuantity(item, mode)"
+                    <CoeliacButton
+                      theme="faded"
+                      icon-only
+                      :icon="TrashIcon"
+                      size="xxl"
+                      as="button"
+                      type="button"
+                      classes="p-1! hover:text-primary-dark !shadow-none"
+                      :loading="deletingAddOn === item.id"
+                      @click="removeAddOn(item)"
                     />
-                  </div>
-
-                  <CoeliacButton
-                    theme="faded"
-                    icon-only
-                    :icon="TrashIcon"
-                    size="xxl"
-                    as="button"
-                    type="button"
-                    classes="p-1! hover:text-primary-dark !shadow-none"
-                    :loading="deletingItem === item.id"
-                    @click="removeItem(item)"
-                  />
-                </div>
-
-                <span
-                  v-if="hasError === item.id"
-                  class="text-sm font-semibold text-red"
-                >
-                  Sorry, there isn't enough quantity available...
-                </span>
-              </div>
-            </div>
-            <div
-              v-if="item.add_on"
-              class="relative -mt-1 flex pb-3"
-            >
-              <div class="hidden w-24 shrink-0 sm:block" />
-
-              <div class="flex flex-1 flex-col sm:ml-4">
-                <div>
-                  <div
-                    class="flex items-center justify-between text-base font-medium text-gray-900"
-                  >
-                    <h3 v-text="item.add_on.title" />
-
-                    <div class="flex items-center space-x-4">
-                      <p
-                        class="ml-4"
-                        v-text="`+${item.add_on.price}`"
-                      />
-
-                      <CoeliacButton
-                        theme="faded"
-                        icon-only
-                        :icon="TrashIcon"
-                        size="xxl"
-                        as="button"
-                        type="button"
-                        classes="p-1! hover:text-primary-dark !shadow-none"
-                        :loading="deletingAddOn === item.id"
-                        @click="removeAddOn(item)"
-                      />
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </li>
-        </template>
+          </div>
+        </li>
       </ul>
     </div>
   </div>

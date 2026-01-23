@@ -97,7 +97,9 @@ export type ShopBasketItem = {
   description?: string;
   add_on?: {
     title: string;
+    description: string;
     price: string;
+    in_basket: boolean;
   };
   link: string;
   variant: string;

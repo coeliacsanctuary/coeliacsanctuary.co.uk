@@ -26,9 +26,11 @@ class ShopOrderItemResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->product_title,
-            'add_on' => $this->product_add_on_id ? [
-                'title' => $this->product_add_on_title,
-                'price' => Helpers::formatMoney(Money::GBP((int)$this->product_add_on_price)),
+            'add_on' => $product->addOns ? [
+                'title' => $product->addOns->name,
+                'description' => $product->addOns->description,
+                'price' => Helpers::formatMoney(Money::GBP((int) $product->addOns->current_price)),
+                'in_basket' => $this->product_add_on_id === $product->addOns->id,
             ] : null,
             'description' => $variant->short_description,
             'link' => $product->link,
