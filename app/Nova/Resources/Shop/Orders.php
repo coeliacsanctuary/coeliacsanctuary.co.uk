@@ -20,9 +20,11 @@ use Jpeters8889\CountryIcon\CountryIcon;
 use Jpeters8889\PrintAllOrders\PrintAllOrders;
 use Jpeters8889\ShopOrderOpenDispatchSlip\ShopOrderOpenDispatchSlip;
 use Jpeters8889\ShopOrderShippingAction\ShopOrderShippingAction;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\HasOneThrough;
 use Laravel\Nova\Fields\ID;
@@ -64,6 +66,8 @@ class Orders extends Resource
 
             Currency::make('Total', fn (ShopOrder $order) => $order->payment->total)->asMinorUnits(),
 
+            Boolean::make('Has Digital Add Ons', 'has_add_ons')->exceptOnForms(),
+
             Text::make('Payment Method', fn (ShopOrder $order) => $order->payment->payment_type_id),
 
             Currency::make('Processing Fee', fn (ShopOrder $order) => $order->payment->fee)->asMinorUnits(),
@@ -92,6 +96,10 @@ class Orders extends Resource
 
             DateTime::make('Order Date', fn (ShopOrder $order) => $order->payment->created_at),
 
+            Boolean::make('Has Digital Add Ons', 'has_add_ons')->exceptOnForms(),
+
+            DateTime::make('Add Ons Set At', 'add_ons_sent_at')->exceptOnForms(),
+
             CountryIcon::make('Country', fn (ShopOrder $order) => [
                 'name' => $order->postageCountry->country,
                 'code' => $order->postageCountry->iso_code,
@@ -105,21 +113,24 @@ class Orders extends Resource
 
             ShopOrderOpenDispatchSlip::make('', 'id'),
 
+            HasMany::make('Items', resource: OrderItem::class),
+
+            HasManyThrough::make('Add Ons', resource: ProductAddOn::class),
+
             HasOne::make('Customer', resource: Customer::class),
 
             HasOne::make('Address', resource: ShippingAddress::class),
 
-            HasOne::make('Payment', resource: Payment::class),
-
-            HasMany::make('Refunds', resource: PaymentRefund::class),
-
             HasOneThrough::make('Discount Code', resource: DiscountCode::class),
 
-            HasMany::make('Items', resource: OrderItem::class),
+            HasOne::make('Payment', resource: Payment::class),
 
             HasMany::make('Review', 'reviews', OrderReviews::class),
 
             HasMany::make('Where did you find us?', 'sources', OrderSourcesResource::class),
+
+            HasMany::make('Refunds', resource: PaymentRefund::class),
+
         ];
     }
 

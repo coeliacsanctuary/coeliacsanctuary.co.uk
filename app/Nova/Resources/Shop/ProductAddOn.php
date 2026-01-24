@@ -9,6 +9,7 @@ use App\Nova\Resource;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Files;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
@@ -38,6 +39,10 @@ class ProductAddOn extends Resource
     {
         return [
             ID::make()->fullWidth()->hide(),
+
+            ...$request->query('viaResource') === 'orders'
+                ? [BelongsTo::make('Product', resource: Products::class)->readonly()]
+                : [],
 
             Text::make('Name')->fullWidth(),
 

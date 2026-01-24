@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Str;
@@ -114,9 +115,21 @@ class ShopOrder extends Model
         return $this->belongsToMany(ShopSource::class, 'shop_order_sources', 'order_id', 'source_id');
     }
 
+    /** @return HasManyThrough<ShopProductAddOn, ShopOrderItem, $this> */
+    public function addOns(): HasManyThrough
+    {
+        return $this->hasManyThrough(ShopProductAddOn::class, ShopOrderItem::class, 'order_id', 'id', 'id', 'product_add_on_id');
+    }
+
     /** @return Attribute<bool, never> */
     public function hasAddOns(): Attribute
     {
-        return Attribute::get(fn () => $this->items()->whereNotNull('product_add_on_id')->exists());
+        return Attribute::get(function () {
+            if ($this->relationLoaded('items')) {
+                return $this->items->whereNotNull('product_add_on_id')->isNotEmpty();
+            }
+
+            return $this->items()->whereNotNull('product_add_on_id')->exists();
+        });
     }
 }
