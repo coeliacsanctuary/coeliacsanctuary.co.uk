@@ -66,6 +66,16 @@ class Products extends Resource
                     ->fullWidth()
                     ->rules(['required', 'max:200']),
 
+                ...$this->resource && $this->resource->variants->count() === 1 ? [
+                    Number::make('Quantity', 'variants.0.quantity', fn () => $this->resource->variants->first()->quantity)
+                        ->fullWidth()
+                        ->required()
+                        ->deferrable()
+                        ->hideWhenCreating()
+                        ->hideFromIndex()
+                        ->hideFromDetail(),
+                ] : [],
+
                 Slug::make('Slug')
                     ->from('Title')
                     ->hideWhenUpdating()

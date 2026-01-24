@@ -23,8 +23,8 @@ use Laravel\Nova\Resource as NovaResource;
  */
 abstract class Resource extends NovaResource
 {
-    /** @var Collection<int, Field> */
-    protected static Collection $deferrableFields;
+    /** @var Collection<int, Field> | null */
+    protected static ?Collection $deferrableFields = null;
 
     public static $clickAction = 'edit';
 
@@ -95,21 +95,43 @@ abstract class Resource extends NovaResource
 
     public static function fillForUpdate(NovaRequest $request, $model): array
     {
-        self::$deferrableFields = new Collection();
+        $parent = parent::fillForUpdate($request, $model);
 
         $model::saved(function ($model) use ($request): void {
             self::$deferrableFields->each(function (Field $field) use ($model, $request): void {
+                if (str_contains($field->attribute, '.')) {
+                    $currentModel = $model;
+
+                    $bits = explode('.', $field->attribute);
+
+                    foreach ($bits as $index => $bit) {
+                        if ($index + 1 === count($bits)) {
+                            $field->fillInto($request, $currentModel, $bit, str_replace('.', '_', $field->attribute));
+                            $currentModel->save();
+
+                            continue;
+                        }
+
+                        if (is_numeric($bit)) {
+                            $currentModel = $currentModel[$bit];
+                        } else {
+                            $currentModel = $currentModel->{$bit};
+                        }
+                    }
+                }
+
                 $field->fillInto($request, $model, $field->attribute, str_replace('.', '_', $field->attribute));
             });
         });
 
-        return parent::fill($request, $model);
+        return $parent;
     }
 
     protected static function fillFields(NovaRequest $request, $model, $fields): array
     {
-        /** @phpstan-ignore-next-line  */
-        self::$deferrableFields = $fields->filter(fn ($field) => property_exists($field, 'deferrable') && $field->deferrable);
+        if ( ! self::$deferrableFields || self::$deferrableFields->isEmpty()) {
+            self::$deferrableFields = $fields->filter(fn ($field) => property_exists($field, 'deferrable') && $field->deferrable);
+        }
 
         $fields = $fields->reject(fn ($field) => property_exists($field, 'deferrable') && $field->deferrable);
 
