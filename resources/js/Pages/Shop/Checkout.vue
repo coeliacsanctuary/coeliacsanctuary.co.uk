@@ -356,7 +356,7 @@ onMounted(() => {
         class="bg-primary-light/20!"
       >
         <div class="flow-root">
-          <ul class="-my-3 divide-y divide-gray-200">
+          <ul class="-my-3 divide-y divide-primary-dark/30">
             <CheckOutItemsRow
               v-for="item in basket.items"
               :key="item.id"

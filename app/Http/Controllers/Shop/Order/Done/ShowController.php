@@ -56,7 +56,7 @@ class ShowController
 
             OrderPaidEvent::dispatch($pendingOrder);
 
-            $pendingOrder->load(['items', 'items.product', 'items.variant', 'payment', 'address', 'discountCode']);
+            $pendingOrder->load(['items', 'items.product', 'items.product.addOns', 'items.variant', 'payment', 'address', 'discountCode']);
 
             Cookie::forget('basket_token');
             $request->session()->remove('discountCode');

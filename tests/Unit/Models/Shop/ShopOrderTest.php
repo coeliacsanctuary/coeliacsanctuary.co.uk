@@ -198,4 +198,19 @@ class ShopOrderTest extends TestCase
         $this->assertInstanceOf(Collection::class, $order->refresh()->sources);
         $this->assertTrue($order->sources->first()->is($source));
     }
+
+    #[Test]
+    public function itCanIdentifyWhenAnOrderHasAnyAdOns(): void
+    {
+        $order = $this->create(ShopOrder::class);
+        $item = $this->build(ShopOrderItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $this->assertFalse($order->has_add_ons);
+
+        $item->update(['product_add_on_id' => 123]);
+
+        $this->assertTrue($order->refresh()->has_add_ons);
+    }
 }

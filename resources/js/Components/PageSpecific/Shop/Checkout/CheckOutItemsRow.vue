@@ -114,7 +114,7 @@ watch(includeAddOn, () => {
 
     <div class="flex space-x-3 py-3">
       <div
-        class="h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200"
+        class="h-17 w-17 shrink-0 overflow-hidden rounded-md border border-gray-200 xs:h-20 xs:w-20 sm:h-24 sm:w-24"
       >
         <img
           :src="item.image"
@@ -123,7 +123,7 @@ watch(includeAddOn, () => {
         />
       </div>
 
-      <div class="ml-4 flex flex-1 flex-col">
+      <div class="flex flex-1 flex-col">
         <div>
           <div class="flex justify-between text-base">
             <h3>
@@ -186,7 +186,9 @@ watch(includeAddOn, () => {
       v-if="item.add_on"
       class="-my-2 flex space-x-3 pb-3"
     >
-      <div class="flex w-24 shrink-0 items-baseline justify-end">
+      <div
+        class="flex w-17 shrink-0 items-baseline justify-end xs:w-20 sm:w-24"
+      >
         <FormCheckbox
           v-model="includeAddOn"
           name="include_add_on"
@@ -197,9 +199,9 @@ watch(includeAddOn, () => {
         />
       </div>
 
-      <div class="ml-4 flex flex-1 flex-col">
+      <div class="flex flex-1 flex-col">
         <div>
-          <div class="flex items-center justify-between text-base">
+          <div class="flex justify-between text-base">
             <div class="flex flex-col">
               <h3 v-text="item.add_on.title" />
               <p

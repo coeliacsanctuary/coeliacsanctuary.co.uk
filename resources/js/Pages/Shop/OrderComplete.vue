@@ -6,7 +6,7 @@ import { OrderCompleteProps } from '@/types/Shop';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useScreensize from '@/composables/useScreensize';
 import useGoogleEvents from '@/composables/useGoogleEvents';
-import Heading from '../../../../vendor/laravel/nova/resources/js/components/Heading.vue';
+import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 
 const props = defineProps<{ order: OrderCompleteProps }>();
@@ -49,6 +49,14 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
             please check your Spam or Junk folders. If you still haven't
             received it please get in touch.
           </p>
+
+          <p
+            v-if="order.has_add_ons"
+            class="prose prose-lg mt-4 max-w-none text-center text-xl font-semibold"
+          >
+            You will receive a separate email with a link to access your digital
+            PDF Downloads.
+          </p>
         </div>
 
         <dl class="font-semibold">
@@ -62,40 +70,59 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
 
       <ul
         role="list"
-        class="divide-y divide-gray-200 border-t border-secondary"
+        class="divide-y divide-secondary/30 border-t border-secondary"
       >
         <li
           v-for="product in order.products"
           :key="product.id"
-          class="flex space-x-6 py-6 last:pb-0"
         >
-          <img
-            :src="product.image"
-            :alt="product.title"
-            class="h-24 w-24 flex-none rounded-md object-cover object-center"
-          />
-          <div class="flex-auto space-y-1">
-            <h3
-              class="font-semibold text-primary-dark md:max-lg:text-lg lg:text-xl"
-            >
-              <Link
-                :href="product.link"
-                target="_blank"
+          <div class="flex space-x-2 py-3 sm:space-x-4 sm:py-4">
+            <img
+              :src="product.image"
+              :alt="product.title"
+              class="h-17 w-17 flex-none rounded-md object-cover object-center xs:h-20 xs:w-20 sm:h-24 sm:w-24"
+            />
+            <div class="flex-auto space-y-1">
+              <h3
+                class="font-semibold text-primary-dark sm:max-lg:text-lg lg:text-xl"
               >
-                {{ product.title }}
-              </Link>
-            </h3>
+                <Link
+                  :href="product.link"
+                  target="_blank"
+                >
+                  {{ product.title }}
+                </Link>
+              </h3>
+              <p
+                v-if="product.variant"
+                class="text-grey-darker"
+                v-text="product.variant"
+              />
+              <p class="text-grey-darker">Quantity: {{ product.quantity }}</p>
+            </div>
             <p
-              v-if="product.variant"
-              class="text-grey-darker"
-            >
-              {{ product.variant }}
-            </p>
-            <p class="text-grey-darker">Quantity: {{ product.quantity }}</p>
+              class="flex-none font-semibold"
+              v-text="product.line_price"
+            />
           </div>
-          <p class="flex-none font-semibold">
-            {{ product.line_price }}
-          </p>
+
+          <div
+            v-if="product.add_on && product.add_on.in_basket"
+            class="-mt-2 flex space-x-2 pb-3 sm:space-x-4 sm:pb-4"
+          >
+            <span class="w-17 flex-none xs:w-20 sm:w-24" />
+
+            <div class="flex-auto space-y-1">
+              <h3
+                class="font-semibold"
+                v-text="product.add_on.title"
+              />
+            </div>
+            <p
+              class="flex-none font-semibold"
+              v-text="`+${product.add_on.price}`"
+            />
+          </div>
         </li>
       </ul>
 

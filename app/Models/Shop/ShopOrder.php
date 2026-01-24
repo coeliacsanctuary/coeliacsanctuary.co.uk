@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Shop;
 
 use App\Enums\Shop\OrderState;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,6 +14,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Str;
 
+/**
+ * @property bool $has_add_ons
+ */
 class ShopOrder extends Model
 {
     protected $casts = [
@@ -108,5 +112,11 @@ class ShopOrder extends Model
     public function sources(): BelongsToMany
     {
         return $this->belongsToMany(ShopSource::class, 'shop_order_sources', 'order_id', 'source_id');
+    }
+
+    /** @return Attribute<bool, never> */
+    public function hasAddOns(): Attribute
+    {
+        return Attribute::get(fn() => $this->items()->whereNotNull('product_add_on_id')->exists());
     }
 }

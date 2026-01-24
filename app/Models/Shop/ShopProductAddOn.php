@@ -14,6 +14,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $currentPrice
+ * @property int $current_price
  * @property null | int $oldPrice
  * @property array{current_price: string, old_price?: string} $price
  * @property Carbon $created_at
