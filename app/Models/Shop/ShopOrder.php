@@ -117,6 +117,6 @@ class ShopOrder extends Model
     /** @return Attribute<bool, never> */
     public function hasAddOns(): Attribute
     {
-        return Attribute::get(fn() => $this->items()->whereNotNull('product_add_on_id')->exists());
+        return Attribute::get(fn () => $this->items()->whereNotNull('product_add_on_id')->exists());
     }
 }
