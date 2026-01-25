@@ -6,7 +6,6 @@ namespace Tests\Unit\Models\Shop;
 
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDownloadLink;
-use App\Models\Shop\ShopOrderItem;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;

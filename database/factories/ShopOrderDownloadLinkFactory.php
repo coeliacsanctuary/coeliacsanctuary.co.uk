@@ -6,7 +6,6 @@ namespace Database\Factories;
 
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDownloadLink;
-use App\Models\Shop\ShopOrderItem;
 
 class ShopOrderDownloadLinkFactory extends Factory
 {
