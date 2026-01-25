@@ -7,6 +7,7 @@ namespace App\Mailables\Shop;
 use App\Infrastructure\MjmlMessage;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDownloadLink;
+use Illuminate\Support\Facades\URL;
 
 class DownloadYourProductsMailable extends BaseShopMailable
 {
@@ -20,7 +21,7 @@ class DownloadYourProductsMailable extends BaseShopMailable
 
     protected function generateLink(): string
     {
-        return 'foobar';
+        return URL::temporarySignedRoute('shop.download-my-products', $this->downloadLink->expires_at, ['downloadLink' => $this->downloadLink]);
     }
 
     public function toMail(): MjmlMessage

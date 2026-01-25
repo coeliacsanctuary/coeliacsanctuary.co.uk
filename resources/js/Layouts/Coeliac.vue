@@ -22,6 +22,8 @@ const isShop = computed(
     usePage().component.includes('Shop') &&
     usePage().component !== 'Shop/Checkout' &&
     usePage().component !== 'Shop/OrderComplete' &&
+    usePage().component !== 'Shop/DownloadMyProducts/DownloadMyProducts' &&
+    usePage().component !== 'Shop/DownloadMyProducts/Error' &&
     usePage().component !== 'Shop/ReviewMyOrder',
 );
 
