@@ -23,6 +23,7 @@ class ShopOrder extends Model
     protected $casts = [
         'state_id' => OrderState::class,
         'shipped_at' => 'datetime',
+        'add_ons_sent_at' => 'datetime',
         'sent_abandoned_basket_email' => 'boolean',
         'newsletter_signup' => 'boolean',
     ];
@@ -119,6 +120,12 @@ class ShopOrder extends Model
     public function addOns(): HasManyThrough
     {
         return $this->hasManyThrough(ShopProductAddOn::class, ShopOrderItem::class, 'order_id', 'id', 'id', 'product_add_on_id');
+    }
+
+    /** @return HasMany<ShopOrderDownloadLink, $this> */
+    public function downloadLinks(): HasMany
+    {
+        return $this->hasMany(ShopOrderDownloadLink::class, 'order_id');
     }
 
     /** @return Attribute<bool, never> */
