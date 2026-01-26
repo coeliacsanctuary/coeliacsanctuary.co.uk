@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 
 /**
  * @property bool $has_add_ons
+ * @property int | null $add_on_total
  */
 class ShopOrder extends Model
 {
@@ -137,6 +138,18 @@ class ShopOrder extends Model
             }
 
             return $this->items()->whereNotNull('product_add_on_id')->exists();
+        });
+    }
+
+    /** @return Attribute<null | int, never> */
+    public function addOnTotal(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->relationLoaded('items')) {
+                return $this->items->whereNotNull('product_add_on_id')->sum('product_add_on_price');
+            }
+
+            return $this->items()->whereNotNull('product_add_on_id')->sum('product_add_on_price');
         });
     }
 }

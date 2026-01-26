@@ -9,6 +9,7 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use App\Nova\Actions\Shop\OpenDispatchSlip;
 use App\Nova\Actions\Shop\RefundOrder;
+use App\Nova\Actions\Shop\ResendDownloadLink;
 use App\Nova\Actions\Shop\ResendOrder;
 use App\Nova\Actions\Shop\ResetPrintStatus;
 use App\Nova\Actions\Shop\ShipOrder;
@@ -160,6 +161,11 @@ class Orders extends Resource
                 ->sole()
                 ->confirmButtonText('Resend Order')
                 ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::SHIPPED),
+
+            ResendDownloadLink::make()
+                ->sole()
+                ->confirmButtonText('Send new Download Link')
+                ->canRun(fn ($request, ShopOrder $order) => $order->has_add_ons),
         ];
     }
 

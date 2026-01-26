@@ -66,7 +66,7 @@ class Products extends Resource
                     ->fullWidth()
                     ->rules(['required', 'max:200']),
 
-                ...$this->resource && $this->resource->variants->count() === 1 ? [
+                ...$this->resource && $this->resource->loadMissing(['variants']) && $this->resource->variants->count() === 1 ? [
                     Number::make('Quantity', 'variants.0.quantity', fn () => $this->resource->variants->first()->quantity)
                         ->fullWidth()
                         ->required()
