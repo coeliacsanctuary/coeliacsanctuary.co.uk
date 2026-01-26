@@ -21,6 +21,18 @@
         </mj-column>
     </mj-section>
 
+    @if($order->has_add_ons && isset($newOrder) && $newOrder === true)
+        <mj-section>
+            <mj-column>
+                <mj-text mj-class="inner">
+                        <span style="line-height:1.4; font-weight: bold; text-align: center;">
+                            You will receive a separate email with the download link for your digital cards.
+                        </span>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+    @endif
+
     @unless(isset($minimal) && $minimal === true)
         <mj-section mj-class="light-section">
             <mj-column>
@@ -59,18 +71,6 @@
                 </mj-text>
             </mj-column>
         </mj-section>
-
-        @if($order->has_add_ons && isset($newOrder))
-            <mj-section>
-                <mj-column>
-                    <mj-text mj-class="inner">
-                        <span style="line-height:1.4; font-weight: bold; text-align: center;">
-                            You will receive a separate email with the download link for your digital cards.
-                        </span>
-                    </mj-text>
-                </mj-column>
-            </mj-section>
-        @endunless
 
         <mj-section>
             <mj-column>

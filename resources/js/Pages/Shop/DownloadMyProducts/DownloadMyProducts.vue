@@ -102,11 +102,16 @@ const downloadAll = () => {
             - {{ item.variant_title }}
           </template>
         </h2>
+
         <h3
           v-if="item.variant_description"
           class="text-center font-semibold sm:text-left"
           v-html="item.variant_description"
         />
+
+        <p class="prose">
+          <strong v-text="item.add_on_name" /> - {{ item.add_on_description }}
+        </p>
       </div>
 
       <div class="flex justify-center">
