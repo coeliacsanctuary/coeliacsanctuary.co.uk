@@ -96,6 +96,16 @@ return [
             'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
             'bucket' => env('AWS_BACKUPS_BUCKET', 'prod-coeliac-backups'),
         ],
+
+        'system' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
+            'bucket' => env('AWS_MEDIA_BUCKET', 'prod-coeliac-media'),
+            'root' => 'system',
+            'visibility' => 'public',
+        ],
     ],
 
     /*
