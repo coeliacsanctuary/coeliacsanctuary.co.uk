@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Order;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\ApplyDiscountCodeAction;
 use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\Checkout\CreateShippingAddressAction;
@@ -28,6 +26,8 @@ use App\Models\Shop\ShopShippingAddress;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\RequestFactories\ShopCompleteOrderRequestFactory;
 use Tests\TestCase;
 
@@ -41,7 +41,7 @@ class StoreControllerTest extends TestCase
 
     protected ShopProductVariant $variant;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -187,6 +187,16 @@ class StoreControllerTest extends TestCase
         $this->assertSame(Str::length($this->basket->order_key), 8);
     }
 
+    #[Test]
+    public function itSetsTheSubscribeToNewsletterValue(): void
+    {
+        $this->makeRequest(['contact.subscribeToNewsletter' => true])->assertCreated();
+
+        $this->basket->refresh();
+
+        $this->assertTrue($this->basket->newsletter_signup);
+    }
+
     protected function makeRequest(array $data = [], array $session = []): TestResponse
     {
         return $this
@@ -218,6 +228,9 @@ class StoreControllerTest extends TestCase
             'contact email confirmation is bool' => [['contact.email_confirmation' => true], ['contact.email']],
             'contact email confirmation is not an email address' => [['contact.email_confirmation' => 'foobar'], ['contact.email']],
             'contact email and email confirmation do not match' => [['contact.email' => 'foo@bar.com', 'contact.email_confirmation' => 'bar@baz.com'], ['contact.email']],
+
+            // contact subscribe to newsletter
+            'contact subscribe to email is not a bool' => [['contact.subscribeToNewsletter' => 'foo'], ['contact.subscribeToNewsletter']],
 
             // shipping details
             'missing shipping object' => [['shipping' => null], 'shipping'],

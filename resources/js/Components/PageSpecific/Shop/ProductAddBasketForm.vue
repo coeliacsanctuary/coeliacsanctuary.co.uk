@@ -13,12 +13,17 @@ import useAddToBasket from '@/composables/useAddToBasket';
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import useScreensize from '@/composables/useScreensize';
 import ProductQuantitySwitcher from '@/Components/PageSpecific/Shop/ProductQuantitySwitcher.vue';
+import ProductSelectVariant from '@/Components/PageSpecific/Shop/ProductSelectVariant.vue';
+import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 
 const props = defineProps<{ product: ShopProductDetail }>();
 
 const selectedVariant: Ref<ShopProductVariant | undefined> = ref();
 const quantity: Ref<number> = ref(1);
 const isInStock: Ref<boolean> = ref(true);
+const includeAddOn: Ref<boolean> = ref(false);
+
+const emit = defineEmits(['selected-variant']);
 
 const checkStock = () => {
   if (!selectedVariant.value) {
@@ -34,6 +39,26 @@ const availableQuantity = computed(() => selectedVariant.value?.quantity);
 const { addBasketForm, prepareAddBasketForm, submitAddBasketForm } =
   useAddToBasket();
 
+const runningTotal = computed((): number => {
+  let total = props.product.prices.raw_price * quantity.value;
+
+  if (includeAddOn.value && props.product.add_ons) {
+    total += props.product.add_ons.price.raw_price;
+  }
+
+  return total / 100;
+});
+
+const buttonLabel = computed((): string => {
+  let label = 'Add To Basket';
+
+  if (runningTotal.value > 0) {
+    label += ` - £${runningTotal.value.toFixed(2)}`;
+  }
+
+  return label;
+});
+
 onMounted(() => {
   if (props.product.variants.length === 1) {
     // eslint-disable-next-line prefer-destructuring
@@ -45,6 +70,7 @@ onMounted(() => {
 });
 
 watch(selectedVariant, () => {
+  emit('selected-variant', selectedVariant.value);
   checkStock();
   prepareAddBasketForm(
     props.product.id,
@@ -52,6 +78,7 @@ watch(selectedVariant, () => {
   );
 
   quantity.value = 1;
+  includeAddOn.value = false;
 });
 
 watch(quantity, () => {
@@ -59,6 +86,16 @@ watch(quantity, () => {
     props.product.id,
     (<ShopProductVariant>selectedVariant.value).id,
     quantity.value,
+    includeAddOn.value,
+  );
+});
+
+watch(includeAddOn, () => {
+  prepareAddBasketForm(
+    props.product.id,
+    (<ShopProductVariant>selectedVariant.value).id,
+    quantity.value,
+    includeAddOn.value,
   );
 });
 
@@ -73,82 +110,17 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
 <template>
   <div
-    class="mt-3 w-full md:col-start-1 md:row-start-2 md:max-w-sm md:self-start"
+    class="mt-3 w-full md:col-start-1 md:row-start-2 md:max-w-lg md:self-start"
   >
     <form
       class="flex w-full flex-col space-y-3"
       @submit.prevent="addToBasket()"
     >
-      <div
-        v-if="product.variants.length > 1"
-        class="w-full sm:flex sm:justify-between"
-      >
-        <RadioGroup
-          v-model="selectedVariant"
-          class="w-full"
-        >
-          <label
-            class="block text-base leading-6 font-semibold text-primary-dark md:max-xl:text-lg xl:text-xl"
-          >
-            Select {{ product.variant_title }}
-            <span
-              class="text-red"
-              v-text="'*'"
-            />
-          </label>
-          <div class="mt-1 grid w-full grid-cols-1 gap-3 xxs:grid-cols-2">
-            <RadioGroupOption
-              v-for="variant in product.variants"
-              :key="variant.id"
-              v-slot="{ checked, disabled }"
-              as="template"
-              :value="variant"
-              :disabled="variant.quantity === 0"
-            >
-              <div
-                :class="[
-                  checked
-                    ? 'bg-primary-light/50 font-semibold ring-2 ring-primary'
-                    : 'ring-0',
-                  disabled ? 'border-grey-off/30' : 'border-grey-off',
-                  'relative block cursor-pointer rounded-lg border p-3 outline-hidden',
-                ]"
-              >
-                <RadioGroupLabel
-                  as="div"
-                  class="flex items-center space-x-2 text-base leading-none text-gray-900"
-                >
-                  <Icon
-                    v-if="variant.icon && variant.icon !== []"
-                    :name="variant.icon.component"
-                    :style="{ color: variant.icon.color }"
-                  />
-
-                  <div class="flex flex-1 justify-between">
-                    <span
-                      :class="{ 'text-grey-off': disabled }"
-                      v-text="variant.title"
-                    />
-                    <span
-                      v-if="disabled"
-                      class="text-xs text-grey-dark italic"
-                      v-text="'Out of stock'"
-                    />
-                  </div>
-                </RadioGroupLabel>
-
-                <RadioGroupDescription
-                  v-if="false"
-                  as="p"
-                  class="mt-1 text-sm text-gray-500"
-                >
-                  {{ variant.title }}
-                </RadioGroupDescription>
-              </div>
-            </RadioGroupOption>
-          </div>
-        </RadioGroup>
-      </div>
+      <ProductSelectVariant
+        v-model="selectedVariant"
+        :variants="product.variants"
+        :variant-label="product.variant_title"
+      />
 
       <div class="w-full *:w-full sm:flex sm:justify-between">
         <ProductQuantitySwitcher
@@ -164,6 +136,40 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
           "
           :error="addBasketForm.errors.quantity"
         />
+      </div>
+
+      <div v-if="availableQuantity && availableQuantity > 0 && product.add_ons">
+        <label
+          class="block text-base leading-6 font-semibold text-primary-dark sm:max-xl:text-lg xl:text-xl"
+        >
+          Add {{ product.add_ons.name }}
+        </label>
+
+        <div
+          class="flex w-full flex-col justify-between space-y-4 rounded-md border border-grey-off p-2 text-base text-gray-900 shadow-xs xs:flex-row xs:items-start xs:space-y-0 xs:space-x-2 md:text-lg"
+        >
+          <div class="flex-1">
+            Include a digital PDF of your travel card delivered straight to your
+            email once your order is complete.
+          </div>
+
+          <div
+            class="border-gray-off flex w-full items-center justify-end space-x-2 border-t pt-4 xs:w-auto xs:border-t-0 xs:pt-0"
+          >
+            <span
+              :class="includeAddOn ? 'text-lg font-semibold text-green' : ''"
+              v-text="`+${product.add_ons.price.current_price}`"
+            />
+
+            <FormCheckbox
+              v-model="includeAddOn"
+              name="include-add-on"
+              label=""
+              xl
+              hide-label
+            />
+          </div>
+        </div>
       </div>
 
       <div
@@ -188,7 +194,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
       <div class="flex items-center justify-center md:justify-between">
         <CoeliacButton
           as="button"
-          label="Add To Basket"
+          :label="buttonLabel"
           :disabled="!isInStock"
           :theme="isInStock ? 'secondary' : 'negative'"
           :icon="

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Console\Commands;
 
+use App\Models\Shop\ShopPrice;
 use PHPUnit\Framework\Attributes\Test;
-use App\Models\Shop\ShopProductPrice;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
@@ -14,7 +14,7 @@ class CleanUpOldProductPricesCommandTest extends TestCase
     #[Test]
     public function itDoesntDeleteProductPricesWithoutAnEndAt(): void
     {
-        $price = $this->create(ShopProductPrice::class);
+        $price = $this->create(ShopPrice::class);
 
         $this->assertNull($price->end_at);
 
@@ -26,7 +26,7 @@ class CleanUpOldProductPricesCommandTest extends TestCase
     #[Test]
     public function itDoesntDeleteProductPricesWithAnEndAtInTheFuture(): void
     {
-        $price = $this->create(ShopProductPrice::class, [
+        $price = $this->create(ShopPrice::class, [
             'end_at' => now()->addDay(),
         ]);
 
@@ -42,7 +42,7 @@ class CleanUpOldProductPricesCommandTest extends TestCase
     {
         TestTime::freeze();
 
-        $price = $this->create(ShopProductPrice::class, [
+        $price = $this->create(ShopPrice::class, [
             'end_at' => now(),
         ]);
 

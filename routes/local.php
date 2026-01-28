@@ -59,6 +59,35 @@ Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = nu
     return Mjml::new()->sidecar()->toHtml($content);
 });
 
+Route::get('/mail/shop/digital-download-ready/{orderId?}', function (?int $orderId = null): string {
+    $order = ShopOrder::query()
+        ->whereIn('state_id', [OrderState::PAID, OrderState::SHIPPED])
+        ->with(['items', 'items.product.media', 'payment', 'customer', 'address'])
+        ->withWhereHas('downloadLinks')
+        ->when(
+            $orderId,
+            fn (Builder $builder) => $builder->findOrFail($orderId),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $content = view('mailables.mjml.shop.download-your-products', [
+        'key' => 'foo',
+        'date' => now(),
+        'order' => $order,
+        'downloadLink' => URL::temporarySignedRoute('shop.download-my-products', now()->addMonth(), $order->downloadLinks->first()),
+        'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'notifiable' => $order->customer,
+        'relatedTitle' => 'products',
+        'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+            title: $product->title,
+            image: $product->main_image,
+            link: $product->link,
+        )),
+    ])->render();
+
+    return Mjml::new()->sidecar()->toHtml($content);
+});
+
 Route::get('/mail/shop/order-shipped/{orderId?}', function (?int $orderId = null): string {
     $order = ShopOrder::query()
         ->whereIn('state_id', [OrderState::PAID, OrderState::SHIPPED])
