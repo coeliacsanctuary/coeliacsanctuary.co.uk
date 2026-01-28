@@ -70,7 +70,7 @@ class GoogleMapService
         /** @var Response $imageRequest */
         $imageRequest = Http::get($this->getGoogleMapUrl($latLng, $params));
 
-        return $imageRequest->getBody()->getContents();
+        return $imageRequest->body();
     }
 
     protected function hasCachedImage(): bool
