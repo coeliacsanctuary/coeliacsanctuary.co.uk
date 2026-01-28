@@ -163,7 +163,7 @@ trait HasEateryDetails
 
             return [
                 'value' => (string) $average,
-                'label' => EateryReview::HOW_EXPENSIVE_LABELS[$average],
+                'label' => EateryReview::HOW_EXPENSIVE_LABELS[(int) $average],
             ];
         });
     }

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Actions\FetchAdsTxtAction;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
- Route::post('/', function (FetchAdsTxtAction $fetchAdsTxtAction) {
-     $fetchAdsTxtAction->handle();
+Route::post('/', function (FetchAdsTxtAction $fetchAdsTxtAction) {
+    $fetchAdsTxtAction->handle();
 
-     return response()->noContent();
- });
+    return response()->noContent();
+});
