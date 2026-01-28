@@ -50,7 +50,7 @@
         "openai-php/laravel": "^0.11",
         "outl1ne/nova-sortable": "^4.0.1",
         "saintsystems/nova-linkable-metrics": "^5.0.1",
-        "spatie/browsershot": "^4.4",
+        "spatie/browsershot": "^5.0.5",
         "spatie/eloquent-sortable": "^4.5.2",
         "spatie/geocoder": "^3.16.1",
         "spatie/laravel-backup": "^9.3.4",
@@ -64,8 +64,9 @@
         "spatie/mjml-sidecar": "^1.1.1",
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
-        "wnx/sidecar-browsershot": "^2.6.1",
-        "ziffmedia/nova-select-plus": "^2.1@beta"
+        "wnx/sidecar-browsershot": "^2.7.0",
+        "ziffmedia/nova-select-plus": "^2.1@beta",
+        "jpeters8889/refresh-ads-txt": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16.0",
@@ -174,6 +175,10 @@
         {
             "type": "path",
             "url": "./nova-components/WteNationwideBranchImport"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/RefreshAdsTxt"
         }
     ],
     "autoload": {
@@ -227,6 +232,11 @@
         "sort-packages": true,
         "allow-plugins": {
             "php-http/discovery": true
+        },
+        "audit": {
+            "ignore": {
+                "CVE-2025-14761": "S3 encryption is not used, and package is locked at this version due to sidecar"
+            }
         }
     },
     "minimum-stability": "dev",

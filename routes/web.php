@@ -8,6 +8,7 @@ use App\Http\Controllers\Contact\IndexController as ContactIndexController;
 use App\Http\Controllers\Contact\StoreController as ContactStoreController;
 use App\Http\Controllers\CookiePolicy\IndexController as CookiePolicyIndexController;
 use App\Http\Controllers\Email\ShowController as EmailShowController;
+use App\Http\Controllers\AdsTxt\GetController as AdsTxtGetController;
 use App\Http\Controllers\FallbackController;
 use App\Http\Controllers\Feed\IndexController as FeedController;
 use App\Http\Controllers\HomeController;
@@ -57,6 +58,7 @@ Route::get('email/{email:key}', EmailShowController::class)->name('email.show');
 
 Route::get('feed', FeedController::class)->name('feed');
 Route::get('sitemap.xml', SiteMapController::class)->name('sitemap');
+Route::get('ads.txt', AdsTxtGetController::class)->name('ads.txt');
 
 Route::get('static/map/{latlng}', StaticMapGetController::class)
     ->name('static.map')
