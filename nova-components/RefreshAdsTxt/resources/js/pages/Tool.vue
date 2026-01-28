@@ -7,7 +7,7 @@
     <Card class="p-8">
       <Button
         :loading="isLoading"
-        @click="refreshAdxTxt()"
+        @click="refreshAdsTxt()"
       >
         Reload ads.txt from mediavine
       </Button>
@@ -34,7 +34,7 @@ export default {
   }),
 
   methods: {
-    refreshAdxTxt() {
+    refreshAdsTxt() {
       this.isLoading = true;
       this.refreshed = false;
 
