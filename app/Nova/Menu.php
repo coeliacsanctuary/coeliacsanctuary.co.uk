@@ -89,6 +89,7 @@ class Menu
                 MenuItem::resource(AnnouncementResource::class),
                 MenuItem::resource(RedirectResource::class),
                 MenuItem::resource(SealiacOverviews::class),
+                MenuItem::make('Refresh ads.txt')->path('/refresh-ads-txt'),
             ])->icon('home'),
 
             MenuSection::make('Eating Out', [
