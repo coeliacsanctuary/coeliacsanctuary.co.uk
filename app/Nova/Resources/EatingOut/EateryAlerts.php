@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Nova\Resources\EatingOut;
 
 use App\Models\EatingOut\EateryAlert;
-use App\Models\EatingOut\EateryReport;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
 use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
 use App\Nova\Resource;
