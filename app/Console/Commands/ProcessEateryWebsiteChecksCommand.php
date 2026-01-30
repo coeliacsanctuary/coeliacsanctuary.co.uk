@@ -22,7 +22,6 @@ class ProcessEateryWebsiteChecksCommand extends Command
     public function handle(): void
     {
         Eatery::query()
-            ->withoutGlobalScopes()
             ->whereNotNull('website')
             ->where('website', '!=', '')
             ->where('closed_down', false)
@@ -41,7 +40,7 @@ class ProcessEateryWebsiteChecksCommand extends Command
                     ->orWhere('website_checked_at', '<', now()->subDays($this->intervalDays)))
             )
             ->leftJoin('wheretoeat_checks', 'wheretoeat.id', '=', 'wheretoeat_checks.wheretoeat_id')
-            ->orderByRaw('COALESCE(wheretoeat_checks.website_checked_at, "1970-01-01") ASC')
+            ->orderByRaw('COALESCE(wheretoeat_checks.website_checked_at, "1970-01-01") ASC, wheretoeat.id ASC')
             ->select('wheretoeat.*')
             ->limit($this->batchSize)
             ->get()
