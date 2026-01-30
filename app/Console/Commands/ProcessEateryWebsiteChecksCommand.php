@@ -30,9 +30,9 @@ class ProcessEateryWebsiteChecksCommand extends Command
                 'alerts',
                 fn (Builder $query) => $query
                 /** @var Builder<EateryAlert> $query */
-                    ->where('completed', false)
-                    ->where('ignored', false)
-                    ->where('type', 'website')
+                    ->where('completed', false) /** @phpstan-ignore-line */
+                    ->where('ignored', false) /** @phpstan-ignore-line */
+                    ->where('type', 'website') /** @phpstan-ignore-line */
             )
             ->where(
                 fn (Builder $query) => $query
@@ -40,7 +40,7 @@ class ProcessEateryWebsiteChecksCommand extends Command
                     ->orWhereHas('check', fn (Builder $query) => $query
                         /** @var Builder<EateryCheck> $query */
                         ->whereNull('website_checked_at')
-                        ->orWhere('website_checked_at', '<', now()->subDays($this->intervalDays)))
+                        ->orWhere('website_checked_at', '<', now()->subDays($this->intervalDays))) /** @phpstan-ignore-line */
             )
             ->leftJoin('wheretoeat_checks', 'wheretoeat.id', '=', 'wheretoeat_checks.wheretoeat_id')
             ->orderByRaw('COALESCE(wheretoeat_checks.website_checked_at, "1970-01-01") ASC, wheretoeat.id ASC')
