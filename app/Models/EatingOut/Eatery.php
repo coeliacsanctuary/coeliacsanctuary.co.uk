@@ -320,6 +320,18 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
         return $this->hasMany(EaterySuggestedEdit::class, 'wheretoeat_id', 'id');
     }
 
+    /** @return HasOne<EateryCheck, $this> */
+    public function check(): HasOne
+    {
+        return $this->hasOne(EateryCheck::class, 'wheretoeat_id');
+    }
+
+    /** @return HasMany<EateryAlert, $this> */
+    public function alerts(): HasMany
+    {
+        return $this->hasMany(EateryAlert::class, 'wheretoeat_id');
+    }
+
     /** @return Attribute<string, never> */
     public function fullName(): Attribute
     {
