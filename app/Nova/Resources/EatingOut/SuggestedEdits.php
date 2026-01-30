@@ -133,8 +133,8 @@ class SuggestedEdits extends Resource
         $suggestedValue = Text::make('Suggested Value', function (EaterySuggestedEdit $edit) {
             return match ($edit->field) {
                 'opening_times', 'features' => '',
-                'venue_type' => EateryVenueType::query()->findOrFail($edit->value)->venue_type,
-                'cuisine' => EateryCuisine::query()->findOrFail($edit->value)->cuisine,
+                'venue_type' => EateryVenueType::query()->where('venue_type', $edit->value)->orWhere('id', $edit->value)->firstOrFail()->venue_type,
+                'cuisine' => EateryCuisine::query()->where('cuisine', $edit->value)->orWhere('id', $edit->value)->firstOrFail()->cuisine,
                 'address' => Str::replace("\n", '<br />', $edit->value),
                 default => $edit->value,
             };
