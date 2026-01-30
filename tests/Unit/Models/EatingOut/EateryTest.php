@@ -10,6 +10,8 @@ use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryAlert;
+use App\Models\EatingOut\EateryCheck;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
@@ -333,5 +335,35 @@ class EateryTest extends TestCase
             ->create();
 
         $this->assertNull($eatery->sealiacOverview);
+    }
+
+    #[Test]
+    public function itCanHaveACheck(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->assertNull($eatery->check);
+
+        $check = $this->build(EateryCheck::class)->create([
+            'wheretoeat_id' => $eatery->id,
+        ]);
+
+        $this->assertNotNull($eatery->refresh()->check);
+        $this->assertTrue($check->is($eatery->check));
+    }
+
+    #[Test]
+    public function itCanHaveAlerts(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->assertEmpty($eatery->alerts);
+
+        $this->build(EateryAlert::class)
+            ->count(3)
+            ->on($eatery)
+            ->create();
+
+        $this->assertCount(3, $eatery->refresh()->alerts);
     }
 }

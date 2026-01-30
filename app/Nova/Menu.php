@@ -7,6 +7,7 @@ namespace App\Nova;
 use App\Enums\Shop\OrderState;
 use App\Models\Comments\Comment;
 use App\Models\EateryAiDescription;
+use App\Models\EatingOut\EateryAlert;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReport;
 use App\Models\EatingOut\EateryReview;
@@ -18,6 +19,7 @@ use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
+use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideEateries;
@@ -63,6 +65,7 @@ class Menu
     {
         $commentsCount = Comment::withoutGlobalScopes()->where('approved', false)->count();
         $reviewCount = EateryReview::withoutGlobalScopes()->where('approved', false)->count();
+        $alertsCount = EateryAlert::query()->where('completed', false)->where('ignored', false)->count();
         $reportsCount = EateryReport::query()->where('completed', false)->where('ignored', false)->count();
         $myPlacesCount = EateryRecommendation::query()->where('email', 'alisondwheatley@gmail.com')->where('completed', false)->where('ignored', false)->count();
         $recommendationsCount = EateryRecommendation::query()->where('email', '!=', 'alisondwheatley@gmail.com')->where('completed', false)->where('ignored', false)->count();
@@ -103,6 +106,7 @@ class Menu
 
                 MenuGroup::make('Feedback', [
                     MenuItem::resource(Reviews::class)->withBadgeIf(fn () => (string) $reviewCount, 'danger', fn () => $reviewCount > 0),
+                    MenuItem::resource(EateryAlerts::class)->withBadgeIf(fn () => (string) $alertsCount, 'danger', fn () => $alertsCount > 0),
                     MenuItem::resource(PlaceReports::class)->withBadgeIf(fn () => (string) $reportsCount, 'danger', fn () => $reportsCount > 0),
                     MenuItem::resource(SuggestedEdits::class)->withBadgeIf(fn () => (string) $suggestedEditsCount, 'danger', fn () => $suggestedEditsCount > 0),
                 ]),
