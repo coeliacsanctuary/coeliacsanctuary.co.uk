@@ -9,6 +9,7 @@ use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Countries;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
+use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EateryAttractionRestaurantResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
@@ -98,6 +99,7 @@ class ResourceRegistrar
             MyPlaces::class,
             PlaceRecommendations::class,
             PlaceReports::class,
+            EateryAlerts::class,
             SuggestedEdits::class,
             EaterySearch::class,
             EaterySearchHistory::class,

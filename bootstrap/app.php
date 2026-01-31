@@ -6,6 +6,7 @@ use App\Console\Commands\ApplyMassDiscountsCommand;
 use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
 use App\Console\Commands\CloseBasketsCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
+use App\Console\Commands\ProcessEateryWebsiteChecksCommand;
 use App\Console\Commands\PublishItemsCommand;
 use App\Console\Commands\RemoveCollectionsFromHomepageCommand;
 use App\Console\Commands\SendAbandonedBasketEmailCommand;
@@ -117,6 +118,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(PublishItemsCommand::class)->everyMinute();
         $schedule->command(RemoveCollectionsFromHomepageCommand::class)->everyMinute();
         $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
+        $schedule->command(ProcessEateryWebsiteChecksCommand::class)->daily();
 
         if (app()->environment('production')) {
             $schedule->command('about')->thenPing('http://beats.envoyer.io/heartbeat/oKkQ7etgPUsSnOW');

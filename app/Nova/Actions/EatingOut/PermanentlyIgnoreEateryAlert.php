@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Nova\Actions\EatingOut;
 
 use App\Models\EatingOut\EateryAlert;
-use App\Models\EatingOut\EateryRecommendation;
-use App\Models\EatingOut\EateryReport;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
@@ -15,9 +13,9 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 /**
  * @codeCoverageIgnore
  */
-class CompleteReportOrRecommendation extends Action
+class PermanentlyIgnoreEateryAlert extends Action
 {
-    public $name = 'Complete';
+    public $name = 'Permanently Ignore';
 
     public $withoutActionEvents = true;
 
@@ -28,12 +26,14 @@ class CompleteReportOrRecommendation extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $models->each(function (EateryRecommendation|EateryReport|EateryAlert $model): void {
-            if ($model->completed) {
+        $models->each(function (EateryAlert $model): void {
+            if ($model->ignored) {
                 return;
             }
 
-            $model->update(['completed' => true]);
+            $model->update(['ignored' => true]);
+
+            $model->eatery->check->update(['disable_website_check' => true]);
         });
     }
 
