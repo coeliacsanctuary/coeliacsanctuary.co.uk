@@ -65,6 +65,38 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
     }
 
     #[Test]
+    public function itExcludesEateriesWithWebsiteCheckDisabled(): void
+    {
+        $normalEatery = $this->create(Eatery::class, [
+            'website' => 'https://example.com',
+            'closed_down' => false,
+            'county_id' => $this->regularCounty->id,
+        ]);
+
+        $eateryWithDisableCheck = $this->create(Eatery::class, [
+            'website' => 'https://example.com',
+            'closed_down' => true,
+            'county_id' => $this->regularCounty->id,
+        ]);
+
+        $this->build(EateryCheck::class)->forEatery($eateryWithDisableCheck)->disableWebsiteCheck()->create();
+
+        $this->artisan('coeliac:process-eatery-website-checks');
+
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($normalEatery) {
+            $this->assertTrue($job->eatery->is($normalEatery));
+
+            return true;
+        });
+
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithDisableCheck) {
+            $this->assertFalse($job->eatery->is($eateryWithDisableCheck));
+
+            return false;
+        });
+    }
+
+    #[Test]
     public function itExcludesClosedDownEateries(): void
     {
         $openEatery = $this->create(Eatery::class, [

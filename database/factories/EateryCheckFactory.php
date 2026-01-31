@@ -16,8 +16,17 @@ class EateryCheckFactory extends Factory
         return [
             'wheretoeat_id' => static::factoryForModel(Eatery::class),
             'website_checked_at' => null,
+            'disable_website_check' => false,
             'google_checked_at' => null,
+            'disable_google_check' => false,
         ];
+    }
+
+    public function forEatery(Eatery $eatery): self
+    {
+        return $this->state(fn () => [
+            'wheretoeat_id' => $eatery->id,
+        ]);
     }
 
     public function checked(): self
@@ -39,6 +48,13 @@ class EateryCheckFactory extends Factory
     {
         return $this->state(fn () => [
             'google_checked_at' => now(),
+        ]);
+    }
+
+    public function disableWebsiteCheck(): self
+    {
+        return $this->state(fn () => [
+            'disable_website_check' => true,
         ]);
     }
 }
