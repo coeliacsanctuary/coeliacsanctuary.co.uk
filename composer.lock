@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f6f8fc661ddb73c4ac608efa1575611f",
+    "content-hash": "b9c852996c948c2f352dbbc0d03f38c1",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2048,7 +2048,7 @@
         },
         {
             "name": "jpeters8889/address-field",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/AddressField",
@@ -2084,7 +2084,7 @@
         },
         {
             "name": "jpeters8889/apex-charts",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ApexCharts",
@@ -2120,7 +2120,7 @@
         },
         {
             "name": "jpeters8889/body",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Body",
@@ -2156,7 +2156,7 @@
         },
         {
             "name": "jpeters8889/country-icon",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CountryIcon",
@@ -2192,7 +2192,7 @@
         },
         {
             "name": "jpeters8889/custom-styles",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CustomStyles",
@@ -2228,7 +2228,7 @@
         },
         {
             "name": "jpeters8889/eatery-location-search",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryLocationSearch",
@@ -2269,7 +2269,7 @@
         },
         {
             "name": "jpeters8889/eatery-opening-times",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryOpeningTimes",
@@ -2305,7 +2305,7 @@
         },
         {
             "name": "jpeters8889/hidden-writable-field",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/HiddenWritableField",
@@ -2346,7 +2346,7 @@
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/OrderDispatchSlip",
@@ -2382,7 +2382,7 @@
         },
         {
             "name": "jpeters8889/polymorphic-panel",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PolymorphicPanel",
@@ -2418,7 +2418,7 @@
         },
         {
             "name": "jpeters8889/print-all-orders",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PrintAllOrders",
@@ -2454,7 +2454,7 @@
         },
         {
             "name": "jpeters8889/refresh-ads-txt",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/RefreshAdsTxt",
@@ -2495,7 +2495,7 @@
         },
         {
             "name": "jpeters8889/shop-daily-stock",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopDailyStock",
@@ -2531,7 +2531,7 @@
         },
         {
             "name": "jpeters8889/shop-generate-resend-slip-button",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopGenerateResendSlipButton",
@@ -2572,7 +2572,7 @@
         },
         {
             "name": "jpeters8889/shop-order-open-dispatch-slip",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderOpenDispatchSlip",
@@ -2608,7 +2608,7 @@
         },
         {
             "name": "jpeters8889/shop-order-shipping-action",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderShippingAction",
@@ -2644,7 +2644,7 @@
         },
         {
             "name": "jpeters8889/wte-nationwide-branch-import",
-            "version": "dev-feature/ads-txt",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/WteNationwideBranchImport",
@@ -13046,33 +13046,33 @@
         },
         {
             "name": "laravel/boost",
-            "version": "v1.8.10",
+            "version": "v2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/boost.git",
-                "reference": "aad8b2a423b0a886c2ce7ee92abbfde69992ff32"
+                "reference": "6f7a9f70c1b2cc5fcef1585e8aa04b8546f150e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/boost/zipball/aad8b2a423b0a886c2ce7ee92abbfde69992ff32",
-                "reference": "aad8b2a423b0a886c2ce7ee92abbfde69992ff32",
+                "url": "https://api.github.com/repos/laravel/boost/zipball/6f7a9f70c1b2cc5fcef1585e8aa04b8546f150e9",
+                "reference": "6f7a9f70c1b2cc5fcef1585e8aa04b8546f150e9",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.9",
-                "illuminate/console": "^10.49.0|^11.45.3|^12.41.1",
-                "illuminate/contracts": "^10.49.0|^11.45.3|^12.41.1",
-                "illuminate/routing": "^10.49.0|^11.45.3|^12.41.1",
-                "illuminate/support": "^10.49.0|^11.45.3|^12.41.1",
+                "illuminate/console": "^11.45.3|^12.41.1",
+                "illuminate/contracts": "^11.45.3|^12.41.1",
+                "illuminate/routing": "^11.45.3|^12.41.1",
+                "illuminate/support": "^11.45.3|^12.41.1",
                 "laravel/mcp": "^0.5.1",
-                "laravel/prompts": "0.1.25|^0.3.6",
+                "laravel/prompts": "^0.3.10",
                 "laravel/roster": "^0.2.9",
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "require-dev": {
-                "laravel/pint": "^1.20.0",
+                "laravel/pint": "^1.27.0",
                 "mockery/mockery": "^1.6.12",
-                "orchestra/testbench": "^8.36.0|^9.15.0|^10.6",
+                "orchestra/testbench": "^9.15.0|^10.6",
                 "pestphp/pest": "^2.36.0|^3.8.4|^4.1.5",
                 "phpstan/phpstan": "^2.1.27",
                 "rector/rector": "^2.1"
@@ -13108,7 +13108,7 @@
                 "issues": "https://github.com/laravel/boost/issues",
                 "source": "https://github.com/laravel/boost"
             },
-            "time": "2026-01-14T14:51:16+00:00"
+            "time": "2026-01-28T13:53:50+00:00"
         },
         {
             "name": "laravel/mcp",
