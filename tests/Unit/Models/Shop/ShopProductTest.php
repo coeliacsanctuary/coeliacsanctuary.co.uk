@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopFeedback;
 use App\Models\Shop\ShopOrderReviewItem;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use App\Models\Shop\ShopProductVariant;
 use App\Models\Shop\ShopShippingMethod;
 use App\Models\Shop\TravelCardSearchTerm;
@@ -17,6 +16,7 @@ use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ShopProductTest extends TestCase
@@ -101,7 +101,7 @@ class ShopProductTest extends TestCase
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->count(5)
             ->forProduct($product)
             ->create();
@@ -154,12 +154,12 @@ class ShopProductTest extends TestCase
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->ended()
             ->create();
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->create();
 
@@ -171,14 +171,14 @@ class ShopProductTest extends TestCase
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->ended()
             ->create([
                 'price' => 200,
             ]);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->create([
                 'price' => 100,
@@ -192,14 +192,14 @@ class ShopProductTest extends TestCase
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->onSale()
             ->create([
                 'price' => 100,
             ]);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->create([
                 'price' => 200,
@@ -213,13 +213,13 @@ class ShopProductTest extends TestCase
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->create([
                 'price' => 100,
             ]);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->create([
                 'price' => 200,
@@ -233,20 +233,20 @@ class ShopProductTest extends TestCase
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->onSale()
             ->create([
                 'price' => 100,
             ]);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->create([
                 'price' => 200,
             ]);
 
-        $this->assertEquals(['current_price' => '£1.00', 'old_price' => '£2.00'], $product->price);
+        $this->assertEquals(['current_price' => '£1.00', 'old_price' => '£2.00', 'raw_price' => 100], $product->price);
     }
 
     #[Test]
@@ -254,18 +254,18 @@ class ShopProductTest extends TestCase
     {
         $product = $this->create(ShopProduct::class);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->create([
                 'price' => 100,
             ]);
 
-        $this->build(ShopProductPrice::class)
+        $this->build(ShopPrice::class)
             ->forProduct($product)
             ->create([
                 'price' => 200,
             ]);
 
-        $this->assertEquals(['current_price' => '£1.00'], $product->price);
+        $this->assertEquals(['current_price' => '£1.00', 'raw_price' => 100], $product->price);
     }
 }

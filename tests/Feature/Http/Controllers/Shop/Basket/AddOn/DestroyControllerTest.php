@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Controllers\Shop\Basket;
+namespace Tests\Feature\Http\Controllers\Shop\Basket\AddOn;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\ResolveBasketAction;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
+use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
 
-class DestroyController extends TestCase
+class DestroyControllerTest extends TestCase
 {
     protected ShopOrder $order;
 
@@ -23,6 +24,8 @@ class DestroyController extends TestCase
     protected ShopProduct $product;
 
     protected ShopProductVariant $variant;
+
+    protected ShopProductAddOn $addOn;
 
     protected function setUp(): void
     {
@@ -33,12 +36,15 @@ class DestroyController extends TestCase
         $this->order = ShopOrder::query()->create();
         $this->product = ShopProduct::query()->first();
         $this->variant = $this->product->variants->first();
+        $this->addOn = $this->create(ShopProductAddOn::class, ['product_id' => $this->product->id]);
 
-        $this->item = $this->create(ShopOrderItem::class, [
-            'order_id' => $this->order->id,
-            'product_id' => $this->product->id,
-            'product_variant_id' => $this->variant->id,
-        ]);
+        $this->item = $this->build(ShopOrderItem::class)
+            ->withAddOn($this->addOn)
+            ->create([
+                'order_id' => $this->order->id,
+                'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
+            ]);
     }
 
     #[Test]
@@ -66,21 +72,55 @@ class DestroyController extends TestCase
     }
 
     #[Test]
-    public function itRemovesTheShopOrderItemRow(): void
+    public function itReturnsNotFoundIfTheItemDoesntHaveAnAddOn(): void
     {
-        $this->makeRequest();
+        $this->item->update([
+            'product_add_on_id' => null,
+            'product_add_on_title' => null,
+            'product_add_on_price' => null,
+        ]);
 
-        $this->assertModelMissing($this->item);
+        $this->makeRequest()->assertNotFound();
     }
 
     #[Test]
-    public function itIncreasesTheProductQuantity(): void
+    public function itReturnsNotFoundIfTheProductDoesntHaveAnAddOn(): void
     {
-        $quantity = $this->variant->quantity;
+        $this->addOn->delete();
 
+        $this->makeRequest()->assertNotFound();
+    }
+
+    #[Test]
+    public function itReturnsNotFoundIfTheProductAddOnDoesntMatchTheItemAddOn(): void
+    {
+        $differentAddOn = $this->create(ShopProductAddOn::class);
+
+        $this->item->update([
+            'product_add_on_id' => $differentAddOn->id,
+        ]);
+
+        $this->makeRequest()->assertNotFound();
+    }
+
+    #[Test]
+    public function itRemovesTheAddOnFromTheOrderItem(): void
+    {
         $this->makeRequest();
 
-        $this->assertEquals($quantity + 1, $this->variant->refresh()->quantity);
+        $this->item->refresh();
+
+        $this->assertNull($this->item->product_add_on_id);
+        $this->assertNull($this->item->product_add_on_title);
+        $this->assertNull($this->item->product_add_on_price);
+    }
+
+    #[Test]
+    public function itDoesNotDeleteTheOrderItem(): void
+    {
+        $this->makeRequest();
+
+        $this->assertModelExists($this->item);
     }
 
     #[Test]
@@ -94,7 +134,7 @@ class DestroyController extends TestCase
     }
 
     #[Test]
-    public function itItRedirectsBack(): void
+    public function itRedirectsBack(): void
     {
         $this
             ->from(route('shop.product', ['product' => $this->product->slug]))
@@ -105,6 +145,6 @@ class DestroyController extends TestCase
     protected function makeRequest(?int $item = null): TestResponse
     {
         return $this->withCookie('basket_token', $this->order->token)
-            ->delete(route('shop.basket.remove', ['item' => $item ?? $this->item->id]));
+            ->delete(route('shop.basket.add-on.remove', ['item' => $item ?? $this->item->id]));
     }
 }

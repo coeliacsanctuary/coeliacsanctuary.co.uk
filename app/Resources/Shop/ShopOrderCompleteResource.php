@@ -63,6 +63,7 @@ class ShopOrderCompleteResource extends JsonResource
                 $shipping->country,
             ]),
             'payment' => $this->getPaymentDetails((string) $payment->payment_type_id),
+            'has_add_ons' => $this->has_add_ons,
             'event' => [
                 'transaction_id' => $this->order_key,
                 'value' => $payment->subtotal / 100,

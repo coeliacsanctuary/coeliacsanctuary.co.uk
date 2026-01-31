@@ -29,4 +29,10 @@ class ShopOrderItem extends Model
     {
         return $this->belongsTo(ShopProductVariant::class, 'product_variant_id');
     }
+
+    /** @return BelongsTo<ShopProductAddOn, $this> */
+    public function addOn(): BelongsTo
+    {
+        return $this->belongsTo(ShopProductAddOn::class, 'product_add_on_id');
+    }
 }

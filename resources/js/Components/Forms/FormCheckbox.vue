@@ -15,6 +15,7 @@ const value = defineModel<boolean>();
     :class="{ 'flex-row-reverse': layout === 'left' }"
   >
     <div
+      v-if="!hideLabel"
       :class="{ 'cursor-not-allowed': disabled }"
       class="min-w-0 flex-1"
     >

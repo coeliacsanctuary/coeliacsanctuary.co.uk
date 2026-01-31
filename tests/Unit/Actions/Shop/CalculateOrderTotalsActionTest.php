@@ -14,8 +14,8 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopPostagePrice;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Support\Collection;
@@ -82,9 +82,21 @@ class CalculateOrderTotalsActionTest extends TestCase
     #[Test]
     public function itCalculatesTheSubtotal(): void
     {
+
         ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
 
         $this->assertEquals(600, $subtotal);
+    }
+
+    #[Test]
+    public function itIncludesProductAddOnsInTheSubtotalCalculation(): void
+    {
+        $this->item->update(['product_add_on_price' => 50]);
+        $this->itemsCollection = $this->callAction(GetOrderItemsAction::class, $this->order)->collection;
+
+        ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+
+        $this->assertEquals(650, $subtotal);
     }
 
     #[Test]
@@ -146,7 +158,7 @@ class CalculateOrderTotalsActionTest extends TestCase
                 'shipping_method_id' => ShippingMethod::LARGE_PARCEL->value,
             ])
             ->has($this->build(ShopProductVariant::class), 'variants')
-            ->has($this->build(ShopProductPrice::class), 'prices')
+            ->has($this->build(ShopPrice::class), 'prices')
             ->create();
 
         $this->callAction(AddProductToBasketAction::class, $this->order, $product, $product->variants[0], 1);

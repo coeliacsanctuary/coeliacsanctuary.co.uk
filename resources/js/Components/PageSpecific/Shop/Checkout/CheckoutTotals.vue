@@ -82,8 +82,8 @@ watch(
 </script>
 
 <template>
-  <div class="w-full">
-    <dl class="mt-10 space-y-3">
+  <div class="mt-3 w-full border-t border-primary-dark/30 pt-3">
+    <dl class="space-y-3">
       <div class="flex justify-between">
         <dt class="lg:max-xl:text-lg xl:text-xl">Subtotal</dt>
         <dd

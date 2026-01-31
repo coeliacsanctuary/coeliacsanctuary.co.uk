@@ -44,6 +44,7 @@ const useShopStore = defineStore<'shop-checkout', State, Getters, Actions>(
           email: '',
           email_confirmation: '',
           phone: '',
+          subscribeToNewsletter: false,
         },
 
         shipping: {

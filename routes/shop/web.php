@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Shop\Basket\AddOn\DestroyController as BasketAddOnDestroyController;
+use App\Http\Controllers\Shop\Basket\AddOn\StoreController as BasketAddOnStoreController;
 use App\Http\Controllers\Shop\Basket\DestroyController as BasketDestroyController;
 use App\Http\Controllers\Shop\Basket\Discount\DestroyController as DiscountDestroyController;
 use App\Http\Controllers\Shop\Basket\Reopen\IndexController as ReopenBasketIndexController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\Shop\Basket\ShowController as BasketShowController;
 use App\Http\Controllers\Shop\Basket\StoreController as BasketStoreController;
 use App\Http\Controllers\Shop\Basket\UpdateController as BasketUpdateController;
 use App\Http\Controllers\Shop\Category\ShowController as CategoryShowController;
+use App\Http\Controllers\Shop\DownloadMyProducts\GetController as DownloadMyProductsController;
 use App\Http\Controllers\Shop\IndexController;
 use App\Http\Controllers\Shop\Order\DestroyController as OrderDestroyController;
 use App\Http\Controllers\Shop\Order\Done\ShowController as OrderDoneShowController;
@@ -43,6 +46,8 @@ Route::middleware(ShopBasketTokenMiddleware::class)->group(function (): void {
 
         Route::delete('/discount', DiscountDestroyController::class)->name('shop.basket.discount.remove');
         Route::delete('/{item}', BasketDestroyController::class)->name('shop.basket.remove');
+        Route::post('/{item}/add-on', BasketAddOnStoreController::class)->name('shop.basket.add-on.store');
+        Route::delete('/{item}/add-on', BasketAddOnDestroyController::class)->name('shop.basket.add-on.remove');
 
         Route::get('/{basket:token}/reopen', ReopenBasketIndexController::class)
             ->name('shop.basket.reopen');
@@ -64,4 +69,8 @@ Route::middleware(ShopBasketTokenMiddleware::class)->group(function (): void {
     Route::redirect('terms', '/terms-of-use#shop');
 
     Route::get('/{category}', CategoryShowController::class)->name('shop.category');
+
+    Route::get('/download-my-products/{downloadLink}', DownloadMyProductsController::class)
+        ->name('shop.download-my-products')
+        ->middleware(['signed']);
 });

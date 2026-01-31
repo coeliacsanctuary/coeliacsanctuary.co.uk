@@ -25,6 +25,7 @@ import pkg from 'i18n-iso-countries';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import Alert from '@/Components/PageSpecific/Shared/Alert.vue';
+import CheckOutItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsRow.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
@@ -354,7 +355,16 @@ onMounted(() => {
         theme="primary-light"
         class="bg-primary-light/20!"
       >
-        <CheckoutItems :items="basket.items" />
+        <div class="flow-root">
+          <ul class="-my-3 divide-y divide-primary-dark/30">
+            <CheckOutItemsRow
+              v-for="item in basket.items"
+              :key="item.id"
+              :item="item"
+            />
+          </ul>
+        </div>
+
         <CheckoutTotals
           :countries="countries as FormSelectOption[]"
           :selected-country="basket.selected_country"

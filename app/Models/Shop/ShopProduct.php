@@ -8,10 +8,10 @@ use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasSealiacOverview;
 use App\Concerns\LinkableModel;
+use App\Concerns\Shop\HasPrices;
 use App\Contracts\Search\IsSearchable;
 use App\Enums\Shop\OrderState;
 use App\Models\Media;
-use App\Support\Helpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -19,10 +19,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Laravel\Scout\Searchable;
-use Money\Money;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\SchemaOrg\Contracts\ReviewContract;
@@ -41,6 +40,10 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
 {
     use ClearsCache;
     use DisplaysMedia;
+
+    /** @use HasPrices<$this> */
+    use HasPrices;
+
     use HasSealiacOverview;
 
     /** @use InteractsWithMedia<Media> */
@@ -109,12 +112,6 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         return $this->hasMany(ShopProductVariant::class, 'product_id');
     }
 
-    /** @return HasMany<ShopProductPrice, $this> */
-    public function prices(): HasMany
-    {
-        return $this->hasMany(ShopProductPrice::class, 'product_id');
-    }
-
     /** @return HasMany<ShopFeedback, $this> */
     public function feedback(): HasMany
     {
@@ -125,6 +122,12 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     public function reviews(): HasMany
     {
         return $this->hasMany(ShopOrderReviewItem::class, 'product_id');
+    }
+
+    /** @return HasOne<ShopProductAddOn, $this> */
+    public function addOns(): HasOne
+    {
+        return $this->hasOne(ShopProductAddOn::class, 'product_id');
     }
 
     /** @return BelongsToMany<TravelCardSearchTerm, $this> */
@@ -141,47 +144,6 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     public function getScoutKey(): mixed
     {
         return $this->id;
-    }
-
-    /** @return Collection<int, ShopProductPrice> */
-    public function currentPrices(): Collection
-    {
-        return $this->prices
-            ->filter(fn (ShopProductPrice $price) => $price->start_at->lessThan(Carbon::now()))
-            ->filter(fn (ShopProductPrice $price) => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
-            ->sortByDesc('start_at');
-    }
-
-    /** @return Attribute<null | int<0, max>, never> */
-    public function currentPrice(): Attribute
-    {
-        return Attribute::get(fn () => $this->currentPrices()->first()?->price);
-    }
-
-    /** @return Attribute<null | int<0, max>, never> */
-    public function oldPrice(): Attribute
-    {
-        return Attribute::get(function () {
-            if ((bool) $this->currentPrices()->first()?->sale_price === true) {
-                return $this->currentPrices()->skip(1)->first()?->price;
-            }
-
-            return null;
-        });
-    }
-
-    /** @return Attribute<array{current_price: string, old_price?: string}, never> */
-    public function price(): Attribute
-    {
-        return Attribute::get(function () {
-            $rtr = ['current_price' => Helpers::formatMoney(Money::GBP($this->currentPrice))];
-
-            if ($this->oldPrice !== null && $this->oldPrice !== 0) {
-                $rtr['old_price'] = Helpers::formatMoney(Money::GBP($this->oldPrice));
-            }
-
-            return $rtr;
-        });
     }
 
     /** @return Attribute<float, never> */
