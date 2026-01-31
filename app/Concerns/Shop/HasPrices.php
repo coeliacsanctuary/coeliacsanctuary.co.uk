@@ -38,13 +38,13 @@ trait HasPrices
             ->sortByDesc('start_at');
     }
 
-    /** @return Attribute<null | int, never> */
+    /** @return Attribute<null | int<0, max>, never> */
     public function currentPrice(): Attribute
     {
         return Attribute::get(fn () => $this->currentPrices()->first()?->price);
     }
 
-    /** @return Attribute<null | int, never> */
+    /** @return Attribute<null | int<0, max>, never> */
     public function oldPrice(): Attribute
     {
         return Attribute::get(function () {
