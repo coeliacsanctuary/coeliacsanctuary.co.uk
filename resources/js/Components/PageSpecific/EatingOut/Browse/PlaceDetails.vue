@@ -229,6 +229,8 @@ const icon = computed((): string => {
           </div>
         </div>
       </template>
+
+      <div class="content_hint" />
     </Card>
   </Sidebar>
 </template>

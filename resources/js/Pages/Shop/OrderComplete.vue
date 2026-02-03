@@ -120,6 +120,27 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
           <dd v-text="order.postage" />
         </div>
 
+        <template v-if="order.fees.length > 0">
+          <div
+            v-for="(fee, x) in order.fees"
+            :key="x"
+            class="flex justify-between"
+          >
+            <dt
+              class="font-semibold"
+              v-text="fee.description ? fee.description : 'Customs Fee'"
+            />
+            <dd v-text="fee.fee" />
+          </div>
+          <div
+            v-if="order.fees.length > 1"
+            class="flex justify-between"
+          >
+            <dt class="font-semibold">Total Fees</dt>
+            <dd v-text="order.total_fees" />
+          </div>
+        </template>
+
         <div
           class="flex items-center justify-between border-t border-secondary pt-4 text-xl font-semibold"
         >

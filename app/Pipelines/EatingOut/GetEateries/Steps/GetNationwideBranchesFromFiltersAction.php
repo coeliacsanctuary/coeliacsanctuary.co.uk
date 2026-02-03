@@ -28,7 +28,7 @@ class GetNationwideBranchesFromFiltersAction implements GetEateriesPipelineActio
             ->selectRaw(Arr::join([
                 'wheretoeat.id as id',
                 'wheretoeat_nationwide_branches.id as branch_id',
-                'if(wheretoeat_nationwide_branches.name = "", concat(wheretoeat.name, "-", wheretoeat.id), concat(wheretoeat_nationwide_branches.name, " ", wheretoeat.name)) as ordering',
+                'if(wheretoeat_nationwide_branches.name = "" or wheretoeat_nationwide_branches.name is null, concat(wheretoeat.name, "-", wheretoeat.id), concat(wheretoeat_nationwide_branches.name, " ", wheretoeat.name)) as ordering',
             ], ','))
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {

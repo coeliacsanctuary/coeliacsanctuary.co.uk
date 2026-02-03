@@ -37,20 +37,8 @@
     </script>
 
     @if(config('coeliac.show_ads'))
-        <script type="text/javascript" async="async" data-noptimize="1" data-cfasync="false" src="https://scripts.scriptwrapper.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"></script>
+        <script type="text/javascript" async="async" data-noptimize="1" data-cfasync="false" src="//scripts.mediavine.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"></script>
     @endif
-
-    <script data-grow-initializer="">
-        !(function() {
-            window.growMe || ((window.growMe = function(e) {
-                window.growMe._.push(e);
-            }), (window.growMe._ = []));
-            var e = document.createElement('script');
-            (e.type = 'text/javascript'), (e.src = 'https://faves.grow.me/main.js'), (e.defer = !0), e.setAttribute('data-grow-faves-site-id', 'U2l0ZTo4YjkwNzRkNS1mYjI3LTRjODUtYTFjYS1mNzlhZjI4OTlmMzc=');
-            var t = document.getElementsByTagName('script')[0];
-            t.parentNode.insertBefore(e, t);
-        })();
-    </script>
 
     @vite('resources/js/app.ts')
     @inertiaHead

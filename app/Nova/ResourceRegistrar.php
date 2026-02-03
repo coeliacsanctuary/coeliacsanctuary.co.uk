@@ -9,6 +9,7 @@ use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Countries;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
+use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EateryAttractionRestaurantResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
@@ -40,6 +41,7 @@ use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
+use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderItem;
@@ -50,6 +52,7 @@ use App\Nova\Resources\Shop\OrderSourcesResource;
 use App\Nova\Resources\Shop\Payment;
 use App\Nova\Resources\Shop\PaymentRefund;
 use App\Nova\Resources\Shop\PostageArea;
+use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\ProductPrice;
 use App\Nova\Resources\Shop\Products;
@@ -95,6 +98,7 @@ class ResourceRegistrar
             MyPlaces::class,
             PlaceRecommendations::class,
             PlaceReports::class,
+            EateryAlerts::class,
             SuggestedEdits::class,
             EaterySearch::class,
             EaterySearchHistory::class,
@@ -127,7 +131,9 @@ class ResourceRegistrar
 
             // Shop Admin
             DiscountCode::class,
+            PostageCountry::class,
             PostagePrice::class,
+            CustomsFee::class,
             PostageArea::class,
             MassDiscount::class,
             OrderReviews::class,

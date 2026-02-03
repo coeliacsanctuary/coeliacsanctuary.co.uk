@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 
 class GetCountyListAction
 {
-    /** @return Collection<string, array{list: Collection<int, object{country: string, county: string, county_slug: string, branches: int, eateries: int, attractions: int, hotels: int}>, counties: int, count: int}> */
+    /** @return Collection<string, array{list: Collection<int, object{country: string, county: string, county_slug: string, branches: int, eateries: int, attractions: int, hotels: int}>, counties: int, eateries: int}> */
     public function handle(): Collection
     {
         $key = config('coeliac.cacheable.eating-out.index-counts');
@@ -18,12 +18,13 @@ class GetCountyListAction
         return Cache::rememberForever(
             $key,
             fn () => $this->getCountries()->map(function (Collection $places) {
+                /** @var Collection<int, object{country: string, county: string, county_slug: string, branches: int, eateries: int, attractions: int, hotels: int}> $list */
                 $list = $places->map(fn ($county) => $this->formatCountry($county));
 
                 return [
                     'list' => $list,
                     'counties' => $list->count(),
-                    'eateries' => $list->pluck('total')->sum(),
+                    'eateries' => (int) $list->pluck('total')->sum(),
                 ];
             })
         );

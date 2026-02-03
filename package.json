@@ -10,7 +10,9 @@
         "build-eatery-location-search": "cd nova-components/EateryLocationSearch && npm run dev",
         "build-eatery-location-search-prod": "cd nova-components/EateryLocationSearch && npm run prod",
         "build-wte-nationwide-branch-import": "cd nova-components/WteNationwideBranchImport && npm run dev",
-        "build-wte-nationwide-branch-import-prod": "cd nova-components/WteNationwideBranchImport && npm run prod"
+        "build-wte-nationwide-branch-import-prod": "cd nova-components/WteNationwideBranchImport && npm run prod",
+        "build-refresh-ads-txt": "cd nova-components/RefreshAdsTxt && npm run dev",
+        "build-refresh-ads-txt-prod": "cd nova-components/RefreshAdsTxt && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",

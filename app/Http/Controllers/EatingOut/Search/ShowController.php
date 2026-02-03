@@ -16,6 +16,7 @@ use App\Resources\EatingOut\EateryListResource;
 use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
 use App\Support\State\EatingOut\Search\LatLngState;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Response;
 
 class ShowController
@@ -35,7 +36,9 @@ class ShowController
             'features' => $request->has('filter.feature') ? explode(',', $request->string('filter.feature')->toString()) : null,
         ];
 
-        $eateries = $getSearchResultsPipeline->run($eaterySearchTerm, $filters);
+        $sort = $request->string('sort', 'distance')->toString();
+
+        $eateries = $getSearchResultsPipeline->run($eaterySearchTerm, $filters, $sort);
 
         /** @var EateryListResource | null $jsonResource */
         $jsonResource = $eateries->collect()->first();
@@ -72,13 +75,30 @@ class ShowController
             ->metaImage($getOpenGraphImageForRouteAction->handle('eatery'))
             ->doNotTrack()
             ->render('EatingOut/SearchResults', [
-                'term' => fn () => $eaterySearchTerm->term,
+                'term' => fn () => Str::apa($eaterySearchTerm->term),
                 'range' => fn () => $eaterySearchTerm->range,
                 'image' => fn () => $image,
                 'eateries' => fn () => $eateries,
                 'filters' => fn () => $getFiltersForSearchResults->usingSearchKey($eaterySearchTerm->key)->handle($filters),
                 'latlng' => fn () => $latLng?->toLatLng(),
                 'county' => fn () => $countyDetails,
+                'sort' => [
+                    'current' => $sort,
+                    'options' => [
+                        [
+                            'label' => 'Alphabetical',
+                            'value' => 'alphabetical',
+                        ],
+                        [
+                            'label' => 'Top Rated',
+                            'value' => 'rating',
+                        ],
+                        [
+                            'label' => 'Distance',
+                            'value' => 'distance',
+                        ],
+                    ],
+                ],
             ]);
     }
 }

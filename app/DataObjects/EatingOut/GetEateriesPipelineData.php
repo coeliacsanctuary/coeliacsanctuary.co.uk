@@ -27,6 +27,7 @@ class GetEateriesPipelineData
      */
     public function __construct(
         public array $filters,
+        public string $sort = 'alphabetical',
         public ?EateryTown $town = null,
         public ?EateryArea $area = null,
         public ?EaterySearchTerm $searchTerm = null,

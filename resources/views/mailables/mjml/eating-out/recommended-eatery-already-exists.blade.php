@@ -27,14 +27,36 @@ $hideRelatedGap = true;
     <mj-section>
         <mj-column>
             <mj-text mj-class="inner">Hey {{ $recommendation->name }}</mj-text>
-            <mj-text mj-class="inner">
-                Thanks for your suggestion to add <strong>{{ $eatery->name }}</strong> in {{ $eatery->town?->town }} to the Coeliac Sanctuary Eating
-                out guide, but {{ $eatery->name }} is already listed in my guide.
-            </mj-text>
-            <mj-text mj-class="inner">
-                Why don't you checkout <strong>{{ $eatery->name }}</strong> on Coeliac Sanctuary and leave a review to
-                let others know your experience eating out there?
-            </mj-text>
+            @if($branch)
+                @if($branch->name)
+                    <mj-text mj-class="inner">
+                        Thanks for your suggestion to add the <strong>{{ $branch->name }}</strong> branch of {{ $eatery->name }} in {{ $branch->town?->town }} to the Coeliac Sanctuary Eating
+                        out guide, but {{ $branch->name }} is already listed in my guide.
+                    </mj-text>
+                    <mj-text mj-class="inner">
+                        Why don't you checkout <strong>{{ $branch->name }}</strong> on Coeliac Sanctuary and leave a review to
+                        let others know your experience eating out there?
+                    </mj-text>
+                @else
+                    <mj-text mj-class="inner">
+                        Thanks for your suggestion to add the <strong>{{ $branch->town?->town }}</strong> branch of <strong>{{ $eatery->name }}</strong> to the Coeliac Sanctuary Eating
+                        out guide, but it is already listed in my guide.
+                    </mj-text>
+                    <mj-text mj-class="inner">
+                        Why don't you checkout <strong>{{ $branch->name }}</strong> on Coeliac Sanctuary and leave a review to
+                        let others know your experience eating out there?
+                    </mj-text>
+                @endif
+            @else
+                <mj-text mj-class="inner">
+                    Thanks for your suggestion to add <strong>{{ $eatery->name }}</strong> in {{ $eatery->town?->town }} to the Coeliac Sanctuary Eating
+                    out guide, but {{ $eatery->name }} is already listed in my guide.
+                </mj-text>
+                <mj-text mj-class="inner">
+                    Why don't you checkout <strong>{{ $eatery->name }}</strong> on Coeliac Sanctuary and leave a review to
+                    let others know your experience eating out there?
+                </mj-text>
+            @endif
             <mj-text mj-class="inner" padding-top="10px">
                 Thanks, Alison - Coeliac Sanctuary
             </mj-text>
@@ -43,8 +65,8 @@ $hideRelatedGap = true;
 
     <mj-section padding-bottom="20px">
         <mj-column>
-            <mj-button href="{{ $eatery->absoluteLink() }}">
-                Visit {{ $eatery->name }} and leave a review!
+            <mj-button href="{{ $branch ? $branch->absoluteLink() : $eatery->absoluteLink() }}">
+                Visit {{ $branch && $branch->name ? $branch->name : $eatery->name }} and leave a review!
             </mj-button>
         </mj-column>
     </mj-section>
@@ -53,7 +75,7 @@ $hideRelatedGap = true;
         <mj-section mj-class="light-section" padding-top="30px">
             <mj-column>
                 <mj-text mj-class="inner">
-                    <h2>Have you also visited these locations in {{ $eatery->town->town }}? Why not leave those a review too!</h2>
+                    <h2>Have you also visited these locations in {{ $branch ? $branch->town->town : $eatery->town->town }}? Why not leave those a review too!</h2>
                 </mj-text>
             </mj-column>
         </mj-section>

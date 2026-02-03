@@ -231,11 +231,11 @@ class Eateries extends Resource
                 Select::make('Venue Type', 'venue_type_id')
                     ->hideFromIndex()
                     ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_venue_type_id'))
-                    ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
-                        return match ($request->type_id) {
+                    ->dependsOn(['type_id'], function (Select $field, NovaRequest $request): void {
+                        match ($request->type_id) {
                             default => $field->options($this->getVenueTypes(1))->rules(['required']),
                             2 => $field->options($this->getVenueTypes(2))->rules(['required']),
-                            3 => $field->hide()->setValue(26),
+                            3 => $field->readonly()->options($this->getVenueTypes(3))->default(26)->setValue(26),
                         };
                     })
                     ->fullWidth(),
@@ -344,6 +344,7 @@ class Eateries extends Resource
             ->selectSub('select town from wheretoeat_towns where wheretoeat_towns.id = wheretoeat.town_id', 'order_town')
             ->with(['country', 'county',
                 'town' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
+                'area' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
                 'type', 'county.country', 'openingTimes',
             ])
             ->withCount(['reviews' => fn (Builder $builder) => $builder->withoutGlobalScopes()])

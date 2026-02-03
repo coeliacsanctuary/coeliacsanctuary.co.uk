@@ -23,6 +23,7 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -61,8 +62,8 @@ class StoreController
             );
 
             $discount = null;
-            ['subtotal' => $subtotal, 'postage' => $postage] = $calculateOrderTotalsAction->handle($collection, $country);
-            $total = $subtotal + $postage;
+            ['subtotal' => $subtotal, 'postage' => $postage, 'fees' => $fees, 'total_fees' => $totalFees] = $calculateOrderTotalsAction->handle($collection, $country);
+            $total = $subtotal + $postage + $totalFees;
 
             if ($request->session()->has('discountCode')) {
                 try {
@@ -90,6 +91,8 @@ class StoreController
                 'subtotal' => $subtotal,
                 'postage' => $postage,
                 'discount' => $discount ?? 0,
+                'fees_breakdown' => $fees,
+                'custom_fees' => $totalFees,
                 'total' => $total,
                 'created_at' => now(),
             ]);
@@ -105,6 +108,11 @@ class StoreController
 
             return new Response(status: Response::HTTP_CREATED);
         } catch (Exception $exception) {
+            Log::critical('checkout', [
+                'exception' => $exception->getMessage(),
+                'trace' => $exception->getTrace(),
+            ]);
+
             DB::rollBack();
 
             throw ValidationException::withMessages(['order' => 'There was an error completing your order, you have not been charged']);

@@ -32,6 +32,7 @@ class NearbyEateryResource extends JsonResource
             'venueType' => $this->venueType?->venue_type,
             'cuisine' => $this->cuisine?->cuisine,
             'average_expense' => $this->average_expense,
+            'is_fully_gf' => $this->features()->where('feature', '100% Gluten Free')->exists(),
         ];
     }
 }

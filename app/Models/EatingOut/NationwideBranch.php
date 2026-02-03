@@ -51,7 +51,7 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
     protected $table = 'wheretoeat_nationwide_branches';
 
     /** @phpstan-ignore-next-line */
-    protected $appends = ['formattedAddress', 'fullLocation'];
+    protected $appends = ['formatted_address', 'full_location'];
 
     protected $casts = [
         'lat' => 'float',
@@ -123,6 +123,28 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
             ->having('distance', '<=', $radius)
             ->addSelect(['id', 'wheretoeat_id', 'lat', 'lng', 'name', ...$additionalColumns])
             ->orderBy('distance');
+    }
+
+    /**
+     *@param Builder<self> $query
+     *@return Builder<self>
+     */
+    public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
+    {
+        return $this->selectRaw('(
+                        6371000 * acos (
+                          cos ( radians(?) )
+                          * cos( radians( wheretoeat_nationwide_branches.lat ) )
+                          * cos( radians( wheretoeat_nationwide_branches.lng ) - radians(?) )
+                          + sin ( radians(?) )
+                          * sin( radians( wheretoeat_nationwide_branches.lat ) )
+                        )
+                     ) AS distance', [
+            $latLng->lat,
+            $latLng->lng,
+            $latLng->lat,
+        ])
+            ->addSelect($columns);
     }
 
     /** @return BelongsTo<Eatery, $this> */

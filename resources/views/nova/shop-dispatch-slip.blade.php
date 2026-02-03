@@ -159,6 +159,20 @@ use Money\Money;
                 <td colspan="2"><strong>Postage</strong></td>
                 <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->postage)) }}</strong></td>
             </tr>
+            @if(count($order->payment->fees_breakdown ?? []) > 0)
+                @foreach($order->payment->fees_breakdown as $fee)
+                    <tr>
+                        <td colspan="2"><strong>{{ $fee['description'] ?? 'Customs Fee' }}</strong></td>
+                        <td><strong>{{ Helpers::formatMoney(Money::GBP($fee['fee'])) }}</strong></td>
+                    </tr>
+                @endforeach
+                @if(count($order->payment->fees_breakdown) > 1)
+                    <tr>
+                        <td colspan="2"><strong>Total Fees</strong></td>
+                        <td><strong>{{ Helpers::formatMoney(Money::GBP($order->payment->custom_fees)) }}</strong></td>
+                    </tr>
+                @endif
+            @endif
             <tr @if($resend) style="text-decoration: line-through" @endif>
                 <td colspan="2">
                     <strong @if($order->refunds->isNotEmpty()) style="text-decoration: line-through" @endif>

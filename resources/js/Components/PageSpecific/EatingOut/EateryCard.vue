@@ -82,7 +82,7 @@ useJourneyTracking().logWhenVisible(
           v-if="eatery.distance"
           class="prose-md prose max-w-none font-semibold"
         >
-          Around {{ eatery.distance }} miles away...
+          Around {{ eatery.distance?.toFixed(2) }} miles away...
         </p>
 
         <span class="mt-2 text-xs italic">

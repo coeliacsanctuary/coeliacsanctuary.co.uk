@@ -33,5 +33,6 @@ module.exports = {
         'vue/no-v-html': 'off',
         'vue/prop-name-casing': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
+        'vue/no-v-for-template-key-on-child': 'off',
     }
 }

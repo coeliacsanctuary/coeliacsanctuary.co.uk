@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Imports\WteNationwideImport;
 use App\Models\EatingOut\EateryArea;
+use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use Illuminate\Support\Facades\Route;
@@ -34,16 +35,27 @@ Route::post('add', function (NovaRequest $request) {
 
     $items = collect(json_decode($request->input('collection'), true));
 
+    $ids = [];
     $added = 0;
     $processed = 0;
     $errors = [];
 
     $items
         ->reject(fn ($item) => $item['error'])
-        ->each(function ($item) use (&$added, &$processed, &$errors): void {
+        ->each(function ($item) use (&$added, &$processed, &$errors, &$ids): void {
             $processed++;
 
             try {
+                if (data_get($item, 'county.id') === 'NEW') {
+                    $county = EateryCounty::withoutGlobalScopes()
+                        ->firstOrCreate([
+                            'county' => data_get($item, 'county.name'),
+                            'country_id' => data_get($item, 'country.id'),
+                        ]);
+
+                    data_set($item, 'county.id', $county->id);
+                }
+
                 if (data_get($item, 'town.id') === 'NEW') {
                     $town = EateryTown::withoutGlobalScopes()
                         ->firstOrCreate([
@@ -64,7 +76,7 @@ Route::post('add', function (NovaRequest $request) {
                     data_set($item, 'area.id', $area->id);
                 }
 
-                NationwideBranch::query()->create([
+                $row = NationwideBranch::query()->create([
                     'wheretoeat_id' => data_get($item, 'wheretoeat_id'),
                     'name' => data_get($item, 'name'),
                     'country_id' => data_get($item, 'country.id'),
@@ -77,11 +89,24 @@ Route::post('add', function (NovaRequest $request) {
                     'live' => data_get($item, 'live'),
                 ]);
 
+                $ids[] = $row->id;
+
                 $added++;
             } catch (Exception $exception) {
                 dd($exception, $item);
                 $errors[data_get($item, 'name')] = $exception->getMessage();
             }
+        });
+
+    sleep(1);
+
+    // set slugs
+    NationwideBranch::query()
+        ->whereIn('id', $ids)
+        ->lazy()
+        ->each(function (NationwideBranch $branch): void {
+            $branch->slug = $branch->generateSlug(true);
+            $branch->saveQuietly();
         });
 
     return inertia('WteNationwideBranchImport.Complete', [

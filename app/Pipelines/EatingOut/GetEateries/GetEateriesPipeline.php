@@ -29,7 +29,7 @@ class GetEateriesPipeline
      * @param  class-string<JsonResource>  $jsonResource
      * @return LengthAwarePaginator<int, JsonResource>
      */
-    public function run(EateryTown $town, array $filters, string $jsonResource = EateryListResource::class): LengthAwarePaginator
+    public function run(EateryTown $town, array $filters, string $sort = 'alphabetical', string $jsonResource = EateryListResource::class): LengthAwarePaginator
     {
         $pipes = [
             GetEateriesInTownAction::class,
@@ -46,6 +46,7 @@ class GetEateriesPipeline
         $pipelineData = new GetEateriesPipelineData(
             town: $town,
             filters: $filters,
+            sort: $sort,
             jsonResource: $jsonResource
         );
 

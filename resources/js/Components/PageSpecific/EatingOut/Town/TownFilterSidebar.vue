@@ -33,6 +33,8 @@ defineEmits(['filtersUpdated', 'sidebarClosed']);
       :filters="filters"
       @updated="$emit('filtersUpdated', $event)"
     />
+
+    <div class="content_desktop_hint"></div>
   </div>
 
   <Sidebar

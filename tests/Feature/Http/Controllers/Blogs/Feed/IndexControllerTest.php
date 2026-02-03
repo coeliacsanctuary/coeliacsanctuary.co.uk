@@ -37,7 +37,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itReturnsAnXmlHeader(): void
     {
-        $this->get(route('blog.feed'))->assertHeader('Content-Type', 'text/xml; charset=UTF-8');
+        $this->get(route('blog.feed'))->assertHeader('Content-Type', 'text/xml; charset=utf-8');
     }
 
     #[Test]
