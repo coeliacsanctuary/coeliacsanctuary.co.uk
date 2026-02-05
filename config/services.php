@@ -21,6 +21,11 @@ return [
         'key' => env('GET_ADDRESS_KEY'),
     ],
 
+    'idealPostcodes' => [
+        'url' => env('IDEAL_POSTCODES_URL', 'https://api.ideal-postcodes.co.uk/v1'),
+        'key' => env('IDEAL_POSTCODES_KEY'),
+    ],
+
     'google' => [
         'maps' => [
             'admin' => env('GOOGLE_MAP_ADMIN'),
