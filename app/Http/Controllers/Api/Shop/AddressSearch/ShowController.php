@@ -11,21 +11,15 @@ class ShowController
 {
     public function __invoke(string $id): array
     {
-        $response = Http::getAddress()
-            ->get("/get/{$id}")
-            ->json();
-
-        $line3 = Arr::get($response, 'line_3');
-
-        if (Arr::get($response, 'line_4') !== '') {
-            $line3 .= ', ' . Arr::get($response, 'line_4');
-        }
+        $response = Http::idealPostcodes()
+            ->get("/autocomplete/addresses/{$id}/gbr")
+            ->json('result');
 
         return [
             'address_1' => Arr::get($response, 'line_1'),
             'address_2' => Arr::get($response, 'line_2'),
-            'address_3' => $line3,
-            'town' => Arr::get($response, 'town_or_city'),
+            'address_3' => Arr::get($response, 'line_3'),
+            'town' => Arr::get($response, 'post_town'),
             'county' => Arr::get($response, 'county'),
             'postcode' => Arr::get($response, 'postcode'),
         ];
