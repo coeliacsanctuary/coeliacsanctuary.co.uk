@@ -83,6 +83,77 @@ class CheckEateryWebsiteActionTest extends TestCase
     }
 
     #[Test]
+    public function itRetriesWithGetWhenHeadReturns405AndGetSucceeds(): void
+    {
+        Http::fakeSequence()
+            ->push('Method Not Allowed', 405)
+            ->push('OK', 200);
+
+        $result = $this->callAction(CheckEateryWebsiteAction::class, $this->eatery);
+
+        $this->assertTrue($result->success);
+        $this->assertEquals(200, $result->statusCode);
+        Http::assertSentCount(2);
+    }
+
+    #[Test]
+    public function itRetriesWithGetWhenHeadReturns401AndGetSucceeds(): void
+    {
+        Http::fakeSequence()
+            ->push('Unauthorized', 401)
+            ->push('OK', 200);
+
+        $result = $this->callAction(CheckEateryWebsiteAction::class, $this->eatery);
+
+        $this->assertTrue($result->success);
+        $this->assertEquals(200, $result->statusCode);
+        Http::assertSentCount(2);
+    }
+
+    #[Test]
+    public function itRetriesWithGetWhenHeadReturns403AndGetSucceeds(): void
+    {
+        Http::fakeSequence()
+            ->push('Forbidden', 403)
+            ->push('OK', 200);
+
+        $result = $this->callAction(CheckEateryWebsiteAction::class, $this->eatery);
+
+        $this->assertTrue($result->success);
+        $this->assertEquals(200, $result->statusCode);
+        Http::assertSentCount(2);
+    }
+
+    #[Test]
+    public function itReturnsFailureWhenRetryWithGetAlsoFails(): void
+    {
+        Http::fakeSequence()
+            ->push('Method Not Allowed', 405)
+            ->push('Not Found', 404);
+
+        $result = $this->callAction(CheckEateryWebsiteAction::class, $this->eatery);
+
+        $this->assertFalse($result->success);
+        $this->assertEquals(404, $result->statusCode);
+        $this->assertEquals('HTTP 404 response', $result->errorMessage);
+        Http::assertSentCount(2);
+    }
+
+    #[Test]
+    public function itDoesNotRetryForNonRetryableStatusCodes(): void
+    {
+        Http::fake([
+            '*' => Http::response('Not Found', 404),
+        ]);
+
+        $result = $this->callAction(CheckEateryWebsiteAction::class, $this->eatery);
+
+        $this->assertFalse($result->success);
+        $this->assertEquals(404, $result->statusCode);
+        Http::assertSentCount(1);
+    }
+
+    #[Test]
     public function itReturnsFailureForConnectionErrors(): void
     {
         Http::fake([
