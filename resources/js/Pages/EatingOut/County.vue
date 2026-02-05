@@ -15,7 +15,6 @@ import CoeliacButton from '@/Components/CoeliacButton.vue';
 import Info from '@/Components/Info.vue';
 import { ref, useTemplateRef } from 'vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
-import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{
