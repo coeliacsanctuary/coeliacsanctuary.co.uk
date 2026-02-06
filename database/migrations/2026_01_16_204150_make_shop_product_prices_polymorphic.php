@@ -8,7 +8,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class () extends Migration {
+return new class() extends Migration
+{
     public function up(): void
     {
         Schema::table('shop_product_prices', function (Blueprint $table): void {
@@ -17,10 +18,12 @@ return new class () extends Migration {
 
             $table->index(['purchasable_type', 'purchasable_id']);
 
-            if ( ! app()->runningUnitTests()) {
-                $table->dropForeign('shop_product_prices_ibfk_1');
-            } else {
-                $table->dropForeign('shop_product_prices_product_id_foreign');
+            $keys = ['shop_product_prices_ibfk_1', 'shop_product_prices_product_id_foreign'];
+
+            foreach ($keys as $key) {
+                if (Schema::hasIndex('shop_product_prices', $key)) {
+                    $table->dropForeign($key);
+                }
             }
 
             $table->rename('shop_prices');
