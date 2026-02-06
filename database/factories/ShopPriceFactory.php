@@ -5,27 +5,29 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
+use App\Models\Shop\ShopPrice;
 use Carbon\Carbon;
 
-class ShopProductPriceFactory extends Factory
+class ShopPriceFactory extends Factory
 {
-    protected $model = ShopProductPrice::class;
+    protected $model = ShopPrice::class;
 
     public function definition()
     {
         return [
-            'product_id' => self::factoryForModel(ShopProduct::class),
+            'purchasable_type' => ShopProduct::class,
+            'purchasable_id' => self::factoryForModel(ShopProduct::class),
             'price' => $this->faker->numberBetween(100, 1500),
             'start_at' => Carbon::now()->subHour(),
             'sale_price' => false,
         ];
     }
 
-    public function forProduct(ShopProduct $product)
+    public function forProduct(ShopProduct $product): static
     {
         return $this->state(fn () => [
-            'product_id' => $product->id,
+            'purchasable_type' => ShopProduct::class,
+            'purchasable_id' => $product->id,
         ]);
     }
 

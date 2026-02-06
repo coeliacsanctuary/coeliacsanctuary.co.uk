@@ -32,10 +32,7 @@ export type ShopProductIndex = ShopBaseProduct & {
 export type ShopProductDetail = ShopBaseProduct & {
   id: number;
   long_description: string;
-  prices: {
-    current_price: string;
-    old_price?: string;
-  };
+  prices: ShopProductPrice;
   variant_title: string;
   variants: ShopProductVariant[];
   category: {
@@ -43,6 +40,19 @@ export type ShopProductDetail = ShopBaseProduct & {
     link: string;
   };
   rating?: ShopProductRating;
+  add_ons?: ShopProductAddOn;
+};
+
+export type ShopProductAddOn = {
+  name: string;
+  description: string;
+  price: ShopProductPrice;
+};
+
+export type ShopProductPrice = {
+  current_price: string;
+  raw_price: number;
+  old_price?: string;
 };
 
 export type ShopTravelCardProductDetail = ShopProductDetail & {
@@ -56,6 +66,7 @@ export type ShopTravelCardProductDetail = ShopProductDetail & {
 export type ShopProductVariant = {
   id: number;
   title: string;
+  description?: string;
   icon?: {
     component: string;
     color: string;
@@ -83,6 +94,13 @@ export type ShopProductReview = {
 export type ShopBasketItem = {
   id: number;
   title: string;
+  description?: string;
+  add_on?: {
+    title: string;
+    description: string;
+    price: string;
+    in_basket: boolean;
+  };
   link: string;
   variant: string;
   item_price: string;
@@ -96,6 +114,7 @@ export type CheckoutContactStep = {
   email: string;
   email_confirmation: string;
   phone?: string;
+  subscribeToNewsletter: boolean;
 };
 
 export type CheckoutShippingStep = {
@@ -133,6 +152,7 @@ export type OrderCompleteProps = {
   discount: null | { amount: string; name: string };
   products: ShopBasketItem[];
   payment: CardPayment | PaypalPayment;
+  has_add_ons: boolean;
   event: {
     [T: string]: string | number | [];
   };

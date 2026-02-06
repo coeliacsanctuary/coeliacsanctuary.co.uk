@@ -7,6 +7,7 @@ import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
 import useShopStore from '@/stores/useShopStore';
 import { CheckoutContactStep } from '@/types/Shop';
 import axios, { AxiosError } from 'axios';
+import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 
 defineProps<{ show: boolean; completed: boolean; error: boolean }>();
 const emits = defineEmits(['continue', 'toggle']);
@@ -139,6 +140,16 @@ watch(data, () => store.setUserDetails(data));
         autocomplete="phone"
         type="phone"
         borders
+      />
+
+      <FormCheckbox
+        v-model="data.subscribeToNewsletter"
+        :error="errors.subscribeToNewsletter"
+        label="Would you like to subscribe to my newsletter?"
+        name="subscribeToNewsletter"
+        layout="left"
+        xl
+        highlight
       />
 
       <CoeliacButton
