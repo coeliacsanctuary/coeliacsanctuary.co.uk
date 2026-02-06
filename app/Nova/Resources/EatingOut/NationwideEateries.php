@@ -115,7 +115,7 @@ class NationwideEateries extends Resource
         return $query
             ->withoutGlobalScopes()
             ->where('county_id', 1)
-            ->withCount(['nationwideBranches' => fn (Builder $builder) => $builder->where('live', true)])
+            ->withCount(['nationwideBranches' => fn (Builder $builder) => $builder->withoutGlobalScopes()])
             ->when($request->missing('orderByDirection'), fn (Builder $builder) => $builder->reorder('name'));
     }
 

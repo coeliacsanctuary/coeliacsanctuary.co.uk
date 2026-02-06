@@ -27,4 +27,4 @@ yarn-error.log
 /.junie
 /.claude
 /boost.json
-.ai/mcp/mcp.json
+/.ai/mcp/
