@@ -58,7 +58,9 @@ class EmailDataCast implements CastsAttributes
         }
 
         if (isset($data['order'])) {
-            $return['order'] = ShopOrder::query()->findOrFail($data['order']['id']);
+            $return['order'] = ShopOrder::query()
+                ->with(['items.product', 'items.variant', 'payment', 'refunds'])
+                ->findOrFail($data['order']['id']);
         }
 
         if (isset($data['notifiable'])) {
