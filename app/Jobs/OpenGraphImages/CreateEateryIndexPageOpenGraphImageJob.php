@@ -60,5 +60,6 @@ class CreateEateryIndexPageOpenGraphImageJob implements ShouldQueue
 
         $openGraphModel->clearMediaCollection();
         $openGraphModel->addMediaFromBase64($base64Image)->usingFileName('og-image.png')->toMediaCollection();
+        $openGraphModel->touch();
     }
 }
