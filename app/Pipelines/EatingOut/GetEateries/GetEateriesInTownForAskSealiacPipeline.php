@@ -22,7 +22,7 @@ class GetEateriesInTownForAskSealiacPipeline
     protected ?GetEateriesPipelineData $pipelineData = null;
 
     /**
-     * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
+     * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null }  $filters
      * @return Collection<int, Eatery>
      */
     public function run(EateryTown $town, array $filters, string $sort = 'alphabetical'): Collection
@@ -39,7 +39,7 @@ class GetEateriesInTownForAskSealiacPipeline
 
         $pipelineData = new GetEateriesPipelineData(
             town: $town,
-            filters: $filters,
+            filters: $filters, /** @phpstan-ignore-line */
             sort: $sort,
         );
 

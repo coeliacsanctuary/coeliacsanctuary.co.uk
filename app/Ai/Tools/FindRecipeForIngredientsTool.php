@@ -43,7 +43,7 @@ class FindRecipeForIngredientsTool extends BaseTool
             ->with(['media', 'nutrition'])
             ->when($request->filled('allergens'), fn (Builder $builder) => $builder->hasFreeFrom($request->array('allergens')))
             ->when($request->filled('meals'), fn (Builder $builder) => $builder->hasMeals($request->array('meals')))
-            ->when($request->filled('features'), fn (Builder $builder) => $builder->hasFeatures($request->array('allergens')))
+            ->when($request->filled('features'), fn (Builder $builder) => $builder->hasFeatures($request->array('features')))
             ->get()
             ->map($this->formatRecipe(...))
             ->toJson();

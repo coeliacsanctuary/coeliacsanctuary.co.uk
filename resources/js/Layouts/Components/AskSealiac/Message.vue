@@ -3,12 +3,15 @@ import { Role } from '@/types/AskSealiac';
 import SealiacSeal from '@/Svg/SealiacSeal.vue';
 import { computed } from 'vue';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { UserIcon } from '@heroicons/vue/16/solid';
 
 const props = defineProps<{ role: Role; message: string }>();
 
 const parsedMessage = computed(() =>
-  props.message ? (marked.parse(props.message) as string) : '',
+  props.message
+    ? DOMPurify.sanitize(marked.parse(props.message) as string)
+    : '',
 );
 </script>
 

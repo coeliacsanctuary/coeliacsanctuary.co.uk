@@ -59,7 +59,7 @@ class ListEateriesInTownTool extends BaseTool
         $town = EateryTown::query()->findOrFail($request->integer('town_id'));
 
         return app(GetEateriesInTownForAskSealiacPipeline::class)
-            ->run($town, $filters, $request->string('sort', 'alphabetical')->toString()) /** @phpstan-ignore-line */
+            ->run($town, $filters, $request->string('sort', 'alphabetical')->toString())
             ->map(function (Eatery $eatery) {
                 /** @var NationwideBranch | null $branch */
                 $branch = $eatery->relationLoaded('branch') ? $eatery->branch : null;
@@ -77,8 +77,7 @@ class ListEateriesInTownTool extends BaseTool
                 $eateryOpeningTimes = $eatery->openingTimes;
 
                 if ($branch) {
-                    /** @phpstan-ignore-next-line  */
-                    $eatery->reviews = $eatery->reviews->where('nationwide_branch_id', $branch->id);
+                    $reviews = $eatery->reviews->where('nationwide_branch_id', $branch->id);
                 }
 
                 return [
@@ -115,7 +114,7 @@ class ListEateriesInTownTool extends BaseTool
                     ],
                     'phone' => $eatery->phone,
                     'reviews' => [
-                        'number' => $eatery->reviews->count(),
+                        'number' => $reviews->count(),
                         'average' => $eatery->average_rating,
                         'expense' => $eatery->average_expense,
                         'admin_review' => $adminReview ? [

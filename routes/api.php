@@ -45,4 +45,4 @@ Route::post('sealiac-overview-feedback/{sealiacOverview}', SealiacOverviewFeedba
 
 Route::post('ask-sealiac', AskSealiacController::class)
     ->name('api.ask-sealiac')
-    ->middleware([StartSession::class]);
+    ->middleware([StartSession::class, 'throttle:10,1']);

@@ -31,7 +31,7 @@ class SearchBlogTagsTool extends BaseTool
                 'id' => $tag->id,
                 'tag' => $tag->tag,
                 'slug' => $tag->slug,
-                'link' => config('app.url') . '/' . route('blog.index.tags', $tag),
+                'link' => route('blog.index.tags', ['tag' => $tag->slug]),
             ])
             ->toJson();
     }

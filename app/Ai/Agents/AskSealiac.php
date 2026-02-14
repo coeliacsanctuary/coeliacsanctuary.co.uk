@@ -93,7 +93,7 @@ class AskSealiac implements Agent, Conversational, HasMiddleware, HasTools
     }
 
     /** @return Tool[] */
-    public function eateryTools(): array
+    protected function eateryTools(): array
     {
         return [
             new GetEateryCountriesTool(),

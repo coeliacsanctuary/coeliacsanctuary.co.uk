@@ -155,7 +155,9 @@ class AskSealiacTest extends TestCase
     public function itReturnsTheEateryTools(): void
     {
         $agent = new AskSealiac();
-        $tools = $agent->eateryTools();
+
+        $reflection = new ReflectionMethod($agent, 'eateryTools');
+        $tools = $reflection->invoke($agent);
 
         $this->assertCount(6, $tools);
         $this->assertInstanceOf(GetEateryCountriesTool::class, $tools[0]);
