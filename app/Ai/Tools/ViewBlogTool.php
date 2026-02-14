@@ -44,7 +44,7 @@ class ViewBlogTool extends BaseTool
             'updated' => $blog->updated_at,
         ];
 
-        return json_encode($data);
+        return (string) json_encode($data);
     }
 
     /**

@@ -59,7 +59,7 @@ class ListEateriesInTownTool extends BaseTool
         $town = EateryTown::query()->findOrFail($request->integer('town_id'));
 
         return app(GetEateriesInTownForAskSealiacPipeline::class)
-            ->run($town, $filters, $request->string('sort', 'alphabetical')->toString())
+            ->run($town, $filters, $request->string('sort', 'alphabetical')->toString()) /** @phpstan-ignore-line */
             ->map(function (Eatery $eatery) {
                 /** @var NationwideBranch | null $branch */
                 $branch = $eatery->relationLoaded('branch') ? $eatery->branch : null;

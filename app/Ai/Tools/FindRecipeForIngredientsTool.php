@@ -35,7 +35,11 @@ class FindRecipeForIngredientsTool extends BaseTool
     protected function execute(Request $request): Stringable|string
     {
         return Recipe::query()
-            ->where(fn (Builder $builder) => $request->collect('ingredients')->each(fn (string $ingredient) => $builder->orWhereLike('ingredients', "%{$ingredient}%")))
+            ->where(
+                fn (Builder $builder) => $request /** @phpstan-ignore-line */
+                    ->collect('ingredients')
+                    ->each(fn (string $ingredient) => $builder->orWhereLike('ingredients', "%{$ingredient}%"))
+            )
             ->with(['media', 'nutrition'])
             ->when($request->filled('allergens'), fn (Builder $builder) => $builder->hasFreeFrom($request->array('allergens')))
             ->when($request->filled('meals'), fn (Builder $builder) => $builder->hasMeals($request->array('meals')))

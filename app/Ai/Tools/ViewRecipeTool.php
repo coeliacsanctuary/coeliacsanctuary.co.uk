@@ -66,7 +66,7 @@ class ViewRecipeTool extends BaseTool
             ],
         ];
 
-        return json_encode($data);
+        return (string) json_encode($data);
     }
 
     /**

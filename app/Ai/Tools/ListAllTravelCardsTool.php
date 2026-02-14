@@ -54,7 +54,7 @@ class ListAllTravelCardsTool extends BaseTool
             'coeliac_plus_cards' => $plusCards,
         ];
 
-        return json_encode($data);
+        return (string) json_encode($data);
     }
 
     /**

@@ -10,7 +10,7 @@ class ChatContext
 {
     protected static ?string $chatId = null;
 
-    /** @var Collection<int, array{toolName: string, data: array<string, mixed>}>|null */
+    /** @var Collection<int, array{tool: string, data: array<string, mixed>}>|null */
     protected static ?Collection $toolUses = null;
 
     public static function setChatId(string $chatId): void
@@ -35,7 +35,7 @@ class ChatContext
         ]);
     }
 
-    /** @return Collection<int, array{toolName: string, data: array<string, mixed>}> */
+    /** @return Collection<int, array{tool: string, data: array<string, mixed>}> */
     public static function getToolUses(): Collection
     {
         return self::$toolUses ?? collect();

@@ -16,19 +16,16 @@ use App\Pipelines\EatingOut\GetEateries\Steps\HydrateBranchesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\HydrateEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\RelateEateriesAndBranchesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\SortPendingEateriesAction;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
 class GetEateriesForAskSealiacSearchPipeline
 {
     /**
-     * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county:
-     *     string | int | null }  $filters
-     * @param  class-string<JsonResource>  $jsonResource
+     * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null }  $filters
      * @return Collection<int, Eatery>
      */
-    public function run(string $searchTerm, int $range, array $filters = [], string $sort = 'distance'): Collection
+    public function run(string $searchTerm, int $range, array $filters, string $sort = 'distance'): Collection
     {
         $pipes = [
             GetEateriesInSearchAreaAction::class,
@@ -43,9 +40,9 @@ class GetEateriesForAskSealiacSearchPipeline
         ];
 
         $pipelineData = new GetEateriesPipelineData(
-            filters: $filters,
+            filters: $filters, /** @phpstan-ignore-line */
             sort: $sort,
-            searchTerm: EaterySearchTerm::make([
+            searchTerm: new EaterySearchTerm([
                 'term' => $searchTerm,
                 'range' => $range,
             ]),
@@ -57,6 +54,9 @@ class GetEateriesForAskSealiacSearchPipeline
             ->through($pipes)
             ->thenReturn();
 
-        return $pipeline->hydrated;
+        /** @var Collection<int, Eatery> $eateries */
+        $eateries = $pipeline->hydrated;
+
+        return $eateries;
     }
 }

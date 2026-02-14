@@ -49,6 +49,9 @@ class GetEateriesInTownForAskSealiacPipeline
             ->through($pipes)
             ->thenReturn();
 
-        return $pipeline->hydrated;
+        /** @var Collection<int, Eatery> $eateries */
+        $eateries = $pipeline->hydrated;
+
+        return $eateries;
     }
 }
