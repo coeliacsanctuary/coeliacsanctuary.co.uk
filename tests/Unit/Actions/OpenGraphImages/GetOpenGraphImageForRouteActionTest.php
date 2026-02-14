@@ -79,4 +79,44 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
 
         Bus::assertDispatched(CreateHomePageOpenGraphImageJob::class);
     }
+
+    #[Test]
+    public function itDispatchesTheJobIfTheImageIsOlderThan24Hours(): void
+    {
+        Bus::fake();
+        Storage::fake('media');
+
+        // Create an old open graph image (25 hours ago)
+        $openGraphImage = $this->create(OpenGraphImage::class, [
+            'route' => 'blog',
+            'updated_at' => now()->subHours(25),
+        ]);
+
+        $openGraphImage->addMedia(UploadedFile::fake()->image('og-image.jpg'))->toMediaCollection();
+
+        app(GetOpenGraphImageForRouteAction::class)->handle('blog');
+
+        // Should dispatch the job to regenerate the image since it's older than 24 hours
+        Bus::assertDispatched(CreateBlogIndexPageOpenGraphImageJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheJobIfTheImageIsNewerThan24Hours(): void
+    {
+        Bus::fake();
+        Storage::fake('media');
+
+        // Create a recent open graph image (23 hours ago)
+        $openGraphImage = $this->create(OpenGraphImage::class, [
+            'route' => 'recipe',
+            'updated_at' => now()->subHours(23),
+        ]);
+
+        $openGraphImage->addMedia(UploadedFile::fake()->image('og-image.jpg'))->toMediaCollection();
+
+        app(GetOpenGraphImageForRouteAction::class)->handle('recipe');
+
+        // Should NOT dispatch the job since the image is still fresh (within 24 hours)
+        Bus::assertNothingDispatched();
+    }
 }
