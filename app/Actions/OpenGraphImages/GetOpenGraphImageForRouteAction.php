@@ -22,6 +22,7 @@ class GetOpenGraphImageForRouteAction
         $model = OpenGraphImage::query()
             ->with(['media'])
             ->where('route', $route)
+            ->where('updated_at', '>=', now()->subHours(24))
             ->first();
 
         if ($model && $model->image_url) {
