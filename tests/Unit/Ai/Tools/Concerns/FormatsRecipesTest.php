@@ -37,8 +37,7 @@ class FormatsRecipesTest extends TestCase
 
         $recipe->load(['nutrition', 'media']);
 
-        $formatter = new class()
-        {
+        $formatter = new class () {
             use FormatsRecipes;
 
             public function format(Recipe $recipe): array

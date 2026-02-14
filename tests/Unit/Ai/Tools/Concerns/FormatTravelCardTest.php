@@ -32,8 +32,7 @@ class FormatTravelCardTest extends TestCase
 
         $product->load(['categories', 'reviews', 'prices', 'variants']);
 
-        $formatter = new class()
-        {
+        $formatter = new class () {
             use FormatTravelCard;
 
             public function format(ShopProduct $product): array
@@ -69,8 +68,7 @@ class FormatTravelCardTest extends TestCase
 
         $product->load(['categories', 'reviews', 'prices', 'variants']);
 
-        $formatter = new class()
-        {
+        $formatter = new class () {
             use FormatTravelCard;
 
             public function format(ShopProduct $product): array
