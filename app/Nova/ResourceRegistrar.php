@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Nova;
 
+use App\Nova\Resources\AskSealiac\AskSealiacChatMessageResource;
+use App\Nova\Resources\AskSealiac\AskSealiacChatResource;
 use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Countries;
@@ -85,6 +87,10 @@ class ResourceRegistrar
             PopupResource::class,
             AnnouncementResource::class,
             RedirectResource::class,
+
+            // Ask Sealiac
+            AskSealiacChatResource::class,
+            AskSealiacChatMessageResource::class,
 
             // Eating Out
             Eateries::class,

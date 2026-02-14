@@ -13,7 +13,7 @@ const processSearch = () => {
 
 <template>
   <form
-    class="mt-8 hidden flex-col items-center space-y-2 pr-2 transition md:flex"
+    class="mt-4 hidden flex-col items-center space-y-2 pr-2 transition md:flex lg:mt-0"
     @submit.prevent="processSearch()"
   >
     <div
