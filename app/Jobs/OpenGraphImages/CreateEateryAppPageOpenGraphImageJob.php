@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class CreateEateryAppPageOpenGraphImageJob implements ShouldQueue
 {
@@ -46,6 +47,14 @@ class CreateEateryAppPageOpenGraphImageJob implements ShouldQueue
         $branches = NationwideBranch::query()->count();
 
         $reviews = EateryReview::query()->count();
+
+        Log::debug('Creating Open Graph image for Eatery App page', [
+            'eateries' => $eateries + $branches,
+            'attractions' => $attractions,
+            'hotels' => $hotels,
+            'branches' => $branches,
+            'reviews' => $reviews,
+        ]);
 
         $base64Image = $renderOpenGraphImage->handle(view('og-images.eatery-app', [
             'eateries' => $eateries + $branches,
