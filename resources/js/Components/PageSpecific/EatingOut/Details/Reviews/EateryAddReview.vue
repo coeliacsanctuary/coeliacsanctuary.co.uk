@@ -315,12 +315,12 @@ const eateryName = (): string => {
 
         <p class="text-sm">
           We require your email in case we need to contact you about your
-          comment, your email address is NEVER displayed publicly with your
-          comment.
+          review, your email address is NEVER displayed publicly with your
+          review.
         </p>
 
         <p class="text-sm">
-          All comments need to be approved before they are shown on the website,
+          All reviews need to be approved before they are shown on the website,
           this usually takes no longer than 48 hours.
         </p>
       </div>

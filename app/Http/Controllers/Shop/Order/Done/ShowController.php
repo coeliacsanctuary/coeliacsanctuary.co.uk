@@ -17,6 +17,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Log;
 use Inertia\Response;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
@@ -55,7 +56,7 @@ class ShowController
 
             OrderPaidEvent::dispatch($pendingOrder);
 
-            $pendingOrder->load(['items', 'items.product', 'items.variant', 'payment', 'address', 'discountCode']);
+            $pendingOrder->load(['items', 'items.product', 'items.product.addOns', 'items.variant', 'payment', 'address', 'discountCode']);
 
             Cookie::forget('basket_token');
             $request->session()->remove('discountCode');
@@ -67,8 +68,19 @@ class ShowController
                     'order' => new ShopOrderCompleteResource($pendingOrder, $paymentMethod),
                 ]);
         } catch (ModelNotFoundException $exception) {
+            Log::error('Shop checkout done - ' . $exception->getMessage(), [
+                'order_id' => $pendingOrder->id ?? null,
+                'payment_intent_status' => $paymentIntentResponse->status ?? null,
+            ]);
+
             return new RedirectResponse(route('shop.index'));
         } catch (Exception $exception) {
+            Log::alert('Shop checkout fatal error - ' . $exception->getMessage(), [
+                'order_id' => $pendingOrder->id ?? null,
+                'payment_intent_status' => $paymentIntentResponse->status ?? null,
+                'trace' => $exception->getTrace(),
+            ]);
+
             return new RedirectResponse(route('shop.index'));
         }
     }

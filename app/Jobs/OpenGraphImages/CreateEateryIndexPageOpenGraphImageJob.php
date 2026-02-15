@@ -33,14 +33,17 @@ class CreateEateryIndexPageOpenGraphImageJob implements ShouldQueue
 
         $eateries = Eatery::query()
             ->where('type_id', EateryType::EATERY)
+            ->where('closed_down', false)
             ->count();
 
         $attractions = Eatery::query()
             ->where('type_id', EateryType::ATTRACTION)
+            ->where('closed_down', false)
             ->count();
 
         $hotels = Eatery::query()
             ->where('type_id', EateryType::HOTEL)
+            ->where('closed_down', false)
             ->count();
 
         $branches = NationwideBranch::query()->count();
@@ -60,5 +63,6 @@ class CreateEateryIndexPageOpenGraphImageJob implements ShouldQueue
 
         $openGraphModel->clearMediaCollection();
         $openGraphModel->addMediaFromBase64($base64Image)->usingFileName('og-image.png')->toMediaCollection();
+        $openGraphModel->touch();
     }
 }

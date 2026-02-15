@@ -8,6 +8,7 @@ import useShopStore from '@/stores/useShopStore';
 import { CheckoutContactStep } from '@/types/Shop';
 import axios, { AxiosError } from 'axios';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 
 defineProps<{ show: boolean; completed: boolean; error: boolean }>();
 const emits = defineEmits(['continue', 'toggle']);
@@ -162,6 +163,16 @@ const track = (label: string, value?: string) => {
         type="phone"
         borders
         @blur-sm="() => track('Phone', data.phone)"
+      />
+
+      <FormCheckbox
+        v-model="data.subscribeToNewsletter"
+        :error="errors.subscribeToNewsletter"
+        label="Would you like to subscribe to my newsletter?"
+        name="subscribeToNewsletter"
+        layout="left"
+        xl
+        highlight
       />
 
       <CoeliacButton
