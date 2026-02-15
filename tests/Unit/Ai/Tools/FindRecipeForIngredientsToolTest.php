@@ -9,12 +9,20 @@ use App\Ai\Tools\FindRecipeForIngredientsTool;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeNutrition;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FindRecipeForIngredientsToolTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake('media');
+    }
+
     protected function tearDown(): void
     {
         ChatContext::clear();

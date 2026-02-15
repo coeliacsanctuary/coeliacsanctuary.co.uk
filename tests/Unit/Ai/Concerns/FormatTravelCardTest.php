@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Ai\Tools\Concerns;
+namespace Tests\Unit\Ai\Concerns;
 
 use App\Ai\Concerns\FormatTravelCard;
 use App\Models\Shop\ShopCategory;
