@@ -123,7 +123,7 @@ Using the action pattern for reusability across jobs, Nova actions, and tinker.
    - `closed_down = false`
    - `county_id != 1`
    - No active alert exists for type 'website'
-   - `wheretoeat_checks.website_checked_at` is null OR > 30 days ago
+   - `wheretoeat_checks.website_checked_at` is null OR in a previous calendar month
 2. Order by `website_checked_at` ascending (oldest first)
 3. Limit to batch size (configurable constant, e.g., 150)
 4. For each eatery: dispatch `CheckSingleEateryWebsiteJob`
@@ -143,7 +143,7 @@ Using the action pattern for reusability across jobs, Nova actions, and tinker.
    - `closed_down = false`
    - `county_id != 1`
    - No active alert exists for type 'google_places'
-   - `wheretoeat_checks.google_checked_at` is null OR > 30/60 days ago
+   - `wheretoeat_checks.google_checked_at` is null OR in a previous calendar month
 2. Order by `google_checked_at` ascending
 3. Limit to batch size (configurable constant)
 4. For each eatery: dispatch `CheckSingleEateryGoogleJob`
@@ -209,13 +209,11 @@ Low priority - mainly for debugging. Shows last check timestamps per eatery.
 Keep it simple initially:
 
 ```php
-// In job classes as constants
-private const BATCH_SIZE = 150;
-private const WEBSITE_CHECK_INTERVAL_DAYS = 30;
-private const GOOGLE_CHECK_INTERVAL_DAYS = 30; // or 60
+// In command classes as properties
+protected int $batchSize = 150;
 ```
 
-Could move to config file later if needed.
+Each eatery is checked at most once per calendar month (not a rolling window). An eatery checked on Jan 31st is eligible again from Feb 1st. The batch size controls the nightly cap; the calendar month boundary controls the per-eatery frequency.
 
 ---
 

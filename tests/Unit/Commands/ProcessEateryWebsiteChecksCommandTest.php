@@ -223,38 +223,38 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
     }
 
     #[Test]
-    public function itExcludesRecentlyCheckedEateries(): void
+    public function itExcludesEateriesCheckedThisCalendarMonth(): void
     {
-        $recentlyChecked = $this->create(Eatery::class, [
+        $checkedThisMonth = $this->create(Eatery::class, [
             'website' => 'https://example.com',
             'county_id' => $this->regularCounty->id,
         ]);
 
         $this->build(EateryCheck::class)->create([
-            'wheretoeat_id' => $recentlyChecked->id,
-            'website_checked_at' => now()->subDays(15),
+            'wheretoeat_id' => $checkedThisMonth->id,
+            'website_checked_at' => now()->startOfMonth()->addDays(3),
         ]);
 
-        $notRecentlyChecked = $this->create(Eatery::class, [
+        $checkedLastMonth = $this->create(Eatery::class, [
             'website' => 'https://example.com',
             'county_id' => $this->regularCounty->id,
         ]);
 
         $this->build(EateryCheck::class)->create([
-            'wheretoeat_id' => $notRecentlyChecked->id,
-            'website_checked_at' => now()->subDays(45),
+            'wheretoeat_id' => $checkedLastMonth->id,
+            'website_checked_at' => now()->subMonthNoOverflow()->endOfMonth(),
         ]);
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($notRecentlyChecked) {
-            $this->assertTrue($job->eatery->is($notRecentlyChecked));
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($checkedLastMonth) {
+            $this->assertTrue($job->eatery->is($checkedLastMonth));
 
             return true;
         });
 
-        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($recentlyChecked) {
-            $this->assertFalse($job->eatery->is($recentlyChecked));
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($checkedThisMonth) {
+            $this->assertFalse($job->eatery->is($checkedThisMonth));
 
             return false;
         });
