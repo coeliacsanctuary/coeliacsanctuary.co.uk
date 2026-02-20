@@ -15,8 +15,6 @@ class ProcessEateryWebsiteChecksCommand extends Command
 {
     protected int $batchSize = 150;
 
-    protected int $intervalDays = 30;
-
     protected $signature = 'coeliac:process-eatery-website-checks';
 
     public function handle(): void
@@ -44,7 +42,7 @@ class ProcessEateryWebsiteChecksCommand extends Command
                             ->where(fn (Builder $query) => $query
                                 /** @var Builder<EateryCheck> $query */
                                 ->whereNull('website_checked_at')
-                                ->orWhere('website_checked_at', '<', now()->subDays($this->intervalDays))) /** @phpstan-ignore-line */
+                                ->orWhere('website_checked_at', '<', now()->startOfMonth())) /** @phpstan-ignore-line */
                     )
             )
             ->leftJoin('wheretoeat_checks', 'wheretoeat.id', '=', 'wheretoeat_checks.wheretoeat_id')
