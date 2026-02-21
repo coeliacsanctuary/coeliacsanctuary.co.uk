@@ -6,7 +6,6 @@ namespace Tests\Unit\Actions\Shop\TravelCardSearch;
 
 use App\Actions\Shop\TravelCardSearch\SearchTravelCardCountyOrLanguageAction;
 use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookupAction;
-use App\Support\Ai\Prompts\TravelCardLookupPrompt;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Resources\Chat;
 use OpenAI\Responses\Chat\CreateResponse;
@@ -45,7 +44,7 @@ class TravelCardSearchAiLookupTest extends TestCase
             $this->assertEquals('system', $message['role']);
 
             $this->assertArrayHasKey('content', $message);
-            $this->assertEquals(TravelCardLookupPrompt::get('foo'), $message['content']);
+            $this->assertEquals(view('prompts.travel-card-lookup', ['searchTerm' => 'foo'])->render(), $message['content']);
 
             return true;
         });

@@ -9,7 +9,6 @@ use App\Actions\Search\IdentifySearchAreasWithAiAction;
 use App\DataObjects\Search\SearchAiResponse;
 use App\Models\Search\Search;
 use App\Models\Search\SearchAiResponse as SearchAiResponseModel;
-use App\Support\Ai\Prompts\SearchPrompt;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Resources\Chat;
 use OpenAI\Responses\Chat\CreateResponse;
@@ -86,7 +85,7 @@ class IdentifySearchAreasWithAiActionTest extends TestCase
             $this->assertCount(1, $parameters['messages']);
             $this->assertArrayHasKeys(['role', 'content'], $parameters['messages'][0]);
             $this->assertEquals('system', $parameters['messages'][0]['role']);
-            $this->assertEquals(SearchPrompt::get('foo'), $parameters['messages'][0]['content']);
+            $this->assertEquals(view('prompts.search', ['searchTerm' => 'foo'])->render(), $parameters['messages'][0]['content']);
 
             return true;
         });
