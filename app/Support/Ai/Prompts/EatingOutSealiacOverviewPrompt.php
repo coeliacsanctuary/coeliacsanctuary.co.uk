@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Support\Ai\Prompts;
 
 use App\Models\EatingOut\Eatery;
-use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
 use Illuminate\Support\Collection;
@@ -16,147 +15,36 @@ class EatingOutSealiacOverviewPrompt
 
     protected ?NationwideBranch $branch = null;
 
-    /** @var Collection<int, string> */
-    protected Collection $promptSections;
-
     public function handle(Eatery $eatery, ?NationwideBranch $branch = null): string
     {
         $this->eatery = $eatery;
         $this->branch = $branch;
-        $this->promptSections = collect();
 
         $this->eatery->loadMissing(['area', 'town', 'county', 'country', 'adminReview', 'features', 'reviews']);
         $this->branch?->loadMissing(['area', 'town', 'county', 'country']);
 
-
-        $this->preparePromptIntroduction();
-        $this->addBaseEateryDetails();
-        $this->addAdminReviewIfAvailable();
-        $this->addVisitorReviews();
-        $this->addEateryFeatures();
-
-        return $this->promptSections->join("\n\n");
+        return view('prompts.eating-out-sealiac-overview', [
+            'eatery' => $this->eatery,
+            'branch' => $this->branch,
+            'eateryName' => $this->eateryName(),
+            'eateryLocation' => $this->eateryLocation(),
+            'averageExpense' => $this->averageExpense(),
+            'adminReview' => $this->adminReview(),
+            'visitorReviews' => $this->reviews(),
+        ])->render();
     }
 
-    protected function preparePromptIntroduction(): void
+    protected function adminReview(): ?EateryReview
     {
-        $this->promptSections->push(<<<'PROMPT'
-        Your role is "Sealiac the Seal", the mascot of a website called Coeliac Sanctuary.
-
-        Your job is to give your thoughts and feelings on visiting this gluten free eatery, and whether others should visit too,
-        using the below information and reviews.
-
-        Please use a friendly, fun tone.
-
-        If you response includes the phrase gluten free, please spell it without an hyphen, just 'gluten free'
-
-        Please return nothing else except your thoughts and feelings in 2 - 3 paragraphs.
-        PROMPT);
-    }
-
-    protected function addBaseEateryDetails(): void
-    {
-        $sections = [
-            '## Eatery Details',
-            "Eatery Name: {$this->eateryName()}",
-            "Eatery Location: {$this->eateryLocation()}",
-        ];
-
-        if ($this->averageExpense()) {
-            $sections[] = "Average Value for Money Rating: {$this->averageExpense()['label']}";
+        if ( ! $this->eatery->adminReview) {
+            return null;
         }
 
-        if ($this->eatery->average_rating) {
-            $sections[] = "Average Rating: {$this->eatery->average_rating} out of 5 stars";
+        if ($this->branch && $this->eatery->adminReview->nationwide_branch_id !== $this->branch->id) {
+            return null;
         }
 
-        $this->promptSections->push(collect($sections)->join("\n"));
-    }
-
-    protected function addAdminReviewIfAvailable(): void
-    {
-        if ( ! $this->eatery->adminReview || ($this->branch && $this->eatery->adminReview->nationwide_branch_id !== $this->branch->id)) {
-            return;
-        }
-
-        $adminReview = [
-            '## Coeliac Sanctuary Team Reviews',
-            '',
-            ...$this->formatReview($this->eatery->adminReview),
-        ];
-
-        $this->promptSections->push(collect($adminReview)->join("\n"));
-    }
-
-    protected function addVisitorReviews(): void
-    {
-        if ($this->reviews()->isEmpty()) {
-            return;
-        }
-
-        $reviews = $this->reviews()
-            ->map($this->formatReview(...))
-            ->map(fn (array $review) => [
-                ...$review,
-                '------',
-            ])
-            ->flatten()
-            ->toArray();
-
-        $sections = [
-            '## Website Visitor Reviews',
-            '',
-            ...$reviews,
-        ];
-
-        $this->promptSections->push(collect($sections)->join("\n"));
-    }
-
-    protected function addEateryFeatures(): void
-    {
-        if ($this->eatery->features->isEmpty()) {
-            return;
-        }
-
-        $features = $this->eatery->features->map(fn (EateryFeature $feature) => "- {$feature->feature}")->toArray();
-
-        $sections = [
-            '## Features of this eatery listed on our website:',
-            '',
-            ...$features,
-        ];
-
-        $this->promptSections->push(collect($sections)->join("\n"));
-    }
-
-    protected function formatReview(EateryReview $review): array
-    {
-        $sections = [];
-
-        if ($review->service_rating) {
-            $sections[] = "Service Rating: {$review->service_rating}";
-        }
-
-        if ($review->food_rating) {
-            $sections[] = "Food Rating: {$review->food_rating}";
-        }
-
-        if ($review->price) {
-            $sections[] = "Value for Money: {$review->price['label']}";
-        }
-
-        if ($review->branch_name && ! $this->branch) {
-            $sections[] = "Branch Name: {$review->branch_name}";
-        }
-
-        return [
-            ...$sections,
-            "Overall Rating: {$review->rating} out of 5 stars.",
-            '',
-            $review->review,
-            '',
-            "Published: {$review->created_at}",
-        ];
+        return $this->eatery->adminReview;
     }
 
     protected function eateryName(): string

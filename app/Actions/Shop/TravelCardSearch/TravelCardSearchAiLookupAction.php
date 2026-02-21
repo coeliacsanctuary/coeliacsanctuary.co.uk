@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop\TravelCardSearch;
 
-use App\Support\Ai\Prompts\TravelCardLookupPrompt;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -20,7 +19,10 @@ class TravelCardSearchAiLookupAction
             $result = OpenAI::chat()->create([
                 'model' => 'gpt-3.5-turbo-1106',
                 'messages' => [
-                    ['role' => 'system', 'content' => TravelCardLookupPrompt::get($searchTerm)],
+                    [
+                        'role' => 'system',
+                        'content' => view('prompts.travel-card-lookup', ['searchTerm' => $searchTerm])->render(),
+                    ],
                 ],
             ]);
 
