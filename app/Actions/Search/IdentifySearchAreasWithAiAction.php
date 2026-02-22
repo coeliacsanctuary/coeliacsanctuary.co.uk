@@ -6,7 +6,6 @@ namespace App\Actions\Search;
 
 use App\DataObjects\Search\SearchAiResponse;
 use App\Models\Search\Search;
-use App\Support\Ai\Prompts\SearchPrompt;
 use OpenAI\Laravel\Facades\OpenAI;
 use Throwable;
 
@@ -22,7 +21,10 @@ class IdentifySearchAreasWithAiAction
             $result = OpenAI::chat()->create([
                 'model' => 'gpt-3.5-turbo-1106',
                 'messages' => [
-                    ['role' => 'system', 'content' => SearchPrompt::get($search->term)],
+                    [
+                        'role' => 'system',
+                        'content' => view('prompts.search', ['searchTerm' => $search->term])->render(),
+                    ],
                 ],
             ]);
 

@@ -10,6 +10,7 @@ use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
 use App\Nova\Actions\EatingOut\ConvertRecommendationToEatery;
+use App\Nova\Actions\EatingOut\IgnoreAndSendAddedToSmallBusinessBlog;
 use App\Nova\Actions\EatingOut\IgnoreAndSendPlaceAlreadyExists;
 use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
 use App\Nova\Resource;
@@ -119,7 +120,7 @@ class PlaceRecommendations extends Resource
             ->values()
             ->map(fn (Eatery|NationwideBranch $location) => [
                 'value' => $location->wheretoeat_id ? "{$location->wheretoeat_id}:{$location->id}" : "{$location->id}:",
-                'label' => $location->full_name
+                'label' => $location->full_name,
             ]);
     }
 
@@ -138,6 +139,10 @@ class PlaceRecommendations extends Resource
                 ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
 
             IgnoreAndSendPlaceAlreadyExists::make()
+                ->showInline()
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
+
+            IgnoreAndSendAddedToSmallBusinessBlog::make()
                 ->showInline()
                 ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
 

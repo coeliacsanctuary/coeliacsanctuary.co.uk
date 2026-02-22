@@ -10,86 +10,41 @@ use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
 use App\Support\Ai\Prompts\EatingOutSealiacOverviewPrompt;
 use Database\Seeders\EateryScaffoldingSeeder;
-use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class EatingOutSealiacOverviewPromptTest extends TestCase
 {
     #[Test]
-    public function theMainHandleMethodGoesThroughEachExpectedMethodFlow(): void
+    public function itRendersTheIntroductionText(): void
     {
+        $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
-        $prompt = $this->partialMock(EatingOutSealiacOverviewPrompt::class);
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $prompt
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('preparePromptIntroduction')
-            ->once()
-            ->getMock()
-            ->shouldReceive('addBaseEateryDetails')
-            ->once()
-            ->getMock()
-            ->shouldReceive('addAdminReviewIfAvailable')
-            ->once()
-            ->getMock()
-            ->shouldReceive('addVisitorReviews')
-            ->once()
-            ->getMock()
-            ->shouldReceive('addEateryFeatures')
-            ->once();
-
-        $prompt->handle($eatery);
+        $this->assertStringContainsString('Sealiac the Seal', $result);
+        $this->assertStringContainsString('Coeliac Sanctuary', $result);
     }
 
     #[Test]
-    public function preparePromptIntroductionLoadsTheFirstBlockOntoThePromptCollection(): void
-    {
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->promptSections = collect();
-
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->preparePromptIntroduction();
-
-        $this->assertCount(1, $prompt->promptSections);
-    }
-
-    #[Test]
-    public function addBaseEateryDetailsPushesTheBasicEateryInfoOnToThePrompt(): void
+    public function itRendersEateryDetails(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-
         $eatery = $this->create(Eatery::class)->load(['area', 'town', 'county', 'country']);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addBaseEateryDetails();
-
-        $this->assertCount(1, $prompt->promptSections);
-
-        $firstSection = $prompt->promptSections->first();
-
-        $this->assertIsString($firstSection);
-
-        $promptSection = Str::explode($firstSection, "\n");
-
-        $this->assertEquals('## Eatery Details', $promptSection[0]);
-        $this->assertStringContainsString($eatery->name, $promptSection[1]);
-        $this->assertStringContainsString($eatery->full_location, $promptSection[2]);
+        $this->assertStringContainsString('## Eatery Details', $result);
+        $this->assertStringContainsString($eatery->name, $result);
+        $this->assertStringContainsString($eatery->full_location, $result);
     }
 
     #[Test]
-    public function addBaseEateryDetailsIncludesTheAverageExpenseIfOneIsPresent(): void
+    public function itRendersAverageExpenseWhenPresent(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-
-        $eatery = $this->create(Eatery::class)->load(['area', 'town', 'county', 'country']);
+        $eatery = $this->create(Eatery::class);
 
         $this->create(EateryReview::class, [
             'wheretoeat_id' => $eatery->id,
@@ -97,33 +52,27 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $eatery->load(['reviews']);
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
-
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addBaseEateryDetails();
-
-        $this->assertCount(1, $prompt->promptSections);
-
-        $firstSection = $prompt->promptSections->first();
-
-        $this->assertIsString($firstSection);
-
-        $promptSection = Str::explode($firstSection, "\n");
-
-        $this->assertStringContainsString(EateryReview::HOW_EXPENSIVE_LABELS[3], $promptSection[3]);
+        $this->assertStringContainsString('Average Value for Money Rating: ' . EateryReview::HOW_EXPENSIVE_LABELS[3], $result);
     }
 
     #[Test]
-    public function addBaseEateryDetailsIncludesTheAverageRatingIfOneIsPresent(): void
+    public function itDoesNotRenderAverageExpenseWhenAbsent(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
 
-        $eatery = $this->create(Eatery::class)->load(['area', 'town', 'county', 'country']);
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringNotContainsString('Average Value for Money Rating', $result);
+    }
+
+    #[Test]
+    public function itRendersAverageRatingWhenPresent(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
 
         $this->create(EateryReview::class, [
             'wheretoeat_id' => $eatery->id,
@@ -131,270 +80,176 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $eatery->load(['reviews']);
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
-
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addBaseEateryDetails();
-
-        $this->assertCount(1, $prompt->promptSections);
-
-        $firstSection = $prompt->promptSections->first();
-
-        $this->assertIsString($firstSection);
-
-        $promptSection = Str::explode($firstSection, "\n");
-
-        $this->assertStringContainsString('5 out of 5 stars', $promptSection[4]);
+        $this->assertStringContainsString('Average Rating: 5 out of 5 stars', $result);
     }
 
     #[Test]
-    public function formatReviewReturnsAnArrayOfTheBaseReviewData(): void
-    {
-        $review = $this->create(EateryReview::class, [
-            'service_rating' => null,
-            'food_rating' => null,
-            'how_expensive' => null,
-            'rating' => 5,
-            'review' => 'foo bar baz',
-            'approved' => true,
-        ]);
-
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-
-        $reviewArray = $prompt->formatReview($review);
-
-        $this->assertCount(5, $reviewArray);
-
-        $this->assertStringContainsString('5 out of 5 stars', $reviewArray[0]);
-        $this->assertEquals('', $reviewArray[1]);
-        $this->assertEquals('foo bar baz', $reviewArray[2]);
-        $this->assertEquals('', $reviewArray[3]);
-        $this->assertStringContainsString('Published: ', $reviewArray[4]);
-    }
-
-    #[Test]
-    public function formatReviewIncludesTheServiceRatingIfItIsPresent(): void
-    {
-        $review = $this->create(EateryReview::class, [
-            'service_rating' => 'excellent',
-            'food_rating' => null,
-            'how_expensive' => null,
-            'rating' => 5,
-            'review' => 'foo bar baz',
-            'approved' => true,
-        ]);
-
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-
-        $reviewArray = $prompt->formatReview($review);
-
-        $this->assertCount(6, $reviewArray);
-
-        $this->assertEquals('Service Rating: excellent', $reviewArray[0]);
-    }
-
-    #[Test]
-    public function formatReviewIncludesTheFoodRatingIfItIsPresent(): void
-    {
-        $review = $this->create(EateryReview::class, [
-            'service_rating' => null,
-            'food_rating' => 'excellent',
-            'how_expensive' => null,
-            'rating' => 5,
-            'review' => 'foo bar baz',
-            'approved' => true,
-        ]);
-
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-
-        $reviewArray = $prompt->formatReview($review);
-
-        $this->assertCount(6, $reviewArray);
-
-        $this->assertEquals('Food Rating: excellent', $reviewArray[0]);
-    }
-
-    #[Test]
-    public function formatReviewIncludesTheValueForMoneyIfItIsPresent(): void
-    {
-        $review = $this->create(EateryReview::class, [
-            'service_rating' => null,
-            'food_rating' => null,
-            'how_expensive' => 3,
-            'rating' => 5,
-            'review' => 'foo bar baz',
-            'approved' => true,
-        ]);
-
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-
-        $reviewArray = $prompt->formatReview($review);
-
-        $this->assertCount(6, $reviewArray);
-
-        $this->assertStringContainsString(EateryReview::HOW_EXPENSIVE_LABELS[3], $reviewArray[0]);
-    }
-
-    #[Test]
-    public function addAdminReviewDoesntDoAnythingIfTheresNoReviews(): void
+    public function itDoesNotRenderAverageRatingWhenAbsent(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
 
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringNotContainsString('Average Rating:', $result);
+    }
+
+    // --- adminReview() helper ---
+
+    #[Test]
+    public function itReturnsNullAdminReviewWhenNone(): void
+    {
         $eatery = $this->create(Eatery::class);
 
         $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $prompt->eatery = $eatery->load(['adminReview']);
 
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addAdminReviewIfAvailable();
-
-        $this->assertEmpty($prompt->promptSections);
+        $this->assertNull($prompt->adminReview());
     }
 
     #[Test]
-    public function addAdminReviewDoesntDoAnythingIfTheresNoAdminReview(): void
+    public function itReturnsNullAdminReviewForWrongBranch(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-
         $eatery = $this->create(Eatery::class);
+
+        $branch1 = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id]);
+        $branch2 = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id]);
 
         $this->build(EateryReview::class)
             ->on($eatery)
-            ->approved()
+            ->adminReview()
+            ->branch($branch1)
             ->create();
 
         $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $prompt->eatery = $eatery->load(['adminReview']);
+        $prompt->branch = $branch2;
 
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addAdminReviewIfAvailable();
-
-        $this->assertEmpty($prompt->promptSections);
+        $this->assertNull($prompt->adminReview());
     }
 
     #[Test]
-    public function addAdminReviewAddsAFormattedReviewToThePrompt(): void
+    public function itReturnsAdminReviewForCorrectBranch(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
 
+        $branch = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id]);
+
+        $this->build(EateryReview::class)
+            ->on($eatery)
+            ->adminReview()
+            ->branch($branch)
+            ->create();
+
+        $prompt = invade(new EatingOutSealiacOverviewPrompt());
+        $prompt->eatery = $eatery->load(['adminReview']);
+        $prompt->branch = $branch;
+
+        $this->assertInstanceOf(EateryReview::class, $prompt->adminReview());
+    }
+
+    // --- Admin review rendering ---
+
+    #[Test]
+    public function itRendersAdminReviewWhenPresent(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
         $this->build(EateryReview::class)
             ->on($eatery)
-            ->approved()
             ->adminReview()
             ->create();
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addAdminReviewIfAvailable();
-
-        $this->assertCount(1, $prompt->promptSections);
-
-        $firstSection = $prompt->promptSections->first();
-
-        $this->assertIsString($firstSection);
-
-        $promptSection = Str::explode($firstSection, "\n");
-
-        $this->assertEquals('## Coeliac Sanctuary Team Reviews', $promptSection[0]);
-        $this->assertEquals('', $promptSection[1]);
-        $this->assertNotEquals('', $promptSection[2]);
+        $this->assertStringContainsString('## Coeliac Sanctuary Team Review', $result);
     }
 
     #[Test]
-    public function addVisitorReviewDoesntDoAnythingIfTheresNoReviews(): void
+    public function itDoesNotRenderAdminReviewWhenAbsent(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-
         $eatery = $this->create(Eatery::class);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addVisitorReviews();
-
-        $this->assertEmpty($prompt->promptSections);
+        $this->assertStringNotContainsString('## Coeliac Sanctuary Team Review', $result);
     }
 
     #[Test]
-    public function addVisitorReviewDoesntDoAnythingIfTheresOnlyAnAdminReview(): void
+    public function itDoesNotRenderAdminReviewForWrongBranch(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
 
+        $branch1 = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id])->load(['area', 'town', 'county', 'country']);
+        $branch2 = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id])->load(['area', 'town', 'county', 'country']);
+
+        $this->build(EateryReview::class)
+            ->on($eatery)
+            ->adminReview()
+            ->branch($branch1)
+            ->create();
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery, $branch2);
+
+        $this->assertStringNotContainsString('## Coeliac Sanctuary Team Reviews', $result);
+    }
+
+    // --- Visitor review rendering ---
+
+    #[Test]
+    public function itRendersVisitorReviewsWhenPresent(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
         $this->build(EateryReview::class)
             ->on($eatery)
             ->approved()
+            ->create();
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringContainsString('## Website Visitor Reviews', $result);
+    }
+
+    #[Test]
+    public function itDoesNotRenderVisitorReviewsWhenNone(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringNotContainsString('## Website Visitor Reviews', $result);
+    }
+
+    #[Test]
+    public function itDoesNotRenderVisitorReviewsWhenOnlyAdminReview(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $this->build(EateryReview::class)
+            ->on($eatery)
             ->adminReview()
             ->create();
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addVisitorReviews();
-
-        $this->assertEmpty($prompt->promptSections);
+        $this->assertStringNotContainsString('## Website Visitor Reviews', $result);
     }
 
     #[Test]
-    public function addVisitorReviewAddsAFormattedReviewToThePrompt(): void
+    public function itRendersASeparatorBetweenMultipleVisitorReviews(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-
-        $eatery = $this->create(Eatery::class);
-
-        $this->build(EateryReview::class)
-            ->on($eatery)
-            ->approved()
-            ->create();
-
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
-
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addVisitorReviews();
-
-        $this->assertCount(1, $prompt->promptSections);
-
-        $firstSection = $prompt->promptSections->first();
-
-        $this->assertIsString($firstSection);
-
-        $promptSection = Str::explode($firstSection, "\n");
-
-        $this->assertEquals('## Website Visitor Reviews', $promptSection[0]);
-        $this->assertEquals('', $promptSection[1]);
-        $this->assertNotEquals('', $promptSection[2]);
-    }
-
-    #[Test]
-    public function addVisitorReviewAddsALineBetweenIndividualReviews(): void
-    {
-        $this->seed(EateryScaffoldingSeeder::class);
-
         $eatery = $this->create(Eatery::class);
 
         $this->build(EateryReview::class)
@@ -403,75 +258,180 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             ->approved()
             ->create();
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addVisitorReviews();
-
-        $this->assertCount(1, $prompt->promptSections);
-
-        $firstSection = $prompt->promptSections->first();
-
-        $this->assertIsString($firstSection);
-
-        $promptSection = Str::explode($firstSection, "\n");
-
-        $this->assertContains('------', $promptSection);
+        $this->assertStringContainsString('------', $result);
     }
 
     #[Test]
-    public function addEateryFeaturesDoesNothingIfTheresNoFeaturesOnTheEatery(): void
+    public function itRendersServiceRatingInReviewWhenPresent(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-
         $eatery = $this->create(Eatery::class);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $eatery->id,
+            'service_rating' => 'excellent',
+            'approved' => true,
+        ]);
 
-        $this->assertEmpty($prompt->promptSections);
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $prompt->addEateryFeatures();
-
-        $this->assertEmpty($prompt->promptSections);
+        $this->assertStringContainsString('Service Rating: excellent', $result);
     }
 
     #[Test]
-    public function addEateryFeaturesListsEachFeatureInTheEatery(): void
+    public function itDoesNotRenderServiceRatingInReviewWhenAbsent(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
 
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $eatery->id,
+            'service_rating' => null,
+            'approved' => true,
+        ]);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringNotContainsString('Service Rating:', $result);
+    }
+
+    #[Test]
+    public function itRendersFoodRatingInReviewWhenPresent(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $eatery->id,
+            'food_rating' => 'excellent',
+            'approved' => true,
+        ]);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringContainsString('Food Rating: excellent', $result);
+    }
+
+    #[Test]
+    public function itDoesNotRenderFoodRatingInReviewWhenAbsent(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $eatery->id,
+            'food_rating' => null,
+            'approved' => true,
+        ]);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringNotContainsString('Food Rating:', $result);
+    }
+
+    #[Test]
+    public function itRendersValueForMoneyInReviewWhenPresent(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $eatery->id,
+            'how_expensive' => 3,
+            'approved' => true,
+        ]);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringContainsString('Value for Money: ' . EateryReview::HOW_EXPENSIVE_LABELS[3], $result);
+    }
+
+    #[Test]
+    public function itDoesNotRenderValueForMoneyInReviewWhenAbsent(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $eatery->id,
+            'how_expensive' => null,
+            'approved' => true,
+        ]);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringNotContainsString('Value for Money:', $result);
+    }
+
+    #[Test]
+    public function itRendersBranchNameInReviewWhenNoBranchSet(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $eatery->id,
+            'branch_name' => 'My Branch',
+            'approved' => true,
+        ]);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringContainsString('Branch Name: My Branch', $result);
+    }
+
+    #[Test]
+    public function itDoesNotRenderBranchNameInReviewWhenBranchIsSet(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $branch = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id])->load(['area', 'town', 'county', 'country']);
+
+        $this->create(EateryReview::class, [
+            'wheretoeat_id' => $eatery->id,
+            'nationwide_branch_id' => $branch->id,
+            'branch_name' => 'My Branch',
+            'approved' => true,
+        ]);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery, $branch);
+
+        $this->assertStringNotContainsString('Branch Name:', $result);
+    }
+
+    // --- Features rendering ---
+
+    #[Test]
+    public function itRendersFeaturesWhenPresent(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
         $features = $this->build(EateryFeature::class)->count(2)->create();
-
         $eatery->features()->attach($features);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->promptSections = collect();
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
 
-        $this->assertEmpty($prompt->promptSections);
-
-        $prompt->addEateryFeatures();
-
-        $this->assertCount(1, $prompt->promptSections);
-
-        $firstSection = $prompt->promptSections->first();
-
-        $this->assertIsString($firstSection);
-
-        $promptSection = Str::explode($firstSection, "\n");
-
-        $this->assertEquals('## Features of this eatery listed on our website:', $promptSection[0]);
-        $this->assertEquals('', $promptSection[1]);
-        $this->assertEquals("- {$features->first()->feature}", $promptSection[2]);
-        $this->assertEquals("- {$features->second()->feature}", $promptSection[3]);
+        $this->assertStringContainsString('## Features of this eatery listed on our website:', $result);
+        $this->assertStringContainsString("- {$features->first()->feature}", $result);
+        $this->assertStringContainsString("- {$features->last()->feature}", $result);
     }
+
+    #[Test]
+    public function itDoesNotRenderFeaturesWhenNone(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+        $eatery = $this->create(Eatery::class);
+
+        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+
+        $this->assertStringNotContainsString('## Features of this eatery listed on our website:', $result);
+    }
+
+    // --- eateryName() helper ---
 
     #[Test]
     public function itCanGetTheBranchNameWhenABranchIsSetAndItHasAName(): void
@@ -520,6 +480,8 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
 
         $this->assertEquals('My Eatery', $prompt->eateryName());
     }
+
+    // --- eateryLocation() helper ---
 
     #[Test]
     public function itCanGetTheBranchLocationWhenABranchIsSet(): void

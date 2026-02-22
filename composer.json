@@ -29,12 +29,14 @@
         "jpeters8889/order-dispatch-slip": "@dev",
         "jpeters8889/polymorphic-panel": "@dev",
         "jpeters8889/print-all-orders": "@dev",
+        "jpeters8889/refresh-ads-txt": "@dev",
         "jpeters8889/shop-daily-stock": "@dev",
         "jpeters8889/shop-generate-resend-slip-button": "@dev",
         "jpeters8889/shop-order-open-dispatch-slip": "@dev",
         "jpeters8889/shop-order-shipping-action": "@dev",
         "jpeters8889/wte-nationwide-branch-import": "@dev",
         "kirschbaum-development/nova-inline-relationship": "^2.1.1",
+        "laravel/ai": "^0.1.3",
         "laravel/framework": "^12.32.5",
         "laravel/horizon": "^5.34.0",
         "laravel/nightwatch": "^1.14.0",
@@ -66,8 +68,7 @@
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
         "wnx/sidecar-browsershot": "^2.7.0",
-        "ziffmedia/nova-select-plus": "^2.1@beta",
-        "jpeters8889/refresh-ads-txt": "@dev"
+        "ziffmedia/nova-select-plus": "^2.1@beta"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16.0",

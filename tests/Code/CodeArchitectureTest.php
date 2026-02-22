@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Code;
 
 use Algolia\ScoutExtended\Searchable\Aggregator;
+use App\Ai\Tools\BaseTool;
 use App\Contracts\Search\IsSearchable;
 use App\Feeds\Feed;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -28,6 +29,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\ServiceProvider;
 use Jpeters8889\PhpUnitCodeAssertions\CodeAssertionsTestCase;
+use Laravel\Ai\Contracts\Agent;
 use PHPUnit\Framework\Attributes\Test;
 
 class CodeArchitectureTest extends CodeAssertionsTestCase
@@ -51,6 +53,39 @@ class CodeArchitectureTest extends CodeAssertionsTestCase
             ->areClasses()
             ->hasMethod('handle')
             ->hasSuffix('Action');
+    }
+
+    #[Test]
+    public function allAiAgentsFollowTheSamePattern(): void
+    {
+        $this->assertClassesIn('app/Ai/Agents')
+            ->areClasses()
+            ->implements(Agent::class);
+    }
+
+    #[Test]
+    public function allAiConcernsFollowTheSamePattern(): void
+    {
+        $this->assertClassesIn('app/Ai/Concerns')->areTraits();
+    }
+
+    #[Test]
+    public function allAiMiddlewareFollowTheSamePattern(): void
+    {
+        $this->assertClassesIn('app/Ai/Middleware')
+            ->areClasses()
+            ->hasSuffix('Middleware')
+            ->hasMethod('handle');
+    }
+
+    #[Test]
+    public function allAiToolsFollowTheSamePattern(): void
+    {
+        $this->assertClassesIn('app/Ai/Tools')
+            ->areClasses()
+            ->hasSuffix('Tool')
+            ->hasMethod('execute')
+            ->extends(BaseTool::class)->except(BaseTool::class);
     }
 
     #[Test]

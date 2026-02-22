@@ -41,6 +41,7 @@ onMounted(() => {
       <Dialog
         as="div"
         class="relative z-50"
+        :class="$attrs.class"
         @close="emit('close')"
       >
         <TransitionChild
