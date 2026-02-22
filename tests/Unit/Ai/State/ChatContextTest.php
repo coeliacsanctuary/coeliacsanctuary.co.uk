@@ -20,6 +20,7 @@ class ChatContextTest extends TestCase
     #[Test]
     public function itCanSetAndGetTheChatId(): void
     {
+        ChatContext::clear();
         $this->assertNull(ChatContext::getChatId());
 
         ChatContext::setChatId('chat-123');
