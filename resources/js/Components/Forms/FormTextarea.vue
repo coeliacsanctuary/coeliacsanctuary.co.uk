@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { TextareaProps, TextareaPropsDefaults } from '@/Components/Forms/Props';
 import { ExclamationCircleIcon } from '@heroicons/vue/20/solid';
+import { useAttrs } from 'vue';
 
 const props = withDefaults(defineProps<TextareaProps>(), TextareaPropsDefaults);
 
@@ -19,7 +20,6 @@ const classes = (): string[] => {
     'leading-7',
     'text-gray-900',
     'placeholder-gray-400',
-    'shadow-xs',
     'outline-hidden',
     'sm:text-sm',
     'sm:leading-6',
@@ -27,6 +27,10 @@ const classes = (): string[] => {
     'focus:ring-0',
     'focus:outline-hidden transition',
   ];
+
+  if (props.shadow) {
+    base.push('shadow-xs');
+  }
 
   if (props.borders) {
     base.push('border border-grey-off focus:border-grey-dark');
@@ -47,6 +51,12 @@ const classes = (): string[] => {
       base.push('bg-red/90!');
     }
   }
+
+  if (!props.resizable) {
+    base.push('resize-none');
+  }
+
+  base.push(<string>useAttrs().class);
 
   return base;
 };
@@ -71,7 +81,10 @@ const classes = (): string[] => {
         v-text="'*'"
       />
     </label>
-    <div class="relative rounded-md shadow-xs">
+    <div
+      class="relative rounded-md"
+      :class="{ 'shadow-xs': shadow }"
+    >
       <textarea
         v-model="value"
         :class="classes()"
