@@ -57,7 +57,7 @@ export type HeadingCustomLink = HeadingBackLink & {
 
 export type CoeliacButtonProps = {
   label?: string;
-  theme?: 'primary' | 'faded' | 'secondary' | 'light' | 'negative';
+  theme?: 'primary' | 'faded' | 'secondary' | 'light' | 'negative' | 'ghost';
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
   bold?: boolean;
   as?: typeof Link | 'button' | 'a';

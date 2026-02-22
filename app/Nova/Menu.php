@@ -15,6 +15,7 @@ use App\Models\EatingOut\EaterySuggestedEdit;
 use App\Models\Shop\ShopOrder;
 use App\Nova\Dashboards\Main;
 use App\Nova\Dashboards\Shop;
+use App\Nova\Resources\AskSealiac\AskSealiacChatResource;
 use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
@@ -94,6 +95,10 @@ class Menu
                 MenuItem::resource(SealiacOverviews::class),
                 MenuItem::make('Refresh ads.txt')->path('/refresh-ads-txt'),
             ])->icon('home'),
+
+            MenuSection::make('Ask Sealiac Chat', [
+                MenuItem::resource(AskSealiacChatResource::class),
+            ]),
 
             MenuSection::make('Eating Out', [
                 MenuGroup::make('Locations', [

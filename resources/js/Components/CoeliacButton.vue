@@ -92,6 +92,15 @@ const classes = computed((): string[] => {
     base.push('bg-red-dark/80', 'hover:bg-red-dark', 'text-white');
   }
 
+  if (props.theme === 'ghost') {
+    base.push(
+      'bg-grey-light',
+      'hover:bg-grey-light/70',
+      'text-grey-dark',
+      '!border-grey-dark/30',
+    );
+  }
+
   if (props.disabled) {
     base.push('cursor-not-allowed', 'opacity-50');
   }

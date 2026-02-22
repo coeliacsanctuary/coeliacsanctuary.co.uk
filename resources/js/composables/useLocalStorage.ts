@@ -3,6 +3,10 @@ export default () => {
     localStorage.setItem(name, JSON.stringify(value));
   };
 
+  const isInLocalStorage = (name: string): boolean => {
+    return localStorage.getItem(name) !== null;
+  };
+
   const getFromLocalStorage = <T>(
     name: string,
     defaultValue: T | null = null,
@@ -20,5 +24,10 @@ export default () => {
     localStorage.removeItem(key);
   };
 
-  return { putInLocalStorage, getFromLocalStorage, removeFromLocalStorage };
+  return {
+    putInLocalStorage,
+    isInLocalStorage,
+    getFromLocalStorage,
+    removeFromLocalStorage,
+  };
 };

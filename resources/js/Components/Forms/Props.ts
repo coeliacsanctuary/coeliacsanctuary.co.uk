@@ -62,6 +62,8 @@ export type TextareaProps = BaseFormInputProps & {
   hideLabel?: boolean;
   size?: 'default' | 'large';
   helpText?: string;
+  resizable?: boolean;
+  shadow?: boolean;
 };
 
 export const TextareaPropsDefaults: Partial<TextareaProps> = {
@@ -71,6 +73,8 @@ export const TextareaPropsDefaults: Partial<TextareaProps> = {
   hideLabel: false,
   size: 'default',
   helpText: undefined,
+  resizable: true,
+  shadow: true,
 };
 
 export type CheckboxProps = BaseFormProps & {

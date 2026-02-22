@@ -10,6 +10,7 @@ use App\Console\Commands\ProcessEateryWebsiteChecksCommand;
 use App\Console\Commands\PublishItemsCommand;
 use App\Console\Commands\RemoveCollectionsFromHomepageCommand;
 use App\Console\Commands\SendAbandonedBasketEmailCommand;
+use App\Console\Commands\SummariseAskSealiacChatsCommand;
 use App\Http\Api\V1\Middleware\ExternalApiSourceMiddleware;
 use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -118,6 +119,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(PublishItemsCommand::class)->everyMinute();
         $schedule->command(RemoveCollectionsFromHomepageCommand::class)->everyMinute();
         $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
+        $schedule->command(SummariseAskSealiacChatsCommand::class)->everyMinute();
         $schedule->command(ProcessEateryWebsiteChecksCommand::class)->daily();
 
         if (app()->environment('production')) {

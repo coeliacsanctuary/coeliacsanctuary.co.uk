@@ -2,6 +2,7 @@
 import {
   Bars3BottomLeftIcon,
   MagnifyingGlassIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
 } from '@heroicons/vue/24/outline';
 import { ref } from 'vue';
 import MobileNav from '@/Layouts/Components/Nav/MobileNav.vue';
@@ -12,11 +13,13 @@ import { MetaProps } from '@/types/DefaultProps';
 import MobileSearch from '@/Layouts/Components/MobileSearch.vue';
 import DesktopSearch from '@/Layouts/Components/DesktopSearch.vue';
 import CoeliacMetas from '@/Layouts/Components/CoeliacMetas.vue';
+import AskSealiac from '@/Layouts/Components/AskSealiac/AskSealiac.vue';
 
 defineProps<{ metas: MetaProps }>();
 
 const mobileNavOpen = ref(false);
 const mobileSearchOpen = ref(false);
+const askSealiacOpen = ref(false);
 </script>
 
 <template>
@@ -43,17 +46,37 @@ const mobileSearchOpen = ref(false);
           <Sealiac class="w-full py-2" />
         </Link>
 
-        <div class="md:w-full md:max-w-xs">
-          <div class="h-10 w-10 py-2 md:hidden">
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary"
-              @click="mobileSearchOpen = true"
-            >
-              <MagnifyingGlassIcon class="h-6 w-6" />
+        <div
+          class="flex space-x-1 xs:flex-col xs:space-y-1 xs:space-x-0 lg:flex-1 lg:flex-row lg:items-center lg:justify-end lg:space-y-0"
+        >
+          <div class="md:w-full md:max-w-xs">
+            <div class="size-8 py-2 xs:size-10 md:hidden">
+              <div
+                class="flex size-8 items-center justify-center rounded-full bg-secondary xs:size-10"
+                @click="mobileSearchOpen = true"
+              >
+                <MagnifyingGlassIcon class="size-5 sm:size-7" />
+              </div>
             </div>
+
+            <DesktopSearch />
           </div>
 
-          <DesktopSearch />
+          <div
+            class="size-8 py-2 xs:size-10 md:flex md:h-auto md:w-auto md:justify-end"
+          >
+            <div
+              class="curosr-pointer flex size-8 cursor-pointer items-center justify-center rounded-full border-2 border-secondary bg-primary-light transition xs:size-10 md:h-auto md:!w-fit md:space-x-2 md:px-2 md:py-1 md:hover:bg-primary-darkest/50"
+              @click="askSealiacOpen = true"
+            >
+              <ChatBubbleOvalLeftEllipsisIcon
+                class="size-5 sm:size-7 md:flex-shrink-0"
+              />
+              <span class="break-none hidden font-semibold md:block">
+                Ask Sealiac
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -73,6 +96,11 @@ const mobileSearchOpen = ref(false);
   <MobileSearch
     :open="mobileSearchOpen"
     @close="mobileSearchOpen = false"
+  />
+
+  <AskSealiac
+    :open="askSealiacOpen"
+    @close="askSealiacOpen = false"
   />
 </template>
 
