@@ -87,5 +87,4 @@ return [
             'site-map' => 'coeliac.shop.products.site-map',
         ],
     ],
-
 ];
