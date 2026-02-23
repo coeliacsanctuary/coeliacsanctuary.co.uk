@@ -88,11 +88,4 @@ return [
         ],
     ],
 
-    'journey' => [
-        'enabled' => env('JOURNEY_ENABLED', true),
-
-        'dont-track' => [
-            'static/map/{latlng}',
-        ],
-    ],
 ];

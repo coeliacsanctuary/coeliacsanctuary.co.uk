@@ -2350,12 +2350,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jpeters8889/journey-tracker-laravel.git",
-                "reference": "b558c4369ae118ceaf78377bc9781dd00035bd9c"
+                "reference": "fe13fa714c003124d7175f56f1cbc8830af3333f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/b558c4369ae118ceaf78377bc9781dd00035bd9c",
-                "reference": "b558c4369ae118ceaf78377bc9781dd00035bd9c",
+                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/fe13fa714c003124d7175f56f1cbc8830af3333f",
+                "reference": "fe13fa714c003124d7175f56f1cbc8830af3333f",
                 "shasum": ""
             },
             "require": {
@@ -2387,7 +2387,7 @@
                 "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/main",
                 "issues": "https://github.com/jpeters8889/journey-tracker-laravel/issues"
             },
-            "time": "2026-02-22T21:34:23+00:00"
+            "time": "2026-02-23T20:14:59+00:00"
         },
         {
             "name": "jpeters8889/order-dispatch-slip",

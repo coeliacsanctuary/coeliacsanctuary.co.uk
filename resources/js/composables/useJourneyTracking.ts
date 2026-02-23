@@ -2,7 +2,7 @@ import { EventType } from '@/types/JourneyTypes';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { ShallowRef, watch } from 'vue';
-import { useElementVisibility } from '@vueuse/core/index';
+import { useElementVisibility } from '@vueuse/core';
 
 export default () => {
   const logWhenVisible = (

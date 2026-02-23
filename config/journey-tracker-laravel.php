@@ -11,5 +11,5 @@ return [
 
     'internal-event-endpoint' => 'api/event',
 
-    'host' => env('JOURNEY_TRACKER_HOST', 'https://journey-tracker.test'),
+    'host' => env('JOURNEY_TRACKER_HOST', 'https://journey-tracker.cloud'),
 ];

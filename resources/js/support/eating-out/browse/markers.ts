@@ -132,7 +132,7 @@ export default () => {
 
       if (!c.properties?.cluster) {
         useJourneyTracking().logEvent('other', 'WhereToEatMap/Marker', {
-          eaterId: c.properties.id as number,
+          eateryId: c.properties.id as number,
         });
       }
 
