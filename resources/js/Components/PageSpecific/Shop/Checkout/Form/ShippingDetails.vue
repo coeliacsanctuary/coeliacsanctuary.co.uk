@@ -8,6 +8,7 @@ import AddressLookup from '@/Components/PageSpecific/Shop/Checkout/Form/Componen
 import { CheckoutShippingStep } from '@/types/Shop';
 import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
 import { storeToRefs } from 'pinia';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{ show: boolean; completed: boolean; error: boolean }>();
 
@@ -86,7 +87,25 @@ const submitForm = () => {
     return;
   }
 
+  useJourneyTracking().logEvent(
+    'clicked',
+    'Checkout/Form/ShippingDetails/Submit',
+    data,
+    true,
+  );
+
   emits('continue');
+};
+
+const track = (label: string, value?: string) => {
+  useJourneyTracking().logEvent(
+    'typed',
+    `Checkout/Form/ShippingDetails/${label}`,
+    {
+      value,
+    },
+    true,
+  );
 };
 </script>
 
@@ -137,6 +156,7 @@ const submitForm = () => {
           borders
           @focus="addressActive = true"
           @blur="addressActive = false"
+          @blur-sm="() => track('Address1', data.address_1)"
         />
       </AddressLookup>
 
@@ -147,6 +167,7 @@ const submitForm = () => {
         name="address_2"
         autocomplete="address_2"
         borders
+        @blur-sm="() => track('Address2', data.address_2)"
       />
 
       <FormInput
@@ -156,6 +177,7 @@ const submitForm = () => {
         name="address_3"
         autocomplete="address_3"
         borders
+        @blur-sm="() => track('Address3', data.address_3)"
       />
 
       <FormInput
@@ -166,6 +188,7 @@ const submitForm = () => {
         autocomplete="town"
         required
         borders
+        @blur-sm="() => track('Town', data.town)"
       />
 
       <FormInput
@@ -175,6 +198,7 @@ const submitForm = () => {
         name="county"
         autocomplete="county"
         borders
+        @blur-sm="() => track('County', data.county)"
       />
 
       <FormInput
@@ -186,6 +210,7 @@ const submitForm = () => {
         class="flex-1"
         required
         borders
+        @blur-sm="() => track('Postcode', data.postcode)"
       />
 
       <CoeliacButton

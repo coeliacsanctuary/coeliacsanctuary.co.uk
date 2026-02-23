@@ -25,6 +25,7 @@ import pkg from 'i18n-iso-countries';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import Alert from '@/Components/PageSpecific/Shared/Alert.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 import CheckOutItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsRow.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
@@ -97,6 +98,8 @@ const { getFromLocalStorage, putInLocalStorage } = useLocalStorage();
 const createGenericError = (
   message: string = 'An unknown error has occurred, you have not been charged.',
 ): void => {
+  useJourneyTracking().logEvent('other', 'Checkout/GenericError', { message });
+
   store.setErrors({
     basket: message,
   });
@@ -108,6 +111,13 @@ const submitPendingOrder = async (payload: CheckoutForm): Promise<boolean> => {
       event_label: `submit-pending-order`,
     });
 
+    useJourneyTracking().logEvent(
+      'other',
+      'Checkout/Submit/Pending',
+      payload,
+      true,
+    );
+
     await axios.post('/shop/basket', payload);
 
     return true;
@@ -117,6 +127,12 @@ const submitPendingOrder = async (payload: CheckoutForm): Promise<boolean> => {
         error as AxiosError<{ errors: Record<string, unknown> }>;
 
       if (axiosError.status === 422 && axiosError.response?.data.errors) {
+        useJourneyTracking().logEvent(
+          'other',
+          'Checkout/Submit/Pending/Error',
+          axiosError.response.data.errors,
+        );
+
         store.setErrors(axiosError.response.data.errors);
 
         return false;
@@ -153,6 +169,8 @@ const stripePayload = (payload: CheckoutForm): Partial<ConfirmPaymentData> => ({
 });
 
 const revertPendingOrder = async (): Promise<void> => {
+  useJourneyTracking().logEvent('other', 'Checkout/Pending/Revert');
+
   await axios.delete('/shop/basket');
 };
 

@@ -1,20 +1,33 @@
 <script lang="ts" setup>
 import { NationwideEatery } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import EateryIntroduction from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryIntroduction.vue';
 import EateryReviews from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryReviews.vue';
 import EateryInfoBlock from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryInfoBlock.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{ eatery: NationwideEatery }>();
 
 const eateryName = computed(() => props.eatery.name);
 
 const eateryLink = computed(() => props.eatery.link);
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'NationwideEateryCard',
+  {
+    eateryId: props.eatery.key,
+  },
+);
 </script>
 
 <template>
-  <Card class="flex flex-col justify-between">
+  <Card
+    ref="card"
+    class="flex flex-col justify-between"
+  >
     <div class="flex w-full">
       <div class="flex w-full flex-col">
         <EateryIntroduction

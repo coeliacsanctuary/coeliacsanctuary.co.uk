@@ -23,6 +23,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Illuminate\Support\Facades\Route;
+use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -46,7 +47,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(
             prepend: AddRouteModelBindingFallbacksMiddleware::class,
-            append: HandleInertiaRequests::class
+            append: [
+                HandleInertiaRequests::class,
+                LogPageViewMiddleware::class,
+            ]
         );
 
         $middleware->redirectGuestsTo(fn () => route('nova.pages.login'));

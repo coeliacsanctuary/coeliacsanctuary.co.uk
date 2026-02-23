@@ -2,6 +2,7 @@
 import { EateryCountryList, EateryCountryPropItem } from '@/types/EateryTypes';
 import { ref } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   country: string;
@@ -15,6 +16,10 @@ const toggle = (): void => {
     show.value = false;
     return;
   }
+
+  useJourneyTracking().logEvent('clicked', 'EateryCountryCard', {
+    country: props.country,
+  });
 
   if (props.details.counties === 1) {
     router.get(`/wheretoeat/${props.details.list[0].slug}`);
@@ -147,6 +152,14 @@ const countyDescription = (county: EateryCountryList): string => {
               <Link
                 :href="'/wheretoeat/' + county.slug"
                 prefetch="click"
+                :on-before="
+                  () =>
+                    useJourneyTracking().logEvent(
+                      'clicked',
+                      'EateryCountryCard/CountyLink',
+                      { country: country, county: county.name },
+                    )
+                "
               >
                 <h4
                   class="text-md mb-2 transform font-semibold text-primary-dark transition duration-500 group-hover:text-lg md:text-xl md:group-hover:text-xl"

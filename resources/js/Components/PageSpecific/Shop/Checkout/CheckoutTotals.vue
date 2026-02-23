@@ -10,6 +10,7 @@ import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { router } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import { InertiaForm } from '@/types/Core';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   countries: FormSelectOption[];
@@ -57,6 +58,11 @@ const removeDiscountCode = () => {
     preserveScroll: true,
     onFinish: () => {
       void nextTick(() => {
+        useJourneyTracking().logEvent(
+          'clicked',
+          'Checkout/Totals/RemovedDiscountCode',
+        );
+
         eventBus.$emit('refresh-payment-element');
       });
     },
@@ -75,6 +81,14 @@ watch(
       onSuccess: () => {
         isLoading.value = false;
         updateStore();
+
+        useJourneyTracking().logEvent(
+          'clicked',
+          'Checkout/Totals/ChangeCountry',
+          {
+            country: countryForm.postage_country_id,
+          },
+        );
       },
     });
   },

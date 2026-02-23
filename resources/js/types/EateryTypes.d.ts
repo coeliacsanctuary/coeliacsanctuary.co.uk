@@ -61,6 +61,7 @@ export type NationwideEatery = {
 };
 
 export type Eatery = {
+  id: number;
   name: string;
   link: string;
   county: {
