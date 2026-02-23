@@ -25,6 +25,7 @@
         "jpeters8889/eatery-location-search": "@dev",
         "jpeters8889/eatery-opening-times": "@dev",
         "jpeters8889/hidden-writable-field": "@dev",
+        "jpeters8889/journey-tracker-laravel": "dev-main",
         "jpeters8889/order-dispatch-slip": "@dev",
         "jpeters8889/polymorphic-panel": "@dev",
         "jpeters8889/print-all-orders": "@dev",
@@ -89,6 +90,10 @@
         "worksome/request-factories": "^3.4"
     },
     "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/jpeters8889/journey-tracker-laravel.git"
+        },
         {
             "type": "composer",
             "url": "https://nova.laravel.com"

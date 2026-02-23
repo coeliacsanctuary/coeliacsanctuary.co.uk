@@ -4,13 +4,15 @@ import {
   StarRating as StarRatingType,
 } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import StarRating from '@/Components/StarRating.vue';
 import ReviewImageGallery from '@/Components/PageSpecific/EatingOut/Shared/ReviewImageGallery.vue';
 import { ucfirst } from '@/helpers';
 import SubHeading from '@/Components/SubHeading.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
+  eateryId: number;
   eateryName: string;
   review: EateryReview;
 }>();
@@ -56,10 +58,22 @@ const reviewBody = computed(() => {
 
   return body?.replaceAll('\n', '<br />');
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'EateryDetails/AdminReview',
+  {
+    eateryId: props.eateryId,
+  },
+);
 </script>
 
 <template>
-  <Card class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8">
+  <Card
+    ref="card"
+    class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8"
+  >
     <SubHeading>Alison's review of {{ eateryName }}</SubHeading>
 
     <div class="mt-2 flex flex-col space-y-2 lg:space-y-4">

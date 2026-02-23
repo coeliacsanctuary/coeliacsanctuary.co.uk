@@ -55,6 +55,10 @@ class Inertia
             $this->includeBasket();
         }
 
+        if (request()->hasHeader('X-Journey-Token')) {
+            BaseInertia::share('journey.token', request()->header('X-Journey-Token'));
+        }
+
         $this->schema = [$this->baseSchema()];
 
         $this->loadAnnouncement();

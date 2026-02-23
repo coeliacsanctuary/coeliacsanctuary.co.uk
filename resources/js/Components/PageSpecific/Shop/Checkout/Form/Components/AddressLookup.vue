@@ -4,6 +4,7 @@ import axios, { AxiosResponse } from 'axios';
 import { watchDebounced } from '@vueuse/core';
 import useShopStore from '@/stores/useShopStore';
 import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{ address: string }>();
 
@@ -36,6 +37,11 @@ const searchResults = ref<{ id: string; address: string }[]>([]);
 const selectAddress = async (id: string) => {
   const response = await axios.get(`/api/shop/address-search/${id}`);
 
+  useJourneyTracking().logEvent(
+    'clicked',
+    'Checkout/Form/ShippingDetails/AddressLookup/AddressResult',
+  );
+
   emits('setAddress', response.data);
   hasSelectedAddress.value = true;
   searchResults.value = [];
@@ -67,6 +73,14 @@ const handleSearch = async () => {
 
 watch(useMyLocation, () => {
   getLocation();
+
+  useJourneyTracking().logEvent(
+    'clicked',
+    'Checkout/Form/ShippingDetails/AddressLookupToggle',
+    {
+      value: useMyLocation.value,
+    },
+  );
 });
 
 watchDebounced(() => props.address, handleSearch, { debounce: 100 });

@@ -13,9 +13,9 @@ import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 import { Link } from '@inertiajs/vue3';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import Info from '@/Components/Info.vue';
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
-import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{
   county: CountyPage;
@@ -24,6 +24,12 @@ defineProps<{
 }>();
 
 const townList = ref<HTMLElement | null>(null);
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('townList'),
+  'scrolled_into_view',
+  'WhereToEatIndexCountyList',
+);
 </script>
 
 <template>

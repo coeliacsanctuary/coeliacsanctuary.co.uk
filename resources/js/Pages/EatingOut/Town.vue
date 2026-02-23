@@ -6,7 +6,7 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { Ref, ref, watch } from 'vue';
+import { Ref, ref, useTemplateRef, watch } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
@@ -15,6 +15,7 @@ import useBrowser from '@/composables/useBrowser';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   live_eateries_count: number;
@@ -113,6 +114,12 @@ watch(sortOption, () => {
     onSuccess: () => reset(),
   });
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('placeList'),
+  'scrolled_into_view',
+  'WhereToEatTownList',
+);
 </script>
 
 <template>

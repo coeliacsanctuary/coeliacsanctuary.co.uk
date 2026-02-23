@@ -2,13 +2,14 @@
 import { DetailedEatery } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import StaticMap from '@/Components/Maps/StaticMap.vue';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import {
   DevicePhoneMobileIcon,
   LinkIcon,
   MapIcon,
 } from '@heroicons/vue/24/solid';
 import SubHeading from '@/Components/SubHeading.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -39,10 +40,23 @@ const eateryName = computed(() => {
 
   return props.eatery.name;
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'EateryDetails/Location',
+  {
+    eateryId: props.eatery.id,
+    branchId: props.eatery.branch?.id,
+  },
+);
 </script>
 
 <template>
-  <Card class="space-y-2 lg:space-y-4 lg:p-6">
+  <Card
+    ref="card"
+    class="space-y-2 lg:space-y-4 lg:p-6"
+  >
     <SubHeading class="!mb-2 lg:!mb-4">
       Where to find {{ eateryName }}
     </SubHeading>

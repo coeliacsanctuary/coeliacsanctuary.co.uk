@@ -9,8 +9,10 @@ import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import StaticMap from '@/Components/Maps/StaticMap.vue';
 import { pluralise } from '@/helpers';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
-defineProps<{ item: SearchResult }>();
+const props = defineProps<{ item: SearchResult }>();
 
 const isNotEatery = (type: SearchableItem): boolean => {
   return type !== 'Eatery' && type !== 'Hotel' && type !== 'Attraction';
@@ -54,10 +56,21 @@ const itemTypeClasses = (type: SearchableItem): string[] => {
 
   return base;
 };
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'SearchResultCard',
+  {
+    type: props.item.type,
+    title: props.item.title,
+  },
+);
 </script>
 
 <template>
   <Card
+    ref="card"
     class="group/item transform p-4 transition-all sm:scale-95 sm:group-hover:opacity-50 sm:hover:scale-100 sm:hover:opacity-100!"
   >
     <Link

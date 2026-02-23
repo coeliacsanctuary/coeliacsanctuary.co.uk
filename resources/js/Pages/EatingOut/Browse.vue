@@ -27,6 +27,7 @@ import { UrlParameters } from '@/types/EatingOutBrowseTypes';
 import Map from '@/support/eating-out/browse/map';
 import Markers from '@/support/eating-out/browse/markers';
 import eventBus from '@/eventBus';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 type FilterKeys = 'category' | 'venueType' | 'feature';
 type UrlFilter = { [T in FilterKeys]?: string };
@@ -226,10 +227,15 @@ const handleMapFeatureClick = (eatery: FeatureLike) => {
   const eateryId: string = eatery.get('id') as string;
   const splitId = eateryId.split('-');
 
-  showPlaceDetails.value = {
-    id: parseInt(splitId[0], 10),
-    branchId: splitId[1] ? parseInt(splitId[1], 10) : undefined,
-  };
+  const id = parseInt(splitId[0], 10);
+  const branchId = splitId[1] ? parseInt(splitId[1], 10) : undefined;
+
+  useJourneyTracking().logEvent('clicked', 'WhereToEatMap/Marker', {
+    eateryId: id,
+    branchId,
+  });
+
+  showPlaceDetails.value = { id, branchId };
 };
 
 const handleMapMove = () => {

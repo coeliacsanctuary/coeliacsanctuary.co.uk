@@ -2,12 +2,23 @@
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import { CollectionDetailCard } from '@/types/CollectionTypes';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
-defineProps<{ collection: CollectionDetailCard }>();
+const props = defineProps<{ collection: CollectionDetailCard }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'CollectionDetailCard',
+  {
+    title: props.collection.title,
+  },
+);
 </script>
 
 <template>
-  <Card>
+  <Card ref="card">
     <div class="group flex-1">
       <Link
         :href="collection.link"

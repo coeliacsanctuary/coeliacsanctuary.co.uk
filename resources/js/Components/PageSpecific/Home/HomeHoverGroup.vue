@@ -2,8 +2,10 @@
 import Card from '@/Components/Card.vue';
 import HomeHoverItem from '@/Components/PageSpecific/Home/HomeHoverItem.vue';
 import { HomeHoverItem as HomeHoverItemType } from '@/types/Types';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     title: string;
     items: HomeHoverItemType[];
@@ -11,10 +13,19 @@ withDefaults(
   }>(),
   { perRow: 3 },
 );
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'Home/HoverGroup',
+  {
+    group: props.title,
+  },
+);
 </script>
 
 <template>
-  <Card>
+  <Card ref="card">
     <h2 class="font-coeliac text-3xl font-semibold md:text-5xl">
       {{ title }}
     </h2>

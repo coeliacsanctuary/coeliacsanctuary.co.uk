@@ -14,6 +14,8 @@ import HomeLatestEateries from '@/Components/PageSpecific/Home/HomeLatestEaterie
 import HomeLatestReviews from '@/Components/PageSpecific/Home/HomeLatestReviews.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
 import HomeNewsletterSignup from '@/Components/PageSpecific/Home/HomeNewsletterSignup.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
 defineProps<{
   blogs: HomeHoverItem[];
@@ -22,6 +24,12 @@ defineProps<{
   latestReviews: EaterySimpleReviewResource[];
   latestEateries: EaterySimpleHomeResource[];
 }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('about-card'),
+  'scrolled_into_view',
+  'Home/AboutCard',
+);
 </script>
 
 <template>
@@ -77,6 +85,7 @@ defineProps<{
 
     <aside class="flex w-full flex-col space-y-4 lg:w-1/4">
       <Card
+        ref="about-card"
         class="space-y-4"
         faded
         theme="primary-light"
