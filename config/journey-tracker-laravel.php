@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'enabled' => env('JOURNEY_TRACKER_ENABLED', true),
 
