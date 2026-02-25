@@ -4,7 +4,7 @@ import {
   MagnifyingGlassIcon,
   ChatBubbleOvalLeftEllipsisIcon,
 } from '@heroicons/vue/24/outline';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import MobileNav from '@/Layouts/Components/Nav/MobileNav.vue';
 import MainNav from '@/Layouts/Components/Nav/MainNav.vue';
 import Sealiac from '@/Svg/Sealiac.vue';
@@ -20,6 +20,11 @@ defineProps<{ metas: MetaProps }>();
 const mobileNavOpen = ref(false);
 const mobileSearchOpen = ref(false);
 const askSealiacOpen = ref(false);
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
 </script>
 
 <template>
@@ -99,6 +104,7 @@ const askSealiacOpen = ref(false);
   />
 
   <AskSealiac
+    v-if="isMounted"
     :open="askSealiacOpen"
     @close="askSealiacOpen = false"
   />
