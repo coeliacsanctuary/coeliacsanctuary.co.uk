@@ -12,6 +12,10 @@ export default () => {
     data: object = {},
     sensitive: boolean = false,
   ) => {
+    if (import.meta.env.SSR) {
+      return;
+    }
+
     const targetIsVisible = useElementVisibility(templateRef);
 
     watch(targetIsVisible, (isVisible) => {
@@ -27,6 +31,10 @@ export default () => {
     data: object = {},
     sensitive: boolean = false,
   ) => {
+    if (import.meta.env.SSR) {
+      return;
+    }
+
     const page = usePage<{
       journey?: { token: string };
     }>();
