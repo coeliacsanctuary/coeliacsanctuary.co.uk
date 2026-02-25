@@ -9,6 +9,9 @@ return [
 
     'dont-track' => [
         'static/map/{latlng}',
+        '/horizon/*',
+        '/cs-adm/*',
+        'fallback',
     ],
 
     'internal-event-endpoint' => 'api/event',
