@@ -2048,7 +2048,7 @@
         },
         {
             "name": "jpeters8889/address-field",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/AddressField",
@@ -2084,7 +2084,7 @@
         },
         {
             "name": "jpeters8889/apex-charts",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ApexCharts",
@@ -2120,7 +2120,7 @@
         },
         {
             "name": "jpeters8889/body",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Body",
@@ -2156,7 +2156,7 @@
         },
         {
             "name": "jpeters8889/country-icon",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CountryIcon",
@@ -2192,7 +2192,7 @@
         },
         {
             "name": "jpeters8889/custom-styles",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CustomStyles",
@@ -2228,7 +2228,7 @@
         },
         {
             "name": "jpeters8889/eatery-location-search",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryLocationSearch",
@@ -2269,7 +2269,7 @@
         },
         {
             "name": "jpeters8889/eatery-opening-times",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryOpeningTimes",
@@ -2305,7 +2305,7 @@
         },
         {
             "name": "jpeters8889/hidden-writable-field",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/HiddenWritableField",
@@ -2350,12 +2350,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jpeters8889/journey-tracker-laravel.git",
-                "reference": "fe13fa714c003124d7175f56f1cbc8830af3333f"
+                "reference": "c894f188ae340f3ca36a2563b886daadb6d0bcc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/fe13fa714c003124d7175f56f1cbc8830af3333f",
-                "reference": "fe13fa714c003124d7175f56f1cbc8830af3333f",
+                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/c894f188ae340f3ca36a2563b886daadb6d0bcc0",
+                "reference": "c894f188ae340f3ca36a2563b886daadb6d0bcc0",
                 "shasum": ""
             },
             "require": {
@@ -2387,11 +2387,11 @@
                 "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/main",
                 "issues": "https://github.com/jpeters8889/journey-tracker-laravel/issues"
             },
-            "time": "2026-02-23T20:14:59+00:00"
+            "time": "2026-02-25T20:56:31+00:00"
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/OrderDispatchSlip",
@@ -2427,7 +2427,7 @@
         },
         {
             "name": "jpeters8889/polymorphic-panel",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PolymorphicPanel",
@@ -2463,7 +2463,7 @@
         },
         {
             "name": "jpeters8889/print-all-orders",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PrintAllOrders",
@@ -2499,7 +2499,7 @@
         },
         {
             "name": "jpeters8889/refresh-ads-txt",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/RefreshAdsTxt",
@@ -2540,7 +2540,7 @@
         },
         {
             "name": "jpeters8889/shop-daily-stock",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopDailyStock",
@@ -2576,7 +2576,7 @@
         },
         {
             "name": "jpeters8889/shop-generate-resend-slip-button",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopGenerateResendSlipButton",
@@ -2617,7 +2617,7 @@
         },
         {
             "name": "jpeters8889/shop-order-open-dispatch-slip",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderOpenDispatchSlip",
@@ -2653,7 +2653,7 @@
         },
         {
             "name": "jpeters8889/shop-order-shipping-action",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderShippingAction",
@@ -2689,7 +2689,7 @@
         },
         {
             "name": "jpeters8889/wte-nationwide-branch-import",
-            "version": "dev-feature/journey-tracking",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/WteNationwideBranchImport",
