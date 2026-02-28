@@ -12,6 +12,7 @@ return [
         '/horizon/*',
         '/cs-adm/*',
         'fallback',
+        '/nova*',
     ],
 
     'internal-event-endpoint' => 'api/event',
