@@ -41,7 +41,6 @@ class ConvertEateriesToNationwideCommand extends Command
                         ->whereLike('name', "%{$value}%")
                         ->orWhereHas('town', fn (Builder $query) => $query->whereLike('town', "%{$value}%"))
                 )
-                ->limit(20)
                 ->get()
                 ->mapWithKeys(fn (Eatery $eatery) => [$eatery->id => "{$eatery->name} — {$eatery->town?->town}, {$eatery->county?->county}"])
                 ->toArray(),
@@ -87,21 +86,22 @@ class ConvertEateriesToNationwideCommand extends Command
         try {
             DB::beginTransaction();
 
-            $baseEatery = Eatery::create([
+            $baseEatery = Eatery::query()->firstOrCreate([
                 'name' => $name,
                 'address' => '',
                 'lat' => '',
                 'lng' => '',
+                'country_id' => 1,
+                'county_id' => 1,
+                'town_id' => 529,
+                'live' => 1,
+            ], [
                 'phone' => $phone ?: null,
                 'website' => $website ?: null,
                 'venue_type_id' => $venueTypeId,
                 'cuisine_id' => $cuisineId,
                 'info' => $info,
                 'type_id' => $first->type_id,
-                'country_id' => 1,
-                'county_id' => 1,
-                'town_id' => 529,
-                'live' => 1,
             ]);
 
             $baseEatery->features()->sync($featureIds);
@@ -145,7 +145,7 @@ class ConvertEateriesToNationwideCommand extends Command
                     'updated_at' => $eatery->updated_at,
                 ]);
 
-                ++$branchCount;
+                $branchCount++;
 
                 $reviewCount += EateryReview::withoutGlobalScopes()
                     ->where('wheretoeat_id', $eatery->id)

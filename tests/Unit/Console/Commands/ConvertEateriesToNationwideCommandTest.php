@@ -313,6 +313,35 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
     }
 
     #[Test]
+    public function itReusesAnExistingNationwideEateryOnRerun(): void
+    {
+        $eatery = $this->build(Eatery::class)->create([
+            'county_id' => $this->county->id,
+            'town_id' => $this->town->id,
+            'name' => 'Chain Eatery',
+        ]);
+
+        $this->runCommand($eatery, ['name' => 'Chain Eatery'])->run();
+
+        $eatery2 = $this->build(Eatery::class)->create([
+            'county_id' => $this->county->id,
+            'town_id' => $this->town->id,
+            'name' => 'Chain Eatery',
+        ]);
+
+        $this->runCommand($eatery2, ['name' => 'Chain Eatery'])->run();
+
+        $this->assertSame(
+            1,
+            Eatery::withoutGlobalScopes()
+                ->where(['name' => 'Chain Eatery', 'county_id' => 1, 'town_id' => 529])
+                ->count(),
+        );
+
+        $this->assertDatabaseCount('wheretoeat_nationwide_branches', 2);
+    }
+
+    #[Test]
     public function itWrapsEverythingInADatabaseTransaction(): void
     {
         $eatery = $this->build(Eatery::class)->create([
