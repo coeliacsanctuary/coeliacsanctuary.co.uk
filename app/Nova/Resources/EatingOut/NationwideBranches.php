@@ -12,13 +12,17 @@ use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\GenerateSealiacOverview;
 use App\Nova\Resource;
 use App\Nova\Resources\Main\SealiacOverviews;
+use Illuminate\Contracts\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Jpeters8889\AddressField\AddressField;
+use Jpeters8889\EateryLocationSearch\EateryLocationSearch;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
@@ -69,38 +73,30 @@ class NationwideBranches extends Resource
             Boolean::make('Live'),
 
             Panel::make('Location', [
-                BelongsTo::make('Town', resource: Towns::class)
-                    ->onlyOnForms()
+                EateryLocationSearch::make('Location Search', 'location', fn () => null)
                     ->fullWidth()
-                    ->showCreateRelationButton(),
+                    ->onlyOnForms(),
 
-                BelongsTo::make('County', resource: Counties::class)
-                    ->onlyOnForms()
+                BelongsTo::make('Country', resource: Countries::class)
+                    ->hideFromIndex()
                     ->fullWidth()
                     ->hide()
-                    ->displayUsing(fn ($county) => $county->county)
-                    ->dependsOn(['town'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
-                        $field->show();
+                    ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        if ($request->filled('location')) {
+                            $location = $request->json('location');
 
-                        /** @var EateryTown $town */
-                        $town = EateryTown::query()->find($request->town);
-
-                        if ($town) {
-                            $field->setValue($town->county_id);
+                            if (Arr::has($location, 'countryId')) {
+                                $field->setValue($location['countryId']);
+                            }
                         }
 
                         return $field;
-                    }),
-
-                BelongsTo::make('Country', resource: Countries::class)
-                    ->onlyOnForms()
-                    ->fullWidth()
-                    ->hide()
+                    })
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $field->show();
 
                         /** @var EateryCounty | null $county */
-                        $county = EateryCounty::query()->find($request->county);
+                        $county = EateryCounty::withoutGlobalScopes()->find($request->county);
 
                         if ($county) {
                             $field->setValue($county->country_id);
@@ -108,6 +104,94 @@ class NationwideBranches extends Resource
 
                         return $field;
                     }),
+
+                BelongsTo::make('County', resource: Counties::class)
+                    ->searchable()
+                    ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        if ($request->filled('location')) {
+                            $location = $request->json('location');
+
+                            if (Arr::has($location, 'countyId')) {
+                                $field->setValue($location['countyId']);
+                            }
+                        }
+
+                        return $field;
+                    })
+                    ->dependsOn('country', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
+                        $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('wheretoeat_counties.country_id', $data->get('country')));
+                    })
+                    ->dependsOn('town', function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        $field->show();
+
+                        /** @var EateryTown $town */
+                        $town = EateryTown::withoutGlobalScopes()->find($request->town);
+
+                        if ($town) {
+                            $field->setValue($town->county_id);
+                        }
+
+                        return $field;
+                    })
+                    ->hideFromIndex()
+                    ->fullWidth()
+                    ->hide()
+                    ->displayUsing(fn ($county) => $county->county)
+                    ->showCreateRelationButton(),
+
+                BelongsTo::make('Town', resource: Towns::class)
+                    ->searchable()
+                    ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        if ($request->filled('location')) {
+                            $location = $request->json('location');
+
+                            if (Arr::has($location, 'townId')) {
+                                $field->setValue($location['townId']);
+                            }
+                        }
+
+                        return $field;
+                    })
+                    ->dependsOn('county', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
+                        $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('county_id', $data->get('county')));
+                    })
+                    ->hideFromIndex()
+                    ->fullWidth()
+                    ->showCreateRelationButton(),
+
+                BelongsTo::make('Area', resource: Areas::class)
+                    ->searchable()
+                    ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        if ($request->filled('location')) {
+                            $location = $request->json('location');
+
+                            if (Arr::has($location, 'areaId')) {
+                                $field->setValue($location['areaId']);
+                            }
+                        }
+
+                        return $field;
+                    })
+                    ->dependsOn('town', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
+                        $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('town_id', $data->get('town')));
+                    })
+                    ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
+                        $countyId = $request->input('county');
+                        $county = EateryCounty::withoutGlobalScopes()->where('id', $countyId)->first();
+
+                        if ($county?->slug === 'london') {
+                            $field->show();
+                        } else {
+                            $field->hide();
+                        }
+
+                        return $field;
+                    })
+                    ->hideFromIndex()
+                    ->fullWidth()
+                    ->showCreateRelationButton()
+                    ->hide()
+                    ->nullable(),
 
                 AddressField::make('Address')
                     ->required()
@@ -138,6 +222,11 @@ class NationwideBranches extends Resource
             ])
             ->withCount(['reviews' => fn (Builder $builder) => $builder->withoutGlobalScopes()])
             ->when($request->missing('orderByDirection'), fn (Builder $builder) => $builder->reorder('order_country')->orderBy('order_county')->orderBy('order_town')->orderBy('order_area'));
+    }
+
+    public static function relatableQuery(NovaRequest $request, EloquentBuilder $query)
+    {
+        return static::indexQuery($request, $query);
     }
 
     protected function getVenueTypes($typeId = null): array
@@ -178,6 +267,21 @@ class NationwideBranches extends Resource
                     return $model->live === true && $model->reviews_count > 0;
                 }),
         ];
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $branch = $fillFields[0];
+
+        unset($branch->location);
+
+        return $fillFields;
+    }
+
+    public static function usesScout()
+    {
+        return false;
     }
 
     public static function redirectAfterCreate(NovaRequest $request, $resource)
