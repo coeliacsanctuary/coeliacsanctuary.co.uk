@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Http\Controllers\Shop\Basket\AddOn;
+namespace Tests\Feature\Http\Controllers\Shop\Basket\AddOn;
 
 use App\Actions\Shop\ResolveBasketAction;
 use App\Models\Shop\ShopOrder;

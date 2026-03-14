@@ -19,6 +19,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
+use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
 
@@ -60,6 +61,8 @@ class ShowController
 
             Cookie::forget('basket_token');
             $request->session()->remove('discountCode');
+
+            JourneyTracker::tag('Shop Purchase');
 
             return $inertia
                 ->title('Order Complete!')

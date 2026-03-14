@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Api\V1\Controllers\EatingOut\Geocoder;
+namespace Tests\Feature\Http\Api\V1\Controllers\EatingOut\Geocode;
 
 use App\DataObjects\EatingOut\LatLng;
 use App\Services\EatingOut\LocationSearchService;
