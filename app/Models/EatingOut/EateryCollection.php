@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * @property Configuration $configuration
+ */
 class EateryCollection extends Model implements HasMedia
 {
     use DisplaysDates;
@@ -37,7 +40,8 @@ class EateryCollection extends Model implements HasMedia
         static::addGlobalScope(new LiveScope());
 
         static::saving(function (self $collection): void {
-            $collection->query = new QueryBuilder($collection->configuration)->toSql();
+            $configuration = $collection->configuration;
+            $collection->query = new QueryBuilder($configuration)->toSql();
         });
 
         static::saved(function (): void {

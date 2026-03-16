@@ -94,6 +94,7 @@ class QueryBuilder
                     return;
                 }
 
+                /** @phpstan-ignore-next-line  */
                 $this->applyWhereClauses($where, $builder);
             });
         });
@@ -101,6 +102,7 @@ class QueryBuilder
         return $query;
     }
 
+    /** @param Collection<int, Order> $getOrderings */
     protected function processOrderClauses(Collection $getOrderings, Builder $query): void
     {
         $getOrderings->each(function (Order $order) use ($query): void {

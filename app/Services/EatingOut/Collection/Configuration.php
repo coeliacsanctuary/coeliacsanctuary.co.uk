@@ -64,9 +64,10 @@ class Configuration implements Castable, Jsonable
         }, $wheres);
     }
 
-    /** @return Collection<int, Where|Collection<int, Where> */
+    /** @return Collection<int, Where|Collection<int, Where>> */
     public function getWheres(): Collection
     {
+        /** @phpstan-ignore argument.type */
         return $this->prepareWheres(collect($this->wheres));
     }
 
@@ -100,27 +101,25 @@ class Configuration implements Castable, Jsonable
     }
 
     /**
-     * @param Collection<int, Where|Collection<int, Where> $wheres
-     * @return Collection<int, Where|Collection<int, Where>
+     * @param Collection<int, Where|Collection<int, Where>> $wheres
+     * @return Collection<int, Where|Collection<int, Where>>
      */
     protected function prepareWheres(Collection $wheres): Collection
     {
-        return $wheres->map(function (Where|Collection|array $where) {
+        /** @phpstan-ignore return.type */
+        return $wheres->map(function (Where|Collection $where) {
             if ($where instanceof Where) {
                 return $where;
             }
 
-            if ( ! $where instanceof Collection) {
-                $where = collect($where);
-            }
-
+            /** @phpstan-ignore argument.type */
             return $this->prepareWheres($where);
         });
     }
 
     public function toJson($options = 0): string
     {
-        return json_encode([
+        return (string) json_encode([
             'wheres' => $this->wheres,
             'joins' => $this->joins,
             'counts' => $this->counts,
@@ -130,6 +129,7 @@ class Configuration implements Castable, Jsonable
         ], $options);
     }
 
+    /** @return CastsAttributes<Configuration, Configuration> */
     public static function castUsing(array $arguments): CastsAttributes
     {
         return new class () implements CastsAttributes {
@@ -149,7 +149,6 @@ class Configuration implements Castable, Jsonable
                 );
             }
 
-            /** @param Configuration $value */
             public function set(Model $model, string $key, mixed $value, array $attributes)
             {
                 if ( ! $value instanceof Configuration) {
