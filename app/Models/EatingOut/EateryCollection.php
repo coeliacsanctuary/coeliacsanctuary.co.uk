@@ -36,7 +36,7 @@ class EateryCollection extends Model implements HasMedia
     {
         static::addGlobalScope(new LiveScope());
 
-        static::saving(function (self $collection) {
+        static::saving(function (self $collection): void {
             $collection->query = new QueryBuilder($collection->configuration)->toSql();
         });
 

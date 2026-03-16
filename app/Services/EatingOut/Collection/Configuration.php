@@ -13,9 +13,7 @@ use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class Configuration implements Castable, Jsonable
 {
@@ -134,8 +132,7 @@ class Configuration implements Castable, Jsonable
 
     public static function castUsing(array $arguments): CastsAttributes
     {
-        return new class() implements CastsAttributes
-        {
+        return new class () implements CastsAttributes {
             public function get(Model $model, string $key, mixed $value, array $attributes)
             {
                 if (is_string($value)) {
