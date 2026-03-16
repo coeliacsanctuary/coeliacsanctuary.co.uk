@@ -29,6 +29,7 @@ class Configuration implements Castable, Jsonable
     /** @var Average[] */
     protected array $averages = [];
 
+    /** @var Order[] */
     protected array $orderBy = [];
 
     protected ?int $limit = null;
@@ -57,7 +58,7 @@ class Configuration implements Castable, Jsonable
             }
 
             if (is_array($where) && isset($where[0]) && (is_array($where[0]) || $where[0] instanceof Where)) {
-                return $this->processWheres($where);
+                return collect($this->processWheres($where));
             }
 
             return new Where(...$where);
@@ -133,7 +134,7 @@ class Configuration implements Castable, Jsonable
     public static function castUsing(array $arguments): CastsAttributes
     {
         return new class () implements CastsAttributes {
-            public function get(Model $model, string $key, mixed $value, array $attributes)
+            public function get(Model $model, string $key, mixed $value, array $attributes): Configuration
             {
                 if (is_string($value)) {
                     $value = json_decode($value, true);
@@ -149,7 +150,7 @@ class Configuration implements Castable, Jsonable
                 );
             }
 
-            public function set(Model $model, string $key, mixed $value, array $attributes)
+            public function set(Model $model, string $key, mixed $value, array $attributes): array
             {
                 if ( ! $value instanceof Configuration) {
                     $value = $this->get($model, $key, $value, $attributes);

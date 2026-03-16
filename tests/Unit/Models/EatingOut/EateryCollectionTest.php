@@ -21,7 +21,7 @@ class EateryCollectionTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsAnConfiguredConfiguration(): void
+    public function itReturnsAConfiguredConfiguration(): void
     {
         $eateryCollection = $this->create(EateryCollection::class, [
             'configuration' => ['wheres' => [['foo', '=', 'baz']]]
