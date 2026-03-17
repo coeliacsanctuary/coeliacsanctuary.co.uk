@@ -13,16 +13,23 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class QueryBuilder
+abstract class QueryBuilder
 {
     public function __construct(protected Configuration $configuration)
     {
         //
     }
 
+    abstract protected function instantiateQuery(): Builder;
+
+    protected function additionalWhereClauses(Builder $query): void
+    {
+        //
+    }
+
     public function toSql(): string
     {
-        $query = DB::table('wheretoeat')->select('wheretoeat.id');
+        $query = $this->instantiateQuery();
 
         if ($this->configuration->getCounts()->isNotEmpty()) {
             $this->applyCountQueries($this->configuration->getCounts(), $query);
@@ -40,9 +47,7 @@ class QueryBuilder
             $this->applyWhereClauses($this->configuration->getWheres(), $query);
         }
 
-        $query
-            ->where('wheretoeat.live', true)
-            ->where('wheretoeat.closed_down', false);
+        $this->additionalWhereClauses($query);
 
         if ($this->configuration->getOrderings()->isNotEmpty()) {
             $this->processOrderClauses($this->configuration->getOrderings(), $query);

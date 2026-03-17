@@ -9,7 +9,8 @@ use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
 use App\Models\Media;
 use App\Scopes\LiveScope;
-use App\Services\EatingOut\Collection\Builder\QueryBuilder;
+use App\Services\EatingOut\Collection\Builder\BranchQueryBuilder;
+use App\Services\EatingOut\Collection\Builder\EateryQueryBuilder;
 use App\Services\EatingOut\Collection\Configuration;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -40,7 +41,8 @@ class EateryCollection extends Model implements HasMedia
         static::addGlobalScope(new LiveScope());
 
         static::saving(function (self $collection): void {
-            $collection->query = new QueryBuilder($collection->configuration)->toSql();
+            $collection->eatery_query = new EateryQueryBuilder($collection->configuration)->toSql();
+            $collection->branch_query = new BranchQueryBuilder($collection->configuration)->toSql();
         });
 
         static::saved(function (): void {

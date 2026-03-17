@@ -24,7 +24,7 @@ class EateryCollectionTest extends TestCase
     public function itReturnsAConfiguredConfiguration(): void
     {
         $eateryCollection = $this->create(EateryCollection::class, [
-            'configuration' => ['wheres' => [['foo', '=', 'baz']]]
+            'configuration' => ['wheres' => [['foo', '=', 'baz']]],
         ]);
 
         $this->assertInstanceOf(Configuration::class, $eateryCollection->configuration);
@@ -35,15 +35,27 @@ class EateryCollectionTest extends TestCase
     }
 
     #[Test]
-    public function itSetsTheQueryWhenSaving(): void
+    public function itSetsTheEateryQueryWhenSaving(): void
     {
         $eateryCollection = $this->create(EateryCollection::class);
 
-        $this->assertNotNull($eateryCollection->query);
-        $this->assertNotEmpty($eateryCollection->query);
+        $this->assertNotNull($eateryCollection->eatery_query);
+        $this->assertNotEmpty($eateryCollection->eatery_query);
 
-        $this->assertStringContainsString('select `wheretoeat`.`id`', $eateryCollection->query);
-        $this->assertStringContainsString('from `wheretoeat`', $eateryCollection->query);
+        $this->assertStringContainsString('select `wheretoeat`.`id`', $eateryCollection->eatery_query);
+        $this->assertStringContainsString('from `wheretoeat`', $eateryCollection->eatery_query);
+    }
+
+    #[Test]
+    public function itSetsTheBranchQueryWhenSaving(): void
+    {
+        $eateryCollection = $this->create(EateryCollection::class);
+
+        $this->assertNotNull($eateryCollection->branch_query);
+        $this->assertNotEmpty($eateryCollection->branch_query);
+
+        $this->assertStringContainsString('select `wheretoeat`.`id` as `id`, `wheretoeat_nationwide_branches`.`id` as `branch_id`', $eateryCollection->branch_query);
+        $this->assertStringContainsString('from `wheretoeat_nationwide_branches`', $eateryCollection->branch_query);
     }
 
     #[Test]
