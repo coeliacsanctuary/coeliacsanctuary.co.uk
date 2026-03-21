@@ -9,7 +9,7 @@ import {
 } from '../../data';
 import { Button } from 'laravel-nova-ui';
 
-defineEmits(['save', 'delete']);
+const emits = defineEmits(['save', 'delete']);
 
 const type = ref();
 const config = ref({});
@@ -18,9 +18,72 @@ const relationValues = ref([]);
 const operators = ['=', '!=', '<', '>', '<=', '>='];
 
 const saveButton = () => {
-  //validate
-  //save
+  let hasError = false;
+
+  getRequiredFields().forEach((field) => {
+    if (hasError) {
+      return;
+    }
+
+    if (config.value[field] === '') {
+      alert(`Please ensure ${field} has a value!`);
+
+      hasError = true;
+    }
+  });
+
+  if (hasError) {
+    return;
+  }
+
+  emits('save', {
+    type: type.value,
+    config: config.value,
+  });
 };
+
+const getRequiredFields = () => {
+  switch (type.value) {
+    case 'field':
+    case 'relation':
+      return ['field', 'operator'];
+    case 'has':
+      return [
+        'relation',
+        'table',
+        'localKey',
+        'foreignKey',
+        'field',
+        'operator',
+        'value',
+      ];
+    case 'count':
+      return [
+        'relation',
+        'table',
+        'localKey',
+        'foreignKey',
+        'alias',
+        'operator',
+        'value',
+      ];
+    case 'average':
+      return [
+        'relation',
+        'table',
+        'column',
+        'localKey',
+        'foreignKey',
+        'alias',
+        'operator',
+        'value',
+      ];
+    case 'nested':
+      return ['clauses'];
+  }
+};
+
+defineExpose({ saveButton });
 
 watch(
   () => type.value,
@@ -47,6 +110,9 @@ watch(
       case 'has':
         config.value = {
           relation: '',
+          table: '',
+          localKey: '',
+          foreignKey: '',
           field: '',
           operator: '=',
           value: '',
@@ -58,6 +124,7 @@ watch(
       case 'count':
         config.value = {
           relation: '',
+          table: '',
           localKey: '',
           foreignKey: '',
           alias: '',
@@ -69,6 +136,7 @@ watch(
       case 'average':
         config.value = {
           relation: '',
+          table: '',
           column: '',
           localKey: '',
           foreignKey: '',
@@ -129,6 +197,9 @@ watch(
       );
 
       config.value.field = raw.column;
+      config.value.table = raw.table;
+      config.value.localKey = raw.localKey;
+      config.value.foreignKey = raw.foreignKey;
     }
 
     if (type.value === 'count') {
@@ -136,6 +207,7 @@ watch(
         (count) => count.label === config.value.relation,
       );
 
+      config.value.table = raw.table;
       config.value.localKey = raw.localKey;
       config.value.foreignKey = raw.foreignKey;
       config.value.alias = raw.alias;
@@ -146,6 +218,7 @@ watch(
         (avg) => avg.label === config.value.relation,
       );
 
+      config.value.table = raw.table;
       config.value.column = raw.column;
       config.value.localKey = raw.localKey;
       config.value.foreignKey = raw.foreignKey;
@@ -426,7 +499,10 @@ watch(
               <option>or</option>
             </select>
             <div class="flex-1">
-              <WhereClause @delete="clause.clauses.splice(index, 1)" />
+              <WhereClause
+                @save="(clause) => (config.clauses[index].config = clause)"
+                @delete="clause.clauses.splice(index, 1)"
+              />
             </div>
           </div>
         </div>

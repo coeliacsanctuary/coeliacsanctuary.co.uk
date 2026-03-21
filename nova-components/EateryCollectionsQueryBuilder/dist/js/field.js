@@ -33,6 +33,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var laravel_nova__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! laravel-nova */ "laravel-nova");
 /* harmony import */ var laravel_nova__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(laravel_nova__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _components_WhereClause_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/WhereClause.vue */ "./resources/js/components/components/WhereClause.vue");
+/* harmony import */ var _objects__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../objects */ "./resources/js/objects/index.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+
 
 
 
@@ -55,7 +69,8 @@ __webpack_require__.r(__webpack_exports__);
         orders: [],
         wheres: [],
         limit: undefined
-      }
+      },
+      refs: []
     };
   },
   methods: {
@@ -64,9 +79,95 @@ __webpack_require__.r(__webpack_exports__);
         type: 'field',
         config: {}
       });
+      console.log('added to page', this.refs);
+    },
+    saveWhere: function saveWhere(clause) {
+      var clausesToAdd = this.prepareConfigItems(clause.type, clause.config);
+      if (clausesToAdd.wheres.length) {
+        var _this$config$wheres;
+        (_this$config$wheres = this.config.wheres).push.apply(_this$config$wheres, _toConsumableArray(clausesToAdd.wheres));
+      }
+      if (clausesToAdd.joins.length) {
+        var _this$config$joins;
+        (_this$config$joins = this.config.joins).push.apply(_this$config$joins, _toConsumableArray(clausesToAdd.joins));
+      }
+      if (clausesToAdd.counts.length) {
+        var _this$config$counts;
+        (_this$config$counts = this.config.counts).push.apply(_this$config$counts, _toConsumableArray(clausesToAdd.counts));
+      }
+      if (clausesToAdd.averages.length) {
+        var _this$config$averages;
+        (_this$config$averages = this.config.averages).push.apply(_this$config$averages, _toConsumableArray(clausesToAdd.averages.length));
+      }
+    },
+    prepareConfigItems: function prepareConfigItems(type, config) {
+      var _this = this;
+      var wheres = [];
+      var joins = [];
+      var counts = [];
+      var averages = [];
+      switch (type) {
+        case 'field':
+        case 'relation':
+          wheres.push((0,_objects__WEBPACK_IMPORTED_MODULE_3__.where)(config.field, config.operator, config.value, config["boolean"] || 'and'));
+          break;
+        case 'has':
+          wheres.push((0,_objects__WEBPACK_IMPORTED_MODULE_3__.where)(config.field, config.operator, config.value));
+          joins.push((0,_objects__WEBPACK_IMPORTED_MODULE_3__.join)(config.table, config.localKey, '=', config.foreignKey));
+          break;
+        case 'count':
+          counts.push((0,_objects__WEBPACK_IMPORTED_MODULE_3__.count)(config.table, config.localKey, config.foreignKey, config.alias, config.operator, config.value));
+          break;
+        case 'average':
+          averages.push((0,_objects__WEBPACK_IMPORTED_MODULE_3__.average)(config.table, config.column, config.localKey, config.foreignKey, config.alias, config.operator, config.value));
+          break;
+        case 'nested':
+          var clauses = config.clauses.map(function (clause) {
+            return _this.prepareConfigItems(clause.type, _objectSpread(_objectSpread({}, clause.config), {}, {
+              "boolean": clause["boolean"]
+            }));
+          });
+          if (clauses.wheres.length) {
+            wheres.push(clauses.wheres);
+          }
+          if (clauses.joins.length) {
+            joins.push.apply(joins, _toConsumableArray(clauses.joins));
+          }
+          if (clauses.counts.length) {
+            counts.push.apply(counts, _toConsumableArray(clauses.counts));
+          }
+          if (clauses.averages.length) {
+            averages.push.apply(averages, _toConsumableArray(clauses.averages.length));
+          }
+          break;
+      }
+      return {
+        wheres: wheres,
+        joins: joins,
+        counts: counts,
+        averages: averages
+      };
     },
     deleteWhere: function deleteWhere(index) {
+      var _this2 = this;
       this.display.wheres.splice(index, 1);
+      this.refs.splice(index, 1);
+      this.$nextTick(function () {
+        _this2.rebuildConfig();
+      });
+    },
+    rebuildConfig: function rebuildConfig() {
+      this.config = {
+        averages: [],
+        counts: [],
+        joins: [],
+        orders: [],
+        wheres: [],
+        limit: undefined
+      };
+      this.refs.forEach(function (ref) {
+        return ref.saveButton();
+      });
     },
     /*
      * Set the initial, internal value for the field.
@@ -145,16 +246,50 @@ __webpack_require__.r(__webpack_exports__);
   __name: 'WhereClause',
   emits: ['save', 'delete'],
   setup: function setup(__props, _ref) {
-    var __expose = _ref.expose;
-    __expose();
+    var __expose = _ref.expose,
+      __emit = _ref.emit;
+    var emits = __emit;
     var type = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)();
     var config = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({});
     var relationValues = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
     var operators = ['=', '!=', '<', '>', '<=', '>='];
     var saveButton = function saveButton() {
-      //validate
-      //save
+      var hasError = false;
+      getRequiredFields().forEach(function (field) {
+        if (hasError) {
+          return;
+        }
+        if (config.value[field] === '') {
+          alert("Please ensure ".concat(field, " has a value!"));
+          hasError = true;
+        }
+      });
+      if (hasError) {
+        return;
+      }
+      emits('save', {
+        type: type.value,
+        config: config.value
+      });
     };
+    var getRequiredFields = function getRequiredFields() {
+      switch (type.value) {
+        case 'field':
+        case 'relation':
+          return ['field', 'operator'];
+        case 'has':
+          return ['relation', 'table', 'localKey', 'foreignKey', 'field', 'operator', 'value'];
+        case 'count':
+          return ['relation', 'table', 'localKey', 'foreignKey', 'alias', 'operator', 'value'];
+        case 'average':
+          return ['relation', 'table', 'column', 'localKey', 'foreignKey', 'alias', 'operator', 'value'];
+        case 'nested':
+          return ['clauses'];
+      }
+    };
+    __expose({
+      saveButton: saveButton
+    });
     (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(function () {
       return type.value;
     }, function () {
@@ -177,6 +312,9 @@ __webpack_require__.r(__webpack_exports__);
         case 'has':
           config.value = {
             relation: '',
+            table: '',
+            localKey: '',
+            foreignKey: '',
             field: '',
             operator: '=',
             value: ''
@@ -186,6 +324,7 @@ __webpack_require__.r(__webpack_exports__);
         case 'count':
           config.value = {
             relation: '',
+            table: '',
             localKey: '',
             foreignKey: '',
             alias: '',
@@ -196,6 +335,7 @@ __webpack_require__.r(__webpack_exports__);
         case 'average':
           config.value = {
             relation: '',
+            table: '',
             column: '',
             localKey: '',
             foreignKey: '',
@@ -244,11 +384,15 @@ __webpack_require__.r(__webpack_exports__);
           return has.relation === config.value.relation;
         });
         config.value.field = raw.column;
+        config.value.table = raw.table;
+        config.value.localKey = raw.localKey;
+        config.value.foreignKey = raw.foreignKey;
       }
       if (type.value === 'count') {
         var _raw = _data__WEBPACK_IMPORTED_MODULE_1__.whereCount.find(function (count) {
           return count.label === config.value.relation;
         });
+        config.value.table = _raw.table;
         config.value.localKey = _raw.localKey;
         config.value.foreignKey = _raw.foreignKey;
         config.value.alias = _raw.alias;
@@ -257,6 +401,7 @@ __webpack_require__.r(__webpack_exports__);
         var _raw2 = _data__WEBPACK_IMPORTED_MODULE_1__.whereAverage.find(function (avg) {
           return avg.label === config.value.relation;
         });
+        config.value.table = _raw2.table;
         config.value.column = _raw2.column;
         config.value.localKey = _raw2.localKey;
         config.value.foreignKey = _raw2.foreignKey;
@@ -264,11 +409,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     });
     var __returned__ = {
+      emits: emits,
       type: type,
       config: config,
       relationValues: relationValues,
       operators: operators,
       saveButton: saveButton,
+      getRequiredFields: getRequiredFields,
       ref: vue__WEBPACK_IMPORTED_MODULE_0__.ref,
       watch: vue__WEBPACK_IMPORTED_MODULE_0__.watch,
       get whereAverage() {
@@ -382,7 +529,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         type: "text",
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["form-control form-control-bordered form-input w-full", _ctx.errorClasses]),
         placeholder: $props.field.name
-      }, null, 10 /* CLASS, PROPS */, _hoisted_1), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.value]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
+      }, null, 10 /* CLASS, PROPS */, _hoisted_1), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.value]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.config) + " ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
         "class": "text-lg font-bold"
       }, "Where Clauses", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
         as: "span",
@@ -391,7 +538,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return _toConsumableArray(_cache[3] || (_cache[3] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add Where Clause ", -1 /* CACHED */)]));
+          return _toConsumableArray(_cache[4] || (_cache[4] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add Where Clause ", -1 /* CACHED */)]));
         }),
         _: 1 /* STABLE */
       })]), _ctx.display.wheres.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.display.wheres, function (where, index) {
@@ -399,18 +546,25 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: index,
           "class": "py-2"
         }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_WhereClause, {
+          ref_for: true,
+          ref: function ref(el) {
+            return _ctx.refs[index] = el;
+          },
+          onSave: _cache[2] || (_cache[2] = function (clause) {
+            return $options.saveWhere(clause);
+          }),
           onDelete: function onDelete() {
             return $options.deleteWhere(index);
           }
         }, null, 8 /* PROPS */, ["onDelete"])]);
       }), 128 /* KEYED_FRAGMENT */))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_6, " No where clauses... ")), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
         as: "span",
-        onClick: _cache[2] || (_cache[2] = function ($event) {
+        onClick: _cache[3] || (_cache[3] = function ($event) {
           return $options.addWhereToPage();
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return _toConsumableArray(_cache[5] || (_cache[5] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add Where Clause ", -1 /* CACHED */)]));
+          return _toConsumableArray(_cache[6] || (_cache[6] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add Where Clause ", -1 /* CACHED */)]));
         }),
         _: 1 /* STABLE */
       })])])])];
@@ -807,10 +961,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       },
       "class": "form-control form-control-bordered"
     }, _toConsumableArray(_cache[49] || (_cache[49] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "and", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "or", -1 /* CACHED */)])), 8 /* PROPS */, _hoisted_21), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, clause["boolean"]]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_WhereClause, {
+      onSave: function onSave(clause) {
+        return $setup.config.clauses[index].config = clause;
+      },
       onDelete: function onDelete($event) {
         return clause.clauses.splice(index, 1);
       }
-    }, null, 8 /* PROPS */, ["onDelete"])])]);
+    }, null, 8 /* PROPS */, ["onSave", "onDelete"])])]);
   }), 128 /* KEYED_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Button"], {
     variant: "outline",
     onClick: _cache[28] || (_cache[28] = function () {
@@ -886,7 +1043,10 @@ var whereRelations = [{
 var whereHas = [{
   label: 'feature',
   relation: 'features',
-  column: 'id'
+  column: 'id',
+  table: 'wheretoeat_assigned_features',
+  localKey: 'id',
+  foreignKey: 'wheretoeat_id'
 }];
 var orderables = [{
   label: 'name',
@@ -944,6 +1104,95 @@ Nova.booting(function (app, store) {
   app.component('form-eatery-collections-query-builder', _components_FormField__WEBPACK_IMPORTED_MODULE_2__["default"]);
   // app.component('preview-eatery-collections-query-builder', PreviewField)
 });
+
+/***/ },
+
+/***/ "./resources/js/objects/index.js"
+/*!***************************************!*\
+  !*** ./resources/js/objects/index.js ***!
+  \***************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   average: () => (/* binding */ average),
+/* harmony export */   count: () => (/* binding */ count),
+/* harmony export */   join: () => (/* binding */ join),
+/* harmony export */   order: () => (/* binding */ order),
+/* harmony export */   where: () => (/* binding */ where)
+/* harmony export */ });
+var average = function average() {
+  var table = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var column = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var localKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  var foreignKey = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  var alias = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  var operator = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : undefined;
+  var value = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : undefined;
+  return {
+    table: table,
+    column: column,
+    localKey: localKey,
+    foreignKey: foreignKey,
+    alias: alias,
+    operator: operator,
+    value: value
+  };
+};
+var count = function count() {
+  var table = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var localKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var foreignKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  var alias = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  var operator = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  var value = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : undefined;
+  return {
+    table: table,
+    localKey: localKey,
+    foreignKey: foreignKey,
+    alias: alias,
+    operator: operator,
+    value: value
+  };
+};
+var join = function join() {
+  var table = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var first = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var operator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  var second = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  return {
+    table: table,
+    first: first,
+    operator: operator,
+    second: second
+  };
+};
+var order = function order() {
+  var column = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var table = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  var localKey = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  var foreignKey = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  return {
+    column: column,
+    direction: direction,
+    table: table,
+    localKey: localKey,
+    foreignKey: foreignKey
+  };
+};
+var where = function where() {
+  var field = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var operator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  var _boolean = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'and';
+  return {
+    field: field,
+    operator: operator,
+    value: value,
+    "boolean": _boolean
+  };
+};
 
 /***/ },
 

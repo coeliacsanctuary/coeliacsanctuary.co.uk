@@ -11,7 +11,14 @@ export const whereRelations = [
 ];
 
 export const whereHas = [
-  { label: 'feature', relation: 'features', column: 'id' },
+  {
+    label: 'feature',
+    relation: 'features',
+    column: 'id',
+    table: 'wheretoeat_assigned_features',
+    localKey: 'id',
+    foreignKey: 'wheretoeat_id',
+  },
 ];
 
 export const orderables = [

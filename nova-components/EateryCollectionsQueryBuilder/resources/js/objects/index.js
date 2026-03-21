@@ -62,8 +62,10 @@ export const where = (
   field = undefined,
   operator = undefined,
   value = undefined,
+  boolean = 'and',
 ) => ({
   field,
   operator,
   value,
+  boolean,
 });
