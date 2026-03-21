@@ -21,7 +21,9 @@ return new class() extends Migration
             $table->json('configuration');
             $table->text('eatery_query');
             $table->text('branch_query');
+            $table->boolean('draft');
             $table->boolean('live');
+            $table->timestamp('publish_at')->nullable()->useCurrent();
             $table->timestamps();
         });
     }

@@ -12,7 +12,9 @@
         "build-wte-nationwide-branch-import": "cd nova-components/WteNationwideBranchImport && npm run dev",
         "build-wte-nationwide-branch-import-prod": "cd nova-components/WteNationwideBranchImport && npm run prod",
         "build-refresh-ads-txt": "cd nova-components/RefreshAdsTxt && npm run dev",
-        "build-refresh-ads-txt-prod": "cd nova-components/RefreshAdsTxt && npm run prod"
+        "build-refresh-ads-txt-prod": "cd nova-components/RefreshAdsTxt && npm run prod",
+        "build-eatery-collections-query-builder": "cd nova-components/EateryCollectionsQueryBuilder && npm run dev",
+        "build-eatery-collections-query-builder-prod": "cd nova-components/EateryCollectionsQueryBuilder && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",

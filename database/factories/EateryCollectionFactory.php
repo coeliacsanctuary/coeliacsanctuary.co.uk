@@ -19,6 +19,7 @@ class EateryCollectionFactory extends Factory
             'meta_description' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
             'body' => $this->faker->paragraphs(3, true),
+            'draft' => false,
             'live' => true,
             'configuration' => [],
         ];

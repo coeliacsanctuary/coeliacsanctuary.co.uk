@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use App\Concerns\CanBePublished;
 use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
@@ -21,6 +22,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class EateryCollection extends Model implements HasMedia
 {
+    use CanBePublished;
     use DisplaysDates;
     use DisplaysMedia;
 
@@ -32,8 +34,10 @@ class EateryCollection extends Model implements HasMedia
     protected $table = 'wheretoeat_collections';
 
     protected $casts = [
+        'draft' => 'bool',
         'live' => 'bool',
         'configuration' => Configuration::class,
+        'published_at' => 'datetime',
     ];
 
     protected static function booted(): void
