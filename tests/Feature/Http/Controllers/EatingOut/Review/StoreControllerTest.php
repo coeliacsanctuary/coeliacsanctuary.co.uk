@@ -404,7 +404,8 @@ class StoreControllerTest extends TestCase
                     'eatery' => $eatery ?? $test->eatery->slug,
                 ]),
                 fn (array $data = []): EateryCreateReviewRequestFactory => EateryCreateReviewRequestFactory::new($data),
-                function (): void {},
+                function (): void {
+                },
                 function (self $test, EateryReview $review): void {
                     $test->assertNull($review->branch_name);
                     $test->assertNull($review->nationwide_branch_id);
@@ -442,7 +443,8 @@ class StoreControllerTest extends TestCase
                     $test->county->update(['county' => 'Nationwide']);
                     $test->town->update(['town' => 'nationwide']);
                 },
-                function (): void {},
+                function (): void {
+                },
             ],
             'nationwide branch' => [
                 fn (self $test, ?string $eatery = null): string => route('eating-out.nationwide.show.branch.reviews.create', [
@@ -462,7 +464,8 @@ class StoreControllerTest extends TestCase
                     $test->county->update(['county' => 'Nationwide']);
                     $test->town->update(['town' => 'nationwide']);
                 },
-                function (): void {},
+                function (): void {
+                },
             ],
         ];
     }

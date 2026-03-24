@@ -9,7 +9,6 @@ use App\Nova\Resource;
 use App\Nova\Support\Panels\VisibilityPanel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
-use Jpeters8889\Body\Body;
 use Jpeters8889\EateryCollectionsQueryBuilder\EateryCollectionsQueryBuilder;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -77,13 +76,16 @@ class EateryCollections extends Resource
             ]),
 
             new Panel('Content', [
-                Body::make('Body')
+                Textarea::make('Body')
+                    ->rows(20)
                     ->fullWidth()
                     ->rules(['required']),
             ]),
 
-            New Panel('Configuration', [
-                EateryCollectionsQueryBuilder::make('configuration'),
+            new Panel('Configuration', [
+                EateryCollectionsQueryBuilder::make('Configuration')
+                    ->fullWidth()
+                    ->onlyOnForms(),
             ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),

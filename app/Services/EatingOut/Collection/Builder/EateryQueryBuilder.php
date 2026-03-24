@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class EateryQueryBuilder extends QueryBuilder
 {
+    protected function getTableName()
+    {
+        return 'wheretoeat';
+    }
+
     protected function instantiateQuery(): Builder
     {
         return DB::table('wheretoeat')

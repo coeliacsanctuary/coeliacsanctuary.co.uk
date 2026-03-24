@@ -45,7 +45,11 @@ class FieldServiceProvider extends ServiceProvider
                 Route::post('lookup', function (Request $request, Geocoder $geocoder) {
                     $geocoder->setApiKey(self::$googleApiKey);
 
-                    return $geocoder->getCoordinatesForAddress($request->string('address')->toString());
+                    $results = $geocoder->getAllCoordinatesForAddress($request->string('address')->toString());
+
+                    return collect($results)
+                        ->filter(fn (array $result) => ! in_array('natural_feature', $result['types']))
+                        ->first();
                 });
             });
     }

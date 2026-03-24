@@ -6,8 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class() extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('wheretoeat_collections', function (Blueprint $table): void {
@@ -21,7 +20,7 @@ return new class() extends Migration
             $table->json('configuration');
             $table->text('eatery_query');
             $table->text('branch_query');
-            $table->boolean('draft');
+            $table->boolean('draft')->default(false);
             $table->boolean('live');
             $table->timestamp('publish_at')->nullable()->useCurrent();
             $table->timestamps();

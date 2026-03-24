@@ -9,13 +9,21 @@ import {
 } from '../../data';
 import { Button } from 'laravel-nova-ui';
 
-const emits = defineEmits(['save', 'delete']);
+const emits = defineEmits(['save', 'delete', 'edit']);
 
 const type = ref();
 const config = ref({});
 const relationValues = ref([]);
 
+const hasSaved = ref(false);
+
 const operators = ['=', '!=', '<', '>', '<=', '>='];
+
+const forceSave = () => {
+  hasSaved.value = false;
+
+  saveButton();
+};
 
 const saveButton = () => {
   let hasError = false;
@@ -36,10 +44,14 @@ const saveButton = () => {
     return;
   }
 
-  emits('save', {
+  emits(hasSaved.value ? 'edit' : 'save', {
     type: type.value,
     config: config.value,
   });
+
+  if (!hasSaved.value) {
+    hasSaved.value = true;
+  }
 };
 
 const getRequiredFields = () => {
@@ -83,7 +95,7 @@ const getRequiredFields = () => {
   }
 };
 
-defineExpose({ saveButton });
+defineExpose({ forceSave });
 
 watch(
   () => type.value,
@@ -500,7 +512,15 @@ watch(
             </select>
             <div class="flex-1">
               <WhereClause
-                @save="(clause) => (config.clauses[index].config = clause)"
+                @save="
+                  (nestedClause) => {
+                    config.clauses[index].config = nestedClause;
+                  }
+                "
+                @edit="
+                  (nestedClause) =>
+                    (config.clauses[index].config = nestedClause)
+                "
                 @delete="clause.clauses.splice(index, 1)"
               />
             </div>
@@ -531,7 +551,7 @@ watch(
         >
           X
         </Button>
-        <Button>Save</Button>
+        <Button @click="saveButton()"> Save </Button>
       </div>
     </template>
   </div>

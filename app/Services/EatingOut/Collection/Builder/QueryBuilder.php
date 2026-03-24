@@ -27,6 +27,11 @@ abstract class QueryBuilder
         //
     }
 
+    protected function prependJoins(Builder $query): void
+    {
+        //
+    }
+
     public function toSql(): string
     {
         $query = $this->instantiateQuery();
@@ -38,6 +43,8 @@ abstract class QueryBuilder
         if ($this->configuration->getAverages()->isNotEmpty()) {
             $this->applyAverageQueries($this->configuration->getAverages(), $query);
         }
+
+        $this->prependJoins($query);
 
         if ($this->configuration->getJoins()->isNotEmpty()) {
             $this->configuration->getJoins()->each(fn ($join) => $join($query));
@@ -60,13 +67,18 @@ abstract class QueryBuilder
         return $query->toRawSql();
     }
 
+    protected function prefixTable(string $table): string
+    {
+        return str_replace('[parent]', $this->getTableName(), $table);
+    }
+
     /** @param Collection<int, Count> $counts */
     protected function applyCountQueries(Collection $counts, Builder $query): Builder
     {
         $counts->each(function (Count $count) use ($query): void {
             $query
                 ->addSelect(
-                    DB::raw("(select count(*) from {$count->table} where {$count->localKey} = {$count->foreignKey}) as {$count->alias}")
+                    DB::raw("(select count(*) from {$this->prefixTable($count->table)} where {$this->prefixTable($count->localKey)} = {$this->prefixTable($count->foreignKey)}) as {$count->alias}")
                 )
                 ->having($count->alias, $count->operator, $count->value);
         });
@@ -80,7 +92,7 @@ abstract class QueryBuilder
         $averages->each(function (Average $average) use ($query): void {
             $query
                 ->addSelect(
-                    DB::raw("(select avg({$average->column}) from {$average->table} where {$average->localKey} = {$average->foreignKey}) as {$average->alias}")
+                    DB::raw("(select avg({$average->column}) from {$this->prefixTable($average->table)} where {$this->prefixTable($average->localKey)} = {$this->prefixTable($average->foreignKey)}) as {$average->alias}")
                 )
                 ->having($average->alias, $average->operator, $average->value);
         });
@@ -112,10 +124,12 @@ abstract class QueryBuilder
     {
         $getOrderings->each(function (Order $order) use ($query): void {
             if ($order->table && $order->localKey && $order->foreignKey) {
-                $query->leftJoin($order->table, $order->localKey, '=', $order->foreignKey);
+                $query->leftJoin($this->prefixTable($order->table), $this->prefixTable($order->localKey), '=', $this->prefixTable($order->foreignKey));
             }
 
             $query->orderBy($order->column, $order->direction);
         });
     }
+
+    abstract protected function getTableName();
 }

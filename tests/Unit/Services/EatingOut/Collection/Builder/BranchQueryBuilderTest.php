@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Services\EatingOut\Collection\Builder;
 
 use App\Services\EatingOut\Collection\Builder\BranchQueryBuilder;
-use App\Services\EatingOut\Collection\Builder\EateryQueryBuilder;
 use App\Services\EatingOut\Collection\Builder\QueryBuilder;
 use App\Services\EatingOut\Collection\Configuration;
 use PHPUnit\Framework\Attributes\Test;

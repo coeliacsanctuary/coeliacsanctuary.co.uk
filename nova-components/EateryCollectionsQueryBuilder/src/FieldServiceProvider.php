@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpeters8889\EateryCollectionsQueryBuilder;
 
 use Illuminate\Support\Facades\Route;
@@ -19,8 +21,8 @@ class FieldServiceProvider extends ServiceProvider
             $this->routes();
         });
 
-        Nova::serving(function (ServingNova $event) {
-            Nova::mix('eatery-collections-query-builder', __DIR__.'/../dist/mix-manifest.json');
+        Nova::serving(function (ServingNova $event): void {
+            Nova::mix('eatery-collections-query-builder', __DIR__ . '/../dist/mix-manifest.json');
         });
 
     }
