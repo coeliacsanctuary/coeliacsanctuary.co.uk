@@ -131,5 +131,5 @@ abstract class QueryBuilder
         });
     }
 
-    abstract protected function getTableName();
+    abstract protected function getTableName(): string;
 }

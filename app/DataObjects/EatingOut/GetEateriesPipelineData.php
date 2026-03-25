@@ -27,7 +27,7 @@ class GetEateriesPipelineData
      * @param  null | LengthAwarePaginator<int, JsonResource> | Collection<int, JsonResource>  $serialisedEateries
      */
     public function __construct(
-        public array $filters = [],
+        public array $filters,
         public string $sort = 'alphabetical',
         public ?EateryTown $town = null,
         public ?EateryArea $area = null,

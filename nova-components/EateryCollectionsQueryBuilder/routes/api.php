@@ -100,7 +100,7 @@ Route::post('/preview-query', function (Request $request) {
 Route::post('results', function (Request $request, GetEateriesFromCollectionPipeline $getEateriesFromCollectionPipeline) {
     $config = new Configuration(...$request->array('config'));
 
-    $eateries = $getEateriesFromCollectionPipeline->run($config);
+    $eateries = $getEateriesFromCollectionPipeline->run($config, []);
 
     return [
         'data' => $eateries,

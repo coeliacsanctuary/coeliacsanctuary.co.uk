@@ -22,10 +22,11 @@ use Illuminate\Pipeline\Pipeline;
 class GetEateriesFromCollectionPipeline
 {
     /**
+     * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
      * @param  class-string<JsonResource>  $jsonResource
      * @return LengthAwarePaginator<int, JsonResource>
      */
-    public function run(Configuration $configuration, string $jsonResource = EateryListResource::class): LengthAwarePaginator
+    public function run(Configuration $configuration, array $filters, string $jsonResource = EateryListResource::class): LengthAwarePaginator
     {
         $pipes = [
             GetEateriesInCollectionAction::class,
@@ -39,6 +40,7 @@ class GetEateriesFromCollectionPipeline
         ];
 
         $pipelineData = new GetEateriesPipelineData(
+            filters: $filters,
             configuration: $configuration,
             jsonResource: $jsonResource
         );

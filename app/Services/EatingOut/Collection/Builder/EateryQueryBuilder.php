@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class EateryQueryBuilder extends QueryBuilder
 {
-    protected function getTableName()
+    protected function getTableName(): string
     {
         return 'wheretoeat';
     }

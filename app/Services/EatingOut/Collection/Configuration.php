@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
 
 class Configuration implements Castable, Jsonable
 {
-    /** @var Where[]|array<int, array<int, Where[]>> */
+    /** @var array<int, Where|Where[]> */
     protected array $wheres = [];
 
     /** @var Join[] */
@@ -107,6 +107,21 @@ class Configuration implements Castable, Jsonable
     public function getLimit(): ?int
     {
         return $this->limit;
+    }
+
+    /** @param Where|Where[] $where */
+    public function addWhere(Where|array $where): self
+    {
+        $this->wheres[] = $where;
+
+        return $this;
+    }
+
+    public function addJoin(Join $join): self
+    {
+        $this->joins[] = $join;
+
+        return $this;
     }
 
     /**
