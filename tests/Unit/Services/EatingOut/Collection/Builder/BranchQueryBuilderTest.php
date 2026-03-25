@@ -21,7 +21,7 @@ class BranchQueryBuilderTest extends QueryBuilderTestCase
     {
         $sql = $this->getBuilder(new Configuration())->toSql();
 
-        $this->assertStringContainsString('select `wheretoeat`.`id` as `id`, `wheretoeat_nationwide_branches`.`id` as `branch_id`, `if(wheretoeat_nationwide_branches`.`name = "" or wheretoeat_nationwide_branches`.`name is null, concat(wheretoeat`.`name, "-", wheretoeat`.`id), concat(wheretoeat_nationwide_branches`.`name, " ", wheretoeat`.`name))` as `ordering`', $sql);
+        $this->assertStringContainsString('select `wheretoeat`.`id` as `id`, `wheretoeat_nationwide_branches`.`id` as `branch_id`, if(wheretoeat_nationwide_branches.name = "" or wheretoeat_nationwide_branches.name is null, concat(wheretoeat.name, "-", wheretoeat.id), concat(wheretoeat_nationwide_branches.name, " ", wheretoeat.name)) as ordering', $sql);
     }
 
     #[Test]
