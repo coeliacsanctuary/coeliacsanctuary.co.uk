@@ -319,7 +319,7 @@ useJourneyTracking().logWhenVisible(
             <div class="flex-1 space-y-6">
               <p
                 class="prose max-w-none xs:max-xl:prose-lg xl:prose-xl"
-                v-text="product.description"
+                v-html="product.description"
               />
             </div>
 
