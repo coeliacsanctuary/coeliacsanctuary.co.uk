@@ -77,7 +77,7 @@ useJourneyTracking().logWhenVisible(
       </h3>
       <p
         class="prose-sm text-gray-500 md:max-xl:prose-base xl:prose-lg"
-        v-text="product.description"
+        v-html="product.description"
       />
 
       <div class="flex flex-1 items-end justify-between">
