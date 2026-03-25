@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import {
   whereAverage,
   whereCount,
@@ -8,6 +8,15 @@ import {
   whereRelations,
 } from '../../data';
 import { Button } from 'laravel-nova-ui';
+
+const props = defineProps(['where']);
+
+onMounted(() => {
+  if (props.where && props.where.type && props.where.config) {
+    type.value = props.where.type;
+    config.value = props.where.config;
+  }
+});
 
 const emits = defineEmits(['save', 'delete', 'edit']);
 
@@ -100,6 +109,10 @@ defineExpose({ forceSave });
 watch(
   () => type.value,
   () => {
+    if (props.where && props.where.type === type.value) {
+      return;
+    }
+
     switch (type.value) {
       case 'field':
         config.value = {

@@ -1,7 +1,15 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { orderables } from '../../data';
 import { Button } from 'laravel-nova-ui';
+
+const props = defineProps(['order']);
+
+onMounted(() => {
+  if (props.order && props.order.config) {
+    config.value = props.order.config;
+  }
+});
 
 const emits = defineEmits(['save', 'delete', 'edit']);
 
@@ -61,6 +69,10 @@ watch(
   () => config.value?.column,
   () => {
     if (config.value.column === '') {
+      return;
+    }
+
+    if (props.order && props.order.config?.column === config.value.column) {
       return;
     }
 

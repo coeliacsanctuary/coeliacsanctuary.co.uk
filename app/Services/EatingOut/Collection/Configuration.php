@@ -34,6 +34,10 @@ class Configuration implements Castable, Jsonable
 
     protected ?int $limit = null;
 
+    protected ?array $novaDisplay = null;
+
+    protected mixed $novaLimit = null;
+
     public function __construct(
         array $wheres = [],
         array $joins = [],
@@ -41,6 +45,8 @@ class Configuration implements Castable, Jsonable
         array $averages = [],
         array $orderBy = [],
         ?int $limit = null,
+        ?array $novaDisplay = null,
+        mixed $novaLimit = null,
     ) {
         $this->wheres = $this->processWheres($wheres);
         $this->joins = array_map(fn ($join) => $join instanceof Join ? $join : new Join(...$join), $joins);
@@ -48,6 +54,8 @@ class Configuration implements Castable, Jsonable
         $this->averages = array_map(fn ($average) => $average instanceof Average ? $average : new Average(...$average), $averages);
         $this->orderBy = array_map(fn ($order) => $order instanceof Order ? $order : new Order(...$order), $orderBy);
         $this->limit = $limit;
+        $this->novaDisplay = $novaDisplay;
+        $this->novaLimit = $novaLimit;
     }
 
     protected function processWheres(array $wheres): array
@@ -127,6 +135,8 @@ class Configuration implements Castable, Jsonable
             'averages' => $this->averages,
             'orderBy' => $this->orderBy,
             'limit' => $this->limit,
+            '_display' => $this->novaDisplay,
+            '_limit' => $this->novaLimit,
         ], $options);
     }
 
@@ -140,13 +150,17 @@ class Configuration implements Castable, Jsonable
                     $value = json_decode($value, true);
                 }
 
+                $limit = data_get($value, 'limit');
+
                 return new Configuration(
                     data_get($value, 'wheres', []),
                     data_get($value, 'joins', []),
                     data_get($value, 'counts', []),
                     data_get($value, 'averages', []),
                     data_get($value, 'orderBy', []),
-                    data_get($value, 'limit', null),
+                    $limit ? (int) $limit : null,
+                    data_get($value, '_display'),
+                    data_get($value, '_limit'),
                 );
             }
 

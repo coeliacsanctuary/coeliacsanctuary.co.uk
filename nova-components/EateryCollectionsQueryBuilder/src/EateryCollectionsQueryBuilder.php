@@ -16,4 +16,9 @@ class EateryCollectionsQueryBuilder extends Field
     public $component = 'eatery-collections-query-builder';
 
     public $fullWidth = true;
+
+    public function resolve($resource, $attribute = null): void
+    {
+        $this->value = json_decode($resource->getRawOriginal($attribute ?? $this->attribute));
+    }
 }

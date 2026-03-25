@@ -92,7 +92,7 @@ class EateryCollections extends Resource
 
             DateTime::make('Updated At')->sortable()->exceptOnForms(),
 
-            URL::make('View', fn ($blog) => $blog->live ? $blog->link : null)
+            URL::make('View', fn ($collection) => $collection->live ? $collection->link : null)
                 ->exceptOnForms(),
         ];
     }

@@ -6,17 +6,6 @@
     :full-width-content="fullWidthContent"
   >
     <template #field>
-      <input
-        :id="field.attribute"
-        v-model="value"
-        type="text"
-        class="form-control form-control-bordered form-input w-full"
-        :class="errorClasses"
-        :placeholder="field.name"
-      />
-
-      {{ config }}
-
       <div class="flex w-full flex-col">
         <div
           class="flex w-full flex-col space-y-3 border-b border-gray-200 pb-3"
@@ -42,9 +31,10 @@
             >
               <WhereClause
                 :ref="(el) => (whereRefs[index] = el)"
-                @save="(clause) => saveWhere(clause)"
+                @save="(clause) => saveWhere(clause, index)"
                 @edit="() => rebuildConfig()"
                 @delete="() => deleteWhere(index)"
+                :where="where"
               />
             </div>
           </div>
@@ -88,9 +78,10 @@
             >
               <OrderClause
                 :ref="(el) => (orderRefs[index] = el)"
-                @save="(clause) => saveOrder(clause)"
+                @save="(clause) => saveOrder(clause, index)"
                 @edit="() => rebuildConfig()"
                 @delete="() => deleteOrder(index)"
+                :order="order"
               />
             </div>
           </div>
@@ -284,6 +275,17 @@ export default {
     },
   }),
 
+  mounted() {
+    console.log(this.field.value);
+    if (
+      this.field.value?._display?.display &&
+      this.field.value?._display?.config
+    ) {
+      this.display = this.field.value._display.display;
+      this.config = this.field.value._display.config;
+    }
+  },
+
   methods: {
     resetPreviewQuery() {
       this.queries.ran = false;
@@ -313,7 +315,9 @@ export default {
       this.display.orders.push({});
     },
 
-    saveWhere(clause) {
+    saveWhere(clause, index) {
+      this.display.wheres[index] = clause;
+
       this.resetPreviewQuery();
 
       const clausesToAdd = this.processWhereClause(clause.type, clause.config);
@@ -346,7 +350,9 @@ export default {
       });
     },
 
-    saveOrder(clause) {
+    saveOrder(clause, index) {
+      this.display.orders[index] = clause;
+
       this.resetPreviewQuery();
 
       this.config.orders.push(
@@ -488,7 +494,7 @@ export default {
         joins: [],
         orders: [],
         wheres: [],
-        limit: undefined,
+        limit: this.config.limit,
       };
 
       this.whereRefs.filter((t) => t).forEach((ref) => ref.forceSave());
@@ -566,10 +572,16 @@ export default {
     fill(formData) {
       this.rebuildConfig();
 
-      console.log(JSON.stringify(this.generateProcessedConfig()));
       formData.append(
         this.fieldAttribute,
-        JSON.stringify(this.generateProcessedConfig()),
+        JSON.stringify({
+          ...this.generateProcessedConfig(),
+          _display: {
+            display: this.display,
+            config: this.config,
+          },
+          _limit: this.config.limit,
+        }),
       );
     },
   },
