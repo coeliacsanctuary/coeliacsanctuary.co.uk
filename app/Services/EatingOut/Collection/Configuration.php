@@ -112,6 +112,11 @@ class Configuration implements Castable, Jsonable
     /** @param Where|Where[] $where */
     public function addWhere(Where|array $where): self
     {
+        if (is_array($where)) {
+            $where = collect($where);
+        }
+
+        /** @phpstan-ignore-next-line  */
         $this->wheres[] = $where;
 
         return $this;
