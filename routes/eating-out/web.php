@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\EatingOut\Collections\Feed\IndexController as FeedController;
 use App\Http\Controllers\EatingOut\Browse\ShowController as BrowseShowController;
 use App\Http\Controllers\EatingOut\CoeliacSanctuaryOnTheGo\ShowController as AppShowController;
+use App\Http\Controllers\EatingOut\Collections\IndexController as CollectionsIndexController;
 use App\Http\Controllers\EatingOut\County\ShowController as CountyShowController;
 use App\Http\Controllers\EatingOut\County\Town\ShowController as TownShowController;
 use App\Http\Controllers\EatingOut\EateryDetails\GetController as EateryDetailsGetController;
 use App\Http\Controllers\EatingOut\IndexController;
 use App\Http\Controllers\EatingOut\LandingPage\IndexController as LandingPageIndexController;
-use App\Http\Controllers\EatingOut\London\Borough\ShowController as LondonBoroughShowController;
 use App\Http\Controllers\EatingOut\London\Borough\Area\ShowController as LondonBoroughAreaShowController;
+use App\Http\Controllers\EatingOut\London\Borough\ShowController as LondonBoroughShowController;
 use App\Http\Controllers\EatingOut\London\IndexController as LondonIndexController;
 use App\Http\Controllers\EatingOut\Nationwide\IndexController as NationwideIndexController;
 use App\Http\Controllers\EatingOut\RecommendAPlace\CreateController as RecommendAPlaceCreateController;
@@ -22,7 +24,18 @@ use App\Http\Controllers\EatingOut\Search\StoreController as SearchStoreControll
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/eating-out', LandingPageIndexController::class)->name('eating-out.landing');
+Route::prefix('eating-out')
+    ->name('eating-out.')
+    ->group(function (): void {
+        Route::get('/', LandingPageIndexController::class)->name('landing');
+
+        Route::prefix('collections')
+            ->name('collections.')
+            ->group(function (): void {
+                Route::get('/', CollectionsIndexController::class)->name('index');
+                Route::get('feed', FeedController::class)->name('feed');
+            });
+    });
 
 Route::prefix('wheretoeat')->group(function (): void {
     $prefixedEateryRoutes = function (string $namePrefix): callable {
