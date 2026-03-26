@@ -4,3 +4,13 @@ export type EateryCollectionCard = HomeHoverItem & {
   description: string;
   date: string;
 };
+
+export type EateryCollectionPage = {
+  id: number;
+  title: string;
+  image: string;
+  published: string;
+  updated: string | null;
+  description: string;
+  body: string;
+};

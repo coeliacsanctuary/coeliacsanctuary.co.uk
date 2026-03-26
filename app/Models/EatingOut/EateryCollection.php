@@ -16,6 +16,8 @@ use App\Services\EatingOut\Collection\Configuration;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\SchemaOrg\Blog as BlogSchema;
+use Spatie\SchemaOrg\Schema;
 
 /**
  * @property Configuration $configuration
@@ -88,5 +90,25 @@ class EateryCollection extends Model implements HasMedia
     protected function linkRoot(): string
     {
         return 'eating-out/collections';
+    }
+
+    public function schema(): BlogSchema
+    {
+        /** @var string $url */
+        $url = config('app.url');
+
+        return Schema::blog()
+            ->author(Schema::person()->name('Alison Peters'))
+            ->dateModified($this->updated_at)
+            ->datePublished($this->created_at)
+            ->description($this->meta_description)
+            ->headline($this->title)
+            ->image($this->main_image)
+            ->mainEntityOfPage(Schema::webPage()->identifier($url))
+            ->publisher(
+                Schema::organization()
+                    ->name('Coeliac Sanctuary')
+                    ->logo(Schema::imageObject()->url($url . '/images/logo.svg'))
+            );
     }
 }
