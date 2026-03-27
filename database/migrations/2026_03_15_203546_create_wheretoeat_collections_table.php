@@ -18,8 +18,7 @@ return new class () extends Migration {
             $table->text('description');
             $table->text('body');
             $table->json('configuration');
-            $table->text('eatery_query');
-            $table->text('branch_query');
+            $table->integer('eateries_count')->nullable();
             $table->boolean('draft')->default(false);
             $table->boolean('live');
             $table->timestamp('publish_at')->nullable()->useCurrent();

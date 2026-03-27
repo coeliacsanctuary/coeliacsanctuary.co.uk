@@ -4,14 +4,23 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\EatingOut;
 
+use App\Jobs\EatingOut\CalculateEateryCollectionEateryCountsJob;
 use App\Models\EatingOut\EateryCollection;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
+use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class EateryCollectionTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Bus::fake();
+    }
+
     #[Test]
     public function itReturnsTheConfigurationValueAsAConfigurationObject(): void
     {
@@ -35,27 +44,11 @@ class EateryCollectionTest extends TestCase
     }
 
     #[Test]
-    public function itSetsTheEateryQueryWhenSaving(): void
+    public function itDispatchesTheCountsJobWhenSaved(): void
     {
-        $eateryCollection = $this->create(EateryCollection::class);
+        $this->create(EateryCollection::class);
 
-        $this->assertNotNull($eateryCollection->eatery_query);
-        $this->assertNotEmpty($eateryCollection->eatery_query);
-
-        $this->assertStringContainsString('select `wheretoeat`.`id`', $eateryCollection->eatery_query);
-        $this->assertStringContainsString('from `wheretoeat`', $eateryCollection->eatery_query);
-    }
-
-    #[Test]
-    public function itSetsTheBranchQueryWhenSaving(): void
-    {
-        $eateryCollection = $this->create(EateryCollection::class);
-
-        $this->assertNotNull($eateryCollection->branch_query);
-        $this->assertNotEmpty($eateryCollection->branch_query);
-
-        $this->assertStringContainsString('select `wheretoeat`.`id` as `id`, `wheretoeat_nationwide_branches`.`id` as `branch_id`', $eateryCollection->branch_query);
-        $this->assertStringContainsString('from `wheretoeat_nationwide_branches`', $eateryCollection->branch_query);
+        Bus::assertDispatched(CalculateEateryCollectionEateryCountsJob::class);
     }
 
     #[Test]

@@ -13,7 +13,7 @@ use Illuminate\Support\Stringable;
 /** @mixin EateryCollection */
 class EateryCollectionCardResource extends JsonResource
 {
-    /** @return array{title: string|Stringable, link: string, image: string, date: string, description: string} */
+    /** @return array{title: string|Stringable, link: string, image: string, date: string, description: string, eateries_count: int|null} */
     public function toArray(Request $request)
     {
         return [
@@ -22,6 +22,7 @@ class EateryCollectionCardResource extends JsonResource
             'image' => $this->main_image_as_webp ?? $this->main_image,
             'date' => $this->published,
             'description' => $this->meta_description,
+            'eateries_count' => $this->eateries_count,
         ];
     }
 }

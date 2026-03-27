@@ -51,6 +51,11 @@ useJourneyTracking().logWhenVisible(
 
     <div class="-m-4 mt-4 flex flex-col bg-grey-light p-4 text-sm shadow-inner">
       <div class="flex justify-between">
+        <div>
+          <template v-if="collection.eateries_count">
+            {{ collection.eateries_count }} locations
+          </template>
+        </div>
         <div>Added on {{ collection.date }}</div>
       </div>
     </div>

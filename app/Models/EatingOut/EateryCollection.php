@@ -8,10 +8,9 @@ use App\Concerns\CanBePublished;
 use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
+use App\Jobs\EatingOut\CalculateEateryCollectionEateryCountsJob;
 use App\Models\Media;
 use App\Scopes\LiveScope;
-use App\Services\EatingOut\Collection\Builder\BranchQueryBuilder;
-use App\Services\EatingOut\Collection\Builder\EateryQueryBuilder;
 use App\Services\EatingOut\Collection\Configuration;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -46,19 +45,14 @@ class EateryCollection extends Model implements HasMedia
     {
         static::addGlobalScope(new LiveScope());
 
-        static::saving(function (self $collection): void {
-            $collection->eatery_query = new EateryQueryBuilder($collection->configuration)->toSql();
-            $collection->branch_query = new BranchQueryBuilder($collection->configuration)->toSql();
-        });
-
-        static::saved(function (): void {
-            if (config('coeliac.generate_og_images') === false) {
-                return;
+        static::saved(function (self $collection): void {
+            if (config('coeliac.generate_og_images') === true) {
+                // @todo
+                //            CreateBlogIndexPageOpenGraphImageJob::dispatch();
+                //            CreateHomePageOpenGraphImageJob::dispatch();
             }
 
-            // @todo
-            //            CreateBlogIndexPageOpenGraphImageJob::dispatch();
-            //            CreateHomePageOpenGraphImageJob::dispatch();
+            CalculateEateryCollectionEateryCountsJob::dispatch($collection);
         });
     }
 
