@@ -27,6 +27,7 @@ class GetEateriesFromFiltersAction implements GetEateriesPipelineActionContract
             ->where('closed_down', false)
             ->orderBy('ordering');
 
+        /** @phpstan-ignore-next-line */
         if (Arr::has($pipelineData->filters, 'county') && $pipelineData->filters['county'] !== null) {
             $query = $query->where('county_id', $pipelineData->filters['county']);
         }

@@ -40,7 +40,7 @@ class GetFiltersForCollection extends GetFiltersForTown
     protected function getTowns(): Collection
     {
         return $this->resolveFilters(EateryTown::class, 'towns', 'town', 'town', 'id', fn (EateryTown $filter) => [
-            'label' => "{$filter->town}, {$filter->county->county}" . ($filter->hasAttribute('eateries_count') ? " - ({$filter->eateries_count})" : ''),
+            'label' => "{$filter->town}, {$filter->county?->county}" . ($filter->hasAttribute('eateries_count') ? " - ({$filter->eateries_count})" : ''),
         ]);
     }
 
@@ -48,7 +48,7 @@ class GetFiltersForCollection extends GetFiltersForTown
     protected function getCounties(): Collection
     {
         return $this->resolveFilters(EateryCounty::class, 'counties', 'county', 'county', 'id', fn (EateryCounty $filter) => [
-            'label' => "{$filter->county}, {$filter->country->country}" . ($filter->hasAttribute('eateries_count') ? " - ({$filter->eateries_count})" : ''),
+            'label' => "{$filter->county}, {$filter->country?->country}" . ($filter->hasAttribute('eateries_count') ? " - ({$filter->eateries_count})" : ''),
         ]);
     }
 
@@ -101,6 +101,10 @@ class GetFiltersForCollection extends GetFiltersForTown
     protected function getIds(): array
     {
         return once(function () {
+            if ( ! $this->collection) {
+                throw new RuntimeException('Collection not set');
+            }
+
             $eateries = DB::select(new EateryQueryBuilder($this->collection->configuration)->toSql());
             $branches = DB::select(new BranchQueryBuilder($this->collection->configuration)->toSql());
 

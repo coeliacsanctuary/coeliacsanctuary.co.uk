@@ -22,7 +22,7 @@ use Illuminate\Pipeline\Pipeline;
 class GetEateriesFromCollectionPipeline
 {
     /**
-     * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
+     * @param  array{categories: string[]|null, features: string[]|null, venueTypes: string[]|null, towns: string[]|null, counties: string[]|null}  $filters
      * @param  class-string<JsonResource>  $jsonResource
      * @return LengthAwarePaginator<int, JsonResource>
      */

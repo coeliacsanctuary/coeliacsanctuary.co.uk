@@ -7,7 +7,7 @@ namespace Tests\Unit\Services\EatingOut\Filters;
 use App\Models\EatingOut\EateryCollection;
 use App\Models\EatingOut\NationwideBranch;
 use App\Services\EatingOut\Filters\GetFiltersForCollection;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 
@@ -15,6 +15,7 @@ class GetFiltersForCollectionTest extends GetFiltersTest
 {
     protected EateryCollection $collection;
 
+    /** @var Collection<int, NationwideBranch> */
     protected Collection $branches;
 
     protected function setUp(): void
@@ -23,13 +24,16 @@ class GetFiltersForCollectionTest extends GetFiltersTest
 
         $this->collection = $this->create(EateryCollection::class);
 
-        $this->branches = $this->build(NationwideBranch::class)
+        /** @var Collection<int, NationwideBranch> $branches */
+        $branches = $this->build(NationwideBranch::class)
             ->count(5)
             ->create([
                 'wheretoeat_id' => $this->eateries->first()->id,
                 'county_id' => $this->county->id,
                 'town_id' => $this->town->id,
             ]);
+
+        $this->branches = $branches;
     }
 
     protected function getFilters(array $filters = []): array
@@ -116,21 +120,28 @@ class GetFiltersForCollectionTest extends GetFiltersTest
         // queries[0] and queries[1] are the getIds() DB::select calls for eatery/branch IDs
         $queries = collect(app('db')->getQueryLog())->slice(2)->values();
 
+        /** @var array{query: string, bindings: array<string, mixed>, time: float|null} $query0 */
+        $query0 = $queries->get(0);
+        /** @var array{query: string, bindings: array<string, mixed>, time: float|null} $query1 */
+        $query1 = $queries->get(1);
+        /** @var array{query: string, bindings: array<string, mixed>, time: float|null} $query2 */
+        $query2 = $queries->get(2);
+
         $ids = $this->eateries->pluck('id')->join(', ');
 
         $this->assertStringContainsString(
             "(select count(*) from `wheretoeat` where `id` in ({$ids}) and `live` = 1 and `wheretoeat_types`.`id` = `wheretoeat`.`type_id` and `live` = 1)",
-            $queries[0]['query']
+            $query0['query']
         );
 
         $this->assertStringContainsString(
             "(select count(*) from `wheretoeat` where `id` in ({$ids}) and `live` = 1 and `wheretoeat_venue_types`.`id` = `wheretoeat`.`venue_type_id` and `live` = 1)",
-            $queries[1]['query']
+            $query1['query']
         );
 
         $this->assertStringContainsString(
             "(select count(*) from `wheretoeat` left join `wheretoeat_assigned_features` on `wheretoeat`.`id` = `wheretoeat_assigned_features`.`wheretoeat_id` where `id` in ({$ids}) and `live` = 1 and `wheretoeat_features`.`id` = `wheretoeat_assigned_features`.`feature_id` and `live` = 1)",
-            $queries[2]['query']
+            $query2['query']
         );
     }
 
@@ -144,21 +155,28 @@ class GetFiltersForCollectionTest extends GetFiltersTest
         // queries[0] and queries[1] are the getIds() DB::select calls for eatery/branch IDs
         $queries = collect(app('db')->getQueryLog())->slice(2)->values();
 
+        /** @var array{query: string, bindings: array<string, mixed>, time: float|null} $query0 */
+        $query0 = $queries->get(0);
+        /** @var array{query: string, bindings: array<string, mixed>, time: float|null} $query1 */
+        $query1 = $queries->get(1);
+        /** @var array{query: string, bindings: array<string, mixed>, time: float|null} $query2 */
+        $query2 = $queries->get(2);
+
         $ids = $this->branches->pluck('id')->join(', ');
 
         $this->assertStringContainsString(
             "(select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_types`.`id` = `wheretoeat`.`type_id` and `live` = 1) and `wheretoeat_nationwide_branches`.`live` = 1)",
-            $queries[0]['query']
+            $query0['query']
         );
 
         $this->assertStringContainsString(
             "(select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_venue_types`.`id` = `wheretoeat`.`venue_type_id` and `live` = 1) and `wheretoeat_nationwide_branches`.`live` = 1)",
-            $queries[1]['query']
+            $query1['query']
         );
 
         $this->assertStringContainsString(
             " (select count(*) from `wheretoeat_nationwide_branches` where `id` in ({$ids}) and `live` = 1 and exists (select * from `wheretoeat` left join `wheretoeat_assigned_features` on `wheretoeat`.`id` = `wheretoeat_assigned_features`.`wheretoeat_id` where `wheretoeat_nationwide_branches`.`wheretoeat_id` = `wheretoeat`.`id` and `wheretoeat_features`.`id` = `wheretoeat_assigned_features`.`feature_id` and `live` = 1) and `wheretoeat_nationwide_branches`.`live` = 1)",
-            $queries[2]['query']
+            $query2['query']
         );
     }
 

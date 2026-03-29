@@ -22,7 +22,7 @@ class ShowController
         GetFiltersForCollection $getFiltersForCollection,
         Inertia $inertia,
     ): Response {
-        /** @var array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, towns: string [] | null, counties: string [] | null, areas: string [] | null }  $filters */
+        /** @var array{categories: string[]|null, features: string[]|null, venueTypes: string[]|null, towns: string[]|null, counties: string[]|null} $filters */
         $filters = [
             'categories' => $request->has('filter.category') ? explode(',', $request->string('filter.category')->toString()) : null,
             'venueTypes' => $request->has('filter.venueType') ? explode(',', $request->string('filter.venueType')->toString()) : null,

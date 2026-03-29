@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
 class GetEateriesPipelineData
 {
     /**
-     * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
+     * @param  array{categories: string[]|null, features: string[]|null, venueTypes: string[]|null, county?: string|int|null, towns?: string[]|null, counties?: string[]|null}  $filters
      * @param  null | Collection<int, PendingEatery>  $eateries
      * @param  null | LengthAwarePaginator<int, PendingEatery>  $paginator
      * @param  null | Collection<int, Eatery>  $hydrated

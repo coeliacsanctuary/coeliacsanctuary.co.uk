@@ -39,7 +39,7 @@ class GetEateriesInTownForAskSealiacPipeline
 
         $pipelineData = new GetEateriesPipelineData(
             town: $town,
-            filters: $filters, /** @phpstan-ignore-line */
+            filters: $filters,
             sort: $sort,
         );
 
