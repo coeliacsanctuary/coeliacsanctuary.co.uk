@@ -58,7 +58,7 @@ class GetFiltersForCollection extends GetFiltersForTown
             return 'wheretoeat_towns.id';
         }
 
-        if($filterable === EateryCounty::class) {
+        if ($filterable === EateryCounty::class) {
             return 'wheretoeat_counties.id';
         }
 
@@ -71,7 +71,7 @@ class GetFiltersForCollection extends GetFiltersForTown
             return 'wheretoeat.town_id';
         }
 
-        if($filterable === EateryCounty::class) {
+        if ($filterable === EateryCounty::class) {
             return 'wheretoeat.county_id';
         }
 

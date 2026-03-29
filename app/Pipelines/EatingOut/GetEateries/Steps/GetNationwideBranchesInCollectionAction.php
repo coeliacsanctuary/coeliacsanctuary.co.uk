@@ -58,7 +58,7 @@ class GetNationwideBranchesInCollectionAction implements GetEateriesPipelineActi
             $pipelineData->configuration->addJoin(new Join('wheretoeat_features', 'wheretoeat_features.id', '=', 'wheretoeat_assigned_features.feature_id'));
         }
 
-        if(Arr::has($pipelineData->filters, 'towns') && $pipelineData->filters['towns'] !== null) {
+        if (Arr::has($pipelineData->filters, 'towns') && $pipelineData->filters['towns'] !== null) {
             $wheres = [];
 
             foreach ($pipelineData->filters['towns'] as $town) {
@@ -68,7 +68,7 @@ class GetNationwideBranchesInCollectionAction implements GetEateriesPipelineActi
             $pipelineData->configuration->addWhere($wheres);
         }
 
-        if(Arr::has($pipelineData->filters, 'counties') && $pipelineData->filters['counties'] !== null) {
+        if (Arr::has($pipelineData->filters, 'counties') && $pipelineData->filters['counties'] !== null) {
             $wheres = [];
 
             foreach ($pipelineData->filters['counties'] as $county) {

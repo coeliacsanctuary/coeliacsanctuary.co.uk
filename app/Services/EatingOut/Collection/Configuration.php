@@ -14,6 +14,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use JsonSerializable;
 
 class Configuration implements Castable, Jsonable
 {
@@ -161,7 +162,7 @@ class Configuration implements Castable, Jsonable
 
     protected function itemKey(mixed $item): string
     {
-        return (string) json_encode($item instanceof \JsonSerializable ? $item->jsonSerialize() : $item);
+        return (string) json_encode($item instanceof JsonSerializable ? $item->jsonSerialize() : $item);
     }
 
     /**

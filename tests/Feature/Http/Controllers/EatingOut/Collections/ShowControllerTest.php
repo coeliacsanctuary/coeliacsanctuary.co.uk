@@ -76,8 +76,9 @@ class ShowControllerTest extends TestCase
             ->andReturn([]);
 
         $this->visitEateryCollection()
-            ->assertInertia(fn (Assert $page) => $page
-                ->loadDeferredProps(fn (Assert $reload) => $reload->has('filters'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->loadDeferredProps(fn (Assert $reload) => $reload->has('filters'))
             );
     }
 
@@ -87,8 +88,9 @@ class ShowControllerTest extends TestCase
         $this->expectPipelineToRun(GetEateriesFromCollectionPipeline::class, collect()->paginate());
 
         $this->visitEateryCollection()
-            ->assertInertia(fn (Assert $page) => $page
-                ->loadDeferredProps(fn (Assert $reload) => $reload->has('eateries'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->loadDeferredProps(fn (Assert $reload) => $reload->has('eateries'))
             );
     }
 }
