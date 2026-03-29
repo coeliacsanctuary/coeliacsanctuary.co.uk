@@ -23,9 +23,9 @@ class GetFilters
         $this->filters = $filters;
 
         return [
-            'categories' => $this->getCategories(),
-            'venueTypes' => $this->getVenueTypes(),
-            'features' => $this->getFeatures(),
+            'categories' => $this->getCategories()->values(),
+            'venueTypes' => $this->getVenueTypes()->values(),
+            'features' => $this->getFeatures()->values(),
         ];
     }
 
@@ -113,7 +113,7 @@ class GetFilters
         return $this->resolveFilters(EateryFeature::class, 'features', 'feature', 'feature', 'slug');
     }
 
-    protected function filterIsEnabled(string $key, string $value): bool
+    protected function filterIsEnabled(string $key, string|int $value): bool
     {
         if ( ! Arr::has($this->filters, $key)) {
             return false;
@@ -128,6 +128,6 @@ class GetFilters
 
         return collect($filters)
             ->map(fn (string $filter) => Str::lower($filter))
-            ->contains(Str::lower($value));
+            ->contains(is_string($value) ? Str::lower($value) : $value);
     }
 }

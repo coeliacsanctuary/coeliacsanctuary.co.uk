@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Feature\Http\Controllers\EatingOut\Collections;
 
 use App\Models\EatingOut\EateryCollection;
+use App\Pipelines\EatingOut\GetEateries\GetEateriesFromCollectionPipeline;
+use App\Services\EatingOut\Filters\GetFiltersForCollection;
 use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -58,6 +60,35 @@ class ShowControllerTest extends TestCase
                     ->has('collection')
                     ->where('collection.title', 'Eatery Collection 0')
                     ->etc()
+            );
+    }
+
+    #[Test]
+    public function itCallsTheGetFiltersForCollection(): void
+    {
+        $this->mock(GetFiltersForCollection::class)
+            ->shouldReceive('setCollection')
+            ->once()
+            ->andReturnSelf()
+            ->getMock()
+            ->shouldReceive('handle')
+            ->once()
+            ->andReturn([]);
+
+        $this->visitEateryCollection()
+            ->assertInertia(fn (Assert $page) => $page
+                ->loadDeferredProps(fn (Assert $reload) => $reload->has('filters'))
+            );
+    }
+
+    #[Test]
+    public function itCallsTheGetEateriesPipeline(): void
+    {
+        $this->expectPipelineToRun(GetEateriesFromCollectionPipeline::class, collect()->paginate());
+
+        $this->visitEateryCollection()
+            ->assertInertia(fn (Assert $page) => $page
+                ->loadDeferredProps(fn (Assert $reload) => $reload->has('eateries'))
             );
     }
 }

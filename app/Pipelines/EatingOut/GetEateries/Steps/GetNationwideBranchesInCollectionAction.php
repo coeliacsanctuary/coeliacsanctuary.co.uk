@@ -58,6 +58,26 @@ class GetNationwideBranchesInCollectionAction implements GetEateriesPipelineActi
             $pipelineData->configuration->addJoin(new Join('wheretoeat_features', 'wheretoeat_features.id', '=', 'wheretoeat_assigned_features.feature_id'));
         }
 
+        if(Arr::has($pipelineData->filters, 'towns') && $pipelineData->filters['towns'] !== null) {
+            $wheres = [];
+
+            foreach ($pipelineData->filters['towns'] as $town) {
+                $wheres[] = new Where('wheretoeat_nationwide_branches.town_id', '=', $town, 'or');
+            }
+
+            $pipelineData->configuration->addWhere($wheres);
+        }
+
+        if(Arr::has($pipelineData->filters, 'counties') && $pipelineData->filters['counties'] !== null) {
+            $wheres = [];
+
+            foreach ($pipelineData->filters['counties'] as $county) {
+                $wheres[] = new Where('wheretoeat_nationwide_branches.county_id', '=', $county, 'or');
+            }
+
+            $pipelineData->configuration->addWhere($wheres);
+        }
+
         /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string}> $pendingEateries */
         $pendingEateries = collect(DB::select(new BranchQueryBuilder($pipelineData->configuration)->toSql()));
 

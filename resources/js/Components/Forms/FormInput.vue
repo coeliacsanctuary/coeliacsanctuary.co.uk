@@ -40,6 +40,10 @@ const classes = (): string[] => {
     base.push(
       'text-base md:text-lg px-[calc(--spacing(4)-1px)] py-[calc(var(--spacing-1_75)-1px)]',
     );
+  } else if (props.size === 'sm') {
+    base.push(
+      'text-sm md:text-base px-[calc(--spacing(2)-1px)] py-[calc(var(--spacing-1)-1px)]',
+    );
   } else {
     base.push(
       'px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] text-base sm:text-sm sm:leading-6',

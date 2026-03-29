@@ -48,11 +48,11 @@ class Configuration implements Castable, Jsonable
         ?array $novaDisplay = null,
         mixed $novaLimit = null,
     ) {
-        $this->wheres = $this->processWheres($wheres);
-        $this->joins = array_map(fn ($join) => $join instanceof Join ? $join : new Join(...$join), $joins);
-        $this->counts = array_map(fn ($count) => $count instanceof Count ? $count : new Count(...$count), $counts);
-        $this->averages = array_map(fn ($average) => $average instanceof Average ? $average : new Average(...$average), $averages);
-        $this->orderBy = array_map(fn ($order) => $order instanceof Order ? $order : new Order(...$order), $orderBy);
+        $this->wheres = $this->deduplicateItems($this->processWheres($wheres));
+        $this->joins = $this->deduplicateItems(array_map(fn ($join) => $join instanceof Join ? $join : new Join(...$join), $joins));
+        $this->counts = $this->deduplicateItems(array_map(fn ($count) => $count instanceof Count ? $count : new Count(...$count), $counts));
+        $this->averages = $this->deduplicateItems(array_map(fn ($average) => $average instanceof Average ? $average : new Average(...$average), $averages));
+        $this->orderBy = $this->deduplicateItems(array_map(fn ($order) => $order instanceof Order ? $order : new Order(...$order), $orderBy));
         $this->limit = $limit;
         $this->novaDisplay = $novaDisplay;
         $this->novaLimit = $novaLimit;
@@ -116,17 +116,52 @@ class Configuration implements Castable, Jsonable
             $where = collect($where);
         }
 
-        /** @phpstan-ignore-next-line  */
-        $this->wheres[] = $where;
+        $key = $this->itemKey($where);
+
+        $isDuplicate = collect($this->wheres)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+
+        if ( ! $isDuplicate) {
+            /** @phpstan-ignore-next-line  */
+            $this->wheres[] = $where;
+        }
 
         return $this;
     }
 
     public function addJoin(Join $join): self
     {
-        $this->joins[] = $join;
+        $key = $this->itemKey($join);
+
+        $isDuplicate = collect($this->joins)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+
+        if ( ! $isDuplicate) {
+            $this->joins[] = $join;
+        }
 
         return $this;
+    }
+
+    /** @param array<int, mixed> $items */
+    protected function deduplicateItems(array $items): array
+    {
+        $seen = [];
+        $unique = [];
+
+        foreach ($items as $item) {
+            $key = $this->itemKey($item);
+
+            if ( ! in_array($key, $seen, true)) {
+                $seen[] = $key;
+                $unique[] = $item;
+            }
+        }
+
+        return $unique;
+    }
+
+    protected function itemKey(mixed $item): string
+    {
+        return (string) json_encode($item instanceof \JsonSerializable ? $item->jsonSerialize() : $item);
     }
 
     /**

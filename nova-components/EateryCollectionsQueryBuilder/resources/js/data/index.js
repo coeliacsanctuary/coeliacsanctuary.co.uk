@@ -24,7 +24,7 @@ export const whereHas = [
 ];
 
 export const orderables = [
-  { label: 'name', column: 'name' },
+  { label: 'name', column: 'ordering' },
   {
     label: 'rating',
     column: 'rating_count',

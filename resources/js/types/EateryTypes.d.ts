@@ -114,6 +114,15 @@ export type EateryFilters = {
   [T in EateryFilterKeys]: EateryFilterItem[];
 };
 
+export type EateryCollectionFilterKeys =
+  | EateryFilterKeys
+  | 'towns'
+  | 'counties';
+
+export type EateryCollectionFilters = {
+  [T in EateryCollectionFilterKeys]: EateryFilterItem[];
+};
+
 export type TownEatery = Eatery & {
   key: string;
   is_fully_gf?: boolean;

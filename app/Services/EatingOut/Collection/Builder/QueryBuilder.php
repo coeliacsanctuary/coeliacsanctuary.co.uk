@@ -127,7 +127,7 @@ abstract class QueryBuilder
                 $query->leftJoin($this->prefixTable($order->table), $this->prefixTable($order->localKey), '=', $this->prefixTable($order->foreignKey));
             }
 
-            $query->orderBy($order->column, $order->direction);
+            $query->orderBy($this->prefixTable($order->column), $order->direction);
         });
     }
 

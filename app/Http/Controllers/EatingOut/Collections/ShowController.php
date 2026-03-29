@@ -7,15 +7,30 @@ namespace App\Http\Controllers\EatingOut\Collections;
 use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCollection;
+use App\Pipelines\EatingOut\GetEateries\GetEateriesFromCollectionPipeline;
 use App\Resources\EatingOut\EateryCollectionShowResource;
+use App\Services\EatingOut\Filters\GetFiltersForCollection;
+use Illuminate\Http\Request;
 use Inertia\Response;
 
 class ShowController
 {
     public function __invoke(
+        Request $request,
         EateryCollection $eateryCollection,
+        GetEateriesFromCollectionPipeline $getEateriesFromCollectionPipeline,
+        GetFiltersForCollection $getFiltersForCollection,
         Inertia $inertia,
     ): Response {
+        /** @var array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, towns: string [] | null, counties: string [] | null, areas: string [] | null }  $filters */
+        $filters = [
+            'categories' => $request->has('filter.category') ? explode(',', $request->string('filter.category')->toString()) : null,
+            'venueTypes' => $request->has('filter.venueType') ? explode(',', $request->string('filter.venueType')->toString()) : null,
+            'features' => $request->has('filter.feature') ? explode(',', $request->string('filter.feature')->toString()) : null,
+            'towns' => $request->has('filter.town') ? explode(',', $request->string('filter.town')->toString()) : null,
+            'counties' => $request->has('filter.county') ? explode(',', $request->string('filter.county')->toString()) : null,
+        ];
+
         return $inertia
             ->title($eateryCollection->title)
             ->metaDescription($eateryCollection->meta_description)
@@ -39,6 +54,8 @@ class ShowController
             ->metaFeed(route('eating-out.collections.feed'))
             ->render('EatingOut/Collections/Show', [
                 'collection' => new EateryCollectionShowResource($eateryCollection),
+                'filters' => $inertia->defer(fn () => $getFiltersForCollection->setCollection($eateryCollection)->handle($filters)),
+                'eateries' => $inertia->defer(fn () => $getEateriesFromCollectionPipeline->run($eateryCollection->configuration, $filters)),
             ]);
     }
 }

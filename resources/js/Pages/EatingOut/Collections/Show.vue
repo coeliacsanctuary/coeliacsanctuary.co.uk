@@ -2,9 +2,16 @@
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { EateryCollectionPage } from '@/types/EatingOutCollectionTypes';
+import { PaginatedCollection } from '@/types/GenericTypes';
+import { EateryCollectionFilters, TownEatery } from '@/types/EateryTypes';
+import { Deferred } from '@inertiajs/vue3';
+import EateryCollectionsScreen from '@/Components/PageSpecific/EatingOut/Collections/EateryCollectionsScreen.vue';
+import Loader from '@/Components/Loader.vue';
 
 defineProps<{
   collection: EateryCollectionPage;
+  eateries?: PaginatedCollection<TownEatery>;
+  filters?: EateryCollectionFilters;
 }>();
 </script>
 
@@ -48,4 +55,39 @@ defineProps<{
       v-html="collection.body"
     />
   </Card>
+
+  <Deferred :data="['filters', 'eateries']">
+    <template #fallback>
+      <div class="flex xmd:space-x-2">
+        <div class="hidden w-1/4 xmd:block">
+          <Card class="py-16">
+            <Loader
+              :absolute="false"
+              display
+              color="dark"
+              size="size-12"
+              width="border-6"
+            />
+          </Card>
+        </div>
+        <div class="flex-1 xmd:w-3/4">
+          <Card class="py-16">
+            <Loader
+              :absolute="false"
+              display
+              color="dark"
+              size="size-12"
+              width="border-6"
+            />
+          </Card>
+        </div>
+      </div>
+    </template>
+
+    <EateryCollectionsScreen
+      v-if="eateries && filters"
+      :eateries="eateries"
+      :filters="filters"
+    />
+  </Deferred>
 </template>
