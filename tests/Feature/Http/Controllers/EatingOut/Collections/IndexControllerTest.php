@@ -55,7 +55,7 @@ class IndexControllerTest extends TestCase
                         'collections.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'eateries_count'])
                     )
                     ->where('collections.data.0.title', 'Eatery Collection 0')
                     ->where('collections.data.1.title', 'Eatery Collection 1')
@@ -80,7 +80,7 @@ class IndexControllerTest extends TestCase
                         'collections.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'eateries_count'])
                     )
                     ->where('collections.data.0.title', 'Eatery Collection 12')
                     ->where('collections.data.1.title', 'Eatery Collection 13')

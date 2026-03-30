@@ -9,6 +9,7 @@ use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
 use App\Jobs\EatingOut\CalculateEateryCollectionEateryCountsJob;
+use App\Jobs\OpenGraphImages\CreateEateryCollectionIndexPageOpenGraphImageJob;
 use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Services\EatingOut\Collection\Configuration;
@@ -47,9 +48,8 @@ class EateryCollection extends Model implements HasMedia
 
         static::saved(function (self $collection): void {
             if (config('coeliac.generate_og_images') === true) {
-                // @todo
-                //            CreateBlogIndexPageOpenGraphImageJob::dispatch();
-                //            CreateHomePageOpenGraphImageJob::dispatch();
+                CreateEateryCollectionIndexPageOpenGraphImageJob::dispatch();
+//                            CreateHomePageOpenGraphImageJob::dispatch();
             }
 
             CalculateEateryCollectionEateryCountsJob::dispatch($collection);

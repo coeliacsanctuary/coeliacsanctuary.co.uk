@@ -34,7 +34,7 @@ class CalculateEateryCollectionEateryCountsJob implements ShouldQueue
 
             $count = count($eateries) + count($branches);
 
-            $this->collection->update(['eateries_count' => $count]);
+            $this->collection->updateQuietly(['eateries_count' => $count]);
         } catch (Exception $e) {
             //
         }
