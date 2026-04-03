@@ -21,7 +21,7 @@ class IndexController
             ->title('Gluten Free Eating Out Collections')
             ->metaDescription('Curated collections of places to eat out at around the UK')
             ->metaTags(['coeliac sanctuary eating out', 'eating out uk'])
-            ->metaImage($getOpenGraphImageForRouteAction->handle('eatery-collection')) // todo
+            ->metaImage($getOpenGraphImageForRouteAction->handle('eatery-collection'))
             ->metaFeed(route('eating-out.collections.feed'))
             ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),

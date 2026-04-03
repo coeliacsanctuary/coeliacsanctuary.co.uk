@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
-use App\Models\Blogs\Blog;
 use App\Models\EatingOut\EateryCollection;
 use App\Models\OpenGraphImage;
 use App\Services\RenderOpenGraphImage;

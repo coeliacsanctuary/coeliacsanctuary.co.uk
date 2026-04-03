@@ -38,7 +38,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itCallsTheGetOpenGraphImageForRouteAction(): void
     {
-        $this->expectAction(GetOpenGraphImageForRouteAction::class, ['eating-out-collection']);
+        $this->expectAction(GetOpenGraphImageForRouteAction::class, ['eatery-collection']);
 
         $this->get(route('eating-out.collections.index'));
     }

@@ -7,12 +7,16 @@ import { EateryCollectionFilters, TownEatery } from '@/types/EateryTypes';
 import { Deferred } from '@inertiajs/vue3';
 import EateryCollectionsScreen from '@/Components/PageSpecific/EatingOut/Collections/EateryCollectionsScreen.vue';
 import Loader from '@/Components/Loader.vue';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import { ref } from 'vue';
 
 defineProps<{
   collection: EateryCollectionPage;
   eateries?: PaginatedCollection<TownEatery>;
   filters?: EateryCollectionFilters;
 }>();
+
+const eateriesRef = ref();
 </script>
 
 <template>
@@ -84,10 +88,18 @@ defineProps<{
       </div>
     </template>
 
-    <EateryCollectionsScreen
-      v-if="eateries && filters"
-      :eateries="eateries"
-      :filters="filters"
+    <div ref="eateriesRef">
+      <EateryCollectionsScreen
+        v-if="eateries && filters"
+        :eateries="eateries"
+        :filters="filters"
+      />
+    </div>
+
+    <JumpToContentButton
+      v-if="eateriesRef"
+      :anchor="eateriesRef"
+      label="Jump to Eateries"
     />
   </Deferred>
 </template>

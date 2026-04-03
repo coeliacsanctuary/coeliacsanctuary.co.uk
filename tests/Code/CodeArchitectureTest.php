@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Code;
 
 use Algolia\ScoutExtended\Searchable\Aggregator;
-use App\Ai\Tools\BaseTool;
+use App\Ai\Tools\AskSealiac\BaseTool;
 use App\Contracts\Search\IsSearchable;
 use App\Feeds\Feed;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -79,9 +79,9 @@ class CodeArchitectureTest extends CodeAssertionsTestCase
     }
 
     #[Test]
-    public function allAiToolsFollowTheSamePattern(): void
+    public function allAiAskSealiacToolsFollowTheSamePattern(): void
     {
-        $this->assertClassesIn('app/Ai/Tools')
+        $this->assertClassesIn('app/Ai/Tools/AskSealiac')
             ->areClasses()
             ->hasSuffix('Tool')
             ->hasMethod('execute')

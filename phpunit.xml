@@ -30,6 +30,7 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="GENERATE_OG_IMAGES" value="false"/>
+        <env name="GENERATE_COUNTY_AI_DESCRIPTIONS" value="false"/>
     </php>
     <source>
         <include>

@@ -377,12 +377,11 @@ type EditableEateryFieldComponent = {
   props?: Partial<Record<string, unknown>>;
 };
 
-export type EateryCountryListProp = {
-  [T: string]: EateryCountryPropItem;
-};
-
 export type EateryCountryPropItem = {
+  name: string;
+  description: string;
   list: EateryCountryList[];
+  top_counties?: EateryCountryList[];
   counties: number;
   eateries: number;
 };
@@ -390,11 +389,14 @@ export type EateryCountryPropItem = {
 export type EateryCountryList = {
   name: string;
   slug: string;
+  image?: string;
   eateries: number;
   branches: number;
   attractions: number;
   hotels: number;
   total: number;
+  review_count: number;
+  avg_rating: number;
 };
 
 export type EaterySimpleReviewResource = {
