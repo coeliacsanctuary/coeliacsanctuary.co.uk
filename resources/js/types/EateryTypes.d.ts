@@ -30,6 +30,7 @@ export type CountyPageTown = Town & {
   eateries: number;
   attractions: number;
   hotels: number;
+  total_eateries: number;
 };
 
 export type LondonPageBorough = Exclude<
