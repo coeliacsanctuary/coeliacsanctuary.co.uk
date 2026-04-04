@@ -22,7 +22,7 @@ class ShowController
         FindRelatedBlogsAction $findRelatedBlogsAction,
         GetCommentsForItemAction $commentsForItemAction,
     ): Response | RedirectResponse {
-        if($blog->eateryCollection) {
+        if ($blog->eateryCollection) {
             return redirect($blog->eateryCollection->link);
         }
 

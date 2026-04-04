@@ -15,9 +15,14 @@ use Illuminate\Queue\SerializesModels;
 
 class SyncEateryCollectionAndBlogJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function __construct(protected EateryCollection $collection) {}
+    public function __construct(protected EateryCollection $collection)
+    {
+    }
 
     public function handle(): void
     {
