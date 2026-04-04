@@ -10,6 +10,7 @@ use App\Nova\Support\Panels\VisibilityPanel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Jpeters8889\EateryCollectionsQueryBuilder\EateryCollectionsQueryBuilder;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Slug;
@@ -76,6 +77,9 @@ class EateryCollections extends Resource
             ]),
 
             new Panel('Content', [
+                Boolean::make('Post as a Blog?', 'cross_post_to_blogs')
+                    ->help('If checked, this collection will also be listed within the blogs'),
+
                 Textarea::make('Body')
                     ->rows(20)
                     ->fullWidth()

@@ -10,6 +10,7 @@ use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
 use App\Jobs\EatingOut\CalculateEateryCollectionEateryCountsJob;
 use App\Jobs\OpenGraphImages\CreateEateryCollectionIndexPageOpenGraphImageJob;
+use App\Jobs\SyncEateryCollectionAndBlogJob;
 use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Services\EatingOut\Collection\Configuration;
@@ -53,6 +54,7 @@ class EateryCollection extends Model implements HasMedia
             }
 
             CalculateEateryCollectionEateryCountsJob::dispatch($collection);
+            SyncEateryCollectionAndBlogJob::dispatch($collection);
         });
     }
 

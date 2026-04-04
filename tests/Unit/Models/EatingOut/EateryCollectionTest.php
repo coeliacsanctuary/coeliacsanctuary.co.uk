@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Models\EatingOut;
 
 use App\Jobs\EatingOut\CalculateEateryCollectionEateryCountsJob;
+use App\Jobs\SyncEateryCollectionAndBlogJob;
 use App\Models\EatingOut\EateryCollection;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
@@ -14,7 +15,7 @@ use Tests\TestCase;
 
 class EateryCollectionTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -49,6 +50,14 @@ class EateryCollectionTest extends TestCase
         $this->create(EateryCollection::class);
 
         Bus::assertDispatched(CalculateEateryCollectionEateryCountsJob::class);
+    }
+
+    #[Test]
+    public function itDispatchesTheSyncJobWhenSaved(): void
+    {
+        $this->create(EateryCollection::class);
+
+        Bus::assertDispatched(SyncEateryCollectionAndBlogJob::class);
     }
 
     #[Test]

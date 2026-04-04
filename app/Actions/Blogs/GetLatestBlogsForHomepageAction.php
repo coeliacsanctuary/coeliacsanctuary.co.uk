@@ -22,7 +22,7 @@ class GetLatestBlogsForHomepageAction
             fn () => BlogSimpleCardViewResource::collection(Blog::query()
                 ->take(6)
                 ->latest()
-                ->with(['media'])
+                ->with(['media', 'eateryCollection'])
                 ->get())
         );
 
