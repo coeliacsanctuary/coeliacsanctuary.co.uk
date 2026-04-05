@@ -43,7 +43,7 @@ class NationwideBranches extends Resource
 
     public static $perPageViaRelationship = 25;
 
-    public static $search = ['id', 'name', 'town', 'county'];
+    public static $search = ['id', 'name', 'town.town', 'county.county'];
 
     public function authorizedToView(Request $request)
     {
