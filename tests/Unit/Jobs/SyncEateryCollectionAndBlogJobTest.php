@@ -124,6 +124,18 @@ class SyncEateryCollectionAndBlogJobTest extends TestCase
     }
 
     #[Test]
+    public function itClearsTheBlogIdOnTheCollectionWhenTheBlogIsDeleted(): void
+    {
+        $blog = $this->create(Blog::class, ['eatery_collection_id' => $this->collection->id]);
+
+        $this->collection->update(['cross_post_to_blogs' => false, 'blog_id' => $blog->id]);
+
+        (new SyncEateryCollectionAndBlogJob($this->collection->fresh()))->handle();
+
+        $this->assertNull($this->collection->fresh()->blog_id);
+    }
+
+    #[Test]
     public function itDoesNothingWhenCrossPostingIsDisabledAndNoBlogExists(): void
     {
         $this->collection->update(['cross_post_to_blogs' => false]);

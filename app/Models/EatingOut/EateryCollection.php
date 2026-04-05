@@ -57,7 +57,7 @@ class EateryCollection extends Model implements HasMedia
         });
     }
 
-    public function getRouteKeyName()
+    public function getRouteKeyName(): string
     {
         return 'slug';
     }

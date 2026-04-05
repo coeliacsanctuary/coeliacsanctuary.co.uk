@@ -29,6 +29,7 @@ class SyncEateryCollectionAndBlogJob implements ShouldQueue
         if ( ! $this->collection->cross_post_to_blogs) {
             if ($this->collection->blog_id) {
                 Blog::query()->where('id', $this->collection->blog_id)->delete();
+                $this->collection->updateQuietly(['blog_id' => null]);
             }
 
             return;
