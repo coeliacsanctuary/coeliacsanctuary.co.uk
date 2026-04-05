@@ -45,7 +45,7 @@ return [
     ],
 
     'generate_og_images' => (bool) env('GENERATE_OG_IMAGES', true),
-    'generate_country_ai_descriptions' => (bool) env('GENERATE_COUNTY_AI_DESCRIPTIONS', true),
+    'generate_country_ai_descriptions' => (bool) env('GENERATE_COUNTRY_AI_DESCRIPTIONS', true),
 
     'cacheable' => [
         'blogs' => [

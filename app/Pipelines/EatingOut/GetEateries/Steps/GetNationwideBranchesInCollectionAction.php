@@ -28,34 +28,34 @@ class GetNationwideBranchesInCollectionAction implements GetEateriesPipelineActi
             $wheres = [];
 
             foreach ($pipelineData->filters['categories'] as $category) {
-                $wheres[] = new Where('wheretoeat_types.type', '=', $category, 'or');
+                $wheres[] = new Where('filter_types.type', '=', $category, 'or');
             }
 
             $pipelineData->configuration->addWhere($wheres);
-            $pipelineData->configuration->addJoin(new Join('wheretoeat_types', 'wheretoeat_types.id', '=', 'wheretoeat.type_id'));
+            $pipelineData->configuration->addJoin(new Join('wheretoeat_types as filter_types', 'filter_types.id', '=', 'wheretoeat.type_id'));
         }
 
         if (Arr::has($pipelineData->filters, 'venueTypes') && $pipelineData->filters['venueTypes'] !== null) {
             $wheres = [];
 
             foreach ($pipelineData->filters['venueTypes'] as $venueType) {
-                $wheres[] = new Where('wheretoeat_venue_types.slug', '=', $venueType, 'or');
+                $wheres[] = new Where('filter_venue.slug', '=', $venueType, 'or');
             }
 
             $pipelineData->configuration->addWhere($wheres);
-            $pipelineData->configuration->addJoin(new Join('wheretoeat_venue_types', 'wheretoeat_venue_types.id', '=', 'wheretoeat.venue_type_id'));
+            $pipelineData->configuration->addJoin(new Join('wheretoeat_venue_types as filter_venue', 'filter_venue.id', '=', 'wheretoeat.venue_type_id'));
         }
 
         if (Arr::has($pipelineData->filters, 'features') && $pipelineData->filters['features'] !== null) {
             $wheres = [];
 
             foreach ($pipelineData->filters['features'] as $feature) {
-                $wheres[] = new Where('wheretoeat_features.slug', '=', $feature, 'or');
+                $wheres[] = new Where('filter_features.slug', '=', $feature, 'or');
             }
 
             $pipelineData->configuration->addWhere($wheres);
-            $pipelineData->configuration->addJoin(new Join('wheretoeat_assigned_features', 'wheretoeat_assigned_features.wheretoeat_id', '=', 'wheretoeat.id'));
-            $pipelineData->configuration->addJoin(new Join('wheretoeat_features', 'wheretoeat_features.id', '=', 'wheretoeat_assigned_features.feature_id'));
+            $pipelineData->configuration->addJoin(new Join('wheretoeat_assigned_features as filter_assigned_features', 'wheretoeat.id', '=', 'filter_assigned_features.wheretoeat_id'));
+            $pipelineData->configuration->addJoin(new Join('wheretoeat_features as filter_features', 'filter_features.id', '=', 'filter_assigned_features.feature_id'));
         }
 
         /** @phpstan-ignore-next-line  */

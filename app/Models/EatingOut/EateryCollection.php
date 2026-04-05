@@ -40,7 +40,6 @@ class EateryCollection extends Model implements HasMedia
         'draft' => 'bool',
         'live' => 'bool',
         'configuration' => Configuration::class,
-        'published_at' => 'datetime',
     ];
 
     protected static function booted(): void

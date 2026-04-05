@@ -88,7 +88,8 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
 
             if (config('coeliac.generate_country_ai_descriptions') === true) {
                 $branch->country()->update(['description' => null]);
-                dispatch(fn () => app(GetCountyListAction::class)->handle());
+
+                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
             }
         });
     }

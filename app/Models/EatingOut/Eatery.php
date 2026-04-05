@@ -99,7 +99,8 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
 
             if (config('coeliac.generate_country_ai_descriptions') === true) {
                 $eatery->country()->update(['description' => null]);
-                dispatch(fn () => app(GetCountyListAction::class)->handle());
+
+                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
             }
         });
     }

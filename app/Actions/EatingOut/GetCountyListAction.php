@@ -13,9 +13,13 @@ use Illuminate\Support\Facades\Cache;
 class GetCountyListAction
 {
     /** @return Collection<int, array{name: string, description: string, list: Collection<int, array>, counties: int, eateries: mixed, top_counties: Collection<int,array>}> */
-    public function handle(): Collection
+    public function handle(bool $force = false): Collection
     {
         $key = config('coeliac.cacheable.eating-out.index-counts');
+
+        if ($force) {
+            Cache::forget($key);
+        }
 
         $eateryCounts = [
             'eateries as total_eateries_count',

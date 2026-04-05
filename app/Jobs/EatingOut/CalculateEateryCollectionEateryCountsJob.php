@@ -7,7 +7,6 @@ namespace App\Jobs\EatingOut;
 use App\Models\EatingOut\EateryCollection;
 use App\Services\EatingOut\Collection\Builder\BranchQueryBuilder;
 use App\Services\EatingOut\Collection\Builder\EateryQueryBuilder;
-use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,15 +27,11 @@ class CalculateEateryCollectionEateryCountsJob implements ShouldQueue
 
     public function handle(): void
     {
-        try {
-            $eateries = DB::select(new EateryQueryBuilder($this->collection->configuration)->toSql());
-            $branches = DB::select(new BranchQueryBuilder($this->collection->configuration)->toSql());
+        $eateries = DB::select(new EateryQueryBuilder($this->collection->configuration)->toSql());
+        $branches = DB::select(new BranchQueryBuilder($this->collection->configuration)->toSql());
 
-            $count = count($eateries) + count($branches);
+        $count = count($eateries) + count($branches);
 
-            $this->collection->updateQuietly(['eateries_count' => $count]);
-        } catch (Exception $e) {
-            //
-        }
+        $this->collection->updateQuietly(['eateries_count' => $count]);
     }
 }
