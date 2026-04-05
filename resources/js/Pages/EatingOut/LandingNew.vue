@@ -30,7 +30,7 @@ import SubHeading from '@/Components/SubHeading.vue';
 
   <LocationSearch />
 
-  <div class="px-4 xl:px-0">
+  <div class="px-4 2xl:px-0">
     <Card class="relative overflow-hidden">
       <div
         class="absolute top-0 left-0 h-full w-full bg-secondary/20 xmd:bg-gradient-to-bl xmd:from-white xmd:to-secondary/5"
