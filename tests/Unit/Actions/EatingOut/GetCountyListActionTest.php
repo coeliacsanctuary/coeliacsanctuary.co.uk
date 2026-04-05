@@ -15,6 +15,7 @@ use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
@@ -29,37 +30,44 @@ class GetCountyListActionTest extends TestCase
         parent::setUp();
 
         Queue::fake();
+        Bus::fake();
         EateryCountryDescriptionAgent::fake();
 
         $this->seed(EateryScaffoldingSeeder::class);
 
-        foreach (range(2, 6) as $index) {
-            $country = $this->build(EateryCountry::class)
-                ->state([
-                    'id' => $index,
-                    'country' => $this->faker->unique->country,
-                ])
-                ->create();
+        $country2 = $this->build(EateryCountry::class)
+            ->state(['id' => 2, 'country' => $this->faker->unique->country])
+            ->create();
 
-            $counties = $this->build(EateryCounty::class)
-                ->state(['country_id' => $country->id])
-                ->count(5)
-                ->create();
-
-            $counties->each(function (EateryCounty $county) use ($country): void {
-                $towns = $this->build(EateryTown::class)
+        $this->build(EateryCounty::class)
+            ->state(['country_id' => $country2->id])
+            ->count(5)
+            ->create()
+            ->each(function (EateryCounty $county) use ($country2): void {
+                $town = $this->build(EateryTown::class)
                     ->state(['county_id' => $county->id])
-                    ->count(5)
                     ->create();
 
-                $towns->each(function (EateryTown $town) use ($county, $country): void {
-                    $this->build(Eatery::class)
-                        ->state(['country_id' => $country->id, 'county_id' => $county->id, 'town_id' => $town->id])
-                        ->count(5)
-                        ->create();
-                });
+                $this->build(Eatery::class)
+                    ->state(['country_id' => $country2->id, 'county_id' => $county->id, 'town_id' => $town->id])
+                    ->create();
             });
-        }
+
+        $country3 = $this->build(EateryCountry::class)
+            ->state(['id' => 3, 'country' => $this->faker->unique->country])
+            ->create();
+
+        $county3 = $this->build(EateryCounty::class)
+            ->state(['country_id' => $country3->id])
+            ->create();
+
+        $town3 = $this->build(EateryTown::class)
+            ->state(['county_id' => $county3->id])
+            ->create();
+
+        $this->build(Eatery::class)
+            ->state(['country_id' => $country3->id, 'county_id' => $county3->id, 'town_id' => $town3->id])
+            ->create();
     }
 
     #[Test]

@@ -18,7 +18,7 @@ class EateryTownFactory extends Factory
         return [
             'county_id' => 1,
             'town' => $town,
-            'slug' => Str::slug($town),
+            'slug' => Str::slug($town) . Str::random(5),
             'latlng' => '51,-1',
             'description' => null,
             'legacy' => Str::slug($town),

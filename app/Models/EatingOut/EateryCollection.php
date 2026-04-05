@@ -50,7 +50,6 @@ class EateryCollection extends Model implements HasMedia
         static::saved(function (self $collection): void {
             if (config('coeliac.generate_og_images') === true) {
                 CreateEateryCollectionIndexPageOpenGraphImageJob::dispatch();
-                //                            CreateHomePageOpenGraphImageJob::dispatch();
             }
 
             CalculateEateryCollectionEateryCountsJob::dispatch($collection);
