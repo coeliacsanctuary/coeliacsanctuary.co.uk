@@ -23,7 +23,7 @@ class EmailDataCast implements CastsAttributes
     /**
      * @phpstan-param  string  $value
      *
-     * @return array{date?: Carbon|null, comment?: Comment|null, reply?: CommentReply, order?: ShopOrder, notifiable?: ShopCustomer, recommendation?: EateryRecommendation, eatery?: Eatery, branch?: NationwideBranch, nearbyEateries?: Collection<int, Eatery>}
+     * @return array{date?: Carbon|null, comment?: Comment|null, reply?: CommentReply, rating?: EateryReview, order?: ShopOrder, notifiable?: ShopCustomer, recommendation?: EateryRecommendation, eatery?: Eatery, branch?: NationwideBranch, nearbyEateries?: Collection<int, Eatery>}
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): array
     {
@@ -91,6 +91,7 @@ class EmailDataCast implements CastsAttributes
             }
         }
 
+        /** @var array{date?: Carbon|null, comment?: Comment|null, reply?: CommentReply, rating?: EateryReview, order?: ShopOrder, notifiable?: ShopCustomer, recommendation?: EateryRecommendation, eatery?: Eatery, branch?: NationwideBranch, nearbyEateries?: Collection<int, Eatery>} $return */
         return $return;
     }
 
