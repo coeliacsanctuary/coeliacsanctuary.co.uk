@@ -83,6 +83,14 @@ class EmailDataCast implements CastsAttributes
             $return['nearbyEateries'] = collect($data['nearbyEateries'])->map(fn ($eatery) => Eatery::query()->findOrFail($eatery['id']));
         }
 
+        $modelKeys = ['date', 'comment', 'reply', 'rating', 'order', 'notifiable', 'recommendation', 'eatery', 'branch', 'nearbyEateries'];
+
+        foreach ($data as $key => $value) {
+            if ( ! in_array($key, $modelKeys) && is_scalar($value)) {
+                $return[$key] = $value;
+            }
+        }
+
         return $return;
     }
 

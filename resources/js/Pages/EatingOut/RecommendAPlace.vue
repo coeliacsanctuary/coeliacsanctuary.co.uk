@@ -303,6 +303,7 @@ watchDebounced(
       <div class="mt-8 flex justify-center">
         <CoeliacButton
           label="Add another!"
+          as="button"
           type="button"
           size="xxl"
           @click="addAnother()"
