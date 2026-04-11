@@ -23,7 +23,7 @@ class EmailDataCast implements CastsAttributes
     /**
      * @phpstan-param  string  $value
      *
-     * @return array{date?: Carbon|null, comment?: Comment|null, reply?: CommentReply, order?: ShopOrder, notifiable?: ShopCustomer, recommendation?: EateryRecommendation, eatery?: Eatery, branch?: NationwideBranch, nearbyEateries?: Collection<int, Eatery>}
+     * @return array{date?: Carbon|null, comment?: Comment|null, reply?: CommentReply, rating?: EateryReview, order?: ShopOrder, notifiable?: ShopCustomer, recommendation?: EateryRecommendation, eatery?: Eatery, branch?: NationwideBranch, nearbyEateries?: Collection<int, Eatery>}
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): array
     {
@@ -83,6 +83,15 @@ class EmailDataCast implements CastsAttributes
             $return['nearbyEateries'] = collect($data['nearbyEateries'])->map(fn ($eatery) => Eatery::query()->findOrFail($eatery['id']));
         }
 
+        $modelKeys = ['date', 'comment', 'reply', 'rating', 'order', 'notifiable', 'recommendation', 'eatery', 'branch', 'nearbyEateries'];
+
+        foreach ($data as $key => $value) {
+            if ( ! in_array($key, $modelKeys) && is_scalar($value)) {
+                $return[$key] = $value;
+            }
+        }
+
+        /** @var array{date?: Carbon|null, comment?: Comment|null, reply?: CommentReply, rating?: EateryReview, order?: ShopOrder, notifiable?: ShopCustomer, recommendation?: EateryRecommendation, eatery?: Eatery, branch?: NationwideBranch, nearbyEateries?: Collection<int, Eatery>} $return */
         return $return;
     }
 

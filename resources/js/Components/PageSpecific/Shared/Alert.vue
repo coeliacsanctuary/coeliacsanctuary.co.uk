@@ -92,6 +92,7 @@ const titleLabel = computed<string>(() => {
           <CoeliacButton
             v-for="(action, index) in actions"
             :key="index"
+            as="button"
             :theme="action.theme"
             :label="action.label"
             :size="action.size"

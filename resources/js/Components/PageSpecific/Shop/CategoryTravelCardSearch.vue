@@ -36,6 +36,8 @@ const form = useForm('get', '/gluten-free-travel-translation-cards', {
     <CoeliacButton
       label="Search"
       size="xxl"
+      as="button"
+      type="button"
       @click="form.submit()"
     />
   </Card>
