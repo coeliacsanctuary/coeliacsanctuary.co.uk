@@ -13,16 +13,39 @@ import Info from '@/Components/Info.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import LondonBorough from '@/Components/PageSpecific/EatingOut/County/LondonBorough.vue';
 import GoogleAd from '@/Components/GoogleAd.vue';
-import { Ref, ref } from 'vue';
+import { computed, ref } from 'vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import FormInput from '@/Components/Forms/FormInput.vue';
+import FormSelect from '@/Components/Forms/FormSelect.vue';
+import { FormSelectOption } from '@/Components/Forms/Props';
 
-defineProps<{
+const props = defineProps<{
   london: LondonPage;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
 }>();
 
 const boroughList = ref<HTMLElement | null>(null);
+const boroughSearch = ref('');
+
+const sortOptions = ref<FormSelectOption[]>([
+  { label: 'Alphabetically', value: 'alphabetical' },
+  { label: 'Total Eateries', value: 'eateries' },
+]);
+
+const currentSort = ref('alphabetical');
+
+const filteredBoroughs = computed(() => {
+  const boroughs = props.london.boroughs.filter((borough) =>
+    borough.name.toLowerCase().includes(boroughSearch.value.toLowerCase()),
+  );
+
+  if (currentSort.value === 'eateries') {
+    return [...boroughs].sort((a, b) => b.locations - a.locations);
+  }
+
+  return boroughs;
+});
 </script>
 
 <template>
@@ -145,15 +168,38 @@ const boroughList = ref<HTMLElement | null>(null);
     code="5284484376"
   />
 
-  <div
-    ref="boroughList"
-    class="mt-2 grid gap-4 px-4 md:grid-cols-2"
-  >
-    <LondonBorough
-      v-for="borough in london.boroughs"
-      :key="borough.name"
-      :borough="borough"
-    />
+  <div ref="boroughList">
+    <Card class="mx-4 mb-4">
+      <div class="flex items-center justify-between">
+        <FormInput
+          v-model="boroughSearch"
+          name="search"
+          label=""
+          placeholder="Search for a borough in London..."
+          hide-label
+          borders
+          class="w-full max-w-md"
+        />
+
+        <FormSelect
+          v-model="currentSort"
+          name="sort"
+          :options="sortOptions"
+          label="Sort by"
+          borders
+          class="flex items-center space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+          size="small"
+        />
+      </div>
+    </Card>
+
+    <div class="mt-2 grid gap-4 px-4 md:grid-cols-2">
+      <LondonBorough
+        v-for="borough in filteredBoroughs"
+        :key="borough.name"
+        :borough="borough"
+      />
+    </div>
   </div>
 
   <JumpToContentButton

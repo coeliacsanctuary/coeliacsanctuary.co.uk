@@ -13,6 +13,7 @@ use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
 use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EateryAttractionRestaurantResource;
+use App\Nova\Resources\EatingOut\EateryCollections;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
 use App\Nova\Resources\EatingOut\MyPlaces;
@@ -96,6 +97,7 @@ class ResourceRegistrar
             Eateries::class,
             NationwideEateries::class,
             NationwideBranches::class,
+            EateryCollections::class,
             Countries::class,
             Counties::class,
             Towns::class,

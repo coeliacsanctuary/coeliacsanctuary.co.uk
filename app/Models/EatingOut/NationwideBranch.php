@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
+use App\Actions\EatingOut\GetCountyListAction;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
@@ -72,20 +73,24 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
         });
 
         static::saved(function (self $branch): void {
-            if (config('coeliac.generate_og_images') === false) {
-                return;
+            if (config('coeliac.generate_og_images') === true) {
+                $eatery = $branch->eatery()->withoutGlobalScopes()->firstOrFail();
+                $town = $branch->town()->withoutGlobalScopes()->firstOrFail();
+
+                CreateEatingOutOpenGraphImageJob::dispatch($branch);
+                CreateEatingOutOpenGraphImageJob::dispatch($eatery);
+                CreateEatingOutOpenGraphImageJob::dispatch($town);
+                CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
+                CreateEateryAppPageOpenGraphImageJob::dispatch();
+                CreateEateryMapPageOpenGraphImageJob::dispatch();
+                CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
-            $eatery = $branch->eatery()->withoutGlobalScopes()->firstOrFail();
-            $town = $branch->town()->withoutGlobalScopes()->firstOrFail();
+            if (config('coeliac.generate_country_ai_descriptions') === true) {
+                $branch->country()->update(['description' => null]);
 
-            CreateEatingOutOpenGraphImageJob::dispatch($branch);
-            CreateEatingOutOpenGraphImageJob::dispatch($eatery);
-            CreateEatingOutOpenGraphImageJob::dispatch($town);
-            CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
-            CreateEateryAppPageOpenGraphImageJob::dispatch();
-            CreateEateryMapPageOpenGraphImageJob::dispatch();
-            CreateEateryIndexPageOpenGraphImageJob::dispatch();
+                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
+            }
         });
     }
 
@@ -126,8 +131,8 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
     }
 
     /**
-     *@param Builder<self> $query
-     *@return Builder<self>
+     * @param  Builder<self>  $query
+     * @return Builder<self>
      */
     public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
     {

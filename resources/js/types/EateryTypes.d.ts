@@ -30,6 +30,7 @@ export type CountyPageTown = Town & {
   eateries: number;
   attractions: number;
   hotels: number;
+  total_eateries: number;
 };
 
 export type LondonPageBorough = Exclude<
@@ -112,6 +113,15 @@ export type EateryFilterKeys = 'categories' | 'venueTypes' | 'features';
 
 export type EateryFilters = {
   [T in EateryFilterKeys]: EateryFilterItem[];
+};
+
+export type EateryCollectionFilterKeys =
+  | EateryFilterKeys
+  | 'towns'
+  | 'counties';
+
+export type EateryCollectionFilters = {
+  [T in EateryCollectionFilterKeys]: EateryFilterItem[];
 };
 
 export type TownEatery = Eatery & {
@@ -368,12 +378,11 @@ type EditableEateryFieldComponent = {
   props?: Partial<Record<string, unknown>>;
 };
 
-export type EateryCountryListProp = {
-  [T: string]: EateryCountryPropItem;
-};
-
 export type EateryCountryPropItem = {
+  name: string;
+  description: string;
   list: EateryCountryList[];
+  top_counties?: EateryCountryList[];
   counties: number;
   eateries: number;
 };
@@ -381,11 +390,14 @@ export type EateryCountryPropItem = {
 export type EateryCountryList = {
   name: string;
   slug: string;
+  image?: string;
   eateries: number;
   branches: number;
   attractions: number;
   hotels: number;
   total: number;
+  review_count: number;
+  avg_rating: number;
 };
 
 export type EaterySimpleReviewResource = {

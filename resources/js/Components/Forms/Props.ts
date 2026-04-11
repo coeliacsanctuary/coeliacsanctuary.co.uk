@@ -33,7 +33,7 @@ export type InputProps = BaseFormInputProps & {
   helpText?: string;
   error?: string;
   hideLabel?: boolean;
-  size?: 'default' | 'large';
+  size?: 'sm' | 'default' | 'large';
   min?: number;
   max?: number;
   wrapperClasses?: string;

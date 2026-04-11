@@ -10,6 +10,7 @@ use App\Models\EatingOut\EaterySearchTerm;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use App\Resources\EatingOut\EateryListResource;
+use App\Services\EatingOut\Collection\Configuration;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -17,7 +18,7 @@ use Illuminate\Support\Collection;
 class GetEateriesPipelineData
 {
     /**
-     * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null, county: string | int | null }  $filters
+     * @param  array{categories: string[]|null, features: string[]|null, venueTypes: string[]|null, county?: string|int|null, towns?: string[]|null, counties?: string[]|null}  $filters
      * @param  null | Collection<int, PendingEatery>  $eateries
      * @param  null | LengthAwarePaginator<int, PendingEatery>  $paginator
      * @param  null | Collection<int, Eatery>  $hydrated
@@ -31,6 +32,7 @@ class GetEateriesPipelineData
         public ?EateryTown $town = null,
         public ?EateryArea $area = null,
         public ?EaterySearchTerm $searchTerm = null,
+        public ?Configuration $configuration = null,
         public ?LatLng $latLng = null,
         public ?Collection $eateries = null,
         public ?LengthAwarePaginator $paginator = null,

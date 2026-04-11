@@ -14,6 +14,7 @@ use App\Models\Blogs\Blog;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryCollection;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReview;
@@ -538,5 +539,13 @@ Route::get('og/generic/wte-map', function () {
         'hotels' => $hotels,
         'branches' => $branches,
         'reviews' => $reviews,
+    ]);
+});
+
+Route::get('og/generic/wte-collections', function () {
+    $collections = EateryCollection::query()->latest()->take(4)->get();
+
+    return view('og-images.eatery-collection', [
+        'collections' => $collections,
     ]);
 });

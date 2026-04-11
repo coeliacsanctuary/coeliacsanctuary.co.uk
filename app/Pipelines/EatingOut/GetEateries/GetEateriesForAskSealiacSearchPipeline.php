@@ -40,7 +40,7 @@ class GetEateriesForAskSealiacSearchPipeline
         ];
 
         $pipelineData = new GetEateriesPipelineData(
-            filters: $filters, /** @phpstan-ignore-line */
+            filters: $filters,
             sort: $sort,
             searchTerm: new EaterySearchTerm([
                 'term' => $searchTerm,

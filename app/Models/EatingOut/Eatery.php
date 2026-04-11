@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
+use App\Actions\EatingOut\GetCountyListAction;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
@@ -85,18 +86,22 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
         });
 
         static::saved(function (self $eatery): void {
-            if (config('coeliac.generate_og_images') === false) {
-                return;
+            if (config('coeliac.generate_og_images') === true) {
+                $town = $eatery->town()->withoutGlobalScopes()->firstOrFail();
+
+                CreateEatingOutOpenGraphImageJob::dispatch($eatery);
+                CreateEatingOutOpenGraphImageJob::dispatch($town);
+                CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
+                CreateEateryAppPageOpenGraphImageJob::dispatch();
+                CreateEateryMapPageOpenGraphImageJob::dispatch();
+                CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
-            $town = $eatery->town()->withoutGlobalScopes()->firstOrFail();
+            if (config('coeliac.generate_country_ai_descriptions') === true) {
+                $eatery->country()->update(['description' => null]);
 
-            CreateEatingOutOpenGraphImageJob::dispatch($eatery);
-            CreateEatingOutOpenGraphImageJob::dispatch($town);
-            CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
-            CreateEateryAppPageOpenGraphImageJob::dispatch();
-            CreateEateryMapPageOpenGraphImageJob::dispatch();
-            CreateEateryIndexPageOpenGraphImageJob::dispatch();
+                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
+            }
         });
     }
 
@@ -139,8 +144,8 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     }
 
     /**
-     *@param Builder<self> $query
-     *@return Builder<self>
+     * @param  Builder<self>  $query
+     * @return Builder<self>
      */
     public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
     {

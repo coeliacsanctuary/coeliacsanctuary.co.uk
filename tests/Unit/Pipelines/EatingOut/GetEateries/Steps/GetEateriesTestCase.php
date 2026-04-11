@@ -22,10 +22,12 @@ use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\ExposeSearchResultEateryIdsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromFiltersAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInAreaAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInCollectionAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInLatLngRadiusAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInSearchAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInTownAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesFromFiltersAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInCollectionAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInLatLngAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInLondonAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInTownAction;
@@ -36,6 +38,7 @@ use App\Pipelines\EatingOut\GetEateries\Steps\RelateEateriesAndBranchesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\SerialiseBrowseResultsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\SerialiseResultsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\SortPendingEateriesAction;
+use App\Services\EatingOut\Collection\Configuration;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -130,6 +133,25 @@ abstract class GetEateriesTestCase extends TestCase
         );
 
         $this->callAction(GetEateriesInTownAction::class, $pipelineData, $closure);
+
+        return $toReturn;
+    }
+
+    protected function callGetEateriesInCollectionAction(Collection $eateries = new Collection(), Configuration $configuration = new Configuration(), array $filters = []): ?GetEateriesPipelineData
+    {
+        $toReturn = null;
+
+        $closure = function (GetEateriesPipelineData $pipelineData) use (&$toReturn): void {
+            $toReturn = $pipelineData;
+        };
+
+        $pipelineData = new GetEateriesPipelineData(
+            configuration: $configuration,
+            filters: $filters,
+            eateries: $eateries,
+        );
+
+        $this->callAction(GetEateriesInCollectionAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }
@@ -236,6 +258,25 @@ abstract class GetEateriesTestCase extends TestCase
         );
 
         $this->callAction(GetNationwideBranchesInTownAction::class, $pipelineData, $closure);
+
+        return $toReturn;
+    }
+
+    protected function callGetBranchesInCollectionAction(Collection $eateries = new Collection(), Configuration $configuration = new Configuration(), array $filters = []): ?GetEateriesPipelineData
+    {
+        $toReturn = null;
+
+        $closure = function (GetEateriesPipelineData $pipelineData) use (&$toReturn): void {
+            $toReturn = $pipelineData;
+        };
+
+        $pipelineData = new GetEateriesPipelineData(
+            configuration: $configuration,
+            filters: $filters,
+            eateries: $eateries,
+        );
+
+        $this->callAction(GetNationwideBranchesInCollectionAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }

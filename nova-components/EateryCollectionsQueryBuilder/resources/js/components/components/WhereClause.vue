@@ -1,0 +1,577 @@
+<script setup>
+import { ref, watch, onMounted } from 'vue';
+import {
+  whereAverage,
+  whereCount,
+  whereFields,
+  whereHas,
+  whereRelations,
+} from '../../data';
+import { Button } from 'laravel-nova-ui';
+
+const props = defineProps(['where']);
+
+onMounted(() => {
+  if (props.where && props.where.type && props.where.config) {
+    type.value = props.where.type;
+    config.value = props.where.config;
+  }
+});
+
+const emits = defineEmits(['save', 'delete', 'edit']);
+
+const type = ref();
+const config = ref({});
+const relationValues = ref([]);
+
+const hasSaved = ref(false);
+
+const operators = ['=', '!=', '<', '>', '<=', '>='];
+
+const forceSave = () => {
+  hasSaved.value = false;
+
+  saveButton();
+};
+
+const saveButton = () => {
+  let hasError = false;
+
+  getRequiredFields().forEach((field) => {
+    if (hasError) {
+      return;
+    }
+
+    if (config.value[field] === '') {
+      alert(`Please ensure ${field} has a value!`);
+
+      hasError = true;
+    }
+  });
+
+  if (hasError) {
+    return;
+  }
+
+  emits(hasSaved.value ? 'edit' : 'save', {
+    type: type.value,
+    config: config.value,
+  });
+
+  if (!hasSaved.value) {
+    hasSaved.value = true;
+  }
+};
+
+const getRequiredFields = () => {
+  switch (type.value) {
+    case 'field':
+    case 'relation':
+      return ['field', 'operator'];
+    case 'has':
+      return [
+        'relation',
+        'table',
+        'localKey',
+        'foreignKey',
+        'field',
+        'operator',
+        'value',
+      ];
+    case 'count':
+      return [
+        'relation',
+        'table',
+        'localKey',
+        'foreignKey',
+        'alias',
+        'operator',
+        'value',
+      ];
+    case 'average':
+      return [
+        'relation',
+        'table',
+        'column',
+        'localKey',
+        'foreignKey',
+        'alias',
+        'operator',
+        'value',
+      ];
+    case 'nested':
+      return ['clauses'];
+  }
+};
+
+defineExpose({ forceSave });
+
+watch(
+  () => type.value,
+  () => {
+    if (props.where && props.where.type === type.value) {
+      return;
+    }
+
+    switch (type.value) {
+      case 'field':
+        config.value = {
+          field: '',
+          operator: '=',
+          value: '',
+        };
+
+        break;
+      case 'relation':
+        config.value = {
+          field: '',
+          operator: '=',
+          value: '',
+        };
+
+        relationValues.value = [];
+
+        break;
+      case 'has':
+        config.value = {
+          relation: '',
+          table: '',
+          localKey: '',
+          foreignKey: '',
+          field: '',
+          operator: '=',
+          value: '',
+        };
+
+        relationValues.value = [];
+
+        break;
+      case 'count':
+        config.value = {
+          relation: '',
+          table: '',
+          localKey: '',
+          foreignKey: '',
+          alias: '',
+          operator: '=',
+          value: '',
+        };
+
+        break;
+      case 'average':
+        config.value = {
+          relation: '',
+          table: '',
+          column: '',
+          localKey: '',
+          foreignKey: '',
+          alias: '',
+          operator: '=',
+          value: '',
+        };
+
+        break;
+
+      case 'nested':
+        config.value = {
+          clauses: [],
+        };
+    }
+  },
+);
+
+watch(
+  () => config.value?.field,
+  () => {
+    if (config.value.field === '') {
+      return;
+    }
+
+    if (type.value === 'relation') {
+      Nova.request()
+        .post('/nova-vendor/eatery-collections-query-builder/relation', {
+          relation: config.value.field,
+        })
+        .then((response) => {
+          relationValues.value = response.data;
+        });
+    }
+
+    if (type.value === 'has') {
+      Nova.request()
+        .post('/nova-vendor/eatery-collections-query-builder/has', {
+          relation: config.value.relation,
+        })
+        .then((response) => {
+          relationValues.value = response.data;
+        });
+    }
+  },
+);
+
+watch(
+  () => config.value?.relation,
+  () => {
+    if (config.value.relation === '') {
+      return;
+    }
+
+    if (type.value === 'has') {
+      const raw = whereHas.find(
+        (has) => has.relation === config.value.relation,
+      );
+
+      config.value.field = raw.column;
+      config.value.table = raw.table;
+      config.value.localKey = raw.localKey;
+      config.value.foreignKey = raw.foreignKey;
+    }
+
+    if (type.value === 'count') {
+      const raw = whereCount.find(
+        (count) => count.label === config.value.relation,
+      );
+
+      config.value.table = raw.table;
+      config.value.localKey = raw.localKey;
+      config.value.foreignKey = raw.foreignKey;
+      config.value.alias = raw.alias;
+    }
+
+    if (type.value === 'average') {
+      const raw = whereAverage.find(
+        (avg) => avg.label === config.value.relation,
+      );
+
+      config.value.table = raw.table;
+      config.value.column = raw.column;
+      config.value.localKey = raw.localKey;
+      config.value.foreignKey = raw.foreignKey;
+      config.value.alias = raw.alias;
+    }
+  },
+);
+</script>
+
+<template>
+  <div class="grid grid-cols-6 gap-2">
+    <div>
+      <select
+        v-model="type"
+        class="form-control form-control-bordered"
+      >
+        <option
+          disabled
+          selected
+        >
+          Select a type
+        </option>
+        <option value="field">Field</option>
+        <option value="relation">Relation</option>
+        <option value="has">Has</option>
+        <option value="count">Count</option>
+        <option value="average">Average</option>
+        <option value="nested">Nested</option>
+      </select>
+    </div>
+
+    <template v-if="type === 'field'">
+      <select
+        v-model="config.field"
+        class="form-control form-control-bordered"
+      >
+        <option disabled>Column</option>
+        <option
+          v-for="field in whereFields"
+          :key="field"
+          v-text="field"
+        />
+      </select>
+      <select
+        v-model="config.operator"
+        class="form-control form-control-bordered"
+      >
+        <option
+          v-for="operator in operators"
+          :key="operator"
+          v-text="operator"
+        />
+      </select>
+      <input
+        v-model="config.value"
+        placeholder="Value"
+        type="text"
+        class="form-control form-control-bordered"
+      />
+      <div />
+      <div class="text-right">
+        <Button
+          variant="outline"
+          class="mr-2"
+          @click="$emit('delete')"
+        >
+          X
+        </Button>
+        <Button @click="saveButton()"> Save </Button>
+      </div>
+    </template>
+
+    <template v-if="type === 'relation'">
+      <select
+        v-model="config.field"
+        class="form-control form-control-bordered"
+      >
+        <option disabled>Relation</option>
+        <option
+          v-for="relation in whereRelations"
+          :key="relation"
+          :value="relation.column"
+          v-text="relation.label"
+        />
+      </select>
+      <select
+        v-model="config.operator"
+        class="form-control form-control-bordered"
+      >
+        <option
+          v-for="operator in operators"
+          :key="operator"
+          v-text="operator"
+        />
+      </select>
+      <select
+        v-model="config.value"
+        class="form-control form-control-bordered"
+      >
+        <option
+          v-for="option in relationValues"
+          :key="option.value"
+          :value="option.value"
+          v-text="option.label"
+        />
+      </select>
+      <div />
+      <div class="text-right">
+        <Button
+          variant="outline"
+          class="mr-2"
+          @click="$emit('delete')"
+        >
+          X
+        </Button>
+        <Button @click="saveButton()"> Save </Button>
+      </div>
+    </template>
+
+    <template v-if="type === 'has'">
+      <select
+        v-model="config.relation"
+        class="form-control form-control-bordered"
+      >
+        <option disabled>Relation</option>
+        <option
+          v-for="relation in whereHas"
+          :key="relation.relation"
+          :value="relation.relation"
+          v-text="relation.label"
+        />
+      </select>
+      <input
+        v-model="config.field"
+        placeholder="Field"
+        type="text"
+        disabled
+        class="form-control form-control-bordered"
+      />
+      <select
+        v-model="config.operator"
+        class="form-control form-control-bordered"
+      >
+        <option
+          v-for="operator in operators"
+          :key="operator"
+          v-text="operator"
+        />
+      </select>
+      <select
+        v-model="config.value"
+        class="form-control form-control-bordered"
+      >
+        <option
+          v-for="option in relationValues"
+          :key="option.value"
+          :value="option.value"
+          v-text="option.label"
+        />
+      </select>
+      <div class="text-right">
+        <Button
+          variant="outline"
+          class="mr-2"
+          @click="$emit('delete')"
+        >
+          X
+        </Button>
+        <Button @click="saveButton()"> Save </Button>
+      </div>
+    </template>
+
+    <template v-if="type === 'count'">
+      <select
+        v-model="config.relation"
+        class="form-control form-control-bordered"
+      >
+        <option disabled>Relation</option>
+        <option
+          v-for="relation in whereCount"
+          :key="relation.label"
+          :value="relation.label"
+          v-text="relation.label"
+        />
+      </select>
+      <select
+        v-model="config.operator"
+        class="form-control form-control-bordered"
+      >
+        <option
+          v-for="operator in operators"
+          :key="operator"
+          v-text="operator"
+        />
+      </select>
+      <input
+        v-model="config.value"
+        placeholder="Value"
+        type="number"
+        class="form-control form-control-bordered"
+      />
+      <div />
+      <div class="text-right">
+        <Button
+          variant="outline"
+          class="mr-2"
+          @click="$emit('delete')"
+        >
+          X
+        </Button>
+        <Button @click="saveButton()"> Save </Button>
+      </div>
+    </template>
+
+    <template v-if="type === 'average'">
+      <select
+        v-model="config.relation"
+        class="form-control form-control-bordered"
+      >
+        <option disabled>Relation</option>
+        <option
+          v-for="relation in whereAverage"
+          :key="relation.label"
+          :value="relation.label"
+          v-text="relation.label"
+        />
+      </select>
+      <input
+        v-model="config.column"
+        placeholder="Column"
+        type="text"
+        disabled
+        class="form-control form-control-bordered"
+      />
+      <select
+        v-model="config.operator"
+        class="form-control form-control-bordered"
+      >
+        <option
+          v-for="operator in operators"
+          :key="operator"
+          v-text="operator"
+        />
+      </select>
+      <input
+        v-model="config.value"
+        placeholder="Value"
+        type="number"
+        class="form-control form-control-bordered"
+      />
+      <div class="text-right">
+        <Button
+          variant="outline"
+          class="mr-2"
+          @click="$emit('delete')"
+        >
+          X
+        </Button>
+        <Button @click="saveButton()"> Save </Button>
+      </div>
+    </template>
+
+    <template v-if="type === 'nested'">
+      <div
+        class="col-span-6 space-y-2 rounded border border-gray-200 p-2 pl-10"
+      >
+        <div class="flex flex-col space-y-2">
+          <div
+            v-for="(clause, index) in config.clauses"
+            :key="index"
+            class="flex space-x-2"
+          >
+            <select
+              v-model="clause.boolean"
+              class="form-control form-control-bordered"
+            >
+              <option>and</option>
+              <option>or</option>
+            </select>
+            <div class="flex-1">
+              <WhereClause
+                @save="
+                  (nestedClause) => {
+                    config.clauses[index].config = nestedClause;
+                  }
+                "
+                @edit="
+                  (nestedClause) =>
+                    (config.clauses[index].config = nestedClause)
+                "
+                @delete="clause.clauses.splice(index, 1)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <Button
+            variant="outline"
+            @click="
+              () =>
+                config.clauses.push({
+                  boolean: 'or',
+                  config: {},
+                })
+            "
+          >
+            Add Clause
+          </Button>
+        </div>
+      </div>
+
+      <div class="col-span-6 flex justify-end">
+        <Button
+          variant="outline"
+          class="mr-2"
+          @click="$emit('delete')"
+        >
+          X
+        </Button>
+        <Button @click="saveButton()"> Save </Button>
+      </div>
+    </template>
+  </div>
+</template>
+
+<style scoped>
+.form-control {
+  width: auto;
+}
+</style>

@@ -4,7 +4,7 @@
     "description": "Coeliac Sanctuary website",
     "license": "proprietary",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "ext-dom": "*",
         "ext-intl": "*",
         "ext-libxml": "*",
@@ -40,7 +40,7 @@
         "laravel/framework": "^12.32.5",
         "laravel/horizon": "^5.34.0",
         "laravel/nightwatch": "^1.14.0",
-        "laravel/nova": "^5.7.5",
+        "laravel/nova": "5.7.6",
         "laravel/sanctum": "^4.2.0",
         "laravel/scout": "^10.19.0",
         "laravel/tinker": "^2.10.1",
@@ -68,7 +68,8 @@
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
         "wnx/sidecar-browsershot": "^2.7.0",
-        "ziffmedia/nova-select-plus": "^2.1@beta"
+        "ziffmedia/nova-select-plus": "^2.1@beta",
+        "jpeters8889/eatery-collections-query-builder": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16.0",
@@ -185,6 +186,10 @@
         {
             "type": "path",
             "url": "./nova-components/RefreshAdsTxt"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/EateryCollectionsQueryBuilder"
         }
     ],
     "autoload": {

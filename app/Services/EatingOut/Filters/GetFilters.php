@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Services\EatingOut\Filters;
 
 use App\Enums\EatingOut\EateryType as EateryTypeEnum;
+use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryFeature;
+use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryType;
 use App\Models\EatingOut\EateryVenueType;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,15 +25,15 @@ class GetFilters
         $this->filters = $filters;
 
         return [
-            'categories' => $this->getCategories(),
-            'venueTypes' => $this->getVenueTypes(),
-            'features' => $this->getFeatures(),
+            'categories' => $this->getCategories()->values(),
+            'venueTypes' => $this->getVenueTypes()->values(),
+            'features' => $this->getFeatures()->values(),
         ];
     }
 
     /**
-     * @param  Builder<EateryType> | Builder<EateryVenueType> | Builder<EateryFeature>  $builder
-     * @return Builder<EateryType> | Builder<EateryVenueType> | Builder<EateryFeature>
+     * @param  Builder<EateryType>|Builder<EateryVenueType>|Builder<EateryFeature>|Builder<EateryTown>|Builder<EateryCounty>  $builder
+     * @return Builder<EateryType>|Builder<EateryVenueType>|Builder<EateryFeature>|Builder<EateryTown>|Builder<EateryCounty>
      */
     protected function withWhereClause(Builder $builder): Builder
     {
@@ -39,8 +41,8 @@ class GetFilters
     }
 
     /**
-     * @param  Builder<EateryType> | Builder<EateryVenueType> | Builder<EateryFeature>  $builder
-     * @return Builder<EateryType> | Builder<EateryVenueType> | Builder<EateryFeature>
+     * @param  Builder<EateryType>|Builder<EateryVenueType>|Builder<EateryFeature>|Builder<EateryTown>|Builder<EateryCounty>  $builder
+     * @return Builder<EateryType>|Builder<EateryVenueType>|Builder<EateryFeature>|Builder<EateryTown>|Builder<EateryCounty>
      */
     protected function orderBy(Builder $builder, string $field): Builder
     {
@@ -48,7 +50,7 @@ class GetFilters
     }
 
     /**
-     * @template T of EateryType | EateryVenueType | EateryFeature
+     * @template T of EateryType|EateryVenueType|EateryFeature|EateryTown|EateryCounty
      *
      * @param  class-string<T>  $filterable
      * @param  null | callable(T $filterable): array  $mergeWithMap
@@ -113,7 +115,7 @@ class GetFilters
         return $this->resolveFilters(EateryFeature::class, 'features', 'feature', 'feature', 'slug');
     }
 
-    protected function filterIsEnabled(string $key, string $value): bool
+    protected function filterIsEnabled(string $key, string|int $value): bool
     {
         if ( ! Arr::has($this->filters, $key)) {
             return false;
@@ -128,6 +130,6 @@ class GetFilters
 
         return collect($filters)
             ->map(fn (string $filter) => Str::lower($filter))
-            ->contains(Str::lower($value));
+            ->contains(Str::lower((string) $value));
     }
 }

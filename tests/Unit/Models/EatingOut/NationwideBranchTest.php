@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\EatingOut;
 
+use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
@@ -99,6 +101,26 @@ class NationwideBranchTest extends TestCase
         Bus::assertDispatched(CreateEateryAppPageOpenGraphImageJob::class);
         Bus::assertDispatched(CreateEateryMapPageOpenGraphImageJob::class);
         Bus::assertDispatched(CreateEateryIndexPageOpenGraphImageJob::class);
+    }
+
+    #[Test]
+    public function itSetsTheCountryDescriptionAsNullOnSave(): void
+    {
+        EateryCountryDescriptionAgent::fake();
+
+        config()->set('coeliac.generate_country_ai_descriptions', true);
+
+        $country = $this->create(EateryCountry::class, [
+            'description' => 'foo bar',
+        ]);
+
+        $this->assertNotNull($country->description);
+
+        $this->create(NationwideBranch::class, [
+            'country_id' => $country->id,
+        ]);
+
+        $this->assertNull($country->refresh()->description);
     }
 
     #[Test]
