@@ -21,6 +21,6 @@ class IndexController
                 'attractions uk gluten free', 'gluten free reviews', 'coeliac reviews', 'gluten free hotels', 'gluten free restaurants uk',
                 'gluten free cafes uk',
             ])
-            ->render('EatingOut/Landing');
+            ->render(config('coeliac.enable_eatery_collections') ? 'EatingOut/LandingNew' : 'EatingOut/Landing');
     }
 }

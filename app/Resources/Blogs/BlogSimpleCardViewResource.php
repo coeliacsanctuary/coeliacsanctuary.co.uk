@@ -18,7 +18,7 @@ class BlogSimpleCardViewResource extends JsonResource
     {
         return [
             'title' => Str::of($this->title)->replace('&quot;', '"'),
-            'link' => route('blog.show', ['blog' => $this]),
+            'link' => $this->link,
             'image' => $this->main_image_as_webp ?? $this->main_image,
         ];
     }

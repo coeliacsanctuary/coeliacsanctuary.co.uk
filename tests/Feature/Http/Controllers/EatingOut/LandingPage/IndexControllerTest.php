@@ -34,6 +34,6 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itRendersTheInertiaPage(): void
     {
-        $this->visitPage()->assertInertia(fn (Assert $page) => $page->component('EatingOut/Landing'));
+        $this->visitPage()->assertInertia(fn (Assert $page) => $page->component('EatingOut/LandingNew'));
     }
 }

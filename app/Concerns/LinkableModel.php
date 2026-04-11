@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Concerns;
 
+use App\Models\Blogs\Blog;
+use App\Models\EatingOut\EateryCollection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -24,6 +26,13 @@ trait LinkableModel
     /** @return Attribute<non-falsy-string, never> */
     public function link(): Attribute
     {
+        if ($this instanceof Blog && $this->eatery_collection_id) {
+            /** @var EateryCollection $eateryCollection */
+            $eateryCollection = $this->eateryCollection;
+
+            return $eateryCollection->link();
+        }
+
         return Attribute::get(fn () => '/' . $this->linkRoot() . '/' . $this->linkColumn());
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Concerns;
 
+use App\Models\Blogs\Blog;
+use App\Models\EatingOut\EateryCollection;
 use App\Models\Media;
 use Exception;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -44,6 +46,13 @@ trait DisplaysMedia
             /** @var MediaCollection<int, Media> $collection */
             $collection = $this->getMedia('primary');
 
+            if ($this instanceof Blog && $this->eatery_collection_id) {
+                /** @var EateryCollection $eateryCollection */
+                $eateryCollection = $this->eateryCollection;
+
+                $collection = $eateryCollection->getMedia('primary');
+            }
+
             /** @var Media $item */
             $item = $collection->first();
 
@@ -61,6 +70,13 @@ trait DisplaysMedia
         return Attribute::get(function () {
             /** @var MediaCollection<int, Media> $collection */
             $collection = $this->getMedia('primary');
+
+            if ($this instanceof Blog && $this->eatery_collection_id) {
+                /** @var EateryCollection $eateryCollection */
+                $eateryCollection = $this->eateryCollection;
+
+                $collection = $eateryCollection->getMedia('primary');
+            }
 
             /** @var Media $item */
             $item = $collection->first();

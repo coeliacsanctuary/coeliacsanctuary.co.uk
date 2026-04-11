@@ -15,7 +15,7 @@ class PopupFactory extends Factory
         return [
             'text' => $this->faker->text(),
             'link' => $this->faker->word(),
-            'display_every' => $this->faker->randomDigit(),
+            'display_every' => $this->faker->randomDigitNotZero(),
             'live' => true,
         ];
     }

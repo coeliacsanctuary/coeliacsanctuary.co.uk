@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Ai\Tools;
+
+use App\Models\EatingOut\EateryTown;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
+use Stringable;
+
+class FindLinkForTownTool implements Tool
+{
+    /**
+     * Get the description of the tool's purpose.
+     */
+    public function description(): Stringable|string
+    {
+        return 'Attempt to find a link to the town/city page in the eating out guide of the website, using a whereLike on the database';
+    }
+
+    /**
+     * Execute the tool.
+     */
+    public function handle(Request $request): Stringable|string
+    {
+        $county = EateryTown::query()->whereLike('town', "%{$request->string('town')->toString()}%")->first();
+
+        if ($county) {
+            return $county->absoluteLink();
+        }
+
+        return '- town not found -';
+    }
+
+    /**
+     * Get the tool's schema definition.
+     */
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'town' => $schema->string()->required(),
+        ];
+    }
+}

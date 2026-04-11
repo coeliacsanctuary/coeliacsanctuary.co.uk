@@ -31,7 +31,7 @@ class GetBlogsForBlogIndexAction
                         ->where('id', $search)
                         ->orWhere('title', 'LIKE', "%{$search}%")
                 ))
-                ->with(['media', 'tags'])
+                ->with(['media', 'tags', 'eateryCollection'])
                 ->withCount(['comments'])
                 ->latest()
                 ->paginate($perPage)

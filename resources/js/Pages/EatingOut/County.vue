@@ -13,17 +13,40 @@ import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 import { Link } from '@inertiajs/vue3';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import Info from '@/Components/Info.vue';
-import { ref, useTemplateRef } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import FormInput from '@/Components/Forms/FormInput.vue';
+import FormSelect from '@/Components/Forms/FormSelect.vue';
+import { FormSelectOption } from '@/Components/Forms/Props';
 
-defineProps<{
+const props = defineProps<{
   county: CountyPage;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
 }>();
 
 const townList = ref<HTMLElement | null>(null);
+const townSearch = ref('');
+
+const sortOptions = ref<FormSelectOption[]>([
+  { label: 'Alphabetically', value: 'alphabetical' },
+  { label: 'Total Eateries', value: 'eateries' },
+]);
+
+const currentSort = ref('alphabetical');
+
+const filteredTowns = computed(() => {
+  const towns = props.county.towns.filter((town) =>
+    town.name.toLowerCase().includes(townSearch.value.toLowerCase()),
+  );
+
+  if (currentSort.value === 'eateries') {
+    return [...towns].sort((a, b) => b.total_eateries - a.total_eateries);
+  }
+
+  return towns;
+});
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('townList'),
@@ -139,21 +162,42 @@ useJourneyTracking().logWhenVisible(
       code="5284484376"
     />
 
-    <div
-      ref="townList"
-      class="group grid gap-3 md:grid-cols-3"
-    >
-      <template
-        v-for="(town, index) in county.towns"
-        :key="town.name"
-      >
-        <CountyTown :town="town" />
-
-        <div
-          v-if="index > 0 && index % 3 === 0"
-          class="content_mobile_hint"
+    <div ref="townList">
+      <div class="mb-4 flex items-center justify-between">
+        <FormInput
+          v-model="townSearch"
+          name="search"
+          label=""
+          :placeholder="`Search for a town in ${county.name}...`"
+          hide-label
+          borders
+          class="w-full max-w-md"
         />
-      </template>
+
+        <FormSelect
+          v-model="currentSort"
+          name="sort"
+          :options="sortOptions"
+          label="Sort by"
+          borders
+          class="flex items-center space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+          size="small"
+        />
+      </div>
+
+      <div class="group grid gap-3 md:grid-cols-3">
+        <template
+          v-for="(town, index) in filteredTowns"
+          :key="town.name"
+        >
+          <CountyTown :town="town" />
+
+          <div
+            v-if="index > 0 && index % 3 === 0"
+            class="content_mobile_hint"
+          />
+        </template>
+      </div>
     </div>
   </Card>
 

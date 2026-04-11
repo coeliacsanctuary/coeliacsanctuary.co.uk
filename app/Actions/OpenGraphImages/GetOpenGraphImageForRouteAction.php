@@ -7,6 +7,7 @@ namespace App\Actions\OpenGraphImages;
 use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateCollectionIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
+use App\Jobs\OpenGraphImages\CreateEateryCollectionIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
@@ -35,6 +36,7 @@ class GetOpenGraphImageForRouteAction
             'collection' => CreateCollectionIndexPageOpenGraphImageJob::dispatch(),
             'shop' => CreateShopIndexPageOpenGraphImageJob::dispatch(),
             'eatery' => CreateEateryIndexPageOpenGraphImageJob::dispatch(),
+            'eatery-collection' => CreateEateryCollectionIndexPageOpenGraphImageJob::dispatch(),
             'eatery-app' => CreateEateryAppPageOpenGraphImageJob::dispatch(),
             'eatery-map' => CreateEateryMapPageOpenGraphImageJob::dispatch(),
             default => CreateHomePageOpenGraphImageJob::dispatch(),
