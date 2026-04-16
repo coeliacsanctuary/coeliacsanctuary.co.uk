@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "501098b1ec1a9970bf11bd847cc4cc0c",
+    "content-hash": "ff7ce74240f861cf9e864bec4484bf72",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2391,16 +2391,16 @@
         },
         {
             "name": "jpeters8889/journey-tracker-laravel",
-            "version": "dev-main",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jpeters8889/journey-tracker-laravel.git",
-                "reference": "9a69b00e7830e6255f5b4f554f96abef0c323fed"
+                "reference": "6698ec347cfe67616b385a848549184eab645853"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/9a69b00e7830e6255f5b4f554f96abef0c323fed",
-                "reference": "9a69b00e7830e6255f5b4f554f96abef0c323fed",
+                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/6698ec347cfe67616b385a848549184eab645853",
+                "reference": "6698ec347cfe67616b385a848549184eab645853",
                 "shasum": ""
             },
             "require": {
@@ -2408,7 +2408,6 @@
                 "php": "^8.3",
                 "spatie/laravel-package-tools": "^1.92"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -2432,10 +2431,10 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/v0.1.0",
+                "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/v0.1.1",
                 "issues": "https://github.com/jpeters8889/journey-tracker-laravel/issues"
             },
-            "time": "2026-04-10T20:26:03+00:00"
+            "time": "2026-04-16T19:33:27+00:00"
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
@@ -16434,7 +16433,6 @@
         "jpeters8889/eatery-location-search": 20,
         "jpeters8889/eatery-opening-times": 20,
         "jpeters8889/hidden-writable-field": 20,
-        "jpeters8889/journey-tracker-laravel": 20,
         "jpeters8889/order-dispatch-slip": 20,
         "jpeters8889/polymorphic-panel": 20,
         "jpeters8889/print-all-orders": 20,
