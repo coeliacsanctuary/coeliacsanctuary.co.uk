@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Inertia\DeferProp;
 use Inertia\Inertia as BaseInertia;
+use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
 use Inertia\MergeProp;
 use Inertia\Response;
 use Money\Money;
@@ -55,9 +56,7 @@ class Inertia
             $this->includeBasket();
         }
 
-        if (request()->hasHeader('X-Journey-Token')) {
-            BaseInertia::share('journey.token', request()->header('X-Journey-Token'));
-        }
+        BaseInertia::share('journey.token', fn (): ?string => LogPageViewMiddleware::getToken());
 
         $this->schema = [$this->baseSchema()];
 
