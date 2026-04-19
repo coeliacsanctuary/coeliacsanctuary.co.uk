@@ -90,5 +90,6 @@
     }, 5000);
 </script>
 
+@journeyTracker
 </body>
 </html>
