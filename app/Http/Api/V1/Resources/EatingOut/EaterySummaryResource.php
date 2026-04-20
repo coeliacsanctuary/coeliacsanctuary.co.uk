@@ -24,6 +24,8 @@ class EaterySummaryResource extends JsonResource
             'type' => $this->type?->name,
             'cuisine' => $this->cuisine?->cuisine,
             'website' => $this->website,
+            'facebook_url' => $this->facebook_url,
+            'instagram_url' => $this->instagram_url,
             'restaurants' => $this->restaurants->map(fn (EateryAttractionRestaurant $restaurant): array => [
                 'name' => $restaurant->restaurant_name,
                 'info' => $restaurant->info,
