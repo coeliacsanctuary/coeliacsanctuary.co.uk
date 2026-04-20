@@ -58,6 +58,8 @@ export type NationwideEatery = {
   type: string;
   venue_type?: string;
   website?: string;
+  facebook_url?: string;
+  instagram_url?: string;
   is_fully_gf: boolean;
 };
 
@@ -132,6 +134,8 @@ export type TownEatery = Eatery & {
   venue_type?: string;
   cuisine?: string;
   website?: string;
+  facebook_url?: string;
+  instagram_url?: string;
   restaurants: {
     name?: string;
     info: string;

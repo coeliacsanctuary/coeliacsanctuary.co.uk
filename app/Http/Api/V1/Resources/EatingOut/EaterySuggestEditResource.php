@@ -21,6 +21,8 @@ class EaterySuggestEditResource extends JsonResource
         return [
             'address' => $this->address,
             'website' => $this->website,
+            'facebook_url' => $this->facebook_url,
+            'instagram_url' => $this->instagram_url,
             'gf_menu_link' => $this->gf_menu_link,
             'phone' => $this->phone,
             'type_id' => $this->type_id,

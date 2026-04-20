@@ -213,6 +213,10 @@ class Eateries extends Resource
                     ->hideFromIndex(),
 
                 URL::make('GF Menu Link')->fullWidth()->nullable()->rules(['max:255'])->hideFromIndex(),
+
+                URL::make('Facebook URL', 'facebook_url')->fullWidth()->nullable()->rules(['max:255'])->hideFromIndex(),
+
+                URL::make('Instagram URL', 'instagram_url')->fullWidth()->nullable()->rules(['max:255'])->hideFromIndex(),
             ]),
 
             Panel::make('Details', [

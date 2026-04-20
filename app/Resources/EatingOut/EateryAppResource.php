@@ -64,6 +64,8 @@ class EateryAppResource extends JsonResource
             'address' => $branch->address ?? $this->address,
             'phone' => $this->phone,
             'website' => $this->website,
+            'facebook_url' => $this->facebook_url,
+            'instagram_url' => $this->instagram_url,
             'gf_menu_link' => $this->gf_menu_link,
             'lat' => $branch->lat ?? $this->lat,
             'lng' => $branch->lng ?? $this->lng,
