@@ -19,6 +19,8 @@ class EateryCollectionsQueryBuilder extends Field
 
     public function resolve($resource, $attribute = null): void
     {
-        $this->value = json_decode($resource->getRawOriginal($attribute ?? $this->attribute));
+        $raw = $resource->getRawOriginal($attribute ?? $this->attribute);
+
+        $this->value = $raw !== null ? json_decode($raw) : null;
     }
 }
