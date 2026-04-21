@@ -3,13 +3,13 @@ import { count, join } from '../objects';
 export const whereFields = ['website', 'gf_menu_link'];
 
 export const whereRelations = [
-  { label: 'town', column: 'town_id' },
-  { label: 'county', column: 'county_id' },
-  { label: 'country', column: 'country_id' },
-  { label: 'area', column: 'area_id' },
-  { label: 'type', column: 'type_id' },
-  { label: 'venueType', column: 'venue_type_id' },
-  { label: 'cuisine', column: 'cuisine_id' },
+  { label: 'town', column: '[parent].town_id' },
+  { label: 'county', column: '[parent].county_id' },
+  { label: 'country', column: '[parent].country_id' },
+  { label: 'area', column: '[parent].area_id' },
+  { label: 'type', column: '[parent].type_id' },
+  { label: 'venueType', column: '[parent].venue_type_id' },
+  { label: 'cuisine', column: '[parent].cuisine_id' },
 ];
 
 export const whereHas = [

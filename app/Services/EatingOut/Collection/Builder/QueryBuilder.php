@@ -106,7 +106,7 @@ abstract class QueryBuilder
         $query->where(function (Builder $builder) use ($clauses): void {
             $clauses->each(function (Where|Collection $where) use ($builder): void {
                 if ($where instanceof Where) {
-                    $where($builder);
+                    $where($builder, $this->getTableName());
 
                     return;
                 }

@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/relation', function (Request $request) {
-    return match ($request->input('relation')) {
+    return match (str_replace('[parent].', '', $request->input('relation'))) {
         'town_id' => EateryTown::query()
             ->orderBy('town')
             ->with(['county', 'county.country'])
