@@ -1,38 +1,46 @@
 import { onMounted, onUnmounted } from 'vue';
 
-const SELECTORS = '.adhesion_wrapper';
-const CSS_VAR = '--sticky-bottom';
+const ADHESION_SELECTOR = '.adhesion_wrapper';
+const VIDEO_SELECTOR = '#universalPlayer_wrapper';
 
-const observedElements = new Set<Element>();
+const adhesionElements = new Set<Element>();
+const videoElements = new Set<Element>();
 let resizeObserver: ResizeObserver | null = null;
 let mutationObserver: MutationObserver | null = null;
 let refCount = 0;
 
-const updateCssVar = (): void => {
-  let maxHeight = 0;
+const updateCssVars = (): void => {
+  let adhesionHeight = 0;
+  let videoHeight = 0;
 
-  observedElements.forEach((el) => {
-    maxHeight = Math.max(maxHeight, el.getBoundingClientRect().height);
+  adhesionElements.forEach((el) => {
+    adhesionHeight = Math.max(adhesionHeight, el.getBoundingClientRect().height);
   });
 
-  document.documentElement.style.setProperty(CSS_VAR, `${maxHeight}px`);
+  videoElements.forEach((el) => {
+    videoHeight = Math.max(videoHeight, el.getBoundingClientRect().height);
+  });
+
+  document.documentElement.style.setProperty('--sticky-bottom', `${adhesionHeight}px`);
+  document.documentElement.style.setProperty('--sticky-bottom-right', `${Math.max(adhesionHeight, videoHeight)}px`);
 };
 
-const observeElement = (el: Element): void => {
-  if (observedElements.has(el)) {
+const observeElement = (el: Element, set: Set<Element>): void => {
+  if (set.has(el)) {
     return;
   }
 
-  observedElements.add(el);
+  set.add(el);
   resizeObserver?.observe(el);
 };
 
 const scan = (): void => {
-  document.querySelectorAll(SELECTORS).forEach(observeElement);
+  document.querySelectorAll(ADHESION_SELECTOR).forEach((el) => observeElement(el, adhesionElements));
+  document.querySelectorAll(VIDEO_SELECTOR).forEach((el) => observeElement(el, videoElements));
 };
 
 const setup = (): void => {
-  resizeObserver = new ResizeObserver(updateCssVar);
+  resizeObserver = new ResizeObserver(updateCssVars);
   mutationObserver = new MutationObserver(scan);
   mutationObserver.observe(document.body, { childList: true });
   scan();
@@ -43,8 +51,10 @@ const teardown = (): void => {
   resizeObserver = null;
   mutationObserver?.disconnect();
   mutationObserver = null;
-  observedElements.clear();
-  document.documentElement.style.removeProperty(CSS_VAR);
+  adhesionElements.clear();
+  videoElements.clear();
+  document.documentElement.style.removeProperty('--sticky-bottom');
+  document.documentElement.style.removeProperty('--sticky-bottom-right');
 };
 
 export default function useStickyAdOffset(): void {

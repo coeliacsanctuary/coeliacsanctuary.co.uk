@@ -86,7 +86,7 @@ watch(viewSideBar, () => {
         'xl:scale-75',
         '2xl:p-4',
       ]"
-      style="bottom: var(--sticky-bottom, 0px)"
+      style="bottom: var(--sticky-bottom-right, 0px)"
       @click="openSidebar()"
     >
       <div

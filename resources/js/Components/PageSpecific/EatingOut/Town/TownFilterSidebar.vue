@@ -19,7 +19,7 @@ defineEmits(['filtersUpdated', 'sidebarClosed']);
 <template>
   <div
     class="safe-bottom fixed right-0 z-10 p-4 xmd:hidden"
-    style="bottom: var(--sticky-bottom, 0px)"
+    style="bottom: var(--sticky-bottom-right, 0px)"
   >
     <div
       class="-ml-3 rounded-full border-2 border-white bg-primary p-3 text-white shadow-sm transition"
