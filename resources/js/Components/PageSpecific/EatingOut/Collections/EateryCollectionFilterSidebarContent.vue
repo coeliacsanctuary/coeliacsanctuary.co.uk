@@ -96,7 +96,7 @@ const resetFilters = () => {
     </div>
 
     <div
-      v-if="countyFilters.length > 0"
+      v-if="countyFilters.length > 1"
       class="px-3"
     >
       <FormCheckboxGroup
@@ -110,7 +110,7 @@ const resetFilters = () => {
     </div>
 
     <div
-      v-if="townFilters.length > 0"
+      v-if="townFilters.length > 1"
       class="px-3"
     >
       <FormCheckboxGroup
@@ -123,7 +123,10 @@ const resetFilters = () => {
       />
     </div>
 
-    <div class="px-3">
+    <div
+      v-if="eateryTypeFilters.length > 1"
+      class="px-3"
+    >
       <FormCheckboxGroup
         v-model="eateryTypeFilters"
         label="Venue Category"
@@ -131,7 +134,10 @@ const resetFilters = () => {
       />
     </div>
 
-    <div class="px-3">
+    <div
+      v-if="venueTypeFilters.length > 1"
+      class="px-3"
+    >
       <FormCheckboxGroup
         v-model="venueTypeFilters"
         label="Venue Type"
@@ -139,7 +145,10 @@ const resetFilters = () => {
       />
     </div>
 
-    <div class="px-3">
+    <div
+      v-if="featureFilters.length > 1"
+      class="px-3"
+    >
       <FormCheckboxGroup
         v-model="featureFilters"
         label="Special Feature"

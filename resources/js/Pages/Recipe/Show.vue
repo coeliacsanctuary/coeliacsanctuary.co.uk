@@ -10,11 +10,9 @@ import { PrinterIcon } from '@heroicons/vue/20/solid';
 import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
 import RecipeNutritionTable from '@/Components/PageSpecific/Recipes/RecipeNutritionTable.vue';
 import { Page } from '@inertiajs/core';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
-import useScreensize from '@/composables/useScreensize';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -257,16 +255,6 @@ const handleCommentReset = () => {
           :nutrition="recipe.nutrition"
         />
       </Card>
-
-      <GoogleAd
-        :key="$page.url"
-        :title="
-          useScreensize().screenIsGreaterThanOrEqualTo('lg')
-            ? 'Sponsored'
-            : undefined
-        "
-        code="2137793897"
-      />
     </aside>
 
     <div class="flex flex-col space-y-3">
