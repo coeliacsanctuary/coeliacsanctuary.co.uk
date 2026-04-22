@@ -7,9 +7,9 @@ export const whereRelations = [
   { label: 'county', column: '[parent].county_id' },
   { label: 'country', column: '[parent].country_id' },
   { label: 'area', column: '[parent].area_id' },
-  { label: 'type', column: '[parent].type_id' },
-  { label: 'venueType', column: '[parent].venue_type_id' },
-  { label: 'cuisine', column: '[parent].cuisine_id' },
+  { label: 'type', column: 'type_id' },
+  { label: 'venueType', column: 'venue_type_id' },
+  { label: 'cuisine', column: 'cuisine_id' },
 ];
 
 export const whereHas = [
