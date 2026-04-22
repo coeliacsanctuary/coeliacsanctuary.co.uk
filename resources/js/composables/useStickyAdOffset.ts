@@ -1,4 +1,5 @@
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+import type { Ref } from 'vue';
 
 const ADHESION_SELECTOR = '.adhesion_wrapper';
 const VIDEO_SELECTOR = '#universalPlayer_wrapper';
@@ -8,6 +9,8 @@ const videoElements = new Set<Element>();
 let resizeObserver: ResizeObserver | null = null;
 let mutationObserver: MutationObserver | null = null;
 let refCount = 0;
+
+const adhesionHeight: Ref<number> = ref(0);
 
 const viewportCoverage = (el: Element): number => {
   const rect = el.getBoundingClientRect();
@@ -30,6 +33,8 @@ const updateCssVars = (): void => {
   videoElements.forEach((el) => {
     videoCoverage = Math.max(videoCoverage, viewportCoverage(el));
   });
+
+  adhesionHeight.value = adhesionCoverage;
 
   document.documentElement.style.setProperty('--sticky-bottom', `${adhesionCoverage}px`);
   document.documentElement.style.setProperty('--sticky-bottom-right', `${Math.max(adhesionCoverage, videoCoverage)}px`);
@@ -63,11 +68,12 @@ const teardown = (): void => {
   mutationObserver = null;
   adhesionElements.clear();
   videoElements.clear();
+  adhesionHeight.value = 0;
   document.documentElement.style.removeProperty('--sticky-bottom');
   document.documentElement.style.removeProperty('--sticky-bottom-right');
 };
 
-export default function useStickyAdOffset(): void {
+export default function useStickyAdOffset(): { adhesionHeight: Ref<number> } {
   onMounted(() => {
     if (refCount++ === 0) {
       setup();
@@ -79,4 +85,6 @@ export default function useStickyAdOffset(): void {
       teardown();
     }
   });
+
+  return { adhesionHeight };
 }
