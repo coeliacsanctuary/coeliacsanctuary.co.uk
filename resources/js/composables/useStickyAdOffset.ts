@@ -9,20 +9,30 @@ let resizeObserver: ResizeObserver | null = null;
 let mutationObserver: MutationObserver | null = null;
 let refCount = 0;
 
+const viewportCoverage = (el: Element): number => {
+  const rect = el.getBoundingClientRect();
+
+  if (rect.height === 0) {
+    return 0;
+  }
+
+  return Math.max(0, window.innerHeight - rect.top);
+};
+
 const updateCssVars = (): void => {
-  let adhesionHeight = 0;
-  let videoHeight = 0;
+  let adhesionCoverage = 0;
+  let videoCoverage = 0;
 
   adhesionElements.forEach((el) => {
-    adhesionHeight = Math.max(adhesionHeight, el.getBoundingClientRect().height);
+    adhesionCoverage = Math.max(adhesionCoverage, viewportCoverage(el));
   });
 
   videoElements.forEach((el) => {
-    videoHeight = Math.max(videoHeight, el.getBoundingClientRect().height);
+    videoCoverage = Math.max(videoCoverage, viewportCoverage(el));
   });
 
-  document.documentElement.style.setProperty('--sticky-bottom', `${adhesionHeight}px`);
-  document.documentElement.style.setProperty('--sticky-bottom-right', `${Math.max(adhesionHeight, videoHeight)}px`);
+  document.documentElement.style.setProperty('--sticky-bottom', `${adhesionCoverage}px`);
+  document.documentElement.style.setProperty('--sticky-bottom-right', `${Math.max(adhesionCoverage, videoCoverage)}px`);
 };
 
 const observeElement = (el: Element, set: Set<Element>): void => {
@@ -42,7 +52,7 @@ const scan = (): void => {
 const setup = (): void => {
   resizeObserver = new ResizeObserver(updateCssVars);
   mutationObserver = new MutationObserver(scan);
-  mutationObserver.observe(document.body, { childList: true });
+  mutationObserver.observe(document.body, { childList: true, subtree: true });
   scan();
 };
 
