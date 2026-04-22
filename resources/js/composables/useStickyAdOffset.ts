@@ -1,6 +1,6 @@
 import { onMounted, onUnmounted } from 'vue';
 
-const SELECTORS = '#fixed_container_bottom, .adhesion_wrapper';
+const SELECTORS = '.adhesion_wrapper';
 const CSS_VAR = '--sticky-bottom';
 
 const observedElements = new Set<Element>();
