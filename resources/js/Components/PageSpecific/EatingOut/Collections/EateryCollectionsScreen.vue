@@ -5,13 +5,11 @@ import { Ref, ref, useTemplateRef, watch } from 'vue';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
 import useScreensize from '@/composables/useScreensize';
 import { RequestPayload } from '@inertiajs/core';
-import { Link, router } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import useBrowser from '@/composables/useBrowser';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import Card from '@/Components/Card.vue';
-import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
-import FormSelect from '@/Components/Forms/FormSelect.vue';
 import EateryCollectionFilterSidebar from '@/Components/PageSpecific/EatingOut/Collections/EateryCollectionFilterSidebar.vue';
 
 defineProps<{
@@ -125,7 +123,9 @@ useJourneyTracking().logWhenVisible(
 </script>
 
 <template>
-  <div class="content_hint" />
+  <div class="w-full">
+    <div class="content_hint" />
+  </div>
 
   <div class="relative md:flex xmd:space-x-2">
     <EateryCollectionFilterSidebar
