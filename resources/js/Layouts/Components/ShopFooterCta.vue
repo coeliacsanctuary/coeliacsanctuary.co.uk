@@ -69,7 +69,6 @@ watch(viewSideBar, () => {
         'translate',
         'group',
         'fixed',
-        'bottom-0',
         'right-0',
         'mb-6',
         'mr-6',
@@ -87,6 +86,7 @@ watch(viewSideBar, () => {
         'xl:scale-75',
         '2xl:p-4',
       ]"
+      style="bottom: var(--sticky-bottom, 0px)"
       @click="openSidebar()"
     >
       <div

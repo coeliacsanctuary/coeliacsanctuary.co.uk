@@ -10,6 +10,9 @@ import PopupCta from '@/Layouts/Components/PopupCta.vue';
 import Loader from '@/Components/Loader.vue';
 import eventBus from '@/eventBus';
 import Announcement from '@/Layouts/Components/Announcement.vue';
+import useStickyAdOffset from '@/composables/useStickyAdOffset';
+
+useStickyAdOffset();
 
 defineProps<{
   meta: MetaProps;

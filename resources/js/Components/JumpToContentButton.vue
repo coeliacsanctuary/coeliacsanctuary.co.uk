@@ -38,7 +38,8 @@ const scrollToAnchor = () => {
     >
       <div
         v-if="show"
-        class="safe-bottom fixed bottom-0 left-[50%] mx-auto flex w-full max-w-8xl translate-x-[-50%] pb-4"
+        class="safe-bottom fixed left-[50%] mx-auto flex w-full max-w-8xl translate-x-[-50%] pb-4"
+        style="bottom: var(--sticky-bottom, 0px)"
         :class="{
           'justify-end pr-4': side === 'right',
           'pl-4': side === 'left',

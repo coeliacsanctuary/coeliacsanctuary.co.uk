@@ -85,7 +85,8 @@ onMounted(() => {
 <template>
   <div
     v-show="filters"
-    class="group absolute right-0 bottom-0 z-10 flex flex-row-reverse items-center"
+    class="group absolute right-0 z-10 flex flex-row-reverse items-center"
+    style="bottom: var(--sticky-bottom, 0px)"
   >
     <div
       class="relative m-4 ml-1 cursor-pointer rounded-full border-2 border-white bg-secondary p-3 text-white shadow-sm transition md:shadow-lg"

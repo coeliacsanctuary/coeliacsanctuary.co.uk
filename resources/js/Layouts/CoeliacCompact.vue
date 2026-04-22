@@ -2,6 +2,9 @@
 import CoeliacCompactHeader from '@/Layouts/Components/CoeliacCompactHeader.vue';
 import CoeliacCompactFooter from '@/Layouts/Components/CoeliacCompactFooter.vue';
 import { MetaProps } from '@/types/DefaultProps';
+import useStickyAdOffset from '@/composables/useStickyAdOffset';
+
+useStickyAdOffset();
 
 defineProps<{ meta: MetaProps }>();
 </script>
