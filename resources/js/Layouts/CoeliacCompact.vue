@@ -16,7 +16,7 @@ defineProps<{ meta: MetaProps }>();
   >
     <CoeliacCompactHeader :metas="meta" />
 
-    <section class="mx-auto mb-3 flex w-full flex-1 flex-col space-y-3">
+    <section class="mx-auto flex w-full flex-1 flex-col space-y-3">
       <slot />
     </section>
 
