@@ -5,8 +5,7 @@ import { PlusIcon } from '@heroicons/vue/24/solid';
 
 <template>
   <Link
-    class="group absolute left-2 z-10 flex items-center"
-    style="bottom: var(--sticky-bottom, 0px)"
+    class="group absolute bottom-0 left-2 z-10 flex items-center"
     href="/wheretoeat/recommend-a-place"
   >
     <div

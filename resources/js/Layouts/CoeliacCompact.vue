@@ -10,7 +10,10 @@ defineProps<{ meta: MetaProps }>();
 </script>
 
 <template>
-  <div class="flex h-screen flex-col bg-gray-100">
+  <div
+    class="flex h-screen flex-col bg-gray-100"
+    style="padding-bottom: var(--sticky-bottom-right, 0px)"
+  >
     <CoeliacCompactHeader :metas="meta" />
 
     <section class="mx-auto mb-3 flex w-full flex-1 flex-col space-y-3">
