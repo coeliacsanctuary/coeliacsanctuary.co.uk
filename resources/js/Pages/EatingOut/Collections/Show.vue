@@ -60,6 +60,10 @@ const eateriesRef = ref();
     />
   </Card>
 
+  <div class="w-full">
+    <div class="content_hint" />
+  </div>
+
   <Deferred :data="['filters', 'eateries']">
     <template #fallback>
       <div class="flex xmd:space-x-2">

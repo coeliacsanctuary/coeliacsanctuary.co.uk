@@ -123,10 +123,6 @@ useJourneyTracking().logWhenVisible(
 </script>
 
 <template>
-  <div class="w-full">
-    <div class="content_hint" />
-  </div>
-
   <div class="relative md:flex xmd:space-x-2">
     <EateryCollectionFilterSidebar
       :filters="filters"
