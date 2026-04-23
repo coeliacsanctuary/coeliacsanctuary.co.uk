@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import Warning from '@/Components/Warning.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import { LondonBoroughPage } from '@/types/EateryTypes';
 import TownHeading from '@/Components/PageSpecific/EatingOut/Town/TownHeading.vue';
 import CountyTown from '@/Components/PageSpecific/EatingOut/County/CountyTown.vue';
@@ -73,11 +72,6 @@ const filteredAreas = computed(() => {
       </p>
     </Warning>
   </Card>
-
-  <GoogleAd
-    :key="$page.url"
-    code="5284484376"
-  />
 
   <div ref="areaList">
     <Card class="mx-4 mb-4">

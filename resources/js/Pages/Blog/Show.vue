@@ -8,7 +8,6 @@ import { BlogPage, RelatedBlogSimpleCard } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
 import RenderedString from '@/Components/RenderedString.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import { Page } from '@inertiajs/core';
 import { loadScript } from '@/helpers';
 import BlogSimpleCard from '@/Components/PageSpecific/Blogs/BlogSimpleCard.vue';
@@ -175,10 +174,6 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
           <RenderedString :content="blog.body" />
         </div>
 
-        <GoogleAd
-          :key="$page.url"
-          code="6662103082"
-        />
       </Card>
 
       <Card

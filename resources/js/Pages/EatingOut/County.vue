@@ -7,7 +7,6 @@ import {
 import CountyHeading from '@/Components/PageSpecific/EatingOut/County/CountyHeading.vue';
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
 import CountyTown from '@/Components/PageSpecific/EatingOut/County/CountyTown.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import Heading from '@/Components/Heading.vue';
 import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 import { Link } from '@inertiajs/vue3';
@@ -156,11 +155,6 @@ useJourneyTracking().logWhenVisible(
         </div>
       </div>
     </Info>
-
-    <GoogleAd
-      :key="$page.url"
-      code="5284484376"
-    />
 
     <div ref="townList">
       <div class="mb-4 flex items-center justify-between">

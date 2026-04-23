@@ -12,7 +12,6 @@ import { Link } from '@inertiajs/vue3';
 import Info from '@/Components/Info.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import LondonBorough from '@/Components/PageSpecific/EatingOut/County/LondonBorough.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import { computed, ref } from 'vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
@@ -162,11 +161,6 @@ const filteredBoroughs = computed(() => {
       </template>
     </TopPlaces>
   </template>
-
-  <GoogleAd
-    :key="$page.url"
-    code="5284484376"
-  />
 
   <div ref="boroughList">
     <Card class="mx-4 mb-4">

@@ -10,7 +10,6 @@ import EateryFeedbackLinks from '@/Components/PageSpecific/EatingOut/Details/Eat
 import { Ref, ref, ShallowRef, useTemplateRef } from 'vue';
 import { formatDate } from '@/helpers';
 import EateryBranchList from '@/Components/PageSpecific/EatingOut/Details/EateryBranchList.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import EateryAiOverview from '@/Components/PageSpecific/EatingOut/Details/EateryAiOverview.vue';
 import NearbyEateries from '@/Components/PageSpecific/EatingOut/Details/NearbyEateries.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
@@ -89,11 +88,6 @@ const shouldShowAiOverview = ref(true);
     <EateryLocation
       v-if="eatery.county.id !== 1 || eatery.branch"
       :eatery="eatery"
-    />
-
-    <GoogleAd
-      :key="$page.url"
-      code="5284484376"
     />
 
     <EateryAiOverview

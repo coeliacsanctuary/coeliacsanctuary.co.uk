@@ -10,7 +10,6 @@ import { Ref, ref, watch } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import { RequestPayload } from '@inertiajs/core';
 import useBrowser from '@/composables/useBrowser';
 import Info from '@/Components/Info.vue';

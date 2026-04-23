@@ -12,7 +12,6 @@ import {
 } from '@/types/EateryTypes';
 import HomeLatestEateries from '@/Components/PageSpecific/Home/HomeLatestEateries.vue';
 import HomeLatestReviews from '@/Components/PageSpecific/Home/HomeLatestReviews.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import HomeNewsletterSignup from '@/Components/PageSpecific/Home/HomeNewsletterSignup.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import { useTemplateRef } from 'vue';
@@ -69,11 +68,6 @@ useJourneyTracking().logWhenVisible(
       <HomeHoverGroup
         :items="blogs"
         title="Latest Blogs"
-      />
-
-      <GoogleAd
-        :key="$page.url"
-        code="9266309021"
       />
 
       <HomeHoverGroup

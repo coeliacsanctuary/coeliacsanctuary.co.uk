@@ -6,7 +6,6 @@ import {
 } from '@/types/EateryTypes';
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
 import NationwideEateryCard from '@/Components/PageSpecific/EatingOut/NationwideEateryCard.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 
@@ -74,11 +73,6 @@ defineProps<{
       </div>
     </Card>
   </template>
-
-  <GoogleAd
-    :key="$page.url"
-    code="5284484376"
-  />
 
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading :border="false"> List of Gluten Free Nationwide Chains </Heading>
