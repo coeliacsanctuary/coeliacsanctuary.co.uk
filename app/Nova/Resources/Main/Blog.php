@@ -11,6 +11,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Jpeters8889\Body\Body;
+use Jpeters8889\PreviewButton\PreviewButton;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
@@ -118,6 +119,8 @@ class Blog extends Resource
                     ->insertable()
                     ->fullSize(),
             ]),
+
+            PreviewButton::make('Preview')->forModel('blog')->onlyOnForms(),
 
             new Panel('Content', [
                 Body::make('Body')
