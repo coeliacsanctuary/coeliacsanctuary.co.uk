@@ -120,8 +120,6 @@ class Blog extends Resource
                     ->fullSize(),
             ]),
 
-            PreviewButton::make('Preview')->forModel('blog')->onlyOnForms(),
-
             new Panel('Content', [
                 Body::make('Body')
                     ->canHaveImages()
@@ -134,6 +132,8 @@ class Blog extends Resource
                     ->onlyOnForms()
                     ->fullWidth()
                     ->help('If checked, the about Alison block will be shown at the bottom of the blog.'),
+
+                PreviewButton::make('Preview')->forModel('blog')->onlyOnForms(),
             ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),
@@ -173,6 +173,6 @@ class Blog extends Resource
 
     public static function indexQuery(NovaRequest $request, Builder $query)
     {
-        return $query->withoutGlobalScopes();
+        return $query->withoutGlobalScopes()->whereNull('eatery_collection_id');
     }
 }

@@ -18,11 +18,12 @@ class PreviewStoreController
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
             'body' => ['required', 'string'],
-            'meta_tags' => ['required', 'string'],
-            'meta_description' => ['required', 'string'],
-            'primary_image_url' => ['required', 'string', 'url'],
-            'social_image_url' => ['required', 'string', 'url'],
+            'primary_image_url' => ['required', 'string'],
+            'social_image_url' => ['nullable', 'string'],
             'show_author' => ['nullable', 'boolean'],
+            'body_images' => ['nullable', 'array'],
+            'body_images.*.file_name' => ['required', 'string'],
+            'body_images.*.url' => ['nullable', 'string'],
         ],
     ];
 
@@ -39,7 +40,7 @@ class PreviewStoreController
         $preview = NovaPreview::query()->create([
             'model' => $model,
             'token' => Str::uuid()->toString(),
-            'payload' => $request->only(array_keys($this->validationRules[$model])),
+            'payload' => $request->only(array_filter(array_keys($this->validationRules[$model]), fn ($key) => ! str_contains($key, '.'))),
         ]);
 
         return response()->json([

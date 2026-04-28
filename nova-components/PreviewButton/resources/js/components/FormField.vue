@@ -7,15 +7,12 @@
   >
     <template #field>
       <div>
-        <button
-          type="button"
-          class="inline-flex cursor-pointer items-center rounded px-3 py-2 text-sm font-bold text-white shadow focus:outline-none"
-          :class="isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:bg-primary-dark'"
-          :disabled="isLoading"
+        <Button
+          :loading="isLoading"
           @click="openPreview"
         >
           {{ isLoading ? 'Generating Preview...' : 'Preview' }}
-        </button>
+        </Button>
 
         <ul
           v-if="previewErrors.length"
@@ -38,10 +35,15 @@
         >
           <div
             class="relative flex flex-col rounded-lg shadow-2xl"
-            style="width: 95vw; height: 95vh; background: white;"
+            style="width: 95vw; height: 95vh; background: white"
           >
-            <div class="flex items-center justify-between rounded-t-lg bg-gray-100 px-4 py-2">
-              <span class="text-sm font-semibold text-gray-700">Blog Preview</span>
+            <div
+              class="flex items-center justify-between rounded-t-lg bg-gray-100 px-4 py-2"
+            >
+              <span class="text-sm font-semibold text-gray-700">
+                Blog Preview
+              </span>
+
               <button
                 type="button"
                 class="text-gray-500 hover:text-gray-800 focus:outline-none"
@@ -54,7 +56,7 @@
             <iframe
               :src="previewUrl"
               class="flex-1 rounded-b-lg border-0"
-              style="width: 100%;"
+              style="width: 100%"
             />
           </div>
         </div>
@@ -64,9 +66,12 @@
 </template>
 
 <script>
-import { FormField, HandlesValidationErrors } from 'laravel-nova'
+import { FormField, HandlesValidationErrors } from 'laravel-nova';
+import { Button } from 'laravel-nova-ui';
 
 export default {
+  components: { Button },
+
   mixins: [FormField, HandlesValidationErrors],
 
   props: ['resourceName', 'resourceId', 'field'],
@@ -77,65 +82,136 @@ export default {
       showModal: false,
       previewUrl: null,
       previewErrors: [],
-    }
+    };
   },
 
   methods: {
     setInitialValue() {
-      this.value = null
+      this.value = null;
     },
 
     fill() {
       // No value to persist
     },
 
+    getGalleryFirstImageUrl(collection) {
+      const input = document.getElementById(`__media__${collection}`);
+
+      if (!input) {
+        return null;
+      }
+
+      let el = input.parentElement;
+
+      while (el && el !== document.body) {
+        const img = el.querySelector('img.gallery-image');
+
+        if (img?.src) {
+          return img.src;
+        }
+
+        el = el.parentElement;
+      }
+
+      return null;
+    },
+
+    getBodyImages() {
+      const input = document.getElementById('__media__body');
+
+      if (!input) {
+        return this.field.body_images ?? [];
+      }
+
+      let el = input.parentElement;
+
+      while (el && el !== document.body) {
+        const imgs = el.querySelectorAll('img.gallery-image');
+
+        if (imgs.length > 0) {
+          return Array.from(imgs).map((img) => ({
+            file_name: img.alt,
+            url: img.src || null,
+          }));
+        }
+
+        el = el.parentElement;
+      }
+
+      return this.field.body_images ?? [];
+    },
+
     getFieldValue(attribute) {
-      const el = document.getElementById(attribute)
+      const el =
+        document.querySelector(`[dusk="${attribute}"]`) ||
+        document.getElementById(attribute);
+
       if (!el) {
-        return null
+        return null;
       }
 
       if (el.type === 'checkbox') {
-        return el.checked
+        return el.checked;
       }
 
-      return el.value || null
+      return el.value || null;
     },
 
     async openPreview() {
-      this.isLoading = true
-      this.previewErrors = []
+      this.isLoading = true;
+      this.previewErrors = [];
 
       const payload = {
         model: this.field.model,
         title: this.getFieldValue('title'),
         description: this.getFieldValue('description'),
         body: this.getFieldValue('body'),
-        meta_tags: this.getFieldValue('meta_tags'),
-        meta_description: this.getFieldValue('meta_description'),
-        primary_image_url: this.field.primary_image_url ?? null,
-        social_image_url: this.field.social_image_url ?? null,
+        primary_image_url:
+          this.getGalleryFirstImageUrl('primary') ??
+          this.field.primary_image_url ??
+          null,
+        social_image_url:
+          this.getGalleryFirstImageUrl('social') ??
+          this.field.social_image_url ??
+          null,
         show_author: this.getFieldValue('show_author') ?? true,
-      }
+        body_images: this.getBodyImages(),
+      };
 
       try {
-        const response = await Nova.request().post('/nova-vendor/preview-button/store', payload)
-        this.previewUrl = response.data.url
-        this.showModal = true
+        const response = await Nova.request().post(
+          '/nova-vendor/preview-button/store',
+          payload,
+        );
+
+        if (!response.data?.url) {
+          this.previewErrors = [
+            'Preview could not be generated. Please try again.',
+          ];
+
+          return;
+        }
+
+        this.previewUrl = response.data.url;
+        this.showModal = true;
       } catch (error) {
         if (error.response?.status === 422) {
-          const errors = error.response.data.errors
-          this.previewErrors = Object.values(errors).flat()
+          const errors = error.response.data.errors;
+          this.previewErrors = Object.values(errors).flat();
+        } else {
+          this.previewErrors = [
+            'An unexpected error occurred. Please try again.',
+          ];
         }
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
     closeModal() {
-      this.showModal = false
-      this.previewUrl = null
+      this.showModal = false;
+      this.previewUrl = null;
     },
   },
-}
+};
 </script>

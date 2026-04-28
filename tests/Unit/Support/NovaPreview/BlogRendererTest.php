@@ -52,6 +52,53 @@ class BlogRendererTest extends TestCase
     }
 
     #[Test]
+    public function itIncludesBodyImagesInThePayload(): void
+    {
+        $images = [
+            ['file_name' => 'img.jpg', 'url' => 'https://example.com/img.jpg'],
+        ];
+
+        $result = $this->renderer->payload($this->makePayload(['body_images' => $images]));
+
+        $this->assertEquals($images, $result['blog']['body_images']);
+    }
+
+    #[Test]
+    public function itDefaultsBodyImagesToAnEmptyArray(): void
+    {
+        $result = $this->renderer->payload($this->makePayload());
+
+        $this->assertEquals([], $result['blog']['body_images']);
+    }
+
+    #[Test]
+    public function itReplacesImageFilenamesWithUrlsInTheBody(): void
+    {
+        $result = $this->renderer->payload($this->makePayload([
+            'body' => 'Some text <article-image src="photo.jpg" position="left"></article-image> more text',
+            'body_images' => [
+                ['file_name' => 'photo.jpg', 'url' => 'https://example.com/storage/photo.jpg'],
+            ],
+        ]));
+
+        $this->assertStringContainsString('https://example.com/storage/photo.jpg', $result['blog']['body']);
+        $this->assertStringNotContainsString('src="photo.jpg"', $result['blog']['body']);
+    }
+
+    #[Test]
+    public function itSkipsBodyImagesWithNoUrl(): void
+    {
+        $result = $this->renderer->payload($this->makePayload([
+            'body' => 'Some text <article-image src="photo.jpg" position="left"></article-image>',
+            'body_images' => [
+                ['file_name' => 'photo.jpg', 'url' => null],
+            ],
+        ]));
+
+        $this->assertStringContainsString('photo.jpg', $result['blog']['body']);
+    }
+
+    #[Test]
     public function itRendersBodyAsMarkdown(): void
     {
         $result = $this->renderer->payload($this->makePayload(['body' => '**bold text**']));

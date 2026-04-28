@@ -19,5 +19,8 @@
     "postcss": "^8.3.11",
     "vue-loader": "^16.8.3"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "overrides": {
+    "webpack": "5.90.3"
+  }
 }

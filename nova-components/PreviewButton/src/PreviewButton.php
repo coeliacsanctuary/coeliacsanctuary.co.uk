@@ -27,6 +27,10 @@ class PreviewButton extends Field
             $this->withMeta([
                 'primary_image_url' => $primaryMedia?->getUrl('webp') ?? $primaryMedia?->getUrl(),
                 'social_image_url' => $socialMedia?->getUrl(),
+                'body_images' => $resource->getMedia('body')->map(fn ($media) => [
+                    'file_name' => $media->file_name,
+                    'url' => $media->getUrl(),
+                ])->values()->all(),
             ]);
         }
     }

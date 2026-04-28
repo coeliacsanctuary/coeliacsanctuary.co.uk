@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Support\NovaPreview;
 
-use App\Support\NovaPreview\Renderer;
 use Illuminate\Support\Str;
 
 class BlogRenderer extends Renderer
@@ -19,10 +20,22 @@ class BlogRenderer extends Renderer
             '<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>',
         ];
 
+        $bodyImages = $data['body_images'] ?? [];
+
         $body = Str::of($data['body'] ?? '')
             ->replace($twitterEmbedScripts, '', false)
             ->replace('&quot;', '"')
             ->markdown(['renderer' => ['soft_break' => '<br />']]);
+
+        $bodyString = $body->toString();
+
+        foreach ($bodyImages as $image) {
+            if (empty($image['url'])) {
+                continue;
+            }
+
+            $bodyString = str_replace($image['file_name'], $image['url'], $bodyString);
+        }
 
         return [
             'blog' => [
@@ -32,11 +45,12 @@ class BlogRenderer extends Renderer
                 'published' => now()->format('jS F Y'),
                 'updated' => null,
                 'description' => $data['description'] ?? '',
-                'body' => $body->toString(),
+                'body' => $bodyString,
                 'hasTwitterEmbed' => Str::contains($data['body'] ?? '', $twitterEmbedScripts),
                 'show_author' => (bool) ($data['show_author'] ?? true),
                 'tags' => [],
                 'featured_in' => [],
+                'body_images' => $data['body_images'] ?? [],
             ],
         ];
     }

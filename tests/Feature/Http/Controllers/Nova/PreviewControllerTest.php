@@ -20,8 +20,6 @@ class PreviewControllerTest extends TestCase
             'title' => 'My Blog Title',
             'description' => 'A blog description.',
             'body' => '<p>Blog body content.</p>',
-            'meta_tags' => 'gluten-free',
-            'meta_description' => 'A meta description.',
             'primary_image_url' => 'https://example.com/image.jpg',
             'social_image_url' => 'https://example.com/social.jpg',
             'show_author' => true,
@@ -70,57 +68,28 @@ class PreviewControllerTest extends TestCase
     }
 
     #[Test]
-    public function itRequiresMetaTags(): void
-    {
-        $this->actingAsNovaUser()
-            ->postJson($this->endpoint, $this->validPayload(['meta_tags' => '']))
-            ->assertUnprocessable()
-            ->assertJsonValidationErrorFor('meta_tags');
-    }
-
-    #[Test]
-    public function itRequiresAMetaDescription(): void
-    {
-        $this->actingAsNovaUser()
-            ->postJson($this->endpoint, $this->validPayload(['meta_description' => '']))
-            ->assertUnprocessable()
-            ->assertJsonValidationErrorFor('meta_description');
-    }
-
-    #[Test]
     public function itRequiresAPrimaryImageUrl(): void
     {
         $this->actingAsNovaUser()
-            ->postJson($this->endpoint, $this->validPayload(['primary_image_url' => '']))
+            ->postJson($this->endpoint, $this->validPayload(['primary_image_url' => null]))
             ->assertUnprocessable()
             ->assertJsonValidationErrorFor('primary_image_url');
     }
 
     #[Test]
-    public function itRequiresAValidUrlForPrimaryImage(): void
+    public function itAcceptsADataUriForPrimaryImageUrl(): void
     {
         $this->actingAsNovaUser()
-            ->postJson($this->endpoint, $this->validPayload(['primary_image_url' => 'not-a-url']))
-            ->assertUnprocessable()
-            ->assertJsonValidationErrorFor('primary_image_url');
+            ->postJson($this->endpoint, $this->validPayload(['primary_image_url' => 'data:image/jpeg;base64,/9j/4AAQ']))
+            ->assertOk();
     }
 
     #[Test]
-    public function itRequiresASocialImageUrl(): void
+    public function itAcceptsNullSocialImageUrl(): void
     {
         $this->actingAsNovaUser()
-            ->postJson($this->endpoint, $this->validPayload(['social_image_url' => '']))
-            ->assertUnprocessable()
-            ->assertJsonValidationErrorFor('social_image_url');
-    }
-
-    #[Test]
-    public function itRequiresAValidUrlForSocialImage(): void
-    {
-        $this->actingAsNovaUser()
-            ->postJson($this->endpoint, $this->validPayload(['social_image_url' => 'not-a-url']))
-            ->assertUnprocessable()
-            ->assertJsonValidationErrorFor('social_image_url');
+            ->postJson($this->endpoint, $this->validPayload(['social_image_url' => null]))
+            ->assertOk();
     }
 
     #[Test]
@@ -145,6 +114,54 @@ class PreviewControllerTest extends TestCase
         $this->assertEquals('blog', $preview->model);
         $this->assertEquals('My Blog Title', $preview->payload['title']);
         $this->assertEquals('A blog description.', $preview->payload['description']);
+    }
+
+    #[Test]
+    public function itAcceptsAnArrayOfBodyImages(): void
+    {
+        $this->actingAsNovaUser()
+            ->postJson($this->endpoint, $this->validPayload([
+                'body_images' => [
+                    ['file_name' => 'a.jpg', 'url' => 'https://example.com/a.jpg'],
+                    ['file_name' => 'b.jpg', 'url' => 'https://example.com/b.jpg'],
+                ],
+            ]))
+            ->assertOk();
+    }
+
+    #[Test]
+    public function itAcceptsAnEmptyBodyImagesArray(): void
+    {
+        $this->actingAsNovaUser()
+            ->postJson($this->endpoint, $this->validPayload(['body_images' => []]))
+            ->assertOk();
+    }
+
+    #[Test]
+    public function itRejectsBodyImagesWithoutAFileName(): void
+    {
+        $this->actingAsNovaUser()
+            ->postJson($this->endpoint, $this->validPayload([
+                'body_images' => [['url' => 'https://example.com/a.jpg']],
+            ]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrorFor('body_images.0.file_name');
+    }
+
+    #[Test]
+    public function itStoresBodyImagesInThePayload(): void
+    {
+        $this->actingAsNovaUser()
+            ->postJson($this->endpoint, $this->validPayload([
+                'body_images' => [['file_name' => 'a.jpg', 'url' => 'https://example.com/a.jpg']],
+            ]));
+
+        $preview = NovaPreview::query()->first();
+
+        $this->assertEquals(
+            [['file_name' => 'a.jpg', 'url' => 'https://example.com/a.jpg']],
+            $preview->payload['body_images']
+        );
     }
 
     #[Test]

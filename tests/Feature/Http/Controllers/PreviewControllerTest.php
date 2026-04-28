@@ -11,6 +11,7 @@ use App\Support\NovaPreview\Renderer;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Mockery;
 
 class PreviewControllerTest extends TestCase
 {
@@ -27,8 +28,6 @@ class PreviewControllerTest extends TestCase
                 'title' => 'Preview Blog Title',
                 'description' => 'Preview description.',
                 'body' => '<p>Preview body.</p>',
-                'meta_tags' => 'gluten-free',
-                'meta_description' => 'Preview meta description.',
                 'primary_image_url' => 'https://example.com/image.jpg',
                 'social_image_url' => 'https://example.com/social.jpg',
                 'show_author' => true,
@@ -38,7 +37,7 @@ class PreviewControllerTest extends TestCase
 
     protected function mockResolverReturning(string $component, array $payload): void
     {
-        $mockRenderer = \Mockery::mock(Renderer::class);
+        $mockRenderer = Mockery::mock(Renderer::class);
         $mockRenderer->shouldReceive('component')->andReturn($component);
         $mockRenderer->shouldReceive('payload')->andReturn($payload);
 
@@ -68,7 +67,7 @@ class PreviewControllerTest extends TestCase
     {
         $preview = $this->createBlogPreview();
 
-        $mockRenderer = \Mockery::mock(Renderer::class);
+        $mockRenderer = Mockery::mock(Renderer::class);
         $mockRenderer->shouldReceive('component')->andReturn('Blog/Preview');
         $mockRenderer->shouldReceive('payload')->andReturn(['blog' => []]);
 
@@ -106,9 +105,10 @@ class PreviewControllerTest extends TestCase
 
         $this->actingAsUser()
             ->get(route('nova-preview.show', $preview->token))
-            ->assertInertia(fn (Assert $page) => $page
-                ->has('blog')
-                ->where('blog.title', 'Mocked Title')
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->has('blog')
+                    ->where('blog.title', 'Mocked Title')
             );
     }
 }
