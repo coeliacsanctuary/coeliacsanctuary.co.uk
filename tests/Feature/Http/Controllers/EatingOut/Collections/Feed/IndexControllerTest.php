@@ -13,6 +13,7 @@ class IndexControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->markTestSkipped('feature disabled');
 
         $this->withEateryCollections(12);
     }

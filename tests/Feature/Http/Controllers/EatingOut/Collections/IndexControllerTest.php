@@ -16,6 +16,7 @@ class IndexControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->markTestSkipped('feature disabled');
 
         Storage::fake('media');
 

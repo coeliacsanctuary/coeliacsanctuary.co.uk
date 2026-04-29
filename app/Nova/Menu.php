@@ -105,7 +105,7 @@ class Menu
                 MenuGroup::make('Locations', [
                     MenuItem::resource(Eateries::class),
                     MenuItem::resource(NationwideEateries::class),
-                    MenuItem::resource(EateryCollections::class),
+                    //                    MenuItem::resource(EateryCollections::class),
                     MenuItem::resource(Counties::class),
                     MenuItem::resource(Towns::class),
                     MenuItem::resource(Areas::class),
