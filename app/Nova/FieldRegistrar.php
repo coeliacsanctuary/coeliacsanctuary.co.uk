@@ -12,6 +12,7 @@ use Jpeters8889\EateryLocationSearch\FieldServiceProvider as EateryLocationSearc
 use Jpeters8889\EateryOpeningTimes\FieldServiceProvider as EateryOpeningTimesFieldServiceProvider;
 use Jpeters8889\HiddenWritableField\FieldServiceProvider as HiddenWritableFieldServiceProvider;
 use Jpeters8889\PolymorphicPanel\FieldServiceProvider as PolymorphicPanelFieldServiceProvider;
+use Jpeters8889\PreviewButton\FieldServiceProvider as PreviewButtonFieldServiceProvider;
 use Jpeters8889\ShopGenerateResendSlipButton\FieldServiceProvider as ShopGenerateResendSlipButtonFieldServiceProvider;
 use Jpeters8889\ShopOrderOpenDispatchSlip\FieldServiceProvider as ShopDispatchSlipFieldServiceProvider;
 use Jpeters8889\ShopOrderShippingAction\FieldServiceProvider as ShopShippingActionFieldServiceProvider;
@@ -35,6 +36,7 @@ class FieldRegistrar
             ShopGenerateResendSlipButtonFieldServiceProvider::class,
             HiddenWritableFieldServiceProvider::class,
             EateryLocationSearchFieldServiceProvider::class,
+            PreviewButtonFieldServiceProvider::class,
         ];
 
         foreach ($customFields as $customField) {

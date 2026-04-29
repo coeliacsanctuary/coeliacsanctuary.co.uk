@@ -11,6 +11,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Jpeters8889\Body\Body;
+use Jpeters8889\PreviewButton\PreviewButton;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
@@ -131,6 +132,8 @@ class Blog extends Resource
                     ->onlyOnForms()
                     ->fullWidth()
                     ->help('If checked, the about Alison block will be shown at the bottom of the blog.'),
+
+                PreviewButton::make('Preview')->forModel('blog')->onlyOnForms(),
             ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),
@@ -170,6 +173,6 @@ class Blog extends Resource
 
     public static function indexQuery(NovaRequest $request, Builder $query)
     {
-        return $query->withoutGlobalScopes();
+        return $query->withoutGlobalScopes()->whereNull('eatery_collection_id');
     }
 }

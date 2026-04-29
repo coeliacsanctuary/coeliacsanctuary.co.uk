@@ -29,6 +29,7 @@
         "jpeters8889/journey-tracker-laravel": "^0.2.1",
         "jpeters8889/order-dispatch-slip": "@dev",
         "jpeters8889/polymorphic-panel": "@dev",
+        "jpeters8889/preview-button": "@dev",
         "jpeters8889/print-all-orders": "@dev",
         "jpeters8889/refresh-ads-txt": "@dev",
         "jpeters8889/shop-daily-stock": "@dev",
@@ -190,6 +191,10 @@
         {
             "type": "path",
             "url": "./nova-components/EateryCollectionsQueryBuilder"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/PreviewButton"
         }
     ],
     "autoload": {

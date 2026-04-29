@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "716d6337fbcc12f955a8e3f33787e1ec",
+    "content-hash": "0888297ed0404f64831a6bf61cd35e9f",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2052,7 +2052,7 @@
         },
         {
             "name": "jpeters8889/address-field",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/AddressField",
@@ -2088,7 +2088,7 @@
         },
         {
             "name": "jpeters8889/apex-charts",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ApexCharts",
@@ -2124,7 +2124,7 @@
         },
         {
             "name": "jpeters8889/body",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Body",
@@ -2160,7 +2160,7 @@
         },
         {
             "name": "jpeters8889/country-icon",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CountryIcon",
@@ -2196,7 +2196,7 @@
         },
         {
             "name": "jpeters8889/custom-styles",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CustomStyles",
@@ -2232,7 +2232,7 @@
         },
         {
             "name": "jpeters8889/eatery-collections-query-builder",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryCollectionsQueryBuilder",
@@ -2273,7 +2273,7 @@
         },
         {
             "name": "jpeters8889/eatery-location-search",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryLocationSearch",
@@ -2314,7 +2314,7 @@
         },
         {
             "name": "jpeters8889/eatery-opening-times",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryOpeningTimes",
@@ -2350,7 +2350,7 @@
         },
         {
             "name": "jpeters8889/hidden-writable-field",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/HiddenWritableField",
@@ -2438,7 +2438,7 @@
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/OrderDispatchSlip",
@@ -2474,7 +2474,7 @@
         },
         {
             "name": "jpeters8889/polymorphic-panel",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PolymorphicPanel",
@@ -2509,8 +2509,45 @@
             }
         },
         {
+            "name": "jpeters8889/preview-button",
+            "version": "dev-feature/324-nova-preview-button",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/PreviewButton",
+                "reference": "e7f1656cc0fc26cbe5fcd217fa0a16034914f531"
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jpeters8889\\PreviewButton\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jpeters8889\\PreviewButton\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "jpeters8889/print-all-orders",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PrintAllOrders",
@@ -2546,7 +2583,7 @@
         },
         {
             "name": "jpeters8889/refresh-ads-txt",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/RefreshAdsTxt",
@@ -2587,7 +2624,7 @@
         },
         {
             "name": "jpeters8889/shop-daily-stock",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopDailyStock",
@@ -2623,7 +2660,7 @@
         },
         {
             "name": "jpeters8889/shop-generate-resend-slip-button",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopGenerateResendSlipButton",
@@ -2664,7 +2701,7 @@
         },
         {
             "name": "jpeters8889/shop-order-open-dispatch-slip",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderOpenDispatchSlip",
@@ -2700,7 +2737,7 @@
         },
         {
             "name": "jpeters8889/shop-order-shipping-action",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderShippingAction",
@@ -2736,7 +2773,7 @@
         },
         {
             "name": "jpeters8889/wte-nationwide-branch-import",
-            "version": "dev-main",
+            "version": "dev-feature/324-nova-preview-button",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/WteNationwideBranchImport",
@@ -16435,6 +16472,7 @@
         "jpeters8889/hidden-writable-field": 20,
         "jpeters8889/order-dispatch-slip": 20,
         "jpeters8889/polymorphic-panel": 20,
+        "jpeters8889/preview-button": 20,
         "jpeters8889/print-all-orders": 20,
         "jpeters8889/refresh-ads-txt": 20,
         "jpeters8889/shop-daily-stock": 20,
