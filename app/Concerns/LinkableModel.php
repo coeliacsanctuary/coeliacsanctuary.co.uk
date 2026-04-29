@@ -27,6 +27,7 @@ trait LinkableModel
     public function link(): Attribute
     {
         if ($this instanceof Blog && $this->eatery_collection_id) {
+            $this->loadMissing('eateryCollection');
             /** @var EateryCollection $eateryCollection */
             $eateryCollection = $this->eateryCollection;
 

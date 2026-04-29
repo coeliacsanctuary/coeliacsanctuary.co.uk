@@ -134,28 +134,27 @@ import SubHeading from '@/Components/SubHeading.vue';
         <div class="flex flex-1 space-x-4">
           <Icon
             class="mx-auto size-8 text-secondary xs:size-12 xmd:size-14"
-            name="reviews"
+            name="app"
           />
 
           <div class="flex flex-1 flex-col space-y-3 xs:space-y-5">
             <h2 class="text-xl font-semibold xs:text-2xl">
-              Curated Collections
+              Coeliac Sanctuary App
             </h2>
 
             <h3 class="prose text-base lg:prose-lg lg:text-lg">
-              Explore our hand picked collections of gluten free eateries,
-              bringing together some of the best places to eat for coeliacs in
-              one place. From city guides to themed selections, these
-              collections make it easy to discover new favourites and plan where
-              to eat with confidence.
+              Take our gluten free eating out guide with you wherever you go
+              using the Coeliac Sanctuary app. Quickly search for nearby places,
+              browse trusted venues, and access everything you need to eat out
+              safely, all from your pocket.
             </h3>
 
             <div class="mt-auto">
               <CoeliacButton
                 theme="primary"
-                href="/eating-out/collections"
+                href="/wheretoeat/coeliac-sanctuary-on-the-go"
                 size="lg"
-                label="View Collections"
+                label="Get the App"
                 bold
                 classes="justify-center"
               />
@@ -206,42 +205,6 @@ import SubHeading from '@/Components/SubHeading.vue';
     </div>
 
     <div class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-5">
-      <Card
-        theme="primary-light"
-        faded
-      >
-        <div class="flex flex-1 space-x-4">
-          <Icon
-            class="mx-auto size-8 text-secondary xs:size-12 xmd:size-14"
-            name="app"
-          />
-
-          <div class="flex flex-1 flex-col space-y-3 xs:space-y-5">
-            <h2 class="text-xl font-semibold xs:text-2xl">
-              Coeliac Sanctuary App
-            </h2>
-
-            <h3 class="prose text-base lg:prose-lg lg:text-lg">
-              Take our gluten free eating out guide with you wherever you go
-              using the Coeliac Sanctuary app. Quickly search for nearby places,
-              browse trusted venues, and access everything you need to eat out
-              safely, all from your pocket.
-            </h3>
-
-            <div class="mt-auto">
-              <CoeliacButton
-                theme="primary"
-                href="/wheretoeat/coeliac-sanctuary-on-the-go"
-                size="lg"
-                label="Get the App"
-                bold
-                classes="justify-center"
-              />
-            </div>
-          </div>
-        </div>
-      </Card>
-
       <Card
         theme="primary-light"
         faded

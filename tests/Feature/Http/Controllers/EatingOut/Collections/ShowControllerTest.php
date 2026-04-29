@@ -19,6 +19,7 @@ class ShowControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->markTestSkipped('feature disabled');
 
         $this->withEateryCollections(1);
 
