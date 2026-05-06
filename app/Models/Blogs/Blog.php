@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
@@ -128,6 +129,12 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     public function eateryCollection(): BelongsTo
     {
         return $this->belongsTo(EateryCollection::class, 'eatery_collection_id');
+    }
+
+    /** @return HasMany<BlogMetric, $this> */
+    public function metrics(): HasMany
+    {
+        return $this->hasMany(BlogMetric::class);
     }
 
     protected function linkRoot(): string

@@ -6,10 +6,12 @@ namespace App\Providers;
 
 use App\Infrastructure\MailChannel;
 use App\Search\Eateries;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Notifications\Channels\MailChannel as IlluminateMailChannel;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nightwatch\Facades\Nightwatch;
@@ -48,5 +50,7 @@ class AppServiceProvider extends ServiceProvider
         Nightwatch::rejectCacheEvents(fn (CacheEvent $event) => ! str_contains($event->key, '.'));
 
         Nightwatch::rejectOutgoingRequests(fn (OutgoingRequest $request) => $request->url === '127.0.0.1');
+
+        RateLimiter::for('metrics', fn () => Limit::perSecond(5));
     }
 }
