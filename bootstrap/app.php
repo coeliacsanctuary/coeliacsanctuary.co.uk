@@ -6,6 +6,7 @@ use App\Console\Commands\ApplyMassDiscountsCommand;
 use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
 use App\Console\Commands\CleanUpNovaPreviewsCommand;
 use App\Console\Commands\CloseBasketsCommand;
+use App\Console\Commands\PrepareMetricUpdatesCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Console\Commands\ProcessEateryWebsiteChecksCommand;
 use App\Console\Commands\PublishItemsCommand;
@@ -125,6 +126,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(RemoveCollectionsFromHomepageCommand::class)->everyMinute();
         $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
         $schedule->command(SummariseAskSealiacChatsCommand::class)->everyMinute();
+        $schedule->command(PrepareMetricUpdatesCommand::class)->everyMinute();
         $schedule->command(ProcessEateryWebsiteChecksCommand::class)->daily();
         $schedule->command(CleanUpNovaPreviewsCommand::class)->daily();
 
