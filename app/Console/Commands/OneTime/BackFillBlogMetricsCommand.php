@@ -22,8 +22,11 @@ class BackFillBlogMetricsCommand extends Command
     {
         Blog::query()
             ->latest()
+            ->whereDoesntHave('metrics')
             ->lazy()
             ->each(function (Blog $blog): void {
+                $this->info("Scheduling updates for {$blog->title}");
+
                 dispatch(function () use ($blog): void {
                     $startDate = Carbon::parse('2026-02-24')->max($blog->created_at);
 

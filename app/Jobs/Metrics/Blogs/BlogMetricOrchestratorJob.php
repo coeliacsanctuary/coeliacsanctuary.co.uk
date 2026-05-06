@@ -42,11 +42,19 @@ class BlogMetricOrchestratorJob implements ShouldQueue
         return match (true) {
             ! $metric => true,
             $blog->created_at->gte(now()->subHours(24)) => true,
-            $blog->created_at->gte(now()->subWeek()) && $metric->created_at->lt(now()->subMinutes(5)) => true,
-            $blog->created_at->gte(now()->subWeeks(2)) && $metric->created_at->lt(now()->subMinutes(10)) => true,
-            $blog->created_at->gte(now()->subMonth()) && $metric->created_at->lt(now()->subMinutes(30)) => true,
-            $metric->created_at->lt(now()->subHour()) => true,
-            default => false,
+            $blog->created_at->gte(now()->subWeek()) => $this->isOnSchedule($metric, 5),
+            $blog->created_at->gte(now()->subWeeks(2)) => $this->isOnSchedule($metric, 10),
+            $blog->created_at->gte(now()->subMonth()) => $this->isOnSchedule($metric, 30),
+            default => $this->isOnSchedule($metric, 60),
         };
+    }
+
+    protected function isOnSchedule(BlogMetric $metric, int $minutes): bool
+    {
+        if (now()->minute % $minutes !== 0) {
+            return false;
+        }
+
+        return $metric->created_at->lt(now()->subMinutes($minutes));
     }
 }
