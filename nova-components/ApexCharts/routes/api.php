@@ -29,7 +29,7 @@ Route::get('/', function (Request $request): array {
     ]);
 
     /** @var Chartable $chartable */
-    $chartable = app($request->string('chartable')->toString(), json_decode($request->string('params')->toString() ?? '[]', true));
+    $chartable = app($request->string('chartable')->toString(), json_decode($request->string('params')->toString() ?? '[]', true) ?? []);
 
     $dateRanges = $chartable->dateRanges();
 
