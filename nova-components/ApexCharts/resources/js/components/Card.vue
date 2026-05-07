@@ -1,13 +1,13 @@
 <template>
   <Card class="flex flex-col items-center justify-center">
-    <div class="px-3 py-3 w-full">
-      <div class="flex justify-between itesm-center">
+    <div class="w-full px-3 py-3">
+      <div class="itesm-center flex justify-between">
         <h1
-          class="text-3xl text-gray-500 font-light"
+          class="text-3xl font-light text-gray-500"
           v-text="card.name"
         />
 
-        <div class="flex space-x-2 items-center">
+        <div class="flex items-center space-x-2">
           <SelectControl
             v-if="!loading"
             v-model="selectedDateRange"
@@ -20,7 +20,7 @@
             v-model="startDate"
             type="date"
             :max="endDate"
-            class="pl-2appearance-none rounded-md h-8 w-full focus:bg-white focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600"
+            class="pl-2appearance-none ring-primary-200 h-8 w-full rounded-md focus:bg-white focus:ring focus:outline-none dark:ring-gray-600"
             @change="getChartable"
           />
 
@@ -29,7 +29,7 @@
             v-model="endDate"
             type="date"
             :min="startDate"
-            class="pl-2appearance-none rounded-md h-8 w-full focus:bg-white focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600"
+            class="pl-2appearance-none ring-primary-200 h-8 w-full rounded-md focus:bg-white focus:ring focus:outline-none dark:ring-gray-600"
             @change="getChartable"
           />
         </div>
@@ -39,9 +39,16 @@
         <div class="w-full">
           <apex-chart
             width="100%"
+            :height="chart.height"
             :type="chart.type"
             :options="chart.options"
             :series="chart.data"
+          />
+
+          <span
+            v-if="chart.helpText"
+            class="text-xs"
+            v-html="chart.helpText"
           />
         </div>
       </LoadingView>
@@ -113,6 +120,10 @@ export default {
       const params = new URLSearchParams();
 
       params.append('chartable', this.card.chartable);
+
+      if (this.card.params) {
+        params.append('params', JSON.stringify(this.card.params));
+      }
 
       if (this.selectedDateRange) {
         params.append('selectedDateRange', this.selectedDateRange);

@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Blogs\Blog as BlogModel;
+use App\Nova\Chartables\Metrics\Blogs\CollectionCardViews;
+use App\Nova\Chartables\Metrics\Blogs\CommentViews;
+use App\Nova\Chartables\Metrics\Blogs\DetailCardViews;
+use App\Nova\Chartables\Metrics\Blogs\Views;
 use App\Nova\Resource;
 use App\Nova\Support\Panels\VisibilityPanel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
+use Jpeters8889\ApexCharts\ApexChart;
 use Jpeters8889\Body\Body;
 use Jpeters8889\PreviewButton\PreviewButton;
 use Laravel\Nova\Fields\Boolean;
@@ -40,6 +46,11 @@ class Blog extends Resource
     public static $search = ['id', 'title'];
 
     public static $with = ['tags', 'media'];
+
+    public function authorizedToView(Request $request)
+    {
+        return true;
+    }
 
     public function fields(NovaRequest $request)
     {
@@ -143,7 +154,7 @@ class Blog extends Resource
             URL::make('View', fn ($blog) => $blog->live ? $blog->link : null)
                 ->exceptOnForms(),
 
-            MorphMany::make('comments', resource: Comments::class),
+            MorphMany::make('Comments', resource: Comments::class),
         ];
     }
 
@@ -169,6 +180,22 @@ class Blog extends Resource
         }
 
         return $fillFields;
+    }
+
+    public function cards(NovaRequest $request)
+    {
+        $blogId = $request->findResourceOrFail()->resource->id;
+
+        $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
+
+        return array_map(
+            fn ($metric) => ApexChart::make($metric)
+                ->withParams(['blogId' => $blogId])
+                ->onlyOnDetail()
+                ->fixedHeight()
+                ->fullWidth(),
+            $metrics
+        );
     }
 
     public static function indexQuery(NovaRequest $request, Builder $query)

@@ -19,6 +19,8 @@ class ApexChart extends Card
 
     protected bool $customDateRange = false;
 
+    protected array $params = [];
+
     public function __construct(?string $chartable = null)
     {
         if ($chartable) {
@@ -53,9 +55,18 @@ class ApexChart extends Card
         return $this;
     }
 
+    public function withParams(array $params)
+    {
+        $this->params = array_merge($this->params, $params);
+
+        $this->meta['params'] = array_merge($this->meta['params'] ?? [], $params);
+
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
-        $chartable = app($this->chartable);
+        $chartable = app($this->chartable, $this->params);
 
         return array_merge([
             'chartable' => $this->chartable,
