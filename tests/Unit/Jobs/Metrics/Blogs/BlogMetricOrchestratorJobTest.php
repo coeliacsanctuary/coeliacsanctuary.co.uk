@@ -52,66 +52,14 @@ class BlogMetricOrchestratorJobTest extends TestCase
         Bus::assertDispatched(GetBlogMetricsJob::class);
     }
 
-    #[Test]
-    public function itDispatchesForBlogWithinLastWeekWhenMetricIsOlderThan5Minutes(): void
-    {
-        $this->travelTo(now()->setMinute(10)->setSecond(0));
-
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
-
-        $this->create(BlogMetric::class, [
-            'blog_id' => $blog->id,
-            'date' => today(),
-            'created_at' => now()->subMinutes(6),
-        ]);
-
-        $this->runOrchestrator();
-
-        Bus::assertDispatched(GetBlogMetricsJob::class);
-    }
+    // --- 10-minute interval (blogs < 1 week old) ---
 
     #[Test]
-    public function itDoesNotDispatchForBlogWithinLastWeekWhenMetricIsRecent(): void
-    {
-        $this->travelTo(now()->setMinute(10)->setSecond(0));
-
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
-
-        $this->create(BlogMetric::class, [
-            'blog_id' => $blog->id,
-            'date' => today(),
-            'created_at' => now()->subMinutes(4),
-        ]);
-
-        $this->runOrchestrator();
-
-        Bus::assertNotDispatched(GetBlogMetricsJob::class);
-    }
-
-    #[Test]
-    public function itDoesNotDispatchForBlogWithinLastWeekWhenMetricIsOlderThan5MinutesButNotAtScheduledMinute(): void
-    {
-        $this->travelTo(now()->setMinute(7)->setSecond(0));
-
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
-
-        $this->create(BlogMetric::class, [
-            'blog_id' => $blog->id,
-            'date' => today(),
-            'created_at' => now()->subMinutes(6),
-        ]);
-
-        $this->runOrchestrator();
-
-        Bus::assertNotDispatched(GetBlogMetricsJob::class);
-    }
-
-    #[Test]
-    public function itDispatchesForBlogWithinLastTwoWeeksWhenMetricIsOlderThan10Minutes(): void
+    public function itDispatchesForBlogWithinLastWeekWhenMetricIsOlderThan10Minutes(): void
     {
         $this->travelTo(now()->setMinute(20)->setSecond(0));
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(10)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -125,11 +73,11 @@ class BlogMetricOrchestratorJobTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotDispatchForBlogWithinLastTwoWeeksWhenMetricIsRecent(): void
+    public function itDoesNotDispatchForBlogWithinLastWeekWhenMetricIsRecent(): void
     {
         $this->travelTo(now()->setMinute(20)->setSecond(0));
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(10)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -143,11 +91,11 @@ class BlogMetricOrchestratorJobTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotDispatchForBlogWithinLastTwoWeeksWhenMetricIsOlderThan10MinutesButNotAtScheduledMinute(): void
+    public function itDoesNotDispatchForBlogWithinLastWeekWhenMetricIsOlderThan10MinutesButNotAtScheduledMinute(): void
     {
         $this->travelTo(now()->setMinute(7)->setSecond(0));
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(10)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -160,12 +108,14 @@ class BlogMetricOrchestratorJobTest extends TestCase
         Bus::assertNotDispatched(GetBlogMetricsJob::class);
     }
 
+    // --- 30-minute interval (blogs < 2 weeks old) ---
+
     #[Test]
-    public function itDispatchesForBlogWithinLastMonthWhenMetricIsOlderThan30Minutes(): void
+    public function itDispatchesForBlogWithinLastTwoWeeksWhenMetricIsOlderThan30Minutes(): void
     {
         $this->travelTo(now()->setMinute(30)->setSecond(0));
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(20)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(10)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -179,11 +129,11 @@ class BlogMetricOrchestratorJobTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotDispatchForBlogWithinLastMonthWhenMetricIsRecent(): void
+    public function itDoesNotDispatchForBlogWithinLastTwoWeeksWhenMetricIsRecent(): void
     {
         $this->travelTo(now()->setMinute(30)->setSecond(0));
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(20)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(10)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -197,11 +147,11 @@ class BlogMetricOrchestratorJobTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotDispatchForBlogWithinLastMonthWhenMetricIsOlderThan30MinutesButNotAtScheduledMinute(): void
+    public function itDoesNotDispatchForBlogWithinLastTwoWeeksWhenMetricIsOlderThan30MinutesButNotAtScheduledMinute(): void
     {
         $this->travelTo(now()->setMinute(7)->setSecond(0));
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(20)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(10)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -214,12 +164,14 @@ class BlogMetricOrchestratorJobTest extends TestCase
         Bus::assertNotDispatched(GetBlogMetricsJob::class);
     }
 
+    // --- 60-minute interval (blogs < 1 month old) ---
+
     #[Test]
-    public function itDispatchesForOldBlogWhenMetricIsOlderThan1Hour(): void
+    public function itDispatchesForBlogWithinLastMonthWhenMetricIsOlderThan60Minutes(): void
     {
         $this->travelTo(now()->startOfHour());
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(2)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(20)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -233,11 +185,11 @@ class BlogMetricOrchestratorJobTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotDispatchForOldBlogWhenMetricIsRecent(): void
+    public function itDoesNotDispatchForBlogWithinLastMonthWhenMetricIsRecent(): void
     {
         $this->travelTo(now()->startOfHour());
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(2)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(20)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -251,11 +203,11 @@ class BlogMetricOrchestratorJobTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotDispatchForOldBlogWhenMetricIsOlderThan1HourButNotAtScheduledMinute(): void
+    public function itDoesNotDispatchForBlogWithinLastMonthWhenMetricIsOlderThan60MinutesButNotAtScheduledMinute(): void
     {
         $this->travelTo(now()->setMinute(7)->setSecond(0));
 
-        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(2)]);
+        $blog = $this->create(Blog::class, ['created_at' => now()->subDays(20)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
@@ -268,6 +220,288 @@ class BlogMetricOrchestratorJobTest extends TestCase
         Bus::assertNotDispatched(GetBlogMetricsJob::class);
     }
 
+    // --- 120-minute interval (blogs < 2 months old) ---
+
+    #[Test]
+    public function itDispatchesForBlogWithinLast2MonthsWhenMetricIsOlderThan120Minutes(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subWeeks(6)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(121),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogWithinLast2MonthsWhenMetricIsRecent(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subWeeks(6)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(119),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogWithinLast2MonthsWhenMetricIsOlderThan120MinutesButNotAtScheduledMinute(): void
+    {
+        $this->travelTo(now()->setMinute(7)->setSecond(0));
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subWeeks(6)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(121),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    // --- 180-minute interval (blogs < 6 months old) ---
+
+    #[Test]
+    public function itDispatchesForBlogWithinLast6MonthsWhenMetricIsOlderThan180Minutes(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(3)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(181),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogWithinLast6MonthsWhenMetricIsRecent(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(3)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(179),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogWithinLast6MonthsWhenMetricIsOlderThan180MinutesButNotAtScheduledMinute(): void
+    {
+        $this->travelTo(now()->setMinute(7)->setSecond(0));
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(3)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(181),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    // --- 360-minute interval (blogs < 1 year old) ---
+
+    #[Test]
+    public function itDispatchesForBlogWithinLastYearWhenMetricIsOlderThan360Minutes(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(8)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(361),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogWithinLastYearWhenMetricIsRecent(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(8)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(359),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogWithinLastYearWhenMetricIsOlderThan360MinutesButNotAtScheduledMinute(): void
+    {
+        $this->travelTo(now()->setMinute(7)->setSecond(0));
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(8)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(361),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    // --- 720-minute interval (blogs < 2 years old) ---
+
+    #[Test]
+    public function itDispatchesForBlogWithinLast2YearsWhenMetricIsOlderThan720Minutes(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(18)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(721),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogWithinLast2YearsWhenMetricIsRecent(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(18)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(719),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogWithinLast2YearsWhenMetricIsOlderThan720MinutesButNotAtScheduledMinute(): void
+    {
+        $this->travelTo(now()->setMinute(7)->setSecond(0));
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(18)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(721),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    // --- 1440-minute interval (blogs older than 2 years) ---
+
+    #[Test]
+    public function itDispatchesForBlogOlderThan2YearsWhenMetricIsOlderThan1440Minutes(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subYears(3)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(1441),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogOlderThan2YearsWhenMetricIsRecent(): void
+    {
+        $this->travelTo(now()->startOfHour());
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subYears(3)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(1439),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchForBlogOlderThan2YearsWhenMetricIsOlderThan1440MinutesButNotAtScheduledMinute(): void
+    {
+        $this->travelTo(now()->setMinute(7)->setSecond(0));
+
+        $blog = $this->create(Blog::class, ['created_at' => now()->subYears(3)]);
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $blog->id,
+            'date' => today(),
+            'created_at' => now()->subMinutes(1441),
+        ]);
+
+        $this->runOrchestrator();
+
+        Bus::assertNotDispatched(GetBlogMetricsJob::class);
+    }
+
+    // --- Combined + delay ---
+
     #[Test]
     public function itOnlyDispatchesForBlogsThatRequireUpdate(): void
     {
@@ -277,25 +511,44 @@ class BlogMetricOrchestratorJobTest extends TestCase
         $this->create(BlogMetric::class, [
             'blog_id' => $blogNeedingUpdate->id,
             'date' => today(),
-            'created_at' => now()->subMinutes(6),
+            'created_at' => now()->subMinutes(11),
         ]);
 
-        $oldBlogNeedingUpdate = $this->create(Blog::class, ['created_at' => now()->subMonths(2)]);
+        $oldBlogNeedingUpdate = $this->create(Blog::class, ['created_at' => now()->subYears(3)]);
         $this->create(BlogMetric::class, [
             'blog_id' => $oldBlogNeedingUpdate->id,
             'date' => today(),
-            'created_at' => now()->subMinutes(61),
+            'created_at' => now()->subMinutes(1441),
         ]);
 
-        $upToDateBlog = $this->create(Blog::class, ['created_at' => now()->subMonths(2)]);
+        $upToDateBlog = $this->create(Blog::class, ['created_at' => now()->subYears(3)]);
         $this->create(BlogMetric::class, [
             'blog_id' => $upToDateBlog->id,
             'date' => today(),
-            'created_at' => now()->subMinutes(30),
+            'created_at' => now()->subMinutes(1439),
         ]);
 
         $this->runOrchestrator();
 
         Bus::assertDispatched(GetBlogMetricsJob::class, 2);
+    }
+
+    #[Test]
+    public function itIncreasesDelayBy15SecondsForEachDispatchedJob(): void
+    {
+        $blog1 = $this->create(Blog::class, ['created_at' => now()->subHours(12)]);
+        $blog2 = $this->create(Blog::class, ['created_at' => now()->subHours(12)]);
+        $blog3 = $this->create(Blog::class, ['created_at' => now()->subHours(12)]);
+
+        $this->runOrchestrator();
+
+        Bus::assertDispatched(GetBlogMetricsJob::class, 3);
+
+        $delays = Bus::dispatched(GetBlogMetricsJob::class)
+            ->map(fn ($job) => $job->delay)
+            ->sort()
+            ->values();
+
+        $this->assertEquals([0, 15, 30], $delays->all());
     }
 }
