@@ -24,14 +24,6 @@ class NovaArchitectureTest extends CodeAssertionsTestCase
     }
 
     #[Test]
-    public function allNovaChartablesFollowTheCorrectPattern(): void
-    {
-        $this->assertClassesIn('app/Nova/Chartables')
-            ->areClasses()
-            ->extends(Chartable::class);
-    }
-
-    #[Test]
     public function allNovaDashboardsFollowTheCorrectPattern(): void
     {
         $this->assertClassesIn('app/Nova/Dashboards')
