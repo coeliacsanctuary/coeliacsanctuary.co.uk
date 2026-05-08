@@ -20,4 +20,6 @@ return [
     'heartbeat-endpoint' => 'api/heartbeat',
 
     'host' => env('JOURNEY_TRACKER_HOST', 'https://journey-tracker.cloud'),
+
+    'queue-connection' => env('JOURNEY_TRACKER_QUEUE_CONNECTION', null),
 ];
