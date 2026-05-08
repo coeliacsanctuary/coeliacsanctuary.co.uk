@@ -87,6 +87,8 @@ return [
 
     'waits' => [
         'redis:default' => 60,
+        'redis:metrics' => 60,
+        'redis:journey-tracker-ingress' => 60,
     ],
 
     /*
@@ -195,11 +197,49 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+
+        'supervisor-metrics' => [
+            'connection' => 'redis',
+            'queue' => ['metrics'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
+
+        'supervisor-journey-tracker-ingress' => [
+            'connection' => 'redis',
+            'queue' => ['journey-tracker-ingress'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
         'production' => [
             'supervisor-1' => [
+                'maxProcesses' => 5,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+            'supervisor-metrics' => [
+                'maxProcesses' => 3,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+            'supervisor-journey-tracker-ingress' => [
                 'maxProcesses' => 5,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
@@ -211,10 +251,24 @@ return [
                 'maxProcesses' => 1,
                 'force' => true,
             ],
+            'supervisor-metrics' => [
+                'maxProcesses' => 1,
+                'force' => true,
+            ],
+            'supervisor-journey-tracker-ingress' => [
+                'maxProcesses' => 1,
+                'force' => true,
+            ],
         ],
 
         'local' => [
             'supervisor-1' => [
+                'maxProcesses' => 1,
+            ],
+            'supervisor-metrics' => [
+                'maxProcesses' => 1,
+            ],
+            'supervisor-journey-tracker-ingress' => [
                 'maxProcesses' => 1,
             ],
         ],

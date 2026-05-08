@@ -92,7 +92,7 @@ class BackFillBlogMetricsCommand extends Command
                         ['blog_id', 'date'],
                         ['page_views', 'page_comment_views', 'detail_card_views', 'collection_card_views'],
                     );
-                });
+                })->onQueue('metrics');
             });
     }
 }
