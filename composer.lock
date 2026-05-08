@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ee14c5d2f2a6d4f5695eef97a752bb11",
+    "content-hash": "9db39a36656b0aece6c61e4590305b69",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2391,16 +2391,16 @@
         },
         {
             "name": "jpeters8889/journey-tracker-laravel",
-            "version": "0.4.3",
+            "version": "0.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jpeters8889/journey-tracker-laravel.git",
-                "reference": "ffd7d3d6f25346606b7f550f773ca94a8ab9384f"
+                "reference": "431d375b78947309d054fda78a268260e59c233b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/ffd7d3d6f25346606b7f550f773ca94a8ab9384f",
-                "reference": "ffd7d3d6f25346606b7f550f773ca94a8ab9384f",
+                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/431d375b78947309d054fda78a268260e59c233b",
+                "reference": "431d375b78947309d054fda78a268260e59c233b",
                 "shasum": ""
             },
             "require": {
@@ -2441,10 +2441,10 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/v0.4.3",
+                "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/v0.4.4",
                 "issues": "https://github.com/jpeters8889/journey-tracker-laravel/issues"
             },
-            "time": "2026-05-08T20:05:54+00:00"
+            "time": "2026-05-08T20:22:51+00:00"
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
