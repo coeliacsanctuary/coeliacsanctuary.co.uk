@@ -19,7 +19,10 @@ class BlogMetricOrchestratorJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public string $queue = 'metrics';
+    public function __construct()
+    {
+        $this->onQueue('metrics');
+    }
 
     public function handle(): void
     {
