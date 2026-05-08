@@ -23,12 +23,11 @@ class GetBlogMetricsJob implements ShouldQueue
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
-
-    public string $queue = 'metrics';
     use SerializesModels;
 
     public function __construct(protected Blog $blog)
     {
+        $this->onQueue('metrics');
     }
 
     public function handle(): void
