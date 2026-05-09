@@ -63,7 +63,7 @@ class BlogMetricOrchestratorJob implements ShouldQueue
 
     protected function isOnSchedule(BlogMetric $metric, int $minutes): bool
     {
-        if (now()->minute % $minutes !== 0) {
+        if ((now()->hour * 60 + now()->minute) % $minutes !== 0) {
             return false;
         }
 
