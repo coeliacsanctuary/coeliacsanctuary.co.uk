@@ -56,11 +56,21 @@ class GetBlogMetricsJobTest extends TestCase
             'blog_id' => $this->blog->id,
             'date' => today(),
             'page_views' => 0,
+            'page_comment_views' => 0,
+            'detail_card_views' => 0,
+            'collection_card_views' => 0,
         ]);
 
         $this->runJob();
 
         $this->assertDatabaseCount(BlogMetric::class, 1);
+
+        $metric = BlogMetric::query()->first();
+
+        $this->assertEquals(100, $metric->page_views);
+        $this->assertEquals(10, $metric->page_comment_views);
+        $this->assertEquals(20, $metric->detail_card_views);
+        $this->assertEquals(5, $metric->collection_card_views);
     }
 
     #[Test]

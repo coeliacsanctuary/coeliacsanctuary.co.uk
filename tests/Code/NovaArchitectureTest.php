@@ -7,7 +7,6 @@ namespace Tests\Code;
 use App\Actions\Shop\ShipOrderAction;
 use App\Nova\Resource;
 use App\Nova\Resources\EatingOut\PolymorphicPanels\EateryFeaturesPolymorphicPanel;
-use Jpeters8889\ApexCharts\Chartable;
 use Jpeters8889\PhpUnitCodeAssertions\CodeAssertionsTestCase;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Dashboard;

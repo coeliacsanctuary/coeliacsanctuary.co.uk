@@ -22,13 +22,13 @@ class BackFillBlogMetricsCommand extends Command
     {
         Blog::query()
             ->latest()
-//            ->whereDoesntHave('metrics')
+            ->whereDoesntHave('metrics')
             ->lazy()
             ->each(function (Blog $blog): void {
                 $this->info("Scheduling updates for {$blog->title}");
 
                 dispatch(function () use ($blog): void {
-                    $startDate = Carbon::parse('2026-05-05')->max($blog->created_at);
+                    $startDate = Carbon::parse('2026-02-24')->max($blog->created_at);
 
                     $metrics = JourneyTracker::query()
                         ->from($startDate)
@@ -92,7 +92,7 @@ class BackFillBlogMetricsCommand extends Command
                         ['blog_id', 'date'],
                         ['page_views', 'page_comment_views', 'detail_card_views', 'collection_card_views'],
                     );
-                })->onQueue('metrics');
+                });
             });
     }
 }

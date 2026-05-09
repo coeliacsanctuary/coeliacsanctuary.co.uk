@@ -225,7 +225,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDispatchesForBlogWithinLast2MonthsWhenMetricIsOlderThan120Minutes(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->setHour(2)->startOfHour());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subWeeks(6)]);
 
@@ -243,7 +243,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDoesNotDispatchForBlogWithinLast2MonthsWhenMetricIsRecent(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->setHour(2)->startOfHour());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subWeeks(6)]);
 
@@ -281,7 +281,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDispatchesForBlogWithinLast6MonthsWhenMetricIsOlderThan180Minutes(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->setHour(3)->startOfHour());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(3)]);
 
@@ -299,7 +299,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDoesNotDispatchForBlogWithinLast6MonthsWhenMetricIsRecent(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->setHour(3)->startOfHour());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(3)]);
 
@@ -337,7 +337,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDispatchesForBlogWithinLastYearWhenMetricIsOlderThan360Minutes(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->setHour(6)->startOfHour());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(8)]);
 
@@ -355,7 +355,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDoesNotDispatchForBlogWithinLastYearWhenMetricIsRecent(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->setHour(6)->startOfHour());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(8)]);
 
@@ -393,7 +393,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDispatchesForBlogWithinLast2YearsWhenMetricIsOlderThan720Minutes(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->setHour(12)->startOfHour());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(18)]);
 
@@ -411,7 +411,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDoesNotDispatchForBlogWithinLast2YearsWhenMetricIsRecent(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->setHour(12)->startOfHour());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subMonths(18)]);
 
@@ -449,7 +449,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDispatchesForBlogOlderThan2YearsWhenMetricIsOlderThan1440Minutes(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->startOfDay());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subYears(3)]);
 
@@ -467,7 +467,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itDoesNotDispatchForBlogOlderThan2YearsWhenMetricIsRecent(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->startOfDay());
 
         $blog = $this->create(Blog::class, ['created_at' => now()->subYears(3)]);
 
@@ -505,7 +505,7 @@ class BlogMetricOrchestratorJobTest extends TestCase
     #[Test]
     public function itOnlyDispatchesForBlogsThatRequireUpdate(): void
     {
-        $this->travelTo(now()->startOfHour());
+        $this->travelTo(now()->startOfDay());
 
         $blogNeedingUpdate = $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
         $this->create(BlogMetric::class, [
