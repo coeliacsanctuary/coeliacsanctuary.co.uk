@@ -5,12 +5,11 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { Ref, ref, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
+import { router, InfiniteScroll } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 import SearchResultsHeading from '@/Components/PageSpecific/EatingOut/SearchResults/SearchResultsHeading.vue';
 import useBrowser from '@/composables/useBrowser';
-import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import { Link } from '@inertiajs/vue3';
 import Info from '@/Components/Info.vue';
@@ -32,13 +31,7 @@ const props = defineProps<{
   };
 }>();
 
-const landmark: Ref<Element> = ref();
 const sortOption = ref(props.sort.current);
-
-const { items, reset, requestOptions } =
-  useInfiniteScrollCollection<TownEatery>('eateries', landmark);
-
-requestOptions.value = { data: { sort: sortOption.value } };
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
@@ -58,8 +51,6 @@ const handleFiltersChanged = ({
   const featureFilter = filters.features
     .filter((filter) => filter.checked)
     .map((filter) => filter.value);
-
-  reset();
 
   const params: Record<string, unknown> & {
     filter?: { [T in 'category' | 'venueType' | 'feature']?: string };
@@ -88,24 +79,28 @@ const handleFiltersChanged = ({
 };
 
 const reloadEateries = () => {
-  reset();
-
   router.reload({
     only: ['eateries'],
+    reset: ['eateries'],
     preserveState: true,
     preserveScroll: true,
   });
 };
 
-watch(() => props.term, reset);
+watch(() => props.term, () => {
+  router.reload({
+    only: ['eateries'],
+    reset: ['eateries'],
+    preserveState: true,
+    preserveScroll: true,
+  });
+});
 
 watch(sortOption, () => {
-  requestOptions.value = { data: { sort: sortOption.value } };
-
   router.reload({
     only: ['eateries', 'sort'],
+    reset: ['eateries'],
     data: { sort: sortOption.value },
-    onSuccess: () => reset(),
   });
 });
 </script>
@@ -163,10 +158,10 @@ watch(sortOption, () => {
       @sidebar-closed="reloadEateries"
     />
 
-    <div class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1">
+    <div class="flex flex-col xmd:w-3/4 xmd:flex-1">
       <Info
         v-if="county"
-        class="mx-4 xmd:mx-0"
+        class="mb-4 mx-4 xmd:mx-0"
       >
         <p class="prose prose-lg max-w-none">
           It looks like you're looking for places to eat in {{ county.name }},
@@ -177,46 +172,52 @@ watch(sortOption, () => {
         </p>
       </Info>
 
-      <template v-if="items.length">
-        <Info
-          no-icon
-          class="mx-4 !border-0 !py-4 text-center font-semibold !shadow-none xmd:mx-0"
-        >
-          Found {{ eateries.total }} {{ pluralise('result', eateries.total) }}
-        </Info>
+      <InfiniteScroll
+        data="eateries"
+        only-next
+        preserve-url
+        class="flex flex-col space-y-4"
+      >
+        <template v-if="eateries.data.length">
+          <Info
+            no-icon
+            class="mx-4 !border-0 !py-4 text-center font-semibold !shadow-none xmd:mx-0"
+          >
+            Found {{ eateries.total }} {{ pluralise('result', eateries.total) }}
+          </Info>
+
+          <Card
+            class="flex space-y-2 xs:flex-row xs:items-center xs:justify-between xs:space-y-0"
+          >
+            <div class="font-semibold sm:text-lg">
+              Showing eateries in {{ sort.current }} order
+            </div>
+
+            <FormSelect
+              v-model="sortOption"
+              name="sort"
+              :options="sort.options"
+              label="Sort by"
+              borders
+              class="flex items-center space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+              size="small"
+            />
+          </Card>
+
+          <EateryCard
+            v-for="eatery in eateries.data"
+            :key="eatery.link"
+            :eatery="eatery"
+          />
+        </template>
 
         <Card
-          class="flex space-y-2 xs:flex-row xs:items-center xs:justify-between xs:space-y-0"
+          v-else
+          class="px-8 py-8 text-center text-xl"
         >
-          <div class="font-semibold sm:text-lg">
-            Showing eateries in {{ sort.current }} order
-          </div>
-
-          <FormSelect
-            v-model="sortOption"
-            name="sort"
-            :options="sort.options"
-            label="Sort by"
-            borders
-            class="flex items-center space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
-            size="small"
-          />
+          No eateries found, try updating your filters or your search term!
         </Card>
-
-        <EateryCard
-          v-for="eatery in items"
-          :key="eatery.link"
-          :eatery="eatery"
-        />
-      </template>
-
-      <Card
-        v-else
-        class="px-8 py-8 text-center text-xl"
-      >
-        No eateries found, try updating your filters or your search term!
-      </Card>
-      <div ref="landmark" />
+      </InfiniteScroll>
     </div>
   </div>
 </template>

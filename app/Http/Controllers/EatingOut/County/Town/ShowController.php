@@ -60,7 +60,7 @@ class ShowController
             ->render('EatingOut/Town', [
                 'live_eateries_count' => $town->liveEateries->count() + $town->liveBranches->count(),
                 'town' => fn () => new TownPageResource($town),
-                'eateries' => $pipeline,
+                'eateries' => $inertia->scroll($pipeline),
                 'filters' => fn () => $getFiltersForTown->setTown($town)->handle($filters),
                 'sort' => [
                     'current' => $sort,

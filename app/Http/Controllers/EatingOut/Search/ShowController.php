@@ -78,7 +78,7 @@ class ShowController
                 'term' => fn () => Str::apa($eaterySearchTerm->term),
                 'range' => fn () => $eaterySearchTerm->range,
                 'image' => fn () => $image,
-                'eateries' => fn () => $eateries,
+                'eateries' => $inertia->scroll(fn () => $eateries),
                 'filters' => fn () => $getFiltersForSearchResults->usingSearchKey($eaterySearchTerm->key)->handle($filters),
                 'latlng' => fn () => $latLng?->toLatLng(),
                 'county' => fn () => $countyDetails,

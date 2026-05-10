@@ -88,6 +88,7 @@ class ShowControllerTest extends TestCase
     {
         $this->expectPipelineToRun(GetEateriesFromCollectionPipeline::class, collect()->paginate());
 
+        // TODO: eateries is no longer deferred — update to ->has('eateries') when this feature is re-enabled
         $this->visitEateryCollection()
             ->assertInertia(
                 fn (Assert $page) => $page

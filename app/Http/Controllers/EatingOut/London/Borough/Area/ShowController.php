@@ -78,7 +78,7 @@ class ShowController
             ->render('EatingOut/LondonArea', [
                 'area' => fn () => new LondonAreaPageResource($area),
                 'alternateAreas' => fn () => $otherAreas,
-                'eateries' => fn () => $getEateriesPipeline->run($area, $filters, $sort),
+                'eateries' => $inertia->scroll(fn () => $getEateriesPipeline->run($area, $filters, $sort)),
                 'filters' => fn () => $getFiltersForLondonArea->setArea($area)->handle($filters),
                 'sort' => [
                     'current' => $sort,
