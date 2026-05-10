@@ -21,6 +21,7 @@ use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
 use Jpeters8889\JourneyTrackerLaravel\Query\EventFilter;
 use Jpeters8889\JourneyTrackerLaravel\Query\PageFilter;
 use Jpeters8889\JourneyTrackerLaravel\Query\QueryDescriptor;
+use Throwable;
 
 class GetBlogMetricsJob implements ShouldQueue
 {
@@ -29,6 +30,10 @@ class GetBlogMetricsJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public int $backOff = 60;
+
+    public int $tries = 1;
+
     public function __construct(protected Blog $blog)
     {
         $this->onQueue('metrics');
@@ -36,6 +41,10 @@ class GetBlogMetricsJob implements ShouldQueue
 
     public function handle(): void
     {
+        Log::info('GetBlogMetricsJob started', [
+            'blog_id' => $this->blog->id,
+        ]);
+
         try {
             $metric = JourneyTracker::query()
                 ->today()
@@ -87,7 +96,6 @@ class GetBlogMetricsJob implements ShouldQueue
             Log::error('Failed to get blog metrics', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'response' => $e?->response?->json() ?? null, /** @phpstan-ignore-line */
                 'blog_id' => $this->blog->id,
             ]);
 
@@ -112,5 +120,14 @@ class GetBlogMetricsJob implements ShouldQueue
     public function middleware(): array
     {
         return [new RateLimited('metrics')];
+    }
+
+    public function failed(?Throwable $e): void
+    {
+        Log::error('Failed to get blog metrics', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'blog_id' => $this->blog->id,
+        ]);
     }
 }
