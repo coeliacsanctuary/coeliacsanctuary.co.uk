@@ -25,11 +25,9 @@ use App\Support\Helpers;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Laravel\SerializableClosure\Support\ReflectionClosure;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -197,10 +195,8 @@ class EateryTest extends TestCase
 
         $builder = Eatery::algoliaSearchAroundLatLng($latLng);
 
-        $parameters = Arr::get((new ReflectionClosure($builder->callback))->getUseVariables(), 'parameters');
-
-        $this->assertArrayHasKey('aroundLatLng', $parameters);
-        $this->assertEquals($latLng->toString(), $parameters['aroundLatLng']);
+        $this->assertArrayHasKey('aroundLatLng', $builder->options);
+        $this->assertEquals($latLng->toString(), $builder->options['aroundLatLng']);
     }
 
     #[Test]
@@ -210,10 +206,8 @@ class EateryTest extends TestCase
 
         $builder = Eatery::algoliaSearchAroundLatLng($latLng, 5);
 
-        $parameters = Arr::get((new ReflectionClosure($builder->callback))->getUseVariables(), 'parameters');
-
-        $this->assertArrayHasKey('aroundRadius', $parameters);
-        $this->assertEquals(Helpers::milesToMeters(5), $parameters['aroundRadius']);
+        $this->assertArrayHasKey('aroundRadius', $builder->options);
+        $this->assertEquals(Helpers::milesToMeters(5), $builder->options['aroundRadius']);
     }
 
     #[Test]

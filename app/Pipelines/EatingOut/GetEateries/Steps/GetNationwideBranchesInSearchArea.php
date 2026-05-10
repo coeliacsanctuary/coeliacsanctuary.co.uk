@@ -53,6 +53,7 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
         $query = NationwideBranch::query()
             ->selectDistance($latLng)
             /** @lang mysql */
+            /** @phpstan-ignore argument.type */
             ->selectRaw(Arr::join([
                 'wheretoeat.id as id',
                 'wheretoeat_nationwide_branches.id as branch_id',

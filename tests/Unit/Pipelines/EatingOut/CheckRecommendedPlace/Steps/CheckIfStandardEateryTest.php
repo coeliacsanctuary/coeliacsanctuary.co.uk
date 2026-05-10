@@ -58,7 +58,7 @@ class CheckIfStandardEateryTest extends StepTestCase
 
     #[Test]
     #[DataProvider('searchScenarios')]
-    public function itReturnsAsFoundForAEateryByTheNameAndAddress($name, $search, $address, $searchAddress): void
+    public function itReturnsAsFoundForAEateryByTheNameAndAddress($name, $search, $address, $searchAddress, $town): void
     {
         $county = $this->create(EateryCounty::class);
         $town = $this->create(EateryTown::class, ['county_id' => $county->id]);

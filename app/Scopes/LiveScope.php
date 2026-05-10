@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 
+/** @implements Scope<Model> */
 class LiveScope implements Scope
 {
     public function __construct(protected string|Closure $field = 'live')
@@ -16,11 +17,7 @@ class LiveScope implements Scope
         //
     }
 
-    /**
-     * @template T of Model
-     *
-     * @param  Builder<T>  $builder
-     */
+    /** @param Builder<covariant Model> $builder */
     public function apply(Builder $builder, Model $model): void
     {
         if ($this->field instanceof Closure) {

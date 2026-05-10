@@ -39,11 +39,13 @@ class GetFiltersForLondonArea extends GetFilters
 
         return $builder
             ->select('*')
+            /** @phpstan-ignore argument.type */
             ->selectRaw("({$this->eateryQuery()}) + ({$this->branchQuery()}) as eateries_count");
     }
 
     protected function orderBy(Builder $builder, string $field): Builder
     {
+        /** @phpstan-ignore argument.type */
         return $builder->orderByRaw("eateries_count desc, {$field} asc");
     }
 

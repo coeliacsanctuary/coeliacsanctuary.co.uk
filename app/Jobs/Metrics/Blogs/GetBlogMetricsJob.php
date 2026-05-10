@@ -10,7 +10,6 @@ use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\RateLimited;
@@ -50,14 +49,14 @@ class GetBlogMetricsJob implements ShouldQueue
                 ->today()
                 ->count(
                     'views',
-                    fn(QueryDescriptor $query) => $query
-                        ->withPage(fn(PageFilter $page) => $page->path(mb_trim($this->blog->link, '/')))
+                    fn (QueryDescriptor $query) => $query
+                        ->withPage(fn (PageFilter $page) => $page->path(mb_trim($this->blog->link, '/')))
                 )
                 ->count(
                     'comment_views',
-                    fn(QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query) => $query
                         ->withEvent(
-                            fn(EventFilter $event) => $event
+                            fn (EventFilter $event) => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('CommentsCard')
                                 ->withParameters([
@@ -68,9 +67,9 @@ class GetBlogMetricsJob implements ShouldQueue
                 )
                 ->count(
                     'detail_card_views',
-                    fn(QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query) => $query
                         ->withEvent(
-                            fn(EventFilter $event) => $event
+                            fn (EventFilter $event) => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('BlogDetailCard')
                                 ->withParameters([
@@ -80,9 +79,9 @@ class GetBlogMetricsJob implements ShouldQueue
                 )
                 ->count(
                     'collection_card_views',
-                    fn(QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query) => $query
                         ->withEvent(
-                            fn(EventFilter $event) => $event
+                            fn (EventFilter $event) => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('CollectionItemCard')
                                 ->withParameters([
@@ -92,7 +91,7 @@ class GetBlogMetricsJob implements ShouldQueue
                         )
                 )
                 ->get();
-        } catch(Exception|RequestException $e) {
+        } catch (Exception|RequestException $e) {
             Log::error('Failed to get blog metrics', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -114,7 +113,8 @@ class GetBlogMetricsJob implements ShouldQueue
                 ],
             ],
             ['blog_id', 'date'],
-            ['page_views', 'page_comment_views', 'detail_card_views', 'collection_card_views']);
+            ['page_views', 'page_comment_views', 'detail_card_views', 'collection_card_views']
+        );
     }
 
     public function middleware(): array
@@ -125,8 +125,8 @@ class GetBlogMetricsJob implements ShouldQueue
     public function failed(?Throwable $e): void
     {
         Log::error('Failed to get blog metrics', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
+            'error' => $e?->getMessage(),
+            'trace' => $e?->getTraceAsString(),
             'blog_id' => $this->blog->id,
         ]);
     }
