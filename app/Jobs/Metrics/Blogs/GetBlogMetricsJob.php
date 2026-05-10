@@ -96,7 +96,6 @@ class GetBlogMetricsJob implements ShouldQueue
             Log::error('Failed to get blog metrics', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'response' => $e?->response?->json() ?? null, /** @phpstan-ignore-line */
                 'blog_id' => $this->blog->id,
             ]);
 
