@@ -15,7 +15,7 @@
         "dompdf/dompdf": "^2.0.8",
         "guzzlehttp/guzzle": "^7.10.0",
         "hammerstone/sidecar": "dev-l13-compatibility as 0.7.1",
-        "inertiajs/inertia-laravel": "^2.0.10",
+        "inertiajs/inertia-laravel": "^3.0",
         "intervention/image": "^2.7.2",
         "jpeters8889/address-field": "@dev",
         "jpeters8889/apex-charts": "@dev",
