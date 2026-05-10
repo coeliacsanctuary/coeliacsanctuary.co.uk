@@ -138,23 +138,33 @@ class SearchEateriesBySearchTermTool extends BaseTool
                 ->default(5)
                 ->max(20)
                 ->min(1)
+                ->nullable()
+                ->required()
                 ->description('The radius, in miles, the default is 5, the max is 20, and min is 1.'),
             'sort' => $schema
                 ->string()
                 ->default('distance')
                 ->enum(['distance', 'rating', 'alphabetical'])
+                ->nullable()
+                ->required()
                 ->description('The sort order, default is distance, other options are by highest user rating, or alphabetically.'),
             'venueTypes' => $schema
                 ->array()
                 ->items($schema->string())
+                ->nullable()
+                ->required()
                 ->description('any venue type slugs to filter on, eg pub, chip shop'),
             'type' => $schema
                 ->array()
                 ->items($schema->string())
+                ->nullable()
+                ->required()
                 ->description('any type slugs to filter on, eg eatery, attraction, hotel'),
             'features' => $schema
                 ->array()
                 ->items($schema->string())
+                ->nullable()
+                ->required()
                 ->description('any feature slugs to filter on, eg gluten free menu'),
         ];
     }
