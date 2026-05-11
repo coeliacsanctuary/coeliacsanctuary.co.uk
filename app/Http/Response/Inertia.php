@@ -21,7 +21,9 @@ use Inertia\DeferProp;
 use Inertia\Inertia as BaseInertia;
 use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
 use Inertia\MergeProp;
+use Inertia\ProvidesScrollMetadata;
 use Inertia\Response;
+use Inertia\ScrollProp;
 use Money\Money;
 use Spatie\SchemaOrg\Schema;
 
@@ -233,5 +235,11 @@ class Inertia
     public static function merge(mixed $value): MergeProp
     {
         return BaseInertia::merge($value);
+    }
+
+    /** @return ScrollProp<mixed> */
+    public static function scroll(mixed $value, string $wrapper = 'data', ProvidesScrollMetadata|callable|null $metadata = null): ScrollProp
+    {
+        return BaseInertia::scroll($value, $wrapper, $metadata);
     }
 }

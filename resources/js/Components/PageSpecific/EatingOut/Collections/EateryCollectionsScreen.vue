@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { PaginatedCollection } from '@/types/GenericTypes';
 import { EateryCollectionFilters, TownEatery } from '@/types/EateryTypes';
-import { Ref, ref, useTemplateRef, watch } from 'vue';
-import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
+import { ref, useTemplateRef } from 'vue';
 import useScreensize from '@/composables/useScreensize';
 import { RequestPayload } from '@inertiajs/core';
-import { router } from '@inertiajs/vue3';
+import { router, InfiniteScroll } from '@inertiajs/vue3';
 import useBrowser from '@/composables/useBrowser';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import Card from '@/Components/Card.vue';
@@ -18,10 +17,6 @@ defineProps<{
 }>();
 
 const placeList = ref<HTMLElement | null>(null);
-const landmark: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
-
-const { items, reset, requestOptions } =
-  useInfiniteScrollCollection<TownEatery>('eateries', landmark);
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
@@ -51,8 +46,6 @@ const handleFiltersChanged = ({
   const countyFilter = filters.counties
     .filter((filter) => filter.checked)
     .map((filter) => filter.value);
-
-  reset();
 
   const params: RequestPayload & {
     filter?: {
@@ -96,6 +89,7 @@ const handleFiltersChanged = ({
     preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
     preserveScroll: true,
     only: ['eateries'],
+    reset: ['eateries'],
     onFinish: () => {
       // This avoids race conditions with hydration
       requestAnimationFrame(() => {
@@ -106,10 +100,9 @@ const handleFiltersChanged = ({
 };
 
 const reloadEateries = () => {
-  reset();
-
   router.reload({
     only: ['eateries'],
+    reset: ['eateries'],
     preserveState: true,
     preserveScroll: true,
   });
@@ -132,30 +125,35 @@ useJourneyTracking().logWhenVisible(
 
     <div
       ref="placeList"
-      class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1"
+      class="flex flex-col xmd:w-3/4 xmd:flex-1"
     >
-      <template v-if="items.length">
-        <template
-          v-for="(eatery, index) in items"
-          :key="eatery.link"
-        >
-          <EateryCard :eatery="eatery" />
-
-          <div
-            v-if="index > 0 && index % 4 === 0"
-            class="content_hint"
-          />
-        </template>
-      </template>
-
-      <Card
-        v-else
-        class="px-8 py-8 text-center text-xl"
+      <InfiniteScroll
+        data="eateries"
+        only-next
+        preserve-url
+        class="flex flex-col space-y-4"
       >
-        No eateries found, try updating your filters!
-      </Card>
+        <template v-if="eateries.data.length">
+          <template
+            v-for="(eatery, index) in eateries.data"
+            :key="eatery.link"
+          >
+            <EateryCard :eatery="eatery" />
 
-      <div ref="landmark" />
+            <div
+              v-if="index > 0 && index % 4 === 0"
+              class="content_hint"
+            />
+          </template>
+        </template>
+
+        <Card
+          v-else
+          class="px-8 py-8 text-center text-xl"
+        >
+          No eateries found, try updating your filters!
+        </Card>
+      </InfiniteScroll>
     </div>
   </div>
 </template>

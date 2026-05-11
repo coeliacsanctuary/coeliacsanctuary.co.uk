@@ -27,6 +27,7 @@ use App\Models\EatingOut\EateryVenueType;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeMeal;
+use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Contracts\HasMiddleware;
@@ -36,6 +37,7 @@ use Laravel\Ai\Messages\Message;
 use Laravel\Ai\Promptable;
 use Stringable;
 
+#[Model('gpt-5.2')]
 class AskSealiac implements Agent, Conversational, HasMiddleware, HasTools
 {
     use Promptable;

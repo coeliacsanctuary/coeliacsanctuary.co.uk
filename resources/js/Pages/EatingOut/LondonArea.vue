@@ -6,10 +6,9 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { Ref, ref, watch } from 'vue';
-import { router, Link } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
+import { router, Link, InfiniteScroll } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
-import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
 import { RequestPayload } from '@inertiajs/core';
 import useBrowser from '@/composables/useBrowser';
 import Info from '@/Components/Info.vue';
@@ -36,13 +35,8 @@ const props = defineProps<{
 }>();
 
 const placeList = ref<HTMLElement | null>(null);
-const landmark: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 const sortOption = ref(props.sort.current);
-const { items, reset, requestOptions } =
-  useInfiniteScrollCollection<TownEatery>('eateries', landmark);
-
-requestOptions.value = { data: { sort: sortOption.value } };
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
@@ -64,8 +58,6 @@ const handleFiltersChanged = ({
   const featureFilter = filters.features
     .filter((filter) => filter.checked)
     .map((filter) => filter.value);
-
-  reset();
 
   const params: RequestPayload & {
     filter?: { [T in 'category' | 'venueType' | 'feature']?: string };
@@ -102,22 +94,19 @@ const handleFiltersChanged = ({
 };
 
 const reloadEateries = () => {
-  reset();
-
   router.reload({
     only: ['eateries'],
+    reset: ['eateries'],
     preserveState: true,
     preserveScroll: true,
   });
 };
 
 watch(sortOption, () => {
-  requestOptions.value = { data: { sort: sortOption.value } };
-
   router.reload({
     only: ['eateries', 'sort'],
+    reset: ['eateries'],
     data: { sort: sortOption.value },
-    onSuccess: () => reset(),
   });
 });
 </script>
@@ -173,10 +162,11 @@ watch(sortOption, () => {
 
     <div
       ref="placeList"
-      class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1"
+      class="flex flex-col xmd:w-3/4 xmd:flex-1"
     >
       <Info
         v-if="alternateAreas && alternateAreas.length"
+        class="mb-4"
         flex
       >
         <div>
@@ -203,7 +193,7 @@ watch(sortOption, () => {
       </Info>
 
       <Card
-        class="flex space-y-2 xs:flex-row xs:items-center xs:justify-between xs:space-y-0"
+        class="mb-4 flex space-y-2 xs:flex-row xs:items-center xs:justify-between xs:space-y-0"
       >
         <div class="font-semibold sm:text-lg">
           Showing eateries in {{ sort.current }} order
@@ -220,27 +210,33 @@ watch(sortOption, () => {
         />
       </Card>
 
-      <template v-if="items.length">
-        <template
-          v-for="(eatery, index) in items"
-          :key="eatery.link"
-        >
-          <EateryCard :eatery="eatery" />
-
-          <div
-            v-if="index > 0 && index % 4 === 0"
-            class="content_hint"
-          />
-        </template>
-      </template>
-
-      <Card
-        v-else
-        class="px-8 py-8 text-center text-xl"
+      <InfiniteScroll
+        data="eateries"
+        only-next
+        preserve-url
+        class="flex flex-col space-y-4"
       >
-        No eateries found, try updating your filters!
-      </Card>
-      <div ref="landmark" />
+        <template v-if="eateries.data.length">
+          <template
+            v-for="(eatery, index) in eateries.data"
+            :key="eatery.link"
+          >
+            <EateryCard :eatery="eatery" />
+
+            <div
+              v-if="index > 0 && index % 4 === 0"
+              class="content_hint"
+            />
+          </template>
+        </template>
+
+        <Card
+          v-else
+          class="px-8 py-8 text-center text-xl"
+        >
+          No eateries found, try updating your filters!
+        </Card>
+      </InfiniteScroll>
     </div>
   </div>
 

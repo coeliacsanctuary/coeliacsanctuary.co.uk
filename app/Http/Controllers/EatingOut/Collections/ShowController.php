@@ -55,7 +55,7 @@ class ShowController
             ->render('EatingOut/Collections/Show', [
                 'collection' => new EateryCollectionShowResource($eateryCollection),
                 'filters' => $inertia->defer(fn () => $getFiltersForCollection->setCollection($eateryCollection)->handle($filters)),
-                'eateries' => $inertia->defer(fn () => $getEateriesFromCollectionPipeline->run($eateryCollection->configuration, $filters)),
+                'eateries' => $inertia->scroll(fn () => $getEateriesFromCollectionPipeline->run($eateryCollection->configuration, $filters)),
             ]);
     }
 }

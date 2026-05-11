@@ -45,6 +45,7 @@ class HydrateEateriesAction implements GetEateriesPipelineActionContract
                 },
             ])
             ->whereIn('id', $eateryIds)
+            /** @phpstan-ignore argument.type */
             ->when(count($eateryIds) > 0, fn (Builder $builder) => $builder->orderByRaw('field(id, ' . Arr::join($eateryIds, ',') . ')'))
             ->get();
 

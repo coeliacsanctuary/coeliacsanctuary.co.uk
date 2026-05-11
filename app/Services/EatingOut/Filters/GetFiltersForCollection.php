@@ -95,6 +95,7 @@ class GetFiltersForCollection extends GetFiltersForTown
             ->select('*')
             ->when($builder->getModel() instanceof EateryTown, fn (Builder $builder) => $builder->with(['county']))
             ->when($builder->getModel() instanceof EateryCounty, fn (Builder $builder) => $builder->with(['country']))
+            /** @phpstan-ignore argument.type */
             ->selectRaw("({$this->eateryQuery()}) + ({$this->branchQuery()}) as eateries_count");
     }
 

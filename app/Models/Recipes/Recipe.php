@@ -275,6 +275,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         );
 
         foreach ($ids as $id) {
+            /** @phpstan-ignore argument.type */
             $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_features f where f.recipe_id = recipes.id and f.feature_type_id = {$id})"));
         }
 
@@ -294,6 +295,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         );
 
         foreach ($ids as $id) {
+            /** @phpstan-ignore argument.type */
             $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_meals m where m.recipe_id = recipes.id and m.meal_type_id = {$id})"));
         }
 
@@ -313,6 +315,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         );
 
         foreach ($ids as $id) {
+            /** @phpstan-ignore argument.type */
             $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_allergens a where a.recipe_id = recipes.id and a.allergen_type_id = {$id})"));
         }
 

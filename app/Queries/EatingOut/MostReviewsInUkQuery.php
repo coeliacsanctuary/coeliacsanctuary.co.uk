@@ -24,6 +24,7 @@ class MostReviewsInUkQuery
             ->addSelect(DB::raw('count(wheretoeat_reviews.wheretoeat_id) as rating_count'))
             ->with(['county', 'town', 'area'])
             ->groupBy('wheretoeat.id')
+            /** @phpstan-ignore argument.type */
             ->orderByRaw($rating)
             ->take(3)
             ->get()
