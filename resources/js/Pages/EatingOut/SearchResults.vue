@@ -114,7 +114,7 @@ watch(sortOption, () => {
   />
 
   <Card
-    v-if="items.length"
+    v-if="eateries.data.length"
     class="mt-3 flex flex-col space-y-4"
   >
     <p class="prose-md prose max-w-none lg:prose-lg">
