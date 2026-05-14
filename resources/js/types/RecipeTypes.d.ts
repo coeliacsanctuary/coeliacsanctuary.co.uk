@@ -25,8 +25,8 @@ export type RecipePage = {
   description: string;
   ingredients: string;
   method: string;
-  features?: { feature: string; slug: string }[];
-  allergens?: { allergen: string; slug: string }[];
+  features: { feature: string; slug: string }[];
+  allergens: { allergen: string; slug: string }[];
   timing: {
     prep_time: string;
     cook_time: string;

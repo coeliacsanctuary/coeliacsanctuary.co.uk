@@ -12,13 +12,13 @@ withDefaults(
 
 <template>
   <div
-    class="w-fit overflow-hidden rounded-lg border-2 border-primary text-xs xs:text-sm"
+    class="overflow-hidden rounded-lg border-2 border-primary text-xs xs:text-sm"
   >
     <div
       class="grid divide-x-2 divide-primary border-primary bg-primary-light/50 font-semibold"
       :class="{
         'grid-cols-6 text-center *:p-1': direction === 'horizontal',
-        'grid-cols-4 divide-y-2 *:p-2': direction === 'vertical',
+        'w-full grid-cols-4 divide-y-2 *:p-2': direction === 'vertical',
       }"
     >
       <div

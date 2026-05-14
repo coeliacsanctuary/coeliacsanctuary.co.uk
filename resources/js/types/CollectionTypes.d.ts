@@ -47,4 +47,6 @@ export type HomepageCollectedItem = {
 export type FeaturedInCollection = {
   title: string;
   link: string;
+  description: string;
+  image: string;
 };

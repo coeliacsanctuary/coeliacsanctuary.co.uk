@@ -12,6 +12,7 @@ import { Page } from '@inertiajs/core';
 import { loadScript } from '@/helpers';
 import BlogSimpleCard from '@/Components/PageSpecific/Blogs/BlogSimpleCard.vue';
 import collect, { Collection } from 'collect.js';
+import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
 
 const props = defineProps<{
   blog: BlogPage;
@@ -144,27 +145,6 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
     />
   </Card>
 
-  <Card v-if="blog.featured_in?.length">
-    <h3 class="text-base font-semibold text-grey-darkest">
-      This blog was featured in
-    </h3>
-
-    <ul class="mt-2 flex flex-row flex-wrap text-sm leading-tight">
-      <li
-        v-for="collection in blog.featured_in"
-        :key="collection.link"
-        class="after:content-[','] last:after:content-['']"
-      >
-        <Link
-          :href="collection.link"
-          class="font-semibold text-primary-dark hover:text-grey-darker"
-        >
-          {{ collection.title }}
-        </Link>
-      </li>
-    </ul>
-  </Card>
-
   <div
     class="flex w-full flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
@@ -173,7 +153,6 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
         <div class="prose prose-lg max-w-none md:prose-xl">
           <RenderedString :content="blog.body" />
         </div>
-
       </Card>
 
       <Card
@@ -234,6 +213,12 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
           </Link>
         </Card>
       </template>
+
+      <FeaturedInCollectionCard
+        v-if="blog.featured_in?.length"
+        :collections="blog.featured_in"
+        title="This blog is featured in"
+      />
     </aside>
   </div>
 </template>

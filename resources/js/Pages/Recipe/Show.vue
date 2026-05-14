@@ -13,6 +13,7 @@ import { Page } from '@inertiajs/core';
 import SubHeading from '@/Components/SubHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
+import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -212,29 +213,12 @@ const handleCommentReset = () => {
     <aside
       class="space-y-3 lg:ml-3 lg:grid lg:w-[350px] lg:flex-shrink-0 lg:grid-cols-1 lg:self-start lg:overflow-auto"
     >
-      <Card
+      <FeaturedInCollectionCard
         v-if="recipe.featured_in?.length"
-        class="lg:row-start-2"
-      >
-        <h3 class="text-base font-semibold text-grey-darkest">
-          This recipe was featured in
-        </h3>
-
-        <ul class="mt-2 flex flex-row flex-wrap text-sm leading-tight">
-          <li
-            v-for="collection in recipe.featured_in"
-            :key="collection.link"
-            class="after:content-[','] last:after:content-['']"
-          >
-            <Link
-              :href="collection.link"
-              class="font-semibold text-primary-dark hover:text-grey-darker"
-            >
-              {{ collection.title }}
-            </Link>
-          </li>
-        </ul>
-      </Card>
+        :collections="recipe.featured_in"
+        title="This recipe is featured in"
+        class="hidden lg:flex"
+      />
 
       <Card>
         <SubHeading classes="text-primary-dark">Ingredients</SubHeading>
@@ -319,6 +303,13 @@ const handleCommentReset = () => {
           </div>
         </div>
       </Card>
+
+      <FeaturedInCollectionCard
+        v-if="recipe.featured_in?.length"
+        :collections="recipe.featured_in"
+        title="This recipe is featured in"
+        class="lg:hidden"
+      />
 
       <Comments
         :id="recipe.id"
