@@ -2,26 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Support\Ai\Prompts;
+namespace Tests\Unit\Ai\Agents;
 
+use App\Ai\Agents\SealiacEateryOverviewAgent;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
-use App\Support\Ai\Prompts\EatingOutSealiacOverviewPrompt;
 use Database\Seeders\EateryScaffoldingSeeder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class EatingOutSealiacOverviewPromptTest extends TestCase
+class SealiacEateryOverviewAgentTest extends TestCase
 {
+    protected function makeAgent(Eatery $eatery, ?NationwideBranch $branch = null): SealiacEateryOverviewAgent
+    {
+        return new SealiacEateryOverviewAgent($eatery, $branch);
+    }
+
     #[Test]
     public function itRendersTheIntroductionText(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('Sealiac the Seal', $result);
         $this->assertStringContainsString('Coeliac Sanctuary', $result);
@@ -31,9 +36,10 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
     public function itRendersEateryDetails(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-        $eatery = $this->create(Eatery::class)->load(['area', 'town', 'county', 'country']);
+        $eatery = $this->create(Eatery::class);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $agent = $this->makeAgent($eatery);
+        $result = (string) $agent->instructions();
 
         $this->assertStringContainsString('## Eatery Details', $result);
         $this->assertStringContainsString($eatery->name, $result);
@@ -52,7 +58,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('Average Value for Money Rating: ' . EateryReview::HOW_EXPENSIVE_LABELS[3], $result);
     }
@@ -63,7 +69,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('Average Value for Money Rating', $result);
     }
@@ -80,7 +86,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('Average Rating: 5 out of 5 stars', $result);
     }
@@ -91,7 +97,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('Average Rating:', $result);
     }
@@ -103,10 +109,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
     {
         $eatery = $this->create(Eatery::class);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery->load(['adminReview']);
-
-        $this->assertNull($prompt->adminReview());
+        $this->assertNull(invade($this->makeAgent($eatery))->adminReview());
     }
 
     #[Test]
@@ -124,11 +127,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             ->branch($branch1)
             ->create();
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery->load(['adminReview']);
-        $prompt->branch = $branch2;
-
-        $this->assertNull($prompt->adminReview());
+        $this->assertNull(invade($this->makeAgent($eatery, $branch2))->adminReview());
     }
 
     #[Test]
@@ -145,11 +144,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             ->branch($branch)
             ->create();
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery->load(['adminReview']);
-        $prompt->branch = $branch;
-
-        $this->assertInstanceOf(EateryReview::class, $prompt->adminReview());
+        $this->assertInstanceOf(EateryReview::class, invade($this->makeAgent($eatery, $branch))->adminReview());
     }
 
     // --- Admin review rendering ---
@@ -165,7 +160,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             ->adminReview()
             ->create();
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('## Coeliac Sanctuary Team Review', $result);
     }
@@ -176,7 +171,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('## Coeliac Sanctuary Team Review', $result);
     }
@@ -196,7 +191,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             ->branch($branch1)
             ->create();
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery, $branch2);
+        $result = (string) $this->makeAgent($eatery, $branch2)->instructions();
 
         $this->assertStringNotContainsString('## Coeliac Sanctuary Team Reviews', $result);
     }
@@ -214,7 +209,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             ->approved()
             ->create();
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('## Website Visitor Reviews', $result);
     }
@@ -225,7 +220,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('## Website Visitor Reviews', $result);
     }
@@ -241,7 +236,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             ->adminReview()
             ->create();
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('## Website Visitor Reviews', $result);
     }
@@ -258,7 +253,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             ->approved()
             ->create();
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('------', $result);
     }
@@ -275,7 +270,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('Service Rating: excellent', $result);
     }
@@ -292,7 +287,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('Service Rating:', $result);
     }
@@ -309,7 +304,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('Food Rating: excellent', $result);
     }
@@ -326,7 +321,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('Food Rating:', $result);
     }
@@ -343,7 +338,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('Value for Money: ' . EateryReview::HOW_EXPENSIVE_LABELS[3], $result);
     }
@@ -360,7 +355,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('Value for Money:', $result);
     }
@@ -377,7 +372,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('Branch Name: My Branch', $result);
     }
@@ -388,7 +383,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
-        $branch = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id])->load(['area', 'town', 'county', 'country']);
+        $branch = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id]);
 
         $this->create(EateryReview::class, [
             'wheretoeat_id' => $eatery->id,
@@ -397,7 +392,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'approved' => true,
         ]);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery, $branch);
+        $result = (string) $this->makeAgent($eatery, $branch)->instructions();
 
         $this->assertStringNotContainsString('Branch Name:', $result);
     }
@@ -413,7 +408,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
         $features = $this->build(EateryFeature::class)->count(2)->create();
         $eatery->features()->attach($features);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringContainsString('## Features of this eatery listed on our website:', $result);
         $this->assertStringContainsString("- {$features->first()->feature}", $result);
@@ -426,7 +421,7 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
         $eatery = $this->create(Eatery::class);
 
-        $result = app(EatingOutSealiacOverviewPrompt::class)->handle($eatery);
+        $result = (string) $this->makeAgent($eatery)->instructions();
 
         $this->assertStringNotContainsString('## Features of this eatery listed on our website:', $result);
     }
@@ -442,43 +437,27 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
             'name' => 'foo bar baz',
         ]);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->branch = $branch;
-
-        $this->assertEquals('foo bar baz', $prompt->eateryName());
+        $this->assertEquals('foo bar baz', invade($this->makeAgent($eatery, $branch))->eateryName());
     }
 
     #[Test]
     public function itGetsTheEateryNameWhenThereIsABranchButItHasNoName(): void
     {
-        $eatery = $this->create(Eatery::class, [
-            'name' => 'My Eatery',
-        ]);
-
+        $eatery = $this->create(Eatery::class, ['name' => 'My Eatery']);
         $branch = $this->create(NationwideBranch::class, [
             'wheretoeat_id' => $eatery->id,
             'name' => null,
         ]);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-        $prompt->branch = $branch;
-
-        $this->assertEquals('My Eatery', $prompt->eateryName());
+        $this->assertEquals('My Eatery', invade($this->makeAgent($eatery, $branch))->eateryName());
     }
 
     #[Test]
     public function itGetsTheEateryNameWhenThereIsOnlyAnEatery(): void
     {
-        $eatery = $this->create(Eatery::class, [
-            'name' => 'My Eatery',
-        ]);
+        $eatery = $this->create(Eatery::class, ['name' => 'My Eatery']);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery;
-
-        $this->assertEquals('My Eatery', $prompt->eateryName());
+        $this->assertEquals('My Eatery', invade($this->makeAgent($eatery))->eateryName());
     }
 
     // --- eateryLocation() helper ---
@@ -487,31 +466,20 @@ class EatingOutSealiacOverviewPromptTest extends TestCase
     public function itCanGetTheBranchLocationWhenABranchIsSet(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-
         $eatery = $this->create(Eatery::class);
+        $branch = $this->create(NationwideBranch::class, ['wheretoeat_id' => $eatery->id]);
 
-        $branch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $eatery->id,
-            'name' => 'foo bar baz',
-        ]);
+        $this->makeAgent($eatery, $branch);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery->load(['area', 'town', 'county', 'country']);
-        $prompt->branch = $branch->load(['area', 'town', 'county', 'country']);
-
-        $this->assertEquals($branch->full_location, $prompt->eateryLocation());
+        $this->assertEquals($branch->full_location, invade($this->makeAgent($eatery, $branch))->eateryLocation());
     }
 
     #[Test]
     public function itGetsTheEateryLocationWhenThereIsOnlyAnEatery(): void
     {
         $this->seed(EateryScaffoldingSeeder::class);
-
         $eatery = $this->create(Eatery::class);
 
-        $prompt = invade(new EatingOutSealiacOverviewPrompt());
-        $prompt->eatery = $eatery->load(['area', 'town', 'county', 'country']);
-
-        $this->assertEquals($eatery->full_location, $prompt->eateryLocation());
+        $this->assertEquals($eatery->load(['area', 'town', 'county', 'country'])->full_location, invade($this->makeAgent($eatery))->eateryLocation());
     }
 }

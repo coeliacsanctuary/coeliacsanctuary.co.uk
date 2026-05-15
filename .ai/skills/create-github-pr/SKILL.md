@@ -59,6 +59,33 @@ Ask me:
 
 ## Step 3: Create a Branch
 
+### Detect whether this issue belongs to an epic
+
+Scan the issue body for a reference to a parent epic — look for patterns like `part of #<number>`, `part of epic #<number>`, `belongs to #<number>`, or similar (case-insensitive). Extract the epic number if found.
+
+**If the issue belongs to an epic (epic number found):**
+
+Check whether the epic branch already exists:
+
+```bash
+git fetch origin
+git branch -a | grep feature/<epic-number>
+```
+
+- If the branch **exists remotely or locally**: check it out and pull latest.
+  ```bash
+  git checkout feature/<epic-number> && git pull origin feature/<epic-number>
+  ```
+- If the branch **does not exist**: create it from main.
+  ```bash
+  git checkout main && git pull origin main
+  git checkout -b feature/<epic-number>
+  ```
+
+All work for this child issue lands on `feature/<epic-number>`. **Do not create a per-issue branch.**
+
+**If the issue does not belong to an epic:**
+
 Always start from main with latest changes:
 
 ```bash
@@ -123,7 +150,40 @@ vendor/bin/pint
 - **Tests**: If tests fail, fix them before proceeding.
 - All quality checks must pass successfully before moving to Step 6.
 
-## Step 6: Final Confirmation Before Creating PR
+## Step 6: Post-Implementation — Epic or Standalone?
+
+Before proceeding to PR creation, determine which path to take:
+
+### If this issue belongs to an epic:
+
+Commit the changes to the epic branch:
+
+```bash
+git add <specific-files>
+git commit -m "<commit message describing the changes for this child issue>"
+git push -u origin feature/<epic-number>
+```
+
+Then use the AskUserQuestion tool to ask:
+
+```
+Question: "Changes for issue #$ARGUMENTS have been committed to feature/<epic-number>. Are all child issues in epic #<epic-number> now complete?"
+
+Options:
+1. "Yes, all tasks are done — create the PR" - Proceed to Step 6a (summary + confirmation)
+2. "No, there are more tasks to do" - Stop here; report the branch and wait
+```
+
+- **If "No, more tasks to do"**: Report that the work is on `feature/<epic-number>` and stop. Do not proceed further.
+- **If "Yes, all tasks done"**: Continue to Step 6a.
+
+### If this issue does not belong to an epic:
+
+Proceed directly to Step 6a.
+
+---
+
+## Step 6a: Final Confirmation Before Creating PR
 
 **CRITICAL**: This is a MANDATORY step. You MUST get explicit user approval before proceeding to create the PR.
 
@@ -174,11 +234,11 @@ Options:
 
 ## Step 7: Commit and Create PR
 
-**ONLY PROCEED WITH THIS STEP AFTER RECEIVING EXPLICIT USER APPROVAL IN STEP 6 AND STEP 6b**
+**ONLY PROCEED WITH THIS STEP AFTER RECEIVING EXPLICIT USER APPROVAL IN STEP 6a AND STEP 6b**
 
-Once the user has explicitly approved by selecting "Yes, create the PR now" and chosen the draft status, commit the changes and create the PR.
+Once the user has explicitly approved by selecting "Yes, create the PR now" and chosen the draft status, commit the changes (if not already committed) and create the PR.
 
-### Commit the changes:
+### Commit the changes (standalone issues only — epic issues were already committed in Step 6):
 ```bash
 git add <specific-files>
 git commit -m "<commit message describing the changes>"
@@ -194,19 +254,24 @@ git push -u origin <branch-name>
 **IMPORTANT**:
 - Include the `--draft` flag if the user selected "Create as draft" in Step 6b.
 
+Use the appropriate command based on draft status and whether this is an epic or standalone issue.
+
+For **epic issues**, the `Fixes` line should reference the epic number, and include a `Part of` line listing all child issues. For **standalone issues**, only reference the single issue.
+
 **If user chose "Create as draft":**
 ```bash
 gh pr create --title "<PR title>" --draft --body "$(cat <<'EOF'
 # Pull Request
 
 ## Description
-Changes for task/bug/feature described in https://github.com/coeliacsanctuary/coeliacsanctuary.co.uk/issues/#$ARGUMENTS
-
 <brief description of changes>
 
 ## Related Issues
-<!-- Link related issues: Fixes #123, Relates to #456 -->
+<!-- Epic example: -->
+Fixes #<epic-number>
+Part of: #<child-issue-1>, #<child-issue-2>, ...
 
+<!-- Standalone example: -->
 Fixes #$ARGUMENTS
 
 ## Additional Context
@@ -224,13 +289,14 @@ gh pr create --title "<PR title>" --body "$(cat <<'EOF'
 # Pull Request
 
 ## Description
-Changes for task/bug/feature described in https://github.com/jpeters8889/journey-tracker.cloudm/issues/#$ARGUMENTS
-
 <brief description of changes>
 
 ## Related Issues
-<!-- Link related issues: Fixes #123, Relates to #456 -->
+<!-- Epic example: -->
+Fixes #<epic-number>
+Part of: #<child-issue-1>, #<child-issue-2>, ...
 
+<!-- Standalone example: -->
 Fixes #$ARGUMENTS
 
 ## Additional Context
