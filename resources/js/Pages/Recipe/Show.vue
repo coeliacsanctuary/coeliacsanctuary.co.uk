@@ -14,6 +14,8 @@ import SubHeading from '@/Components/SubHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
 import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import RenderedString from '@/Components/RenderedString.vue';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -22,6 +24,8 @@ const props = defineProps<{
 }>();
 
 const header = ref<HTMLElement>();
+
+const recipeElem = ref<HTMLElement>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
 const isLoadingComments = ref(false);
@@ -139,9 +143,9 @@ const handleCommentReset = () => {
             {{ recipe.timing.cook_time }}
           </li>
           <li>
-            <strong class="font-semibold"
-              >This recipe makes {{ recipe.nutrition.servings }}</strong
-            >
+            <strong class="font-semibold">
+              This recipe makes {{ recipe.nutrition.servings }}
+            </strong>
           </li>
         </ul>
       </Info>
@@ -207,7 +211,38 @@ const handleCommentReset = () => {
     />
   </Card>
 
+  <Card v-if="recipe.body">
+    <div class="prose prose-lg max-w-none md:prose-xl">
+      <RenderedString :content="recipe.body" />
+    </div>
+  </Card>
+
+  <Card v-if="recipe.faqs">
+    <SubHeading classes="text-primary-dark">
+      Here are some tips and FAQs about {{ recipe.short_title || recipe.title }}
+    </SubHeading>
+
+    <div
+      v-for="faq in recipe.faqs"
+      :key="faq.question"
+      class="mt-3 divide-y divide-primary"
+    >
+      <div class="flex flex-col space-y-3">
+        <h3
+          class="text-xl font-semibold md:text-2xl"
+          v-text="faq.question"
+        />
+
+        <p
+          class="prose prose-lg max-w-none md:prose-xl"
+          v-html="faq.answer"
+        />
+      </div>
+    </div>
+  </Card>
+
   <div
+    ref="recipeElem"
     class="relative flex flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
     <aside
@@ -322,4 +357,10 @@ const handleCommentReset = () => {
       />
     </div>
   </div>
+
+  <JumpToContentButton
+    v-if="recipeElem"
+    :anchor="recipeElem"
+    label="Jump to recipe"
+  />
 </template>

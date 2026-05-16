@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Recipes\Recipe as RecipeModel;
+use App\Nova\Repeaters\RecipeFaq;
 use App\Nova\Resource;
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeAllergens as RecipeAllergenPanel;
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeFeatures as RecipeFeaturePanel;
@@ -17,6 +18,7 @@ use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Repeater;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -50,6 +52,13 @@ class Recipe extends Resource
                     ->showOnCreating()
                     ->fullWidth()
                     ->rules(['sometimes', 'required', 'max:200', 'unique:recipes,slug']),
+
+                Text::make('Short Title')
+                    ->fullWidth()
+                    ->maxlength(100)
+                    ->onlyOnForms()
+                    ->help('Optional, used with FAQs')
+                    ->nullable(),
 
                 Text::make('Search Tags')->onlyOnForms()->fullWidth()->rules(['required']),
 
@@ -85,6 +94,19 @@ class Recipe extends Resource
                     ->onlyOnForms()
                     ->addButtonLabel('Select Social Image')
                     ->rules(['required']),
+
+                Images::make('Body Images', 'body')
+                    ->onlyOnForms()
+                    ->insertable()
+                    ->fullSize(),
+            ]),
+
+            new Panel('Body', [
+                Body::make('Body')
+                    ->fullWidth()
+                    ->canHaveImages()
+                    ->mustBeValidHtml()
+                    ->nullable(),
             ]),
 
             new Panel('Recipe', [
@@ -94,11 +116,13 @@ class Recipe extends Resource
 
                 Body::make('Ingredients')
                     ->fullWidth()
+                    ->noToolbar()
                     ->rows(15)
                     ->rules(['required']),
 
                 Body::make('Method')
                     ->fullWidth()
+                    ->noToolbar()
                     ->rules(['required']),
 
                 Text::make('Serving Size')->onlyOnForms()->fullWidth()->rules(['required', 'max:50']),
@@ -125,6 +149,12 @@ class Recipe extends Resource
             new Panel('Features', [
                 PolymorphicPanel::make('Features', new RecipeFeaturePanel())->display('row'),
             ]),
+
+            Repeater::make('FAQs', 'faqs')
+                ->asJson()
+                ->repeatables([
+                    RecipeFaq::make(),
+                ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),
 
