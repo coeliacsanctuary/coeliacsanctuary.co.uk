@@ -11,7 +11,6 @@ use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Exception;
 use Illuminate\Support\Str;
-use OpenAI\Laravel\Facades\OpenAI;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -25,8 +24,6 @@ class GetControllerTest extends TestCase
 
         $this->product = $this->create(ShopProduct::class);
         $this->build(ShopProductVariant::class)->belongsToProduct($this->product)->create();
-
-        OpenAI::fake();
     }
 
     #[Test]
