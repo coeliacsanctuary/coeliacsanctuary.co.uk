@@ -17,6 +17,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -64,6 +65,9 @@ class EateryAlerts extends Resource
                 ->showOnPreview()
                 ->displayUsing(fn (string $details) => Str::wordWrap($details, 100, '<br />'))
                 ->asHtml(),
+
+            URL::make('Website', 'eatery.website')
+                ->showOnIndex(),
 
             Boolean::make('Completed')
                 ->filterable()

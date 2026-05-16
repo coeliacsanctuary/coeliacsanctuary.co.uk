@@ -125,6 +125,62 @@ vendor/bin/pint
 
 ## Step 6: Final Confirmation Before Creating PR
 
+Before proceeding to PR creation, determine which path to take:
+
+### If this issue belongs to an epic:
+
+**CRITICAL**: Do NOT commit yet. First, present a summary and get explicit approval.
+
+#### Present a Summary
+
+Provide the user with a clear summary:
+1. List of all files modified/created/deleted
+2. Brief description of changes made in each file
+3. How the changes address the issue requirements
+4. Any important implementation decisions or trade-offs made
+
+Then use the AskUserQuestion tool to ask:
+
+```
+Question: "I've completed the implementation for issue #$ARGUMENTS. Please review the changes above. Are you happy for me to commit these to feature/<epic-number>?"
+
+Options:
+1. "Yes, commit the changes" (Recommended) - Commit and push to the epic branch
+2. "Show me the git diff first" - Display the full diff for detailed review
+3. "I need to make adjustments" - Stop and wait for user feedback
+```
+
+- **If "Show me the git diff first"**: Run `git diff` and display it, then ask for confirmation again.
+- **If "I need to make adjustments"**: Stop and wait for the user to provide specific feedback.
+- **If "Yes, commit the changes"**: Proceed to commit:
+
+```bash
+git add <specific-files>
+git commit -m "<commit message describing the changes for this child issue>"
+git push -u origin feature/<epic-number>
+```
+
+Then use the AskUserQuestion tool to ask:
+
+```
+Question: "Changes for issue #$ARGUMENTS have been committed to feature/<epic-number>. Are all child issues in epic #<epic-number> now complete?"
+
+Options:
+1. "Yes, all tasks are done — create the PR" - Proceed to Step 6a (summary + confirmation)
+2. "No, there are more tasks to do" - Stop here; report the branch and wait
+```
+
+- **If "No, more tasks to do"**: Report that the work is on `feature/<epic-number>` and stop. Do not proceed further.
+- **If "Yes, all tasks done"**: Continue to Step 6a.
+
+### If this issue does not belong to an epic:
+
+Proceed directly to Step 6a.
+
+---
+
+## Step 6a: Final Confirmation Before Creating PR
+
 **CRITICAL**: This is a MANDATORY step. You MUST get explicit user approval before proceeding to create the PR.
 
 ### Present a Summary
