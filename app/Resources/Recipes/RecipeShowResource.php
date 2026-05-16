@@ -11,6 +11,7 @@ use App\Models\Recipes\RecipeNutrition;
 use App\Resources\Collections\FeaturedInCollectionSimpleCardViewResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /** @mixin Recipe */
@@ -28,12 +29,20 @@ class RecipeShowResource extends JsonResource
             'id' => $this->id,
             'print_url' => route('recipe.print', ['recipe' => $this]),
             'title' => $this->title,
+            'short_title' => $this->short_title,
             'image' => $this->main_image_as_webp ?? $this->main_image,
             'square_image' => $this->square_image_as_webp ?? $this->square_image,
             'published' => $this->published,
             'updated' => $this->lastUpdated,
             'author' => $this->author,
             'description' => $this->description,
+            'body' => $this->body ? Str::of($this->body)
+                ->replace('&quot;', '"')
+                ->markdown([
+                    'renderer' => [
+                        'soft_break' => '<br />',
+                    ],
+                ]) : null,
             'ingredients' => Str::markdown($this->ingredients, [
                 'renderer' => [
                     'soft_break' => '<br />',
@@ -57,6 +66,7 @@ class RecipeShowResource extends JsonResource
                 'protein' => $nutrition->protein,
             ],
             'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollections),
+            'faqs' => $this->faqs ? $this->parseFaqs($this->faqs) : null,
         ];
     }
 
@@ -74,5 +84,13 @@ class RecipeShowResource extends JsonResource
             'allergen' => $allergen->allergen,
             'slug' => $allergen->slug,
         ];
+    }
+
+    /**
+     * @return Collection<int, array{question: string, answer: string}>
+     */
+    protected function parseFaqs(array $faqs): Collection
+    {
+        return collect($faqs)->map(fn ($faq) => $faq['fields']);
     }
 }

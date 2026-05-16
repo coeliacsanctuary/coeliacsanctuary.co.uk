@@ -17,12 +17,14 @@ export type RecipePage = {
   id: number;
   print_url: string;
   title: string;
+  short_title?: string;
   image: string;
   square_image: string;
   published: string;
   updated: string;
   author: string;
   description: string;
+  body?: string;
   ingredients: string;
   method: string;
   features: { feature: string; slug: string }[];
@@ -39,6 +41,12 @@ export type RecipePage = {
     protein: number;
   };
   featured_in?: FeaturedInCollection[];
+  faqs?: RecipeFaq[];
+};
+
+export type RecipeFaq = {
+  question: string;
+  answer: string;
 };
 
 export type RecipeFeature = {
