@@ -12,7 +12,6 @@ use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Symfony\Component\HttpFoundation\Response;
 
 class LoadCompleteEateryDetailsForRequestAction
@@ -40,24 +39,13 @@ class LoadCompleteEateryDetailsForRequestAction
         $eatery->setRelation('county', $county);
 
         $eatery->load([
-            'adminReview' => function (HasOne $builder) use ($pageType, $showAllReviews, $nationwideBranch) {
-                /** @var HasOne<EateryReview, Eatery> $builder */
-                return $builder
-                    ->latest()
-                    ->with(['branch'])
-                    ->when(
-                        $pageType === 'branch' && $showAllReviews !== true,
-                        fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
-                    );
-
-            },
             'approvedReviewImages' => function (HasMany $builder) use ($pageType, $showAllReviews, $nationwideBranch) {
                 /** @var HasMany<EateryReviewImage, Eatery> $builder */
                 return $builder
                     ->with(['review', 'review.eatery', 'review.branch', 'review.branch.town'])
                     ->whereRelation('review', function (Builder $builder) use ($pageType, $showAllReviews, $nationwideBranch) {
                         /** @var Builder<EateryReview> $builder */
-                        return $builder->where('admin_review', false)
+                        return $builder
                             ->when(
                                 $pageType === 'branch' && $showAllReviews !== true,
                                 fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
@@ -68,14 +56,15 @@ class LoadCompleteEateryDetailsForRequestAction
                 /** @var HasMany<EateryReview, Eatery> $builder */
                 return $builder
                     ->latest()
-                    ->where('admin_review', false)
                     ->with(['branch'])
+                    ->reorder('admin_review', 'desc')
+                    ->orderByDesc('created_at')
                     ->when(
                         $pageType === 'branch' && $showAllReviews !== true,
                         fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
                     );
             },
-            'adminReview.images', 'reviews.images', 'restaurants', 'features', 'openingTimes',
+            'reviews.images', 'restaurants', 'features', 'openingTimes',
         ])
             ->loadCount(['reviews']);
 
