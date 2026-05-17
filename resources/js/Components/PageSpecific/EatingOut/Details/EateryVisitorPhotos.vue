@@ -34,7 +34,7 @@ useJourneyTracking().logWhenVisible(
     ref="card"
     class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8"
   >
-    <SubHeading>Photos from others at {{ eateryName() }}</SubHeading>
+    <SubHeading>Photos from {{ eateryName() }}</SubHeading>
 
     <p class="prose mt-2 max-w-none lg:max-xl:prose-lg xl:prose-xl">
       Here are some photos taken at <strong>{{ eateryName() }}</strong> that

@@ -30,9 +30,6 @@ class EateryDetailsResource extends JsonResource
         /** @var NationwideBranch | null $branch */
         $branch = $this->relationLoaded('branch') ? $this->branch : null;
 
-        /** @var EateryReview | null $adminReview */
-        $adminReview = $this->adminReview;
-
         /** @var EateryOpeningTimes | null $eateryOpeningTimes */
         $eateryOpeningTimes = $this->openingTimes;
 
@@ -87,21 +84,6 @@ class EateryDetailsResource extends JsonResource
                     'path' => $image->path,
                     'location' => $image->review?->branch && $image->review->branch->name ? "{$image->review->branch->name}, {$image->review->branch->town?->town}" : $image->review?->eatery?->name,
                 ]) : [],
-                'admin_review' => $adminReview ? [
-                    'published' => $adminReview->created_at,
-                    'date_diff' => $adminReview->human_date,
-                    'body' => $adminReview->review,
-                    'rating' => (float) $adminReview->rating,
-                    'expense' => $adminReview->price,
-                    'food_rating' => $adminReview->food_rating,
-                    'service_rating' => $adminReview->service_rating,
-                    'branch_name' => $adminReview->branch_name,
-                    'images' => $adminReview->images->count() > 0 ? $adminReview->images->map(fn (EateryReviewImage $image) => [
-                        'id' => $image->id,
-                        'thumbnail' => $image->thumb,
-                        'path' => $image->path,
-                    ]) : [],
-                ] : null,
                 'user_reviews' => $reviews->map(fn (EateryReview $review) => [
                     'id' => $review->id,
                     'published' => $review->created_at,
@@ -113,6 +95,7 @@ class EateryDetailsResource extends JsonResource
                     'food_rating' => $review->food_rating,
                     'service_rating' => $review->service_rating,
                     'branch_name' => $review->branch ? $review->branch->name : $review->branch_name,
+                    'admin_review' => $review->admin_review,
                     'images' => $review->images->count() > 0 ? $review->images->map(fn (EateryReviewImage $image) => [
                         'id' => $image->id,
                         'thumbnail' => $image->thumb,

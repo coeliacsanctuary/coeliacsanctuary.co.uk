@@ -192,7 +192,6 @@ export type DetailedEatery = Exclude<TownEatery, 'key'> & {
     };
     has_rated: boolean;
     images?: ReviewImage[];
-    admin_review?: Exclude<EateryReview, ['id', 'name']>;
     user_reviews: EateryReview[];
     ratings: {
       rating: StarRating;
@@ -277,6 +276,7 @@ export type EateryReview = {
   food_rating?: string;
   service_rating?: string;
   branch_name?: string;
+  admin_review: boolean;
   images: ReviewImage[];
 };
 
