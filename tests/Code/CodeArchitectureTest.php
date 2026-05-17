@@ -325,14 +325,6 @@ class CodeArchitectureTest extends CodeAssertionsTestCase
     }
 
     #[Test]
-    public function allAiPromptsFollowTheCorrectPattern(): void
-    {
-        $this->assertClassesIn('app/Support/Ai/Prompts')
-            ->areClasses()
-            ->hasSuffix('Prompt');
-    }
-
-    #[Test]
     public function allEatingOutSuggestEditableFieldsFollowTheCorrectFormat(): void
     {
         $this->assertClassesIn('app/Support/EatingOut/SuggestEdits/Fields')

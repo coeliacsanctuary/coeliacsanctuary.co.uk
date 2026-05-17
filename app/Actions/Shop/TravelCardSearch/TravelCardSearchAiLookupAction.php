@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop\TravelCardSearch;
 
-use Exception;
-use Illuminate\Support\Arr;
+use App\Ai\Agents\TravelCardSearchAgent;
 use Illuminate\Support\Collection;
-use OpenAI\Laravel\Facades\OpenAI;
 use Throwable;
 
 class TravelCardSearchAiLookupAction
@@ -16,32 +14,12 @@ class TravelCardSearchAiLookupAction
     public function handle(string $searchTerm): ?Collection
     {
         try {
-            $result = OpenAI::chat()->create([
-                'model' => 'gpt-3.5-turbo-1106',
-                'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => view('prompts.travel-card-lookup', ['searchTerm' => $searchTerm])->render(),
-                    ],
-                ],
-            ]);
-
-            /** @var string $response */
-            $response = $result->choices[0]->message->content;
-
-            if ( ! json_validate($response)) {
-                throw new Exception('not valid json');
-            }
-
-            /** @var array $json */
-            $json = json_decode($response, true);
-
-            $result = Arr::get($json, 'results.0');
+            $result = (new TravelCardSearchAgent())->lookup($searchTerm);
 
             if ($result) {
                 return app(SearchTravelCardCountyOrLanguageAction::class)->handle($result);
             }
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             //
         }
 

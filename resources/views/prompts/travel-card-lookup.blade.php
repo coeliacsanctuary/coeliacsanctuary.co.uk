@@ -7,10 +7,4 @@ or something that isn't a country or language, they will get zero results, this 
 
 Your job is to take a given search term, and providing it is a town/city/province/state/county/any area of a country, return that country name.
 
-Please return a JSON object with the following key: results. This should be an array, with one string, which is the country name that matches the criteria. If there is no result, then results should be an empty array.
-
-Also, please return an explanation key in the JSON object with details on how you got to this result.
-
-The search term is:
-
-{{ $searchTerm }}
+If there is no matching country, return an empty results array. Also return an explanation with details on how you arrived at this result.

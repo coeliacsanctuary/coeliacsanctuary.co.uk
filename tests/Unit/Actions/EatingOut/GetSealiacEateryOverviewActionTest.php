@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\EatingOut;
 
 use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
+use App\Ai\Agents\SealiacEateryOverviewAgent;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\SealiacOverview;
-use App\Support\Ai\Prompts\EatingOutSealiacOverviewPrompt;
+use Database\Seeders\EateryScaffoldingSeeder;
 use Exception;
-use OpenAI\Laravel\Facades\OpenAI;
-use OpenAI\Resources\Chat;
-use OpenAI\Responses\Chat\CreateResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -27,11 +25,13 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     {
         parent::setUp();
 
+        $this->seed(EateryScaffoldingSeeder::class);
+
         $this->eatery = $this->create(Eatery::class);
 
         $this->branch = $this->build(NationwideBranch::class)->forEatery($this->eatery)->create();
 
-        OpenAI::fake();
+        SealiacEateryOverviewAgent::fake();
     }
 
     #[Test]
@@ -45,7 +45,7 @@ class GetSealiacEateryOverviewActionTest extends TestCase
 
         $this->assertTrue($model->is($overview));
 
-        OpenAI::assertNothingSent();
+        SealiacEateryOverviewAgent::assertNeverPrompted();
     }
 
     #[Test]
@@ -59,7 +59,7 @@ class GetSealiacEateryOverviewActionTest extends TestCase
 
         $this->assertTrue($model->is($overview));
 
-        OpenAI::assertNothingSent();
+        SealiacEateryOverviewAgent::assertNeverPrompted();
     }
 
     #[Test]
@@ -77,7 +77,7 @@ class GetSealiacEateryOverviewActionTest extends TestCase
 
         $this->assertTrue($branchModel->is($overview));
 
-        OpenAI::assertNothingSent();
+        SealiacEateryOverviewAgent::assertNeverPrompted();
     }
 
     #[Test]
@@ -92,17 +92,9 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     }
 
     #[Test]
-    public function itWillGetANewOverviewForAnEateryFromOpenAiUsingTheCorrectPrompt(): void
+    public function itWillPromptTheSealiacEateryOverviewAgentForAnEatery(): void
     {
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'foo',
-                    ],
-                ],
-            ],
-        ])]);
+        SealiacEateryOverviewAgent::fake(['foo']);
 
         $this->build(EateryReview::class)->createQuietly([
             'wheretoeat_id' => $this->eatery->id,
@@ -110,41 +102,15 @@ class GetSealiacEateryOverviewActionTest extends TestCase
             'approved' => true,
         ]);
 
-        $this->mock(EatingOutSealiacOverviewPrompt::class)
-            ->shouldReceive('handle')
-            ->withArgs(function ($argEatery, $argBranch) {
-                $this->assertTrue($this->eatery->is($argEatery));
-                $this->assertNull($argBranch);
-
-                return true;
-            })
-            ->andReturn('This is the prompt')
-            ->once();
-
         app(GetSealiacEateryOverviewAction::class)->handle($this->eatery);
 
-        OpenAI::assertSent(Chat::class, function (string $method, array $parameters): bool {
-            $this->assertEquals('create', $method);
-
-            $this->assertArrayHasKey('model', $parameters);
-            $this->assertEquals('gpt-3.5-turbo-1106', $parameters['model']);
-
-            return true;
-        });
+        SealiacEateryOverviewAgent::assertPrompted('Generate your overview.');
     }
 
     #[Test]
-    public function itWillGetANewOverviewForANationwideBranchFromOpenAiUsingTheCorrectPrompt(): void
+    public function itWillPromptTheSealiacEateryOverviewAgentForANationwideBranch(): void
     {
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'foo',
-                    ],
-                ],
-            ],
-        ])]);
+        SealiacEateryOverviewAgent::fake(['foo']);
 
         $this->build(EateryReview::class)->createQuietly([
             'wheretoeat_id' => $this->branch->wheretoeat_id,
@@ -152,27 +118,9 @@ class GetSealiacEateryOverviewActionTest extends TestCase
             'approved' => true,
         ]);
 
-        $this->mock(EatingOutSealiacOverviewPrompt::class)
-            ->shouldReceive('handle')
-            ->withArgs(function ($argEatery, $argBranch) {
-                $this->assertTrue($this->eatery->is($argEatery));
-                $this->assertTrue($this->branch->is($argBranch));
-
-                return true;
-            })
-            ->andReturn('This is the prompt')
-            ->once();
-
         app(GetSealiacEateryOverviewAction::class)->handle($this->eatery, $this->branch);
 
-        OpenAI::assertSent(Chat::class, function (string $method, array $parameters): bool {
-            $this->assertEquals('create', $method);
-
-            $this->assertArrayHasKey('model', $parameters);
-            $this->assertEquals('gpt-3.5-turbo-1106', $parameters['model']);
-
-            return true;
-        });
+        SealiacEateryOverviewAgent::assertPrompted('Generate your overview.');
     }
 
     #[Test]
@@ -180,26 +128,13 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     {
         $this->assertDatabaseEmpty(SealiacOverview::class);
 
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'This is the overview',
-                    ],
-                ],
-            ],
-        ])]);
+        SealiacEateryOverviewAgent::fake(['This is the overview']);
 
         $this->build(EateryReview::class)->createQuietly([
             'wheretoeat_id' => $this->eatery->id,
             'nationwide_branch_id' => $this->branch->id,
             'approved' => true,
         ]);
-
-        $this->mock(EatingOutSealiacOverviewPrompt::class)
-            ->shouldReceive('handle')
-            ->andReturn('This is the prompt')
-            ->once();
 
         app(GetSealiacEateryOverviewAction::class)->handle($this->eatery);
 
@@ -218,26 +153,13 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     {
         $this->assertDatabaseEmpty(SealiacOverview::class);
 
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'This is the overview',
-                    ],
-                ],
-            ],
-        ])]);
+        SealiacEateryOverviewAgent::fake(['This is the overview']);
 
         $this->build(EateryReview::class)->createQuietly([
             'wheretoeat_id' => $this->branch->wheretoeat_id,
             'nationwide_branch_id' => $this->branch->id,
             'approved' => true,
         ]);
-
-        $this->mock(EatingOutSealiacOverviewPrompt::class)
-            ->shouldReceive('handle')
-            ->andReturn('This is the prompt')
-            ->once();
 
         app(GetSealiacEateryOverviewAction::class)->handle($this->eatery, $this->branch);
 

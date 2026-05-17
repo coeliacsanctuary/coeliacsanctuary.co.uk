@@ -9,19 +9,11 @@ use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookupAction;
 use App\Models\Shop\TravelCardSearchTerm;
 use App\Models\Shop\TravelCardSearchTermHistory;
 use Illuminate\Testing\Fluent\AssertableJson;
-use OpenAI\Laravel\Facades\OpenAI;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class StoreControllerTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        OpenAI::fake();
-    }
-
     #[Test]
     public function itErrorsWithoutASearchTerm(): void
     {

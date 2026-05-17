@@ -2,27 +2,32 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Ai\Prompts;
+namespace App\Ai\Agents;
 
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
 use Illuminate\Support\Collection;
+use Laravel\Ai\Attributes\Model;
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Promptable;
+use Stringable;
 
-class EatingOutSealiacOverviewPrompt
+#[Model('gpt-4o-mini')]
+class SealiacEateryOverviewAgent implements Agent
 {
-    protected Eatery $eatery;
+    use Promptable;
 
-    protected ?NationwideBranch $branch = null;
-
-    public function handle(Eatery $eatery, ?NationwideBranch $branch = null): string
-    {
-        $this->eatery = $eatery;
-        $this->branch = $branch;
-
+    public function __construct(
+        protected Eatery $eatery,
+        protected ?NationwideBranch $branch = null,
+    ) {
         $this->eatery->loadMissing(['area', 'town', 'county', 'country', 'adminReview', 'features', 'reviews']);
         $this->branch?->loadMissing(['area', 'town', 'county', 'country']);
+    }
 
+    public function instructions(): Stringable|string
+    {
         return view('prompts.eating-out-sealiac-overview', [
             'eatery' => $this->eatery,
             'branch' => $this->branch,
