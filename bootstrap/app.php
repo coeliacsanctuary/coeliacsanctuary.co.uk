@@ -126,7 +126,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(RemoveCollectionsFromHomepageCommand::class)->everyMinute();
         $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
         $schedule->command(SummariseAskSealiacChatsCommand::class)->everyMinute();
-        //$schedule->command(PrepareMetricUpdatesCommand::class)->everyMinute();
+        $schedule->command(PrepareMetricUpdatesCommand::class)->everyMinute();
         $schedule->command(ProcessEateryWebsiteChecksCommand::class)->daily();
         $schedule->command(CleanUpNovaPreviewsCommand::class)->daily();
 

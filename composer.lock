@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8960f76014397a810e6a295c52a79a9a",
+    "content-hash": "a7e446061521cb2a0b55d9509eaefc03",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2048,7 +2048,7 @@
         },
         {
             "name": "jpeters8889/address-field",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/AddressField",
@@ -2084,7 +2084,7 @@
         },
         {
             "name": "jpeters8889/apex-charts",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ApexCharts",
@@ -2120,7 +2120,7 @@
         },
         {
             "name": "jpeters8889/body",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Body",
@@ -2156,7 +2156,7 @@
         },
         {
             "name": "jpeters8889/country-icon",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CountryIcon",
@@ -2192,7 +2192,7 @@
         },
         {
             "name": "jpeters8889/custom-styles",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CustomStyles",
@@ -2228,7 +2228,7 @@
         },
         {
             "name": "jpeters8889/eatery-collections-query-builder",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryCollectionsQueryBuilder",
@@ -2269,7 +2269,7 @@
         },
         {
             "name": "jpeters8889/eatery-location-search",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryLocationSearch",
@@ -2310,7 +2310,7 @@
         },
         {
             "name": "jpeters8889/eatery-opening-times",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryOpeningTimes",
@@ -2346,7 +2346,7 @@
         },
         {
             "name": "jpeters8889/hidden-writable-field",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/HiddenWritableField",
@@ -2387,16 +2387,16 @@
         },
         {
             "name": "jpeters8889/journey-tracker-laravel",
-            "version": "0.5.0",
+            "version": "0.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jpeters8889/journey-tracker-laravel.git",
-                "reference": "2c681058e3f034f1f089bf9a7716d1ccb76dd98e"
+                "reference": "b0500f4ce591c557d14f9da67893abd13c972cfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/2c681058e3f034f1f089bf9a7716d1ccb76dd98e",
-                "reference": "2c681058e3f034f1f089bf9a7716d1ccb76dd98e",
+                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/b0500f4ce591c557d14f9da67893abd13c972cfc",
+                "reference": "b0500f4ce591c557d14f9da67893abd13c972cfc",
                 "shasum": ""
             },
             "require": {
@@ -2437,14 +2437,14 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/v0.5.0",
+                "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/v0.5.2",
                 "issues": "https://github.com/jpeters8889/journey-tracker-laravel/issues"
             },
-            "time": "2026-05-09T20:08:24+00:00"
+            "time": "2026-05-17T13:05:28+00:00"
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/OrderDispatchSlip",
@@ -2480,7 +2480,7 @@
         },
         {
             "name": "jpeters8889/polymorphic-panel",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PolymorphicPanel",
@@ -2516,7 +2516,7 @@
         },
         {
             "name": "jpeters8889/preview-button",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PreviewButton",
@@ -2553,7 +2553,7 @@
         },
         {
             "name": "jpeters8889/print-all-orders",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PrintAllOrders",
@@ -2589,7 +2589,7 @@
         },
         {
             "name": "jpeters8889/refresh-ads-txt",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/RefreshAdsTxt",
@@ -2630,7 +2630,7 @@
         },
         {
             "name": "jpeters8889/shop-daily-stock",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopDailyStock",
@@ -2666,7 +2666,7 @@
         },
         {
             "name": "jpeters8889/shop-generate-resend-slip-button",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopGenerateResendSlipButton",
@@ -2707,7 +2707,7 @@
         },
         {
             "name": "jpeters8889/shop-order-open-dispatch-slip",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderOpenDispatchSlip",
@@ -2743,7 +2743,7 @@
         },
         {
             "name": "jpeters8889/shop-order-shipping-action",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderShippingAction",
@@ -2779,7 +2779,7 @@
         },
         {
             "name": "jpeters8889/wte-nationwide-branch-import",
-            "version": "dev-feature/340",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/WteNationwideBranchImport",

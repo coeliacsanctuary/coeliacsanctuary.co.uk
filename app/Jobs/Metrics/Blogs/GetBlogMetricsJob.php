@@ -45,8 +45,14 @@ class GetBlogMetricsJob implements ShouldQueue
         ]);
 
         try {
+            $today = today();
+
+            if (now()->hour <= 7 && $this->blog->created_at->lte(now()->subMonths(6))) {
+                $today = $today->subDay();
+            }
+
             $metric = JourneyTracker::query()
-                ->today()
+                ->today($today)
                 ->count(
                     'views',
                     fn (QueryDescriptor $query) => $query
