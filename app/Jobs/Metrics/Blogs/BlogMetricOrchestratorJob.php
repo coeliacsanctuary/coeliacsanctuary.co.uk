@@ -26,8 +26,6 @@ class BlogMetricOrchestratorJob implements ShouldQueue
 
     public function handle(): void
     {
-        $delayTime = 0;
-
         Blog::query()
             ->latest()
             ->with(['metrics' => fn ($query) => $query->whereDate('date', today())])
@@ -37,8 +35,7 @@ class BlogMetricOrchestratorJob implements ShouldQueue
                     return;
                 }
 
-                GetBlogMetricsJob::dispatch($blog)->delay($delayTime);
-                $delayTime += 15;
+                GetBlogMetricsJob::dispatch($blog);
             });
     }
 

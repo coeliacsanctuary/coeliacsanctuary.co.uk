@@ -29,9 +29,7 @@ class GetBlogMetricsJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public int $backOff = 60;
-
-    public int $tries = 1;
+    public int $tries = 5;
 
     public function __construct(protected Blog $blog)
     {
@@ -111,7 +109,7 @@ class GetBlogMetricsJob implements ShouldQueue
             [
                 [
                     'blog_id' => $this->blog->id,
-                    'date' => today()->toDateString(),
+                    'date' => $today->toDateString(),
                     'page_views' => $metric->get('views'),
                     'page_comment_views' => $metric->get('comment_views'),
                     'detail_card_views' => $metric->get('detail_card_views'),
