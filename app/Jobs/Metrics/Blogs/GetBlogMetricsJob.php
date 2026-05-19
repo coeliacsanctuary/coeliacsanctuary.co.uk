@@ -29,7 +29,7 @@ class GetBlogMetricsJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public int $tries = 5;
+    public int $tries = 1;
 
     public function __construct(protected Blog $blog)
     {
@@ -123,7 +123,7 @@ class GetBlogMetricsJob implements ShouldQueue
 
     public function middleware(): array
     {
-        return [new RateLimited('metrics')];
+        return [];
     }
 
     public function failed(?Throwable $e): void
