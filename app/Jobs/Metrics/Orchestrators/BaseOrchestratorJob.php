@@ -15,7 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
-abstract class BaseOrchestrator implements ShouldQueue, ShouldBeUnique
+abstract class BaseOrchestratorJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -69,14 +69,14 @@ abstract class BaseOrchestrator implements ShouldQueue, ShouldBeUnique
 
     public static function scheduleAll(Schedule $schedule): void
     {
-        $schedule->job(MinuteOrchestrator::class)->everyMinute();
-        $schedule->job(TenMinuteOrchestrator::class)->everyTenMinutes();
-        $schedule->job(ThirtyMinuteOrchestrator::class)->everyThirtyMinutes();
-        $schedule->job(HourlyOrchestrator::class)->hourly();
-        $schedule->job(TwoHourOrchestrator::class)->everyTwoHours();
-        $schedule->job(ThreeHourOrchestrator::class)->everyThreeHours();
-        $schedule->job(SixHourOrchestrator::class)->everySixHours();
-        $schedule->job(TwelveHourOrchestrator::class)->cron('0 */12 * * *');
-        $schedule->job(DailyOrchestrator::class)->daily();
+        $schedule->job(MinuteOrchestratorJob::class)->everyMinute();
+        $schedule->job(TenMinuteOrchestratorJob::class)->everyTenMinutes();
+        $schedule->job(ThirtyMinuteOrchestratorJob::class)->everyThirtyMinutes();
+        $schedule->job(HourlyOrchestratorJob::class)->hourly();
+        $schedule->job(TwoHourOrchestratorJob::class)->everyTwoHours();
+        $schedule->job(ThreeHourOrchestratorJob::class)->everyThreeHours();
+        $schedule->job(SixHourOrchestratorJob::class)->everySixHours();
+        $schedule->job(TwelveHourOrchestratorJob::class)->cron('0 */12 * * *');
+        $schedule->job(DailyOrchestratorJob::class)->daily();
     }
 }

@@ -16,8 +16,8 @@ use App\Http\Api\V1\Middleware\ExternalApiSourceMiddleware;
 use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Response\Inertia;
+use App\Jobs\Metrics\Orchestrators\BaseOrchestratorJob;
 use App\Models\Shop\ShopOrderDownloadLink;
-use App\Jobs\Metrics\Orchestrators\BaseOrchestrator;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -129,7 +129,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(ProcessEateryWebsiteChecksCommand::class)->daily();
         $schedule->command(CleanUpNovaPreviewsCommand::class)->daily();
 
-        BaseOrchestrator::scheduleAll($schedule);
+        BaseOrchestratorJob::scheduleAll($schedule);
 
         if (app()->environment('production')) {
             $schedule->command('about')->thenPing('http://beats.envoyer.io/heartbeat/oKkQ7etgPUsSnOW');

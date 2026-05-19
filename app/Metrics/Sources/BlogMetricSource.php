@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Jobs\Metrics\Sources;
+namespace App\Metrics\Sources;
 
 use App\Contracts\Metrics\MetricSource;
 use App\Jobs\Metrics\Blogs\GetBlogMetricsJob;

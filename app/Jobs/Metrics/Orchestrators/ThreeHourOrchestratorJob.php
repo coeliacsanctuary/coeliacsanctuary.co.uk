@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Jobs\Metrics\Orchestrators;
 
-use App\Jobs\Metrics\Sources\BlogMetricSource;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Metrics\Sources\BlogMetricSource;
 use Illuminate\Support\Carbon;
 
-class ThreeHourOrchestrator extends BaseOrchestrator
+class ThreeHourOrchestratorJob extends BaseOrchestratorJob implements ShouldQueue
 {
     protected function intervalMinutes(): int
     {

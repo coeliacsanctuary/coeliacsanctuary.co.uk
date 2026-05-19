@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Jobs\Metrics\Sources;
 
 use App\Jobs\Metrics\Blogs\GetBlogMetricsJob;
-use App\Jobs\Metrics\Sources\BlogMetricSource;
+use App\Metrics\Sources\BlogMetricSource;
 use App\Models\Blogs\Blog;
 use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\Test;

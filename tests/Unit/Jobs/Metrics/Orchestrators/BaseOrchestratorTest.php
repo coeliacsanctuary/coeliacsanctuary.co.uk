@@ -6,8 +6,8 @@ namespace Tests\Unit\Jobs\Metrics\Orchestrators;
 
 use App\Contracts\Metrics\MetricSource;
 use App\Jobs\Metrics\Blogs\GetBlogMetricsJob;
-use App\Jobs\Metrics\Orchestrators\BaseOrchestrator;
-use App\Jobs\Metrics\Sources\BlogMetricSource;
+use App\Jobs\Metrics\Orchestrators\BaseOrchestratorJob;
+use App\Metrics\Sources\BlogMetricSource;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogMetric;
 use Illuminate\Support\Facades\Bus;
@@ -23,14 +23,14 @@ class BaseOrchestratorTest extends TestCase
         Bus::fake();
     }
 
-    protected function makeOrchestrator(int $intervalMinutes = 10, ?MetricSource $source = null): BaseOrchestrator
+    protected function makeOrchestrator(int $intervalMinutes = 10, ?MetricSource $source = null): BaseOrchestratorJob
     {
         $source ??= new BlogMetricSource(
             createdAfter: now()->subWeek(),
             createdBefore: now()->subHours(24),
         );
 
-        return new class ($intervalMinutes, $source) extends BaseOrchestrator {
+        return new class ($intervalMinutes, $source) extends BaseOrchestratorJob {
             public function __construct(
                 private int $minutes,
                 private MetricSource $testSource,
@@ -148,7 +148,7 @@ class BaseOrchestratorTest extends TestCase
             createdBefore: now()->subHours(24),
         );
 
-        $orchestrator = new class (10, [$sourceA, $sourceB]) extends BaseOrchestrator {
+        $orchestrator = new class (10, [$sourceA, $sourceB]) extends BaseOrchestratorJob {
             public function __construct(
                 private int $minutes,
                 private array $testSources,
