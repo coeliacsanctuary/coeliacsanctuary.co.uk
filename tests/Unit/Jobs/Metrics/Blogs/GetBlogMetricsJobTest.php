@@ -8,6 +8,7 @@ use App\Jobs\Metrics\Blogs\GetBlogMetricsJob;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogMetric;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -34,9 +35,9 @@ class GetBlogMetricsJobTest extends TestCase
         ]);
     }
 
-    protected function runJob(): void
+    protected function runJob(?Carbon $date = null): void
     {
-        (new GetBlogMetricsJob($this->blog))->handle();
+        (new GetBlogMetricsJob($this->blog, $date ?? today()))->handle();
     }
 
     #[Test]
@@ -176,48 +177,15 @@ class GetBlogMetricsJobTest extends TestCase
         });
     }
 
-    // --- Midnight / first-run logic ---
-
     #[Test]
-    public function itUsesYesterdayWhenRunningBefore8amWithNoTodayMetric(): void
+    public function itWritesMetricsForTheGivenDate(): void
     {
-        $this->travelTo(now()->setHour(3));
+        $date = today()->subDay();
 
-        $this->runJob();
-
-        $this->assertDatabaseCount(BlogMetric::class, 1);
+        $this->runJob($date);
 
         $metric = BlogMetric::query()->first();
 
-        $this->assertEquals(today()->subDay()->toDateString(), $metric->date->toDateString());
-    }
-
-    #[Test]
-    public function itUsesTodayWhenRunningBefore8amButTodayMetricAlreadyExists(): void
-    {
-        $this->travelTo(now()->setHour(3));
-
-        $this->create(BlogMetric::class, [
-            'blog_id' => $this->blog->id,
-            'date' => today(),
-        ]);
-
-        $this->runJob();
-
-        $metric = BlogMetric::query()->first();
-
-        $this->assertEquals(today()->toDateString(), $metric->date->toDateString());
-    }
-
-    #[Test]
-    public function itUsesTodayWhenRunningAt8amOrLater(): void
-    {
-        $this->travelTo(now()->setHour(8));
-
-        $this->runJob();
-
-        $metric = BlogMetric::query()->first();
-
-        $this->assertEquals(today()->toDateString(), $metric->date->toDateString());
+        $this->assertEquals($date->toDateString(), $metric->date->toDateString());
     }
 }

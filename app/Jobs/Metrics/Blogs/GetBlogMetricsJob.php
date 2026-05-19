@@ -31,8 +31,10 @@ class GetBlogMetricsJob implements ShouldQueue
 
     public int $tries = 1;
 
-    public function __construct(protected Blog $blog)
-    {
+    public function __construct(
+        protected Blog $blog,
+        public Carbon $date,
+    ) {
         $this->onQueue('metrics');
     }
 
@@ -44,7 +46,7 @@ class GetBlogMetricsJob implements ShouldQueue
 
         try {
             $metric = JourneyTracker::query()
-                ->today($this->targetDate())
+                ->today($this->date)
                 ->count(
                     'views',
                     fn (QueryDescriptor $query) => $query
@@ -103,7 +105,7 @@ class GetBlogMetricsJob implements ShouldQueue
             [
                 [
                     'blog_id' => $this->blog->id,
-                    'date' => $this->targetDate()->toDateString(),
+                    'date' => $this->date->toDateString(),
                     'page_views' => $metric->get('views'),
                     'page_comment_views' => $metric->get('comment_views'),
                     'detail_card_views' => $metric->get('detail_card_views'),
@@ -113,19 +115,6 @@ class GetBlogMetricsJob implements ShouldQueue
             ['blog_id', 'date'],
             ['page_views', 'page_comment_views', 'detail_card_views', 'collection_card_views']
         );
-    }
-
-    protected function targetDate(): Carbon
-    {
-        if (now()->hour >= 8) {
-            return today();
-        }
-
-        if (BlogMetric::query()->where('blog_id', $this->blog->id)->whereDate('date', today())->exists()) {
-            return today();
-        }
-
-        return today()->subDay();
     }
 
     public function middleware(): array

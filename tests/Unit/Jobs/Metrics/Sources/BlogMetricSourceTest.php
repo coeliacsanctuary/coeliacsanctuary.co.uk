@@ -86,8 +86,8 @@ class BlogMetricSourceTest extends TestCase
         $blog = $this->create(Blog::class);
         $source = new BlogMetricSource();
 
-        $source->dispatch($blog, 30);
+        $source->dispatch($blog, 30, today());
 
-        Bus::assertDispatched(GetBlogMetricsJob::class, fn ($job) => $job->delay === 30);
+        Bus::assertDispatched(GetBlogMetricsJob::class, fn (GetBlogMetricsJob $job) => $job->delay === 30 && $job->date->isToday());
     }
 }

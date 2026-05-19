@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 abstract class BaseOrchestratorJob implements ShouldQueue, ShouldBeUnique
@@ -35,24 +36,38 @@ abstract class BaseOrchestratorJob implements ShouldQueue, ShouldBeUnique
     public function handle(): void
     {
         $delayTime = 0;
+        $date = $this->targetDate();
 
         foreach ($this->sources() as $source) {
             $source->query()
-                ->with([$source->metricsRelation() => fn ($query) => $query->whereDate('date', today())])
+                ->with([$source->metricsRelation() => fn ($query) => $query->whereDate('date', $date)])
                 ->lazy()
-                ->each(function (Model $model) use (&$delayTime, $source): void {
-                    if ( ! $this->shouldDispatch($model, $source)) {
+                ->each(function (Model $model) use (&$delayTime, $source, $date): void {
+                    if ( ! $this->shouldDispatch($model, $source, $date)) {
                         return;
                     }
 
-                    $source->dispatch($model, $delayTime);
-                    ++$delayTime;
+                    $source->dispatch($model, $delayTime, $date);
+                    $delayTime += 15;
                 });
         }
     }
 
-    protected function shouldDispatch(Model $model, MetricSource $source): bool
+    protected function targetDate(): Carbon
     {
+        if ((now()->hour * 60 + now()->minute) < $this->intervalMinutes()) {
+            return today()->subDay();
+        }
+
+        return today();
+    }
+
+    protected function shouldDispatch(Model $model, MetricSource $source, Carbon $date): bool
+    {
+        if ($date->isYesterday()) {
+            return true;
+        }
+
         /** @var Collection<int, Model> $related */
         $related = $model->getRelation($source->metricsRelation());
 

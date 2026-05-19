@@ -41,9 +41,9 @@ class BlogMetricSource implements MetricSource
         return 'metrics';
     }
 
-    public function dispatch(Model $model, int $delaySeconds): void
+    public function dispatch(Model $model, int $delaySeconds, Carbon $date): void
     {
         assert($model instanceof Blog);
-        GetBlogMetricsJob::dispatch($model)->delay($delaySeconds);
+        GetBlogMetricsJob::dispatch($model, $date)->delay($delaySeconds);
     }
 }
