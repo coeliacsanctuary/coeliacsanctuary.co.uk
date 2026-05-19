@@ -46,7 +46,7 @@ abstract class BaseOrchestratorJob implements ShouldQueue, ShouldBeUnique
                     }
 
                     $source->dispatch($model, $delayTime);
-                    $delayTime += 15;
+                    ++$delayTime;
                 });
         }
     }
