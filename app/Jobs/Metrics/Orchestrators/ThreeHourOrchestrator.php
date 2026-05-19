@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs\Metrics\Orchestrators;
+
+use App\Jobs\Metrics\Sources\BlogMetricSource;
+use Illuminate\Support\Carbon;
+
+class ThreeHourOrchestrator extends BaseOrchestrator
+{
+    protected function intervalMinutes(): int
+    {
+        return Carbon::MINUTES_PER_HOUR * 3;
+    }
+
+    protected function sources(): array
+    {
+        return [
+            new BlogMetricSource(
+                createdAfter: now()->subMonths(6),
+                createdBefore: now()->subMonths(2),
+            ),
+        ];
+    }
+}

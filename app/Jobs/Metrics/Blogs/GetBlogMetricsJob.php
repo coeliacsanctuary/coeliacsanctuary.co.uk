@@ -12,8 +12,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Jpeters8889\JourneyTrackerLaravel\Enums\EventType;
 use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
@@ -43,14 +43,8 @@ class GetBlogMetricsJob implements ShouldQueue
         ]);
 
         try {
-            $today = today();
-
-            if (now()->hour <= 7 && $this->blog->created_at->lte(now()->subMonths(6))) {
-                $today = $today->subDay();
-            }
-
             $metric = JourneyTracker::query()
-                ->today($today)
+                ->today($this->targetDate())
                 ->count(
                     'views',
                     fn (QueryDescriptor $query) => $query
@@ -109,7 +103,7 @@ class GetBlogMetricsJob implements ShouldQueue
             [
                 [
                     'blog_id' => $this->blog->id,
-                    'date' => $today->toDateString(),
+                    'date' => $this->targetDate()->toDateString(),
                     'page_views' => $metric->get('views'),
                     'page_comment_views' => $metric->get('comment_views'),
                     'detail_card_views' => $metric->get('detail_card_views'),
@@ -119,6 +113,19 @@ class GetBlogMetricsJob implements ShouldQueue
             ['blog_id', 'date'],
             ['page_views', 'page_comment_views', 'detail_card_views', 'collection_card_views']
         );
+    }
+
+    protected function targetDate(): Carbon
+    {
+        if (now()->hour >= 8) {
+            return today();
+        }
+
+        if (BlogMetric::query()->where('blog_id', $this->blog->id)->whereDate('date', today())->exists()) {
+            return today();
+        }
+
+        return today()->subDay();
     }
 
     public function middleware(): array

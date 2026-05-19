@@ -175,4 +175,49 @@ class GetBlogMetricsJobTest extends TestCase
                 && $event['parameters']['type'] === 'Blog';
         });
     }
+
+    // --- Midnight / first-run logic ---
+
+    #[Test]
+    public function itUsesYesterdayWhenRunningBefore8amWithNoTodayMetric(): void
+    {
+        $this->travelTo(now()->setHour(3));
+
+        $this->runJob();
+
+        $this->assertDatabaseCount(BlogMetric::class, 1);
+
+        $metric = BlogMetric::query()->first();
+
+        $this->assertEquals(today()->subDay()->toDateString(), $metric->date->toDateString());
+    }
+
+    #[Test]
+    public function itUsesTodayWhenRunningBefore8amButTodayMetricAlreadyExists(): void
+    {
+        $this->travelTo(now()->setHour(3));
+
+        $this->create(BlogMetric::class, [
+            'blog_id' => $this->blog->id,
+            'date' => today(),
+        ]);
+
+        $this->runJob();
+
+        $metric = BlogMetric::query()->first();
+
+        $this->assertEquals(today()->toDateString(), $metric->date->toDateString());
+    }
+
+    #[Test]
+    public function itUsesTodayWhenRunningAt8amOrLater(): void
+    {
+        $this->travelTo(now()->setHour(8));
+
+        $this->runJob();
+
+        $metric = BlogMetric::query()->first();
+
+        $this->assertEquals(today()->toDateString(), $metric->date->toDateString());
+    }
 }
