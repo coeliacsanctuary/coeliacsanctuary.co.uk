@@ -12,8 +12,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Jpeters8889\JourneyTrackerLaravel\Enums\EventType;
 use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
@@ -29,12 +29,12 @@ class GetBlogMetricsJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public int $backOff = 60;
-
     public int $tries = 1;
 
-    public function __construct(protected Blog $blog)
-    {
+    public function __construct(
+        protected Blog $blog,
+        public Carbon $date,
+    ) {
         $this->onQueue('metrics');
     }
 
@@ -45,14 +45,8 @@ class GetBlogMetricsJob implements ShouldQueue
         ]);
 
         try {
-            $today = today();
-
-            if (now()->hour <= 7 && $this->blog->created_at->lte(now()->subMonths(6))) {
-                $today = $today->subDay();
-            }
-
             $metric = JourneyTracker::query()
-                ->today($today)
+                ->today($this->date)
                 ->count(
                     'views',
                     fn (QueryDescriptor $query) => $query
@@ -111,7 +105,7 @@ class GetBlogMetricsJob implements ShouldQueue
             [
                 [
                     'blog_id' => $this->blog->id,
-                    'date' => today()->toDateString(),
+                    'date' => $this->date->toDateString(),
                     'page_views' => $metric->get('views'),
                     'page_comment_views' => $metric->get('comment_views'),
                     'detail_card_views' => $metric->get('detail_card_views'),
@@ -125,7 +119,7 @@ class GetBlogMetricsJob implements ShouldQueue
 
     public function middleware(): array
     {
-        return [new RateLimited('metrics')];
+        return [];
     }
 
     public function failed(?Throwable $e): void
