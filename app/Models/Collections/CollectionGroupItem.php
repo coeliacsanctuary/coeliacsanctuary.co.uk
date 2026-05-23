@@ -21,6 +21,14 @@ class CollectionGroupItem extends Model implements Sortable
         'sort_on_has_many' => true,
     ];
 
+    protected static function booted()
+    {
+        static::saved(function(self $item) {
+            $item->group?->touch();
+            $item->group?->collection?->touch();
+        });
+    }
+
     /** @return BelongsTo<CollectionGroup, $this> */
     public function group(): BelongsTo
     {

@@ -7,6 +7,7 @@ namespace App\Nova;
 use Jpeters8889\AddressField\FieldServiceProvider as AddressFieldServiceProvider;
 use Jpeters8889\AdvancedNovaMediaLibrary\AdvancedNovaMediaLibraryServiceProvider;
 use Jpeters8889\Body\FieldServiceProvider as BodyFieldServiceProvider;
+use Jpeters8889\CollectionItemSearch\FieldServiceProvider as CollectionItemSearchFieldServiceProvider;
 use Jpeters8889\CountryIcon\FieldServiceProvider as CountryFieldServiceProvider;
 use Jpeters8889\EateryLocationSearch\FieldServiceProvider as EateryLocationSearchFieldServiceProvider;
 use Jpeters8889\EateryOpeningTimes\FieldServiceProvider as EateryOpeningTimesFieldServiceProvider;
@@ -35,6 +36,7 @@ class FieldRegistrar
             ShopShippingActionFieldServiceProvider::class,
             ShopGenerateResendSlipButtonFieldServiceProvider::class,
             HiddenWritableFieldServiceProvider::class,
+            CollectionItemSearchFieldServiceProvider::class,
             EateryLocationSearchFieldServiceProvider::class,
             PreviewButtonFieldServiceProvider::class,
         ];

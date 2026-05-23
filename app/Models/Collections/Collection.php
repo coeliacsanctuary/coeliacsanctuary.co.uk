@@ -34,6 +34,8 @@ class Collection extends Model implements HasMedia
 
     use LinkableModel;
 
+    protected $with = ['groups', 'groups.items'];
+
     protected $casts = [
         'display_on_homepage' => 'bool',
         'remove_from_homepage' => 'datetime',
