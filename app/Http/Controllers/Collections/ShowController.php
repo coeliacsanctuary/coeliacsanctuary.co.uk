@@ -13,7 +13,7 @@ class ShowController
 {
     public function __invoke(Inertia $inertia, Collection $collection): Response
     {
-        $collection->load(['items', 'items.item', 'items.item.media']);
+        $collection->load(['groups', 'groups.items', 'groups.items.item', 'groups.items.item.media']);
 
         return $inertia
             ->title($collection->title)

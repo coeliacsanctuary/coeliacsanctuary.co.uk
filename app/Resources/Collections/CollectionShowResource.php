@@ -16,8 +16,6 @@ class CollectionShowResource extends JsonResource
     /** @return array */
     public function toArray(Request $request)
     {
-        $items = $this->items->filter(fn (CollectionItem $collectionItem) => $collectionItem->item !== null);
-
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -26,7 +24,7 @@ class CollectionShowResource extends JsonResource
             'updated' => $this->lastUpdated,
             'description' => $this->description,
             'body' => $this->body,
-            'items' => new CollectedItemCollection($items),
+            'groups' => CollectionGroupResource::collection($this->groups),
         ];
     }
 }
