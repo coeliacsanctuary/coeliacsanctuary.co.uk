@@ -20,7 +20,7 @@ class CollectionDetailCardViewResource extends JsonResource
             'image' => $this->main_image_as_wepb ?? $this->main_image,
             'date' => $this->lastUpdated,
             'description' => $this->meta_description,
-            'number_of_items' => $this->items_count,
+            'number_of_items' => $this->groups->sum('items_count'),
         ];
     }
 }

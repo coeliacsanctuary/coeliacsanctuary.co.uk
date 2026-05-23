@@ -6,6 +6,7 @@ namespace App\Actions\Collections;
 
 use App\Models\Collections\Collection;
 use App\ResourceCollections\Collections\CollectionListCollection;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class GetCollectionsForIndexAction
 {
@@ -14,7 +15,7 @@ class GetCollectionsForIndexAction
         return new CollectionListCollection(
             Collection::query()
                 ->with(['media'])
-                ->withCount('items')
+                ->with(['groups' => fn(Relation $relation) => $relation->withCount('items')])
                 ->latest('updated_at')
                 ->paginate($perPage)
         );
