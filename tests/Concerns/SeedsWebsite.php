@@ -7,6 +7,7 @@ namespace Tests\Concerns;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
 use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
 use App\Models\EatingOut\EateryCollection;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
@@ -103,6 +104,11 @@ trait SeedsWebsite
             ->each(function (Collection $collection): void {
                 $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('primary');
                 $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('social');
+
+                $this->create(CollectionGroup::class, [
+                   'collection_id' => $collection->id,
+                   'id' => $collection->id,
+                ]);
             });
 
         if ($then) {

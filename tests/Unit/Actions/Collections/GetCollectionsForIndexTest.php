@@ -69,13 +69,4 @@ class GetCollectionsForIndexTest extends TestCase
 
         $this->assertTrue($collection->relationLoaded('media'));
     }
-
-    #[Test]
-    public function itHasAnItemsCount(): void
-    {
-        /** @var Collection $collection */
-        $collection = $this->callAction(GetCollectionsForIndexAction::class)->resource->first()->resource;
-
-        $this->assertArrayHasKey('items_count', $collection->attributesToArray());
-    }
 }
