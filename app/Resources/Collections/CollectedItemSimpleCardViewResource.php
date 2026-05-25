@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Resources\Collections;
 
 use App\Models\Blogs\Blog;
-use App\Models\Collections\CollectionItem;
+use App\Models\Collections\CollectionGroupItem;
 use App\Models\Recipes\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin CollectionItem
+ * @mixin CollectionGroupItem
  */
 class CollectedItemSimpleCardViewResource extends JsonResource
 {

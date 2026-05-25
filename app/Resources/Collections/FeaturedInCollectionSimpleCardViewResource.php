@@ -16,7 +16,7 @@ class FeaturedInCollectionSimpleCardViewResource extends JsonResource
     public function toArray(Request $request)
     {
         /** @var Collection $collection */
-        $collection = $this->group->collection;
+        $collection = $this->group?->collection;
 
         return [
             'title' => $collection->title,
