@@ -18,7 +18,7 @@ class BlogShowResource extends JsonResource
     /** @return array{id: number, title: string|Stringable, image: string, published: string, updated: string, description: string, body: string|Stringable, hasTwitterEmbed: bool, tags: BlogTagCollection} */
     public function toArray(Request $request)
     {
-        $this->load(['associatedCollections', 'associatedCollections.collection', 'associatedCollections.collection.media']);
+        $this->load(['associatedCollectionGroups', 'associatedCollectionGroups.group.collection', 'associatedCollectionGroups.group.collection.media']);
 
         $twitterReplacements = [
             '<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
@@ -43,7 +43,7 @@ class BlogShowResource extends JsonResource
             'hasTwitterEmbed' => Str::contains($this->body, $twitterReplacements),
             'show_author' => $this->show_author,
             'tags' => new BlogTagCollection($this->tags),
-            'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollections),
+            'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollectionGroups),
         ];
     }
 }
