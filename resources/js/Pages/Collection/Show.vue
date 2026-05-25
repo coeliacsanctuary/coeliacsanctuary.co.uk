@@ -2,7 +2,7 @@
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { CollectionPage } from '@/types/CollectionTypes';
-import CollectionItemCard from '@/Components/PageSpecific/Collections/CollectionItemCard.vue';
+import CollectionGroupCard from '@/Components/PageSpecific/Collections/CollectionGroupCard.vue';
 
 defineProps<{ collection: CollectionPage }>();
 </script>
@@ -47,12 +47,11 @@ defineProps<{ collection: CollectionPage }>();
       class="prose prose-lg max-w-none md:prose-xl"
       v-html="collection.body"
     />
-
   </Card>
 
-  <CollectionItemCard
-    v-for="item in collection.items"
-    :key="item.title"
-    :item="item"
+  <CollectionGroupCard
+    v-for="group in collection.groups"
+    :key="group.title"
+    :group="group"
   />
 </template>

@@ -15,17 +15,34 @@ export type CollectionPage = {
   author: string;
   description: string;
   body?: string;
+  groups: CollectionGroup[];
+};
+
+export type CollectionGroup = {
+  title?: string;
+  body?: string;
   items: CollectionItem[];
 };
 
+export type CollectableType = 'Blog' | 'Recipe' | 'Eatery' | 'NationwideBranch';
+
 export type CollectionItem = {
-  type: 'Blog' | 'Recipe';
+  type: CollectableType;
   title: string;
   description: string;
-  image: string;
-  square_image?: string;
   date: string;
   link: string;
+};
+
+export type BlogCollectionItem = CollectionItem & {
+  type: 'Blog';
+  image: string;
+};
+
+export type RecipeCollectionItem = CollectionItem & {
+  type: 'Recipe';
+  image: string;
+  square_image?: string;
 };
 
 export type HomepageCollection = {
