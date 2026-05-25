@@ -21,9 +21,9 @@ class CollectionGroupItem extends Model implements Sortable
         'sort_on_has_many' => true,
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        static::saved(function(self $item) {
+        static::saved(function (self $item): void {
             $item->group?->touch();
             $item->group?->collection?->touch();
         });

@@ -15,7 +15,7 @@ class GetCollectionsForIndexAction
         return new CollectionListCollection(
             Collection::query()
                 ->with(['media'])
-                ->with(['groups' => fn(Relation $relation) => $relation->withCount('items')])
+                ->with(['groups' => fn (Relation $relation) => $relation->withCount('items')])
                 ->latest('updated_at')
                 ->paginate($perPage)
         );

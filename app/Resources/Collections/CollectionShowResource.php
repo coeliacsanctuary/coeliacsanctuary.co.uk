@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Resources\Collections;
 
 use App\Models\Collections\Collection;
-use App\Models\Collections\CollectionItem;
-use App\ResourceCollections\Collections\CollectedItemCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
