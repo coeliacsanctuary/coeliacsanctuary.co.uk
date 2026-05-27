@@ -71,10 +71,12 @@ defineProps<{ item: EateryCollectionItem }>();
           />
         </div>
 
+        <div v-else />
+
         <div
           class="rounded-lg bg-primary-light/50 px-4 py-2 text-sm leading-none font-semibold md:text-base"
         >
-          <span v-text="item.type" />
+          <span v-text="'Eatery'" />
         </div>
       </div>
     </div>

@@ -51,7 +51,7 @@ export type RecipeCollectionItem = CollectionItem & {
 };
 
 export type EateryCollectionItem = CollectionItem & {
-  type: 'Eatery';
+  type: 'Eatery' | 'NationwideBranch';
   name: string;
   full_location: string;
   description: string;

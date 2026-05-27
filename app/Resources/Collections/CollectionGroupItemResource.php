@@ -87,6 +87,23 @@ class CollectionGroupItemResource extends JsonResource
 
     protected function renderBranch(NationwideBranch $branch): array
     {
-        return [];
+        return [
+            'name' => $this->item_title ?? ($branch->name ? "{$branch->name} - ({$branch->eatery->name})" : $branch->eatery->name),
+            'full_location' => $branch->full_location,
+            'description' => $this->item_description ?? $branch->eatery->info,
+            'location' => [
+                'address' => collect(explode("\n", $branch->address))
+                    ->map(fn (string $line) => mb_trim($line))
+                    ->join(', '),
+                'lat' => $branch->lat,
+                'lng' => $branch->lng,
+            ],
+            'reviews' => [
+                'number' => $branch->reviews->count(),
+                'average' => $branch->average_rating,
+            ],
+            'link' => $branch->link(),
+        ];
+
     }
 }

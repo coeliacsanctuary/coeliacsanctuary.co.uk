@@ -37,7 +37,7 @@ useJourneyTracking().logWhenVisible(
     />
 
     <EateryCollectionItem
-      v-if="item.type === 'Eatery'"
+      v-if="item.type === 'Eatery' || item.type === 'NationwideBranch'"
       :item="item as EateryCollectionItemType"
     />
   </div>
