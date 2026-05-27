@@ -84,7 +84,7 @@ class GetLatestCollectionsForHomePageActionTest extends TestCase
         $collection->update(['display_on_homepage' => true]);
 
         /** @var CollectionGroup $group */
-        $group = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+        $group = $collection->groups->first();
 
         $this->build(Blog::class)->count(5)->create()->each(function (Blog $blog) use ($group): void {
             $this->build(CollectionGroupItem::class)->forBlog($blog)->create(['collection_group_id' => $group->id]);
@@ -116,11 +116,11 @@ class GetLatestCollectionsForHomePageActionTest extends TestCase
         DB::enableQueryLog();
 
         $this->callAction(GetLatestCollectionsForHomepageAction::class);
-        // collections, groups, and media relations
-        $this->assertCount(3, DB::getQueryLog());
+        // collections, groups, group items, and media relations
+        $this->assertCount(4, DB::getQueryLog());
 
         $this->callAction(GetLatestCollectionsForHomepageAction::class);
 
-        $this->assertCount(3, DB::getQueryLog());
+        $this->assertCount(4, DB::getQueryLog());
     }
 }

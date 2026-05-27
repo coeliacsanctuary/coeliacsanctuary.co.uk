@@ -72,20 +72,24 @@ class CollectionModelTest extends TestCase
     #[Test]
     public function itHasManyGroups(): void
     {
-        $this->assertEmpty($this->collection->groups);
+        $collection = $this->create(Collection::class);
 
-        $this->create(CollectionGroup::class, ['collection_id' => $this->collection->id]);
+        $this->assertEmpty($collection->groups);
 
-        $this->assertCount(1, $this->collection->refresh()->groups);
+        $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $this->assertCount(1, $collection->refresh()->groups);
     }
 
     #[Test]
     public function groupsAreOrderedByPosition(): void
     {
-        $first = $this->create(CollectionGroup::class, ['collection_id' => $this->collection->id]);
-        $second = $this->create(CollectionGroup::class, ['collection_id' => $this->collection->id]);
+        $collection = $this->create(Collection::class);
 
-        $groups = $this->collection->refresh()->groups;
+        $first = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+        $second = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $groups = $collection->refresh()->groups;
 
         $this->assertTrue($groups->first()->is($first));
         $this->assertTrue($groups->last()->is($second));

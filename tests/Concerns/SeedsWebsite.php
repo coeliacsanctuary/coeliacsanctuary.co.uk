@@ -106,8 +106,8 @@ trait SeedsWebsite
                 $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('social');
 
                 $this->create(CollectionGroup::class, [
-                   'collection_id' => $collection->id,
-                   'id' => $collection->id,
+                    'collection_id' => $collection->id,
+                    'id' => $collection->id,
                 ]);
             });
 
