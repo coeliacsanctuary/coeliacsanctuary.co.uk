@@ -66,7 +66,23 @@ class CollectionGroupItemResource extends JsonResource
 
     protected function renderEatery(Eatery $eatery): array
     {
-        return [];
+        return [
+            'name' => $this->item_title ?? $eatery->name,
+            'full_location' => $eatery->full_location,
+            'description' => $this->item_description ?? $eatery->info,
+            'location' => [
+                'address' => collect(explode("\n", $eatery->address))
+                    ->map(fn (string $line) => mb_trim($line))
+                    ->join(', '),
+                'lat' => $eatery->lat,
+                'lng' => $eatery->lng,
+            ],
+            'reviews' => [
+                'number' => $eatery->reviews->count(),
+                'average' => $eatery->average_rating,
+            ],
+            'link' => $eatery->link(),
+        ];
     }
 
     protected function renderBranch(NationwideBranch $branch): array

@@ -1,4 +1,5 @@
 import { HomeHoverItem } from '@/types/Types';
+import { EateryLocation, StarRating } from '@/types/EateryTypes';
 
 export type CollectionDetailCard = HomeHoverItem & {
   description: string;
@@ -28,21 +29,37 @@ export type CollectableType = 'Blog' | 'Recipe' | 'Eatery' | 'NationwideBranch';
 
 export type CollectionItem = {
   type: CollectableType;
-  title: string;
-  description: string;
-  date: string;
   link: string;
+  [T: string]: unknown;
 };
 
 export type BlogCollectionItem = CollectionItem & {
   type: 'Blog';
+  title: string;
+  description: string;
+  date: string;
   image: string;
 };
 
 export type RecipeCollectionItem = CollectionItem & {
   type: 'Recipe';
+  title: string;
+  description: string;
+  date: string;
   image: string;
   square_image?: string;
+};
+
+export type EateryCollectionItem = CollectionItem & {
+  type: 'Eatery';
+  name: string;
+  full_location: string;
+  description: string;
+  location: EateryLocation;
+  reviews: {
+    number: number;
+    average: StarRating;
+  };
 };
 
 export type HomepageCollection = {

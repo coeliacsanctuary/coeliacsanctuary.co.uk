@@ -32,7 +32,7 @@ defineProps<{ item: RecipeCollectionItem }>();
       </Link>
     </div>
 
-    <div class="mt-4 flex flex-1 flex-col space-y-3">
+    <div class="mt-4 flex flex-1 flex-col space-y-3 md:mt-0">
       <Link
         :href="item.link"
         prefetch
