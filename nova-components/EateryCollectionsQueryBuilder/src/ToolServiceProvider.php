@@ -6,15 +6,12 @@ namespace Jpeters8889\EateryCollectionsQueryBuilder;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Jpeters8889\RefreshAdsTxt\Http\Middleware\Authorize;
+use Jpeters8889\EateryCollectionsQueryBuilder\Http\Middleware\Authorize;
 use Laravel\Nova\Events\ServingNova;
 use Laravel\Nova\Nova;
 
-class FieldServiceProvider extends ServiceProvider
+class ToolServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         $this->app->booted(function (): void {
@@ -22,9 +19,8 @@ class FieldServiceProvider extends ServiceProvider
         });
 
         Nova::serving(function (ServingNova $event): void {
-            Nova::mix('eatery-collections-query-builder', __DIR__ . '/../dist/mix-manifest.json');
+            //
         });
-
     }
 
     protected function routes(): void
@@ -33,14 +29,14 @@ class FieldServiceProvider extends ServiceProvider
             return;
         }
 
+        Nova::router(['nova', 'nova.auth', Authorize::class], 'eatery-collections-query-builder')
+            ->group(__DIR__ . '/../routes/inertia.php');
+
         Route::middleware(['nova', 'nova.auth', Authorize::class])
             ->prefix('nova-vendor/eatery-collections-query-builder')
             ->group(__DIR__ . '/../routes/api.php');
     }
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //

@@ -13,6 +13,7 @@ use App\Nova\NovaMacros;
 use App\Nova\ResourceRegistrar;
 use Illuminate\Support\Facades\Gate;
 use Jpeters8889\AddressField\FieldServiceProvider as AddressFieldServiceProvider;
+use Jpeters8889\EateryCollectionsQueryBuilder\EateryCollectionsQueryBuilder as EateryCollectionsQueryBuilderTool;
 use Jpeters8889\OrderDispatchSlip\OrderDispatchSlip as DispatchSlipTool;
 use Jpeters8889\RefreshAdsTxt\RefreshAdsTxt as RefreshAdsTxtTool;
 use Jpeters8889\ShopDailyStock\ShopDailyStock;
@@ -71,6 +72,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function tools(): array
     {
         return [
+            new EateryCollectionsQueryBuilderTool(),
             new DispatchSlipTool(),
             new RefreshAdsTxtTool(),
             new ShopDailyStock(),

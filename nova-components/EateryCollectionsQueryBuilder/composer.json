@@ -25,7 +25,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Jpeters8889\\EateryCollectionsQueryBuilder\\FieldServiceProvider"
+                "Jpeters8889\\EateryCollectionsQueryBuilder\\ToolServiceProvider"
             ]
         }
     },

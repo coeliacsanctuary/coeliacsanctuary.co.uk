@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a2394f5edc40e28e6194ecf4e0d5a04e",
+    "content-hash": "a75a92778cfdf6d5c1c80b125acd993d",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2273,7 +2273,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryCollectionsQueryBuilder",
-                "reference": "221dfb2fac00c10dba103f3c5d0a7628b0406d72"
+                "reference": "bd7766af1b15e7ff38bf1def109cff9a30426c1f"
             },
             "require": {
                 "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
@@ -2287,7 +2287,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Jpeters8889\\EateryCollectionsQueryBuilder\\FieldServiceProvider"
+                        "Jpeters8889\\EateryCollectionsQueryBuilder\\ToolServiceProvider"
                     ]
                 }
             },
