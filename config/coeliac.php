@@ -5,8 +5,6 @@ declare(strict_types=1);
 return [
     'show_ads' => env('SHOW_ADS', true),
 
-    'enable_eatery_collections' => env('ENABLE_EATERY_COLLECTIONS', false),
-
     'images_url' => env('IMAGES_URL'),
 
     'shop' => [

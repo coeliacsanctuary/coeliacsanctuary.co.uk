@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\EatingOut\Collections\Feed\IndexController as FeedController;
 use App\Http\Controllers\EatingOut\Browse\ShowController as BrowseShowController;
 use App\Http\Controllers\EatingOut\CoeliacSanctuaryOnTheGo\ShowController as AppShowController;
-use App\Http\Controllers\EatingOut\Collections\IndexController as CollectionsIndexController;
-use App\Http\Controllers\EatingOut\Collections\ShowController as CollectionsShowController;
 use App\Http\Controllers\EatingOut\County\ShowController as CountyShowController;
 use App\Http\Controllers\EatingOut\County\Town\ShowController as TownShowController;
 use App\Http\Controllers\EatingOut\EateryDetails\GetController as EateryDetailsGetController;
@@ -29,14 +26,6 @@ Route::prefix('eating-out')
     ->name('eating-out.')
     ->group(function (): void {
         Route::get('/', LandingPageIndexController::class)->name('landing');
-
-        //        Route::prefix('collections')
-        //            ->name('collections.')
-        //            ->group(function (): void {
-        //                Route::get('/', CollectionsIndexController::class)->name('index');
-        //                Route::get('feed', FeedController::class)->name('feed');
-        //                Route::get('/{eateryCollection}', CollectionsShowController::class)->name('show');
-        //            });
     });
 
 Route::prefix('wheretoeat')->group(function (): void {

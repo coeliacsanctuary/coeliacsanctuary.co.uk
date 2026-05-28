@@ -14,7 +14,6 @@ use App\Contracts\Comments\HasComments;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
-use App\Models\EatingOut\EateryCollection;
 use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Support\Collections\CanBeCollected;
@@ -123,12 +122,6 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     public function primaryTag(): BelongsTo
     {
         return $this->belongsTo(BlogTag::class, 'primary_tag_id');
-    }
-
-    /** @return BelongsTo<EateryCollection, $this> */
-    public function eateryCollection(): BelongsTo
-    {
-        return $this->belongsTo(EateryCollection::class, 'eatery_collection_id');
     }
 
     /** @return HasMany<BlogMetric, $this> */
