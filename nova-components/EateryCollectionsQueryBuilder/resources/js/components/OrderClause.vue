@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { orderables } from '../../data';
+import { orderables } from '../data';
 import { Button } from 'laravel-nova-ui';
 
 const props = defineProps(['order']);

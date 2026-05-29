@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\DataObjects\EatingOut\PendingEatery;
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
@@ -10,6 +12,7 @@ use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryType;
 use App\Models\EatingOut\EateryVenueType;
+use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesFromCollectionPipeline;
 use App\Services\EatingOut\Collection\Builder\BranchQueryBuilder;
 use App\Services\EatingOut\Collection\Builder\EateryQueryBuilder;
@@ -100,9 +103,39 @@ Route::post('/preview-query', function (Request $request) {
 Route::post('results', function (Request $request, GetEateriesFromCollectionPipeline $getEateriesFromCollectionPipeline) {
     $config = new Configuration(...$request->array('config'));
 
-    $eateries = $getEateriesFromCollectionPipeline->run($config, []);
+    $pendingEateries = $getEateriesFromCollectionPipeline->run($config);
+
+    $eateries = $pendingEateries
+        ->take(10)
+        ->map(function (PendingEatery $pendingEatery) {
+            $eatery = Eatery::query()->find($pendingEatery->id);
+            $branch = null;
+
+            if ($pendingEatery->branchId) {
+                $branch = NationwideBranch::query()
+                    ->where('wheretoeat_id', $pendingEatery->id)
+                    ->find($pendingEatery->branchId);
+            }
+
+            return [
+                'name' => $eatery->name,
+                'location' => [
+                    'address' => $eatery->formatted_address,
+                ],
+                'branch' => $branch ? [
+                    'name' => $branch->name,
+                    'location' => [
+                        'address' => $branch->formatted_address,
+                    ],
+                ] : null,
+            ];
+        });
 
     return [
-        'data' => $eateries,
+        'data' => [
+            'data' => $eateries,
+            'to' => $eateries->count(),
+            'total' => $pendingEateries->count(),
+        ],
     ];
 });

@@ -6,7 +6,9 @@
 
     <Card class="p-8">
       <div class="flex w-full flex-col">
-        <div class="flex w-full flex-col space-y-3 border-b border-gray-200 pb-3">
+        <div
+          class="flex w-full flex-col space-y-3 border-b border-gray-200 pb-3"
+        >
           <div class="flex w-full items-center justify-between">
             <h3 class="text-lg font-bold">Where Clauses</h3>
 
@@ -54,7 +56,9 @@
           </div>
         </div>
 
-        <div class="flex w-full flex-col space-y-3 border-b border-gray-200 py-3">
+        <div
+          class="flex w-full flex-col space-y-3 border-b border-gray-200 py-3"
+        >
           <div class="flex w-full items-center justify-between">
             <h3 class="text-lg font-bold">Order Clauses</h3>
 
@@ -170,9 +174,7 @@
         <div v-if="results.ran">
           <Loader v-if="results.loading" />
 
-          <div
-            v-if="!results.loading"
-          >
+          <div v-if="!results.loading">
             <ul class="flex flex-col space-y-3">
               <li
                 v-for="eatery in results.data.data"
@@ -224,7 +226,6 @@
 
             <span>
               Showing {{ results.data.to }} of {{ results.data.total }} results
-              over {{ results.data.last_page }} pages.
             </span>
           </div>
         </div>
@@ -235,8 +236,8 @@
 
 <script>
 import { Button, Loader } from 'laravel-nova-ui';
-import WhereClause from '../components/components/WhereClause.vue';
-import OrderClause from '../components/components/OrderClause.vue';
+import WhereClause from '../components/WhereClause.vue';
+import OrderClause from '../components/OrderClause.vue';
 import { average, count, join, order, where } from '../objects';
 
 export default {

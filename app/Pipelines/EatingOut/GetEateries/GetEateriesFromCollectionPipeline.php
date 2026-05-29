@@ -5,44 +5,28 @@ declare(strict_types=1);
 namespace App\Pipelines\EatingOut\GetEateries;
 
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
-use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
+use App\DataObjects\EatingOut\PendingEatery;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInCollectionAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInCollectionAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\HydrateBranchesAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\HydrateEateriesAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\PaginateEateriesAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\RelateEateriesAndBranchesAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\SerialiseResultsAction;
-use App\Resources\EatingOut\EateryListResource;
 use App\Services\EatingOut\Collection\Configuration;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Collection;
 
 class GetEateriesFromCollectionPipeline
 {
     /**
-     * @param  array{categories: string[]|null, features: string[]|null, venueTypes: string[]|null, towns: string[]|null, counties: string[]|null}  $filters
-     * @param  class-string<JsonResource>  $jsonResource
-     * @return LengthAwarePaginator<int, JsonResource>
+     * @return Collection<int, PendingEatery>
      */
-    public function run(Configuration $configuration, array $filters, string $jsonResource = EateryListResource::class): LengthAwarePaginator
+    public function run(Configuration $configuration): Collection
     {
         $pipes = [
             GetEateriesInCollectionAction::class,
             GetNationwideBranchesInCollectionAction::class,
-            PaginateEateriesAction::class,
-            HydrateEateriesAction::class,
-            HydrateBranchesAction::class,
-            CheckForMissingEateriesAction::class,
-            RelateEateriesAndBranchesAction::class,
-            SerialiseResultsAction::class,
         ];
 
         $pipelineData = new GetEateriesPipelineData(
-            filters: $filters,
+            filters: ['categories' => null, 'features' => null, 'venueTypes' => null],
             configuration: $configuration,
-            jsonResource: $jsonResource
         );
 
         /** @var GetEateriesPipelineData $pipeline */
@@ -51,8 +35,8 @@ class GetEateriesFromCollectionPipeline
             ->through($pipes)
             ->thenReturn();
 
-        /** @var LengthAwarePaginator<int, JsonResource> $serialisedEateries */
-        $serialisedEateries = $pipeline->serialisedEateries;
+        /** @var Collection<int, PendingEatery> $serialisedEateries */
+        $serialisedEateries = $pipeline->eateries;
 
         return $serialisedEateries;
     }

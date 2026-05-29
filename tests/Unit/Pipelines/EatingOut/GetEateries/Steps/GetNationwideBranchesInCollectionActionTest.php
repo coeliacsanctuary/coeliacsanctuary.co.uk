@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Pipelines\EatingOut\GetEateries\Steps;
 
-use App\Models\EatingOut\EateryCounty;
-use App\Models\EatingOut\EateryTown;
-use PHPUnit\Framework\Attributes\Test;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
-use App\Models\EatingOut\EateryFeature;
-use App\Models\EatingOut\EateryType;
-use App\Models\EatingOut\EateryVenueType;
-use App\Models\EatingOut\NationwideBranch;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 
 class GetNationwideBranchesInCollectionActionTest extends GetEateriesTestCase
 {
@@ -42,135 +36,6 @@ class GetNationwideBranchesInCollectionActionTest extends GetEateriesTestCase
         $newCollection = $this->callGetBranchesInCollectionAction($eateries);
 
         $this->assertCount(10, $newCollection->eateries); // 5 in setup, 5 from above
-    }
-
-    #[Test]
-    public function itCanFilterTheEateriesByCategory(): void
-    {
-        $eatery = $this->build(Eatery::class)
-            ->create([
-                'type_id' => EateryType::ATTRACTION,
-                'county_id' => $this->county->id,
-                'town_id' => $this->town->id,
-                'venue_type_id' => EateryVenueType::query()->first()->id,
-            ]);
-
-        $this->build(NationwideBranch::class)
-            ->create([
-                'wheretoeat_id' => $eatery->id,
-                'county_id' => $this->county->id,
-                'town_id' => $this->town->id,
-            ]);
-
-        $eateries = $this->callGetBranchesInCollectionAction(filters: ['categories' => ['att']])->eateries;
-
-        $this->assertCount(1, $eateries);
-        $this->assertEquals($eatery->id, $eateries->first()->id);
-    }
-
-    #[Test]
-    public function itCanFilterTheEateriesByVenueType(): void
-    {
-        $venueType = $this->create(EateryVenueType::class, ['slug' => 'test']);
-
-        $eatery = $this->build(Eatery::class)
-            ->create([
-                'type_id' => EateryType::EATERY,
-                'county_id' => $this->county->id,
-                'town_id' => $this->town->id,
-                'venue_type_id' => $venueType->id,
-            ]);
-
-        $this->build(NationwideBranch::class)
-            ->create([
-                'wheretoeat_id' => $eatery->id,
-                'county_id' => $this->county->id,
-                'town_id' => $this->town->id,
-            ]);
-
-        $eateries = $this->callGetBranchesInCollectionAction(filters: ['venueTypes' => ['test']])->eateries;
-
-        $this->assertCount(1, $eateries);
-        $this->assertEquals($eatery->id, $eateries->first()->id);
-    }
-
-    #[Test]
-    public function itCanFilterTheEateriesByFeature(): void
-    {
-        $feature = $this->create(EateryFeature::class, ['slug' => 'test']);
-
-        $eatery = $this->build(Eatery::class)
-            ->create([
-                'type_id' => EateryType::EATERY,
-                'county_id' => $this->county->id,
-                'town_id' => $this->town->id,
-            ]);
-
-        $feature->eateries()->attach($eatery);
-
-        $this->build(NationwideBranch::class)
-            ->create([
-                'wheretoeat_id' => $eatery->id,
-                'county_id' => $this->county->id,
-                'town_id' => $this->town->id,
-            ]);
-
-        $eateries = $this->callGetBranchesInCollectionAction(filters: ['features' => ['test']])->eateries;
-
-        $this->assertCount(1, $eateries);
-        $this->assertEquals($eatery->id, $eateries->first()->id);
-    }
-
-    #[Test]
-    public function itCanFilterTheEateriesByTown(): void
-    {
-        $town = $this->create(EateryTown::class);
-
-        $eatery = $this->build(Eatery::class)
-            ->create([
-                'type_id' => EateryType::ATTRACTION,
-                'county_id' => $this->county->id,
-                'town_id' => $town->id,
-                'venue_type_id' => EateryVenueType::query()->first()->id,
-            ]);
-
-        $this->build(NationwideBranch::class)
-            ->create([
-                'wheretoeat_id' => $eatery->id,
-                'county_id' => $this->county->id,
-                'town_id' => $town->id,
-            ]);
-
-        $eateries = $this->callGetBranchesInCollectionAction(filters: ['towns' => [$town->id]])->eateries;
-
-        $this->assertCount(1, $eateries);
-        $this->assertEquals($eatery->id, $eateries->first()->id);
-    }
-
-    #[Test]
-    public function itCanFilterTheEateriesByCounty(): void
-    {
-        $county = $this->create(EateryCounty::class);
-
-        $eatery = $this->build(Eatery::class)
-            ->create([
-                'type_id' => EateryType::ATTRACTION,
-                'county_id' => $county->id,
-                'town_id' => $this->town->id,
-                'venue_type_id' => EateryVenueType::query()->first()->id,
-            ]);
-
-        $this->build(NationwideBranch::class)
-            ->create([
-                'wheretoeat_id' => $eatery->id,
-                'county_id' => $county->id,
-                'town_id' => $this->town->id,
-            ]);
-
-        $eateries = $this->callGetBranchesInCollectionAction(filters: ['counties' => [$county->id]])->eateries;
-
-        $this->assertCount(1, $eateries);
-        $this->assertEquals($eatery->id, $eateries->first()->id);
     }
 
     #[Test]

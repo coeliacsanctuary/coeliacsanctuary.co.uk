@@ -93,8 +93,12 @@ class Menu
                 MenuItem::resource(AnnouncementResource::class),
                 MenuItem::resource(RedirectResource::class),
                 MenuItem::resource(SealiacOverviews::class),
-                MenuItem::make('Refresh ads.txt')->path('/refresh-ads-txt'),
             ])->icon('home'),
+
+            MenuSection::make('Tools', [
+                MenuItem::make('Eatery Collection Builder')->path('/eatery-collections-query-builder'),
+                MenuItem::make('Refresh ads.txt')->path('/refresh-ads-txt'),
+            ])->icon('wrench'),
 
             MenuSection::make('Ask Sealiac Chat', [
                 MenuItem::resource(AskSealiacChatResource::class),

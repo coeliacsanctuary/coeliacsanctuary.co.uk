@@ -6,7 +6,7 @@ import {
   whereFields,
   whereHas,
   whereRelations,
-} from '../../data';
+} from '../data';
 import { Button } from 'laravel-nova-ui';
 
 const props = defineProps(['where']);
