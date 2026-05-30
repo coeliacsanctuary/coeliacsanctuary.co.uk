@@ -32,9 +32,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->alias(MailChannel::class, IlluminateMailChannel::class);
 
         $this->app->singleton(GoogleMerchantClient::class, fn () => new GoogleMerchantClient(
-            enabled: (bool) config('google-merchant.enabled'),
-            merchantId: (string) config('google-merchant.merchant_id', ''),
-            serviceAccountKeyPath: (string) config('google-merchant.service_account_key_path', ''),
+            enabled: config()->boolean('google-merchant.enabled', false),
+            merchantId: config()->string('google-merchant.merchant_id', ''),
+            serviceAccountKeyPath: config()->string('google-merchant.service_account_key_path', ''),
         ));
     }
 
