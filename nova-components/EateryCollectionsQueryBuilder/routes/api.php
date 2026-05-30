@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Actions\Collections\GenerateCollectionFromPendingEateries;
+use App\Actions\Collections\GenerateCollectionFromPendingEateriesAction;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
@@ -142,7 +142,7 @@ Route::post('results', function (Request $request, GetEateriesFromCollectionPipe
     ];
 });
 
-Route::post('/generate', function (Request $request, GetEateriesFromCollectionPipeline $getEateriesFromCollectionPipeline, GenerateCollectionFromPendingEateries $generateCollection) {
+Route::post('/generate', function (Request $request, GetEateriesFromCollectionPipeline $getEateriesFromCollectionPipeline, GenerateCollectionFromPendingEateriesAction $generateCollection) {
     $request->validate([
         'name' => ['required', 'string'],
         'orderField' => ['required', 'string', 'in:town,county,country,area'],

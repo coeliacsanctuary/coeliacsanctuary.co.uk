@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Collections;
 
-use App\Actions\Collections\GenerateCollectionFromPendingEateries;
+use App\Actions\Collections\GenerateCollectionFromPendingEateriesAction;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\Collections\Collection;
 use App\Models\Collections\CollectionGroup;
@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class GenerateCollectionFromPendingEateriesTest extends TestCase
+class GenerateCollectionFromPendingEateriesActionTest extends TestCase
 {
     protected EateryCountry $country;
 
@@ -61,7 +61,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'My Test Collection', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'My Test Collection', 'town');
 
         $collection = Collection::query()->withoutGlobalScopes()->first();
 
@@ -80,7 +80,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'My Test Collection', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'My Test Collection', 'town');
 
         $collection = Collection::query()->withoutGlobalScopes()->first();
 
@@ -92,7 +92,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $result = $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $result = $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $this->assertInstanceOf(Collection::class, $result);
         $this->assertEquals('Test', $result->title);
@@ -109,7 +109,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
             $this->makePendingEatery($secondEatery),
         ]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $this->assertDatabaseCount(CollectionGroup::class, 2);
     }
@@ -119,7 +119,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $group = CollectionGroup::query()->first();
 
@@ -134,7 +134,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'county');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'county');
 
         $group = CollectionGroup::query()->first();
 
@@ -149,7 +149,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'country');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'country');
 
         $group = CollectionGroup::query()->first();
 
@@ -173,7 +173,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
 
         $pending = collect([new PendingEatery(id: $eateryInArea->id, branchId: null, ordering: $eateryInArea->name)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'area');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'area');
 
         $group = CollectionGroup::query()->first();
 
@@ -194,7 +194,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
             $this->makePendingEatery($this->eatery),
         ]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $groups = CollectionGroup::query()->orderBy('position')->get();
 
@@ -219,7 +219,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
             $this->makePendingEatery($secondEatery),
         ]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $this->assertDatabaseCount(CollectionGroupItem::class, 2);
     }
@@ -229,7 +229,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $item = CollectionGroupItem::query()->first();
 
@@ -241,7 +241,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $item = CollectionGroupItem::query()->first();
 
@@ -260,7 +260,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
 
         $pending = collect([$this->makePendingEatery($this->eatery, $branch->id)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $item = CollectionGroupItem::query()->first();
 
@@ -279,7 +279,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
 
         $pending = collect([$this->makePendingEatery($this->eatery, $branch->id)]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $item = CollectionGroupItem::query()->first();
 
@@ -298,7 +298,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
             $this->makePendingEatery($secondEatery),
         ]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $items = CollectionGroupItem::query()->orderBy('position')->get();
 
@@ -319,7 +319,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
 
         DB::enableQueryLog();
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $eateryQueries = collect(DB::getQueryLog())
             ->filter(fn (array $query) => str_starts_with($query['query'], 'select `id`') && str_contains($query['query'], 'from `wheretoeat`'))
@@ -340,7 +340,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
 
         DB::enableQueryLog();
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $townQueries = collect(DB::getQueryLog())
             ->filter(fn (array $query) => str_starts_with($query['query'], 'select * from `wheretoeat_towns`'))
@@ -375,7 +375,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
 
         DB::enableQueryLog();
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $branchQueries = collect(DB::getQueryLog())
             ->filter(fn (array $query) => str_starts_with($query['query'], 'select `id`') && str_contains($query['query'], 'from `wheretoeat_nationwide_branches`'))
@@ -389,7 +389,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
     {
         $pending = collect([$this->makePendingEatery($this->eatery)]);
 
-        $result = $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $result = $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $group = CollectionGroup::query()->first();
 
@@ -407,7 +407,7 @@ class GenerateCollectionFromPendingEateriesTest extends TestCase
             $this->makePendingEatery($secondEatery),
         ]);
 
-        $this->callAction(GenerateCollectionFromPendingEateries::class, $pending, 'Test', 'town');
+        $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $firstGroup = CollectionGroup::query()->orderBy('position')->first();
         $secondGroup = CollectionGroup::query()->orderBy('position')->skip(1)->first();

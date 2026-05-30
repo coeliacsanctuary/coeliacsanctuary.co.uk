@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-class GenerateCollectionFromPendingEateries
+class GenerateCollectionFromPendingEateriesAction
 {
     /** @param Collection<int, PendingEatery> $pendingEateries */
     public function handle(Collection $pendingEateries, string $name, string $orderField): CollectionModel
