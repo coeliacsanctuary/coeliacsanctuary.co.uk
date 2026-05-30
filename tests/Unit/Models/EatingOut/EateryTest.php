@@ -10,6 +10,9 @@ use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
+use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAlert;
 use App\Models\EatingOut\EateryCheck;
@@ -381,5 +384,22 @@ class EateryTest extends TestCase
             ->create();
 
         $this->assertCount(3, $eatery->refresh()->alerts);
+    }
+
+    #[Test]
+    public function itCanBeAssociatedWithACollectionGroup(): void
+    {
+        $eatery = $this->create(Eatery::class);
+        $group = $this->create(CollectionGroup::class, ['collection_id' => $this->create(Collection::class)->id]);
+
+        $this->assertEmpty($eatery->associatedCollectionGroups);
+
+        $this->create(CollectionGroupItem::class, [
+            'collection_group_id' => $group->id,
+            'item_id' => $eatery->id,
+            'item_type' => Eatery::class,
+        ]);
+
+        $this->assertCount(1, $eatery->refresh()->associatedCollectionGroups);
     }
 }

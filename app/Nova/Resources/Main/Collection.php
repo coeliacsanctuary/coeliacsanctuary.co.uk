@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Collections\Collection as CollectionModel;
+use App\Models\Collections\CollectionGroup as CollectionGroupModel;
 use App\Nova\Resource;
 use App\Nova\Support\Panels\VisibilityPanel;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,8 +15,8 @@ use Jpeters8889\Body\Body;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use App\Nova\FieldOverrides\Repeater;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
@@ -37,8 +38,6 @@ class Collection extends Resource
     public static $title = 'title';
 
     public static $search = ['id', 'title'];
-
-    public static $with = ['items', 'media'];
 
     public function authorizedToView(Request $request)
     {
@@ -100,7 +99,7 @@ class Collection extends Resource
                         '6' => '6 items',
                         '8' => '8 items',
                     ])
-                    ->displayUsingLabels()
+                    ->displayUsingLabels(),
             ]),
 
             new Panel('Metas', [
@@ -132,9 +131,17 @@ class Collection extends Resource
                     ->nullable(),
             ]),
 
-            HasMany::make('Items', 'items', CollectionItem::class),
+            Repeater::make('Groups', 'groups')
+                ->repeatables([
+                    \App\Nova\Repeaters\CollectionGroup::make(),
+                ])
+                ->fullWidth()
+                ->asHasMany(CollectionGroup::class),
 
-            Text::make('Items', fn ($model) => $model->items->count())
+            Text::make('Groups', fn ($model) => $model->groups->count())
+                ->exceptOnForms(),
+
+            Text::make('Items', fn ($model) => $model->groups->sum(fn (CollectionGroupModel $group) => $group->items->count()))
                 ->exceptOnForms(),
 
             DateTime::make('Created At')->exceptOnForms(),
@@ -161,7 +168,9 @@ class Collection extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->withoutGlobalScopes()->reorder('updated_at', 'desc');
+        return $query->withoutGlobalScopes()
+            ->with(['groups', 'groups.items'])
+            ->reorder('updated_at', 'desc');
     }
 
     protected static function fillFields(NovaRequest $request, $model, $fields): array

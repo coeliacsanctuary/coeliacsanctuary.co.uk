@@ -200,6 +200,6 @@ class Blog extends Resource
 
     public static function indexQuery(NovaRequest $request, Builder $query)
     {
-        return $query->withoutGlobalScopes()->whereNull('eatery_collection_id');
+        return $query->withoutGlobalScopes();
     }
 }

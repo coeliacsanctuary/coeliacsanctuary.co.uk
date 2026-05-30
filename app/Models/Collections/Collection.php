@@ -10,11 +10,8 @@ use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
 use App\Jobs\OpenGraphImages\CreateCollectionIndexPageOpenGraphImageJob;
-use App\Models\Blogs\Blog;
 use App\Models\Media;
-use App\Models\Recipes\Recipe;
 use App\Scopes\LiveScope;
-use App\Support\Collections\Collectable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,6 +33,8 @@ class Collection extends Model implements HasMedia
     use InteractsWithMedia;
 
     use LinkableModel;
+
+    protected $with = ['groups', 'groups.items'];
 
     protected $casts = [
         'display_on_homepage' => 'bool',
@@ -80,28 +79,15 @@ class Collection extends Model implements HasMedia
             ->format('webp');
     }
 
-    /** @return HasMany<CollectionItem, $this> */
-    public function items(): HasMany
+    /** @return HasMany<CollectionGroup, $this> */
+    public function groups(): HasMany
     {
-        return $this->hasMany(CollectionItem::class)->orderBy('position');
+        return $this->hasMany(CollectionGroup::class)->orderBy('position');
     }
 
     protected function linkRoot(): string
     {
         return 'collection';
-    }
-
-    /** @param Collectable<Recipe | Blog> $item */
-    public function addItem(Collectable $item, string $description, ?int $position = null): static
-    {
-        $this->items()->create([
-            'item_id' => $item->getKey(),
-            'item_type' => get_class($item),
-            'description' => $description,
-            'position' => $position ?? $this->items()->max('position') + 1,
-        ]);
-
-        return $this;
     }
 
     /** @return Attribute<string, never> */

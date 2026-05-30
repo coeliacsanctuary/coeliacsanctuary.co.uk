@@ -7,6 +7,8 @@ namespace Tests\Unit\Actions\Collections;
 use App\Actions\Collections\GetLatestCollectionsForHomepageAction;
 use App\Models\Blogs\Blog;
 use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Resources\Collections\CollectedItemSimpleCardViewResource;
 use App\Resources\Collections\CollectionSimpleCardViewResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -57,8 +59,11 @@ class GetLatestCollectionsForHomePageActionTest extends TestCase
 
         $collection->update(['display_on_homepage' => true]);
 
-        Blog::query()->take(3)->get()->each(function (Blog $blog) use ($collection): void {
-            $collection->addItem($blog, $blog->description);
+        /** @var CollectionGroup $group */
+        $group = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $this->build(Blog::class)->count(3)->create()->each(function (Blog $blog) use ($group): void {
+            $this->build(CollectionGroupItem::class)->forBlog($blog)->create(['collection_group_id' => $group->id]);
         });
 
         $collectionResource = $this->callAction(GetLatestCollectionsForHomepageAction::class)[0]->toArray(request());
@@ -78,8 +83,11 @@ class GetLatestCollectionsForHomePageActionTest extends TestCase
 
         $collection->update(['display_on_homepage' => true]);
 
-        $this->build(Blog::class)->count(5)->create()->each(function (Blog $blog) use ($collection): void {
-            $collection->addItem($blog, $blog->description);
+        /** @var CollectionGroup $group */
+        $group = $collection->groups->first();
+
+        $this->build(Blog::class)->count(5)->create()->each(function (Blog $blog) use ($group): void {
+            $this->build(CollectionGroupItem::class)->forBlog($blog)->create(['collection_group_id' => $group->id]);
         });
 
         $collectionResource = $this->callAction(GetLatestCollectionsForHomepageAction::class)[0]->toArray(request());
@@ -108,11 +116,11 @@ class GetLatestCollectionsForHomePageActionTest extends TestCase
         DB::enableQueryLog();
 
         $this->callAction(GetLatestCollectionsForHomepageAction::class);
-        // collections and media/item relation;
-        $this->assertCount(3, DB::getQueryLog());
+        // collections, groups, group items, and media relations
+        $this->assertCount(4, DB::getQueryLog());
 
         $this->callAction(GetLatestCollectionsForHomepageAction::class);
 
-        $this->assertCount(3, DB::getQueryLog());
+        $this->assertCount(4, DB::getQueryLog());
     }
 }

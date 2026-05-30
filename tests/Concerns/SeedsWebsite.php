@@ -7,7 +7,7 @@ namespace Tests\Concerns;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
 use App\Models\Collections\Collection;
-use App\Models\EatingOut\EateryCollection;
+use App\Models\Collections\CollectionGroup;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
@@ -103,6 +103,11 @@ trait SeedsWebsite
             ->each(function (Collection $collection): void {
                 $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('primary');
                 $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('social');
+
+                $this->create(CollectionGroup::class, [
+                    'collection_id' => $collection->id,
+                    'id' => $collection->id,
+                ]);
             });
 
         if ($then) {
@@ -112,29 +117,6 @@ trait SeedsWebsite
         return $this;
     }
 
-    protected function withEateryCollections($count = 10, ?callable $then = null): static
-    {
-        Storage::fake('media');
-
-        $this->build(EateryCollection::class)
-            ->count($count)
-            ->sequence(fn (Sequence $sequence) => [
-                'id' => $sequence->index + 1,
-                'title' => "Eatery Collection {$sequence->index}",
-                'created_at' => Carbon::now()->subDays($sequence->index),
-            ])
-            ->create()
-            ->each(function (EateryCollection $collection): void {
-                $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('primary');
-                $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('social');
-            });
-
-        if ($then) {
-            $then();
-        }
-
-        return $this;
-    }
 
 
     protected function withCategoriesAndProducts($categories = 5, $products = 2, $variants = 1, ?callable $then = null): static

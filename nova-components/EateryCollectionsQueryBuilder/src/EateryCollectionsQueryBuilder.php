@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Jpeters8889\EateryCollectionsQueryBuilder;
 
-use Laravel\Nova\Fields\Field;
+use Illuminate\Http\Request;
+use Laravel\Nova\Menu\MenuSection;
+use Laravel\Nova\Nova;
+use Laravel\Nova\Tool;
 
-class EateryCollectionsQueryBuilder extends Field
+class EateryCollectionsQueryBuilder extends Tool
 {
-    /**
-     * The field's component.
-     *
-     * @var string
-     */
-    public $component = 'eatery-collections-query-builder';
-
-    public $fullWidth = true;
-
-    public function resolve($resource, $attribute = null): void
+    public function boot(): void
     {
-        $raw = $resource->getRawOriginal($attribute ?? $this->attribute);
+        Nova::mix('eatery-collections-query-builder', __DIR__ . '/../dist/mix-manifest.json');
+    }
 
-        $this->value = $raw !== null ? json_decode($raw) : null;
+    public function menu(Request $request): MenuSection
+    {
+        return MenuSection::make('Eatery Query Builder')
+            ->path('/eatery-collections-query-builder')
+            ->icon('search');
     }
 }

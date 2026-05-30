@@ -1,10 +1,15 @@
 <script lang="ts" setup>
-import Card from '@/Components/Card.vue';
-import { Link } from '@inertiajs/vue3';
-import { CollectionItem } from '@/types/CollectionTypes';
-import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
+import {
+  CollectionItem,
+  BlogCollectionItem as BlogCollectionItemType,
+  RecipeCollectionItem as RecipeCollectionItemType,
+  EateryCollectionItem as EateryCollectionItemType,
+} from '@/types/CollectionTypes';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import { useTemplateRef } from 'vue';
+import BlogCollectionItem from '@/Components/PageSpecific/Collections/Items/BlogCollectionItem.vue';
+import RecipeCollectionItem from '@/Components/PageSpecific/Collections/Items/RecipeCollectionItem.vue';
+import EateryCollectionItem from '@/Components/PageSpecific/Collections/Items/EateryCollectionItem.vue';
 
 const props = defineProps<{ item: CollectionItem }>();
 
@@ -13,66 +18,27 @@ useJourneyTracking().logWhenVisible(
   'scrolled_into_view',
   'CollectionItemCard',
   {
-    title: props.item.title,
+    title: props.item?.title ?? props.item?.name ?? '',
     type: props.item.type,
   },
 );
 </script>
 
 <template>
-  <Card
-    ref="card"
-    class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4"
-  >
-    <div class="md:max-w-16 md:min-w-1/4">
-      <Link
-        :href="item.link"
-        class="mb-0 flex flex-col"
-        prefetch
-      >
-        <img
-          v-if="
-            item.type !== 'Recipe' ||
-            (item.type === 'Recipe' && item.square_image)
-          "
-          :alt="item.title"
-          :src="item.image"
-          loading="lazy"
-        />
-        <RecipeSquareImage
-          v-else
-          :alt="item.title"
-          :src="item.image"
-        />
-      </Link>
-    </div>
+  <div ref="card">
+    <BlogCollectionItem
+      v-if="item.type === 'Blog'"
+      :item="item as BlogCollectionItemType"
+    />
 
-    <div class="mt-4 flex flex-1 flex-col space-y-3">
-      <Link
-        :href="item.link"
-        prefetch
-      >
-        <h2
-          class="text-xl font-semibold text-primary-dark transition hover:text-grey-dark md:text-2xl"
-          v-text="item.title"
-        />
-      </Link>
+    <RecipeCollectionItem
+      v-if="item.type === 'Recipe'"
+      :item="item as RecipeCollectionItemType"
+    />
 
-      <div class="flex flex-1">
-        <p
-          class="prose max-w-none md:prose-lg"
-          v-text="item.description"
-        />
-      </div>
-
-      <div class="flex flex-1 items-end justify-between">
-        <p class="text-xs md:text-sm">Added on {{ item.date }}</p>
-        <div
-          class="rounded-lg bg-primary-light/50 px-4 py-2 text-sm leading-none font-semibold md:text-base"
-        >
-          <span v-text="item.type" />
-        </div>
-      </div>
-    </div>
-  </Card>
+    <EateryCollectionItem
+      v-if="item.type === 'Eatery' || item.type === 'NationwideBranch'"
+      :item="item as EateryCollectionItemType"
+    />
+  </div>
 </template>

@@ -20,6 +20,7 @@
         "jpeters8889/address-field": "@dev",
         "jpeters8889/apex-charts": "@dev",
         "jpeters8889/body": "@dev",
+        "jpeters8889/collection-item-search": "@dev",
         "jpeters8889/country-icon": "@dev",
         "jpeters8889/custom-styles": "@dev",
         "jpeters8889/eatery-collections-query-builder": "@dev",
@@ -226,6 +227,10 @@
         {
             "type": "path",
             "url": "./nova-components/PreviewButton"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/CollectionItemSearch"
         }
     ],
     "autoload": {

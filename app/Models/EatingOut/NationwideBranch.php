@@ -12,6 +12,8 @@ use App\Concerns\HasOpenGraphImage;
 use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
+use App\Support\Collections\CanBeCollected;
+use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
@@ -31,6 +33,7 @@ use Laravel\Scout\Searchable;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
+ * @implements Collectable<$this>
  *
  * @property Eatery $eatery
  * @property string $short_name
@@ -38,8 +41,11 @@ use Laravel\Scout\Searchable;
  * @property string | null $average_rating
  * @property array{value: string, label: string} | null $average_expense
  */
-class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSearchable
+class NationwideBranch extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
+    /** @use CanBeCollected<$this> */
+    use CanBeCollected;
+
     use ClearsCache;
     use HasEateryDetails;
 
