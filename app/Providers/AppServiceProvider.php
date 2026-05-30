@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Infrastructure\MailChannel;
 use App\Search\Eateries;
+use App\Services\GoogleMerchant\GoogleMerchantClient;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -29,6 +30,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(Mjml::class, fn () => Mjml::new());
         $this->app->register(MacroServiceProvider::class);
         $this->app->alias(MailChannel::class, IlluminateMailChannel::class);
+
+        $this->app->singleton(GoogleMerchantClient::class, fn () => new GoogleMerchantClient(
+            enabled: (bool) config('google-merchant.enabled'),
+            merchantId: (string) config('google-merchant.merchant_id', ''),
+            serviceAccountKeyPath: (string) config('google-merchant.service_account_key_path', ''),
+        ));
     }
 
     /**
