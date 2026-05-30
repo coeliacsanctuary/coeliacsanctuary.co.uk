@@ -28,12 +28,14 @@ class GoogleMerchantClient
 
     public function client(): Client
     {
-        if ( ! file_exists($this->serviceAccountKeyPath)) {
-            throw new RuntimeException("Google Merchant service account key not found at [{$this->serviceAccountKeyPath}]");
+        $path = str_starts_with($this->serviceAccountKeyPath, '/') ? $this->serviceAccountKeyPath : base_path($this->serviceAccountKeyPath);
+
+        if ( ! file_exists($path)) {
+            throw new RuntimeException("Google Merchant service account key not found at [{$path}]");
         }
 
         $client = new Client();
-        $client->setAuthConfig($this->serviceAccountKeyPath);
+        $client->setAuthConfig($path);
         $client->setScopes(['https://www.googleapis.com/auth/content']);
 
         return $client;

@@ -38,9 +38,18 @@ class GoogleMerchantClientTest extends TestCase
     public function itThrowsWhenKeyFileDoesNotExist(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Google Merchant service account key not found at [/nonexistent/path.json]');
+        $this->expectExceptionMessageMatches('/Google Merchant service account key not found at \[.+nonexistent.+\]/');
 
         $this->makeClient(keyPath: '/nonexistent/path.json')->client();
+    }
+
+    #[Test]
+    public function itResolvesRelativePathsAgainstProjectRoot(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Google Merchant service account key not found at [' . base_path('google-merchant-key.json') . ']');
+
+        $this->makeClient(keyPath: 'google-merchant-key.json')->client();
     }
 
     #[Test]
