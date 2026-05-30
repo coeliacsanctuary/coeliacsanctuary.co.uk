@@ -26,20 +26,6 @@ export const whereHas = [
 export const orderables = [
   { label: 'name', column: 'ordering' },
   {
-    label: 'rating',
-    column: 'rating_count',
-    additional: {
-      counts: [
-        count(
-          'wheretoeat_reviews',
-          '[parent].id',
-          'wheretoeat_id',
-          'rating_count',
-        ),
-      ],
-    },
-  },
-  {
     label: 'town',
     column: 'wheretoeat_towns.town',
     table: 'wheretoeat_towns',

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Actions\Collections\GenerateCollectionFromPendingEateries;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
@@ -19,6 +20,7 @@ use App\Services\EatingOut\Collection\Builder\EateryQueryBuilder;
 use App\Services\EatingOut\Collection\Configuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Nova\Nova;
 
 Route::post('/relation', function (Request $request) {
     return match (str_replace('[parent].', '', $request->input('relation'))) {
@@ -137,5 +139,23 @@ Route::post('results', function (Request $request, GetEateriesFromCollectionPipe
             'to' => $eateries->count(),
             'total' => $pendingEateries->count(),
         ],
+    ];
+});
+
+Route::post('/generate', function (Request $request, GetEateriesFromCollectionPipeline $getEateriesFromCollectionPipeline, GenerateCollectionFromPendingEateries $generateCollection) {
+    $request->validate([
+        'name' => ['required', 'string'],
+        'orderField' => ['required', 'string', 'in:town,county,country,area'],
+        'config' => ['required', 'array'],
+    ]);
+
+    $config = new Configuration(...$request->array('config'));
+
+    $pendingEateries = $getEateriesFromCollectionPipeline->run($config);
+
+    $collection = $generateCollection->handle($pendingEateries, $request->input('name'), $request->input('orderField'));
+
+    return [
+        'redirect' => Nova::url('/resources/collections/' . $collection->id . '/edit'),
     ];
 });

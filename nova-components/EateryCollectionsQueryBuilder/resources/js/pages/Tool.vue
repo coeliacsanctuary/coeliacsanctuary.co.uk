@@ -230,7 +230,73 @@
           </div>
         </div>
       </div>
+
+      <div class="flex w-full justify-center border-t border-gray-200 pt-6">
+        <Button
+          :disabled="!results.ran || results.loading || !display.orders.filter((o) => getOrderLabel(o.config?.column) !== 'name').length"
+          @click="openGenerateModal()"
+        >
+          Generate Collection
+        </Button>
+      </div>
     </Card>
+
+    <div
+      v-if="modal.open"
+      class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center"
+    >
+      <div class="w-full max-w-md rounded bg-white p-6 shadow-lg">
+        <h2 class="mb-4 text-lg font-bold">Generate Collection</h2>
+
+        <p class="mb-4 text-sm text-gray-600">
+          Are you sure you want to generate a collection from these results?
+        </p>
+
+        <div class="mb-4 flex flex-col space-y-1">
+          <label class="text-sm font-medium">Collection Name</label>
+          <input
+            v-model="modal.name"
+            type="text"
+            class="form-control form-control-bordered px-2"
+            placeholder="Enter a name..."
+          />
+        </div>
+
+        <div
+          v-if="display.orders.filter((o) => getOrderLabel(o.config?.column) !== 'name').length > 1"
+          class="mb-4 flex flex-col space-y-1"
+        >
+          <label class="text-sm font-medium">Group By</label>
+          <select
+            v-model="modal.orderField"
+            class="form-control form-control-bordered"
+          >
+            <option
+              v-for="order in display.orders.filter((o) => getOrderLabel(o.config?.column) !== 'name')"
+              :key="order.config.column"
+              :value="getOrderLabel(order.config.column)"
+              v-text="getOrderLabel(order.config.column)"
+            />
+          </select>
+        </div>
+
+        <div class="flex justify-end space-x-2">
+          <Button
+            variant="outline"
+            as="span"
+            @click="modal.open = false"
+          >
+            Cancel
+          </Button>
+          <Button
+            :disabled="!modal.name || !modal.orderField"
+            @click="generateCollection()"
+          >
+            Confirm
+          </Button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -239,6 +305,7 @@ import { Button, Loader } from 'laravel-nova-ui';
 import WhereClause from '../components/WhereClause.vue';
 import OrderClause from '../components/OrderClause.vue';
 import { average, count, join, order, where } from '../objects';
+import { orderables } from '../data';
 
 export default {
   components: { Button, Loader, WhereClause, OrderClause },
@@ -268,6 +335,11 @@ export default {
       ran: false,
       loading: false,
       data: [],
+    },
+    modal: {
+      open: false,
+      name: '',
+      orderField: '',
     },
   }),
 
@@ -544,6 +616,37 @@ export default {
           this.results.loading = false;
         });
     },
+
+    getOrderLabel(column) {
+      const orderable = orderables.find((o) => o.column === column);
+      return orderable ? orderable.label : column;
+    },
+
+    openGenerateModal() {
+      const collectableOrders = this.display.orders.filter(
+        (o) => this.getOrderLabel(o.config?.column) !== 'name',
+      );
+
+      this.modal.name = '';
+      this.modal.orderField =
+        collectableOrders.length === 1
+          ? this.getOrderLabel(collectableOrders[0].config.column)
+          : '';
+      this.modal.open = true;
+    },
+
+    generateCollection() {
+      Nova.request()
+        .post('/nova-vendor/eatery-collections-query-builder/generate', {
+          config: this.generateProcessedConfig(),
+          name: this.modal.name,
+          orderField: this.modal.orderField,
+        })
+        .then((response) => {
+          this.modal.open = false;
+          window.location.href = response.data.redirect;
+        });
+    },
   },
 };
 </script>
@@ -556,5 +659,9 @@ export default {
 
 .col-span-5 {
   grid-column: span 5 / span 5;
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
