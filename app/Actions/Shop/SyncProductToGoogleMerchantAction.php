@@ -8,6 +8,7 @@ use App\Models\Shop\ShopProduct;
 use App\Services\GoogleMerchant\GoogleMerchantProductManager;
 use Google\Service\ShoppingContent\Price;
 use Google\Service\ShoppingContent\Product;
+use Google\Service\ShoppingContent\ProductShippingWeight;
 
 class SyncProductToGoogleMerchantAction
 {
@@ -55,6 +56,8 @@ class SyncProductToGoogleMerchantAction
 
     protected function buildProduct(ShopProduct $product): Product
     {
+        $product->loadMissing('variants');
+
         $googleProduct = new Product();
 
         $googleProduct->setOfferId((string) $product->id);
@@ -69,6 +72,14 @@ class SyncProductToGoogleMerchantAction
         $googleProduct->setChannel('online');
         $googleProduct->setContentLanguage('en');
         $googleProduct->setTargetCountry('GB');
+        $firstVariant = $product->variants->first();
+
+        if ($firstVariant !== null) {
+            $googleProduct->setShippingWeight(new ProductShippingWeight([
+                'value' => $firstVariant->weight / 1000,
+                'unit' => 'kg',
+            ]));
+        }
 
         return $googleProduct;
     }

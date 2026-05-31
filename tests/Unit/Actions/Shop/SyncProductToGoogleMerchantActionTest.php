@@ -144,4 +144,21 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
 
         $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
     }
+
+    #[Test]
+    public function itSetsTheShippingWeightFromTheFirstVariantInKg(): void
+    {
+        $variant = ShopProductVariant::query()->first();
+        $returned = new Product(['id' => 'online:en:GB:' . $this->product->id]);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('insert')
+            ->withArgs(fn (Product $product) => $product->getShippingWeight()->getValue() === $variant->weight / 1000
+                    && $product->getShippingWeight()->getUnit() === 'kg')
+            ->once()
+            ->andReturn($returned);
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+    }
 }
