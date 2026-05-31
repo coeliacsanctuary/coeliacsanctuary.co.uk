@@ -11,13 +11,14 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Resources\Collections\CollectionShowResource;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Inertia\Response;
 
 class ShowController
 {
     public function __invoke(Inertia $inertia, Collection $collection): Response
     {
-        $collection->loadMissing(['groups', 'groups.items', 'groups.items.item']);
+        $collection->loadMissing(['groups', 'groups.items', 'groups.items.item' => fn(Relation $builder) => $builder->where('live', true)]);
 
         $collection->groups->each(function (CollectionGroup $group): void {
             $group->items->groupBy('item_type')->each(function (EloquentCollection $items, string $itemType): void {
