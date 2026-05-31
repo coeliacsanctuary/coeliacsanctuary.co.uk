@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\Shop;
 
+use App\Jobs\Shop\SyncShippingToGoogleMerchantJob;
 use App\Models\Shop\ShopPostageCountryArea;
 use App\Nova\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -41,5 +43,23 @@ class PostageArea extends Resource
     public function authorizedToUpdate(Request $request)
     {
         return false;
+    }
+
+    public static function afterCreate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        SyncShippingToGoogleMerchantJob::dispatch();
+    }
+
+    public static function afterUpdate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        SyncShippingToGoogleMerchantJob::dispatch();
     }
 }
