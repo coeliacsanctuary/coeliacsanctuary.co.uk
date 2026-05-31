@@ -19,6 +19,7 @@ class ShowController
 {
     public function __invoke(Inertia $inertia, Collection $collection): Response
     {
+        /** @phpstan-ignore-next-line */
         $collection->loadMissing(['groups', 'groups.items', 'groups.items.item' => fn (Relation $builder) => $builder->where('live', true)]);
 
         $collection->groups->each(function (CollectionGroup $group): void {
