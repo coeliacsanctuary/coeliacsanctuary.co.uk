@@ -6,9 +6,10 @@ namespace App\Actions\Shop;
 
 use App\Models\Shop\ShopProduct;
 use App\Services\GoogleMerchant\GoogleMerchantProductManager;
-use Google\Service\ShoppingContent\Price;
-use Google\Service\ShoppingContent\Product;
-use Google\Service\ShoppingContent\ProductShippingWeight;
+use App\Services\GoogleMerchant\Helpers;
+use Google\Shopping\Merchant\Products\V1\Availability;
+use Google\Shopping\Merchant\Products\V1\ProductAttributes;
+use Google\Shopping\Merchant\Products\V1\ProductInput;
 
 class SyncProductToGoogleMerchantAction
 {
@@ -40,7 +41,7 @@ class SyncProductToGoogleMerchantAction
             ? $this->manager->update($product->google_merchant_product_id, $googleProduct)
             : $this->manager->insert($googleProduct);
 
-        $product->update(['google_merchant_product_id' => $result->getId()]);
+        $product->update(['google_merchant_product_id' => $result->getName()]);
     }
 
     protected function removeFromMerchant(ShopProduct $product): void
@@ -54,34 +55,27 @@ class SyncProductToGoogleMerchantAction
         $product->update(['google_merchant_product_id' => null]);
     }
 
-    protected function buildProduct(ShopProduct $product): Product
+    protected function buildProduct(ShopProduct $product): ProductInput
     {
         $product->loadMissing('variants');
 
-        $googleProduct = new Product();
+        $attrs = new ProductAttributes();
+        $attrs->setTitle($product->title);
+        $attrs->setLink($product->absolute_link);
+        $attrs->setImageLink($product->main_image);
+        $attrs->setPrice(Helpers::priceFromPence($product->currentPrice));
+        $attrs->setAvailability(Availability::IN_STOCK);
 
-        $googleProduct->setOfferId((string) $product->id);
-        $googleProduct->setTitle($product->title);
-        $googleProduct->setLink($product->absolute_link);
-        $googleProduct->setImageLink($product->main_image);
-        $googleProduct->setPrice(new Price([
-            'value' => number_format($product->currentPrice / 100, 2, '.', ''),
-            'currency' => 'GBP',
-        ]));
-        $googleProduct->setAvailability('in_stock');
-        $googleProduct->setChannel('online');
-        $googleProduct->setContentLanguage('en');
-        $googleProduct->setTargetCountry('GB');
         $firstVariant = $product->variants->first();
 
         if ($firstVariant !== null) {
-            $googleProduct->setShippingWeight(new ProductShippingWeight([
-                'value' => $firstVariant->weight / 1000,
-                'unit' => 'kg',
-            ]));
+            $attrs->setShippingWeight(Helpers::shippingWeightFromGrams($firstVariant->weight));
         }
 
-        return $googleProduct;
+        return (new ProductInput())
+            ->setOfferId((string) $product->id)
+            ->setContentLanguage('en')
+            ->setFeedLabel('GB')
+            ->setProductAttributes($attrs);
     }
-
 }

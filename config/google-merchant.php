@@ -8,4 +8,6 @@ return [
     'merchant_id' => env('GOOGLE_MERCHANT_ID'),
 
     'service_account_key_path' => env('GOOGLE_MERCHANT_SERVICE_ACCOUNT_KEY_PATH'),
+
+    'data_source' => env('GOOGLE_MERCHANT_DATA_SOURCE'),
 ];

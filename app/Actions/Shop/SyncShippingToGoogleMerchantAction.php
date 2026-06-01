@@ -7,16 +7,15 @@ namespace App\Actions\Shop;
 use App\Models\Shop\ShopPostagePrice;
 use App\Models\Shop\ShopShippingMethod;
 use App\Services\GoogleMerchant\GoogleMerchantShippingManager;
-use Google\Service\ShoppingContent\DeliveryTime;
-use Google\Service\ShoppingContent\Headers;
-use Google\Service\ShoppingContent\Price;
-use Google\Service\ShoppingContent\RateGroup;
-use Google\Service\ShoppingContent\Row;
-use Google\Service\ShoppingContent\Service;
-use Google\Service\ShoppingContent\ShippingSettings;
-use Google\Service\ShoppingContent\Table;
-use Google\Service\ShoppingContent\Value;
-use Google\Service\ShoppingContent\Weight;
+use App\Services\GoogleMerchant\Helpers;
+use Google\Shopping\Merchant\Accounts\V1\DeliveryTime;
+use Google\Shopping\Merchant\Accounts\V1\Headers;
+use Google\Shopping\Merchant\Accounts\V1\RateGroup;
+use Google\Shopping\Merchant\Accounts\V1\Row;
+use Google\Shopping\Merchant\Accounts\V1\Service;
+use Google\Shopping\Merchant\Accounts\V1\ShippingSettings;
+use Google\Shopping\Merchant\Accounts\V1\Table;
+use Google\Shopping\Merchant\Accounts\V1\Value;
 use Illuminate\Support\Collection;
 
 class SyncShippingToGoogleMerchantAction
@@ -52,8 +51,9 @@ class SyncShippingToGoogleMerchantAction
         )->all();
 
         $settings = new ShippingSettings();
-        $settings->setAccountId($this->manager->merchantId());
+        $settings->setName("accounts/{$this->manager->merchantId()}/shippingSettings");
         $settings->setServices($services);
+        $settings->setEtag('');
 
         $this->manager->update($settings);
     }
@@ -64,10 +64,10 @@ class SyncShippingToGoogleMerchantAction
         $isoCode = mb_strtoupper($country->iso_code);
 
         $service = new Service();
-        $service->setName("{$method->shipping_method}-{$isoCode}");
+        $service->setServiceName("{$method->shipping_method}-{$isoCode}");
         $service->setActive(true);
-        $service->setDeliveryCountry($isoCode);
-        $service->setCurrency('GBP');
+        $service->setDeliveryCountries([$isoCode]);
+        $service->setCurrencyCode('GBP');
         $service->setDeliveryTime($this->buildDeliveryTime($deliveryTimescale));
 
         $rateGroup = new RateGroup();
@@ -83,10 +83,10 @@ class SyncShippingToGoogleMerchantAction
         preg_match('/(\d+)\s*-\s*(\d+)/', $timescale, $matches);
 
         $deliveryTime = new DeliveryTime();
-        $deliveryTime->setMinHandlingTimeInDays('0');
-        $deliveryTime->setMaxHandlingTimeInDays('1');
-        $deliveryTime->setMinTransitTimeInDays($matches[1] ?? '0');
-        $deliveryTime->setMaxTransitTimeInDays($matches[2] ?? '0');
+        $deliveryTime->setMinHandlingDays(0);
+        $deliveryTime->setMaxHandlingDays(1);
+        $deliveryTime->setMinTransitDays((int) ($matches[1] ?? 0));
+        $deliveryTime->setMaxTransitDays((int) ($matches[2] ?? 0));
 
         return $deliveryTime;
     }
@@ -99,17 +99,10 @@ class SyncShippingToGoogleMerchantAction
         $lastIndex = $prices->count() - 1;
 
         foreach ($prices->values() as $index => $price) {
-            $weightValue = $index === $lastIndex
-                ? 'infinity'
-                : number_format($price->max_weight / 1000, 4, '.', '');
-
-            $weights[] = new Weight(['value' => $weightValue, 'unit' => 'kg']);
+            $weights[] = Helpers::weightFromGrams($index === $lastIndex ? null : $price->max_weight);
 
             $cell = new Value();
-            $cell->setFlatRate(new Price([
-                'value' => number_format($price->price / 100, 2, '.', ''),
-                'currency' => 'GBP',
-            ]));
+            $cell->setFlatRate(Helpers::priceFromPence($price->price));
 
             $row = new Row();
             $row->setCells([$cell]);

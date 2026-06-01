@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace Tests\Unit\Services\GoogleMerchant;
 
 use App\Services\GoogleMerchant\GoogleMerchantClient;
-use Google\Client;
+use Google\Auth\Credentials\ServiceAccountCredentials;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
 
 class GoogleMerchantClientTest extends TestCase
 {
-    protected function makeClient(bool $enabled = true, string $merchantId = '12345', string $keyPath = ''): GoogleMerchantClient
+    protected function makeClient(bool $enabled = true, string $merchantId = '12345', string $keyPath = '', string $dataSource = ''): GoogleMerchantClient
     {
         return new GoogleMerchantClient(
             enabled: $enabled,
             merchantId: $merchantId,
             serviceAccountKeyPath: $keyPath,
+            dataSource: $dataSource,
         );
     }
 
@@ -32,6 +33,12 @@ class GoogleMerchantClientTest extends TestCase
     public function itReturnsMerchantId(): void
     {
         $this->assertSame('12345', $this->makeClient(merchantId: '12345')->merchantId());
+    }
+
+    #[Test]
+    public function itReturnsDataSource(): void
+    {
+        $this->assertSame('accounts/12345/dataSources/99', $this->makeClient(dataSource: 'accounts/12345/dataSources/99')->dataSource());
     }
 
     #[Test]
@@ -70,7 +77,7 @@ class GoogleMerchantClientTest extends TestCase
         try {
             $client = $this->makeClient(keyPath: $keyPath)->client();
 
-            $this->assertInstanceOf(Client::class, $client);
+            $this->assertInstanceOf(ServiceAccountCredentials::class, $client);
         } finally {
             unlink($keyPath);
         }

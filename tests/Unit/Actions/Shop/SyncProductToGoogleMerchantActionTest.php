@@ -8,7 +8,7 @@ use App\Actions\Shop\SyncProductToGoogleMerchantAction;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use App\Services\GoogleMerchant\GoogleMerchantProductManager;
-use Google\Service\ShoppingContent\Product;
+use Google\Shopping\Merchant\Products\V1\ProductInput;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -44,12 +44,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     {
         $this->product->update([
             'google_merchant_enabled' => false,
-            'google_merchant_product_id' => 'online:en:GB:1',
+            'google_merchant_product_id' => 'accounts/12345/productInputs/ZW4~GB~1',
         ]);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
-            ->shouldReceive('delete')->with('online:en:GB:1')->once();
+            ->shouldReceive('delete')->with('accounts/12345/productInputs/ZW4~GB~1')->once();
 
         $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
 
@@ -73,12 +73,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itDeletesAndClearsIdWhenProductHasNoLiveStockAndHasAnExistingId(): void
     {
-        $this->product->update(['google_merchant_product_id' => 'online:en:GB:1']);
+        $this->product->update(['google_merchant_product_id' => 'accounts/12345/productInputs/ZW4~GB~1']);
         ShopProductVariant::query()->update(['quantity' => 0]);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
-            ->shouldReceive('delete')->with('online:en:GB:1')->once();
+            ->shouldReceive('delete')->with('accounts/12345/productInputs/ZW4~GB~1')->once();
 
         $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
 
@@ -102,7 +102,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itInsertsWhenProductIsInStockAndHasNoExistingId(): void
     {
-        $returned = new Product(['id' => 'online:en:GB:' . $this->product->id]);
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -110,20 +110,20 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
 
         $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
 
-        $this->assertSame('online:en:GB:' . $this->product->id, $this->product->fresh()->google_merchant_product_id);
+        $this->assertSame('accounts/12345/productInputs/ZW4~GB~' . $this->product->id, $this->product->fresh()->google_merchant_product_id);
     }
 
     #[Test]
     public function itUpdatesWhenProductIsInStockAndHasAnExistingId(): void
     {
-        $existingId = 'online:en:GB:' . $this->product->id;
+        $existingId = 'accounts/12345/productInputs/ZW4~GB~' . $this->product->id;
         $this->product->update(['google_merchant_product_id' => $existingId]);
 
-        $returned = new Product(['id' => $existingId]);
+        $returned = (new ProductInput())->setName($existingId);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
-            ->shouldReceive('update')->with($existingId, Mockery::type(Product::class))->once()->andReturn($returned);
+            ->shouldReceive('update')->with($existingId, Mockery::type(ProductInput::class))->once()->andReturn($returned);
 
         $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
 
@@ -133,12 +133,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itUsesTheProductTitleAsTheMerchantTitle(): void
     {
-        $returned = new Product(['id' => 'online:en:GB:' . $this->product->id]);
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (Product $product) => $product->getTitle() === $this->product->title)
+            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getTitle() === $this->product->title)
             ->once()
             ->andReturn($returned);
 
@@ -149,13 +149,13 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     public function itSetsTheShippingWeightFromTheFirstVariantInKg(): void
     {
         $variant = ShopProductVariant::query()->first();
-        $returned = new Product(['id' => 'online:en:GB:' . $this->product->id]);
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (Product $product) => $product->getShippingWeight()->getValue() === $variant->weight / 1000
-                    && $product->getShippingWeight()->getUnit() === 'kg')
+            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getShippingWeight()->getValue() === $variant->weight / 1000
+                    && $input->getProductAttributes()->getShippingWeight()->getUnit() === 'kg')
             ->once()
             ->andReturn($returned);
 

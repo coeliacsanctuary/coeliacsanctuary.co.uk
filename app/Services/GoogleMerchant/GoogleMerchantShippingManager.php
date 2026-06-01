@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\GoogleMerchant;
 
-use Google\Service\ShoppingContent;
-use Google\Service\ShoppingContent\ShippingSettings;
+use Google\Shopping\Merchant\Accounts\V1\Client\ShippingSettingsServiceClient;
+use Google\Shopping\Merchant\Accounts\V1\InsertShippingSettingsRequest;
+use Google\Shopping\Merchant\Accounts\V1\ShippingSettings;
 
 class GoogleMerchantShippingManager
 {
-    protected ?ShoppingContent $shoppingContent = null;
+    protected ?ShippingSettingsServiceClient $serviceClient = null;
 
     public function __construct(protected GoogleMerchantClient $client)
     {
@@ -17,9 +18,11 @@ class GoogleMerchantShippingManager
 
     public function update(ShippingSettings $settings): ShippingSettings
     {
-        $merchantId = $this->client->merchantId();
+        $request = (new InsertShippingSettingsRequest())
+            ->setParent("accounts/{$this->client->merchantId()}")
+            ->setShippingSetting($settings);
 
-        return $this->service()->shippingsettings->update($merchantId, $merchantId, $settings);
+        return $this->service()->insertShippingSettings($request);
     }
 
     public function isEnabled(): bool
@@ -32,13 +35,11 @@ class GoogleMerchantShippingManager
         return $this->client->merchantId();
     }
 
-    public function setShoppingContent(ShoppingContent $shoppingContent): void
+    protected function service(): ShippingSettingsServiceClient
     {
-        $this->shoppingContent = $shoppingContent;
-    }
-
-    protected function service(): ShoppingContent
-    {
-        return $this->shoppingContent ??= new ShoppingContent($this->client->client());
+        return $this->serviceClient ??= new ShippingSettingsServiceClient([
+            'credentials' => $this->client->client(),
+            'transport' => 'rest',
+        ]);
     }
 }

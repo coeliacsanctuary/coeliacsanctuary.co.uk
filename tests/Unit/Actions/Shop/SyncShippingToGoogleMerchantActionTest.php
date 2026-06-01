@@ -10,7 +10,8 @@ use App\Enums\Shop\ShippingMethod;
 use App\Models\Shop\ShopPostagePrice;
 use App\Services\GoogleMerchant\GoogleMerchantShippingManager;
 use Database\Seeders\ShopScaffoldingSeeder;
-use Google\Service\ShoppingContent\ShippingSettings;
+use Google\Shopping\Merchant\Accounts\V1\ShippingSettings;
+use Google\Shopping\Type\Weight\WeightUnit;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -109,7 +110,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
 
         $service = $capturedSettings->getServices()[0];
 
-        $this->assertSame('letter-UK', $service->getName());
+        $this->assertSame('letter-UK', $service->getServiceName());
     }
 
     #[Test]
@@ -139,7 +140,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
         $service = $capturedSettings->getServices()[0];
 
         // ShopScaffoldingSeeder creates UK with iso_code 'uk' (lowercase)
-        $this->assertSame('UK', $service->getDeliveryCountry());
+        $this->assertSame('UK', $service->getDeliveryCountries()[0]);
     }
 
     #[Test]
@@ -174,14 +175,16 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
         $rows = $table->getRows();
 
         $this->assertCount(3, $rows);
-        $this->assertSame('0.0500', $weights[0]->getValue());
-        $this->assertSame('0.1000', $weights[1]->getValue());
-        $this->assertSame('infinity', $weights[2]->getValue());
-        $this->assertSame('kg', $weights[0]->getUnit());
-        $this->assertSame('1.50', $rows[0]->getCells()[0]->getFlatRate()->getValue());
-        $this->assertSame('2.50', $rows[1]->getCells()[0]->getFlatRate()->getValue());
-        $this->assertSame('4.00', $rows[2]->getCells()[0]->getFlatRate()->getValue());
-        $this->assertSame('GBP', $rows[0]->getCells()[0]->getFlatRate()->getCurrency());
+        // 50g = 50_000 micros, 100g = 100_000 micros, last row = -1 (infinity)
+        $this->assertSame(50_000, $weights[0]->getAmountMicros());
+        $this->assertSame(100_000, $weights[1]->getAmountMicros());
+        $this->assertSame(-1, $weights[2]->getAmountMicros());
+        $this->assertSame(WeightUnit::KILOGRAM, $weights[0]->getUnit());
+        // 150p = 1_500_000 micros, 250p = 2_500_000 micros, 400p = 4_000_000 micros
+        $this->assertSame(1_500_000, $rows[0]->getCells()[0]->getFlatRate()->getAmountMicros());
+        $this->assertSame(2_500_000, $rows[1]->getCells()[0]->getFlatRate()->getAmountMicros());
+        $this->assertSame(4_000_000, $rows[2]->getCells()[0]->getFlatRate()->getAmountMicros());
+        $this->assertSame('GBP', $rows[0]->getCells()[0]->getFlatRate()->getCurrencyCode());
     }
 
     #[Test]
@@ -211,9 +214,9 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
         $deliveryTime = $capturedSettings->getServices()[0]->getDeliveryTime();
 
         // PostageArea::EUROPE deliveryEstimate = "5 - 7"
-        $this->assertSame('5', $deliveryTime->getMinTransitTimeInDays());
-        $this->assertSame('7', $deliveryTime->getMaxTransitTimeInDays());
-        $this->assertSame('0', $deliveryTime->getMinHandlingTimeInDays());
-        $this->assertSame('1', $deliveryTime->getMaxHandlingTimeInDays());
+        $this->assertSame(5, $deliveryTime->getMinTransitDays());
+        $this->assertSame(7, $deliveryTime->getMaxTransitDays());
+        $this->assertSame(0, $deliveryTime->getMinHandlingDays());
+        $this->assertSame(1, $deliveryTime->getMaxHandlingDays());
     }
 }

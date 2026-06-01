@@ -4,30 +4,48 @@ declare(strict_types=1);
 
 namespace App\Services\GoogleMerchant;
 
-use Google\Service\ShoppingContent;
-use Google\Service\ShoppingContent\Product;
+use Google\Shopping\Merchant\Products\V1\Client\ProductInputsServiceClient;
+use Google\Shopping\Merchant\Products\V1\DeleteProductInputRequest;
+use Google\Shopping\Merchant\Products\V1\InsertProductInputRequest;
+use Google\Shopping\Merchant\Products\V1\ProductInput;
+use Google\Shopping\Merchant\Products\V1\UpdateProductInputRequest;
 
 class GoogleMerchantProductManager
 {
-    protected ?ShoppingContent $shoppingContent = null;
+    protected ?ProductInputsServiceClient $serviceClient = null;
 
     public function __construct(protected GoogleMerchantClient $client)
     {
     }
 
-    public function insert(Product $product): Product
+    public function insert(ProductInput $productInput): ProductInput
     {
-        return $this->service()->products->insert($this->client->merchantId(), $product);
+        $request = (new InsertProductInputRequest())
+            ->setParent("accounts/{$this->client->merchantId()}")
+            ->setProductInput($productInput)
+            ->setDataSource($this->client->dataSource());
+
+        return $this->service()->insertProductInput($request);
     }
 
-    public function update(string $productId, Product $product): Product
+    public function update(string $productInputName, ProductInput $productInput): ProductInput
     {
-        return $this->service()->products->update($this->client->merchantId(), $productId, $product);
+        $productInput->setName($productInputName);
+
+        $request = (new UpdateProductInputRequest())
+            ->setProductInput($productInput)
+            ->setDataSource($this->client->dataSource());
+
+        return $this->service()->updateProductInput($request);
     }
 
-    public function delete(string $productId): void
+    public function delete(string $productInputName): void
     {
-        $this->service()->products->delete($this->client->merchantId(), $productId);
+        $request = (new DeleteProductInputRequest())
+            ->setName($productInputName)
+            ->setDataSource($this->client->dataSource());
+
+        $this->service()->deleteProductInput($request);
     }
 
     public function isEnabled(): bool
@@ -35,13 +53,11 @@ class GoogleMerchantProductManager
         return $this->client->isEnabled();
     }
 
-    public function setShoppingContent(ShoppingContent $shoppingContent): void
+    protected function service(): ProductInputsServiceClient
     {
-        $this->shoppingContent = $shoppingContent;
-    }
-
-    protected function service(): ShoppingContent
-    {
-        return $this->shoppingContent ??= new ShoppingContent($this->client->client());
+        return $this->serviceClient ??= new ProductInputsServiceClient([
+            'credentials' => $this->client->client(),
+            'transport' => 'rest',
+        ]);
     }
 }

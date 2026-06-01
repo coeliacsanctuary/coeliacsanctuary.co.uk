@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\GoogleMerchant;
 
-use Google\Client;
+use Google\Auth\Credentials\ServiceAccountCredentials;
 use RuntimeException;
 
 class GoogleMerchantClient
@@ -13,6 +13,7 @@ class GoogleMerchantClient
         protected bool $enabled,
         protected string $merchantId,
         protected string $serviceAccountKeyPath,
+        protected string $dataSource,
     ) {
     }
 
@@ -26,7 +27,12 @@ class GoogleMerchantClient
         return $this->merchantId;
     }
 
-    public function client(): Client
+    public function dataSource(): string
+    {
+        return $this->dataSource;
+    }
+
+    public function client(): ServiceAccountCredentials
     {
         $path = str_starts_with($this->serviceAccountKeyPath, '/') ? $this->serviceAccountKeyPath : base_path($this->serviceAccountKeyPath);
 
@@ -34,10 +40,12 @@ class GoogleMerchantClient
             throw new RuntimeException("Google Merchant service account key not found at [{$path}]");
         }
 
-        $client = new Client();
-        $client->setAuthConfig($path);
-        $client->setScopes(['https://www.googleapis.com/auth/content']);
+        /** @var string $contents */
+        $contents = file_get_contents($path);
 
-        return $client;
+        return new ServiceAccountCredentials(
+            ['https://www.googleapis.com/auth/content'],
+            json_decode($contents, true),
+        );
     }
 }

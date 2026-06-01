@@ -40,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
             enabled: config()->boolean('google-merchant.enabled', false),
             merchantId: config()->string('google-merchant.merchant_id', ''),
             serviceAccountKeyPath: config()->string('google-merchant.service_account_key_path', ''),
+            dataSource: config()->string('google-merchant.data_source', ''),
         ));
     }
 
