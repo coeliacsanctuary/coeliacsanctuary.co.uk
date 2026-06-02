@@ -1,4 +1,4 @@
-import { HomeHoverItem } from '@/types/Types';
+import { ArticleFaq, HomeHoverItem } from '@/types/Types';
 import { FeaturedInCollection } from '@/types/CollectionTypes';
 
 export type BlogSimpleCard = Exclude<HomeHoverItem, 'type' & 'square_image'>;
@@ -25,9 +25,12 @@ export type BlogPage = {
   description: string;
   body: string;
   hasTwitterEmbed: boolean;
+  short_title?: string;
   show_author: boolean;
   tags: BlogTag[];
   featured_in?: FeaturedInCollection[];
+  faqs?: ArticleFaq[];
+  faq_display?: 'top' | 'bottom';
 };
 
 export type BlogTag = {

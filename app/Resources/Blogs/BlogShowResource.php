@@ -9,6 +9,7 @@ use App\ResourceCollections\Blogs\BlogTagCollection;
 use App\Resources\Collections\FeaturedInCollectionSimpleCardViewResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
@@ -42,9 +43,21 @@ class BlogShowResource extends JsonResource
                 ]),
             'hasTwitterEmbed' => Str::contains($this->body, $twitterReplacements),
             'header_image_alt_text' => $this->header_image_alt_text,
+            'short_title' => $this->short_title,
             'show_author' => $this->show_author,
             'tags' => new BlogTagCollection($this->tags),
             'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollectionGroups),
+            'faqs' => $this->faqs ? $this->parseFaqs($this->faqs) : null,
+            'faq_display' => $this->faq_display,
         ];
+    }
+
+    /**
+     * @param  array<int, array{fields: array{question: string, answer: string}}>  $faqs
+     * @return Collection<int, array{question: string, answer: string}>
+     */
+    protected function parseFaqs(array $faqs): Collection
+    {
+        return collect($faqs)->map(fn ($faq) => $faq['fields']);
     }
 }

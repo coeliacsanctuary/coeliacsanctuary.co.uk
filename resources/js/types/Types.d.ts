@@ -6,6 +6,11 @@ import {
   VNodeProps,
 } from 'vue';
 
+export type ArticleFaq = {
+  question: string;
+  answer: string;
+};
+
 export type HomeHoverItem = {
   title: string;
   link: string;
