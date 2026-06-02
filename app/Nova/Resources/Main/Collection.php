@@ -118,6 +118,12 @@ class Collection extends Resource
                     ->addButtonLabel('Select Header Image')
                     ->rules(['required']),
 
+                Text::make('Header Image Alt Text', 'header_image_alt_text')
+                    ->nullable()
+                    ->onlyOnForms()
+                    ->fullWidth()
+                    ->help('Descriptive alt text for the header image. Defaults to the collection title if left blank.'),
+
                 Images::make('Social Image', 'social')
                     ->onlyOnForms()
                     ->addButtonLabel('Select Social Image')

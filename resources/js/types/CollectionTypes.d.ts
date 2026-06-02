@@ -11,6 +11,7 @@ export type CollectionPage = {
   id: number;
   title: string;
   image: string;
+  header_image_alt_text?: string;
   published: string;
   updated: string;
   author: string;
@@ -39,6 +40,7 @@ export type BlogCollectionItem = CollectionItem & {
   description: string;
   date: string;
   image: string;
+  header_image_alt_text?: string;
 };
 
 export type RecipeCollectionItem = CollectionItem & {
@@ -47,6 +49,7 @@ export type RecipeCollectionItem = CollectionItem & {
   description: string;
   date: string;
   image: string;
+  header_image_alt_text?: string;
   square_image?: string;
 };
 
@@ -74,6 +77,7 @@ export type HomepageCollectedItem = {
   type: 'Blog' | 'Recipe';
   title: string;
   image: string;
+  header_image_alt_text?: string;
   square_image?: string;
   link: string;
 };
@@ -83,4 +87,5 @@ export type FeaturedInCollection = {
   link: string;
   description: string;
   image: string;
+  header_image_alt_text?: string;
 };

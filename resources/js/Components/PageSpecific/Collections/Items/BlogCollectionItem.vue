@@ -18,7 +18,7 @@ defineProps<{ item: BlogCollectionItem }>();
         prefetch
       >
         <img
-          :alt="item.title"
+          :alt="item.header_image_alt_text ?? item.title"
           :src="item.image"
           loading="lazy"
         />

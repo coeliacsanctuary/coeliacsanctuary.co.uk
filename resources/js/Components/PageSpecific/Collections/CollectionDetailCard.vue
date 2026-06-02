@@ -26,7 +26,7 @@ useJourneyTracking().logWhenVisible(
         prefetch
       >
         <img
-          :alt="collection.title"
+          :alt="collection.header_image_alt_text ?? collection.title"
           :src="collection.image"
           loading="lazy"
         />

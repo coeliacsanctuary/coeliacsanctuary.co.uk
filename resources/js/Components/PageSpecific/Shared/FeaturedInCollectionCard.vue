@@ -28,7 +28,7 @@ defineProps<{ collections: FeaturedInCollection[]; title: string }>();
       <Link :href="collection.link">
         <img
           :src="collection.image"
-          :alt="collection.title"
+          :alt="collection.header_image_alt_text ?? collection.title"
           class="scale-95 transform transition duration-500 group-hover:scale-100 group-hover:opacity-100 sm:opacity-80"
         />
       </Link>

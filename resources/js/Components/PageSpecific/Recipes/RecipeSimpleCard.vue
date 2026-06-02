@@ -16,7 +16,7 @@ defineProps<{ recipe: RecipeDetailCard }>();
       class="group -m-4"
     >
       <img
-        :alt="recipe.title"
+        :alt="recipe.header_image_alt_text ?? recipe.title"
         :src="recipe.image"
         loading="lazy"
       />

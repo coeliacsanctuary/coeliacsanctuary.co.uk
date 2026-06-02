@@ -33,7 +33,7 @@ defineProps<{ collection: CollectionPage }>();
 
   <Card no-padding>
     <img
-      :alt="collection.title"
+      :alt="collection.header_image_alt_text ?? collection.title"
       :src="collection.image"
       loading="lazy"
     />

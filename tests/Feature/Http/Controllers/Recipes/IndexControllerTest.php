@@ -106,7 +106,7 @@ class IndexControllerTest extends TestCase
                         'recipes.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'square_image', 'link', 'description', 'features', 'nutrition'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'square_image', 'link', 'description', 'features', 'nutrition'])
                     )
                     ->where('recipes.data.0.title', 'Recipe 0')
                     ->where('recipes.data.1.title', 'Recipe 1')
@@ -131,7 +131,7 @@ class IndexControllerTest extends TestCase
                         'recipes.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'square_image', 'link', 'description', 'features', 'nutrition'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'square_image', 'link', 'description', 'features', 'nutrition'])
                     )
                     ->where('recipes.data.0.title', 'Recipe 12')
                     ->where('recipes.data.1.title', 'Recipe 13')
