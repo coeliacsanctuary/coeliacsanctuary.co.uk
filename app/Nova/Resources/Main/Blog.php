@@ -6,6 +6,7 @@ namespace App\Nova\Resources\Main;
 
 use App\Models\Blogs\Blog as BlogModel;
 use App\Nova\Chartables\Metrics\Blogs\CollectionCardViews;
+use App\Nova\Repeaters\ArticleFaq;
 use App\Nova\Chartables\Metrics\Blogs\CommentViews;
 use App\Nova\Chartables\Metrics\Blogs\DetailCardViews;
 use App\Nova\Chartables\Metrics\Blogs\Views;
@@ -23,6 +24,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\Repeater;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Tag;
@@ -59,6 +61,13 @@ class Blog extends Resource
 
             new Panel('Introduction', [
                 Text::make('Title')->fullWidth()->rules(['required', 'max:200'])->showWhenPeeking(),
+
+                Text::make('Short Title')
+                    ->fullWidth()
+                    ->maxlength(100)
+                    ->onlyOnForms()
+                    ->help('Optional, used with FAQs')
+                    ->nullable(),
 
                 Slug::make('Slug')->from('Title')
                     ->hideFromIndex()
@@ -151,6 +160,16 @@ class Blog extends Resource
                     ->help('If checked, the about Alison block will be shown at the bottom of the blog.'),
 
                 PreviewButton::make('Preview')->forModel('blog')->onlyOnForms(),
+            ]),
+
+            new Panel('FAQ', [
+                Repeater::make('FAQs', 'faqs')
+                    ->asJson()
+                    ->repeatables([ArticleFaq::make()]),
+
+                Select::make('Display FAQ', 'faq_display')
+                    ->options(['top' => 'Above content', 'bottom' => 'Below content'])
+                    ->nullable(),
             ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),

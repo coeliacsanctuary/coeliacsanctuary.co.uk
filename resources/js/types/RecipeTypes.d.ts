@@ -1,4 +1,4 @@
-import { HomeHoverItem } from '@/types/Types';
+import { ArticleFaq, HomeHoverItem } from '@/types/Types';
 import { FeaturedInCollection } from '@/types/CollectionTypes';
 
 export type RecipeDetailCard = HomeHoverItem & {
@@ -42,12 +42,7 @@ export type RecipePage = {
     protein: number;
   };
   featured_in?: FeaturedInCollection[];
-  faqs?: RecipeFaq[];
-};
-
-export type RecipeFaq = {
-  question: string;
-  answer: string;
+  faqs?: ArticleFaq[];
 };
 
 export type RecipeFeature = {

@@ -9,7 +9,7 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class RecipeFaq extends Repeatable
+class ArticleFaq extends Repeatable
 {
     /**
      * Get the fields displayed by the repeatable.

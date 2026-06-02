@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Recipes\Recipe as RecipeModel;
-use App\Nova\Repeaters\RecipeFaq;
+use App\Nova\Repeaters\ArticleFaq;
 use App\Nova\Resource;
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeAllergens as RecipeAllergenPanel;
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeFeatures as RecipeFeaturePanel;
@@ -159,7 +159,7 @@ class Recipe extends Resource
             Repeater::make('FAQs', 'faqs')
                 ->asJson()
                 ->repeatables([
-                    RecipeFaq::make(),
+                    ArticleFaq::make(),
                 ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),
