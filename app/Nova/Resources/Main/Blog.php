@@ -33,6 +33,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
+use Throwable;
 
 /** @extends resource<BlogModel> */
 /**
@@ -209,18 +210,22 @@ class Blog extends Resource
 
     public function cards(NovaRequest $request)
     {
-        $blogId = $request->findResourceOrFail()->resource->id;
+        try {
+            $blogId = $request->findResourceOrFail()->resource->id;
 
-        $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
+            $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
 
-        return array_map(
-            fn ($metric) => ApexChart::make($metric)
-                ->withParams(['blogId' => $blogId])
-                ->onlyOnDetail()
-                ->fixedHeight()
-                ->fullWidth(),
-            $metrics
-        );
+            return array_map(
+                fn($metric) => ApexChart::make($metric)
+                    ->withParams(['blogId' => $blogId])
+                    ->onlyOnDetail()
+                    ->fixedHeight()
+                    ->fullWidth(),
+                $metrics
+            );
+        } catch(Throwable $e) {
+            return [];
+        }
     }
 
     public static function indexQuery(NovaRequest $request, Builder $query)
