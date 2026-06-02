@@ -1,8 +1,9 @@
 <script lang="ts" setup>
+import { ref, watch } from 'vue';
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/outline';
 import { ArticleFaq } from '@/types/Types';
 
-defineProps<{
+const props = defineProps<{
   faq: ArticleFaq;
   index: number;
   isOpen: boolean;
@@ -12,39 +13,42 @@ defineEmits<{
   open: [index: number];
 }>();
 
-const onEnter = (el: Element): void => {
-  const element = el as HTMLElement;
-  element.style.height = '0';
-  element.style.overflow = 'hidden';
-  requestAnimationFrame(() => {
-    element.style.transition = 'height 0.3s ease-out';
-    element.style.height = `${element.scrollHeight}px`;
-  });
-};
+const panel = ref<HTMLElement | null>(null);
 
-const onAfterEnter = (el: Element): void => {
-  const element = el as HTMLElement;
-  element.style.height = 'auto';
-  element.style.overflow = '';
-  element.style.transition = '';
-};
+watch(
+  () => props.isOpen,
+  (open) => {
+    const el = panel.value;
 
-const onLeave = (el: Element): void => {
-  const element = el as HTMLElement;
-  element.style.height = `${element.scrollHeight}px`;
-  element.style.overflow = 'hidden';
-  requestAnimationFrame(() => {
-    element.style.transition = 'height 0.3s ease-in';
-    element.style.height = '0';
-  });
-};
+    if (!el) {
+      return;
+    }
 
-const onAfterLeave = (el: Element): void => {
-  const element = el as HTMLElement;
-  element.style.height = '';
-  element.style.overflow = '';
-  element.style.transition = '';
-};
+    if (open) {
+      el.style.overflow = 'hidden';
+      el.style.transition = 'height 0.3s ease-out';
+      el.style.height = `${el.scrollHeight}px`;
+      el.addEventListener(
+        'transitionend',
+        () => {
+          el.style.height = 'auto';
+          el.style.overflow = '';
+          el.style.transition = '';
+        },
+        { once: true },
+      );
+
+      return;
+    }
+
+    el.style.height = `${el.scrollHeight}px`;
+    el.style.overflow = 'hidden';
+    requestAnimationFrame(() => {
+      el.style.transition = 'height 0.3s ease-in';
+      el.style.height = '0';
+    });
+  },
+);
 </script>
 
 <template>
@@ -75,20 +79,16 @@ const onAfterLeave = (el: Element): void => {
       </span>
     </button>
 
-    <Transition
-      @enter="onEnter"
-      @after-enter="onAfterEnter"
-      @leave="onLeave"
-      @after-leave="onAfterLeave"
+    <div
+      ref="panel"
+      style="height: 0; overflow: hidden"
     >
-      <div v-if="isOpen">
-        <div class="border-t border-primary-light px-3 pb-3 pt-2">
-          <p
-            class="prose prose-lg max-w-none md:prose-xl"
-            v-html="faq.answer"
-          />
-        </div>
+      <div class="border-t border-primary-light px-3 pb-3 pt-2">
+        <p
+          class="prose prose-lg max-w-none md:prose-xl"
+          v-html="faq.answer"
+        />
       </div>
-    </Transition>
+    </div>
   </div>
 </template>
