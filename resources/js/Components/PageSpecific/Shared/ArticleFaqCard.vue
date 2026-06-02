@@ -1,12 +1,20 @@
 <script lang="ts" setup>
+import { ref } from 'vue';
 import Card from '@/Components/Card.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import ArticleFaqItem from '@/Components/PageSpecific/Shared/ArticleFaqItem.vue';
 import { ArticleFaq } from '@/types/Types';
 
 defineProps<{
   faqs: ArticleFaq[];
   title: string;
 }>();
+
+const openIndex = ref<number | null>(null);
+
+const handleOpen = (index: number): void => {
+  openIndex.value = openIndex.value === index ? null : index;
+};
 </script>
 
 <template>
@@ -15,22 +23,15 @@ defineProps<{
       {{ title }}
     </SubHeading>
 
-    <div
-      v-for="faq in faqs"
-      :key="faq.question"
-      class="mt-3 divide-y divide-primary"
-    >
-      <div class="flex flex-col space-y-3">
-        <h3
-          class="text-xl font-semibold md:text-2xl"
-          v-text="faq.question"
-        />
-
-        <p
-          class="prose prose-lg max-w-none md:prose-xl"
-          v-html="faq.answer"
-        />
-      </div>
+    <div class="mt-3 flex flex-col space-y-4">
+      <ArticleFaqItem
+        v-for="(faq, index) in faqs"
+        :key="faq.question"
+        :faq="faq"
+        :index="index"
+        :is-open="openIndex === index"
+        @open="handleOpen"
+      />
     </div>
   </Card>
 </template>
