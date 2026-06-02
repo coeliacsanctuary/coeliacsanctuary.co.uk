@@ -59,7 +59,7 @@ onMounted(() => {
     no-padding
   >
     <img
-      :alt="blog.title"
+      :alt="blog.header_image_alt_text ?? blog.title"
       :src="blog.image"
       loading="lazy"
     />

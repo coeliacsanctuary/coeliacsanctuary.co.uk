@@ -20,13 +20,13 @@ defineProps<{ item: RecipeCollectionItem }>();
       >
         <img
           v-if="item.square_image"
-          :alt="item.title"
+          :alt="item.header_image_alt_text ?? item.title"
           :src="item.image"
           loading="lazy"
         />
         <RecipeSquareImage
           v-else
-          :alt="item.title"
+          :alt="item.header_image_alt_text ?? item.title"
           :src="item.image"
         />
       </Link>

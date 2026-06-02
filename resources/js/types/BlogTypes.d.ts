@@ -19,6 +19,7 @@ export type BlogPage = {
   id: number;
   title: string;
   image: string;
+  header_image_alt_text?: string;
   published: string;
   updated: string | null;
   description: string;

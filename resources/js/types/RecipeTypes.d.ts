@@ -17,6 +17,7 @@ export type RecipePage = {
   id: number;
   print_url: string;
   title: string;
+  header_image_alt_text?: string;
   short_title?: string;
   image: string;
   square_image: string;

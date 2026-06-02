@@ -21,6 +21,7 @@ class BlogDetailCardViewResource extends JsonResource
             'title' => Str::of($this->title)->replace('&quot;', '"'),
             'link' => $this->link,
             'image' => $this->main_image_as_webp ?? $this->main_image,
+            'header_image_alt_text' => $this->header_image_alt_text,
             'date' => $this->published,
             'description' => $this->meta_description,
             'comments_count' => $this->comments_count,

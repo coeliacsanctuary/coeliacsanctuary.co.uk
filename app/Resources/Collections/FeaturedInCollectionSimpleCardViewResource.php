@@ -22,6 +22,7 @@ class FeaturedInCollectionSimpleCardViewResource extends JsonResource
             'title' => $collection->title,
             'link' => route('collection.show', ['collection' => $collection]),
             'image' => $collection->main_image_as_webp ?? $collection->main_image,
+            'header_image_alt_text' => $collection->header_image_alt_text,
             'description' => $collection->meta_description,
         ];
     }

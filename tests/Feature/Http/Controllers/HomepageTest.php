@@ -85,7 +85,7 @@ class HomepageTest extends TestCase
                         'blogs',
                         6,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'link'])
+                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
                     )
                     ->where('blogs.0.title', 'Blog 0')
                     ->where('blogs.1.title', 'Blog 1')
@@ -105,7 +105,7 @@ class HomepageTest extends TestCase
                         'blogs',
                         6,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'link'])
+                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
                     )
                     ->where('blogs.0.title', 'Blog 1')
                     ->where('blogs.1.title', 'Blog 2')
@@ -125,7 +125,7 @@ class HomepageTest extends TestCase
                         'recipes',
                         8,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'link'])
+                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
                     )
                     ->where('recipes.0.title', 'Recipe 0')
                     ->where('recipes.1.title', 'Recipe 1')
@@ -145,7 +145,7 @@ class HomepageTest extends TestCase
                         'recipes',
                         8,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'link'])
+                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
                     )
                     ->where('recipes.0.title', 'Recipe 1')
                     ->where('recipes.1.title', 'Recipe 2')

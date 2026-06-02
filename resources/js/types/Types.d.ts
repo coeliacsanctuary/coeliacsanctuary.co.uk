@@ -10,6 +10,7 @@ export type HomeHoverItem = {
   title: string;
   link: string;
   image: string;
+  header_image_alt_text?: string;
   square_image?: string;
   type?: 'Blog' | 'Recipe';
 };

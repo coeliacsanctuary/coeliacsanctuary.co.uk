@@ -29,6 +29,7 @@ class RecipeShowResource extends JsonResource
             'id' => $this->id,
             'print_url' => route('recipe.print', ['recipe' => $this]),
             'title' => $this->title,
+            'header_image_alt_text' => $this->header_image_alt_text,
             'short_title' => $this->short_title,
             'image' => $this->main_image_as_webp ?? $this->main_image,
             'square_image' => $this->square_image_as_webp ?? $this->square_image,

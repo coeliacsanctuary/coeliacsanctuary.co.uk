@@ -28,13 +28,13 @@ useJourneyTracking().logWhenVisible(
       >
         <img
           v-if="recipe.square_image"
-          :alt="recipe.title"
+          :alt="recipe.header_image_alt_text ?? recipe.title"
           :src="recipe.image"
           loading="lazy"
         />
         <RecipeSquareImage
           v-else
-          :alt="recipe.title"
+          :alt="recipe.header_image_alt_text ?? recipe.title"
           :src="recipe.image"
         />
       </Link>
