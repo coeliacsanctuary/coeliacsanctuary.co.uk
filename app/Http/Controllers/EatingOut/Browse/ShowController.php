@@ -14,7 +14,7 @@ class ShowController
 {
     public function __invoke(Inertia $inertia, GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction): Response
     {
-        $ogImage = $getOpenGraphImageForRouteAction->handle('eatery', function(string $url, OpenGraphImage $image) {
+        $ogImage = $getOpenGraphImageForRouteAction->handle('eatery', function (string $url, OpenGraphImage $image) {
             $timestamp = $image->updated_at->timestamp;
 
             return URL::query($url, ['cache' => $timestamp]);

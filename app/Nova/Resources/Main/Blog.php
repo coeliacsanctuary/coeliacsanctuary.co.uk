@@ -216,14 +216,14 @@ class Blog extends Resource
             $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
 
             return array_map(
-                fn($metric) => ApexChart::make($metric)
+                fn ($metric) => ApexChart::make($metric)
                     ->withParams(['blogId' => $blogId])
                     ->onlyOnDetail()
                     ->fixedHeight()
                     ->fullWidth(),
                 $metrics
             );
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             return [];
         }
     }
