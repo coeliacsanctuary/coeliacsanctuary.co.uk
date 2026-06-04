@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
-use App\Enums\EatingOut\EateryType;
 use App\Models\EatingOut\Eatery;
-use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\OpenGraphImage;
 use App\Services\RenderOpenGraphImage;

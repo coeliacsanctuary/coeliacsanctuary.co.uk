@@ -1,4 +1,3 @@
-@php use App\Enums\EatingOut\EateryType;use Illuminate\Support\Str; @endphp
 @vite('resources/js/app.ts')
 <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
 
