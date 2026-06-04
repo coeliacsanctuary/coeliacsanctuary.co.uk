@@ -10,7 +10,6 @@ use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateCollectionIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateRecipeIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateShopIndexPageOpenGraphImageJob;
@@ -18,6 +17,7 @@ use App\Models\OpenGraphImage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class GetOpenGraphImageForRouteActionTest extends TestCase
@@ -59,7 +59,7 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
             'shop' => CreateShopIndexPageOpenGraphImageJob::class,
             'eatery' => CreateEateryIndexPageOpenGraphImageJob::class,
             'eatery-app' => CreateEateryAppPageOpenGraphImageJob::class,
-            'eatery-map' => CreateEateryMapPageOpenGraphImageJob::class,
+            'eatery-map' => CreateEateryIndexPageOpenGraphImageJob::class,
         ];
 
         foreach ($jobs as $route => $job) {
@@ -117,6 +117,30 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
         app(GetOpenGraphImageForRouteAction::class)->handle('recipe');
 
         // Should NOT dispatch the job since the image is still fresh (within 24 hours)
+        Bus::assertNothingDispatched();
+    }
+
+    #[Test]
+    public function itCallsTheAlterUrlCallbackWhenOneIsProvided(): void
+    {
+        Bus::fake();
+        Storage::fake('media');
+
+        $timestamp = now()->subHours(2);
+
+        $openGraphImage = $this->create(OpenGraphImage::class, [
+            'route' => 'blog',
+            'updated_at' => $timestamp,
+        ]);
+
+        $openGraphImage->addMedia(UploadedFile::fake()->image('og-image.jpg'))->toMediaCollection();
+
+        $result = app(GetOpenGraphImageForRouteAction::class)->handle(
+            'blog',
+            fn (string $url, OpenGraphImage $image) => URL::query($url, ['cache' => $image->updated_at->timestamp]),
+        );
+
+        $this->assertStringContainsString('cache=' . $timestamp->timestamp, $result);
         Bus::assertNothingDispatched();
     }
 }

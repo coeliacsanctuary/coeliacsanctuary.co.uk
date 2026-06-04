@@ -8,7 +8,6 @@ use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\Collections\Collection;
 use App\Models\Collections\CollectionGroup;
@@ -100,7 +99,6 @@ class EateryTest extends TestCase
         $this->create(Eatery::class);
 
         Bus::assertDispatched(CreateEateryAppPageOpenGraphImageJob::class);
-        Bus::assertDispatched(CreateEateryMapPageOpenGraphImageJob::class);
         Bus::assertDispatched(CreateEateryIndexPageOpenGraphImageJob::class);
     }
 
