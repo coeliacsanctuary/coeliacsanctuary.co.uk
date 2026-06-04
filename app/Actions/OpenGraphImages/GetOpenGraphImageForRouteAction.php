@@ -8,7 +8,6 @@ use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateCollectionIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateRecipeIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateShopIndexPageOpenGraphImageJob;
@@ -16,7 +15,8 @@ use App\Models\OpenGraphImage;
 
 class GetOpenGraphImageForRouteAction
 {
-    public function handle(string $route = 'home'): string
+    /** @param callable(string, OpenGraphImage): string $alterUrl */
+    public function handle(string $route = 'home', ?callable $alterUrl = null): string
     {
         /** @var OpenGraphImage | null $model */
         $model = OpenGraphImage::query()
@@ -26,7 +26,13 @@ class GetOpenGraphImageForRouteAction
             ->first();
 
         if ($model && $model->image_url) {
-            return $model->image_url;
+            $url = $model->image_url;
+
+            if ($alterUrl) {
+                $url = $alterUrl($url, $model);
+            }
+
+            return $url;
         }
 
         match ($route) {
@@ -34,9 +40,8 @@ class GetOpenGraphImageForRouteAction
             'recipe' => CreateRecipeIndexPageOpenGraphImageJob::dispatch(),
             'collection' => CreateCollectionIndexPageOpenGraphImageJob::dispatch(),
             'shop' => CreateShopIndexPageOpenGraphImageJob::dispatch(),
-            'eatery' => CreateEateryIndexPageOpenGraphImageJob::dispatch(),
+            'eatery', 'eatery-map' => CreateEateryIndexPageOpenGraphImageJob::dispatch(),
             'eatery-app' => CreateEateryAppPageOpenGraphImageJob::dispatch(),
-            'eatery-map' => CreateEateryMapPageOpenGraphImageJob::dispatch(),
             default => CreateHomePageOpenGraphImageJob::dispatch(),
         };
 
