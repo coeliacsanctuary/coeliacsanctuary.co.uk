@@ -7,7 +7,7 @@
         class="rotate-15 scale-140 absolute top-[30px] right-[-50px] h-full w-1/2 bg-secondary/20 bg-gradient-to-bl from-white to-secondary/5"
     >
         <img
-            src="/images/misc/eating-out-map-colour.png"
+            src="{{ asset('images/misc/eating-out-map-colour.png') }}"
             alt=""
             class="border-20 border-black h-full w-full object-cover object-center opacity-40"
         />
