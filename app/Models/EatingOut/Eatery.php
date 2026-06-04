@@ -17,7 +17,6 @@ use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Schema\EaterySchema;
 use App\Scopes\LiveScope;
@@ -99,7 +98,6 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
                 CreateEatingOutOpenGraphImageJob::dispatch($town);
                 CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
                 CreateEateryAppPageOpenGraphImageJob::dispatch();
-                CreateEateryMapPageOpenGraphImageJob::dispatch();
                 CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
