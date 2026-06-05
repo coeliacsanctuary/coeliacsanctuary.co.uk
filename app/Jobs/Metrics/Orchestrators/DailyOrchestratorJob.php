@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Jobs\Metrics\Orchestrators;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Metrics\Sources\BlogMetricSource;
+use App\Metrics\Sources\RecipeMetricSource;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Carbon;
 
 class DailyOrchestratorJob extends BaseOrchestratorJob implements ShouldQueue
@@ -19,6 +20,9 @@ class DailyOrchestratorJob extends BaseOrchestratorJob implements ShouldQueue
     {
         return [
             new BlogMetricSource(
+                createdBefore: now()->subYears(2),
+            ),
+            new RecipeMetricSource(
                 createdBefore: now()->subYears(2),
             ),
         ];
