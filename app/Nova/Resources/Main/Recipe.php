@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Recipes\Recipe as RecipeModel;
+use App\Nova\Chartables\Metrics\Recipes\CollectionCardViews;
+use App\Nova\Chartables\Metrics\Recipes\CommentViews;
+use App\Nova\Chartables\Metrics\Recipes\DetailCardViews;
+use App\Nova\Chartables\Metrics\Recipes\Views;
 use App\Nova\Repeaters\ArticleFaq;
 use App\Nova\Resource;
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeAllergens as RecipeAllergenPanel;
@@ -12,7 +16,9 @@ use App\Nova\Resources\Main\PolymorphicPanels\RecipeFeatures as RecipeFeaturePan
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeMeals as RecipeMealPanel;
 use App\Nova\Support\Panels\VisibilityPanel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
+use Jpeters8889\ApexCharts\ApexChart;
 use Jpeters8889\Body\Body;
 use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
 use Laravel\Nova\Fields\DateTime;
@@ -25,6 +31,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
+use Throwable;
 
 /** @extends resource<RecipeModel> */
 /**
@@ -37,6 +44,11 @@ class Recipe extends Resource
     public static $title = 'title';
 
     public static $search = ['id', 'title'];
+
+    public function authorizedToView(Request $request)
+    {
+        return true;
+    }
 
     public function fields(NovaRequest $request)
     {
@@ -158,6 +170,7 @@ class Recipe extends Resource
 
             Repeater::make('FAQs', 'faqs')
                 ->asJson()
+                ->hideFromDetail()
                 ->repeatables([
                     ArticleFaq::make(),
                 ]),
@@ -185,6 +198,26 @@ class Recipe extends Resource
         unset($recipe->_status);
 
         return $fillFields;
+    }
+
+    public function cards(NovaRequest $request)
+    {
+        try {
+            $recipeId = $request->findResourceOrFail()->resource->id;
+
+            $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
+
+            return array_map(
+                fn ($metric) => ApexChart::make($metric)
+                    ->withParams(['recipeId' => $recipeId])
+                    ->onlyOnDetail()
+                    ->fixedHeight()
+                    ->fullWidth(),
+                $metrics
+            );
+        } catch (Throwable $e) {
+            return [];
+        }
     }
 
     public static function indexQuery(NovaRequest $request, Builder $query)
