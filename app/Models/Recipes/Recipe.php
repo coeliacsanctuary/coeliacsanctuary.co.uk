@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -160,6 +161,12 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
             'recipe_id',
             'meal_type_id'
         )->withTimestamps();
+    }
+
+    /** @return HasMany<RecipeMetric, $this> */
+    public function metrics(): HasMany
+    {
+        return $this->hasMany(RecipeMetric::class);
     }
 
     /** @return Attribute<string, never-return> */
