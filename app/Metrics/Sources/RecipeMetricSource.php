@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Metrics\Sources;
 
 use App\Contracts\Metrics\MetricSource;
-use App\Jobs\Metrics\Blogs\GetBlogMetricsJob;
-use App\Models\Blogs\Blog;
+use App\Jobs\Metrics\Recipes\GetRecipeMetricsJob;
+use App\Models\Recipes\Recipe;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-class BlogMetricSource implements MetricSource
+class RecipeMetricSource implements MetricSource
 {
     public function __construct(
         protected ?Carbon $createdAfter = null,
@@ -22,7 +22,7 @@ class BlogMetricSource implements MetricSource
     /** @return Builder<Model> */
     public function query(): Builder
     {
-        $query = Blog::query()->latest();
+        $query = Recipe::query()->latest();
 
         if ($this->createdAfter !== null) {
             $query->where('created_at', '>=', $this->createdAfter);
@@ -43,8 +43,8 @@ class BlogMetricSource implements MetricSource
 
     public function dispatch(Model $model, int $delaySeconds, Carbon $date): void
     {
-        assert($model instanceof Blog);
+        assert($model instanceof Recipe);
 
-        GetBlogMetricsJob::dispatch($model, $date)->delay($delaySeconds);
+        GetRecipeMetricsJob::dispatch($model, $date)->delay($delaySeconds);
     }
 }

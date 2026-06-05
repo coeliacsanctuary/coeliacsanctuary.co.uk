@@ -9,9 +9,9 @@ use App\Jobs\Metrics\Orchestrators\DailyOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\HourlyOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\MinuteOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\SixHourOrchestratorJob;
+use App\Jobs\Metrics\Orchestrators\TenMinuteOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\ThirtyMinuteOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\ThreeHourOrchestratorJob;
-use App\Jobs\Metrics\Orchestrators\TenMinuteOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\TwelveHourOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\TwoHourOrchestratorJob;
 use App\Models\Blogs\Blog;
@@ -82,7 +82,7 @@ class IntervalOrchestratorTest extends TestCase
     }
 
     /**
-     * @param class-string $orchestratorClass
+     * @param  class-string  $orchestratorClass
      */
     #[Test]
     #[DataProvider('orchestratorProvider')]
@@ -139,7 +139,7 @@ class IntervalOrchestratorTest extends TestCase
     }
 
     /**
-     * @param class-string $orchestratorClass
+     * @param  class-string  $orchestratorClass
      */
     #[Test]
     #[DataProvider('outOfRangeProvider')]
