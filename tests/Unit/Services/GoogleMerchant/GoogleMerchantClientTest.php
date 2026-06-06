@@ -38,7 +38,7 @@ class GoogleMerchantClientTest extends TestCase
     #[Test]
     public function itReturnsDataSource(): void
     {
-        $this->assertSame('accounts/12345/dataSources/99', $this->makeClient(dataSource: 'accounts/12345/dataSources/99')->dataSource());
+        $this->assertSame('accounts/12345/dataSources/99', $this->makeClient(merchantId: '12345', dataSource: '99')->dataSource());
     }
 
     #[Test]

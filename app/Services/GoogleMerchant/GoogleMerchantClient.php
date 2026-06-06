@@ -29,7 +29,7 @@ class GoogleMerchantClient
 
     public function dataSource(): string
     {
-        return $this->dataSource;
+        return "accounts/{$this->merchantId}/dataSources/{$this->dataSource}";
     }
 
     public function client(): ServiceAccountCredentials
