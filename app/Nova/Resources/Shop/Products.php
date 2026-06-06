@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Jobs\Shop\SyncProductToGoogleMerchantJob;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Nova\Actions\Shop\CreateTravelCardFullSet;
@@ -148,6 +149,13 @@ class Products extends Resource
                     ->sortable()
                     ->exceptOnForms()
                     ->showOnDetail(),
+            ]),
+
+            new Panel('Google Merchant', [
+                Boolean::make('Sync to Google Merchant', 'google_merchant_enabled')
+                    ->default(true)
+                    ->hideFromIndex()
+                    ->help('Toggle to include or remove this product from Google Merchant Centre'),
             ]),
 
             new Panel('Metas', [
@@ -360,6 +368,26 @@ class Products extends Resource
     public static function usesScout()
     {
         return false;
+    }
+
+    public static function afterCreate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        /** @var ShopProduct $model */
+        SyncProductToGoogleMerchantJob::dispatch($model);
+    }
+
+    public static function afterUpdate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        /** @var ShopProduct $model */
+        SyncProductToGoogleMerchantJob::dispatch($model);
     }
 
     public static function redirectAfterCreate(NovaRequest $request, $resource)
