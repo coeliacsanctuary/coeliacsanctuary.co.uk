@@ -144,6 +144,37 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
     }
 
     #[Test]
+    public function itUsesSingleValueForASinglePriceTier(): void
+    {
+        $this->build(ShopPostagePrice::class)->create([
+            'shipping_method_id' => ShippingMethod::LETTER->value,
+            'postage_country_area_id' => PostageArea::UK->value,
+            'max_weight' => 100,
+            'price' => 200,
+        ]);
+
+        $capturedSettings = null;
+
+        $this->mock(GoogleMerchantShippingManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('merchantId')->andReturn('12345')
+            ->shouldReceive('update')
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+                $capturedSettings = $settings;
+
+                return true;
+            });
+
+        $this->callAction(SyncShippingToGoogleMerchantAction::class);
+
+        $rateGroup = $capturedSettings->getServices()[0]->getRateGroups()[0];
+
+        $this->assertNull($rateGroup->getMainTable());
+        $this->assertSame(2_000_000, $rateGroup->getSingleValue()->getFlatRate()->getAmountMicros());
+        $this->assertSame('GBP', $rateGroup->getSingleValue()->getFlatRate()->getCurrencyCode());
+    }
+
+    #[Test]
     public function itBuildsWeightBasedPricingRows(): void
     {
         foreach ([50 => 150, 100 => 250, 200 => 400] as $weight => $price) {

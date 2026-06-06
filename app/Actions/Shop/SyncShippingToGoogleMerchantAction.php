@@ -72,7 +72,15 @@ class SyncShippingToGoogleMerchantAction
 
         $rateGroup = new RateGroup();
         $rateGroup->setApplicableShippingLabels([]);
-        $rateGroup->setMainTable($this->buildWeightTable($prices));
+
+        if ($prices->count() === 1) {
+            $flatRate = new Value();
+            $flatRate->setFlatRate(Helpers::priceFromPence($prices->first()->price));
+            $rateGroup->setSingleValue($flatRate);
+        } else {
+            $rateGroup->setMainTable($this->buildWeightTable($prices));
+        }
+
         $service->setRateGroups([$rateGroup]);
 
         return $service;
