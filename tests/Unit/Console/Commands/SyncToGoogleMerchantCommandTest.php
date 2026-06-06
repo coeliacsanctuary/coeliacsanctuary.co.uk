@@ -11,6 +11,7 @@ use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Config;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -19,6 +20,8 @@ class SyncToGoogleMerchantCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        config()->set('google-merchant.enabled', true);
 
         $this->seed(ShopScaffoldingSeeder::class);
         $this->withCategoriesAndProducts(categories: 1, products: 2, variants: 1);
