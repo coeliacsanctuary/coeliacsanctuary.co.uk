@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ArticleFaqCard from '@/Components/PageSpecific/Shared/ArticleFaqCard.vue';
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { Link, router } from '@inertiajs/vue3';
@@ -139,11 +140,17 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
 
   <Card no-padding>
     <img
-      :alt="blog.title"
+      :alt="blog.header_image_alt_text ?? blog.title"
       :src="blog.image"
       loading="lazy"
     />
   </Card>
+
+  <ArticleFaqCard
+    v-if="blog.faqs && blog.faq_display === 'top'"
+    :faqs="blog.faqs"
+    :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
+  />
 
   <div
     class="flex w-full flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
@@ -154,6 +161,12 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
           <RenderedString :content="blog.body" />
         </div>
       </Card>
+
+      <ArticleFaqCard
+        v-if="blog.faqs && (!blog.faq_display || blog.faq_display === 'bottom')"
+        :faqs="blog.faqs"
+        :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
+      />
 
       <Card
         v-if="blog.show_author"

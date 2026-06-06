@@ -63,7 +63,9 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itCallsTheGetOpenGraphImageForRouteAction(): void
     {
-        $this->expectAction(GetOpenGraphImageForRouteAction::class, ['eatery']);
+        $this->expectAction(GetOpenGraphImageForRouteAction::class, [
+            static fn (string $route, mixed $alterUrl = null) => $route === 'eatery',
+        ]);
 
         $this->visitPage();
     }

@@ -18,6 +18,7 @@ class CollectionShowResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'image' => $this->main_image_as_webp ?? $this->main_image,
+            'header_image_alt_text' => $this->header_image_alt_text,
             'published' => $this->published,
             'updated' => $this->lastUpdated,
             'description' => $this->description,

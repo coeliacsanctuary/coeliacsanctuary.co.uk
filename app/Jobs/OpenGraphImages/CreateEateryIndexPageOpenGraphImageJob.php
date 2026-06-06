@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
-use App\Enums\EatingOut\EateryType;
 use App\Models\EatingOut\Eatery;
-use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\OpenGraphImage;
 use App\Services\RenderOpenGraphImage;
@@ -31,31 +29,22 @@ class CreateEateryIndexPageOpenGraphImageJob implements ShouldQueue
             return;
         }
 
-        $eateries = Eatery::query()
-            ->where('type_id', EateryType::EATERY)
-            ->where('closed_down', false)
-            ->count();
+        $eateries = Eatery::query()->select(['id', 'country_id'])->get();
+        $branches = NationwideBranch::query()->select(['id', 'country_id'])->get();
 
-        $attractions = Eatery::query()
-            ->where('type_id', EateryType::ATTRACTION)
-            ->where('closed_down', false)
-            ->count();
-
-        $hotels = Eatery::query()
-            ->where('type_id', EateryType::HOTEL)
-            ->where('closed_down', false)
-            ->count();
-
-        $branches = NationwideBranch::query()->count();
-
-        $reviews = EateryReview::query()->count();
+        $wales = $eateries->where('country_id', 8)->count() + $branches->where('country_id', 8)->count();
+        $scotland = $eateries->where('country_id', 7)->count() + $branches->where('country_id', 7)->count();
+        $roi = $eateries->where('country_id', 6)->count() + $branches->where('country_id', 6)->count();
+        $ni = $eateries->where('country_id', 5)->count() + $branches->where('country_id', 5)->count();
+        $england = $eateries->whereNotIn('country_id', [5,6,7,8])->count() + $branches->whereNotIn('country_id', [5,6,7,8])->count();
 
         $base64Image = $renderOpenGraphImage->handle(view('og-images.eatery', [
-            'eateries' => $eateries + $branches,
-            'attractions' => $attractions,
-            'hotels' => $hotels,
-            'branches' => $branches,
-            'reviews' => $reviews,
+            'eateries' => $eateries->count() + $branches->count(),
+            'wales' => $wales,
+            'scotland' => $scotland,
+            'roi' => $roi,
+            'ni' => $ni,
+            'england' => $england,
         ])->render());
 
         /** @var OpenGraphImage $openGraphModel */

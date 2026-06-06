@@ -153,6 +153,23 @@ When creating subtasks for an Epic:
 3. Tradeoffs (Any particular tradeoffs)
 4. Affected areas (Areas of the codebase it will affect)
 
+## Collaborative Planning
+
+- **Always work interactively** - If there are any unknowns, ambiguities, or decisions to make when planning an issue, ask the user before proceeding. Do not assume or fill in gaps silently.
+- **Iterate until clear** - Keep the conversation going until all details are resolved and the issue scope is unambiguous.
+
+## Pre-Creation Sign-off (MANDATORY)
+
+**NEVER create an issue without explicit user approval.**
+
+Before calling `gh issue create`, you MUST:
+
+1. **Present the full issue** - Show the user the exact title, body, type, and labels you intend to create.
+2. **Wait for explicit approval** - Do not proceed until the user confirms they are happy with the content.
+3. **Apply any requested changes** - If the user wants edits, update and re-present before creating.
+
+This rule is absolute. Even if the user says "go ahead and create it", present the full draft first.
+
 ## IMPORTANT
 - Never include "Generated with Claude Code"
 - Never use title case for descriptions - use sentence case

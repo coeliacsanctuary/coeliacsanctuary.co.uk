@@ -19,7 +19,7 @@ withDefaults(defineProps<{ blog: BlogSimpleCard; hover?: boolean }>(), {
       class="group -m-4"
     >
       <img
-        :alt="blog.title"
+        :alt="blog.header_image_alt_text ?? blog.title"
         :src="blog.image"
         loading="lazy"
       />

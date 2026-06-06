@@ -243,9 +243,48 @@ import Heading from '@/Components/Heading.vue';
             </li>
 
             <li>
-              <span class="font-semibold text-primary-dark"
-                >Full Set of Cards</span
-              >
+              <span class="font-semibold text-primary-dark">
+                Travel Translation Cards
+              </span>
+              <ol>
+                <li>
+                  Our travel translation cards are designed as a communication
+                  aid to help explain gluten free dietary requirements and
+                  Coeliac disease in other languages.
+                </li>
+                <li>
+                  Translations are obtained from independent professional
+                  translation providers and are prepared by native speakers of
+                  the relevant language.
+                </li>
+                <li>
+                  Whilst every effort is made to ensure the accuracy of
+                  translations, language interpretation, local terminology and
+                  individual understanding may vary between countries, regions,
+                  establishments and individuals.
+                </li>
+                <li>
+                  The travel translation cards are intended to assist
+                  communication and do not guarantee that a third party will
+                  understand, follow or act upon the information provided.
+                </li>
+                <li>
+                  Coeliac Sanctuary cannot guarantee that any food, drink or
+                  product provided by a third party will be gluten free, safe to
+                  consume, or suitable for an individual's dietary requirements.
+                </li>
+                <li>
+                  Users should always make their own assessment of food
+                  suitability and, where necessary, seek further clarification
+                  from the establishment before consuming any food or drink.
+                </li>
+              </ol>
+            </li>
+
+            <li id="shop-travel-cards">
+              <span class="font-semibold text-primary-dark">
+                Full Set of Cards
+              </span>
               <ol>
                 <li>
                   A full set of cards is one of each of the Standard Coeliac

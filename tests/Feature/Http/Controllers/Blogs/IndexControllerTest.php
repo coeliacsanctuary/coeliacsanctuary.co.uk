@@ -72,7 +72,7 @@ class IndexControllerTest extends TestCase
                         'blogs.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'tags', 'comments_count'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 0')
                     ->where('blogs.data.1.title', 'Blog 1')
@@ -97,7 +97,7 @@ class IndexControllerTest extends TestCase
                         'blogs.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'tags', 'comments_count'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 12')
                     ->where('blogs.data.1.title', 'Blog 13')
@@ -165,7 +165,7 @@ class IndexControllerTest extends TestCase
                 fn (Assert $page) => $page
                     ->component('Blog/Index')
                     ->has('blogs')
-                    ->has('blogs.data', 2, fn (Assert $page) => $page->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'tags', 'comments_count']))
+                    ->has('blogs.data', 2, fn (Assert $page) => $page->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count']))
                     ->where('blogs.data.0.title', 'Blog 0')
                     ->has('blogs.links')
                     ->has('blogs.meta')
@@ -194,7 +194,7 @@ class IndexControllerTest extends TestCase
                         'blogs.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'tags', 'comments_count'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 12')
                     ->where('blogs.data.1.title', 'Blog 13')

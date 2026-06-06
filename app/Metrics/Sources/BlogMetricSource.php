@@ -8,8 +8,8 @@ use App\Contracts\Metrics\MetricSource;
 use App\Jobs\Metrics\Blogs\GetBlogMetricsJob;
 use App\Models\Blogs\Blog;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class BlogMetricSource implements MetricSource
 {
@@ -44,6 +44,7 @@ class BlogMetricSource implements MetricSource
     public function dispatch(Model $model, int $delaySeconds, Carbon $date): void
     {
         assert($model instanceof Blog);
+
         GetBlogMetricsJob::dispatch($model, $date)->delay($delaySeconds);
     }
 }

@@ -10,6 +10,7 @@ import { PrinterIcon } from '@heroicons/vue/20/solid';
 import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
 import RecipeNutritionTable from '@/Components/PageSpecific/Recipes/RecipeNutritionTable.vue';
 import { Page } from '@inertiajs/core';
+import ArticleFaqCard from '@/Components/PageSpecific/Shared/ArticleFaqCard.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
@@ -200,13 +201,13 @@ const handleCommentReset = () => {
   <Card no-padding>
     <img
       v-if="recipe.square_image"
-      :alt="recipe.title"
+      :alt="recipe.header_image_alt_text ?? recipe.title"
       :src="recipe.image"
       loading="lazy"
     />
     <RecipeSquareImage
       v-else
-      :alt="recipe.title"
+      :alt="recipe.header_image_alt_text ?? recipe.title"
       :src="recipe.image"
     />
   </Card>
@@ -217,29 +218,11 @@ const handleCommentReset = () => {
     </div>
   </Card>
 
-  <Card v-if="recipe.faqs">
-    <SubHeading classes="text-primary-dark">
-      Here are some tips and FAQs about {{ recipe.short_title || recipe.title }}
-    </SubHeading>
-
-    <div
-      v-for="faq in recipe.faqs"
-      :key="faq.question"
-      class="mt-3 divide-y divide-primary"
-    >
-      <div class="flex flex-col space-y-3">
-        <h3
-          class="text-xl font-semibold md:text-2xl"
-          v-text="faq.question"
-        />
-
-        <p
-          class="prose prose-lg max-w-none md:prose-xl"
-          v-html="faq.answer"
-        />
-      </div>
-    </div>
-  </Card>
+  <ArticleFaqCard
+    v-if="recipe.faqs"
+    :faqs="recipe.faqs"
+    :title="`Here are some tips and FAQs about ${recipe.short_title || recipe.title}`"
+  />
 
   <div
     ref="recipeElem"

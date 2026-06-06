@@ -11,13 +11,16 @@ use App\Nova\FieldRegistrar;
 use App\Nova\Menu;
 use App\Nova\NovaMacros;
 use App\Nova\ResourceRegistrar;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
 use Jpeters8889\AddressField\FieldServiceProvider as AddressFieldServiceProvider;
 use Jpeters8889\EateryCollectionsQueryBuilder\EateryCollectionsQueryBuilder as EateryCollectionsQueryBuilderTool;
 use Jpeters8889\OrderDispatchSlip\OrderDispatchSlip as DispatchSlipTool;
 use Jpeters8889\RefreshAdsTxt\RefreshAdsTxt as RefreshAdsTxtTool;
 use Jpeters8889\ShopDailyStock\ShopDailyStock;
 use Jpeters8889\WteNationwideBranchImport\WteNationwideBranchImport;
+use Laravel\Fortify\Features;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 
@@ -31,6 +34,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
         Nova::booted(function (): void {
             Menu::build();
+
+            Inertia::share('novaFlash', fn (Request $request) => $request->session()->get('nova_flash'));
         });
     }
 
@@ -67,6 +72,19 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Main::make(),
             Shop::make(),
         ];
+    }
+
+    protected function fortify(): void
+    {
+        Nova::fortify()
+            ->features([
+                Features::updatePasswords(),
+                Features::twoFactorAuthentication([
+                    'confirm' => true,
+                    'confirmPassword' => true,
+                ]),
+            ])
+            ->register();
     }
 
     public function tools(): array

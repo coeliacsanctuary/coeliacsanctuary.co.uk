@@ -6,6 +6,7 @@ namespace App\Nova\Resources\Main;
 
 use App\Models\Blogs\Blog as BlogModel;
 use App\Nova\Chartables\Metrics\Blogs\CollectionCardViews;
+use App\Nova\Repeaters\ArticleFaq;
 use App\Nova\Chartables\Metrics\Blogs\CommentViews;
 use App\Nova\Chartables\Metrics\Blogs\DetailCardViews;
 use App\Nova\Chartables\Metrics\Blogs\Views;
@@ -23,6 +24,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\Repeater;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Tag;
@@ -31,6 +33,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
+use Throwable;
 
 /** @extends resource<BlogModel> */
 /**
@@ -59,6 +62,13 @@ class Blog extends Resource
 
             new Panel('Introduction', [
                 Text::make('Title')->fullWidth()->rules(['required', 'max:200'])->showWhenPeeking(),
+
+                Text::make('Short Title')
+                    ->fullWidth()
+                    ->maxlength(100)
+                    ->onlyOnForms()
+                    ->help('Optional, used with FAQs')
+                    ->nullable(),
 
                 Slug::make('Slug')->from('Title')
                     ->hideFromIndex()
@@ -120,6 +130,12 @@ class Blog extends Resource
                     ->addButtonLabel('Select Header Image')
                     ->rules(['required']),
 
+                Text::make('Header Image Alt Text', 'header_image_alt_text')
+                    ->nullable()
+                    ->onlyOnForms()
+                    ->fullWidth()
+                    ->help('Descriptive alt text for the header image. Defaults to the blog title if left blank.'),
+
                 Images::make('Social Image', 'social')
                     ->onlyOnForms()
                     ->addButtonLabel('Select Social Image')
@@ -145,6 +161,16 @@ class Blog extends Resource
                     ->help('If checked, the about Alison block will be shown at the bottom of the blog.'),
 
                 PreviewButton::make('Preview')->forModel('blog')->onlyOnForms(),
+            ]),
+
+            new Panel('FAQ', [
+                Repeater::make('FAQs', 'faqs')
+                    ->asJson()
+                    ->repeatables([ArticleFaq::make()]),
+
+                Select::make('Display FAQ', 'faq_display')
+                    ->options(['top' => 'Above content', 'bottom' => 'Below content'])
+                    ->nullable(),
             ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),
@@ -184,18 +210,22 @@ class Blog extends Resource
 
     public function cards(NovaRequest $request)
     {
-        $blogId = $request->findResourceOrFail()->resource->id;
+        try {
+            $blogId = $request->findResourceOrFail()->resource->id;
 
-        $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
+            $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
 
-        return array_map(
-            fn ($metric) => ApexChart::make($metric)
-                ->withParams(['blogId' => $blogId])
-                ->onlyOnDetail()
-                ->fixedHeight()
-                ->fullWidth(),
-            $metrics
-        );
+            return array_map(
+                fn ($metric) => ApexChart::make($metric)
+                    ->withParams(['blogId' => $blogId])
+                    ->onlyOnDetail()
+                    ->fixedHeight()
+                    ->fullWidth(),
+                $metrics
+            );
+        } catch (Throwable $e) {
+            return [];
+        }
     }
 
     public static function indexQuery(NovaRequest $request, Builder $query)

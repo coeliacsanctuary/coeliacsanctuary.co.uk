@@ -54,6 +54,10 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     use LinkableModel;
     use Searchable;
 
+    protected $casts = [
+        'faqs' => 'array',
+    ];
+
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
