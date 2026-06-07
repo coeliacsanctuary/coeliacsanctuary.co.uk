@@ -86,8 +86,8 @@ useJourneyTracking().logWhenVisible(
         title="Top Recipes"
       >
         <p class="prose prose-lg mb-2 max-w-none font-semibold lg:prose-xl">
-          See what everyone is making today, and check out the most popular recipes
-          on Coeliac Sanctuary.
+          See what everyone is making today, and check out the most popular
+          recipes on Coeliac Sanctuary.
         </p>
       </HomeHoverGroup>
 
