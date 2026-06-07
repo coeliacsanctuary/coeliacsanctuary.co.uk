@@ -17,8 +17,8 @@ import useJourneyTracking from '@/composables/useJourneyTracking';
 import { useTemplateRef } from 'vue';
 
 defineProps<{
-  blogs: HomeHoverItem[];
-  recipes: HomeHoverItem[];
+  blogs: { latest: HomeHoverItem[]; top: HomeHoverItem[] };
+  recipes: { latest: HomeHoverItem[]; top: HomeHoverItem[] };
   collections: HomepageCollection[];
   latestReviews: EaterySimpleReviewResource[];
   latestEateries: EaterySimpleHomeResource[];
@@ -66,12 +66,33 @@ useJourneyTracking().logWhenVisible(
       <HomeNewsletterSignup />
 
       <HomeHoverGroup
-        :items="blogs"
+        :items="blogs.top"
+        title="Top Blogs"
+      >
+        <p class="prose prose-lg mb-2 max-w-none font-semibold lg:prose-xl">
+          Explore some of the most popular articles from the Coeliac Sanctuary
+          blog.
+        </p>
+      </HomeHoverGroup>
+
+      <HomeHoverGroup
+        :items="blogs.latest"
         title="Latest Blogs"
       />
 
       <HomeHoverGroup
-        :items="recipes"
+        :items="recipes.top"
+        :per-row="4"
+        title="Top Recipes"
+      >
+        <p class="prose prose-lg mb-2 max-w-none font-semibold lg:prose-xl">
+          See what everyone is making today, and see the most popular recipes
+          from the on Coeliac Sanctuary.
+        </p>
+      </HomeHoverGroup>
+
+      <HomeHoverGroup
+        :items="recipes.latest"
         :per-row="4"
         title="Latest Recipes"
       />

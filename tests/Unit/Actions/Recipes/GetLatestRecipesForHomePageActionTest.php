@@ -40,9 +40,9 @@ class GetLatestRecipesForHomePageActionTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsEightRecipes(): void
+    public function itReturnsFourRecipes(): void
     {
-        $this->assertCount(8, $this->callAction(GetLatestRecipesForHomepageAction::class));
+        $this->assertCount(4, $this->callAction(GetLatestRecipesForHomepageAction::class));
     }
 
     #[Test]

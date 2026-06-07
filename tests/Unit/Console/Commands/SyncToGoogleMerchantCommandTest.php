@@ -11,7 +11,6 @@ use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Config;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
