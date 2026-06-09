@@ -169,6 +169,17 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         return $this->hasMany(RecipeMetric::class);
     }
 
+    /** @return BelongsToMany<static, $this> */
+    public function relatedRecipes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            static::class,
+            'recipes_related_recipes',
+            'recipe_id',
+            'related_recipe_id'
+        )->withTimestamps();
+    }
+
     /** @return Attribute<string, never-return> */
     public function servings(): Attribute
     {

@@ -20,7 +20,10 @@ class RecipeShowResource extends JsonResource
     /** @return array */
     public function toArray(Request $request)
     {
-        $this->load(['associatedCollectionGroups', 'associatedCollectionGroups.group.collection', 'associatedCollectionGroups.group.collection.media']);
+        $this->load([
+            'relatedRecipes', 'relatedRecipes.media',
+            'associatedCollectionGroups', 'associatedCollectionGroups.group.collection', 'associatedCollectionGroups.group.collection.media',
+        ]);
 
         /** @var RecipeNutrition $nutrition */
         $nutrition = $this->nutrition;
@@ -68,6 +71,7 @@ class RecipeShowResource extends JsonResource
             ],
             'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollectionGroups),
             'faqs' => $this->faqs ? $this->parseFaqs($this->faqs) : null,
+            'related_recipes' => RelatedRecipeCardViewResource::collection($this->relatedRecipes),
         ];
     }
 

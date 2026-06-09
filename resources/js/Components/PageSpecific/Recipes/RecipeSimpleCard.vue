@@ -2,6 +2,7 @@
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import { RecipeDetailCard } from '@/types/RecipeTypes';
+import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
 
 defineProps<{ recipe: RecipeDetailCard }>();
 </script>
@@ -16,9 +17,15 @@ defineProps<{ recipe: RecipeDetailCard }>();
       class="group -m-4"
     >
       <img
+        v-if="recipe.square_image"
         :alt="recipe.header_image_alt_text ?? recipe.title"
         :src="recipe.image"
         loading="lazy"
+      />
+      <RecipeSquareImage
+        v-else
+        :alt="recipe.header_image_alt_text ?? recipe.title"
+        :src="recipe.image"
       />
 
       <h2

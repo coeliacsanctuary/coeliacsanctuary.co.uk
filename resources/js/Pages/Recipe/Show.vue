@@ -17,6 +17,7 @@ import Info from '@/Components/Info.vue';
 import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import RenderedString from '@/Components/RenderedString.vue';
+import RecipeSimpleCard from '@/Components/PageSpecific/Recipes/RecipeSimpleCard.vue';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -255,6 +256,16 @@ const handleCommentReset = () => {
         <RecipeNutritionTable
           direction="vertical"
           :nutrition="recipe.nutrition"
+        />
+      </Card>
+
+      <Card v-if="recipe.related_recipes?.length">
+        <SubHeading classes="text-primary-dark">Related Recipes</SubHeading>
+
+        <RecipeSimpleCard
+          v-for="relatedRecipe in recipe.related_recipes"
+          :key="relatedRecipe.title"
+          :recipe="relatedRecipe"
         />
       </Card>
     </aside>
