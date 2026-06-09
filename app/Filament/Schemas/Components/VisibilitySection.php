@@ -2,16 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Shared\SchemaPartials;
+namespace App\Filament\Schemas\Components;
 
-use App\Filament\Fields\Status\Form\StatusField;
-use App\Models\Blogs\Blog;
-use App\Models\Recipes\Recipe;
+use App\Filament\Forms\Components\StatusField;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 
 class VisibilitySection
 {

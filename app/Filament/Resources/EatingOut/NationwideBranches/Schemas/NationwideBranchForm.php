@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\EatingOut\NationwideBranches\Schemas;
 
-use App\Filament\Shared\SchemaPartials\EateryIntroductionSection;
-use App\Filament\Shared\SchemaPartials\EateryLocationSection;
+use App\Filament\Schemas\Components\EateryIntroductionSection;
+use App\Filament\Schemas\Components\EateryLocationSection;
 use App\Models\EatingOut\Eatery;
 use Filament\Schemas\Schema;
 

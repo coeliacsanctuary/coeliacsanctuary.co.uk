@@ -17,10 +17,11 @@ class EateryTownsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query
-                ->where('slug', '!=', 'nationwide')
-                ->withCount(['areas', 'eateries', 'nationwideBranches'])
-                ->orderBy('town')
+            ->modifyQueryUsing(
+                fn ($query) => $query
+                    ->where('slug', '!=', 'nationwide')
+                    ->withCount(['areas', 'eateries', 'nationwideBranches'])
+                    ->orderBy('town')
             )
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->collection('primary'),

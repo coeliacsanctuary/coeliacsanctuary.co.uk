@@ -18,19 +18,20 @@ class NationwideBranchesTable
     public static function configure(Table $table, bool $isChain = false): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query
-                ->withoutGlobalScopes()
-                ->with([
-                    'eatery' => fn ($query) => $query->withoutGlobalScopes(),
-                    'area' => fn ($query) => $query->withoutGlobalScopes(),
-                    'town' => fn ($query) => $query->withoutGlobalScopes(),
-                    'county' => fn ($query) => $query->withoutGlobalScopes(),
-                    'country' => fn ($query) => $query->withoutGlobalScopes(),
-                    'reviews' => fn ($query) => $query->withoutGlobalScopes(),
-                ])
-                ->withCount([
-                    'reviews' => fn ($query) => $query->withoutGlobalScopes(),
-                ])
+            ->modifyQueryUsing(
+                fn (Builder $query) => $query
+                    ->withoutGlobalScopes()
+                    ->with([
+                        'eatery' => fn ($query) => $query->withoutGlobalScopes(),
+                        'area' => fn ($query) => $query->withoutGlobalScopes(),
+                        'town' => fn ($query) => $query->withoutGlobalScopes(),
+                        'county' => fn ($query) => $query->withoutGlobalScopes(),
+                        'country' => fn ($query) => $query->withoutGlobalScopes(),
+                        'reviews' => fn ($query) => $query->withoutGlobalScopes(),
+                    ])
+                    ->withCount([
+                        'reviews' => fn ($query) => $query->withoutGlobalScopes(),
+                    ])
             )
             ->groups( ! $isChain ? [
                 Group::make('eatery.name')

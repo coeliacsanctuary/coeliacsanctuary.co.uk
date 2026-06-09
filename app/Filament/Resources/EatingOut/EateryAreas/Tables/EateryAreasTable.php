@@ -18,9 +18,10 @@ class EateryAreasTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query
-                ->withCount(['eateries', 'nationwideBranches'])
-                ->orderBy('area')
+            ->modifyQueryUsing(
+                fn ($query) => $query
+                    ->withCount(['eateries', 'nationwideBranches'])
+                    ->orderBy('area')
             )
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->collection('primary'),

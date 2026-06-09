@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Fields\Status\Table;
+namespace App\Filament\Tables\Columns;
 
 use App\Models\Blogs\Blog;
 use App\Models\Collections\Collection;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Collections\Schemas;
 
-use App\Filament\Shared\SchemaPartials\ImagesSection;
-use App\Filament\Shared\SchemaPartials\MetasSection;
-use App\Filament\Shared\SchemaPartials\VisibilitySection;
+use App\Filament\Schemas\Components\ImagesSection;
+use App\Filament\Schemas\Components\MetasSection;
+use App\Filament\Schemas\Components\VisibilitySection;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;

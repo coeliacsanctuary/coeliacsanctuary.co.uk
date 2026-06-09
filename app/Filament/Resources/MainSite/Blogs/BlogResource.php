@@ -6,7 +6,7 @@ namespace App\Filament\Resources\MainSite\Blogs;
 
 use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Blogs\RelationManagers\CommentsRelationManager;
-use App\Filament\Resources\MainSite\Blogs\Shemas\BlogForm;
+use App\Filament\Resources\MainSite\Blogs\Schemas\BlogForm;
 use App\Filament\Resources\MainSite\Blogs\Tables\BlogsTable;
 use App\Filament\Transformers\StatusTransformer;
 use App\Models\Blogs\Blog;

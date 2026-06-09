@@ -17,9 +17,10 @@ class EateryCountiesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query
-                ->where('id', '>', 1)
-                ->withCount(['towns', 'eateries', 'nationwideBranches'])
+            ->modifyQueryUsing(
+                fn ($query) => $query
+                    ->where('id', '>', 1)
+                    ->withCount(['towns', 'eateries', 'nationwideBranches'])
             )
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->collection('primary'),

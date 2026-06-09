@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Shared\SchemaPartials;
+namespace App\Filament\Schemas\Components;
 
-use App\Filament\Fields\LocationLookup;
+use App\Filament\Forms\Components\LocationLookup;
 use App\Filament\Support\FindEateryLocation;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;

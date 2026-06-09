@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Collections\Tables;
 
-use App\Filament\Fields\Status\Table\StatusColumn;
+use App\Filament\Tables\Columns\StatusColumn;
 use App\Models\Collections\Collection;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;

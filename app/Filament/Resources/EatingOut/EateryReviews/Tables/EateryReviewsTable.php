@@ -28,15 +28,16 @@ class EateryReviewsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query
-                ->with([
-                    'eatery' => fn ($query) => $query->withoutGlobalScopes(),
-                    'branch' => fn ($query) => $query->withoutGlobalScopes(),
-                    'images',
-                ])
-                ->withCount(['images' => fn ($query) => $query->withoutGlobalScopes()])
-                ->where('admin_review', false)
-                ->reorder('created_at', 'desc')
+            ->modifyQueryUsing(
+                fn ($query) => $query
+                    ->with([
+                        'eatery' => fn ($query) => $query->withoutGlobalScopes(),
+                        'branch' => fn ($query) => $query->withoutGlobalScopes(),
+                        'images',
+                    ])
+                    ->withCount(['images' => fn ($query) => $query->withoutGlobalScopes()])
+                    ->where('admin_review', false)
+                    ->reorder('created_at', 'desc')
             )
             ->columns([
                 Grid::make()

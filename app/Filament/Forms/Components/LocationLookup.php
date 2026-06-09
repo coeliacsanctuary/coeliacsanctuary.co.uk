@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Fields;
+namespace App\Filament\Forms\Components;
 
 use Filament\Forms\Components\Select;
 

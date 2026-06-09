@@ -148,7 +148,7 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     /** @return Attribute<HtmlString, never> */
     public function editableContent(): Attribute
     {
-        return Attribute::get(fn() => new HtmlString($this->body));
+        return Attribute::get(fn () => new HtmlString($this->body));
     }
 
     public function setUpRichContent(): void

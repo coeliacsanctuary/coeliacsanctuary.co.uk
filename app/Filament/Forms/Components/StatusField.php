@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Fields\Status\Form;
+namespace App\Filament\Forms\Components;
 
 use App\Models\Blogs\Blog;
 use App\Models\Collections\Collection;

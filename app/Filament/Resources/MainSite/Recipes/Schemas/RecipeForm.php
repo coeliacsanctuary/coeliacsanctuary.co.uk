@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Recipes\Schemas;
 
-use App\Filament\Shared\SchemaPartials\ImagesSection;
-use App\Filament\Shared\SchemaPartials\MetasSection;
-use App\Filament\Shared\SchemaPartials\VisibilitySection;
+use App\Filament\Schemas\Components\ImagesSection;
+use App\Filament\Schemas\Components\MetasSection;
+use App\Filament\Schemas\Components\VisibilitySection;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use Filament\Forms\Components\CheckboxList;
@@ -155,7 +155,7 @@ class RecipeForm
                         ->columns(5)
                         ->columnSpanFull()
                         ->formatStateUsing(function (array $state, ?Recipe $record) {
-                            if(!$record) {
+                            if ( ! $record) {
                                 return [];
                             }
 

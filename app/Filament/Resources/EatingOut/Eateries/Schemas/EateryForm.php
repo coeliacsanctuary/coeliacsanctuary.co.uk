@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\Resources\EatingOut\Eateries\Schemas;
 
 use App\Enums\EatingOut\EateryType;
-use App\Filament\Shared\SchemaPartials\EateryIntroductionSection;
-use App\Filament\Shared\SchemaPartials\EateryLocationSection;
+use App\Filament\Schemas\Components\EateryIntroductionSection;
+use App\Filament\Schemas\Components\EateryLocationSection;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Shared\SchemaPartials;
+namespace App\Filament\Schemas\Components;
 
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Toggle;

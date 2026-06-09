@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Shared\SchemaPartials;
+namespace App\Filament\Schemas\Components;
 
 use App\Models\EatingOut\Eatery;
 use Filament\Forms\Components\TextInput;

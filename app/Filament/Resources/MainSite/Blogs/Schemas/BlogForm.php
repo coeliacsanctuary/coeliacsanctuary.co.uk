@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\MainSite\Blogs\Shemas;
+namespace App\Filament\Resources\MainSite\Blogs\Schemas;
 
-use App\Filament\Fields\BlogTags\Form\BlogTagsInput;
-use App\Filament\Shared\SchemaPartials\ImagesSection;
-use App\Filament\Shared\SchemaPartials\MetasSection;
-use App\Filament\Shared\SchemaPartials\VisibilitySection;
+use App\Filament\Forms\Components\BlogTagsInput;
+use App\Filament\Schemas\Components\ImagesSection;
+use App\Filament\Schemas\Components\MetasSection;
+use App\Filament\Schemas\Components\VisibilitySection;
 use App\Models\Blogs\BlogTag;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -51,9 +51,10 @@ class BlogForm
 
                             BlogTagsInput::make('tags')
                                 ->required()
-                                ->suggestions(fn () => BlogTag::query()
-                                    ->pluck('tag')
-                                    ->all()
+                                ->suggestions(
+                                    fn () => BlogTag::query()
+                                        ->pluck('tag')
+                                        ->all()
                                 ),
                         ]),
 
@@ -62,19 +63,20 @@ class BlogForm
 
             MetasSection::make()->columnSpanFull(),
 
-            ImagesSection::make(additionalImages: fn () => Section::make('Body Images')
-                ->columnStart(1)
-                ->columnSpanFull()
-                ->schema([
-                    SpatieMediaLibraryFileUpload::make('body_images')
-                        ->hiddenLabel()
-                        ->collection('body')
-                        ->multiple()
-                        ->panelLayout('grid')
-                        ->itemPanelAspectRatio(0.5)
-                        ->appendFiles()
-                        ->imagePreviewHeight('176px'),
-                ])
+            ImagesSection::make(
+                additionalImages: fn () => Section::make('Body Images')
+                    ->columnStart(1)
+                    ->columnSpanFull()
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('body_images')
+                            ->hiddenLabel()
+                            ->collection('body')
+                            ->multiple()
+                            ->panelLayout('grid')
+                            ->itemPanelAspectRatio(0.5)
+                            ->appendFiles()
+                            ->imagePreviewHeight('176px'),
+                    ])
             )->columnSpanFull(),
 
             Section::make('Content')
@@ -82,16 +84,16 @@ class BlogForm
                 ->schema([
                     Textarea::make('body')->rows(15),
 
-//                    RichEditor::make('body')
-//                        ->toolbarButtons([
-//                            ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
-//                            ['h2', 'h3'],
-//                            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-//                            ['table', 'attachFiles'],
-//                            ['undo', 'redo'],
-//                        ])
-//                        ->hiddenLabel()
-//                        ->required(),
+                    //                    RichEditor::make('body')
+                    //                        ->toolbarButtons([
+                    //                            ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
+                    //                            ['h2', 'h3'],
+                    //                            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                    //                            ['table', 'attachFiles'],
+                    //                            ['undo', 'redo'],
+                    //                        ])
+                    //                        ->hiddenLabel()
+                    //                        ->required(),
                 ]),
         ]);
     }
