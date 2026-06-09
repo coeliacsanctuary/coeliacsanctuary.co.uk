@@ -21,6 +21,7 @@ use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Jpeters8889\ApexCharts\ApexChart;
 use Jpeters8889\Body\Body;
 use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
+use Jpeters8889\RelatedRecipesSearch\RelatedRecipesSearch;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
@@ -174,6 +175,14 @@ class Recipe extends Resource
                 ->repeatables([
                     ArticleFaq::make(),
                 ]),
+
+            new Panel('Related Recipes', [
+                RelatedRecipesSearch::make('Related Recipes', 'relatedRecipes')
+                    ->deferrable()
+                    ->fullWidth()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
+            ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),
 

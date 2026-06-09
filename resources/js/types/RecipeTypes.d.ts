@@ -43,6 +43,12 @@ export type RecipePage = {
   };
   featured_in?: FeaturedInCollection[];
   faqs?: ArticleFaq[];
+  related_recipes?: {
+    title: string;
+    square_image: string;
+    image: string;
+    header_image_alt_text?: string;
+  }[];
 };
 
 export type RecipeFeature = {

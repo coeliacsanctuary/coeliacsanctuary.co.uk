@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4506774e148f8b71274af0467c09d0b6",
+    "content-hash": "13b9b9c7f78abf91bc1b5603b90442e1",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2615,7 +2615,7 @@
         },
         {
             "name": "jpeters8889/address-field",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/AddressField",
@@ -2651,7 +2651,7 @@
         },
         {
             "name": "jpeters8889/apex-charts",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ApexCharts",
@@ -2687,7 +2687,7 @@
         },
         {
             "name": "jpeters8889/body",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Body",
@@ -2723,7 +2723,7 @@
         },
         {
             "name": "jpeters8889/collection-item-search",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CollectionItemSearch",
@@ -2764,7 +2764,7 @@
         },
         {
             "name": "jpeters8889/country-icon",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CountryIcon",
@@ -2800,7 +2800,7 @@
         },
         {
             "name": "jpeters8889/custom-styles",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CustomStyles",
@@ -2836,7 +2836,7 @@
         },
         {
             "name": "jpeters8889/eatery-collections-query-builder",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryCollectionsQueryBuilder",
@@ -2877,7 +2877,7 @@
         },
         {
             "name": "jpeters8889/eatery-location-search",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryLocationSearch",
@@ -2918,7 +2918,7 @@
         },
         {
             "name": "jpeters8889/eatery-opening-times",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryOpeningTimes",
@@ -2954,7 +2954,7 @@
         },
         {
             "name": "jpeters8889/hidden-writable-field",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/HiddenWritableField",
@@ -3052,7 +3052,7 @@
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/OrderDispatchSlip",
@@ -3088,7 +3088,7 @@
         },
         {
             "name": "jpeters8889/polymorphic-panel",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PolymorphicPanel",
@@ -3124,7 +3124,7 @@
         },
         {
             "name": "jpeters8889/preview-button",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PreviewButton",
@@ -3161,7 +3161,7 @@
         },
         {
             "name": "jpeters8889/print-all-orders",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PrintAllOrders",
@@ -3197,7 +3197,7 @@
         },
         {
             "name": "jpeters8889/refresh-ads-txt",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/RefreshAdsTxt",
@@ -3237,8 +3237,49 @@
             }
         },
         {
+            "name": "jpeters8889/related-recipes-search",
+            "version": "dev-feature/368-related-recipes",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/RelatedRecipesSearch",
+                "reference": "65f889ed3ab63c634e469e581a8aae4f1cd357d5"
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/nova": "^5.0",
+                "laravel/nova-devtool": "^1.7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jpeters8889\\RelatedRecipesSearch\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jpeters8889\\RelatedRecipesSearch\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "jpeters8889/shop-daily-stock",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopDailyStock",
@@ -3274,7 +3315,7 @@
         },
         {
             "name": "jpeters8889/shop-generate-resend-slip-button",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopGenerateResendSlipButton",
@@ -3315,7 +3356,7 @@
         },
         {
             "name": "jpeters8889/shop-order-open-dispatch-slip",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderOpenDispatchSlip",
@@ -3351,7 +3392,7 @@
         },
         {
             "name": "jpeters8889/shop-order-shipping-action",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderShippingAction",
@@ -3387,7 +3428,7 @@
         },
         {
             "name": "jpeters8889/wte-nationwide-branch-import",
-            "version": "dev-feature/325",
+            "version": "dev-feature/368-related-recipes",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/WteNationwideBranchImport",
@@ -16919,6 +16960,7 @@
         "jpeters8889/preview-button": 20,
         "jpeters8889/print-all-orders": 20,
         "jpeters8889/refresh-ads-txt": 20,
+        "jpeters8889/related-recipes-search": 20,
         "jpeters8889/shop-daily-stock": 20,
         "jpeters8889/shop-generate-resend-slip-button": 20,
         "jpeters8889/shop-order-open-dispatch-slip": 20,

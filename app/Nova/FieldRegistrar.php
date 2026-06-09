@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova;
 
 use Jpeters8889\AddressField\FieldServiceProvider as AddressFieldServiceProvider;
+use Jpeters8889\RelatedRecipesSearch\FieldServiceProvider as RelatedRecipesSearchFieldServiceProvider;
 use Jpeters8889\AdvancedNovaMediaLibrary\AdvancedNovaMediaLibraryServiceProvider;
 use Jpeters8889\Body\FieldServiceProvider as BodyFieldServiceProvider;
 use Jpeters8889\CollectionItemSearch\FieldServiceProvider as CollectionItemSearchFieldServiceProvider;
@@ -39,6 +40,7 @@ class FieldRegistrar
             CollectionItemSearchFieldServiceProvider::class,
             EateryLocationSearchFieldServiceProvider::class,
             PreviewButtonFieldServiceProvider::class,
+            RelatedRecipesSearchFieldServiceProvider::class,
         ];
 
         foreach ($customFields as $customField) {

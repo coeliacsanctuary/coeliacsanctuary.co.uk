@@ -72,7 +72,8 @@
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
         "wnx/sidecar-browsershot": "^2.7.0",
-        "ziffmedia/nova-select-plus": "^2.1@beta"
+        "ziffmedia/nova-select-plus": "^2.1@beta",
+        "jpeters8889/related-recipes-search": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.0",
@@ -233,6 +234,10 @@
         {
             "type": "path",
             "url": "./nova-components/CollectionItemSearch"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/RelatedRecipesSearch"
         }
     ],
     "autoload": {
