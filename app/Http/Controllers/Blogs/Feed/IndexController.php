@@ -19,7 +19,7 @@ class IndexController
         $blogs = $getBlogsForBlogIndexAction
             ->handle()
             ->collection
-            ->map(fn (JsonResource $resource) => $resource->resource);
+            ?->map(fn (JsonResource $resource) => $resource->resource);
 
         return new Response(
             $blogFeed->render($blogs),

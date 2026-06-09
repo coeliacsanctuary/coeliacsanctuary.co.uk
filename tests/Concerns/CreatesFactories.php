@@ -29,7 +29,7 @@ trait CreatesFactories
      * @param  class-string<T>  $what
      * @return ($countOrAttributes is positive-int ? Collection<int, T> : T)
      */
-    protected function create(string $what, array|int $countOrAttributes = [], array $otherAttributes = [])
+    protected function create(string $what, array|int $countOrAttributes = [], array $otherAttributes = [], bool $quietly = false)
     {
         $count = is_array($countOrAttributes) ? 1 : $countOrAttributes;
         $attributes = is_array($countOrAttributes) ? $countOrAttributes : $otherAttributes;
@@ -40,6 +40,8 @@ trait CreatesFactories
             $factory = $factory->count($count);
         }
 
-        return $factory->state($attributes)->create();
+        $method = $quietly ? 'createQuietly' : 'create';
+
+        return $factory->state($attributes)->$method();
     }
 }

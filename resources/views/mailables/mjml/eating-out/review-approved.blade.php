@@ -60,6 +60,7 @@
             </mj-text>
         </mj-column>
     </mj-section>
+    @if($eateryReview->price)
     <mj-section padding="0 25px">
         <mj-column mj-class="light-blue" width="25%" padding="5px 10px">
             <mj-text mj-class="inner">
@@ -72,6 +73,7 @@
             </mj-text>
         </mj-column>
     </mj-section>
+    @endif
     <mj-section padding="0 25px">
         <mj-column mj-class="light-blue" width="25%" padding="5px 10px">
             <mj-text mj-class="inner">

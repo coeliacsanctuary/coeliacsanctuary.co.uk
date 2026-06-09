@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\EatingOut;
 
+use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
+use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryAlert;
+use App\Models\EatingOut\EateryCheck;
+use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
@@ -21,11 +27,9 @@ use App\Support\Helpers;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Laravel\SerializableClosure\Support\ReflectionClosure;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -95,8 +99,27 @@ class EateryTest extends TestCase
         $this->create(Eatery::class);
 
         Bus::assertDispatched(CreateEateryAppPageOpenGraphImageJob::class);
-        Bus::assertDispatched(CreateEateryMapPageOpenGraphImageJob::class);
         Bus::assertDispatched(CreateEateryIndexPageOpenGraphImageJob::class);
+    }
+
+    #[Test]
+    public function itSetsTheCountryDescriptionAsNullOnSave(): void
+    {
+        EateryCountryDescriptionAgent::fake();
+
+        config()->set('coeliac.generate_country_ai_descriptions', true);
+
+        $country = $this->create(EateryCountry::class, [
+            'description' => 'foo bar',
+        ]);
+
+        $this->assertNotNull($country->description);
+
+        $this->create(Eatery::class, [
+            'country_id' => $country->id,
+        ]);
+
+        $this->assertNull($country->refresh()->description);
     }
 
     #[Test]
@@ -173,10 +196,8 @@ class EateryTest extends TestCase
 
         $builder = Eatery::algoliaSearchAroundLatLng($latLng);
 
-        $parameters = Arr::get((new ReflectionClosure($builder->callback))->getUseVariables(), 'parameters');
-
-        $this->assertArrayHasKey('aroundLatLng', $parameters);
-        $this->assertEquals($latLng->toString(), $parameters['aroundLatLng']);
+        $this->assertArrayHasKey('aroundLatLng', $builder->options);
+        $this->assertEquals($latLng->toString(), $builder->options['aroundLatLng']);
     }
 
     #[Test]
@@ -186,10 +207,8 @@ class EateryTest extends TestCase
 
         $builder = Eatery::algoliaSearchAroundLatLng($latLng, 5);
 
-        $parameters = Arr::get((new ReflectionClosure($builder->callback))->getUseVariables(), 'parameters');
-
-        $this->assertArrayHasKey('aroundRadius', $parameters);
-        $this->assertEquals(Helpers::milesToMeters(5), $parameters['aroundRadius']);
+        $this->assertArrayHasKey('aroundRadius', $builder->options);
+        $this->assertEquals(Helpers::milesToMeters(5), $builder->options['aroundRadius']);
     }
 
     #[Test]
@@ -333,5 +352,52 @@ class EateryTest extends TestCase
             ->create();
 
         $this->assertNull($eatery->sealiacOverview);
+    }
+
+    #[Test]
+    public function itCanHaveACheck(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->assertNull($eatery->check);
+
+        $check = $this->build(EateryCheck::class)->create([
+            'wheretoeat_id' => $eatery->id,
+        ]);
+
+        $this->assertNotNull($eatery->refresh()->check);
+        $this->assertTrue($check->is($eatery->check));
+    }
+
+    #[Test]
+    public function itCanHaveAlerts(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->assertEmpty($eatery->alerts);
+
+        $this->build(EateryAlert::class)
+            ->count(3)
+            ->on($eatery)
+            ->create();
+
+        $this->assertCount(3, $eatery->refresh()->alerts);
+    }
+
+    #[Test]
+    public function itCanBeAssociatedWithACollectionGroup(): void
+    {
+        $eatery = $this->create(Eatery::class);
+        $group = $this->create(CollectionGroup::class, ['collection_id' => $this->create(Collection::class)->id]);
+
+        $this->assertEmpty($eatery->associatedCollectionGroups);
+
+        $this->create(CollectionGroupItem::class, [
+            'collection_group_id' => $group->id,
+            'item_id' => $eatery->id,
+            'item_type' => Eatery::class,
+        ]);
+
+        $this->assertCount(1, $eatery->refresh()->associatedCollectionGroups);
     }
 }

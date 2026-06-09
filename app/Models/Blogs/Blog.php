@@ -23,7 +23,9 @@ use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\HtmlString;
 use Laravel\Scout\Searchable;
@@ -57,6 +59,10 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
 
     use LinkableModel;
     use Searchable;
+
+    protected $casts = [
+        'faqs' => 'array',
+    ];
 
     protected static function booted(): void
     {
@@ -120,6 +126,18 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
             'blog_id',
             'tag_id'
         )->withTimestamps();
+    }
+
+    /** @return BelongsTo<BlogTag, $this> */
+    public function primaryTag(): BelongsTo
+    {
+        return $this->belongsTo(BlogTag::class, 'primary_tag_id');
+    }
+
+    /** @return HasMany<BlogMetric, $this> */
+    public function metrics(): HasMany
+    {
+        return $this->hasMany(BlogMetric::class);
     }
 
     protected function linkRoot(): string

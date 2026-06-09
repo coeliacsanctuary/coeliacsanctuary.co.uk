@@ -41,10 +41,18 @@ const howExpensive = (review: EateryReview) => {
   <div class="py-6">
     <div class="flex items-center justify-between">
       <div class="flex flex-col">
-        <h4
-          class="font-bold lg:text-xl"
-          v-text="review.body ? review.name : 'Anonymous'"
-        />
+        <div class="flex items-center space-x-2">
+          <h4
+            class="font-bold lg:text-xl"
+            v-text="review.body ? review.name : 'Anonymous'"
+          />
+          <span
+            v-if="review.admin_review"
+            class="block rounded-xl border border-secondary bg-secondary/50 px-2 py-2 text-sm leading-1"
+          >
+            Coeliac Sanctuary
+          </span>
+        </div>
         <time
           :datetime="review.published"
           :title="formatDate(review.published, 'Do MMM YYYY h:mm a')"

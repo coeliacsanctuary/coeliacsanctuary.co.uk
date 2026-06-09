@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\Shop;
 
 use App\Actions\Shop\GetSealiacProductOverviewAction;
+use App\Ai\Agents\SealiacProductOverviewAgent;
 use App\Models\SealiacOverview;
 use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
-use App\Support\Ai\Prompts\ShopProductSealiacOverviewPrompt;
 use Exception;
-use OpenAI\Laravel\Facades\OpenAI;
-use OpenAI\Resources\Chat;
-use OpenAI\Responses\Chat\CreateResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -26,7 +23,7 @@ class GetSealiacProductOverviewActionTest extends TestCase
 
         $this->product = $this->create(ShopProduct::class);
 
-        OpenAI::fake();
+        SealiacProductOverviewAgent::fake();
     }
 
     #[Test]
@@ -40,9 +37,8 @@ class GetSealiacProductOverviewActionTest extends TestCase
 
         $this->assertTrue($model->is($overview));
 
-        OpenAI::assertNothingSent();
+        SealiacProductOverviewAgent::assertNeverPrompted();
     }
-
 
     #[Test]
     public function itWillThrowAnErrorIfNoReviewsExistWhenThereIsNoExistingRecordInTheDatabase(): void
@@ -56,40 +52,15 @@ class GetSealiacProductOverviewActionTest extends TestCase
     }
 
     #[Test]
-    public function itWillGetANewOverviewForAProductFromOpenAiUsingTheCorrectPrompt(): void
+    public function itWillPromptTheSealiacProductOverviewAgent(): void
     {
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'foo',
-                    ],
-                ],
-            ],
-        ])]);
+        SealiacProductOverviewAgent::fake(['foo']);
 
         $this->build(ShopOrderReviewItem::class)->forProduct($this->product)->createQuietly();
 
-        $this->mock(ShopProductSealiacOverviewPrompt::class)
-            ->shouldReceive('handle')
-            ->withArgs(function ($argProduct) {
-                $this->assertTrue($this->product->is($argProduct));
-
-                return true;
-            })
-            ->andReturn('This is the prompt')
-            ->once();
-
         app(GetSealiacProductOverviewAction::class)->handle($this->product);
 
-        OpenAI::assertSent(Chat::class, function (string $method, array $parameters): bool {
-            $this->assertEquals('create', $method);
-
-            $this->assertArrayHasKey('model', $parameters);
-            $this->assertEquals('gpt-3.5-turbo-1106', $parameters['model']);
-
-            return true;
-        });
+        SealiacProductOverviewAgent::assertPrompted('Generate your overview.');
     }
 
     #[Test]
@@ -97,22 +68,9 @@ class GetSealiacProductOverviewActionTest extends TestCase
     {
         $this->assertDatabaseEmpty(SealiacOverview::class);
 
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'This is the overview',
-                    ],
-                ],
-            ],
-        ])]);
+        SealiacProductOverviewAgent::fake(['This is the overview']);
 
         $this->build(ShopOrderReviewItem::class)->forProduct($this->product)->createQuietly();
-
-        $this->mock(ShopProductSealiacOverviewPrompt::class)
-            ->shouldReceive('handle')
-            ->andReturn('This is the prompt')
-            ->once();
 
         app(GetSealiacProductOverviewAction::class)->handle($this->product);
 

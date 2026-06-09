@@ -34,6 +34,27 @@ class NotificationEmailTest extends TestCase
     }
 
     #[Test]
+    public function itPassesThroughScalarValuesInEmailData(): void
+    {
+        /** @var NotificationEmail $model */
+        $model = $this->build(NotificationEmail::class)
+            ->create([
+                'data' => [
+                    'date' => now()->toString(),
+                    'reviewLink' => 'https://www.coeliacsanctuary.co.uk/review/abc123',
+                    'delayText' => '5 days',
+                    'reason' => 'to invite you to leave a review',
+                ],
+            ]);
+
+        $this->assertArrayHasKey('reviewLink', $model->data);
+        $this->assertSame('https://www.coeliacsanctuary.co.uk/review/abc123', $model->data['reviewLink']);
+        $this->assertArrayHasKey('delayText', $model->data);
+        $this->assertSame('5 days', $model->data['delayText']);
+        $this->assertArrayHasKey('reason', $model->data);
+    }
+
+    #[Test]
     public function itCanBeAssociatedToAShopCustomer(): void
     {
         /** @var NotificationEmail $model */

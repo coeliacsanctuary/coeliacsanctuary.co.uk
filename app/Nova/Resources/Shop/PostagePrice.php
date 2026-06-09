@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\Shop;
 
+use App\Jobs\Shop\SyncShippingToGoogleMerchantJob;
 use App\Models\Shop\ShopPostagePrice;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\ID;
@@ -54,5 +56,23 @@ class PostagePrice extends Resource
     public function authorizedToAdd(NovaRequest $request, $model): bool
     {
         return false;
+    }
+
+    public static function afterCreate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        SyncShippingToGoogleMerchantJob::dispatch();
+    }
+
+    public static function afterUpdate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        SyncShippingToGoogleMerchantJob::dispatch();
     }
 }

@@ -3,8 +3,10 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline';
 import { Link } from '@inertiajs/vue3';
 import Icon from '@/Components/Icon.vue';
 import { computed } from 'vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
+  id: number;
   link: string;
   name: string;
   isNotNationwide: boolean;
@@ -48,6 +50,14 @@ const icon = computed((): string => {
             :href="link"
             class="hover:text-primary-dark hover:underline"
             prefetch
+            :on-before="
+              () =>
+                useJourneyTracking().logEvent(
+                  'clicked',
+                  'EateryCard/TitleLink',
+                  { eateryId: props.id },
+                )
+            "
           >
             {{ name }}
           </Link>

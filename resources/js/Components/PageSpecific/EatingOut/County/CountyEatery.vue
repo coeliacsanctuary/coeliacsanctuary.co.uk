@@ -3,12 +3,24 @@ import { CountyEatery as CountyEateryType } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import StarRating from '@/Components/StarRating.vue';
+import { useTemplateRef, watch } from 'vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
-defineProps<{ eatery: CountyEateryType }>();
+const props = defineProps<{ eatery: CountyEateryType }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'CountyEatery',
+  {
+    eateryId: props.eatery.id,
+  },
+);
 </script>
 
 <template>
   <Card
+    ref="card"
     class="flex flex-col space-y-2 bg-linear-to-br from-primary/50 to-primary-light/50"
   >
     <Link

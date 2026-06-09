@@ -39,11 +39,13 @@ class GetFiltersForTown extends GetFilters
 
         return $builder
             ->select('*')
+            /** @phpstan-ignore argument.type */
             ->selectRaw("({$this->eateryQuery()}) + ({$this->branchQuery()}) as eateries_count");
     }
 
     protected function orderBy(Builder $builder, string $field): Builder
     {
+        /** @phpstan-ignore argument.type */
         return $builder->orderByRaw("eateries_count desc, {$field} asc");
     }
 
@@ -82,19 +84,8 @@ class GetFiltersForTown extends GetFilters
             $this->relation = ['wheretoeat_assigned_features', 'wheretoeat.id', 'wheretoeat_assigned_features.wheretoeat_id'];
         }
 
-        $this->column = match ($filterable) {
-            EateryType::class => 'wheretoeat_types.id',
-            EateryVenueType::class => 'wheretoeat_venue_types.id',
-            EateryFeature::class => 'wheretoeat_features.id',
-            default => throw new RuntimeException('Unknown filterable ' . $filterable),
-        };
-
-        $this->value = match ($filterable) {
-            EateryType::class => 'wheretoeat.type_id',
-            EateryVenueType::class => 'wheretoeat.venue_type_id',
-            EateryFeature::class => 'wheretoeat_assigned_features.feature_id',
-            default => throw new RuntimeException('Unknown filterable'),
-        };
+        $this->column = $this->getColumnForFilterable($filterable);
+        $this->value = $this->getValueForFilterable($filterable);
 
         $filters = parent::resolveFilters($filterable, $filterName, $orderBy, $nameColumn, $checkedColumn, $mergeWithMap);
 
@@ -103,5 +94,25 @@ class GetFiltersForTown extends GetFilters
         $this->value = '';
 
         return $filters;
+    }
+
+    protected function getColumnForFilterable(string $filterable): string
+    {
+        return match ($filterable) {
+            EateryType::class => 'wheretoeat_types.id',
+            EateryVenueType::class => 'wheretoeat_venue_types.id',
+            EateryFeature::class => 'wheretoeat_features.id',
+            default => throw new RuntimeException('Unknown filterable ' . $filterable),
+        };
+    }
+
+    protected function getValueForFilterable(string $filterable): string
+    {
+        return match ($filterable) {
+            EateryType::class => 'wheretoeat.type_id',
+            EateryVenueType::class => 'wheretoeat.venue_type_id',
+            EateryFeature::class => 'wheretoeat_assigned_features.feature_id',
+            default => throw new RuntimeException('Unknown filterable'),
+        };
     }
 }

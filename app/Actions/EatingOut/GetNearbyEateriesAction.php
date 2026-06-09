@@ -86,6 +86,7 @@ class GetNearbyEateriesAction
         return $model::databaseSearchAroundLatLng($latLng, Helpers::milesToMeters($miles), $columns)
             /** @phpstan-ignore-next-line  */
             ->when($model === Eatery::class, fn (Builder $query) => $query->where('type_id', EateryType::EATERY))
+            /** @phpstan-ignore method.unresolvableReturnType */
             ->when($except, fn (Builder $query) => $query->whereNot('id', $except))
             ->with($relations)
             ->withCount(['reviews'])

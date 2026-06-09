@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Basket;
 
+use App\Models\Shop\ShopProductAddOn;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Actions\Shop\ResolveBasketAction;
@@ -107,6 +108,22 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
+    public function itReturnsAValidationErrorIfIncludeAddOnIsNotABoolean(): void
+    {
+        $this->makeRequest(['include_add_on' => 'foo'])->assertSessionHasErrors('include_add_on');
+        $this->makeRequest(['include_add_on' => 123])->assertSessionHasErrors('include_add_on');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorIfIncludeAddOnIsTrueButTheProductDoesntHaveAnAddOn(): void
+    {
+        $this->assertNull($this->product->addOns);
+
+        $this->makeRequest(['include_add_on' => true])
+            ->assertSessionHasErrors(['include_add_on' => 'This product does not have an add on.']);
+    }
+
+    #[Test]
     public function itCallsTheResolveBasketAction(): void
     {
         $this->expectAction(ResolveBasketAction::class);
@@ -138,15 +155,18 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itCallsTheAddProductToBasketAction(): void
     {
-        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity) {
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $includeAddOn) {
             $this->assertTrue($this->product->is($product));
             $this->assertTrue($this->variant->is($variant));
             $this->assertEquals(1, $quantity);
+            $this->assertTrue($includeAddOn);
 
             return true;
         }]);
 
-        $this->makeRequest();
+        $this->build(ShopProductAddOn::class)->forProduct($this->product)->create();
+
+        $this->makeRequest(['include_add_on' => true]);
     }
 
     #[Test]

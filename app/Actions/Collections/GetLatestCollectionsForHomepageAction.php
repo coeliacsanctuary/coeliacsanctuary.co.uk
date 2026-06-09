@@ -6,7 +6,6 @@ namespace App\Actions\Collections;
 
 use App\Models\Collections\Collection;
 use App\Resources\Collections\CollectionSimpleCardViewResource;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
 
@@ -23,7 +22,7 @@ class GetLatestCollectionsForHomepageAction
             fn () => CollectionSimpleCardViewResource::collection(Collection::query()
                 ->where('display_on_homepage', true)
                 ->latest('updated_at')
-                ->with(['media', 'items' => fn (Relation $relation) => $relation->take(8), 'items.item', 'items.item.media'])
+                ->with(['media', 'groups'])
                 ->get())
         );
 

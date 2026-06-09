@@ -7,6 +7,8 @@ import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
 import useShopStore from '@/stores/useShopStore';
 import { CheckoutContactStep } from '@/types/Shop';
 import axios, { AxiosError } from 'axios';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 
 defineProps<{ show: boolean; completed: boolean; error: boolean }>();
 const emits = defineEmits(['continue', 'toggle']);
@@ -58,12 +60,30 @@ const submitForm = () => {
     return;
   }
 
+  useJourneyTracking().logEvent(
+    'clicked',
+    'Checkout/Form/ContactDetails/Submit',
+    data,
+    true,
+  );
+
   storeCustomerDetails();
 
   emits('continue');
 };
 
 watch(data, () => store.setUserDetails(data));
+
+const track = (label: string, value?: string) => {
+  useJourneyTracking().logEvent(
+    'typed',
+    `Checkout/Form/ContactDetails/${label}`,
+    {
+      value,
+    },
+    true,
+  );
+};
 </script>
 
 <template>
@@ -107,6 +127,7 @@ watch(data, () => store.setUserDetails(data));
         autocomplete="name"
         required
         borders
+        @blur-sm="() => track('Name', data.name)"
       />
 
       <FormInput
@@ -118,6 +139,7 @@ watch(data, () => store.setUserDetails(data));
         autocomplete="email"
         required
         borders
+        @blur-sm="() => track('Email', data.email)"
       />
 
       <FormInput
@@ -129,6 +151,7 @@ watch(data, () => store.setUserDetails(data));
         autocomplete="email"
         required
         borders
+        @blur-sm="() => track('EmailConfirmation', data.email_confirmation)"
       />
 
       <FormInput
@@ -139,6 +162,17 @@ watch(data, () => store.setUserDetails(data));
         autocomplete="phone"
         type="phone"
         borders
+        @blur-sm="() => track('Phone', data.phone)"
+      />
+
+      <FormCheckbox
+        v-model="data.subscribeToNewsletter"
+        :error="errors.subscribeToNewsletter"
+        label="Would you like to subscribe to my newsletter?"
+        name="subscribeToNewsletter"
+        layout="left"
+        xl
+        highlight
       />
 
       <CoeliacButton

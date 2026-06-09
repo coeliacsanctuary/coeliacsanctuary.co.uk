@@ -20,6 +20,7 @@ class AddToBasketRequest extends FormRequest
             'product_id' => ['required', 'numeric', Rule::in($productIds)],
             'variant_id' => ['required', 'numeric'],
             'quantity' => ['required', 'int', 'min:1', 'regex:/^[0-9]+$/'],
+            'include_add_on' => ['nullable', 'boolean'],
         ];
     }
 
@@ -62,6 +63,19 @@ class AddToBasketRequest extends FormRequest
                     $validator->errors()->add('quantity', 'The product doesn\'t have the requested quantity available');
                 }
             },
+
+            // product has an add on
+            function (Validator $validator): void {
+                if ( ! $this->boolean('include_add_on')) {
+                    return;
+                }
+
+                $product = ShopProduct::query()->find($this->integer('product_id'));
+
+                if ( ! $product || ! $product->addOns) {
+                    $validator->errors()->add('include_add_on', 'This product does not have an add on.');
+                }
+            }
         ];
     }
 }

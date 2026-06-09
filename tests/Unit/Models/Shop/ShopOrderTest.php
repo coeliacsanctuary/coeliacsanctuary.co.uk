@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDiscountCode;
@@ -21,6 +20,7 @@ use App\Models\Shop\ShopShippingAddress;
 use App\Models\Shop\ShopSource;
 use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ShopOrderTest extends TestCase
@@ -197,5 +197,35 @@ class ShopOrderTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $order->refresh()->sources);
         $this->assertTrue($order->sources->first()->is($source));
+    }
+
+    #[Test]
+    public function itCanIdentifyWhenAnOrderHasAnyAdOns(): void
+    {
+        $order = $this->create(ShopOrder::class);
+        $item = $this->build(ShopOrderItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $this->assertFalse($order->has_add_ons);
+
+        $item->update(['product_add_on_id' => 123]);
+
+        $this->assertTrue($order->refresh()->has_add_ons);
+    }
+
+    #[Test]
+    public function itCanTheTotalPriceOfAnyAddOns(): void
+    {
+        $order = $this->create(ShopOrder::class);
+        $item = $this->build(ShopOrderItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $this->assertFalse($order->has_add_ons);
+
+        $item->update(['product_add_on_id' => 123, 'product_add_on_price' => 50]);
+
+        $this->assertEquals(50, $order->add_on_total);
     }
 }

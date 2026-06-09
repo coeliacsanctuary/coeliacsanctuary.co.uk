@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import EventBus from '@/eventBus';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
 import { ShopBasketItem } from '@/types/Shop';
 import { Page } from '@inertiajs/core';
@@ -10,6 +10,7 @@ import BasketSidebar from '@/Components/PageSpecific/Shop/BasketSidebar.vue';
 import { ShoppingCartIcon, NoSymbolIcon } from '@heroicons/vue/24/outline';
 import { pluralise } from '../../helpers';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const viewSideBar = ref(false);
 const isVisible = ref(false);
@@ -24,8 +25,9 @@ const openSidebar = () => {
 
 EventBus.$on('product-added-to-basket', openSidebar);
 EventBus.$on('open-basket', openSidebar);
-const page: Page<{ basket?: { items: ShopBasketItem[]; subtotal: string } }> =
-  usePage();
+
+type PageProps = { basket?: { items: ShopBasketItem[]; subtotal: string } };
+const page: Page<PageProps> = usePage<PageProps>();
 
 const items = computed((): ShopBasketItem[] => page.props.basket?.items || []);
 const subtotal = computed(() => page.props.basket?.subtotal || '');
@@ -42,6 +44,12 @@ onMounted(() => {
   new IntersectionObserver((entries) => {
     isVisible.value = entries[0].intersectionRatio === 0;
   }).observe(<Element>document.querySelector('#header-basket-detail'));
+});
+
+watch(viewSideBar, () => {
+  if (viewSideBar.value) {
+    useJourneyTracking().logEvent('clicked', 'ShopSideBarBasket');
+  }
 });
 </script>
 
@@ -61,7 +69,6 @@ onMounted(() => {
         'translate',
         'group',
         'fixed',
-        'bottom-0',
         'right-0',
         'mb-6',
         'mr-6',
@@ -79,6 +86,7 @@ onMounted(() => {
         'xl:scale-75',
         '2xl:p-4',
       ]"
+      style="bottom: var(--sticky-bottom-right, 0px)"
       @click="openSidebar()"
     >
       <div

@@ -19,8 +19,11 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Inertia\DeferProp;
 use Inertia\Inertia as BaseInertia;
+use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
 use Inertia\MergeProp;
+use Inertia\ProvidesScrollMetadata;
 use Inertia\Response;
+use Inertia\ScrollProp;
 use Money\Money;
 use Spatie\SchemaOrg\Schema;
 
@@ -54,6 +57,8 @@ class Inertia
         if (Request::hasCookie('basket_token') && ! Request::routeIs('shop.basket.checkout')) {
             $this->includeBasket();
         }
+
+        BaseInertia::share('journey.token', fn (): ?string => LogPageViewMiddleware::getToken());
 
         $this->schema = [$this->baseSchema()];
 
@@ -168,10 +173,10 @@ class Inertia
         $items = app(GetOrderItemsAction::class)->handle($basket);
 
         /** @var Collection<int, ShopOrderItemResource> $collection */
-        $collection = app(GetOrderItemsAction::class)->handle($basket)->collection;
+        $collection = $items->collection;
 
         /** @var int $subtotal */
-        $subtotal = $collection->map(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity)->sum();
+        $subtotal = $collection->map(fn (ShopOrderItemResource $item) => ($item->product_price * $item->quantity) + $item->product_add_on_price)->sum();
 
         BaseInertia::share('basket.items', $items);
         BaseInertia::share('basket.subtotal', Helpers::formatMoney(Money::GBP($subtotal)));
@@ -230,5 +235,11 @@ class Inertia
     public static function merge(mixed $value): MergeProp
     {
         return BaseInertia::merge($value);
+    }
+
+    /** @return ScrollProp<mixed> */
+    public static function scroll(mixed $value, string $wrapper = 'data', ProvidesScrollMetadata|callable|null $metadata = null): ScrollProp
+    {
+        return BaseInertia::scroll($value, $wrapper, $metadata);
     }
 }

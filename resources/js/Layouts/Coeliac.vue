@@ -2,14 +2,17 @@
 import CoeliacHeader from '@/Layouts/Components/CoeliacHeader.vue';
 import CoeliacFooter from '@/Layouts/Components/CoeliacFooter.vue';
 import { AnnouncementProps, MetaProps, PopupProps } from '@/types/DefaultProps';
-import { computed, onMounted, ref } from 'vue';
-import { router, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import ShopBasketHeader from '@/Layouts/Components/ShopBasketHeader.vue';
 import ShopFooterCta from '@/Layouts/Components/ShopFooterCta.vue';
 import PopupCta from '@/Layouts/Components/PopupCta.vue';
 import Loader from '@/Components/Loader.vue';
 import eventBus from '@/eventBus';
 import Announcement from '@/Layouts/Components/Announcement.vue';
+import useStickyAdOffset from '@/composables/useStickyAdOffset';
+
+useStickyAdOffset();
 
 defineProps<{
   meta: MetaProps;
@@ -22,6 +25,8 @@ const isShop = computed(
     usePage().component.includes('Shop') &&
     usePage().component !== 'Shop/Checkout' &&
     usePage().component !== 'Shop/OrderComplete' &&
+    usePage().component !== 'Shop/DownloadMyProducts/DownloadMyProducts' &&
+    usePage().component !== 'Shop/DownloadMyProducts/Error' &&
     usePage().component !== 'Shop/ReviewMyOrder',
 );
 
@@ -31,20 +36,6 @@ eventBus.$on('show-site-loader', () => (showLoader.value = true));
 eventBus.$on('hide-site-loader', () => (showLoader.value = false));
 
 const isMounted = ref(false);
-
-onMounted(() => {
-  isMounted.value = true;
-
-  router.on('success', () => {
-    document
-      .querySelector('body')
-      ?.classList.toggle(
-        'no-auto-ads',
-        usePage().url.includes('/shop') ||
-          usePage().url.includes('/wheretoeat/browse'),
-      );
-  });
-});
 </script>
 
 <template>

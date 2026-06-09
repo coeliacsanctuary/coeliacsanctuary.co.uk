@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use App\Ai\Agents\AskSealiac;
+use App\Ai\Agents\EateryCountryDescriptionAgent;
 use ArrayAccess;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -35,6 +37,9 @@ abstract class TestCase extends BaseTestCase
         $this->withoutVite();
 
         DB::connection()->getSchemaBuilder()->disableForeignKeyConstraints();
+
+        EateryCountryDescriptionAgent::fake();
+        AskSealiac::fake();
     }
 
     protected function assertSortedAlphabetically(array $items): void

@@ -3,12 +3,23 @@ import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import { EaterySimpleReviewResource } from '@/types/EateryTypes';
 import StarRating from '@/Components/StarRating.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
 defineProps<{ reviews: EaterySimpleReviewResource[] }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'Home/LatestReviews',
+);
 </script>
 
 <template>
-  <Card class="space-y-4 pb-10">
+  <Card
+    ref="card"
+    class="space-y-4 pb-10"
+  >
     <h3 class="text-center text-2xl font-semibold text-primary-dark">
       Latest Ratings
     </h3>

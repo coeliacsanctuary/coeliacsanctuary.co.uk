@@ -7,14 +7,15 @@ namespace Tests\Concerns;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
 use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeMeal;
 use App\Models\Recipes\RecipeNutrition;
 use App\Models\Shop\ShopCategory;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductPrice;
 use App\Models\Shop\ShopProductVariant;
 use App\Models\User;
 use Carbon\Carbon;
@@ -102,6 +103,11 @@ trait SeedsWebsite
             ->each(function (Collection $collection): void {
                 $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('primary');
                 $collection->addMedia(UploadedFile::fake()->image('collection.jpg'))->toMediaCollection('social');
+
+                $this->create(CollectionGroup::class, [
+                    'collection_id' => $collection->id,
+                    'id' => $collection->id,
+                ]);
             });
 
         if ($then) {
@@ -110,6 +116,8 @@ trait SeedsWebsite
 
         return $this;
     }
+
+
 
     protected function withCategoriesAndProducts($categories = 5, $products = 2, $variants = 1, ?callable $then = null): static
     {
@@ -134,7 +142,7 @@ trait SeedsWebsite
                         'title' => "Product {$sequence->index}",
                         'created_at' => Carbon::now()->subDays($sequence->index),
                     ])
-                    ->has($this->build(ShopProductPrice::class), 'prices')
+                    ->has($this->build(ShopPrice::class), 'prices')
                     ->create()
                     ->each(function (ShopProduct $product) use ($category, $variants): void {
                         $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('primary');

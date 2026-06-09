@@ -1,6 +1,8 @@
 @php
     use App\Models\Shop\ShopOrder;
     /** @var ShopOrder $order */
+
+$newOrder = true;
 @endphp
 
 @extends('mailables.mjml.shop.layout')

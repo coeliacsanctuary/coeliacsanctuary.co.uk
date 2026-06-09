@@ -10,6 +10,7 @@ import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { router } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import { InertiaForm } from '@/types/Core';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   countries: FormSelectOption[];
@@ -18,6 +19,8 @@ const props = defineProps<{
   subtotal: string;
   postage: string;
   discount?: string;
+  fees: { fee: string; description?: string }[];
+  totalFees: string;
   total: string;
 }>();
 
@@ -55,6 +58,11 @@ const removeDiscountCode = () => {
     preserveScroll: true,
     onFinish: () => {
       void nextTick(() => {
+        useJourneyTracking().logEvent(
+          'clicked',
+          'Checkout/Totals/RemovedDiscountCode',
+        );
+
         eventBus.$emit('refresh-payment-element');
       });
     },
@@ -73,6 +81,14 @@ watch(
       onSuccess: () => {
         isLoading.value = false;
         updateStore();
+
+        useJourneyTracking().logEvent(
+          'clicked',
+          'Checkout/Totals/ChangeCountry',
+          {
+            country: countryForm.postage_country_id,
+          },
+        );
       },
     });
   },
@@ -80,8 +96,8 @@ watch(
 </script>
 
 <template>
-  <div class="w-full">
-    <dl class="mt-10 space-y-3">
+  <div class="mt-3 w-full border-t border-primary-dark/30 pt-3">
+    <dl class="space-y-3">
       <div class="flex justify-between">
         <dt class="lg:max-xl:text-lg xl:text-xl">Subtotal</dt>
         <dd
@@ -118,6 +134,39 @@ watch(
           v-text="postage"
         />
       </div>
+      <template v-if="fees.length > 0">
+        <div
+          v-for="(fee, x) in fees"
+          :key="x"
+          class="flex justify-between"
+        >
+          <dt
+            class="flex w-full items-center justify-between lg:max-xl:text-lg xl:text-xl"
+          >
+            <span
+              v-text="fee.description ? fee.description : 'Customs Charge'"
+            />
+          </dt>
+          <dd
+            class="shrink-0 text-lg font-semibold lg:max-xl:text-xl xl:text-2xl"
+            v-text="fee.fee"
+          />
+        </div>
+        <div
+          v-if="fees.length > 1"
+          class="flex justify-between"
+        >
+          <dt
+            class="flex w-full items-center justify-between lg:max-xl:text-lg xl:text-xl"
+          >
+            <span>Total Fees</span>
+          </dt>
+          <dd
+            class="shrink-0 text-lg font-semibold lg:max-xl:text-xl xl:text-2xl"
+            v-text="totalFees"
+          />
+        </div>
+      </template>
       <div>
         <small
           class="mt-2 block leading-tight xl:text-base"
@@ -127,8 +176,14 @@ watch(
           v-if="selectedCountry > 1"
           class="mt-2 block font-semibold xl:text-base"
         >
-          Please note, you may be required to pay any applicable customs charges
-          for any items coming from the UK.
+          <template v-if="fees.length === 0">
+            Please note, you may be required to pay any applicable customs
+            charges for any items coming from the UK.
+          </template>
+          <template v-else>
+            Any required fees have been applied, but you may also need to pay
+            any additional customs charges for any items coming from the UK.
+          </template>
         </small>
       </div>
       <div

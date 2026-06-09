@@ -8,6 +8,7 @@ import { nextTick } from 'vue';
 import eventBus from '@/eventBus';
 import { InertiaForm } from '@/types/Core';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const form = useForm('patch', '/shop/basket', {
   discount: '',
@@ -23,6 +24,15 @@ const applyDiscountCode = () => {
           event_category: 'applied-discount',
           event_label: `applied-discount-${form.discount}`,
         });
+
+        useJourneyTracking().logEvent(
+          'clicked',
+          'Checkout/Totals/DiscountCode/ApplyDiscountCode',
+          {
+            code: form.discount,
+          },
+          true,
+        );
 
         eventBus.$emit('refresh-payment-element');
       });

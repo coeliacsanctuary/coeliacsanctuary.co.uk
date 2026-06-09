@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
+use App\Actions\EatingOut\GetCountyListAction;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
 use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
+use App\Support\Collections\CanBeCollected;
+use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Schema\EaterySchema;
 use App\Scopes\LiveScope;
@@ -35,6 +37,7 @@ use Spatie\SchemaOrg\Restaurant;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
+ * @implements Collectable<$this>
  *
  * @property string | null $average_rating
  * @property string | null $formatted_address
@@ -45,8 +48,11 @@ use Spatie\SchemaOrg\Restaurant;
  * @property string $full_name
  * @property string $typeDescription
  */
-class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
+class Eatery extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
+    /** @use CanBeCollected<$this> */
+    use CanBeCollected;
+
     use ClearsCache;
     use HasEateryDetails;
 
@@ -86,18 +92,21 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
         });
 
         static::saved(function (self $eatery): void {
-            if (config('coeliac.generate_og_images') === false) {
-                return;
+            if (config('coeliac.generate_og_images') === true) {
+                $town = $eatery->town()->withoutGlobalScopes()->firstOrFail();
+
+                CreateEatingOutOpenGraphImageJob::dispatch($eatery);
+                CreateEatingOutOpenGraphImageJob::dispatch($town);
+                CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
+                CreateEateryAppPageOpenGraphImageJob::dispatch();
+                CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
-            $town = $eatery->town()->withoutGlobalScopes()->firstOrFail();
+            if (config('coeliac.generate_country_ai_descriptions') === true) {
+                $eatery->country()->update(['description' => null]);
 
-            CreateEatingOutOpenGraphImageJob::dispatch($eatery);
-            CreateEatingOutOpenGraphImageJob::dispatch($town);
-            CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
-            CreateEateryAppPageOpenGraphImageJob::dispatch();
-            CreateEateryMapPageOpenGraphImageJob::dispatch();
-            CreateEateryIndexPageOpenGraphImageJob::dispatch();
+                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
+            }
         });
     }
 
@@ -137,6 +146,28 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             ->addSelect(['id', 'lat', 'lng', 'name', 'county_id', 'type_id', ...$additionalColumns])
             ->where('closed_down', false)
             ->orderBy('distance');
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
+    {
+        return $this->selectRaw('(
+                        6371000 * acos (
+                          cos ( radians(?) )
+                          * cos( radians( lat ) )
+                          * cos( radians( lng ) - radians(?) )
+                          + sin ( radians(?) )
+                          * sin( radians( lat ) )
+                        )
+                     ) AS distance', [
+            $latLng->lat,
+            $latLng->lng,
+            $latLng->lat,
+        ])
+            ->addSelect($columns);
     }
 
     /**
@@ -297,6 +328,18 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
     public function suggestedEdits(): HasMany
     {
         return $this->hasMany(EaterySuggestedEdit::class, 'wheretoeat_id', 'id');
+    }
+
+    /** @return HasOne<EateryCheck, $this> */
+    public function check(): HasOne
+    {
+        return $this->hasOne(EateryCheck::class, 'wheretoeat_id');
+    }
+
+    /** @return HasMany<EateryAlert, $this> */
+    public function alerts(): HasMany
+    {
+        return $this->hasMany(EateryAlert::class, 'wheretoeat_id');
     }
 
     /** @return Attribute<string, never> */

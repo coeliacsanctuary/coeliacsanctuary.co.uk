@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ShopPayment extends Model
 {
+    protected $casts = [
+        'fees_breakdown' => 'array',
+    ];
+
     /** @return BelongsTo<ShopOrder, $this> */
     public function order(): BelongsTo
     {

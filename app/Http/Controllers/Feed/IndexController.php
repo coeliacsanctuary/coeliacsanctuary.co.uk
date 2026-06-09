@@ -24,13 +24,13 @@ class IndexController
         $blogs = $getBlogsForBlogIndexAction
             ->handle()
             ->collection
-            ->map(fn (JsonResource $resource) => $resource->resource);
+            ?->map(fn (JsonResource $resource) => $resource->resource);
 
         /** @var Collection<int, Recipe> $recipes */
         $recipes = $getRecipesForIndexAction
             ->handle()
             ->collection
-            ->map(fn (JsonResource $resource) => $resource->resource);
+            ?->map(fn (JsonResource $resource) => $resource->resource);
 
         /** @var Collection<int, Blog | Recipe> $items */
         $items = collect([...$blogs, ...$recipes])

@@ -157,8 +157,6 @@ class ShowControllerTest extends TestCase
         $this->mockRetrievePaymentIntent('foo', params: ['latest_charge' => 'bar']);
         $this->mockRetrieveCharge('bar');
 
-        $this->withoutExceptionHandling();
-
         $this->get(route('shop.basket.done', [
             'payment_intent' => 'foo',
             'payment_intent_client_secret' => $this->order->payment_intent_secret,

@@ -3,12 +3,23 @@ import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
 import { RecipeDetailCard } from '@/types/RecipeTypes';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
-defineProps<{ recipe: RecipeDetailCard }>();
+const props = defineProps<{ recipe: RecipeDetailCard }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'RecipeDetailCard',
+  {
+    title: props.recipe.title,
+  },
+);
 </script>
 
 <template>
-  <Card>
+  <Card ref="card">
     <div class="group flex-1">
       <Link
         :href="recipe.link"
@@ -17,13 +28,13 @@ defineProps<{ recipe: RecipeDetailCard }>();
       >
         <img
           v-if="recipe.square_image"
-          :alt="recipe.title"
+          :alt="recipe.header_image_alt_text ?? recipe.title"
           :src="recipe.image"
           loading="lazy"
         />
         <RecipeSquareImage
           v-else
-          :alt="recipe.title"
+          :alt="recipe.header_image_alt_text ?? recipe.title"
           :src="recipe.image"
         />
       </Link>

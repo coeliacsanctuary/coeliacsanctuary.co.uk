@@ -40,9 +40,9 @@ class GetLatestBlogsForHomePageActionTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsSixBlogs(): void
+    public function itReturnsThreeBlogs(): void
     {
-        $this->assertCount(6, $this->callAction(GetLatestBlogsForHomepageAction::class));
+        $this->assertCount(3, $this->callAction(GetLatestBlogsForHomepageAction::class));
     }
 
     #[Test]

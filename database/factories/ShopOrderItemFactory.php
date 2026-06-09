@@ -7,6 +7,7 @@ namespace Database\Factories;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
+use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
 
 class ShopOrderItemFactory extends Factory
@@ -21,6 +22,9 @@ class ShopOrderItemFactory extends Factory
             'product_variant_id' => Factory::factoryForModel(ShopProductVariant::class),
             'product_title' => $this->faker->words(3, true),
             'product_price' => $this->faker->numberBetween(100, 500),
+            'product_add_on_id' => null,
+            'product_add_on_title' => null,
+            'product_add_on_price' => null,
             'quantity' => 1,
         ];
     }
@@ -43,6 +47,15 @@ class ShopOrderItemFactory extends Factory
     public function inVariant(ShopProductVariant $variant): self
     {
         return $this->state(fn () => ['product_variant_id' => $variant->id]);
+    }
+
+    public function withAddOn(ShopProductAddOn $addOn): self
+    {
+        return $this->state(fn () => [
+            'product_add_on_id' => $addOn->id,
+            'product_add_on_title' => $addOn->name,
+            'product_add_on_price' => $addOn->currentPrice,
+        ]);
     }
 
     public function add(ShopProductVariant $productVariant, int $quantity = 1): self

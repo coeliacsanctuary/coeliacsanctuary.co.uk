@@ -59,6 +59,35 @@ Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = nu
     return Mjml::new()->sidecar()->toHtml($content);
 });
 
+Route::get('/mail/shop/digital-download-ready/{orderId?}', function (?int $orderId = null): string {
+    $order = ShopOrder::query()
+        ->whereIn('state_id', [OrderState::PAID, OrderState::SHIPPED])
+        ->with(['items', 'items.product.media', 'payment', 'customer', 'address'])
+        ->withWhereHas('downloadLinks')
+        ->when(
+            $orderId,
+            fn (Builder $builder) => $builder->findOrFail($orderId),
+            fn (Builder $builder) => $builder->latest()->first(),
+        );
+
+    $content = view('mailables.mjml.shop.download-your-products', [
+        'key' => 'foo',
+        'date' => now(),
+        'order' => $order,
+        'downloadLink' => URL::temporarySignedRoute('shop.download-my-products', now()->addMonth(), $order->downloadLinks->first()),
+        'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'notifiable' => $order->customer,
+        'relatedTitle' => 'products',
+        'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+            title: $product->title,
+            image: $product->main_image,
+            link: $product->link,
+        )),
+    ])->render();
+
+    return Mjml::new()->sidecar()->toHtml($content);
+});
+
 Route::get('/mail/shop/order-shipped/{orderId?}', function (?int $orderId = null): string {
     $order = ShopOrder::query()
         ->whereIn('state_id', [OrderState::PAID, OrderState::SHIPPED])
@@ -435,28 +464,22 @@ Route::get('og/generic/shop', function () {
 });
 
 Route::get('og/generic/wte', function () {
-    $eateries = Eatery::query()
-        ->where('type_id', EateryType::EATERY)
-        ->count();
+    $eateries = Eatery::query()->select(['id', 'country_id'])->get();
+    $branches = NationwideBranch::query()->select(['id', 'country_id'])->get();
 
-    $attractions = Eatery::query()
-        ->where('type_id', EateryType::ATTRACTION)
-        ->count();
-
-    $hotels = Eatery::query()
-        ->where('type_id', EateryType::HOTEL)
-        ->count();
-
-    $branches = NationwideBranch::query()->count();
-
-    $reviews = EateryReview::query()->count();
+    $wales = $eateries->where('country_id', 8)->count() + $branches->where('country_id', 8)->count();
+    $scotland = $eateries->where('country_id', 7)->count() + $branches->where('country_id', 7)->count();
+    $roi = $eateries->where('country_id', 6)->count() + $branches->where('country_id', 6)->count();
+    $ni = $eateries->where('country_id', 5)->count() + $branches->where('country_id', 5)->count();
+    $englande = $eateries->whereNotIn('country_id', [5,6,7,8])->count() + $branches->whereNotIn('country_id', [5,6,7,8])->count();
 
     return view('og-images.eatery', [
-        'eateries' => $eateries + $branches,
-        'attractions' => $attractions,
-        'hotels' => $hotels,
-        'branches' => $branches,
-        'reviews' => $reviews,
+        'eateries' => $eateries->count() + $branches->count(),
+        'wales' => $wales,
+        'scotland' => $scotland,
+        'roi' => $roi,
+        'ni' => $ni,
+        'england' => $englande,
     ]);
 });
 
@@ -487,27 +510,21 @@ Route::get('og/generic/wte-app', function () {
 });
 
 Route::get('og/generic/wte-map', function () {
-    $eateries = Eatery::query()
-        ->where('type_id', EateryType::EATERY)
-        ->count();
+    $eateries = Eatery::query()->select(['id', 'country_id'])->get();
+    $branches = NationwideBranch::query()->select(['id', 'country_id'])->get();
 
-    $attractions = Eatery::query()
-        ->where('type_id', EateryType::ATTRACTION)
-        ->count();
+    $wales = $eateries->where('country_id', 8)->count() + $branches->where('country_id', 8)->count();
+    $scotland = $eateries->where('country_id', 7)->count() + $branches->where('country_id', 7)->count();
+    $roi = $eateries->where('country_id', 6)->count() + $branches->where('country_id', 6)->count();
+    $ni = $eateries->where('country_id', 5)->count() + $branches->where('country_id', 5)->count();
+    $englande = $eateries->whereNotIn('country_id', [5,6,7,8])->count() + $branches->whereNotIn('country_id', [5,6,7,8])->count();
 
-    $hotels = Eatery::query()
-        ->where('type_id', EateryType::HOTEL)
-        ->count();
-
-    $branches = NationwideBranch::query()->count();
-
-    $reviews = EateryReview::query()->count();
-
-    return view('og-images.eatery-map', [
-        'eateries' => $eateries + $branches,
-        'attractions' => $attractions,
-        'hotels' => $hotels,
-        'branches' => $branches,
-        'reviews' => $reviews,
+    return view('og-images.eatery', [
+        'eateries' => $eateries->count() + $branches->count(),
+        'wales' => $wales,
+        'scotland' => $scotland,
+        'roi' => $roi,
+        'ni' => $ni,
+        'england' => $englande,
     ]);
 });

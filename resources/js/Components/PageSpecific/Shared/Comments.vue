@@ -6,11 +6,12 @@ import FormInput from '@/Components/Forms/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import { ucfirst } from '@/helpers';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const emits = defineEmits(['load-more', 'reset']);
 
@@ -54,10 +55,20 @@ const submitComment = () => {
     },
   });
 };
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'CommentsCard',
+  {
+    page: props.module,
+    id: props.id,
+  },
+);
 </script>
 
 <template>
-  <Card>
+  <Card ref="card">
     <Heading as="h3">Your Comments</Heading>
 
     <div

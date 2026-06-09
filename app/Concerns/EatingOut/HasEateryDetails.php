@@ -50,9 +50,9 @@ trait HasEateryDetails
         return Attribute::get(fn () => Str::of($this->address)->explode("\n")->first());
     }
 
-    public function generateSlug(): string
+    public function generateSlug(bool $force = false): string
     {
-        if ($this->slug) {
+        if ($this->slug && ! $force) {
             return $this->slug;
         }
 
@@ -104,7 +104,7 @@ trait HasEateryDetails
         return Attribute::get(fn () => Str::of($this->address)->explode("\n")->map(fn (string $line) => mb_trim($line))->join(', '));
     }
 
-    /** @return Attribute<non-falsy-string | null, never> */
+    /** @return Attribute<string | null, never> */
     public function fullLocation(): Attribute
     {
         return Attribute::get(function () {
@@ -116,11 +116,12 @@ trait HasEateryDetails
                 return "{$this->name}, Nationwide";
             }
 
-            return implode(', ', [
+            return implode(', ', array_filter([
+                $this->area?->area,
                 $this->town->town,
                 $this->county->county,
                 $this->country->country,
-            ]);
+            ]));
         });
     }
 
@@ -162,7 +163,7 @@ trait HasEateryDetails
 
             return [
                 'value' => (string) $average,
-                'label' => EateryReview::HOW_EXPENSIVE_LABELS[$average],
+                'label' => EateryReview::HOW_EXPENSIVE_LABELS[(int) $average],
             ];
         });
     }

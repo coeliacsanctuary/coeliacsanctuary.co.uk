@@ -39,6 +39,8 @@ class EateryDetailsResource extends JsonResource
             'type' => $this->type?->name,
             'cuisine' => $this->cuisine?->cuisine,
             'website' => $this->website,
+            'facebook_url' => $this->facebook_url,
+            'instagram_url' => $this->instagram_url,
             'menu' => $this->gf_menu_link,
             'restaurants' => $this->restaurants->map(fn (EateryAttractionRestaurant $restaurant): array => [
                 'name' => $restaurant->restaurant_name,

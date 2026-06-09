@@ -9,6 +9,8 @@ import {
   MapIcon,
   WalletIcon,
 } from '@heroicons/vue/24/solid';
+import FacebookIcon from '@/Icons/FacebookIcon.vue';
+import InstagramIcon from '@/Icons/InstagramIcon.vue';
 import DynamicMap from '@/Components/Maps/DynamicMap.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import EateryOpeningTimesModal from '@/Components/PageSpecific/EatingOut/Details/Modals/EateryOpeningTimesModal.vue';
@@ -84,6 +86,34 @@ const openText = computed(() => {
       >
         <LinkIcon class="h-4 w-4" />
         <span>Website</span>
+      </a>
+    </li>
+
+    <li
+      v-if="eatery.facebook_url"
+      class="rounded-sm bg-primary-light/25 px-3 py-1 leading-none"
+    >
+      <a
+        class="flex items-center space-x-3 text-sm font-semibold text-grey transition-all ease-in-out hover:text-black"
+        :href="eatery.facebook_url"
+        target="_blank"
+      >
+        <FacebookIcon class="!h-4 !w-4" />
+        <span>Facebook</span>
+      </a>
+    </li>
+
+    <li
+      v-if="eatery.instagram_url"
+      class="rounded-sm bg-primary-light/25 px-3 py-1 leading-none"
+    >
+      <a
+        class="flex items-center space-x-3 text-sm font-semibold text-grey transition-all ease-in-out hover:text-black"
+        :href="eatery.instagram_url"
+        target="_blank"
+      >
+        <InstagramIcon class="!h-4 !w-4" />
+        <span>Instagram</span>
       </a>
     </li>
 

@@ -35,7 +35,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
 
     #[Test]
     #[DataProvider('searchScenarios')]
-    public function itReturnsAsFoundForASearchNameButNoLocation(string $name, string $search): void
+    public function itReturnsAsFoundForASearchNameButNoLocation(string $name, string $search, string $branchName, string $address, string $searchAddress, string $town): void
     {
         $eatery = $this
             ->create(Eatery::class, [
@@ -56,7 +56,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
 
     #[Test]
     #[DataProvider('searchScenarios')]
-    public function itReturnsAsFoundForABranchSearchByTheAddress($name, $search, $branchName, $address, $searchAddress): void
+    public function itReturnsAsFoundForABranchSearchByTheAddress($name, $search, $branchName, $address, $searchAddress, $town): void
     {
         $eatery = $this
             ->create(Eatery::class, [

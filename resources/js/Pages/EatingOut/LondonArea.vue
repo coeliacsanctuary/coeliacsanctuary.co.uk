@@ -6,16 +6,16 @@ import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { Ref, ref } from 'vue';
-import { router, Link } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
+import { router, Link, InfiniteScroll } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
-import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import { RequestPayload } from '@inertiajs/core';
 import useBrowser from '@/composables/useBrowser';
 import Info from '@/Components/Info.vue';
 import { pluralise } from '@/helpers';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import { FormSelectOption } from '@/Components/Forms/Props';
+import FormSelect from '@/Components/Forms/FormSelect.vue';
 
 type AlternateArea = {
   borough: string;
@@ -23,20 +23,20 @@ type AlternateArea = {
   locations: number;
 };
 
-defineProps<{
+const props = defineProps<{
   area: LondonAreaPage;
   alternateAreas?: AlternateArea[];
   eateries: PaginatedCollection<TownEatery>;
   filters: EateryFilters;
+  sort: {
+    current: string;
+    options: FormSelectOption[];
+  };
 }>();
 
 const placeList = ref<HTMLElement | null>(null);
-const landmark: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
-const { items, reset } = useInfiniteScrollCollection<TownEatery>(
-  'eateries',
-  landmark,
-);
+const sortOption = ref(props.sort.current);
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
@@ -58,8 +58,6 @@ const handleFiltersChanged = ({
   const featureFilter = filters.features
     .filter((filter) => filter.checked)
     .map((filter) => filter.value);
-
-  reset();
 
   const params: RequestPayload & {
     filter?: { [T in 'category' | 'venueType' | 'feature']?: string };
@@ -96,14 +94,21 @@ const handleFiltersChanged = ({
 };
 
 const reloadEateries = () => {
-  reset();
-
   router.reload({
     only: ['eateries'],
+    reset: ['eateries'],
     preserveState: true,
     preserveScroll: true,
   });
 };
+
+watch(sortOption, () => {
+  router.reload({
+    only: ['eateries', 'sort'],
+    reset: ['eateries'],
+    data: { sort: sortOption.value },
+  });
+});
 </script>
 
 <template>
@@ -146,10 +151,7 @@ const reloadEateries = () => {
     </Warning>
   </Card>
 
-  <GoogleAd
-    :key="$page.url"
-    code="5284484376"
-  />
+  <div class="content_hint" />
 
   <div class="relative md:flex xmd:space-x-2">
     <TownFilterSidebar
@@ -160,10 +162,11 @@ const reloadEateries = () => {
 
     <div
       ref="placeList"
-      class="flex flex-col space-y-4 xmd:w-3/4 xmd:flex-1"
+      class="flex flex-col xmd:w-3/4 xmd:flex-1"
     >
       <Info
         v-if="alternateAreas && alternateAreas.length"
+        class="mb-4"
         flex
       >
         <div>
@@ -189,21 +192,51 @@ const reloadEateries = () => {
         </div>
       </Info>
 
-      <template v-if="items.length">
-        <EateryCard
-          v-for="eatery in items"
-          :key="eatery.link"
-          :eatery="eatery"
-        />
-      </template>
-
       <Card
-        v-else
-        class="px-8 py-8 text-center text-xl"
+        class="mb-4 flex space-y-2 xs:flex-row xs:items-center xs:justify-between xs:space-y-0"
       >
-        No eateries found, try updating your filters!
+        <div class="font-semibold sm:text-lg">
+          Showing eateries in {{ sort.current }} order
+        </div>
+
+        <FormSelect
+          v-model="sortOption"
+          name="sort"
+          :options="sort.options"
+          label="Sort by"
+          borders
+          class="flex items-center space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+          size="small"
+        />
       </Card>
-      <div ref="landmark" />
+
+      <InfiniteScroll
+        data="eateries"
+        only-next
+        preserve-url
+        class="flex flex-col space-y-4"
+      >
+        <template v-if="eateries.data.length">
+          <template
+            v-for="(eatery, index) in eateries.data"
+            :key="eatery.link"
+          >
+            <EateryCard :eatery="eatery" />
+
+            <div
+              v-if="index > 0 && index % 4 === 0"
+              class="content_hint"
+            />
+          </template>
+        </template>
+
+        <Card
+          v-else
+          class="px-8 py-8 text-center text-xl"
+        >
+          No eateries found, try updating your filters!
+        </Card>
+      </InfiniteScroll>
     </div>
   </div>
 

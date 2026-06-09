@@ -3,9 +3,11 @@ import { TownEatery } from '@/types/EateryTypes';
 import StarRating from '@/Components/StarRating.vue';
 import { Link } from '@inertiajs/vue3';
 import { pluralise } from '@/helpers';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 withDefaults(
   defineProps<{
+    id: number;
     name: string;
     link: string;
     reviews: TownEatery['reviews'];
@@ -41,6 +43,14 @@ withDefaults(
         :href="link"
         class="block p-2"
         prefetch
+        :on-before="
+          () =>
+            useJourneyTracking().logEvent(
+              'clicked',
+              'EateryCard/EateryReviewsLink',
+              { eateryId: id },
+            )
+        "
       >
         Read more about <strong>{{ name }}</strong
         >, {{ reviews.number > 0 ? ' read experiences from other people' : '' }}

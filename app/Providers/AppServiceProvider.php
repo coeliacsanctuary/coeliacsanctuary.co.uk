@@ -6,10 +6,15 @@ namespace App\Providers;
 
 use App\Infrastructure\MailChannel;
 use App\Search\Eateries;
+use App\Services\GoogleMerchant\GoogleMerchantClient;
+use App\Services\GoogleMerchant\GoogleMerchantProductManager;
+use App\Services\GoogleMerchant\GoogleMerchantShippingManager;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Notifications\Channels\MailChannel as IlluminateMailChannel;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nightwatch\Facades\Nightwatch;
@@ -27,6 +32,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(Mjml::class, fn () => Mjml::new());
         $this->app->register(MacroServiceProvider::class);
         $this->app->alias(MailChannel::class, IlluminateMailChannel::class);
+
+        $this->app->singleton(GoogleMerchantProductManager::class);
+        $this->app->singleton(GoogleMerchantShippingManager::class);
+
+        $this->app->singleton(GoogleMerchantClient::class, fn () => new GoogleMerchantClient(
+            enabled: config()->boolean('google-merchant.enabled', false),
+            merchantId: config()->string('google-merchant.merchant_id', ''),
+            serviceAccountKeyPath: config()->string('google-merchant.service_account_key_path', ''),
+            dataSource: config()->string('google-merchant.data_source', ''),
+        ));
     }
 
     /**
@@ -48,5 +63,7 @@ class AppServiceProvider extends ServiceProvider
         Nightwatch::rejectCacheEvents(fn (CacheEvent $event) => ! str_contains($event->key, '.'));
 
         Nightwatch::rejectOutgoingRequests(fn (OutgoingRequest $request) => $request->url === '127.0.0.1');
+
+        RateLimiter::for('metrics', fn () => Limit::perSecond(5));
     }
 }

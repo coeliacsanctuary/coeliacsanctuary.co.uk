@@ -5,7 +5,7 @@ const props = withDefaults(
   defineProps<{
     as?: string;
     classes?: string;
-    textSize?: 'small' | 'base' | 'large' | 'xl';
+    textSize?: 'xs' | 'small' | 'base' | 'large' | 'xl';
     border?: boolean;
   }>(),
   {
@@ -18,6 +18,10 @@ const props = withDefaults(
 
 const headerClasses = computed(() => {
   const baseClasses = ['my-0! text-left font-coeliac font-semibold'];
+
+  if (props.textSize === 'xs') {
+    baseClasses.push('text-xl lg:text-[1.7rem]');
+  }
 
   if (props.textSize === 'small') {
     baseClasses.push('text-xl md:max-lg:text-2xl lg:text-3xl');

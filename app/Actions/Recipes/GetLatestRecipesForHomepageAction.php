@@ -20,7 +20,7 @@ class GetLatestRecipesForHomepageAction
         $recipes = Cache::rememberForever(
             $key,
             fn () => RecipeSimpleCardViewResource::collection(Recipe::query()
-                ->take(8)
+                ->take(4)
                 ->latest()
                 ->with(['media'])
                 ->get())

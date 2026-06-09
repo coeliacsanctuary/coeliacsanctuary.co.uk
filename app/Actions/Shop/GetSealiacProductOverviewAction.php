@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Ai\Agents\SealiacProductOverviewAgent;
 use App\Models\SealiacOverview;
 use App\Models\Shop\ShopProduct;
-use App\Support\Ai\Prompts\ShopProductSealiacOverviewPrompt;
 use Exception;
-use OpenAI\Laravel\Facades\OpenAI;
 
 class GetSealiacProductOverviewAction
 {
@@ -22,22 +21,12 @@ class GetSealiacProductOverviewAction
             throw new Exception('No reviews found to generate overview');
         }
 
-        $prompt = app(ShopProductSealiacOverviewPrompt::class)->handle($product);
-
-        $result = OpenAI::chat()->create([
-            'model' => 'gpt-3.5-turbo-1106',
-            'messages' => [
-                ['role' => 'system', 'content' => $prompt],
-            ],
-        ]);
-
-        /** @var string $response */
-        $response = $result->choices[0]->message->content;
+        $response = (new SealiacProductOverviewAgent($product))->prompt('Generate your overview.');
 
         return SealiacOverview::query()->create([
             'model_id' => $product->id,
             'model_type' => ShopProduct::class,
-            'overview' => $response,
+            'overview' => $response->text,
         ]);
     }
 }

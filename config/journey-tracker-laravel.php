@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'enabled' => env('JOURNEY_TRACKER_ENABLED', true),
+
+    'app-token' => env('JOURNEY_TRACKER_TOKEN'),
+
+    'dont-track' => [
+        'static/map/{latlng}',
+        '/horizon/*',
+        '/cs-adm/*',
+        'fallback',
+        '/nova*',
+    ],
+
+    'internal-event-endpoint' => 'api/event',
+
+    'heartbeat-endpoint' => 'api/heartbeat',
+
+    'host' => env('JOURNEY_TRACKER_HOST', 'https://journey-tracker.cloud'),
+
+    'queue' => env('JOURNEY_TRACKER_QUEUE', null),
+];

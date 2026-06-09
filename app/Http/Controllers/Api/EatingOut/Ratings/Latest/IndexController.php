@@ -14,6 +14,7 @@ class IndexController
     {
         $reviews = EateryReview::query()
             ->latest()
+            ->whereHas('eatery')
             ->with(['eatery', 'eatery.area', 'eatery.town', 'eatery.county', 'eatery.country'])
             ->take(5)
             ->get();

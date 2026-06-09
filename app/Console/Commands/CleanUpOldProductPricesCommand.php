@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\Shop\ShopProductPrice;
+use App\Models\Shop\ShopPrice;
 use Illuminate\Console\Command;
 
 class CleanUpOldProductPricesCommand extends Command
@@ -13,7 +13,7 @@ class CleanUpOldProductPricesCommand extends Command
 
     public function handle(): void
     {
-        ShopProductPrice::query()
+        ShopPrice::query()
             ->whereNotNull('end_at')
             ->where('end_at', '<', now())
             ->delete();

@@ -20,7 +20,7 @@ class GetLatestBlogsForHomepageAction
         $blogs = Cache::rememberForever(
             $key,
             fn () => BlogSimpleCardViewResource::collection(Blog::query()
-                ->take(6)
+                ->take(3)
                 ->latest()
                 ->with(['media'])
                 ->get())

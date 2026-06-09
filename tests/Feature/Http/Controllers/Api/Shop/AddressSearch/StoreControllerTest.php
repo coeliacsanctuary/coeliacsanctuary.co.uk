@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Api\Shop\AddressSearch;
 
-use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class StoreControllerTest extends TestCase
@@ -43,9 +43,10 @@ class StoreControllerTest extends TestCase
         ])->assertOk();
 
         Http::assertSent(function (Request $request) {
-            $this->assertEquals('POST', $request->method());
-            $this->assertStringContainsString(config('services.getAddress.url'), $request->url());
-            $this->assertStringContainsString('/autocomplete/foo', $request->url());
+            $this->assertEquals('GET', $request->method());
+            $this->assertStringContainsString(config('services.idealPostcodes.url'), $request->url());
+            $this->assertStringContainsString('/autocomplete/addresses', $request->url());
+            $this->assertStringContainsString('query=foo', $request->url());
 
             return true;
         });
@@ -66,11 +67,7 @@ class StoreControllerTest extends TestCase
         ])->assertOk();
 
         Http::assertSent(function (Request $request) {
-            $this->assertArrayHasKey('location', $request->data());
-            $this->assertArrayHasKey('latitude', $request->data()['location']);
-            $this->assertArrayHasKey('longitude', $request->data()['location']);
-            $this->assertEquals(12.34, $request->data()['location']['latitude']);
-            $this->assertEquals(56.78, $request->data()['location']['longitude']);
+            $this->assertStringContainsString('bias_lonlat=56.78%2C12.34%2C5000', $request->url());
 
             return true;
         });
@@ -94,17 +91,17 @@ class StoreControllerTest extends TestCase
         Http::preventStrayRequests();
         Http::fake([
             '*' => Http::response([
-                'suggestions' => [
-                    ['id' => 'foo', 'address' => 'bar', 'a' => 'b'],
-                    ['id' => 'hello', 'address' => 'there', 'c' => 'd'],
+                'result' => [
+                    'hits' => [
+                        ['id' => 'foo', 'suggestion' => 'bar', 'a' => 'b'],
+                        ['id' => 'hello', 'suggestion' => 'there', 'c' => 'd'],
+                    ],
                 ],
             ]),
         ]);
 
         $this->postJson(route('api.shop.address-search'), [
             'search' => 'foo',
-            'lat' => 12.34,
-            'lng' => 56.78,
         ])->assertOk()
             ->assertJson([
                 ['id' => 'foo', 'address' => 'bar'],

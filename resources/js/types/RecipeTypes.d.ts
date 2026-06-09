@@ -1,4 +1,4 @@
-import { HomeHoverItem } from '@/types/Types';
+import { ArticleFaq, HomeHoverItem } from '@/types/Types';
 import { FeaturedInCollection } from '@/types/CollectionTypes';
 
 export type RecipeDetailCard = HomeHoverItem & {
@@ -17,16 +17,19 @@ export type RecipePage = {
   id: number;
   print_url: string;
   title: string;
+  header_image_alt_text?: string;
+  short_title?: string;
   image: string;
   square_image: string;
   published: string;
   updated: string;
   author: string;
   description: string;
+  body?: string;
   ingredients: string;
   method: string;
-  features?: { feature: string; slug: string }[];
-  allergens?: { allergen: string; slug: string }[];
+  features: { feature: string; slug: string }[];
+  allergens: { allergen: string; slug: string }[];
   timing: {
     prep_time: string;
     cook_time: string;
@@ -39,6 +42,13 @@ export type RecipePage = {
     protein: number;
   };
   featured_in?: FeaturedInCollection[];
+  faqs?: ArticleFaq[];
+  related_recipes?: {
+    title: string;
+    square_image: string;
+    image: string;
+    header_image_alt_text?: string;
+  }[];
 };
 
 export type RecipeFeature = {

@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Jobs\Shop\SyncProductToGoogleMerchantJob;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProductVariant;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -28,12 +31,25 @@ class ProductVariant extends Resource
 
     public static $title = 'title';
 
+    public static $clickAction = 'view';
+
+    public function authorizedToView(Request $request)
+    {
+        return true;
+    }
+
     public function fields(Request $request): array
     {
         return [
             ID::make()->fullWidth()->hide(),
 
             Text::make('Title')->fullWidth()->help('Leave empty for only one variant')->default(''),
+
+            Textarea::make('Description', 'short_description')
+                ->maxlength(255)
+                ->nullable()
+                ->fullWidth()
+                ->alwaysShow(),
 
             Number::make('Quantity', 'quantity')->fullWidth()->rules(['required']),
 
@@ -52,6 +68,7 @@ class ProductVariant extends Resource
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
         return $query
+            ->with(['product'])
             ->addSelect(['total_sold' => ShopOrderItem::query()
                 ->selectRaw('sum(quantity)')
                 ->whereColumn('product_variant_id', 'shop_product_variants.id')
@@ -61,6 +78,11 @@ class ProductVariant extends Resource
                     OrderState::SHIPPED,
                 ])),
             ]);
+    }
+
+    public static function detailQuery(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder $query)
+    {
+        return self::indexQuery($request, $query);
     }
 
     protected static function fillFields(NovaRequest $request, $model, $fields): array
@@ -73,6 +95,26 @@ class ProductVariant extends Resource
         }
 
         return $fillFields;
+    }
+
+    public static function afterCreate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        /** @var ShopProductVariant $model */
+        SyncProductToGoogleMerchantJob::dispatch($model->product);
+    }
+
+    public static function afterUpdate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        /** @var ShopProductVariant $model */
+        SyncProductToGoogleMerchantJob::dispatch($model->product);
     }
 
     public static function redirectAfterCreate(NovaRequest $request, $resource)

@@ -14,18 +14,20 @@ class StoreController
     /** @return Collection<int, array{id: string, address: string}> */
     public function __invoke(AddressSearchRequest $request): Collection
     {
-        $payload = [];
+        $payload = [
+            'query' => $request->string('search')->toString(),
+        ];
 
         if ($request->has('lat') && $request->has('lng')) {
-            $payload['location'] = [
-                'latitude' => $request->float('lat'),
-                'longitude' => $request->float('lng'),
-            ];
+            $payload['bias_lonlat'] = "{$request->float('lng')},{$request->float('lat')},5000";
         }
 
-        return Http::getAddress()
-            ->post("/autocomplete/{$request->string('search')->toString()}", $payload)
-            ->collect('suggestions')
-            ->map(fn (array $result) => Arr::only($result, ['id', 'address']));
+        return Http::idealPostcodes()
+            ->get('/autocomplete/addresses', $payload)
+            ->collect('result.hits')
+            ->map(fn (array $result) => [
+                'id' => Arr::get($result, 'id'),
+                'address' => Arr::get($result, 'suggestion'),
+            ]);
     }
 }

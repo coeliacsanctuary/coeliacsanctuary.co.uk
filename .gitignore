@@ -25,4 +25,7 @@ yarn-error.log
 /CLAUDE.md
 /AGENTS.md
 /.junie
+/.claude
 /boost.json
+/.ai/mcp/
+google-auth.json

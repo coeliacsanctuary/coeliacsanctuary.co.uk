@@ -3,12 +3,23 @@ import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import { EaterySimpleHomeResource } from '@/types/EateryTypes';
 import { ArrowRightIcon } from '@heroicons/vue/24/outline';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
 defineProps<{ eateries: EaterySimpleHomeResource[] }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'Home/LatestEateries',
+);
 </script>
 
 <template>
-  <Card class="space-y-4 pb-10">
+  <Card
+    ref="card"
+    class="space-y-4 pb-10"
+  >
     <h3 class="text-center text-2xl font-semibold text-primary-dark">
       Latest Eateries
     </h3>

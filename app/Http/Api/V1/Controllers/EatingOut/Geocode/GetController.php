@@ -5,19 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Api\V1\Controllers\EatingOut\Geocode;
 
 use App\Http\Api\V1\Requests\EatingOut\GeocodeRequest;
-use Spatie\Geocoder\Geocoder;
+use App\Services\EatingOut\LocationSearchService;
 
 class GetController
 {
-    public function __invoke(GeocodeRequest $request, Geocoder $geocoder): array
+    public function __invoke(GeocodeRequest $request): array
     {
-        $result = $geocoder->getCoordinatesForAddress($request->string('term')->toString());
+        $result = app(LocationSearchService::class)->getLatLng($request->string('term')->toString());
 
         return [
-            'data' => [
-                'lat' => $result['lat'],
-                'lng' => $result['lng'],
-            ],
+            'data' => $result->toLatLng(),
         ];
     }
 }

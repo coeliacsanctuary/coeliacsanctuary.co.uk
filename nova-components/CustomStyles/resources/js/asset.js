@@ -1,5 +1,7 @@
-// import CustomStyles from './components/CustomStyles'
+document.addEventListener('inertia:navigate', (event) => {
+    const flash = event.detail.page.props.novaFlash
 
-// Nova.booting(app => {
-//   app.component('custom-styles', CustomStyles)
-// })
+    if (flash) {
+        Nova.success(flash)
+    }
+})

@@ -37,6 +37,11 @@ class Comments extends Resource
         return true;
     }
 
+    public function authorizedToDelete(Request $request): bool
+    {
+        return true;
+    }
+
     public function fields(NovaRequest $request)
     {
         return [

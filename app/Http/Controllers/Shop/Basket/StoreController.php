@@ -30,7 +30,7 @@ class StoreController
             $product = ShopProduct::query()->findOrFail($request->integer('product_id'));
             $variant = $product->variants()->findOrFail($request->integer('variant_id'));
 
-            $addProductToBasketAction->handle($order, $product, $variant, $request->integer('quantity'));
+            $addProductToBasketAction->handle($order, $product, $variant, $request->integer('quantity'), $request->boolean('include_add_on'));
 
             DB::commit();
 

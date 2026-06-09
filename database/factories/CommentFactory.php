@@ -27,4 +27,9 @@ class CommentFactory extends Factory
             'commentable_id' => $commentable->id,
         ]);
     }
+
+    public function approved(): self
+    {
+        return $this->state(fn () => ['approved' => true]);
+    }
 }

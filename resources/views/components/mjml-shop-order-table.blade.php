@@ -10,7 +10,7 @@
 
 <!-- BEGIN PRODUCTS -->
 @foreach($order->items as $item)
-    <mj-section margin-bottom="{{ $loop->last ? '0' : '10px' }}">
+    <mj-section margin-bottom="{{ $loop->last || $item->product_add_on_id ? '0' : '10px' }}">
         <mj-column width="25%" padding="4px 0">
             <mj-image
                 src="{{ $item->product->main_image }}"
@@ -51,6 +51,26 @@
             </mj-text>
         </mj-column>
     </mj-section>
+
+    @if($item->product_add_on_id && !$resend)
+        <mj-section margin-bottom="{{ $loop->last ? '0' : '10px' }}" padding-top="0">
+            <mj-column width="25%" padding="0 0 4px" />
+
+            <mj-column width="60%" padding="0 0 4px">
+                <mj-text font-size="18px" line-height="1.2">
+                    <span style="font-weight: 600">
+                        {{ $item->product_add_on_title }}
+                    </span>
+                </mj-text>
+            </mj-column>
+
+            <mj-column width="15%" padding="0 0 4px">
+                <mj-text align="right">
+                    +{{ Helpers::formatMoney(Money::GBP($item->product_add_on_price)) }}
+                </mj-text>
+            </mj-column>
+        </mj-section>
+    @endif
 @endforeach
 <!-- END: PRODUCTS -->
 
@@ -86,6 +106,25 @@
     <mj-column css-class="force-half-width" width="50%">
         <mj-text line-height="1.5" align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->postage)) }}</mj-text>
     </mj-column>
+
+    @if(count($order->payment->fees_breakdown ?? []) > 0)
+        @foreach($order->payment->fees_breakdown as $fee)
+            <mj-column css-class="force-half-width" width="50%">
+                <mj-text line-height="1.5">{{ $fee['description'] ?? 'Customs Fee' }}</mj-text>
+            </mj-column>
+            <mj-column css-class="force-half-width" width="50%">
+                <mj-text line-height="1.5" align="right">{{ Helpers::formatMoney(Money::GBP($fee['fee'])) }}</mj-text>
+            </mj-column>
+        @endforeach
+        @if(count($order->payment->fees_breakdown) > 1)
+            <mj-column css-class="force-half-width" width="50%">
+                <mj-text line-height="1.5">Total Fees</mj-text>
+            </mj-column>
+            <mj-column css-class="force-half-width" width="50%">
+                <mj-text line-height="1.5" align="right">{{ Helpers::formatMoney(Money::GBP($order->payment->custom_fees)) }}</mj-text>
+            </mj-column>
+        @endif
+    @endif
 
     <mj-column css-class="force-half-width" width="50%">
         <mj-text line-height="1.5" padding-top="10px">

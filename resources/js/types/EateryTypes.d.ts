@@ -30,6 +30,7 @@ export type CountyPageTown = Town & {
   eateries: number;
   attractions: number;
   hotels: number;
+  total_eateries: number;
 };
 
 export type LondonPageBorough = Exclude<
@@ -57,10 +58,13 @@ export type NationwideEatery = {
   type: string;
   venue_type?: string;
   website?: string;
+  facebook_url?: string;
+  instagram_url?: string;
   is_fully_gf: boolean;
 };
 
 export type Eatery = {
+  id: number;
   name: string;
   link: string;
   county: {
@@ -113,6 +117,15 @@ export type EateryFilters = {
   [T in EateryFilterKeys]: EateryFilterItem[];
 };
 
+export type EateryCollectionFilterKeys =
+  | EateryFilterKeys
+  | 'towns'
+  | 'counties';
+
+export type EateryCollectionFilters = {
+  [T in EateryCollectionFilterKeys]: EateryFilterItem[];
+};
+
 export type TownEatery = Eatery & {
   key: string;
   is_fully_gf?: boolean;
@@ -121,6 +134,8 @@ export type TownEatery = Eatery & {
   venue_type?: string;
   cuisine?: string;
   website?: string;
+  facebook_url?: string;
+  instagram_url?: string;
   restaurants: {
     name?: string;
     info: string;
@@ -177,7 +192,6 @@ export type DetailedEatery = Exclude<TownEatery, 'key'> & {
     };
     has_rated: boolean;
     images?: ReviewImage[];
-    admin_review?: Exclude<EateryReview, ['id', 'name']>;
     user_reviews: EateryReview[];
     ratings: {
       rating: StarRating;
@@ -262,6 +276,7 @@ export type EateryReview = {
   food_rating?: string;
   service_rating?: string;
   branch_name?: string;
+  admin_review: boolean;
   images: ReviewImage[];
 };
 
@@ -367,12 +382,11 @@ type EditableEateryFieldComponent = {
   props?: Partial<Record<string, unknown>>;
 };
 
-export type EateryCountryListProp = {
-  [T: string]: EateryCountryPropItem;
-};
-
 export type EateryCountryPropItem = {
+  name: string;
+  description: string;
   list: EateryCountryList[];
+  top_counties?: EateryCountryList[];
   counties: number;
   eateries: number;
 };
@@ -380,11 +394,14 @@ export type EateryCountryPropItem = {
 export type EateryCountryList = {
   name: string;
   slug: string;
+  image?: string;
   eateries: number;
   branches: number;
   attractions: number;
   hotels: number;
   total: number;
+  review_count: number;
+  avg_rating: number;
 };
 
 export type EaterySimpleReviewResource = {

@@ -54,7 +54,7 @@ abstract class BaseMailable
                     ->map(fn (Blog $blog) => new NotificationRelatedObject(
                         title: $blog->title,
                         image: $blog->main_image,
-                        link: $blog->link,
+                        link: $blog->absolute_link,
                     )),
             ],
             [
@@ -67,7 +67,7 @@ abstract class BaseMailable
                     ->map(fn (Recipe $recipe) => new NotificationRelatedObject(
                         title: $recipe->title,
                         image: $recipe->square_image ?? $recipe->main_image,
-                        link: $recipe->link,
+                        link: $recipe->absolute_link,
                     )),
             ],
             [
@@ -80,7 +80,7 @@ abstract class BaseMailable
                     ->map(fn (ShopProduct $product) => new NotificationRelatedObject(
                         title: $product->title,
                         image: $product->main_image,
-                        link: $product->link,
+                        link: $product->absolute_link,
                     )),
             ],
         ], 1);

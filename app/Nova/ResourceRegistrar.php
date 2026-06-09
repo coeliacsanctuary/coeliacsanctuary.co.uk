@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Nova;
 
+use App\Nova\Resources\AskSealiac\AskSealiacChatMessageResource;
+use App\Nova\Resources\AskSealiac\AskSealiacChatResource;
 use App\Nova\Resources\EatingOut\Areas;
 use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Countries;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
+use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EateryAttractionRestaurantResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
@@ -25,7 +28,7 @@ use App\Nova\Resources\Main\AnnouncementResource;
 use App\Nova\Resources\Main\Blog;
 use App\Nova\Resources\Main\BlogTag;
 use App\Nova\Resources\Main\Collection;
-use App\Nova\Resources\Main\CollectionItem;
+use App\Nova\Resources\Main\CollectionGroup;
 use App\Nova\Resources\Main\CommentReply;
 use App\Nova\Resources\Main\Comments;
 use App\Nova\Resources\Main\PopupResource;
@@ -40,6 +43,7 @@ use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
+use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderItem;
@@ -50,8 +54,10 @@ use App\Nova\Resources\Shop\OrderSourcesResource;
 use App\Nova\Resources\Shop\Payment;
 use App\Nova\Resources\Shop\PaymentRefund;
 use App\Nova\Resources\Shop\PostageArea;
+use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
-use App\Nova\Resources\Shop\ProductPrice;
+use App\Nova\Resources\Shop\Price;
+use App\Nova\Resources\Shop\ProductAddOn;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\ProductVariant;
 use App\Nova\Resources\Shop\ShippingAddress;
@@ -72,7 +78,7 @@ class ResourceRegistrar
             Blog::class,
             BlogTag::class,
             Collection::class,
-            CollectionItem::class,
+            CollectionGroup::class,
             Recipe::class,
             RecipeAllergens::class,
             RecipeNutritionalInformation::class,
@@ -81,6 +87,10 @@ class ResourceRegistrar
             PopupResource::class,
             AnnouncementResource::class,
             RedirectResource::class,
+
+            // Ask Sealiac
+            AskSealiacChatResource::class,
+            AskSealiacChatMessageResource::class,
 
             // Eating Out
             Eateries::class,
@@ -95,6 +105,7 @@ class ResourceRegistrar
             MyPlaces::class,
             PlaceRecommendations::class,
             PlaceReports::class,
+            EateryAlerts::class,
             SuggestedEdits::class,
             EaterySearch::class,
             EaterySearchHistory::class,
@@ -118,8 +129,9 @@ class ResourceRegistrar
             Categories::class,
             Products::class,
             ShippingMethod::class,
-            ProductPrice::class,
+            Price::class,
             ProductVariant::class,
+            ProductAddOn::class,
 
             // Shop Customers
             Customer::class,
@@ -127,7 +139,9 @@ class ResourceRegistrar
 
             // Shop Admin
             DiscountCode::class,
+            PostageCountry::class,
             PostagePrice::class,
+            CustomsFee::class,
             PostageArea::class,
             MassDiscount::class,
             OrderReviews::class,

@@ -51,8 +51,7 @@ class MarkOrderAsPaidAction
             return 'PayPal';
         }
 
-        /** @phpstan-ignore-next-line  */
-        if ($paymentMethod->card?->wallet?->type) {
+        if (isset($paymentMethod->card->wallet->type)) {
             return Str::headline($paymentMethod->card->wallet->type);
         }
 

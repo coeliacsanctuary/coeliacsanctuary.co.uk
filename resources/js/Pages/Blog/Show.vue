@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ArticleFaqCard from '@/Components/PageSpecific/Shared/ArticleFaqCard.vue';
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { Link, router } from '@inertiajs/vue3';
@@ -8,11 +9,11 @@ import { BlogPage, RelatedBlogSimpleCard } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
 import RenderedString from '@/Components/RenderedString.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import { Page } from '@inertiajs/core';
 import { loadScript } from '@/helpers';
 import BlogSimpleCard from '@/Components/PageSpecific/Blogs/BlogSimpleCard.vue';
 import collect, { Collection } from 'collect.js';
+import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
 
 const props = defineProps<{
   blog: BlogPage;
@@ -139,32 +140,17 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
 
   <Card no-padding>
     <img
-      :alt="blog.title"
+      :alt="blog.header_image_alt_text ?? blog.title"
       :src="blog.image"
       loading="lazy"
     />
   </Card>
 
-  <Card v-if="blog.featured_in?.length">
-    <h3 class="text-base font-semibold text-grey-darkest">
-      This blog was featured in
-    </h3>
-
-    <ul class="mt-2 flex flex-row flex-wrap text-sm leading-tight">
-      <li
-        v-for="collection in blog.featured_in"
-        :key="collection.link"
-        class="after:content-[','] last:after:content-['']"
-      >
-        <Link
-          :href="collection.link"
-          class="font-semibold text-primary-dark hover:text-grey-darker"
-        >
-          {{ collection.title }}
-        </Link>
-      </li>
-    </ul>
-  </Card>
+  <ArticleFaqCard
+    v-if="blog.faqs && blog.faq_display === 'top'"
+    :faqs="blog.faqs"
+    :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
+  />
 
   <div
     class="flex w-full flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
@@ -174,12 +160,13 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
         <div class="prose prose-lg max-w-none md:prose-xl">
           <RenderedString :content="blog.body" />
         </div>
-
-        <GoogleAd
-          :key="$page.url"
-          code="6662103082"
-        />
       </Card>
+
+      <ArticleFaqCard
+        v-if="blog.faqs && (!blog.faq_display || blog.faq_display === 'bottom')"
+        :faqs="blog.faqs"
+        :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
+      />
 
       <Card
         v-if="blog.show_author"
@@ -239,6 +226,12 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
           </Link>
         </Card>
       </template>
+
+      <FeaturedInCollectionCard
+        v-if="blog.featured_in?.length"
+        :collections="blog.featured_in"
+        title="This blog is featured in"
+      />
     </aside>
   </div>
 </template>

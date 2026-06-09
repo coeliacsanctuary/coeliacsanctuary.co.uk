@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Jobs\Shop\SyncProductToGoogleMerchantJob;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Nova\Actions\Shop\CreateTravelCardFullSet;
@@ -27,6 +28,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Number;
@@ -64,6 +66,16 @@ class Products extends Resource
                     ->displayUsing(fn (string $value) => Str::limit($value, 50))
                     ->fullWidth()
                     ->rules(['required', 'max:200']),
+
+                ...$this->resource && $this->resource->loadMissing(['variants']) && $this->resource->variants->count() === 1 ? [
+                    Number::make('Quantity', 'variants.0.quantity', fn () => $this->resource->variants->first()->quantity)
+                        ->fullWidth()
+                        ->required()
+                        ->deferrable()
+                        ->hideWhenCreating()
+                        ->hideFromIndex()
+                        ->hideFromDetail(),
+                ] : [],
 
                 Slug::make('Slug')
                     ->from('Title')
@@ -107,7 +119,20 @@ class Products extends Resource
                     ->nullable()
                     ->hideFromIndex()
                     ->help('The label displayed above the variant select, eg, size, colour etc')
+                    ->default('Option')
                     ->suggestions(['Size', 'Colour']),
+
+                Textarea::make('Description')
+                    ->rows(3)
+                    ->fullWidth()
+                    ->alwaysShow()
+                    ->rules(['required']),
+
+                Textarea::make('Long Description')
+                    ->alwaysShow()
+                    ->fullWidth()
+                    ->rows(8)
+                    ->rules(['required']),
             ]),
 
             new Panel('Sales', [
@@ -124,6 +149,13 @@ class Products extends Resource
                     ->sortable()
                     ->exceptOnForms()
                     ->showOnDetail(),
+            ]),
+
+            new Panel('Google Merchant', [
+                Boolean::make('Sync to Google Merchant', 'google_merchant_enabled')
+                    ->default(true)
+                    ->hideFromIndex()
+                    ->help('Toggle to include or remove this product from Google Merchant Centre'),
             ]),
 
             new Panel('Metas', [
@@ -156,25 +188,56 @@ class Products extends Resource
                     ->nullable(),
             ]),
 
-            new Panel('Details', [
-                Textarea::make('Description')
-                    ->rows(3)
+            new Panel('Initial Variant', [
+                Text::make('Title', 'variants.title')
                     ->fullWidth()
-                    ->alwaysShow()
-                    ->rules(['required']),
+                    ->help('Leave empty for only one variant')
+                    ->default('')
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
 
-                Textarea::make('Long Description')
-                    ->alwaysShow()
+                Number::make('Quantity', 'variants.quantity')
                     ->fullWidth()
-                    ->rows(8)
-                    ->rules(['required']),
+                    ->required()
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
+
+                Number::make('Weight', 'variants.weight')
+                    ->fullWidth()
+                    ->required()
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
+
+                Boolean::make('Live', 'variants.live')
+                    ->fullWidth()
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
+
+                Currency::make('Price', 'prices.price')
+                    ->asMinorUnits()
+                    ->required()
+                    ->fullWidth()
+                    ->deferrable()
+                    ->hideWhenUpdating()
+                    ->hideFromIndex()
+                    ->hideFromDetail(),
             ]),
 
-            BelongsToMany::make('Categories', resource: Categories::class),
-
-            HasMany::make('Prices', resource: ProductPrice::class),
-
             HasMany::make('Variants', resource: ProductVariant::class),
+
+            MorphMany::make('Prices', resource: Price::class),
+
+            HasOne::make('Digital Download Add Ons', 'addOns', resource: ProductAddOn::class),
+
+            BelongsToMany::make('Categories', resource: Categories::class),
 
             MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
 
@@ -305,6 +368,26 @@ class Products extends Resource
     public static function usesScout()
     {
         return false;
+    }
+
+    public static function afterCreate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        /** @var ShopProduct $model */
+        SyncProductToGoogleMerchantJob::dispatch($model);
+    }
+
+    public static function afterUpdate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        /** @var ShopProduct $model */
+        SyncProductToGoogleMerchantJob::dispatch($model);
     }
 
     public static function redirectAfterCreate(NovaRequest $request, $resource)

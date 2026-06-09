@@ -20,7 +20,7 @@ use Illuminate\Validation\ValidationException;
 
 class UpdateController
 {
-    public function __invoke(BasketPatchRequest $request, ResolveBasketAction $resolveBasketAction): RedirectResponse | Response
+    public function __invoke(BasketPatchRequest $request, ResolveBasketAction $resolveBasketAction): RedirectResponse|Response
     {
         /** @var string | null $token */
         $token = $request->cookies->get('basket_token');
@@ -55,6 +55,7 @@ class UpdateController
 
                 $basket->update([
                     'customer_id' => $customer->id,
+                    'newsletter_signup' => $request->boolean('contact.subscribeToNewsletter'),
                 ]);
             }
 

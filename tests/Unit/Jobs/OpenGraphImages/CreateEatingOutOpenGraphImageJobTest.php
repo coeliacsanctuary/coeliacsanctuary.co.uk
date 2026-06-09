@@ -36,7 +36,7 @@ class CreateEatingOutOpenGraphImageJobTest extends TestCase
 
     #[Test]
     #[DataProvider('openGraphModelsDataProvider')]
-    public function itCallsTheRenderOpenGraphImageService($classString, $expectedAction): void
+    public function itCallsTheRenderOpenGraphImageService($classString, $expectedAction, $useMedia): void
     {
         $this->mock(RenderOpenGraphImage::class)
             ->shouldReceive('handle')

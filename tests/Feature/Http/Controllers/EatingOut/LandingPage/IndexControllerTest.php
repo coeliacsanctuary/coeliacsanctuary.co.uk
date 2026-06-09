@@ -26,7 +26,9 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itCallsTheGetOpenGraphImageForRouteAction(): void
     {
-        $this->expectAction(GetOpenGraphImageForRouteAction::class, ['eatery']);
+        $this->expectAction(GetOpenGraphImageForRouteAction::class, [
+            static fn (string $route, mixed $alterUrl = null) => $route === 'eatery',
+        ]);
 
         $this->visitPage();
     }
@@ -34,6 +36,6 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itRendersTheInertiaPage(): void
     {
-        $this->visitPage()->assertInertia(fn (Assert $page) => $page->component('EatingOut/Landing'));
+        $this->visitPage()->assertInertia(fn (Assert $page) => $page->component('EatingOut/LandingNew'));
     }
 }

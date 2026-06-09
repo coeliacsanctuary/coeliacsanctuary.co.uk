@@ -55,6 +55,8 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
             }
 
             if ( ! $area->latlng) {
+                $area->loadMissing(['town' => fn ($query) => $query->withoutGlobalScopes()]);
+
                 /** @phpstan-ignore-next-line  */
                 $name = "{$area->area}, {$area->town->town}, {$area->town->county?->county}, {$area->town->county?->country?->country}";
                 $latLng = app(LocationSearchService::class)->getLatLng($name, force: true);

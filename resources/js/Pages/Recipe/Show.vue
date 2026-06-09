@@ -10,11 +10,14 @@ import { PrinterIcon } from '@heroicons/vue/20/solid';
 import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
 import RecipeNutritionTable from '@/Components/PageSpecific/Recipes/RecipeNutritionTable.vue';
 import { Page } from '@inertiajs/core';
-import GoogleAd from '@/Components/GoogleAd.vue';
+import ArticleFaqCard from '@/Components/PageSpecific/Shared/ArticleFaqCard.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
-import useScreensize from '@/composables/useScreensize';
+import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import RenderedString from '@/Components/RenderedString.vue';
+import RecipeSimpleCard from '@/Components/PageSpecific/Recipes/RecipeSimpleCard.vue';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -23,6 +26,8 @@ const props = defineProps<{
 }>();
 
 const header = ref<HTMLElement>();
+
+const recipeElem = ref<HTMLElement>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
 const isLoadingComments = ref(false);
@@ -140,9 +145,9 @@ const handleCommentReset = () => {
             {{ recipe.timing.cook_time }}
           </li>
           <li>
-            <strong class="font-semibold"
-              >This recipe makes {{ recipe.nutrition.servings }}</strong
-            >
+            <strong class="font-semibold">
+              This recipe makes {{ recipe.nutrition.servings }}
+            </strong>
           </li>
         </ul>
       </Info>
@@ -197,46 +202,42 @@ const handleCommentReset = () => {
   <Card no-padding>
     <img
       v-if="recipe.square_image"
-      :alt="recipe.title"
+      :alt="recipe.header_image_alt_text ?? recipe.title"
       :src="recipe.image"
       loading="lazy"
     />
     <RecipeSquareImage
       v-else
-      :alt="recipe.title"
+      :alt="recipe.header_image_alt_text ?? recipe.title"
       :src="recipe.image"
     />
   </Card>
 
+  <Card v-if="recipe.body">
+    <div class="prose prose-lg max-w-none md:prose-xl">
+      <RenderedString :content="recipe.body" />
+    </div>
+  </Card>
+
+  <ArticleFaqCard
+    v-if="recipe.faqs"
+    :faqs="recipe.faqs"
+    :title="`Here are some tips and FAQs about ${recipe.short_title || recipe.title}`"
+  />
+
   <div
+    ref="recipeElem"
     class="relative flex flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
     <aside
       class="space-y-3 lg:ml-3 lg:grid lg:w-[350px] lg:flex-shrink-0 lg:grid-cols-1 lg:self-start lg:overflow-auto"
     >
-      <Card
+      <FeaturedInCollectionCard
         v-if="recipe.featured_in?.length"
-        class="lg:row-start-2"
-      >
-        <h3 class="text-base font-semibold text-grey-darkest">
-          This recipe was featured in
-        </h3>
-
-        <ul class="mt-2 flex flex-row flex-wrap text-sm leading-tight">
-          <li
-            v-for="collection in recipe.featured_in"
-            :key="collection.link"
-            class="after:content-[','] last:after:content-['']"
-          >
-            <Link
-              :href="collection.link"
-              class="font-semibold text-primary-dark hover:text-grey-darker"
-            >
-              {{ collection.title }}
-            </Link>
-          </li>
-        </ul>
-      </Card>
+        :collections="recipe.featured_in"
+        title="This recipe is featured in"
+        class="hidden lg:flex"
+      />
 
       <Card>
         <SubHeading classes="text-primary-dark">Ingredients</SubHeading>
@@ -258,15 +259,15 @@ const handleCommentReset = () => {
         />
       </Card>
 
-      <GoogleAd
-        :key="$page.url"
-        :title="
-          useScreensize().screenIsGreaterThanOrEqualTo('lg')
-            ? 'Sponsored'
-            : undefined
-        "
-        code="2137793897"
-      />
+      <Card v-if="recipe.related_recipes?.length">
+        <SubHeading classes="text-primary-dark">Related Recipes</SubHeading>
+
+        <RecipeSimpleCard
+          v-for="relatedRecipe in recipe.related_recipes"
+          :key="relatedRecipe.title"
+          :recipe="relatedRecipe"
+        />
+      </Card>
     </aside>
 
     <div class="flex flex-col space-y-3">
@@ -332,6 +333,13 @@ const handleCommentReset = () => {
         </div>
       </Card>
 
+      <FeaturedInCollectionCard
+        v-if="recipe.featured_in?.length"
+        :collections="recipe.featured_in"
+        title="This recipe is featured in"
+        class="lg:hidden"
+      />
+
       <Comments
         :id="recipe.id"
         :comments="allComments"
@@ -343,4 +351,10 @@ const handleCommentReset = () => {
       />
     </div>
   </div>
+
+  <JumpToContentButton
+    v-if="recipeElem"
+    :anchor="recipeElem"
+    label="Jump to recipe"
+  />
 </template>

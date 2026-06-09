@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
+use App\Actions\EatingOut\GetCountyListAction;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
 use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
+use App\Support\Collections\CanBeCollected;
+use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Scopes\LiveScope;
 use App\Support\Helpers;
@@ -30,6 +32,7 @@ use Laravel\Scout\Searchable;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
+ * @implements Collectable<$this>
  *
  * @property Eatery $eatery
  * @property string $short_name
@@ -37,8 +40,11 @@ use Laravel\Scout\Searchable;
  * @property string | null $average_rating
  * @property array{value: string, label: string} | null $average_expense
  */
-class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSearchable
+class NationwideBranch extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
+    /** @use CanBeCollected<$this> */
+    use CanBeCollected;
+
     use ClearsCache;
     use HasEateryDetails;
 
@@ -72,20 +78,23 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
         });
 
         static::saved(function (self $branch): void {
-            if (config('coeliac.generate_og_images') === false) {
-                return;
+            if (config('coeliac.generate_og_images') === true) {
+                $eatery = $branch->eatery()->withoutGlobalScopes()->firstOrFail();
+                $town = $branch->town()->withoutGlobalScopes()->firstOrFail();
+
+                CreateEatingOutOpenGraphImageJob::dispatch($branch);
+                CreateEatingOutOpenGraphImageJob::dispatch($eatery);
+                CreateEatingOutOpenGraphImageJob::dispatch($town);
+                CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
+                CreateEateryAppPageOpenGraphImageJob::dispatch();
+                CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
-            $eatery = $branch->eatery()->withoutGlobalScopes()->firstOrFail();
-            $town = $branch->town()->withoutGlobalScopes()->firstOrFail();
+            if (config('coeliac.generate_country_ai_descriptions') === true) {
+                $branch->country()->update(['description' => null]);
 
-            CreateEatingOutOpenGraphImageJob::dispatch($branch);
-            CreateEatingOutOpenGraphImageJob::dispatch($eatery);
-            CreateEatingOutOpenGraphImageJob::dispatch($town);
-            CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
-            CreateEateryAppPageOpenGraphImageJob::dispatch();
-            CreateEateryMapPageOpenGraphImageJob::dispatch();
-            CreateEateryIndexPageOpenGraphImageJob::dispatch();
+                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
+            }
         });
     }
 
@@ -123,6 +132,28 @@ class NationwideBranch extends Model implements HasOpenGraphImageContract, IsSea
             ->having('distance', '<=', $radius)
             ->addSelect(['id', 'wheretoeat_id', 'lat', 'lng', 'name', ...$additionalColumns])
             ->orderBy('distance');
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
+    {
+        return $this->selectRaw('(
+                        6371000 * acos (
+                          cos ( radians(?) )
+                          * cos( radians( wheretoeat_nationwide_branches.lat ) )
+                          * cos( radians( wheretoeat_nationwide_branches.lng ) - radians(?) )
+                          + sin ( radians(?) )
+                          * sin( radians( wheretoeat_nationwide_branches.lat ) )
+                        )
+                     ) AS distance', [
+            $latLng->lat,
+            $latLng->lng,
+            $latLng->lat,
+        ])
+            ->addSelect($columns);
     }
 
     /** @return BelongsTo<Eatery, $this> */

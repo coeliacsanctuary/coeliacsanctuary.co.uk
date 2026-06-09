@@ -3,7 +3,8 @@ import { DetailedEatery } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Icon from '@/Components/Icon.vue';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -16,10 +17,23 @@ const eateryName = computed(() => {
 
   return props.eatery.name;
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'EateryDetails/Description',
+  {
+    eateryId: props.eatery.id,
+    branchId: props.eatery.branch?.id,
+  },
+);
 </script>
 
 <template>
-  <Card class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8">
+  <Card
+    ref="card"
+    class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8"
+  >
     <template v-if="eatery.restaurants.length">
       <SubHeading>
         Here's some restaurants in {{ eatery.name }} that have gluten free
@@ -55,7 +69,7 @@ const eateryName = computed(() => {
 
     <ul
       v-if="eatery.features"
-      class="grid grid-cols-1 gap-2 xxs:max-sm:grid-cols-2 xmd:gap-3 xmd:max-xl:grid-cols-4 sm:max-xmd:grid-cols-3 lg:gap-3 xl:grid-cols-6"
+      class="grid grid-cols-1 gap-2 xxs:max-sm:grid-cols-2 sm:max-xmd:grid-cols-3 xmd:gap-3 xmd:max-xl:grid-cols-4 lg:gap-3 xl:grid-cols-6"
     >
       <li
         v-for="feature in eatery.features"

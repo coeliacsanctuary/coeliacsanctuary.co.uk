@@ -71,6 +71,10 @@
                 @endif
 
                 @yield('main-content')
+
+                @hasSection('footer')
+                    @yield('footer')
+                @endif
             </mj-wrapper>
             @isset($relatedTitle, $relatedItems)
                 <mj-wrapper>

@@ -11,7 +11,7 @@ defineProps<{ image: string }>();
     <Heading
       :back-link="{ label: 'Back to eating out guide.', href: '/eating-out' }"
     >
-      Coeliac Sanctuary - On the Go
+      Coeliac Sanctuary - Gluten Free On the Go
     </Heading>
 
     <img
@@ -21,10 +21,11 @@ defineProps<{ image: string }>();
     />
 
     <p class="prose prose-lg max-w-none md:prose-xl">
-      Coeliac Sanctuary - On the Go connects to the eating out guide on the
-      Coeliac Sanctuary website to display the locations of gluten free places
-      to eat around your location. You can also search for locations around the
-      UK and Ireland to plan your next trip to the seaside or to the city!
+      Coeliac Sanctuary's Gluten Free On the Go app connects to the eating out
+      guide on the Coeliac Sanctuary website to display the locations of gluten
+      free places to eat around your location. You can also search for locations
+      around the UK and Ireland to plan your next trip to the seaside or to the
+      city!
     </p>
 
     <p class="prose prose-lg max-w-none md:prose-xl">
@@ -48,15 +49,15 @@ defineProps<{ image: string }>();
     >
       <ArticleImage
         position="fullwidth"
-        src="/images/misc/app/1.png"
+        src="/images/misc/app/Main.png"
       />
       <ArticleImage
         position="fullwidth"
-        src="/images/misc/app/2.png"
+        src="/images/misc/app/Map.png"
       />
       <ArticleImage
         position="fullwidth"
-        src="/images/misc/app/3.png"
+        src="/images/misc/app/Nearby.png"
       />
     </div>
 
@@ -81,7 +82,7 @@ defineProps<{ image: string }>();
 
       <a
         title="Apple App Store"
-        href="https://apps.apple.com/us/app/coeliac-sanctuary-on-the-go/id1608694621"
+        href="https://apps.apple.com/gb/app/gluten-free-on-the-go/id1608694621"
         target="_blank"
         class="flex flex-col items-center space-y-2 rounded-sm bg-linear-to-br from-primary/30 to-primary-light/30 p-2 sm:h-full sm:max-w-1/2 lg:p-4"
       >

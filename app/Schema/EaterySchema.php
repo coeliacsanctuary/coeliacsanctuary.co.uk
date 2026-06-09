@@ -49,7 +49,7 @@ class EaterySchema
 
         $this->schema
             ->name($this->eatery->name)
-            ->description($this->eatery->info)
+            ->description((string) $this->eatery->info)
             ->address(
                 Schema::postalAddress()
                     ->addressLocality($town->town)
@@ -121,7 +121,7 @@ class EaterySchema
     protected function makeReview(EateryReview $review, bool $isAdmin = false): Review
     {
         $reviewSchema = Schema::review()
-            ->reviewBody($review->review)
+            ->reviewBody((string) $review->review)
             ->author($isAdmin ? $this->getCoeliacOrganisation() : Schema::person()->name($review->name ?? 'Anonymous'))
             ->reviewRating(
                 Schema::rating()

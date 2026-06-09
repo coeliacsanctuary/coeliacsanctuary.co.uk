@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Pipelines\Search\Steps;
 
+use App\Services\EatingOut\LocationSearchService;
 use PHPUnit\Framework\Attributes\Test;
 use App\DataObjects\Search\SearchParameters;
 use App\DataObjects\Search\SearchPipelineData;
@@ -12,7 +13,6 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\Search\Steps\SearchEateries;
 use Database\Seeders\EateryScaffoldingSeeder;
-use Spatie\Geocoder\Facades\Geocoder;
 use Tests\TestCase;
 
 class SearchEateriesTest extends TestCase
@@ -25,7 +25,7 @@ class SearchEateriesTest extends TestCase
     }
 
     #[Test]
-    public function itDoesntSearchAnyShopEateriesIfTheEaterySearchParameterIsFalse(): void
+    public function itDoesntSearchAnyEateriesIfTheEaterySearchParameterIsFalse(): void
     {
         $eatery = $this->create(Eatery::class, ['name' => 'Foo']);
         $this->create(NationwideBranch::class, [
@@ -91,9 +91,10 @@ class SearchEateriesTest extends TestCase
             //
         };
 
-        Geocoder::shouldReceive('getCoordinatesForAddress')
-            ->withArgs(fn ($term) => $term === 'foo')
-            ->once();
+        $this->mock(LocationSearchService::class)
+            ->shouldReceive('getLatLng')
+            ->once()
+            ->andReturn(null);
 
         app(SearchEateries::class)->handle($pipelineData, $closure);
     }
@@ -116,9 +117,10 @@ class SearchEateriesTest extends TestCase
             //
         };
 
-        Geocoder::shouldReceive('getCoordinatesForAddress')
-            ->withArgs(fn ($term) => $term === 'bar')
-            ->once();
+        $this->mock(LocationSearchService::class)
+            ->shouldReceive('getLatLng')
+            ->once()
+            ->andReturn(null);
 
         app(SearchEateries::class)->handle($pipelineData, $closure);
     }

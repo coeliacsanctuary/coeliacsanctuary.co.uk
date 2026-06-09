@@ -3,7 +3,8 @@ import { HomepageCollection } from '@/types/CollectionTypes';
 import Card from '@/Components/Card.vue';
 import HomeHoverItem from '@/Components/PageSpecific/Home/HomeHoverItem.vue';
 import { Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{ collection: HomepageCollection }>();
 
@@ -34,10 +35,19 @@ const collectionWrapperClasses = computed(() => {
 
   return base;
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'Home/Collection',
+  {
+    collection: props.collection.title,
+  },
+);
 </script>
 
 <template>
-  <Card>
+  <Card ref="card">
     <h2 class="font-coeliac text-3xl font-semibold md:text-5xl">
       {{ collection.title }}
     </h2>

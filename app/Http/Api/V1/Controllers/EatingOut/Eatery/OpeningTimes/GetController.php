@@ -14,7 +14,7 @@ class GetController
         abort_if( ! $eatery->openingTimes, 404);
 
         return [
-            'data' => EateryOpeningTimesResource::make($eatery->openingTimes->first()),
+            'data' => EateryOpeningTimesResource::make($eatery->openingTimes),
         ];
     }
 }

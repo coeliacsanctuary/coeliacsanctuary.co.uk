@@ -12,16 +12,23 @@ import {
 } from '@/types/EateryTypes';
 import HomeLatestEateries from '@/Components/PageSpecific/Home/HomeLatestEateries.vue';
 import HomeLatestReviews from '@/Components/PageSpecific/Home/HomeLatestReviews.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import HomeNewsletterSignup from '@/Components/PageSpecific/Home/HomeNewsletterSignup.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
 defineProps<{
-  blogs: HomeHoverItem[];
-  recipes: HomeHoverItem[];
+  blogs: { latest: HomeHoverItem[]; top: HomeHoverItem[] };
+  recipes: { latest: HomeHoverItem[]; top: HomeHoverItem[] };
   collections: HomepageCollection[];
   latestReviews: EaterySimpleReviewResource[];
   latestEateries: EaterySimpleHomeResource[];
 }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('about-card'),
+  'scrolled_into_view',
+  'Home/AboutCard',
+);
 </script>
 
 <template>
@@ -59,17 +66,33 @@ defineProps<{
       <HomeNewsletterSignup />
 
       <HomeHoverGroup
-        :items="blogs"
+        :items="blogs.top"
+        title="Top Blogs"
+      >
+        <p class="prose prose-lg mb-2 max-w-none font-semibold lg:prose-xl">
+          Explore some of the most popular articles from the Coeliac Sanctuary
+          blog.
+        </p>
+      </HomeHoverGroup>
+
+      <HomeHoverGroup
+        :items="blogs.latest"
         title="Latest Blogs"
       />
 
-      <GoogleAd
-        :key="$page.url"
-        code="9266309021"
-      />
+      <HomeHoverGroup
+        :items="recipes.top"
+        :per-row="4"
+        title="Top Recipes"
+      >
+        <p class="prose prose-lg mb-2 max-w-none font-semibold lg:prose-xl">
+          See what everyone is making today, and check out the most popular
+          recipes on Coeliac Sanctuary.
+        </p>
+      </HomeHoverGroup>
 
       <HomeHoverGroup
-        :items="recipes"
+        :items="recipes.latest"
         :per-row="4"
         title="Latest Recipes"
       />
@@ -77,6 +100,7 @@ defineProps<{
 
     <aside class="flex w-full flex-col space-y-4 lg:w-1/4">
       <Card
+        ref="about-card"
         class="space-y-4"
         faded
         theme="primary-light"

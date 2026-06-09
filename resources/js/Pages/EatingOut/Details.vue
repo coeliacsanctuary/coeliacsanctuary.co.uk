@@ -10,7 +10,6 @@ import EateryFeedbackLinks from '@/Components/PageSpecific/EatingOut/Details/Eat
 import { Ref, ref } from 'vue';
 import { formatDate } from '@/helpers';
 import EateryBranchList from '@/Components/PageSpecific/EatingOut/Details/EateryBranchList.vue';
-import GoogleAd from '@/Components/GoogleAd.vue';
 import EateryAiOverview from '@/Components/PageSpecific/EatingOut/Details/EateryAiOverview.vue';
 import NearbyEateries from '@/Components/PageSpecific/EatingOut/Details/NearbyEateries.vue';
 
@@ -90,23 +89,12 @@ const shouldShowAiOverview = ref(true);
       :eatery="eatery"
     />
 
-    <GoogleAd
-      :key="$page.url"
-      code="5284484376"
-    />
-
     <EateryAiOverview
       v-if="eatery.qualifies_for_ai && shouldShowAiOverview"
       :eatery-id="eatery.id"
       :branch-id="eatery.branch?.id"
       :eatery-name="eateryName()"
       @on-error="shouldShowAiOverview = false"
-    />
-
-    <EateryAdminReview
-      v-if="eatery.reviews.admin_review"
-      :eatery-name="eateryName()"
-      :review="eatery.reviews.admin_review"
     />
 
     <EateryVisitorPhotos

@@ -19,8 +19,9 @@ class BlogDetailCardViewResource extends JsonResource
     {
         return [
             'title' => Str::of($this->title)->replace('&quot;', '"'),
-            'link' => route('blog.show', ['blog' => $this]),
+            'link' => $this->link,
             'image' => $this->main_image_as_webp ?? $this->main_image,
+            'header_image_alt_text' => $this->header_image_alt_text,
             'date' => $this->published,
             'description' => $this->meta_description,
             'comments_count' => $this->comments_count,

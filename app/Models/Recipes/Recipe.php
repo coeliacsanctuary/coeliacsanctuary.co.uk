@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -61,6 +62,10 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
 
     use LinkableModel;
     use Searchable;
+
+    protected $casts = [
+        'faqs' => 'array',
+    ];
 
     protected static function booted(): void
     {
@@ -155,6 +160,23 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
             'recipe_assigned_meals',
             'recipe_id',
             'meal_type_id'
+        )->withTimestamps();
+    }
+
+    /** @return HasMany<RecipeMetric, $this> */
+    public function metrics(): HasMany
+    {
+        return $this->hasMany(RecipeMetric::class);
+    }
+
+    /** @return BelongsToMany<static, $this> */
+    public function relatedRecipes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            static::class,
+            'recipes_related_recipes',
+            'recipe_id',
+            'related_recipe_id'
         )->withTimestamps();
     }
 
@@ -275,6 +297,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         );
 
         foreach ($ids as $id) {
+            /** @phpstan-ignore argument.type */
             $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_features f where f.recipe_id = recipes.id and f.feature_type_id = {$id})"));
         }
 
@@ -294,6 +317,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         );
 
         foreach ($ids as $id) {
+            /** @phpstan-ignore argument.type */
             $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_meals m where m.recipe_id = recipes.id and m.meal_type_id = {$id})"));
         }
 
@@ -313,6 +337,7 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
         );
 
         foreach ($ids as $id) {
+            /** @phpstan-ignore argument.type */
             $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_allergens a where a.recipe_id = recipes.id and a.allergen_type_id = {$id})"));
         }
 

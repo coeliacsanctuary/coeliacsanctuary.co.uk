@@ -5,15 +5,27 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Blogs\Blog as BlogModel;
+use App\Nova\Chartables\Metrics\Blogs\CollectionCardViews;
+use App\Nova\Repeaters\ArticleFaq;
+use App\Nova\Chartables\Metrics\Blogs\CommentViews;
+use App\Nova\Chartables\Metrics\Blogs\DetailCardViews;
+use App\Nova\Chartables\Metrics\Blogs\Views;
 use App\Nova\Resource;
 use App\Nova\Support\Panels\VisibilityPanel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
+use Jpeters8889\ApexCharts\ApexChart;
 use Jpeters8889\Body\Body;
+use Jpeters8889\PreviewButton\PreviewButton;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\Repeater;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Tag;
 use Laravel\Nova\Fields\Text;
@@ -21,6 +33,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
+use Throwable;
 
 /** @extends resource<BlogModel> */
 /**
@@ -37,6 +50,11 @@ class Blog extends Resource
 
     public static $with = ['tags', 'media'];
 
+    public function authorizedToView(Request $request)
+    {
+        return true;
+    }
+
     public function fields(NovaRequest $request)
     {
         return [
@@ -44,6 +62,13 @@ class Blog extends Resource
 
             new Panel('Introduction', [
                 Text::make('Title')->fullWidth()->rules(['required', 'max:200'])->showWhenPeeking(),
+
+                Text::make('Short Title')
+                    ->fullWidth()
+                    ->maxlength(100)
+                    ->onlyOnForms()
+                    ->help('Optional, used with FAQs')
+                    ->nullable(),
 
                 Slug::make('Slug')->from('Title')
                     ->hideFromIndex()
@@ -55,6 +80,34 @@ class Blog extends Resource
                 Tag::make('Tags', 'tags', BlogTag::class) /** @phpstan-ignore-line */
                     ->showCreateRelationButton()
                     ->fullWidth(),
+
+                Select::make('Primary Tag', 'primary_tag_id')
+                    ->resolveUsing(function ($value) {
+                        if ( ! $value) {
+                            return;
+                        }
+
+                        $tag = \App\Models\Blogs\BlogTag::query()->withCount('blogs')->find($value);
+
+                        if ($tag) {
+                            return "{$tag->tag} - ({$tag->blogs_count} blogs)";
+                        }
+                    })
+                    ->dependsOn(['tags'], function (Select $field, NovaRequest $request, FormData $data): void {
+                        $tags = collect(json_decode($data->get('tags')))->map(fn ($tag) => $tag->display);
+
+                        if ($tags->isEmpty()) {
+                            $field->readonly()->help('Please add tags before selecting a primary tag.');
+
+                            return;
+                        }
+
+                        $field->readonly(false)
+                            ->options($tags->mapWithKeys(fn ($tag) => [$tag => $tag])->toArray())
+                            ->displayUsingLabels()
+                            ->help('If set, the primary tag will be used for related blogs in the sidebar');
+                    })
+                    ->nullable(),
 
                 Textarea::make('Description')->onlyOnForms()->fullWidth()->rules(['required'])->showWhenPeeking(),
             ]),
@@ -76,6 +129,12 @@ class Blog extends Resource
                     ->onlyOnForms()
                     ->addButtonLabel('Select Header Image')
                     ->rules(['required']),
+
+                Text::make('Header Image Alt Text', 'header_image_alt_text')
+                    ->nullable()
+                    ->onlyOnForms()
+                    ->fullWidth()
+                    ->help('Descriptive alt text for the header image. Defaults to the blog title if left blank.'),
 
                 Images::make('Social Image', 'social')
                     ->onlyOnForms()
@@ -100,6 +159,18 @@ class Blog extends Resource
                     ->onlyOnForms()
                     ->fullWidth()
                     ->help('If checked, the about Alison block will be shown at the bottom of the blog.'),
+
+                PreviewButton::make('Preview')->forModel('blog')->onlyOnForms(),
+            ]),
+
+            new Panel('FAQ', [
+                Repeater::make('FAQs', 'faqs')
+                    ->asJson()
+                    ->repeatables([ArticleFaq::make()]),
+
+                Select::make('Display FAQ', 'faq_display')
+                    ->options(['top' => 'Above content', 'bottom' => 'Below content'])
+                    ->nullable(),
             ]),
 
             DateTime::make('Created At')->sortable()->exceptOnForms(),
@@ -109,7 +180,7 @@ class Blog extends Resource
             URL::make('View', fn ($blog) => $blog->live ? $blog->link : null)
                 ->exceptOnForms(),
 
-            MorphMany::make('comments', resource: Comments::class),
+            MorphMany::make('Comments', resource: Comments::class),
         ];
     }
 
@@ -126,7 +197,35 @@ class Blog extends Resource
 
         unset($blog->_status);
 
+        if ($blog->primary_tag_id && is_string($blog->primary_tag_id)) {
+            $tag = Str::beforeLast($blog->primary_tag_id, ' - (');
+
+            $tagModel = \App\Models\Blogs\BlogTag::query()->where('tag', $tag)->first();
+
+            $blog->primary_tag_id = $tagModel?->id;
+        }
+
         return $fillFields;
+    }
+
+    public function cards(NovaRequest $request)
+    {
+        try {
+            $blogId = $request->findResourceOrFail()->resource->id;
+
+            $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
+
+            return array_map(
+                fn ($metric) => ApexChart::make($metric)
+                    ->withParams(['blogId' => $blogId])
+                    ->onlyOnDetail()
+                    ->fixedHeight()
+                    ->fullWidth(),
+                $metrics
+            );
+        } catch (Throwable $e) {
+            return [];
+        }
     }
 
     public static function indexQuery(NovaRequest $request, Builder $query)

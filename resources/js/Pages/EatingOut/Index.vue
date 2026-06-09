@@ -4,24 +4,32 @@ import { ChevronDownIcon } from '@heroicons/vue/24/solid';
 import {
   CountyEatery as CountyEateryType,
   EateryCountryListProp,
+  EateryCountryPropItem,
 } from '@/types/EateryTypes';
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
 import EateryCountryCard from '@/Components/PageSpecific/EatingOut/Index/EateryCountryCard.vue';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import Heading from '@/Components/Heading.vue';
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import Info from '@/Components/Info.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { Link } from '@inertiajs/vue3';
 import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{
-  countries: EateryCountryListProp;
+  countries: EateryCountryPropItem[];
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
 }>();
 
 const guide = ref<null | { $el: Element }>(null);
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('guide'),
+  'scrolled_into_view',
+  'WhereToEatIndexCountryList',
+);
 </script>
 
 <template>
@@ -129,17 +137,19 @@ const guide = ref<null | { $el: Element }>(null);
     <Heading> Gluten Free around the UK and Ireland </Heading>
 
     <p class="prose prose-lg max-w-none md:prose-xl">
-      Our eating out guide is split into countries, counties and then towns or
-      cities, click or tap on a country below to get started!
+      Our gluten free eating out guide is organised by country, then broken down
+      into counties and finally towns or cities, helping you easily find safe
+      places to eat wherever you are. Whether you’re planning ahead or searching
+      on the go, you can start by choosing a country below, where you’ll find
+      popular counties highlighted first or the full list available to browse.
     </p>
-
-    <div class="flex flex-col space-y-3">
-      <EateryCountryCard
-        v-for="(details, country) in countries"
-        :key="country"
-        :country="country"
-        :details="details"
-      />
-    </div>
   </Card>
+
+  <div class="flex flex-col space-y-3">
+    <EateryCountryCard
+      v-for="country in countries"
+      :key="country.name"
+      :country="country"
+    />
+  </div>
 </template>

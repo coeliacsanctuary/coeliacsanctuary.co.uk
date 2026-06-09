@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Actions\EatingOut;
 
+use App\Models\EatingOut\EateryAlert;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReport;
 use Illuminate\Support\Collection;
@@ -27,7 +28,7 @@ class IgnoreReportOrRecommendation extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $models->each(function (EateryReport|EateryRecommendation $model): void {
+        $models->each(function (EateryReport|EateryRecommendation|EateryAlert $model): void {
             if ($model->ignored) {
                 return;
             }

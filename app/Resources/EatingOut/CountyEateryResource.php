@@ -19,6 +19,7 @@ class CountyEateryResource extends JsonResource
         $town = $this->town;
 
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'link' => $this->link(),
             'town' => [

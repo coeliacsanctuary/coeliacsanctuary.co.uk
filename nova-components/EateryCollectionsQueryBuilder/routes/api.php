@@ -1,0 +1,161 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Actions\Collections\GenerateCollectionFromPendingEateriesAction;
+use App\DataObjects\EatingOut\PendingEatery;
+use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
+use App\Models\EatingOut\EateryCountry;
+use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryCuisine;
+use App\Models\EatingOut\EateryFeature;
+use App\Models\EatingOut\EateryTown;
+use App\Models\EatingOut\EateryType;
+use App\Models\EatingOut\EateryVenueType;
+use App\Models\EatingOut\NationwideBranch;
+use App\Pipelines\EatingOut\GetEateries\GetEateriesFromCollectionPipeline;
+use App\Services\EatingOut\Collection\Builder\BranchQueryBuilder;
+use App\Services\EatingOut\Collection\Builder\EateryQueryBuilder;
+use App\Services\EatingOut\Collection\Configuration;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Laravel\Nova\Nova;
+
+Route::post('/relation', function (Request $request) {
+    return match (str_replace('[parent].', '', $request->input('relation'))) {
+        'town_id' => EateryTown::query()
+            ->orderBy('town')
+            ->with(['county', 'county.country'])
+            ->get()
+            ->map(fn (EateryTown $town) => [
+                'value' => $town->id,
+                'label' => "{$town->town}, {$town->county->county}, {$town->county->country->country}",
+            ]),
+        'county_id' => EateryCounty::query()
+            ->orderBy('county')
+            ->with(['country'])
+            ->get()
+            ->map(fn (EateryCounty $county) => [
+                'value' => $county->id,
+                'label' => "{$county->county}, {$county->country->country}",
+            ]),
+        'country_id' => EateryCountry::query()
+            ->orderBy('country')
+            ->get()
+            ->map(fn (EateryCountry $country) => [
+                'value' => $country->id,
+                'label' => $country->country,
+            ]),
+        'area_id' => EateryArea::query()
+            ->orderBy('area')
+            ->with(['town'])
+            ->get()
+            ->map(fn (EateryArea $area) => [
+                'value' => $area->id,
+                'label' => "{$area->area}, {$area->town->town}",
+            ]),
+        'type_id' => EateryType::query()
+            ->get()
+            ->map(fn (EateryType $type) => [
+                'value' => $type->id,
+                'label' => $type->type,
+            ]),
+        'venue_type_id' => EateryVenueType::query()
+            ->orderBy('venue_type')
+            ->get()
+            ->map(fn (EateryVenueType $venueType) => [
+                'value' => $venueType->id,
+                'label' => $venueType->venue_type,
+            ]),
+        'cuisine_id' => EateryCuisine::query()
+            ->orderBy('cuisine')
+            ->get()
+            ->map(fn (EateryCuisine $cuisine) => [
+                'value' => $cuisine->id,
+                'label' => $cuisine->cuisine,
+            ]),
+    };
+});
+
+Route::post('/has', function (Request $request) {
+    return match ($request->input('relation')) {
+        'features' => EateryFeature::query()
+            ->orderBy('feature')
+            ->get()
+            ->map(fn (EateryFeature $feature) => [
+                'value' => $feature->id,
+                'label' => $feature->feature,
+            ]),
+    };
+});
+
+Route::post('/preview-query', function (Request $request) {
+    $config = new Configuration(...$request->array('config'));
+
+    $eateryQueryBuilder = new EateryQueryBuilder($config);
+    $branchQueryBuilder = new BranchQueryBuilder($config);
+
+    return [
+        'eateries' => $eateryQueryBuilder->toSql(),
+        'branches' => $branchQueryBuilder->toSql(),
+    ];
+});
+
+Route::post('results', function (Request $request, GetEateriesFromCollectionPipeline $getEateriesFromCollectionPipeline) {
+    $config = new Configuration(...$request->array('config'));
+
+    $pendingEateries = $getEateriesFromCollectionPipeline->run($config);
+
+    $eateries = $pendingEateries
+        ->take(10)
+        ->map(function (PendingEatery $pendingEatery) {
+            $eatery = Eatery::query()->find($pendingEatery->id);
+            $branch = null;
+
+            if ($pendingEatery->branchId) {
+                $branch = NationwideBranch::query()
+                    ->where('wheretoeat_id', $pendingEatery->id)
+                    ->find($pendingEatery->branchId);
+            }
+
+            return [
+                'name' => $eatery->name,
+                'location' => [
+                    'address' => $eatery->formatted_address,
+                ],
+                'branch' => $branch ? [
+                    'name' => $branch->name,
+                    'location' => [
+                        'address' => $branch->formatted_address,
+                    ],
+                ] : null,
+            ];
+        });
+
+    return [
+        'data' => [
+            'data' => $eateries,
+            'to' => $eateries->count(),
+            'total' => $pendingEateries->count(),
+        ],
+    ];
+});
+
+Route::post('/generate', function (Request $request, GetEateriesFromCollectionPipeline $getEateriesFromCollectionPipeline, GenerateCollectionFromPendingEateriesAction $generateCollection) {
+    $request->validate([
+        'name' => ['required', 'string'],
+        'orderField' => ['required', 'string', 'in:town,county,country,area'],
+        'config' => ['required', 'array'],
+    ]);
+
+    $config = new Configuration(...$request->array('config'));
+
+    $pendingEateries = $getEateriesFromCollectionPipeline->run($config);
+
+    $collection = $generateCollection->handle($pendingEateries, $request->input('name'), $request->input('orderField'));
+
+    return [
+        'redirect' => Nova::url('/resources/collections/' . $collection->id . '/edit'),
+    ];
+});

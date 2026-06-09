@@ -39,6 +39,7 @@ class GetFiltersForSearchResults extends GetFiltersForTown
 
         return $builder
             ->select('*')
+            /** @phpstan-ignore argument.type */
             ->selectRaw("({$this->eateryQuery()}) + ({$this->branchQuery()}) as eateries_count");
     }
 

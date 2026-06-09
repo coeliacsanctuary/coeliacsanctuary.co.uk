@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\EatingOut;
 
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryVenueType;
+use App\Models\EatingOut\NationwideBranch;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
 use App\Nova\Actions\EatingOut\ConvertRecommendationToEatery;
+use App\Nova\Actions\EatingOut\IgnoreAndSendAddedToSmallBusinessBlog;
+use App\Nova\Actions\EatingOut\IgnoreAndSendPlaceAlreadyExists;
 use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Email;
@@ -22,6 +27,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
+use ZiffMedia\NovaSelectPlus\SelectPlus;
 
 /**
  * @codeCoverageIgnore
@@ -83,7 +89,39 @@ class PlaceRecommendations extends Resource
             ]),
 
             DateTime::make('Created', 'created_at')->hideWhenCreating()->hideWhenUpdating()->showOnPreview(),
+
+            SelectPlus::make('eatery_id')
+                ->onlyOnForms()
+                ->options(fn (Request $request) => $this->searchLocations($request->get('search')))
+                ->ajaxSearchable($this->searchLocations(...)),
         ];
+    }
+
+    protected function searchLocations(string $search): Collection
+    {
+        $eateries = Eatery::query()
+            ->with(['area', 'town', 'county', 'country'])
+            ->whereLike('name', "%{$search}%")
+            ->get();
+
+        $branches = NationwideBranch::query()
+            ->with(['area', 'town', 'county', 'country', 'eatery'])
+            ->whereLike('name', "%{$search}%")
+            ->orWhere(function (Builder $query) use ($search): void {
+                $query
+                    ->where('name', '')
+                    ->whereRelation('town', 'town', 'like', "%{$search}%");
+            })
+            ->get();
+
+        return $eateries
+            ->merge($branches)
+            ->sortBy(fn (Eatery|NationwideBranch $location) => $location->full_name)
+            ->values()
+            ->map(fn (Eatery|NationwideBranch $location) => [
+                'value' => $location->wheretoeat_id ? "{$location->wheretoeat_id}:{$location->id}" : "{$location->id}:",
+                'label' => $location->full_name,
+            ]);
     }
 
     public function actions(NovaRequest $request): array
@@ -100,6 +138,14 @@ class PlaceRecommendations extends Resource
                 ->withoutConfirmation()
                 ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
 
+            IgnoreAndSendPlaceAlreadyExists::make()
+                ->showInline()
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
+
+            IgnoreAndSendAddedToSmallBusinessBlog::make()
+                ->showInline()
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
+
             IgnoreReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
@@ -112,7 +158,7 @@ class PlaceRecommendations extends Resource
         return $query->where('email', '!=', 'alisondwheatley@gmail.com')
             ->reorder()
             ->orderByRaw('(completed = 1 or ignored = 1) asc')
-            ->orderByDesc('created_at');
+            ->orderByDesc('updated_at');
     }
 
     protected function getVenueTypes($typeId = null): array

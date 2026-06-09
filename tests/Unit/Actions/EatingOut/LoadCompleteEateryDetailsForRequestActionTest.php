@@ -146,26 +146,6 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
     }
 
     #[Test]
-    public function itLoadsTheAdminReviewRelationship(): void
-    {
-        $review = $this->build(EateryReview::class)->adminReview()->on($this->eatery)->create();
-
-        $this->eatery->setRelation('adminReview', null);
-        $this->assertNull($this->eatery->adminReview);
-
-        app(LoadCompleteEateryDetailsForRequestAction::class)->handle(
-            $this->eatery,
-            $this->eatery->county()->first(),
-            $this->eatery->town()->first(),
-            new NationwideBranch(),
-        );
-
-        $this->assertNotNull($this->eatery->adminReview);
-        ;
-        $this->assertTrue($review->is($this->eatery->adminReview));
-    }
-
-    #[Test]
     public function itLoadsTheApprovedReviewImagesRelationship(): void
     {
         $image = $this->build(EateryReviewImage::class)->on($this->eatery)->create();
@@ -288,15 +268,15 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
     }
 
     #[Test]
-    public function itDoesntLoadNotAdminReviewsInTheReviewsRelationship(): void
+    public function itLoadsNotAdminReviewsInTheReviewsRelationshipInTheFirstPosition(): void
     {
         $this->build(EateryReview::class)
-            ->adminReview()
-            ->on($this->eatery)
-            ->create();
-
-        $review = $this->build(EateryReview::class)
             ->approved()
+            ->on($this->eatery)
+            ->create(['created_at' => now()->subHour()]);
+
+        $adminReview = $this->build(EateryReview::class)
+            ->adminReview()
             ->on($this->eatery)
             ->create();
 
@@ -311,8 +291,8 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
         );
 
         $this->assertNotNull($this->eatery->reviews);
-        $this->assertCount(1, $this->eatery->reviews);
-        $this->assertTrue($review->is($this->eatery->reviews->first()));
+        $this->assertCount(2, $this->eatery->reviews);
+        $this->assertTrue($adminReview->is($this->eatery->reviews->first()));
     }
 
     #[Test]

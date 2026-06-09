@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 use App\Actions\GetPopupCtaAction;
+use App\Http\Controllers\Api\AskSealiac\StoreController as AskSealiacController;
 use App\Http\Controllers\Api\MailcoachSchedule\StoreController as MailcoachScheduleStoreController;
 use App\Http\Controllers\Api\SealiacOverviewFeedback\StoreController as SealiacOverviewFeedbackController;
 use App\Http\Middleware\MailcoachIncomingRequestMiddleware;
 use App\Models\TempMailcoachMail;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('blogs')->group(base_path('routes/blogs/api.php'));
@@ -40,3 +42,7 @@ Route::get('mailcoach-message/{message}', fn (TempMailcoachMail $message) => $me
     ->middleware(MailcoachIncomingRequestMiddleware::class);
 
 Route::post('sealiac-overview-feedback/{sealiacOverview}', SealiacOverviewFeedbackController::class)->name('api.sealiac-overview-feedback');
+
+Route::post('ask-sealiac', AskSealiacController::class)
+    ->name('api.ask-sealiac')
+    ->middleware([StartSession::class, 'throttle:10,1']);

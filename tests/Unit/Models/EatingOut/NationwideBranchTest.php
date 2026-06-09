@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\EatingOut;
 
+use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
+use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
@@ -97,8 +101,27 @@ class NationwideBranchTest extends TestCase
         $this->create(Eatery::class);
 
         Bus::assertDispatched(CreateEateryAppPageOpenGraphImageJob::class);
-        Bus::assertDispatched(CreateEateryMapPageOpenGraphImageJob::class);
         Bus::assertDispatched(CreateEateryIndexPageOpenGraphImageJob::class);
+    }
+
+    #[Test]
+    public function itSetsTheCountryDescriptionAsNullOnSave(): void
+    {
+        EateryCountryDescriptionAgent::fake();
+
+        config()->set('coeliac.generate_country_ai_descriptions', true);
+
+        $country = $this->create(EateryCountry::class, [
+            'description' => 'foo bar',
+        ]);
+
+        $this->assertNotNull($country->description);
+
+        $this->create(NationwideBranch::class, [
+            'country_id' => $country->id,
+        ]);
+
+        $this->assertNull($country->refresh()->description);
     }
 
     #[Test]
@@ -280,5 +303,22 @@ class NationwideBranchTest extends TestCase
             ->create();
 
         $this->assertNull($branch->sealiacOverview);
+    }
+
+    #[Test]
+    public function itCanBeAssociatedWithACollectionGroup(): void
+    {
+        $branch = $this->create(NationwideBranch::class);
+        $group = $this->create(CollectionGroup::class, ['collection_id' => $this->create(Collection::class)->id]);
+
+        $this->assertEmpty($branch->associatedCollectionGroups);
+
+        $this->create(CollectionGroupItem::class, [
+            'collection_group_id' => $group->id,
+            'item_id' => $branch->id,
+            'item_type' => NationwideBranch::class,
+        ]);
+
+        $this->assertCount(1, $branch->refresh()->associatedCollectionGroups);
     }
 }

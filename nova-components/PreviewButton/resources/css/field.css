@@ -1,0 +1,7 @@
+.bg-black\/60 {
+    background-color: rgba(0,0,0,0.6);
+}
+
+.shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}

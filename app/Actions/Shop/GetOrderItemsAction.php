@@ -14,7 +14,7 @@ class GetOrderItemsAction
     {
         $items = $order
             ->items()
-            ->with(['product', 'product.media', 'variant'])
+            ->with(['product', 'product.media', 'product.addOns', 'variant'])
             ->get();
 
         return ShopOrderItemResource::collection($items);

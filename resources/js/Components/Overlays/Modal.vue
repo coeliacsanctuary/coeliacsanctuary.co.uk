@@ -13,6 +13,7 @@ withDefaults(
     size?: 'small' | 'medium' | 'relaxed' | 'large' | 'full';
     width?: 'w-full' | 'w-auto';
     fitScreen?: boolean;
+    overlayClasses?: string;
   }>(),
   {
     closeable: true,
@@ -20,6 +21,7 @@ withDefaults(
     size: 'medium',
     width: 'w-auto',
     fitScreen: false,
+    overlayClasses: '',
   },
 );
 
@@ -40,14 +42,17 @@ onMounted(() => {
     :open="open"
     :width="width"
     class="mx-[2.5%]"
-    :class="{
-      'xs:max-w-md': size === 'small',
-      'sm:max-w-lg': size === 'medium',
-      'sm:max-w-4xl': size === 'relaxed',
-      'sm:max-w-8xl': size === 'large',
-      'sm:max-w-[95%]': size === 'full',
-      'max-h-[90vh]': fitScreen,
-    }"
+    :class="[
+      {
+        'xs:max-w-md': size === 'small',
+        'sm:max-w-lg': size === 'medium',
+        'sm:max-w-4xl': size === 'relaxed',
+        'sm:max-w-8xl': size === 'large',
+        'sm:max-w-[95%]': size === 'full',
+        'max-h-[90vh]': fitScreen,
+      },
+      overlayClasses,
+    ]"
     @close="emit('close')"
   >
     <div

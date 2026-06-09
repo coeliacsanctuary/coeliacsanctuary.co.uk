@@ -2,14 +2,26 @@
 import { Link } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
 import { ShopCategoryIndex } from '@/types/Shop';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import { useTemplateRef } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   category: ShopCategoryIndex;
 }>();
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('card'),
+  'scrolled_into_view',
+  'ShopIndexCategoryCard',
+  {
+    title: props.category.title,
+  },
+);
 </script>
 
 <template>
   <Card
+    ref="card"
     theme="transparent"
     no-flex
     no-padding

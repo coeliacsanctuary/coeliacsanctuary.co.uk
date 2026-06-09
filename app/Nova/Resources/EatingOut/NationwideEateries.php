@@ -115,7 +115,7 @@ class NationwideEateries extends Resource
         return $query
             ->withoutGlobalScopes()
             ->where('county_id', 1)
-            ->withCount(['nationwideBranches' => fn (Builder $builder) => $builder->where('live', true)])
+            ->withCount(['nationwideBranches' => fn (Builder $builder) => $builder->withoutGlobalScopes()])
             ->when($request->missing('orderByDirection'), fn (Builder $builder) => $builder->reorder('name'));
     }
 
@@ -143,6 +143,21 @@ class NationwideEateries extends Resource
                 ->showInline()
                 ->canRun(fn (NovaRequest $request, Eatery $model) => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
         ];
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $eatery = $fillFields[0];
+
+        $eatery->address = '';
+        $eatery->lat = 0;
+        $eatery->lng = 0;
+        $eatery->country_id = 1;
+        $eatery->county_id = 1;
+        $eatery->town_id = 529;
+
+        return $fillFields;
     }
 
     public static function usesScout()

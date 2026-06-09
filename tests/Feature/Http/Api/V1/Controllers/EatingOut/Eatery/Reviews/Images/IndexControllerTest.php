@@ -7,6 +7,7 @@ namespace Tests\Feature\Http\Api\V1\Controllers\EatingOut\Eatery\Reviews\Images;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReviewImage;
 use Database\Seeders\EateryScaffoldingSeeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -18,6 +19,8 @@ class IndexControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Storage::fake('review-images');
 
         $this->seed(EateryScaffoldingSeeder::class);
 

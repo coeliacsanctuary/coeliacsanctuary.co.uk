@@ -33,7 +33,7 @@ export type InputProps = BaseFormInputProps & {
   helpText?: string;
   error?: string;
   hideLabel?: boolean;
-  size?: 'default' | 'large';
+  size?: 'sm' | 'default' | 'large';
   min?: number;
   max?: number;
   wrapperClasses?: string;
@@ -62,6 +62,8 @@ export type TextareaProps = BaseFormInputProps & {
   hideLabel?: boolean;
   size?: 'default' | 'large';
   helpText?: string;
+  resizable?: boolean;
+  shadow?: boolean;
 };
 
 export const TextareaPropsDefaults: Partial<TextareaProps> = {
@@ -71,10 +73,13 @@ export const TextareaPropsDefaults: Partial<TextareaProps> = {
   hideLabel: false,
   size: 'default',
   helpText: undefined,
+  resizable: true,
+  shadow: true,
 };
 
 export type CheckboxProps = BaseFormProps & {
   label: string;
+  hideLabel?: boolean;
   layout?: 'left' | 'right';
   xl?: boolean;
   highlight?: boolean;
@@ -84,6 +89,7 @@ export const CheckboxPropsDefault: Partial<CheckboxProps> = <
   Partial<CheckboxProps>
 >{
   ...BaseFormInputPropDefaults,
+  hideLabel: false,
   layout: 'right',
   xl: false,
   highlight: false,
@@ -110,7 +116,7 @@ export type FormSelectProps = BaseFormProps & {
   placeholder?: string;
   hideLabel?: boolean;
   error?: string;
-  size?: 'default' | 'large';
+  size?: 'small' | 'default' | 'large';
   inputClasses?: string;
 };
 

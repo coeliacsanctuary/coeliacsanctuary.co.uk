@@ -9,6 +9,7 @@ import { FormSelectOption } from '@/Components/Forms/Props';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import eventBus from '@/eventBus';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{ show: boolean; completed: boolean; paymentToken: string }>();
 
@@ -38,6 +39,13 @@ const paymentValid = ref(false);
 const submit = () => {
   submitting.value = true;
   store.setBillingDetails(fields);
+
+  useJourneyTracking().logEvent(
+    'clicked',
+    'Checkout/Form/PaymentDetails/Submit',
+    fields,
+    true,
+  );
 
   emits('continue');
 };
@@ -73,6 +81,12 @@ const canSubmit = computed((): boolean => {
 });
 
 watch(billingAddressSelect, () => {
+  useJourneyTracking().logEvent(
+    'clicked',
+    'Checkout/Form/PaymentDetails/BillingAddress',
+    { value: billingAddressSelect.value },
+  );
+
   if (billingAddressSelect.value === 'same') {
     // eslint-disable-next-line no-const-assign
     fields = reactive({
@@ -97,6 +111,17 @@ watch(billingAddressSelect, () => {
 eventBus.$on('payment-failed', () => {
   submitting.value = false;
 });
+
+const track = (label: string, value?: string) => {
+  useJourneyTracking().logEvent(
+    'typed',
+    `Checkout/Form/PaymentDetails/${label}`,
+    {
+      value,
+    },
+    true,
+  );
+};
 </script>
 
 <template>
@@ -138,6 +163,7 @@ eventBus.$on('payment-failed', () => {
           autocomplete="name"
           required
           borders
+          @blur-sm="() => track('Name', fields.name)"
         />
 
         <FormInput
@@ -147,6 +173,7 @@ eventBus.$on('payment-failed', () => {
           autocomplete="address_1"
           required
           borders
+          @blur-sm="() => track('Address1', fields.address_1)"
         />
 
         <FormInput
@@ -155,6 +182,7 @@ eventBus.$on('payment-failed', () => {
           name="address_2"
           autocomplete="address_2"
           borders
+          @blur-sm="() => track('Address2', fields.address_2)"
         />
 
         <FormInput
@@ -163,6 +191,7 @@ eventBus.$on('payment-failed', () => {
           name="address_3"
           autocomplete="address_3"
           borders
+          @blur-sm="() => track('Address3', fields.address_3)"
         />
 
         <FormInput
@@ -172,6 +201,7 @@ eventBus.$on('payment-failed', () => {
           autocomplete="town"
           required
           borders
+          @blur-sm="() => track('Town', fields.town)"
         />
 
         <FormInput
@@ -180,6 +210,7 @@ eventBus.$on('payment-failed', () => {
           name="county"
           autocomplete="county"
           borders
+          @blur-sm="() => track('County', fields.county)"
         />
 
         <FormInput
@@ -189,6 +220,7 @@ eventBus.$on('payment-failed', () => {
           autocomplete="postcode"
           required
           borders
+          @blur-sm="() => track('Postcode', fields.postcode)"
         />
 
         <FormInput
@@ -198,6 +230,7 @@ eventBus.$on('payment-failed', () => {
           autocomplete="country"
           required
           borders
+          @blur-sm="() => track('Country', fields.country)"
         />
       </template>
 

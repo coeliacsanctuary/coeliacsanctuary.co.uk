@@ -10,6 +10,7 @@ use App\DataObjects\EatingOut\LatLng;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Services\EatingOut\LocationSearchService;
+use App\Support\Helpers;
 use App\Support\State\EatingOut\Search\LatLngState;
 use Closure;
 use Exception;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
@@ -55,7 +57,10 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             ->values();
 
         /** @var Builder<Eatery> $query */
-        $query = Eatery::query()->whereIn('id', $ids->pluck('id'));
+        $query = Eatery::query()
+            ->selectDistance($latLng, ['id', 'name'])
+            ->addSelect(DB::raw('coalesce((select (round(avg(r.rating) * 2) / 2) + (count(r.rating) * 0.001) from wheretoeat_reviews r where r.approved = 1 and r.wheretoeat_id = wheretoeat.id), 0) as rating'))
+            ->whereIn('id', $ids->pluck('id'));
 
         if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
             $query = $query->hasCategories($pipelineData->filters['categories']);
@@ -69,20 +74,30 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             $query = $query->hasFeatures($pipelineData->filters['features']);
         }
 
-        /** @var Collection<int, object{id: int, name: string}> $pendingEateries */
-        $pendingEateries = $query->get(['id', 'name']);
+        /** @var Collection<int, object{id: int, name: string, distance: null | float, rating: float}> $pendingEateries */
+        $pendingEateries = $query->get(['id', 'name', 'distance']);
 
-        $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids) {
-            /** @var Eatery $searchRecord */
-            $searchRecord = $ids->firstWhere('id', $eatery->id);
+        $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids, $pipelineData) {
+            $distance = Helpers::metersToMiles($eatery->distance ?? 0);
 
-            /** @var string | null $distance */
-            $distance = Arr::get($searchRecord->attributesToArray(), 'distance');
+            if ( ! $distance) {
+                /** @var Eatery $searchRecord */
+                $searchRecord = $ids->firstWhere('id', $eatery->id);
+
+                /** @var string | null $distance */
+                $distance = Arr::get($searchRecord->attributesToArray(), 'distance');
+            }
+
+            $ordering = match (true) {
+                $distance && $pipelineData->sort === 'distance' => $distance,
+                $pipelineData->sort === 'rating' => $eatery->rating,
+                default => $eatery->name,
+            };
 
             return new PendingEatery(
                 id: $eatery->id,
                 branchId: null,
-                ordering: $distance ?? $eatery->name,
+                ordering: $ordering,
                 distance: (float) $distance,
             );
         });

@@ -6,6 +6,9 @@ namespace Tests\Unit\Models\Recipes;
 
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateRecipeIndexPageOpenGraphImageJob;
+use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
@@ -122,5 +125,22 @@ class RecipeModelTest extends TestCase
 
             $this->assertFalse(Cache::has($key));
         }
+    }
+
+    #[Test]
+    public function itCanBeAssociatedWithACollectionGroup(): void
+    {
+        $recipe = $this->create(Recipe::class);
+        $group = $this->create(CollectionGroup::class, ['collection_id' => $this->create(Collection::class)->id]);
+
+        $this->assertEmpty($recipe->associatedCollectionGroups);
+
+        $this->create(CollectionGroupItem::class, [
+            'collection_group_id' => $group->id,
+            'item_id' => $recipe->id,
+            'item_type' => Recipe::class,
+        ]);
+
+        $this->assertCount(1, $recipe->refresh()->associatedCollectionGroups);
     }
 }
