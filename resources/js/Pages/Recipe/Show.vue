@@ -259,7 +259,10 @@ const handleCommentReset = () => {
         />
       </Card>
 
-      <Card v-if="recipe.related_recipes?.length">
+      <Card
+        v-if="recipe.related_recipes?.length"
+        class="hidden lg:flex"
+      >
         <SubHeading classes="text-primary-dark">Related Recipes</SubHeading>
 
         <RecipeSimpleCard
@@ -331,6 +334,19 @@ const handleCommentReset = () => {
             his old family favourites so Alison can eat them too.
           </div>
         </div>
+      </Card>
+
+      <Card
+        v-if="recipe.related_recipes?.length"
+        class="lg:hidden"
+      >
+        <SubHeading classes="text-primary-dark">Related Recipes</SubHeading>
+
+        <RecipeSimpleCard
+          v-for="relatedRecipe in recipe.related_recipes"
+          :key="relatedRecipe.title"
+          :recipe="relatedRecipe"
+        />
       </Card>
 
       <FeaturedInCollectionCard
