@@ -14,10 +14,10 @@
         "cheesegrits/filament-google-maps": "v4.x-dev",
         "coeliacsanctuary/advanced-nova-media-library": "^1.2",
         "dompdf/dompdf": "^2.0.8",
+        "filament/filament": "^5.0",
+        "filament/spatie-laravel-media-library-plugin": "^5.0",
         "google/shopping-merchant-accounts": "^1.4",
         "google/shopping-merchant-products": "^1.6",
-        "filament/filament": "^4.0.15",
-        "filament/spatie-laravel-media-library-plugin": "^4.0",
         "guzzlehttp/guzzle": "^7.10.0",
         "hammerstone/sidecar": "dev-l13-compatibility as 0.7.1",
         "inertiajs/inertia-laravel": "^3.0",
@@ -38,6 +38,7 @@
         "jpeters8889/preview-button": "@dev",
         "jpeters8889/print-all-orders": "@dev",
         "jpeters8889/refresh-ads-txt": "@dev",
+        "jpeters8889/related-recipes-search": "@dev",
         "jpeters8889/shop-daily-stock": "@dev",
         "jpeters8889/shop-generate-resend-slip-button": "@dev",
         "jpeters8889/shop-order-open-dispatch-slip": "@dev",
@@ -75,14 +76,15 @@
         "spatie/schema-org": "^3.23.1",
         "stripe/stripe-php": "^13.18",
         "wnx/sidecar-browsershot": "^2.7.0",
-        "ziffmedia/nova-select-plus": "^2.1@beta",
-        "jpeters8889/related-recipes-search": "@dev"
+        "ziffmedia/nova-select-plus": "^2.1@beta"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.0",
         "barryvdh/laravel-ide-helper": "^3.6.0",
         "brianium/paratest": "^7.8.4",
         "fakerphp/faker": "^1.24.1",
+        "filament/blueprint": "^2.2",
+        "filament/upgrade": "^5.0",
         "jpeters8889/phpunit-code-assertions": "^0.1.4",
         "larastan/larastan": "^3.7.2",
         "laravel/boost": "^2.0",
@@ -99,6 +101,11 @@
         "worksome/request-factories": "^3.4"
     },
     "repositories": [
+        {
+            "name": "filament",
+            "type": "composer",
+            "url": "https://packages.filamentphp.com/composer"
+        },
         {
             "type": "package",
             "package": {
