@@ -43,12 +43,7 @@ withDefaults(
         {{ nutrition.calories }}
       </div>
 
-      <div
-        class=""
-        :class="{ 'col-span-3': direction === 'vertical' }"
-      >
-        Carbs
-      </div>
+      <div :class="{ 'col-span-3': direction === 'vertical' }">Carbs</div>
       <div
         class="bg-white"
         :class="{
@@ -59,12 +54,7 @@ withDefaults(
         {{ nutrition.carbs }}<sub>g</sub>
       </div>
 
-      <div
-        class=""
-        :class="{ 'col-span-3': direction === 'vertical' }"
-      >
-        Fibre
-      </div>
+      <div :class="{ 'col-span-3': direction === 'vertical' }">Fibre</div>
       <div
         class="bg-white"
         :class="{
@@ -75,12 +65,7 @@ withDefaults(
         {{ nutrition.fibre }}<sub>g</sub>
       </div>
 
-      <div
-        class=""
-        :class="{ 'col-span-3': direction === 'vertical' }"
-      >
-        Fat
-      </div>
+      <div :class="{ 'col-span-3': direction === 'vertical' }">Fat</div>
       <div
         class="bg-white"
         :class="{
@@ -103,7 +88,6 @@ withDefaults(
       </div>
 
       <div
-        class=""
         :class="{
           '!border-r-0': direction === 'horizontal',
           'col-span-3 !border-b-0': direction === 'vertical',
