@@ -38,6 +38,12 @@ class EateryCountyForm
                             ->required()
                             ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('country_id', $get('country_id'))),
 
+                        TextInput::make('lat')
+                            ->label('Latitude'),
+
+                        TextInput::make('lng')
+                            ->label('Longitude'),
+
                         SpatieMediaLibraryFileUpload::make('primary')
                             ->label('Image')
                             ->required()

@@ -30,7 +30,7 @@ class EateryAreaForm
                             ->live()
                             ->required(),
 
-                        TextInput::make('rea')
+                        TextInput::make('area')
                             ->required()
                             ->label('Name')
                             ->live()
@@ -39,6 +39,12 @@ class EateryAreaForm
                         TextInput::make('slug')
                             ->required()
                             ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('town_id', $get('town_id'))),
+
+                        TextInput::make('lat')
+                            ->label('Latitude'),
+
+                        TextInput::make('lng')
+                            ->label('Longitude'),
 
                         SpatieMediaLibraryFileUpload::make('primary')
                             ->label('Image')

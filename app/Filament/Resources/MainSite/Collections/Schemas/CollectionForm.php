@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Collections\Schemas;
 
+use App\Filament\Forms\Components\Body;
 use App\Filament\Schemas\Components\ImagesSection;
 use App\Filament\Schemas\Components\MetasSection;
 use App\Filament\Schemas\Components\VisibilitySection;
@@ -47,6 +48,12 @@ class CollectionForm
                                 ->required()
                                 ->maxLength(200)
                                 ->regex('/^[a-z0-9-]+$/'),
+
+                            Textarea::make('long_description')
+                                ->label('Description')
+                                ->rows(4)
+                                ->required()
+                                ->columnSpanFull(),
                         ]),
 
                     Grid::make()->columns(1)->schema([
@@ -85,7 +92,7 @@ class CollectionForm
             Section::make('Content')
                 ->columnSpanFull()
                 ->schema([
-                    Textarea::make('body')
+                    Body::make('body')
                         ->rows(5)
                         ->required()
                         ->autosize(),

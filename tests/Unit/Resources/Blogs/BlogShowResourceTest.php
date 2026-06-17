@@ -32,12 +32,12 @@ class BlogShowResourceTest extends TestCase
     }
 
     #[Test]
-    public function itParsesFaqsWhenSet(): void
+    public function itReturnsFaqsWhenSet(): void
     {
         $this->blog->update([
             'faqs' => [
-                ['fields' => ['question' => 'Is this gluten free?', 'answer' => 'Yes!']],
-                ['fields' => ['question' => 'Can I freeze it?', 'answer' => 'Absolutely.']],
+                ['question' => 'Is this gluten free?', 'answer' => 'Yes!'],
+                ['question' => 'Can I freeze it?', 'answer' => 'Absolutely.'],
             ],
         ]);
 

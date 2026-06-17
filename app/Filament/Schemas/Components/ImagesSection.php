@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Schemas\Components;
 
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -12,7 +13,7 @@ use Filament\Schemas\Components\Utilities\Get;
 
 class ImagesSection
 {
-    public static function make(bool $headerImage = true, bool $socialImage = true, bool $squareImage = false, ?callable $additionalImages = null): Section
+    public static function make(bool $headerImage = true, bool $socialImage = true, bool $squareImage = false, bool $headerImageAltText = false, ?callable $additionalImages = null): Section
     {
         return Section::make('Images')
             ->collapsible()
@@ -20,7 +21,7 @@ class ImagesSection
             ->schema([
                 Grid::make()
                     ->columns(4)
-                    ->schema(function () use ($headerImage, $socialImage, $squareImage, $additionalImages) {
+                    ->schema(function () use ($headerImage, $socialImage, $squareImage, $headerImageAltText, $additionalImages) {
                         $schema = [];
 
                         if ($headerImage) {
@@ -30,6 +31,12 @@ class ImagesSection
                                         ->hiddenLabel()
                                         ->collection('primary')
                                         ->imagePreviewHeight('176px'),
+
+                                    ...($headerImageAltText ? [
+                                        TextInput::make('header_image_alt_text')
+                                            ->label('Alt Text')
+                                            ->nullable(),
+                                    ] : []),
                                 ]);
                         }
 

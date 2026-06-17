@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Blogs\Tables;
 
+use App\Filament\Resources\MainSite\Blogs\BlogResource;
 use App\Filament\Tables\Columns\StatusColumn;
 use App\Models\Blogs\Blog;
 use Filament\Actions\Action;
@@ -17,16 +18,17 @@ class BlogsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->recordUrl(fn (Blog $record) => BlogResource::getUrl('edit', ['record' => $record]))
             ->columns([
                 TextColumn::make('id')->label('ID')->searchable(),
 
                 TextColumn::make('title')->searchable(),
 
+                TextColumn::make('primaryTag.tag')->label('Primary Tag'),
+
                 StatusColumn::make(),
 
                 TextColumn::make('created_at')->dateTime(),
-
-                TextColumn::make('publish_at')->dateTime(),
             ])
             ->recordActions([
                 Action::make('view')

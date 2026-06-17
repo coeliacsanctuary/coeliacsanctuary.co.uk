@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\MainSite\Collections;
 
 use App\Filament\Resources\BaseResource;
-use App\Filament\Resources\MainSite\Collections\RelationManagers\ItemsRelationManager;
+use App\Filament\Resources\MainSite\Collections\RelationManagers\GroupsRelationManager;
 use App\Filament\Resources\MainSite\Collections\Schemas\CollectionForm;
 use App\Filament\Resources\MainSite\Collections\Tables\CollectionsTable;
 use App\Filament\Transformers\StatusTransformer;
@@ -60,6 +60,6 @@ class CollectionResource extends BaseResource
 
     public static function getRelations(): array
     {
-        return [ItemsRelationManager::class];
+        return [GroupsRelationManager::class];
     }
 }

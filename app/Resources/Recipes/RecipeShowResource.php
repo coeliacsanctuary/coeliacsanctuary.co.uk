@@ -11,7 +11,6 @@ use App\Models\Recipes\RecipeNutrition;
 use App\Resources\Collections\FeaturedInCollectionSimpleCardViewResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /** @mixin Recipe */
@@ -70,7 +69,7 @@ class RecipeShowResource extends JsonResource
                 'protein' => $nutrition->protein,
             ],
             'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollectionGroups),
-            'faqs' => $this->faqs ? $this->parseFaqs($this->faqs) : null,
+            'faqs' => $this->faqs,
             'related_recipes' => RelatedRecipeCardViewResource::collection($this->relatedRecipes),
         ];
     }
@@ -89,13 +88,5 @@ class RecipeShowResource extends JsonResource
             'allergen' => $allergen->allergen,
             'slug' => $allergen->slug,
         ];
-    }
-
-    /**
-     * @return Collection<int, array{question: string, answer: string}>
-     */
-    protected function parseFaqs(array $faqs): Collection
-    {
-        return collect($faqs)->map(fn ($faq) => $faq['fields']);
     }
 }

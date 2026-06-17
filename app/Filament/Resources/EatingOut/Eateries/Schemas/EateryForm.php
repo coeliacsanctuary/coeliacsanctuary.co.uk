@@ -37,6 +37,8 @@ class EateryForm
                         TextInput::make('phone')->label('Phone Number'),
                         TextInput::make('website'),
                         TextInput::make('gf_menu_link')->label('GF Menu Link'),
+                        TextInput::make('facebook_url')->label('Facebook URL'),
+                        TextInput::make('instagram_url')->label('Instagram URL'),
                     ]),
 
                 Section::make('Details')
