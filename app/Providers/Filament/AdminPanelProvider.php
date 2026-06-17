@@ -13,6 +13,8 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Js;
+use Illuminate\Foundation\Vite;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Table;
@@ -37,6 +39,10 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->assets([
+                Js::make('body-field', app(Vite::class)->asset('resources/js/filament/body-field.js')),
+            ])
             ->font('Raleway')
             ->login()
             ->brandLogo('/images/logo.svg')

@@ -6,7 +6,7 @@ export default defineConfig(({ command, isSsrBuild }) => {
   let config: UserConfig = {
     plugins: [
       laravel({
-        input: ['resources/js/app.ts', 'resources/js/standalone.ts'],
+        input: ['resources/js/app.ts', 'resources/js/standalone.ts', 'resources/css/filament/admin/theme.css', 'resources/js/filament/body-field.js'],
         ssr: 'resources/js/ssr.ts',
         refresh: true,
       }),

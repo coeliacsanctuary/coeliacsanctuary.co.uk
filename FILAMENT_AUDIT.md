@@ -33,7 +33,7 @@ The branch is `feature/filament`. Nova lives in `app/Nova/`. Filament resources 
 - `app/Filament/Resources/MainSite/Blogs/Schemas/BlogForm.php`
 - `app/Filament/Resources/MainSite/Blogs/Tables/BlogsTable.php`
 
-**Problem:** Several fields were added to blogs after this branch was created, and the `body` field uses the wrong component type.
+**Problem:** Several fields were added to blogs after this branch was created
 
 **Missing fields to add to the form:**
 
@@ -44,8 +44,6 @@ The branch is `feature/filament`. Nova lives in `app/Nova/`. Filament resources 
 | `show_author` | Toggle | Boolean column |
 | `primary_tag_id` | Select | BelongsTo `BlogTag`; model has `primaryTag()` relation |
 | `faqs` | Repeater | Column is a JSON array cast (`'faqs' => 'array'` in model). Each entry has a `question` and `answer`. See Nova repeater at `app/Nova/Repeaters/ArticleFaq.php` for field names. |
-
-**Body field:** The `body` field is currently a `Textarea`. The `Blog` model now implements `HasRichContent` / uses `InteractsWithRichContent` (Filament's own rich content system). It should use `RichEditor` instead. Check the Nova `Body` field usage and the model's `registerMediaCollections` — there is a `body` media collection for inline images.
 
 **Reference:** `app/Nova/Resources/Main/Blog.php`
 
