@@ -29,12 +29,18 @@ class BodyImageInsertGallery extends Field
         return $this;
     }
 
+    public function getCollection(): string
+    {
+        return $this->collection;
+    }
+
     /**
-     * @return array<int, array{key: string, thumbnail: ?string, label: string, insertSrc: string, pending: bool}>
+     * @return array<int, array{key: string, thumbnail: ?string, label: string, insertSrc: string, pending: bool, isDeletable: bool, collection: string}>
      */
     public function getGalleryItems(): array
     {
         $rawState = $this->evaluate(fn (Get $get) => $get('body_images')) ?? [];
+        $bodyContent = $this->evaluate(fn (Get $get) => $get('body')) ?? '';
 
         $record = $this->getRecord();
         $existingMedia = $record?->getMedia($this->collection) ?? collect();
@@ -49,6 +55,8 @@ class BodyImageInsertGallery extends Field
                     'label' => $file->getClientOriginalName(),
                     'insertSrc' => $this->sanitiseFileName($file->getClientOriginalName()),
                     'pending' => true,
+                    'isDeletable' => false,
+                    'collection' => $this->collection,
                 ];
 
                 continue;
@@ -67,6 +75,8 @@ class BodyImageInsertGallery extends Field
                 'label' => $media->file_name,
                 'insertSrc' => $media->file_name,
                 'pending' => false,
+                'isDeletable' => ! str_contains((string) $bodyContent, $media->file_name),
+                'collection' => $this->collection,
             ];
         }
 

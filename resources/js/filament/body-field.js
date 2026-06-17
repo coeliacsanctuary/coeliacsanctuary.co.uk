@@ -9,6 +9,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.store('bodyImages', {
         items: [],
         docked: false,
+        pendingDelete: null,
 
         seed(serverItems) {
             this.items = serverItems.map((item) => ({
@@ -18,6 +19,8 @@ document.addEventListener('alpine:init', () => {
                 title: item.label,
                 isProcessing: false,
                 pending: item.pending,
+                isDeletable: item.isDeletable,
+                collection: item.collection,
             }));
         },
 
@@ -52,6 +55,22 @@ document.addEventListener('alpine:init', () => {
 
                 this.items.splice(index, 1);
             }
+        },
+
+        confirmDelete(item) {
+            this.pendingDelete = item;
+        },
+
+        cancelDelete() {
+            this.pendingDelete = null;
+        },
+
+        performDelete(item) {
+            this.items = this.items.filter((i) => i.key !== item.key);
+            this.pendingDelete = null;
+            window.dispatchEvent(new CustomEvent('body-image-do-delete', {
+                detail: { insertSrc: item.insertSrc, collection: item.collection },
+            }));
         },
     });
 
@@ -114,6 +133,9 @@ document.addEventListener('alpine:init', () => {
                 Alpine.store('bodyImageInsert').title = '';
                 Alpine.store('bodyImageInsert').position = 'left';
                 window.dispatchEvent(new CustomEvent('close-modal', { detail: { id: imagesModalId } }));
+            });
+            window.addEventListener('body-image-do-delete', (event) => {
+                this.$wire.call('deleteBodyImage', event.detail.insertSrc, event.detail.collection);
             });
         },
 

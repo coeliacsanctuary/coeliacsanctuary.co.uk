@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Blogs\Pages;
 
+use App\Filament\Resources\Concerns\DeletesBodyImages;
 use App\Filament\Resources\Concerns\SwapsBodyImageFileNamesToUrls;
 use App\Filament\Resources\MainSite\Blogs\BlogResource;
 use Filament\Resources\Pages\EditRecord;
 
 class EditBlog extends EditRecord
 {
+    use DeletesBodyImages;
     use SwapsBodyImageFileNamesToUrls;
 
     protected static string $resource = BlogResource::class;
