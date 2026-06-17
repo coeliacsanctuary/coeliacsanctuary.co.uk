@@ -91,7 +91,7 @@ class AdminPanelProvider extends PanelProvider
         });
 
         SpatieMediaLibraryFileUpload::configureUsing(function (SpatieMediaLibraryFileUpload $component): void {
-            $component->disk('media');
+            $component->disk('media')->preserveFilenames();
         });
 
         if (Str::startsWith(Request::path(), 'admin')) {

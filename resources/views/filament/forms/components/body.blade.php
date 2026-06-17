@@ -60,6 +60,8 @@
                             x-intersect.once="resize()"
                             x-on:resize.window="resize()"
                         @endif
+                        x-on:click="recordCursorPosition()"
+                        x-on:keyup="recordCursorPosition()"
                         x-model="state"
                         @if ($isGrammarlyDisabled())
                             data-gramm="false"

@@ -183,13 +183,13 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
 
     public function toSearchableArray(): array
     {
-        return $this->transform([
+        return [
             'title' => $this->title,
             'description' => $this->description,
             'metas' => $this->meta_tags,
             'tags' => $this->tags->pluck('tag'),
             'updated_at' => $this->updated_at,
-        ]);
+        ];
     }
 
     public function shouldBeSearchable(): bool

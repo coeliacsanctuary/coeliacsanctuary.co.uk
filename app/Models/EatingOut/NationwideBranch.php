@@ -214,7 +214,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
 
         $name = $this->name !== '' ? $this->name : $this->eatery->name;
 
-        return $this->transform([
+        return [
             'title' => $this->relationLoaded('town') && $this->town ? $name . ', ' . $this->town->town : $name,
             'location' => $this->relationLoaded('town') && $this->relationLoaded('county') && $this->town && $this->county ? $this->town->town . ', ' . $this->county->county : '',
             'town' => $this->relationLoaded('town') && $this->town ? $this->town->town : '',
@@ -225,7 +225,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
                 'lat' => $this->lat,
                 'lng' => $this->lng,
             ],
-        ]);
+        ];
     }
 
     public function shouldBeSearchable(): bool

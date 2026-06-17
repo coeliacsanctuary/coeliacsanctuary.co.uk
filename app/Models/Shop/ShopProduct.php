@@ -167,7 +167,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
 
     public function toSearchableArray(): array
     {
-        return $this->transform([
+        return [
             'title' => $this->title,
             'description' => $this->description,
             'metaTags' => $this->meta_keywords,
@@ -175,7 +175,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
                 ->where('product_id', $this->id)
                 ->whereRelation('order', 'state_id', OrderState::SHIPPED)
                 ->sum('quantity'),
-        ]);
+        ];
     }
 
     public function shouldBeSearchable(): bool
