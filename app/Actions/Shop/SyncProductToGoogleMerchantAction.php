@@ -8,6 +8,7 @@ use App\Models\Shop\ShopProduct;
 use App\Services\GoogleMerchant\GoogleMerchantProductManager;
 use App\Services\GoogleMerchant\Helpers;
 use Google\Shopping\Merchant\Products\V1\Availability;
+use Google\Shopping\Merchant\Products\V1\Condition;
 use Google\Shopping\Merchant\Products\V1\ProductAttributes;
 use Google\Shopping\Merchant\Products\V1\ProductInput;
 
@@ -57,14 +58,24 @@ class SyncProductToGoogleMerchantAction
 
     protected function buildProduct(ShopProduct $product): ProductInput
     {
-        $product->loadMissing('variants');
+        $product->loadMissing(['variants', 'prices']);
 
         $attrs = new ProductAttributes();
         $attrs->setTitle($product->title);
+        $attrs->setDescription($product->description);
         $attrs->setLink($product->absolute_link);
         $attrs->setImageLink($product->main_image);
-        $attrs->setPrice(Helpers::priceFromPence($product->currentPrice));
+        $attrs->setBrand('Coeliac Sanctuary');
+        $attrs->setMpn($product->slug);
+        $attrs->setCondition(Condition::PBNEW);
         $attrs->setAvailability(Availability::IN_STOCK);
+
+        if ($product->oldPrice !== null) {
+            $attrs->setPrice(Helpers::priceFromPence($product->oldPrice));
+            $attrs->setSalePrice(Helpers::priceFromPence($product->currentPrice));
+        } else {
+            $attrs->setPrice(Helpers::priceFromPence($product->currentPrice));
+        }
 
         $firstVariant = $product->variants->first();
 

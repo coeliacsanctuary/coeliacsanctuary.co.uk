@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\Shop;
 
 use App\Actions\Shop\SyncProductToGoogleMerchantAction;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use App\Services\GoogleMerchant\GoogleMerchantProductManager;
+use Google\Shopping\Merchant\Products\V1\Condition;
 use Google\Shopping\Merchant\Products\V1\ProductInput;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -156,6 +158,107 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('insert')
             ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getShippingWeight()->getValue() === $variant->weight / 1000
                     && $input->getProductAttributes()->getShippingWeight()->getUnit() === 'kg')
+            ->once()
+            ->andReturn($returned);
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+    }
+
+    #[Test]
+    public function itSetsTheDescriptionFromTheProductDescription(): void
+    {
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('insert')
+            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getDescription() === $this->product->description)
+            ->once()
+            ->andReturn($returned);
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+    }
+
+    #[Test]
+    public function itSetsTheBrandToCoeliacSanctuary(): void
+    {
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('insert')
+            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getBrand() === 'Coeliac Sanctuary')
+            ->once()
+            ->andReturn($returned);
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+    }
+
+    #[Test]
+    public function itSetsTheMpnFromTheProductSlug(): void
+    {
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('insert')
+            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getMpn() === $this->product->slug)
+            ->once()
+            ->andReturn($returned);
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+    }
+
+    #[Test]
+    public function itSetsTheConditionToNew(): void
+    {
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('insert')
+            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getCondition() === Condition::PBNEW)
+            ->once()
+            ->andReturn($returned);
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+    }
+
+    #[Test]
+    public function itSetsThePriceWhenNotOnSale(): void
+    {
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('insert')
+            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getPrice()->getAmountMicros() === $this->product->currentPrice * 10000
+                    && $input->getProductAttributes()->getSalePrice() === null)
+            ->once()
+            ->andReturn($returned);
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+    }
+
+    #[Test]
+    public function itSetsOriginalPriceAndSalePriceWhenProductIsOnSale(): void
+    {
+        $originalPrice = $this->product->currentPrice;
+
+        $this->build(ShopPrice::class)
+            ->forProduct($this->product)
+            ->onSale()
+            ->create(['start_at' => now()]);
+
+        $this->product->unsetRelation('prices');
+
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('insert')
+            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getPrice()->getAmountMicros() === $originalPrice * 10000
+                    && $input->getProductAttributes()->getSalePrice()->getAmountMicros() === $this->product->currentPrice * 10000)
             ->once()
             ->andReturn($returned);
 
