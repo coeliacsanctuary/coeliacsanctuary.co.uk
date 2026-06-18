@@ -10,8 +10,10 @@ document.addEventListener('alpine:init', () => {
         items: [],
         docked: false,
         pendingDelete: null,
+        componentKey: null,
 
-        seed(serverItems) {
+        seed(serverItems, componentKey) {
+            this.componentKey = componentKey;
             this.items = serverItems.map((item) => ({
                 key: item.key,
                 src: item.thumbnail,
@@ -69,7 +71,7 @@ document.addEventListener('alpine:init', () => {
             this.items = this.items.filter((i) => i.key !== item.key);
             this.pendingDelete = null;
             window.dispatchEvent(new CustomEvent('body-image-do-delete', {
-                detail: { insertSrc: item.insertSrc, collection: item.collection },
+                detail: { insertSrc: item.insertSrc, collection: item.collection, componentKey: this.componentKey },
             }));
         },
     });
@@ -135,7 +137,11 @@ document.addEventListener('alpine:init', () => {
                 window.dispatchEvent(new CustomEvent('close-modal', { detail: { id: imagesModalId } }));
             });
             window.addEventListener('body-image-do-delete', (event) => {
-                this.$wire.call('deleteBodyImage', event.detail.insertSrc, event.detail.collection);
+                this.$wire.callSchemaComponentMethod(
+                    event.detail.componentKey,
+                    'deleteBodyImage',
+                    { fileName: event.detail.insertSrc, collection: event.detail.collection },
+                );
             });
         },
 

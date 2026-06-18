@@ -2,7 +2,7 @@
     $items = $getGalleryItems();
 @endphp
 
-<div wire:key="gallery-{{ count($items) }}" x-init="$store.bodyImages.seed(@js($items))">
+<div wire:key="gallery-{{ count($items) }}" x-init="$store.bodyImages.seed(@js($items), @js($getKey()))">
     <div class="flex flex-wrap gap-3">
         <template x-for="item in $store.bodyImages.items" :key="item.key">
             <div class="group flex w-50 flex-col gap-2 rounded-lg border border-gray-200 p-2 dark:border-white/10">

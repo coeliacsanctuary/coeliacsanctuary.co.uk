@@ -6,6 +6,7 @@ namespace App\Filament\Forms\Components;
 
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -14,6 +15,8 @@ class BodyImageInsertGallery extends Field
     protected string $view = 'filament.forms.components.body-image-insert-gallery';
 
     protected string $collection = 'body';
+
+    protected string $bodyAttribute = 'body';
 
     protected function setUp(): void
     {
@@ -29,9 +32,34 @@ class BodyImageInsertGallery extends Field
         return $this;
     }
 
+    public function bodyAttribute(string $attribute): static
+    {
+        $this->bodyAttribute = $attribute;
+
+        return $this;
+    }
+
     public function getCollection(): string
     {
         return $this->collection;
+    }
+
+    #[ExposedLivewireMethod]
+    public function deleteBodyImage(string $fileName, string $collection): void
+    {
+        $record = $this->getRecord();
+
+        $bodyContent = $this->getLivewire()->form->getRawState()[$this->bodyAttribute] ?? '';
+
+        if (str_contains((string) $bodyContent, $fileName)) {
+            return;
+        }
+
+        $record->getMedia($collection)
+            ->firstWhere('file_name', $fileName)
+            ?->delete();
+
+        $this->getLivewire()->fillForm();
     }
 
     /**

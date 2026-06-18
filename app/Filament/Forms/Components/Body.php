@@ -7,8 +7,11 @@ namespace App\Filament\Forms\Components;
 use App\Rules\ValidArticleHtmlRule;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Resources\Events\RecordSaved;
 use Filament\Schemas\Schema;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Body extends Textarea
@@ -62,7 +65,8 @@ class Body extends Textarea
                 ->imagePreviewHeight('176px'),
 
             BodyImageInsertGallery::make('body_images_gallery')
-                ->collection($collection),
+                ->collection($collection)
+                ->bodyAttribute($this->getName()),
         ], 'bodyImages');
 
         $this->afterStateHydrated(static function (Body $component, mixed $state): void {
@@ -77,6 +81,26 @@ class Body extends Textarea
             });
 
             $component->state($state);
+        });
+
+        $attribute = $this->getName();
+
+        app(Dispatcher::class)->listen(RecordSaved::class, function ($record) use ($collection, $attribute): void {
+            if ( ! $record instanceof HasMedia || blank($record->{$attribute})) {
+                return;
+            }
+
+            $body = $record->{$attribute};
+
+            $record->unsetRelation('media');
+
+            $record->getMedia($collection)->each(function (Media $media) use (&$body): void {
+                $body = str_replace($media->file_name, $media->getUrl(), (string) $body);
+            });
+
+            if ($body !== $record->{$attribute}) {
+                $record->updateQuietly([$attribute => $body]);
+            }
         });
 
         return $this;
