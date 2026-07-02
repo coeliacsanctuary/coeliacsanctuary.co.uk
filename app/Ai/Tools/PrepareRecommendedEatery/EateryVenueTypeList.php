@@ -27,10 +27,9 @@ class EateryVenueTypeList implements Tool
     {
         $list = EateryVenueType::query()
             ->orderBy('venue_type')
-            ->get()
             ->pluck('venue_type');
 
-        return json_encode($list);
+        return (string) json_encode($list);
     }
 
     public function schema(JsonSchema $schema): array

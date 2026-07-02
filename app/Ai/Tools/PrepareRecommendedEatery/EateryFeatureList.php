@@ -27,10 +27,9 @@ class EateryFeatureList implements Tool
     {
         $list = EateryFeature::query()
             ->orderBy('feature')
-            ->get()
             ->pluck('feature');
 
-        return json_encode($list);
+        return (string) json_encode($list);
     }
 
     public function schema(JsonSchema $schema): array

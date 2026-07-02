@@ -30,10 +30,9 @@ class SearchTown implements Tool
             ->whereRelation('county', 'county', $request->string('county'))
             ->whereLike('town', "%{$request->string('town')}%")
             ->orderBy('town')
-            ->get()
             ->pluck('town');
 
-        return json_encode($search);
+        return (string) json_encode($search);
     }
 
     /**

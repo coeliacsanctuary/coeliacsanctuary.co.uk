@@ -29,7 +29,7 @@ class GeoLookup implements Tool
         /** @var LatLng $lookup */
         $lookup = app(LocationSearchService::class)->getLatLng($request->string('address')->toString());
 
-        return json_encode([
+        return (string) json_encode([
             'latitude' => $lookup->lat,
             'longitude' => $lookup->lng,
         ]);

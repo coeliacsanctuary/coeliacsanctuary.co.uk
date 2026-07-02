@@ -57,7 +57,7 @@ class SendEateryRecommendationToAiJob implements ShouldQueue
         ]);
     }
 
-    protected function checkIfEligible()
+    protected function checkIfEligible(): bool
     {
         if ($this->eateryRecommendation->email === 'alisondwheatley@gmail.com') {
             return false;

@@ -30,10 +30,9 @@ class SearchArea implements Tool
             ->whereRelation('town', 'town', $request->string('town'))
             ->whereLike('area', "%{$request->string('area')}%")
             ->orderBy('area')
-            ->get()
             ->pluck('area');
 
-        return json_encode($search);
+        return (string) json_encode($search);
     }
 
     /**

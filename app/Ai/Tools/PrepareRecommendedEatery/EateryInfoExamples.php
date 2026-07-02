@@ -30,10 +30,9 @@ class EateryInfoExamples implements Tool
             ->where('country_id', '>', 1)
             ->where('created_at', '>=', now()->subMonths(6))
             ->take(10)
-            ->get()
             ->pluck('info');
 
-        return json_encode($info);
+        return (string) json_encode($info);
     }
 
     public function schema(JsonSchema $schema): array

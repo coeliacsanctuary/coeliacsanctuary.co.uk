@@ -42,11 +42,12 @@ class PrepareRecommendedEatery implements Agent, HasStructuredOutput, HasTools
     /**
      * Get the tools available to the agent.
      *
-     * @return Tool[]
+     * @return iterable<Tool>
      */
     public function tools(): iterable
     {
-        return [
+        /** @var array<int, Tool> $tools */
+        $tools = [
             new WebSearch(),
             new WebFetch(),
             new SearchCounty(),
@@ -58,6 +59,8 @@ class PrepareRecommendedEatery implements Agent, HasStructuredOutput, HasTools
             new EateryInfoExamples(),
             new EateryFeatureList(),
         ];
+
+        return $tools;
     }
 
     /**

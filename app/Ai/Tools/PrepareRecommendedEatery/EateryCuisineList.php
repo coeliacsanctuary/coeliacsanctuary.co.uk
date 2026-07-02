@@ -27,10 +27,9 @@ class EateryCuisineList implements Tool
     {
         $list = EateryCuisine::query()
             ->orderBy('cuisine')
-            ->get()
             ->pluck('cuisine');
 
-        return json_encode($list);
+        return (string) json_encode($list);
     }
 
     public function schema(JsonSchema $schema): array
