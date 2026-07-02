@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Acceptance;
 
+use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\Test;
 use App\Models\Blogs\Blog;
 use App\Models\EatingOut\Eatery;
@@ -30,6 +31,7 @@ class CoeliacSanctuaryOnTheGoTest extends TestCase
         parent::setUp();
 
         $this->seed(EateryScaffoldingSeeder::class);
+        Bus::fake();
     }
 
     #[Test]

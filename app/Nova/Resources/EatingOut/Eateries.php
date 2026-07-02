@@ -79,13 +79,20 @@ class Eateries extends Resource
                     ->hideFromIndex()
                     ->fullWidth()
                     ->hide()
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_country'))
                     ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         if ($request->filled('location')) {
                             $location = $request->json('location');
 
                             if (Arr::has($location, 'countryId')) {
                                 $field->setValue($location['countryId']);
+
+                                return $field;
                             }
+                        }
+
+                        if ($request->filled('country')) {
+                            $field->setValue($request->input('country'));
                         }
 
                         return $field;
@@ -105,19 +112,30 @@ class Eateries extends Resource
 
                 BelongsTo::make('County', resource: Counties::class)
                     ->searchable()
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_county'))
                     ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         if ($request->filled('location')) {
                             $location = $request->json('location');
 
                             if (Arr::has($location, 'countyId')) {
                                 $field->setValue($location['countyId']);
+
+                                return $field;
                             }
+                        }
+
+                        if ($request->filled('county')) {
+                            $field->setValue($request->input('county'));
                         }
 
                         return $field;
                     })
                     ->dependsOn('country', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('wheretoeat_counties.country_id', $data->get('country')));
+
+                        if ($request->filled('county')) {
+                            $field->setValue($request->input('county'));
+                        }
                     })
                     ->dependsOn('town', function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $field->show();
@@ -139,19 +157,30 @@ class Eateries extends Resource
 
                 BelongsTo::make('Town', resource: Towns::class)
                     ->searchable()
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_town'))
                     ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         if ($request->filled('location')) {
                             $location = $request->json('location');
 
                             if (Arr::has($location, 'townId')) {
                                 $field->setValue($location['townId']);
+
+                                return $field;
                             }
+                        }
+
+                        if ($request->filled('town')) {
+                            $field->setValue($request->input('town'));
                         }
 
                         return $field;
                     })
                     ->dependsOn('county', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('county_id', $data->get('county')));
+
+                        if ($request->filled('town')) {
+                            $field->setValue($request->input('town'));
+                        }
                     })
                     ->hideFromIndex()
                     ->fullWidth()
@@ -159,19 +188,30 @@ class Eateries extends Resource
 
                 BelongsTo::make('Area', resource: Areas::class)
                     ->searchable()
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_area'))
                     ->dependsOn(['location'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         if ($request->filled('location')) {
                             $location = $request->json('location');
 
                             if (Arr::has($location, 'areaId')) {
                                 $field->setValue($location['areaId']);
+
+                                return $field;
                             }
+                        }
+
+                        if ($request->filled('area')) {
+                            $field->setValue($request->input('area'));
                         }
 
                         return $field;
                     })
                     ->dependsOn('town', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('town_id', $data->get('town')));
+
+                        if ($request->filled('area')) {
+                            $field->setValue($request->input('area'));
+                        }
                     })
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $countyId = $request->input('county');
@@ -181,6 +221,10 @@ class Eateries extends Resource
                             $field->show();
                         } else {
                             $field->hide();
+                        }
+
+                        if ($request->filled('area')) {
+                            $field->setValue($request->input('area'));
                         }
 
                         return $field;
@@ -195,15 +239,20 @@ class Eateries extends Resource
                     ->required()
                     ->default(fn () => json_encode([
                         'address' => Arr::get(Cache::get('admin-recommend-place'), 'place_location'),
-                        'latitude' => null,
-                        'longitude' => null,
+                        'latitude' => Arr::get(Cache::get('admin-recommend-place'), 'latitude'),
+                        'longitude' => Arr::get(Cache::get('admin-recommend-place'), 'longitude'),
                     ]))
                     ->latitudeField('lat')
                     ->longitudeField('lng'),
             ]),
 
             Panel::make('Contact Details', [
-                Text::make('Phone Number', 'phone')->fullWidth()->nullable()->rules(['max:50'])->hideFromIndex(),
+                Text::make('Phone Number', 'phone')
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'phone_number'))
+                    ->fullWidth()
+                    ->nullable()
+                    ->rules(['max:50'])
+                    ->hideFromIndex(),
 
                 URL::make('Website')
                     ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_web_address'))
@@ -214,14 +263,25 @@ class Eateries extends Resource
 
                 URL::make('GF Menu Link')->fullWidth()->nullable()->rules(['max:255'])->hideFromIndex(),
 
-                URL::make('Facebook URL', 'facebook_url')->fullWidth()->nullable()->rules(['max:255'])->hideFromIndex(),
+                URL::make('Facebook URL', 'facebook_url')
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_facebook'))
+                    ->fullWidth()
+                    ->nullable()
+                    ->rules(['max:255'])
+                    ->hideFromIndex(),
 
-                URL::make('Instagram URL', 'instagram_url')->fullWidth()->nullable()->rules(['max:255'])->hideFromIndex(),
+                URL::make('Instagram URL', 'instagram_url')
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_instagram'))
+                    ->fullWidth()
+                    ->nullable()
+                    ->rules(['max:255'])
+                    ->hideFromIndex(),
             ]),
 
             Panel::make('Details', [
                 Select::make('Type', 'type_id')
                     ->displayUsingLabels()
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_type_id'))
                     ->fullWidth()
                     ->filterable()
                     ->rules(['required'])
@@ -246,6 +306,7 @@ class Eateries extends Resource
 
                 Select::make('Cuisine', 'cuisine_id')
                     ->hideFromIndex()
+                    ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_cuisine_id'))
                     ->fullWidth()
                     ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
                         return match ($request->type_id) {
@@ -310,7 +371,7 @@ class Eateries extends Resource
             ...$request->viaRelationship() === false ? $detailsFields : [],
 
             Panel::make('Features', [
-                PolymorphicPanel::make('Features', new EateryFeaturesPolymorphicPanel())->display('row'),
+                PolymorphicPanel::make('Features', new EateryFeaturesPolymorphicPanel(Arr::get(Cache::get('admin-recommend-place'), 'features')))->display('row'),
             ]),
 
             Boolean::make('Live')->filterable(),

@@ -17,6 +17,11 @@ use Laravel\Nova\Fields\Boolean;
  */
 class EateryFeaturesPolymorphicPanel implements PolymorphicResource
 {
+    public function __construct(protected array $defaults = [])
+    {
+        //
+    }
+
     public function fields(): array
     {
         return EateryFeature::query()
@@ -33,18 +38,27 @@ class EateryFeaturesPolymorphicPanel implements PolymorphicResource
     /** @phpstan-param  Collection<int, EateryFeature>  $relationship */
     public function check($key, Collection $relationship, Model $resource): bool
     {
-        return $relationship->filter(function (EateryFeature $feature) use ($key) {
-            $feature = Str::of($feature->feature)
-                ->lower()
-                ->toString();
+        if (count($this->defaults) > 0) {
+            $selectedFeatures = once(fn () => EateryFeature::query()->whereIn('feature', $this->defaults)->get());
 
-            $key = Str::of($key)
-                ->headline()
-                ->lower()
-                ->toString();
+            return $selectedFeatures->filter(fn (EateryFeature $feature) => $this->checkIfFilterSelected($feature, $key))->count() === 1;
+        }
 
-            return $feature === $key;
-        })->count() === 1;
+        return $relationship->filter(fn (EateryFeature $feature) => $this->checkIfFilterSelected($feature, $key))->count() === 1;
+    }
+
+    protected function checkIfFilterSelected(EateryFeature $feature, string $key): bool
+    {
+        $feature = Str::of($feature->feature)
+            ->lower()
+            ->toString();
+
+        $key = Str::of($key)
+            ->headline()
+            ->lower()
+            ->toString();
+
+        return $feature === $key;
     }
 
     /**
