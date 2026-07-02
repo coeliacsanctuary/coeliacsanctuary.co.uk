@@ -63,10 +63,6 @@ class SendEateryRecommendationToAiJob implements ShouldQueue
             return false;
         }
 
-        if ($this->eateryRecommendation->email === 'contact@coeliacsanctuary.co.uk') {
-            return false;
-        }
-
         return $this->eateryRecommendation->completed === false && $this->eateryRecommendation->ignored === false;
     }
 }

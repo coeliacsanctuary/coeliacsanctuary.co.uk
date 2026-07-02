@@ -70,20 +70,6 @@ class SendEateryRecommendationToAiJobTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotCallTheActionForCoeliacSanctuaryEmail(): void
-    {
-        $recommendation = $this->create(EateryRecommendation::class, [
-            'email' => 'contact@coeliacsanctuary.co.uk',
-            'completed' => false,
-            'ignored' => false,
-        ]);
-
-        $this->dontExpectAction(SendEateryRecommendationToAiAction::class);
-
-        (new SendEateryRecommendationToAiJob($recommendation))->handle();
-    }
-
-    #[Test]
     public function itCreatesAiDataWhenEligible(): void
     {
         $this->assertDatabaseEmpty(EateryRecommendationAiData::class);
