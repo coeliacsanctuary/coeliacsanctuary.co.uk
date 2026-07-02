@@ -13,6 +13,7 @@ use App\Ai\Tools\PrepareRecommendedEatery\SearchArea;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchCounty;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchTown;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Attributes\Provider;
 use Laravel\Ai\Attributes\UseSmartestModel;
 use Laravel\Ai\Contracts\Agent;
@@ -26,7 +27,7 @@ use Laravel\Ai\Providers\Tools\WebSearch;
 use Stringable;
 
 #[Provider(Lab::Anthropic)]
-#[UseSmartestModel]
+#[Model('claude-opus-4-6')]
 class PrepareRecommendedEatery implements Agent, HasStructuredOutput, HasTools
 {
     use Promptable;
