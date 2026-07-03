@@ -9,11 +9,13 @@ use App\Models\EatingOut\EateryRecommendation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 #[Tries(1)]
+#[Timeout(300)]
 class SendEateryRecommendationToAiJob implements ShouldQueue
 {
     use Dispatchable;
