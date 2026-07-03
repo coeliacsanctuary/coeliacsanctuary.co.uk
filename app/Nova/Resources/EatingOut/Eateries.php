@@ -371,7 +371,7 @@ class Eateries extends Resource
             ...$request->viaRelationship() === false ? $detailsFields : [],
 
             Panel::make('Features', [
-                PolymorphicPanel::make('Features', new EateryFeaturesPolymorphicPanel(Arr::get(Cache::get('admin-recommend-place'), 'features')))->display('row'),
+                PolymorphicPanel::make('Features', new EateryFeaturesPolymorphicPanel(Arr::get(Cache::get('admin-recommend-place'), 'features') ?? []))->display('row'),
             ]),
 
             Boolean::make('Live')->filterable(),
