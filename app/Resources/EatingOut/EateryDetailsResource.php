@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resources\EatingOut;
 
+use App\Actions\EatingOut\GetGroupedEateryNationwideBranchesAction;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAttractionRestaurant;
 use App\Models\EatingOut\EateryFeature;
@@ -119,43 +120,12 @@ class EateryDetailsResource extends JsonResource
                 ],
                 'days' => $eateryOpeningTimes->opening_times_array,
             ] : null,
-            'branch' => $branch ? $this->formatBranch($branch) : null,
+            'branch' => $branch ? NationwideBranchResource::make($branch) : null,
             'is_nationwide' => $this->county_id === 1,
             'nationwide_branches' => $this->getBranchList(),
             'last_updated' => $this->updated_at,
             'last_updated_human' => $this->updated_at?->diffForHumans(),
             'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)->count() > 0,
-        ];
-    }
-
-    protected function formatBranch(NationwideBranch $branch): array
-    {
-        return [
-            'id' => $branch->id,
-            'name' => $branch->name ?: $this->name,
-            'county' => [
-                'id' => $branch->county_id,
-                'name' => $branch->county?->county,
-                'link' => $branch->county?->link(),
-            ],
-            'town' => [
-                'id' => $branch->town_id,
-                'name' => $branch->town?->town,
-                'link' => $branch->town?->link(),
-            ],
-            'area' => $branch->area ? [
-                'id' => $branch->area_id,
-                'name' => $branch->area->area,
-                'link' => $branch->area->link(),
-            ] : null,
-            'link' => $branch->link(),
-            'location' => [
-                'address' => collect(explode("\n", $branch->address))
-                    ->map(fn (string $line) => mb_trim($line))
-                    ->join(', '),
-                'lat' => $branch->lat,
-                'lng' => $branch->lng,
-            ],
         ];
     }
 
@@ -165,29 +135,6 @@ class EateryDetailsResource extends JsonResource
             return null;
         }
 
-        return $this->nationwideBranches
-            ->groupBy(fn (NationwideBranch $branch) => $branch->country->country) /** @phpstan-ignore-line */
-            ->sortKeys()
-            ->map(
-                fn (Collection $branches) => $branches
-                    ->groupBy(fn (NationwideBranch $branch) => $branch->county->county) /** @phpstan-ignore-line */
-                    ->sortKeys()
-                    ->map(
-                        fn (Collection $branches) => $branches
-                            ->groupBy(fn (NationwideBranch $branch) => $branch->town->town) /** @phpstan-ignore-line */
-                            ->sortKeys()
-                            ->map(
-                                fn (Collection $branches) => $branches
-                                    ->groupBy(fn (NationwideBranch $branch) => $branch->area?->area ?? '_') /** @phpstan-ignore-line */
-                                    ->sortKeys()
-                                    ->map(
-                                        fn (Collection $branches) => $branches
-                                            ->sortBy('name')
-                                            ->map(fn (NationwideBranch $branch) => $this->formatBranch($branch))
-                                    )
-                            )
-                    )
-            )
-            ->toArray();
+        return app(GetGroupedEateryNationwideBranchesAction::class)->handle($this->nationwideBranches);
     }
 }

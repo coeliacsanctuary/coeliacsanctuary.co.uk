@@ -103,6 +103,10 @@ class ProductVariant extends Resource
             return;
         }
 
+        if ( ! $model->product) {
+            return;
+        }
+
         /** @var ShopProductVariant $model */
         SyncProductToGoogleMerchantJob::dispatch($model->product);
     }
@@ -110,6 +114,10 @@ class ProductVariant extends Resource
     public static function afterUpdate(NovaRequest $request, Model $model): void
     {
         if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        if ( ! $model->product) {
             return;
         }
 

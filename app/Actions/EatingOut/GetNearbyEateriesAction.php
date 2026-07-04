@@ -73,20 +73,17 @@ class GetNearbyEateriesAction
         $columns = match ($model) {
             Eatery::class => ['area_id', 'town_id', 'country_id', 'address', 'slug', 'info'],
             NationwideBranch::class => ['wheretoeat_id', 'area_id', 'town_id', 'country_id', 'county_id', 'address', 'slug'],
-            default => throw new InvalidArgumentException("Unsupported model {{$model}}")
+            default => throw new InvalidArgumentException("Unsupported model {{$model}}"),
         };
 
         $relations = match ($model) {
             Eatery::class => ['area', 'town', 'county', 'country', 'reviews'],
             NationwideBranch::class => ['eatery', 'area', 'town', 'county', 'country', 'reviews'],
-            default => throw new InvalidArgumentException("Unsupported model {{$model}}")
         };
 
         /** @phpstan-ignore-next-line  */
         return $model::databaseSearchAroundLatLng($latLng, Helpers::milesToMeters($miles), $columns)
-            /** @phpstan-ignore-next-line  */
             ->when($model === Eatery::class, fn (Builder $query) => $query->where('type_id', EateryType::EATERY))
-            /** @phpstan-ignore method.unresolvableReturnType */
             ->when($except, fn (Builder $query) => $query->whereNot('id', $except))
             ->with($relations)
             ->withCount(['reviews'])

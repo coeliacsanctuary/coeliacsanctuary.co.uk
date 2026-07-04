@@ -27,7 +27,7 @@ class EmailDataCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): array
     {
-        /** @var array{date?: string, comment?: array{id?: number, created_at?: string, name?: string}, reply?: array{id: string}, rating?: array{id: string}, order?: array{id: string}, notifiable?: array{id: string}, recommendation?: array{id: string}, eatery?: array{id: string}, branch?: array{id: string}, nearbyEateries?: array{array{id: string}}} $data */
+        /** @var array{date?: string, comment?: array{id?: number, created_at?: string, name?: string}, reply?: array{id: string}, rating?: array{id: string}, order?: array{id: string}, notifiable?: array{id: string}, recommendation?: array{id: string}, eatery?: array{id: string}, branch?: array{id: string}, nearbyEateries?: array{array{id: string}}, ...<string, scalar>} $data */
         $data = json_decode($value, true);
 
         $return = [];
