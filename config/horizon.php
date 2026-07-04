@@ -89,6 +89,7 @@ return [
         'redis:default' => 60,
         'redis:metrics' => 60,
         'redis:journey-tracker-ingress' => 60,
+        'redis:eatery-recommendation-ai' => 60,
     ],
 
     /*
@@ -225,6 +226,20 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+
+        'supervisor-eatery-recommendation-ai' => [
+            'connection' => 'redis',
+            'queue' => ['eatery-recommendation-ai'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 360,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
@@ -244,6 +259,11 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+            'supervisor-eatery-recommendation-ai' => [
+                'maxProcesses' => 3,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
         ],
 
         'develop' => [
@@ -259,6 +279,10 @@ return [
                 'maxProcesses' => 1,
                 'force' => true,
             ],
+            'supervisor-eatery-recommendation-ai' => [
+                'maxProcesses' => 1,
+                'force' => true,
+            ],
         ],
 
         'local' => [
@@ -269,6 +293,9 @@ return [
                 'maxProcesses' => 1,
             ],
             'supervisor-journey-tracker-ingress' => [
+                'maxProcesses' => 1,
+            ],
+            'supervisor-eatery-recommendation-ai' => [
                 'maxProcesses' => 1,
             ],
         ],

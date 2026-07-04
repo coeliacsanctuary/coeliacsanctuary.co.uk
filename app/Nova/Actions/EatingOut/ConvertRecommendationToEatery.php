@@ -48,11 +48,13 @@ class ConvertRecommendationToEatery extends Action
             'place_type_id' => $this->resolveRelatedId($aiData?->eatery_type, null, EateryType::class, 'type'),
             'place_venue_type_id' => $this->resolveRelatedId($aiData?->venue_type, $recommendation->place_venue_type_id, EateryVenueType::class, 'venue_type'),
             'place_cuisine_id' => $this->resolveRelatedId($aiData?->cuisine, null, EateryCuisine::class, 'cuisine'),
-            'place_details' => $aiData->info ?? $recommendation->place_details,
+            'place_details' => $aiData?->info ? "{$aiData->info}\n\nSubmitted Data:\n\n{$recommendation->place_details}" : $recommendation->place_details,
             'features' => $aiData?->features,
-        ]), now()->addHour());
+            'isEligible' => $aiData?->is_eligible,
+            'explanation' => $aiData?->explanation,
+        ], fn ($value) => $value !== null), now()->addHour());
 
-        return Action::visit('/resources/eateries/new');
+        return Action::openInNewTab('/cs-adm/resources/eateries/new');
     }
 
     protected function resolveRelatedId(?string $rawValue, ?int $default, string $model, string $column): ?int

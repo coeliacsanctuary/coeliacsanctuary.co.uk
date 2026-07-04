@@ -13,6 +13,7 @@ use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 #[Tries(1)]
 #[Timeout(300)]
@@ -25,7 +26,7 @@ class SendEateryRecommendationToAiJob implements ShouldQueue
 
     public function __construct(protected EateryRecommendation $eateryRecommendation)
     {
-        //
+        $this->onQueue('eatery-recommendation-ai');
     }
 
     public function handle(): void
@@ -36,7 +37,7 @@ class SendEateryRecommendationToAiJob implements ShouldQueue
 
         $aiInfo = app(SendEateryRecommendationToAiAction::class)->handle($this->eateryRecommendation);
 
-        $this->eateryRecommendation->aiData()->create([
+        $this->eateryRecommendation->aiData()->updateOrCreate([], [
             'place_name' => $aiInfo->placeName,
             'place_address' => $aiInfo->placeAddress,
             'place_country' => $aiInfo->placeCountry,
@@ -56,6 +57,15 @@ class SendEateryRecommendationToAiJob implements ShouldQueue
             'features' => $aiInfo->features,
             'explanation' => $aiInfo->explanation,
             'is_eligible' => $aiInfo->isEligible,
+            'completed_at' => now(),
+        ]);
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        $this->eateryRecommendation->aiData()->update([
+            'failed_at' => now(),
+            'explanation' => $exception->getMessage(),
         ]);
     }
 

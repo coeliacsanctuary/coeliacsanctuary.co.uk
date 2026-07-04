@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Actions\EatingOut;
 
-use App\Jobs\EatingOut\SendEateryRecommendationToAiJob;
+use App\Actions\EatingOut\CheckEateryRecommendationWithAiAction;
 use App\Models\EatingOut\EateryRecommendation;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
@@ -19,7 +19,7 @@ class CheckEateryRecommendationWithAi extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         $models->each(function (EateryRecommendation $model): void {
-            SendEateryRecommendationToAiJob::dispatch($model);
+            app(CheckEateryRecommendationWithAiAction::class)->handle($model);
         });
 
         return ActionResponse::message('Eatery Recommendation is queued to be checked with AI.');

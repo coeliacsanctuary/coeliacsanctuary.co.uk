@@ -74,7 +74,9 @@
         "wnx/sidecar-browsershot": "^2.7.0",
         "ziffmedia/nova-select-plus": "^2.1@beta",
         "jpeters8889/related-recipes-search": "@dev",
-        "jpeters8889/view-ai-recommendation-data": "@dev"
+        "jpeters8889/view-ai-recommendation-data": "@dev",
+        "jpeters8889/eatery-recommendation-eligibility": "@dev",
+        "jpeters8889/eatery-recommendation-ai-status": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.0",
@@ -247,6 +249,18 @@
         {
             "type": "path",
             "url": "./nova-components/ViewAiRecommendationData"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/EateryRecommendationEligibility"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/EateryRecommendationEligibility"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/EateryRecommendationAiStatus"
         }
     ],
     "autoload": {
