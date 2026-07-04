@@ -68,6 +68,7 @@ class ProductVariant extends Resource
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
         return $query
+            ->withoutGlobalScopes()
             ->with(['product'])
             ->addSelect(['total_sold' => ShopOrderItem::query()
                 ->selectRaw('sum(quantity)')
