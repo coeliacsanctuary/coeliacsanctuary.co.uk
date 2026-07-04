@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 
 class GetCountyListAction
 {
-    /** @return Collection<int, array{name: string, description: string, list: Collection<int, array>, counties: int, eateries: mixed, top_counties: Collection<int,array>}> */
+    /** @return Collection<int, array{name: string, description: string, list: Collection<int, array>, counties: int<0, max>, eateries: mixed, top_counties: Collection<int,array>}> */
     public function handle(bool $force = false): Collection
     {
         $key = config('coeliac.cacheable.eating-out.index-counts');

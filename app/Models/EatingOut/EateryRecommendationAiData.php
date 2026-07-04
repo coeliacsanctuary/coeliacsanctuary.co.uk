@@ -14,6 +14,8 @@ class EateryRecommendationAiData extends Model
     protected $casts = [
         'is_eligible' => 'bool',
         'features' => 'array',
+        'completed_at' => 'datetime',
+        'failed_at' => 'datetime',
     ];
 
     /** @return BelongsTo<EateryRecommendation, $this> */

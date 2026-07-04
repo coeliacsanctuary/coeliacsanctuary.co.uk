@@ -64,7 +64,6 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
                 /** @var Builder<Eatery> $query */
-                /** @phpstan-ignore-next-line  */
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
                 }

@@ -42,20 +42,17 @@ class SearchableItemResource extends JsonResource
                     'name' => $restaurant->restaurant_name,
                     'info' => $restaurant->info,
                 ]),
-            NationwideBranch::class => $this->resource->eatery->info,
-            default => throw new Exception('Unknown search class'),
+            default => $this->resource->eatery->info,
         };
 
         $image = match ($this->resource::class) {
             Blog::class, Recipe::class, ShopProduct::class => $this->resource->main_image_as_webp ?? $this->resource->main_image,
             Eatery::class, NationwideBranch::class => ['lat' => $this->resource->lat, 'lng' => $this->resource->lng],
-            default => throw new Exception('Unknown search class'),
         };
 
         $link = match ($this->resource::class) {
             Blog::class, Recipe::class, ShopProduct::class => $this->resource->link,
             Eatery::class, NationwideBranch::class => $this->resource->link(),
-            default => throw new Exception('Unknown search class'),
         };
 
         $distance = null;

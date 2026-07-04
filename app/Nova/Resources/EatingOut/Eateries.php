@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Cache;
 use Jpeters8889\AddressField\AddressField;
 use Jpeters8889\EateryLocationSearch\EateryLocationSearch;
 use Jpeters8889\EateryOpeningTimes\EateryOpeningTimes;
+use Jpeters8889\EateryRecommendationEligibility\EateryRecommendationEligibility;
 use Jpeters8889\HiddenWritableField\HiddenWritableField;
 use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
 use Laravel\Nova\Fields\BelongsTo;
@@ -344,7 +345,23 @@ class Eateries extends Resource
             ]),
         ];
 
+        $eligibilityPanel = [];
+
+        if (Cache::has('admin-recommend-place')) {
+            $recommendCache = Cache::get('admin-recommend-place');
+
+            $eligibilityPanel = [
+                Panel::make('AI Eligibility', [
+                    EateryRecommendationEligibility::make(
+                        Arr::get($recommendCache, 'isEligible'),
+                        Arr::get($recommendCache, 'explanation'),
+                    )->onlyOnForms(),
+                ]),
+            ];
+        }
+
         return [
+            ...$eligibilityPanel,
             HiddenWritableField::make('Recommendation ID', 'place_recommendation_id')
                 ->onlyOnForms()
                 ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_recommendation_id')),

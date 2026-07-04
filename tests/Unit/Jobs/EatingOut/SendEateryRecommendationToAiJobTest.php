@@ -11,6 +11,7 @@ use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryRecommendationAiData;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use RuntimeException;
 
 class SendEateryRecommendationToAiJobTest extends TestCase
 {
@@ -25,6 +26,14 @@ class SendEateryRecommendationToAiJobTest extends TestCase
             'ignored' => false,
             'email' => 'user@example.com',
         ]);
+    }
+
+    #[Test]
+    public function itRunsOnTheEateryAiQueue(): void
+    {
+        $job = new SendEateryRecommendationToAiJob($this->recommendation);
+
+        $this->assertSame('eatery-recommendation-ai', $job->queue);
     }
 
     #[Test]
@@ -91,6 +100,35 @@ class SendEateryRecommendationToAiJobTest extends TestCase
         (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
 
         $this->assertDatabaseEmpty(EateryRecommendationAiData::class);
+    }
+
+    #[Test]
+    public function itSetsCompletedAtOnSuccess(): void
+    {
+        $this->expectAction(SendEateryRecommendationToAiAction::class, return: $this->validDto());
+
+        (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
+
+        $aiData = $this->recommendation->aiData()->first();
+
+        $this->assertNotNull($aiData->completed_at);
+    }
+
+    #[Test]
+    public function itSetsFailedAtAndStoresExceptionMessageOnFailure(): void
+    {
+        $this->create(EateryRecommendationAiData::class, [
+            'wheretoeat_place_recommendation_id' => $this->recommendation->id,
+        ]);
+
+        $exception = new RuntimeException('AI service unavailable.');
+
+        (new SendEateryRecommendationToAiJob($this->recommendation))->failed($exception);
+
+        $aiData = $this->recommendation->aiData()->first();
+
+        $this->assertNotNull($aiData->failed_at);
+        $this->assertSame('AI service unavailable.', $aiData->explanation);
     }
 
     #[Test]

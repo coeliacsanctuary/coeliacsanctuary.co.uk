@@ -19,6 +19,7 @@ use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Jpeters8889\EateryRecommendationAiStatus\EateryRecommendationAiStatus;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Email;
@@ -73,8 +74,16 @@ class PlaceRecommendations extends Resource
                 ->filterable()
                 ->showOnPreview(),
 
-            Boolean::make('Reviewed by AI', 'ai_data_exists')
-                ->filterable(),
+            EateryRecommendationAiStatus::make('AI Status'),
+
+            Boolean::make('AI Eligible')
+                ->resolveUsing(
+                    fn ($value, $resource) =>
+                    $resource->aiData?->completed_at !== null && $resource->aiData->failed_at === null
+                        ? $resource->aiData->is_eligible
+                        : null
+                )
+                ->nullable(),
 
             Panel::make('User', [
                 Text::make('name')->showOnPreview()->hideFromIndex(),
@@ -172,7 +181,7 @@ class PlaceRecommendations extends Resource
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->where('email', '!=', 'alisondwheatley@gmail.com')
-            ->withExists('aiData')
+            ->with('aiData')
             ->reorder()
             ->orderByRaw('(completed = 1 or ignored = 1) asc')
             ->orderByDesc('updated_at');

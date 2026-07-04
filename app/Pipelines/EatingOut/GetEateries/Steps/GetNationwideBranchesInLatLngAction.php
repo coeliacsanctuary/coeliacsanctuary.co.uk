@@ -32,7 +32,7 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
         $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, Helpers::milesToMeters($pipelineData->latLng->radius))
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
                 /** @var Builder<Eatery> $query */
-                $query->where('closed_down', false); /** @phpstan-ignore-line */
+                $query->where('closed_down', false);
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
                 }

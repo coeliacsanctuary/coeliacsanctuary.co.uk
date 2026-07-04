@@ -126,6 +126,8 @@ This one is key, use the EateryInfoExamples tool to get a random selection of 10
 
 This is the key data displayed to website visitors on eatery listings, the eatery detail page, and mobile app, so it is key, must be factual, and seo optimised.
 
+Please keep it at a reasonable length, matching the examples returned by the tool, and make it more about the eatery and what they offer, rather than random information about them, again, use the examples retuned and match the style.
+
 ### Features
 
 An eatery can have many features, use the EateryFeatureList tool to list all of the features we have (eg 100% gluten free, Afternoon Tea, Gluten Free Menu) and assign any that match from your research.

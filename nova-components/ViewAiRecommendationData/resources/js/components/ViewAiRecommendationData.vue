@@ -15,7 +15,7 @@
           </div>
 
           <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Explanation</h3>
-          <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{{ data.explanation }}</p>
+          <div class="prose prose-sm text-gray-700 dark:text-gray-300 max-w-none" v-html="parsedExplanation" />
         </div>
 
         <hr class="mb-6 border-gray-100 dark:border-gray-700" />
@@ -54,6 +54,9 @@
 </template>
 
 <script>
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+
 export default {
   props: {
     show: { type: Boolean, default: false },
@@ -61,6 +64,11 @@ export default {
   },
   emits: ['close'],
   computed: {
+    parsedExplanation() {
+      return this.data.explanation
+        ? DOMPurify.sanitize(marked.parse(this.data.explanation))
+        : '';
+    },
     dataFields() {
       return [
         { label: 'Name', value: this.data.place_name },
