@@ -35,7 +35,9 @@ export default {
     'field.status'(newStatus) {
       this.currentStatus = newStatus
 
-      if (newStatus !== 'pending') {
+      if (newStatus === 'pending') {
+        this.startPolling()
+      } else {
         this.stopPolling()
       }
     },
@@ -43,6 +45,10 @@ export default {
 
   methods: {
     startPolling() {
+      if (this.pollInterval) {
+        return
+      }
+
       this.pollInterval = setInterval(this.checkStatus, 5000)
     },
 
