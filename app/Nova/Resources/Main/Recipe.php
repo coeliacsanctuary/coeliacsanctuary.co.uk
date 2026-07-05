@@ -9,7 +9,7 @@ use App\Nova\Chartables\Metrics\Recipes\CollectionCardViews;
 use App\Nova\Chartables\Metrics\Recipes\CommentViews;
 use App\Nova\Chartables\Metrics\Recipes\DetailCardViews;
 use App\Nova\Chartables\Metrics\Recipes\Views;
-use App\Nova\Repeaters\ArticleFaq;
+use App\Nova\Repeaters\Faq as FaqRepeatable;
 use App\Nova\Resource;
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeAllergens as RecipeAllergenPanel;
 use App\Nova\Resources\Main\PolymorphicPanels\RecipeFeatures as RecipeFeaturePanel;
@@ -25,7 +25,7 @@ use Jpeters8889\RelatedRecipesSearch\RelatedRecipesSearch;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Repeater;
+use App\Nova\FieldOverrides\Repeater;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -170,11 +170,8 @@ class Recipe extends Resource
             ]),
 
             Repeater::make('FAQs', 'faqs')
-                ->asJson()
-                ->hideFromDetail()
-                ->repeatables([
-                    ArticleFaq::make(),
-                ]),
+                ->asMorphMany()
+                ->repeatables([FaqRepeatable::make()]),
 
             new Panel('Related Recipes', [
                 RelatedRecipesSearch::make('Related Recipes', 'relatedRecipes')

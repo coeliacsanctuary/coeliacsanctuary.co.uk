@@ -6,7 +6,7 @@ namespace App\Nova\Resources\Main;
 
 use App\Models\Blogs\Blog as BlogModel;
 use App\Nova\Chartables\Metrics\Blogs\CollectionCardViews;
-use App\Nova\Repeaters\ArticleFaq;
+use App\Nova\Repeaters\Faq as FaqRepeatable;
 use App\Nova\Chartables\Metrics\Blogs\CommentViews;
 use App\Nova\Chartables\Metrics\Blogs\DetailCardViews;
 use App\Nova\Chartables\Metrics\Blogs\Views;
@@ -24,7 +24,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
-use Laravel\Nova\Fields\Repeater;
+use App\Nova\FieldOverrides\Repeater;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Tag;
@@ -165,8 +165,8 @@ class Blog extends Resource
 
             new Panel('FAQ', [
                 Repeater::make('FAQs', 'faqs')
-                    ->asJson()
-                    ->repeatables([ArticleFaq::make()]),
+                    ->asMorphMany()
+                    ->repeatables([FaqRepeatable::make()]),
 
                 Select::make('Display FAQ', 'faq_display')
                     ->options(['top' => 'Above content', 'bottom' => 'Below content'])
