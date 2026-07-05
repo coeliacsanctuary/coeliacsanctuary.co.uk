@@ -9,8 +9,10 @@ use App\Concerns\ClearsCache;
 use App\Concerns\Comments\Commentable;
 use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
+use App\Concerns\Faqs\Faqable;
 use App\Concerns\LinkableModel;
 use App\Contracts\Comments\HasComments;
+use App\Contracts\Faqs\HasFaqs;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
@@ -33,8 +35,9 @@ use Spatie\SchemaOrg\Schema;
 /**
  * @implements Collectable<$this>
  * @implements HasComments<$this>
+ * @implements HasFaqs<$this>
  */
-class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearchable
+class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable
 {
     /** @use CanBeCollected<$this> */
     use CanBeCollected;
@@ -46,7 +49,10 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     use Commentable;
 
     use DisplaysDates;
+
     use DisplaysMedia;
+    /** @use Faqable<$this> */
+    use Faqable;
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;

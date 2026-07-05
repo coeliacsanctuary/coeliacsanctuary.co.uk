@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\CanBePublishedTestTrait;
 use Tests\Concerns\CommentableTestTrait;
 use Tests\Concerns\DisplaysMediaTestTrait;
+use Tests\Concerns\FaqableTestTrait;
 use Tests\Concerns\LinkableModelTestTrait;
 use Tests\TestCase;
 
@@ -29,6 +30,7 @@ class RecipeModelTest extends TestCase
     use CanBePublishedTestTrait;
     use CommentableTestTrait;
     use DisplaysMediaTestTrait;
+    use FaqableTestTrait;
     use LinkableModelTestTrait;
 
     protected Recipe $recipe;
@@ -49,6 +51,8 @@ class RecipeModelTest extends TestCase
         $this->setUpLinkableModelTest(fn (array $params) => $this->create(Recipe::class, $params));
 
         $this->setUpCommentsTest(fn (array $params = []) => $this->create(Recipe::class, $params));
+
+        $this->setUpFaqsTest(fn (array $params = []) => $this->create(Recipe::class, $params));
 
         $this->setUpCanBePublishedModelTest(fn (array $params = []) => $this->create(Recipe::class, $params));
 
