@@ -69,10 +69,6 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
     use LinkableModel;
     use Searchable;
 
-    protected $casts = [
-        'faqs' => 'array',
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
