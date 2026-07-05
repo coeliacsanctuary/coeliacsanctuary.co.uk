@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions;
+namespace Tests\Unit\Actions\Redirects;
 
-use App\Actions\CheckForRouteRedirectAction;
+use App\Actions\Redirects\CheckForRouteRedirectAction;
 use App\Models\Redirect;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
