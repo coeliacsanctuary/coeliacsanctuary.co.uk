@@ -11,6 +11,7 @@ use App\Models\Redirect;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use RuntimeException;
 
 class RedirectFallbackResolver implements RouteFallbackResolverContract
 {
@@ -31,6 +32,11 @@ class RedirectFallbackResolver implements RouteFallbackResolverContract
 
     public function handle(Request $request): Responsable | RedirectResponse
     {
+        if ( ! $this->redirect) {
+            // this should never happen
+            throw new RuntimeException('Redirect not found.');
+        }
+
         return app(HandleRedirectResponseAction::class)->handle($this->redirect);
     }
 }

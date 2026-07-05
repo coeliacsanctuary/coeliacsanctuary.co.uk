@@ -54,7 +54,7 @@ class RedirectFallbackResolverTest extends TestCase
 
         $this->mock(HandleRedirectResponseAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function($redirectArg) use ($redirect) {
+            ->withArgs(function ($redirectArg) use ($redirect) {
                 $this->assertTrue($redirect->is($redirectArg));
 
                 return true;
