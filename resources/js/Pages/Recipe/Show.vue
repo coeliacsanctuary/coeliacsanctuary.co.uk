@@ -10,7 +10,7 @@ import { PrinterIcon } from '@heroicons/vue/20/solid';
 import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
 import RecipeNutritionTable from '@/Components/PageSpecific/Recipes/RecipeNutritionTable.vue';
 import { Page } from '@inertiajs/core';
-import ArticleFaqCard from '@/Components/PageSpecific/Shared/ArticleFaqCard.vue';
+import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import Info from '@/Components/Info.vue';
@@ -219,7 +219,7 @@ const handleCommentReset = () => {
     </div>
   </Card>
 
-  <ArticleFaqCard
+  <FaqCard
     v-if="recipe.faqs"
     :faqs="recipe.faqs"
     :title="`Here are some tips and FAQs about ${recipe.short_title || recipe.title}`"

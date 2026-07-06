@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import Card from '@/Components/Card.vue';
 import SubHeading from '@/Components/SubHeading.vue';
-import ArticleFaqItem from '@/Components/PageSpecific/Shared/ArticleFaqItem.vue';
+import FaqCardItem from '@/Components/PageSpecific/Shared/FaqCardItem.vue';
 import { ArticleFaq } from '@/types/Types';
 
 defineProps<{
@@ -24,7 +24,7 @@ const handleOpen = (index: number): void => {
     </SubHeading>
 
     <div class="mt-3 flex flex-col space-y-4">
-      <ArticleFaqItem
+      <FaqCardItem
         v-for="(faq, index) in faqs"
         :key="faq.question"
         :faq="faq"
