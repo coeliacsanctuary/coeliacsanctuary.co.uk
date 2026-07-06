@@ -9,8 +9,10 @@ use App\Concerns\ClearsCache;
 use App\Concerns\Comments\Commentable;
 use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
+use App\Concerns\Faqs\Faqable;
 use App\Concerns\LinkableModel;
 use App\Contracts\Comments\HasComments;
+use App\Contracts\Faqs\HasFaqs;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateRecipeIndexPageOpenGraphImageJob;
@@ -39,11 +41,12 @@ use Spatie\SchemaOrg\Schema;
 /**
  * @implements Collectable<$this>
  * @implements HasComments<$this>
+ * @implements HasFaqs<$this>
  *
  * @property string $servings
  * @property string $portion_size
  */
-class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSearchable
+class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable
 {
     /** @use CanBeCollected<$this> */
     use CanBeCollected;
@@ -55,17 +58,16 @@ class Recipe extends Model implements Collectable, HasComments, HasMedia, IsSear
     use Commentable;
 
     use DisplaysDates;
+
     use DisplaysMedia;
+    /** @use Faqable<$this> */
+    use Faqable;
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
     use LinkableModel;
     use Searchable;
-
-    protected $casts = [
-        'faqs' => 'array',
-    ];
 
     protected static function booted(): void
     {

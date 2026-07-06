@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ArticleFaqCard from '@/Components/PageSpecific/Shared/ArticleFaqCard.vue';
+import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { Link, router } from '@inertiajs/vue3';
@@ -146,7 +146,7 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
     />
   </Card>
 
-  <ArticleFaqCard
+  <FaqCard
     v-if="blog.faqs && blog.faq_display === 'top'"
     :faqs="blog.faqs"
     :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
@@ -162,7 +162,7 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
         </div>
       </Card>
 
-      <ArticleFaqCard
+      <FaqCard
         v-if="blog.faqs && (!blog.faq_display || blog.faq_display === 'bottom')"
         :faqs="blog.faqs"
         :title="`Frequently asked questions about ${blog.short_title || blog.title}`"

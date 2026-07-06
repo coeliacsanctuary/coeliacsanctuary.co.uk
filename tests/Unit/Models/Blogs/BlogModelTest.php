@@ -17,6 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\CanBePublishedTestTrait;
 use Tests\Concerns\CommentableTestTrait;
 use Tests\Concerns\DisplaysMediaTestTrait;
+use Tests\Concerns\FaqableTestTrait;
 use Tests\Concerns\LinkableModelTestTrait;
 use Tests\TestCase;
 
@@ -25,6 +26,7 @@ class BlogModelTest extends TestCase
     use CanBePublishedTestTrait;
     use CommentableTestTrait;
     use DisplaysMediaTestTrait;
+    use FaqableTestTrait;
     use LinkableModelTestTrait;
 
     protected Blog $blog;
@@ -42,6 +44,8 @@ class BlogModelTest extends TestCase
         $this->setUpLinkableModelTest(fn (array $params) => $this->create(Blog::class, $params));
 
         $this->setUpCommentsTest(fn (array $params = []) => $this->create(Blog::class, $params));
+
+        $this->setUpFaqsTest(fn (array $params = []) => $this->create(Blog::class, $params));
 
         $this->setUpCanBePublishedModelTest(fn (array $params = []) => $this->create(Blog::class, $params));
     }

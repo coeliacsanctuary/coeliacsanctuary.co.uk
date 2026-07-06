@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Resources\Blogs;
 
 use App\Models\Blogs\Blog;
+use App\Models\Faqs\Faq;
 use App\Resources\Blogs\BlogShowResource;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\Attributes\Test;
@@ -24,7 +25,7 @@ class BlogShowResourceTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsNullFaqsWhenFaqsColumnIsNull(): void
+    public function itReturnsNullFaqsWhenThereAreNoFaqs(): void
     {
         $resource = (new BlogShowResource($this->blog))->toArray(new Request());
 
@@ -32,14 +33,10 @@ class BlogShowResourceTest extends TestCase
     }
 
     #[Test]
-    public function itParsesFaqsWhenSet(): void
+    public function itReturnsFaqsFromTheRelation(): void
     {
-        $this->blog->update([
-            'faqs' => [
-                ['fields' => ['question' => 'Is this gluten free?', 'answer' => 'Yes!']],
-                ['fields' => ['question' => 'Can I freeze it?', 'answer' => 'Absolutely.']],
-            ],
-        ]);
+        $this->build(Faq::class)->on($this->blog)->create(['question' => 'Is this gluten free?', 'answer' => 'Yes!']);
+        $this->build(Faq::class)->on($this->blog)->create(['question' => 'Can I freeze it?', 'answer' => 'Absolutely.']);
 
         $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
 
