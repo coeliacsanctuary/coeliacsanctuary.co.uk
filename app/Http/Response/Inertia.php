@@ -137,6 +137,13 @@ class Inertia
         return $this;
     }
 
+    public function disableAds(): self
+    {
+        BaseInertia::share('meta.hideAds', true);
+
+        return $this;
+    }
+
     public function metaFeed(string $link): self
     {
         BaseInertia::share('meta.feed', $link);

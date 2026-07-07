@@ -4,6 +4,7 @@ import CoeliacCompactFooter from '@/Layouts/Components/CoeliacCompactFooter.vue'
 import { MetaProps } from '@/types/DefaultProps';
 import useStickyAdOffset from '@/composables/useStickyAdOffset';
 import { onMounted, onUnmounted, ref, watch } from 'vue';
+import AdBlocker from '@/Components/AdBlocker.vue';
 
 const { adhesionHeight } = useStickyAdOffset();
 
@@ -53,4 +54,6 @@ onUnmounted(() => {
 
     <CoeliacCompactFooter ref="footerEl" />
   </div>
+
+  <AdBlocker />
 </template>

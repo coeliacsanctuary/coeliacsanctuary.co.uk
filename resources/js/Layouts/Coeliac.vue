@@ -8,6 +8,7 @@ import ShopBasketHeader from '@/Layouts/Components/ShopBasketHeader.vue';
 import ShopFooterCta from '@/Layouts/Components/ShopFooterCta.vue';
 import PopupCta from '@/Layouts/Components/PopupCta.vue';
 import Loader from '@/Components/Loader.vue';
+import AdBlocker from '@/Components/AdBlocker.vue';
 import eventBus from '@/eventBus';
 import Announcement from '@/Layouts/Components/Announcement.vue';
 import useStickyAdOffset from '@/composables/useStickyAdOffset';
@@ -86,4 +87,6 @@ const isMounted = ref(false);
       on-top
     />
   </teleport>
+
+  <AdBlocker v-if="meta.hideAds" />
 </template>
