@@ -21,6 +21,7 @@ use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
 use App\Nova\Resources\EatingOut\EateryAlerts;
+use App\Nova\Resources\EatingOut\EateryCuisines;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideEateries;
@@ -108,9 +109,13 @@ class Menu
                 MenuGroup::make('Locations', [
                     MenuItem::resource(Eateries::class),
                     MenuItem::resource(NationwideEateries::class),
+                ]),
+
+                MenuGroup::make('Management', [
                     MenuItem::resource(Counties::class),
                     MenuItem::resource(Towns::class),
                     MenuItem::resource(Areas::class),
+                    MenuItem::resource(EateryCuisines::class),
                 ]),
 
                 MenuGroup::make('Feedback', [

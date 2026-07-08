@@ -123,6 +123,7 @@ class NationwideEateries extends Resource
     {
         return EateryVenueType::query()
             ->when($typeId, fn (Builder $query) => $query->where('type_id', $typeId))
+            ->orderBy('venue_type')
             ->get()
             ->mapWithKeys(fn (EateryVenueType $venueType) => [$venueType->id => $venueType->venue_type])
             ->toArray();
