@@ -56,7 +56,17 @@ class PolymorphicPanel extends Field
 
     public function resolve($resource, $attribute = null): void
     {
-        $relationship = $resource->{$this->polymorphicResource->relationship()}()->get();
+        if ( ! $resource->exists) {
+            $request = app(NovaRequest::class);
+            $originalId = $request->input('fromResourceId');
+            $originalResource = $originalId ? $resource::find($originalId) : null;
+
+            $relationship = $originalResource
+                ? $originalResource->{$this->polymorphicResource->relationship()}()->get()
+                : collect();
+        } else {
+            $relationship = $resource->{$this->polymorphicResource->relationship()}()->get();
+        }
 
         collect($this->fields)
             ->map(function (Field $field) use ($relationship, $resource) {
