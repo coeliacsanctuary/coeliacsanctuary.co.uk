@@ -134,7 +134,7 @@ class Eateries extends Resource
                     ->dependsOn('country', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('wheretoeat_counties.country_id', $data->get('country')));
 
-                        if ($request->filled('county')) {
+                        if ( ! $request->filled('location') && $request->filled('county')) {
                             $field->setValue($request->input('county'));
                         }
                     })
@@ -179,7 +179,7 @@ class Eateries extends Resource
                     ->dependsOn('county', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('county_id', $data->get('county')));
 
-                        if ($request->filled('town')) {
+                        if ( ! $request->filled('location') && $request->filled('town')) {
                             $field->setValue($request->input('town'));
                         }
                     })
@@ -210,7 +210,7 @@ class Eateries extends Resource
                     ->dependsOn('town', function (BelongsTo $field, NovaRequest $request, FormData $data): void {
                         $field->relatableQueryUsing(fn (NovaRequest $subRequest, Builder $query) => $query->where('town_id', $data->get('town')));
 
-                        if ($request->filled('area')) {
+                        if ( ! $request->filled('location') && $request->filled('area')) {
                             $field->setValue($request->input('area'));
                         }
                     })
@@ -224,7 +224,7 @@ class Eateries extends Resource
                             $field->hide();
                         }
 
-                        if ($request->filled('area')) {
+                        if ( ! $request->filled('location') && $request->filled('area')) {
                             $field->setValue($request->input('area'));
                         }
 
