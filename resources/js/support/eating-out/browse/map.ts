@@ -1,4 +1,4 @@
-import { MapBrowserEvent, View } from 'ol';
+import { Feature, MapBrowserEvent, View } from 'ol';
 import Map from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
 import { OSM } from 'ol/source';
@@ -10,11 +10,12 @@ import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { UrlParameters } from '@/types/EatingOutBrowseTypes';
 import useScreensize from '@/composables/useScreensize';
 import eventBus from '@/eventBus';
-import { clusterStyle } from '@/support/eating-out/browse/styles';
+import { clusterStyle, searchLocationMarkerStyle } from '@/support/eating-out/browse/styles';
 import { Extent } from 'ol/extent';
 import { getDistance } from 'ol/sphere';
 import { LatLng } from '@/types/EateryTypes';
 import { AnimationOptions } from 'ol/View';
+import { Point } from 'ol/geom';
 
 export default (
   processedUrl: Ref<UrlParameters>,
@@ -25,6 +26,8 @@ export default (
   const map: Ref<Map> = ref() as Ref<Map>;
   const view: Ref<View> = ref() as Ref<View>;
   const markerLayer = ref<VectorLayer<VectorSource>>();
+  const searchLocationSource = ref<VectorSource>(new VectorSource());
+  const searchLocationLayer = ref<VectorLayer<VectorSource>>();
 
   const initialLatLng = computed((): Coordinate => {
     let latLng: [number, number] = [54.093409, -2.89479];
@@ -86,9 +89,15 @@ export default (
 
       map.value.getTargetElement().style.cursor = map.value.hasFeatureAtPixel(
         map.value.getEventPixel(event.originalEvent),
+        { layerFilter: (layer) => layer === markerLayer.value },
       )
         ? 'pointer'
         : '';
+    });
+
+    searchLocationLayer.value = new VectorLayer({
+      source: searchLocationSource.value,
+      properties: { name: 'searchLocation' },
     });
 
     markerLayer.value = new VectorLayer({
@@ -99,28 +108,31 @@ export default (
       },
     });
 
+    map.value.addLayer(searchLocationLayer.value);
     map.value.addLayer(markerLayer.value);
   };
 
   const handleMapClick = (event: MapBrowserEvent<MouseEvent>) => {
     try {
-      void markerLayer.value?.getFeatures(event.pixel).then((feature) => {
-        if (!feature.length) {
-          return;
-        }
-
-        if (feature[0].get('cluster') === true) {
-          eventBus.$emit('cluster-clicked', {
-            pixel: event.pixel,
-            markerLayer: markerLayer.value,
-            currentZoom: getZoom(),
-          });
-
-          return;
-        }
-
-        eventBus.$emit('clicked-feature', feature[0]);
+      const features = map.value.getFeaturesAtPixel(event.pixel, {
+        layerFilter: (layer) => layer === markerLayer.value,
       });
+
+      if (!features.length) {
+        return;
+      }
+
+      if (features[0].get('cluster') === true) {
+        eventBus.$emit('cluster-clicked', {
+          pixel: event.pixel,
+          markerLayer: markerLayer.value,
+          currentZoom: getZoom(),
+        });
+
+        return;
+      }
+
+      eventBus.$emit('clicked-feature', features[0]);
     } catch (e) {
       console.error(e);
     }
@@ -172,6 +184,15 @@ export default (
       duration: 1000,
       zoom: 13,
     });
+
+    searchLocationSource.value.clear();
+
+    const searchFeature = new Feature({
+      geometry: new Point(coordinates),
+    });
+
+    searchFeature.setStyle(searchLocationMarkerStyle());
+    searchLocationSource.value.addFeature(searchFeature);
   };
 
   onMounted(() => {

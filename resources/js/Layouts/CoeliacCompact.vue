@@ -29,7 +29,7 @@ watch(adhesionHeight, repositionVideo);
 onMounted(() => {
   footerObserver = new ResizeObserver(repositionVideo);
 
-  if (footerEl.value) {
+  if (footerEl.value && footerEl.value instanceof Element) {
     footerObserver.observe(footerEl.value);
   }
 

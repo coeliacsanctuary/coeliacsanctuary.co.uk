@@ -19,7 +19,7 @@ class EateryBrowseDetailsResource extends JsonResource
             'id' => $this->id,
             'name' => $this->relationLoaded('branch') && $this->branch && $this->branch->name ? "{$this->branch->name} - {$this->name}" : $this->name,
             'link' => $this->relationLoaded('branch') ? $this->branch?->absoluteLink() : $this->absoluteLink(),
-            'full_location' => $this->full_location,
+            'full_location' =>  $this->relationLoaded('branch') ? $this->branch?->full_location : $this->full_location,
             'venue_type' => $this->venueType?->venue_type,
             'type' => $this->type?->name,
             'cuisine' => $this->cuisine?->cuisine,
@@ -43,6 +43,7 @@ class EateryBrowseDetailsResource extends JsonResource
                 'number' => $this->reviews->count(),
                 'average' => (float) $this->average_rating,
             ],
+            'isNationwideBranch' => $this->relationLoaded('branch')
         ];
     }
 }

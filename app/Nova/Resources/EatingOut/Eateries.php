@@ -56,7 +56,7 @@ class Eateries extends Resource
 
     public static $title = 'name';
 
-    public static $search = ['id', 'name', 'town.town', 'county.county'];
+    public static $search = ['id', 'name', 'area.area', 'town.town', 'county.county'];
 
     public function authorizedToReplicate(Request $request)
     {

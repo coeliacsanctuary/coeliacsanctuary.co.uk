@@ -145,15 +145,15 @@ const icon = computed((): string => {
                 >
                   <span
                     class="text-base"
-                    v-text="
-                      placeDetails.full_location.includes('Nationwide')
-                        ? 'Nationwide Chain'
-                        : placeDetails.full_location
-                    "
+                    v-text="placeDetails.full_location"
                   />
                   <div>
                     <span>
-                      {{ placeDetails.venue_type
+                      {{
+                        placeDetails.isNationwideBranch
+                          ? 'Nationwide Chain, '
+                          : ''
+                      }}{{ placeDetails.venue_type
                       }}{{
                         placeDetails.cuisine ? `, ${placeDetails.cuisine}` : ''
                       }}

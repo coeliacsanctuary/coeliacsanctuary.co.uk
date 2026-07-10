@@ -233,13 +233,7 @@ export type EateryBranchesCollection = {
 
 export type EateryBrowseDetails = Exclude<
   DetailedEatery,
-  | 'menu'
-  | 'reviews'
-  | 'features'
-  | 'opening_times'
-  | 'isNationwideBranch'
-  | 'branch'
-  | 'details'
+  'menu' | 'reviews' | 'features' | 'opening_times' | 'branch' | 'details'
 > & {
   reviews: {
     number: number;

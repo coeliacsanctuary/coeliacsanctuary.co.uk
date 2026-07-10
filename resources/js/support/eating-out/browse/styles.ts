@@ -31,3 +31,12 @@ export const markerStyle = (color: string): Style =>
       color,
     }),
   });
+
+export const searchLocationMarkerStyle = (): Style =>
+  new Style({
+    image: new Icon({
+      size: [60, 60],
+      src: '/images/svg/marker.svg',
+      color: '#000000',
+    }),
+  });
