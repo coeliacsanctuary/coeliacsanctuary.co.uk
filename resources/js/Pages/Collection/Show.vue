@@ -3,6 +3,7 @@ import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { CollectionPage } from '@/types/CollectionTypes';
 import CollectionGroupCard from '@/Components/PageSpecific/Collections/CollectionGroupCard.vue';
+import RenderedString from '@/Components/RenderedString.vue';
 
 defineProps<{ collection: CollectionPage }>();
 </script>
@@ -43,10 +44,9 @@ defineProps<{ collection: CollectionPage }>();
     v-if="collection.body"
     class="space-y-3"
   >
-    <article
-      class="prose prose-lg max-w-none md:prose-xl"
-      v-html="collection.body"
-    />
+    <article class="prose prose-lg max-w-none md:prose-xl">
+      <RenderedString :content="collection.body" />
+    </article>
   </Card>
 
   <CollectionGroupCard

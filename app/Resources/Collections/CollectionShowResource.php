@@ -7,6 +7,7 @@ namespace App\Resources\Collections;
 use App\Models\Collections\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 /** @mixin Collection */
 class CollectionShowResource extends JsonResource
@@ -22,7 +23,13 @@ class CollectionShowResource extends JsonResource
             'published' => $this->published,
             'updated' => $this->lastUpdated,
             'description' => $this->description,
-            'body' => $this->body,
+            'body' => Str::of($this->body)
+                ->replace('&quot;', '"')
+                ->markdown([
+                    'renderer' => [
+                        'soft_break' => '<br />',
+                    ],
+                ]),
             'groups' => CollectionGroupResource::collection($this->groups),
         ];
     }
