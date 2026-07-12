@@ -7,7 +7,7 @@ import {
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
 import NationwideEateryCard from '@/Components/PageSpecific/EatingOut/NationwideEateryCard.vue';
 import Heading from '@/Components/Heading.vue';
-import SubHeading from '@/Components/SubHeading.vue';
+import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
 
 defineProps<{
   county: NationwidePage;
@@ -18,60 +18,70 @@ defineProps<{
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading> Gluten Free Nationwide Chains </Heading>
+    <Heading> Gluten Free Nationwide Chains in the UK </Heading>
 
     <p class="prose prose-lg max-w-none">
-      Here you can see all of the nationwide chains in our Where to Eat guide
-      that offer gluten free options across the UK.
+      Discover nationwide chain restaurants, cafés and pubs offering gluten free
+      options across the UK. Whether you're living with coeliac disease or
+      following a gluten free diet, our guide helps you find places to eat,
+      complete with reviews, ratings and useful information from the gluten free
+      community.
     </p>
 
     <p class="prose prose-lg max-w-none">
-      Most of the places to eat listed in our guide are contributed by people
-      like you, other Coeliac's or people with a gluten intolerance who know of
-      local places in their local area and are kind enough to let us know.
+      Many of the venues featured in our Where to Eat guide have been
+      recommended by people with coeliac disease or gluten intolerance who have
+      first-hand experience dining there. Their recommendations help keep our
+      guide accurate, up to date and useful for anyone looking for gluten free
+      places to eat across the UK.
     </p>
   </Card>
 
   <template v-if="topRated.length">
-    <Card class="mt-3 flex flex-col space-y-4">
-      <SubHeading> Highest Rated Gluten Free Nationwide Chains </SubHeading>
+    <TopPlaces>
+      <template #title>Top Rated Gluten Free Chain Restaurants</template>
 
-      <p class="prose prose-lg max-w-none">
-        Discover the best rated places nationwide chains to eat gluten free in,
-        voted by people like you! From cozy cafes to restaurants, these
-        establishments offer exceptional gluten-free options. Enjoy a delightful
-        meal or snack, tailored to your dietary needs.
-      </p>
+      <template #default>
+        <p class="prose prose-lg max-w-none">
+          These are the three highest rated nationwide chains in our Where to
+          Eat guide, based on reviews from our community. If you're looking for
+          trusted gluten free options, these cafés, pubs and restaurants
+          consistently receive excellent feedback from people with coeliac
+          disease and those following a gluten free diet.
+        </p>
 
-      <div class="group grid gap-3 md:grid-cols-3">
-        <CountyEatery
-          v-for="eatery in topRated"
-          :key="eatery.name"
-          :eatery="eatery"
-        />
-      </div>
-    </Card>
+        <div class="group grid gap-3 md:grid-cols-3">
+          <CountyEatery
+            v-for="eatery in topRated"
+            :key="eatery.name"
+            :eatery="eatery"
+          />
+        </div>
+      </template>
+    </TopPlaces>
   </template>
 
   <template v-if="mostRated.length">
-    <Card class="mt-3 flex flex-col space-y-4">
-      <SubHeading> Most rated nationwide chains to eat gluten free </SubHeading>
+    <TopPlaces>
+      <template #title> Most Reviewed Gluten Free Chain Restaurants </template>
 
-      <p class="prose prose-lg max-w-none">
-        Discover the most reviewed and highly praised chains to eat gluten free
-        around the UK, loved by people just like you! These establishments have
-        garnered a significant number of reviews, ensuring a great gluten free
-        experience.
-      </p>
+      <template #default>
+        <p class="prose prose-lg max-w-none">
+          These are the three most reviewed chain restaurants in our Where to
+          Eat guide. With the highest number of community reviews, they're among
+          the most popular places to eat for people with coeliac disease and
+          those following a gluten free diet.
+        </p>
 
-      <div class="group grid gap-3 md:grid-cols-3">
-        <CountyEatery
-          v-for="eatery in mostRated"
-          :key="eatery.name"
-          :eatery="eatery"
-        />
-      </div>
-    </Card>
+        <div class="group grid gap-3 md:grid-cols-3">
+          <CountyEatery
+            v-for="eatery in mostRated"
+            :key="eatery.name"
+            :eatery="eatery"
+          />
+        </div>
+      </template>
+    </TopPlaces>
   </template>
 
   <Card class="mt-3 flex flex-col space-y-4">

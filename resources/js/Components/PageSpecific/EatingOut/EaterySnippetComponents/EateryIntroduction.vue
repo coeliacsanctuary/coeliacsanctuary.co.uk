@@ -15,7 +15,7 @@ const props = defineProps<{
   cuisine?: string;
   website?: string;
   isBranch?: boolean;
-  isFullyGf: boolean;
+  isFullyGf?: boolean;
 }>();
 
 const icon = computed((): string => {
@@ -35,10 +35,7 @@ const icon = computed((): string => {
   <div class="flex justify-between">
     <div class="mb-4 flex-1">
       <div class="flex items-center text-2xl font-semibold md:text-3xl">
-        <div
-          v-if="isNotNationwide"
-          class="mr-2 w-10 pt-2 text-primary"
-        >
+        <div class="mr-2 w-10 pt-2 text-primary">
           <Icon
             :name="icon"
             class="h-10 w-10"
