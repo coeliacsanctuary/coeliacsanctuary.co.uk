@@ -21,13 +21,13 @@ use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToEateries;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\ExposeSearchResultEateryIdsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromFiltersAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromQueryBuilderConfigurationAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInAreaAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInCollectionAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInLatLngRadiusAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInSearchAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInTownAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesFromFiltersAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInCollectionAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesFromQueryBuilderConfigurationAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInLatLngAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInLondonAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInTownAction;
@@ -151,7 +151,7 @@ abstract class GetEateriesTestCase extends TestCase
             eateries: $eateries,
         );
 
-        $this->callAction(GetEateriesInCollectionAction::class, $pipelineData, $closure);
+        $this->callAction(GetEateriesFromQueryBuilderConfigurationAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }
@@ -174,7 +174,6 @@ abstract class GetEateriesTestCase extends TestCase
 
         return $toReturn;
     }
-
 
     protected function callGetEateriesFromFiltersAction(Collection $eateries = new Collection(), array $filters = []): ?GetEateriesPipelineData
     {
@@ -276,7 +275,7 @@ abstract class GetEateriesTestCase extends TestCase
             eateries: $eateries,
         );
 
-        $this->callAction(GetNationwideBranchesInCollectionAction::class, $pipelineData, $closure);
+        $this->callAction(GetNationwideBranchesFromQueryBuilderConfigurationAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }

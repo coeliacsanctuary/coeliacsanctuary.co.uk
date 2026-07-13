@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers;
 
 use App\Contracts\RouteFallbackResolverContract;
-use App\Support\RouteFallbackResolvers\RedirectFallbackResolver;
+use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
+use App\Support\MagicRouting\Resolvers\RedirectFallbackResolver;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -25,10 +26,31 @@ class FallbackControllerTest extends TestCase
     }
 
     #[Test]
-    public function itChecksTheRedirectFallbackResolverIfNoOtherResolvesReturnHandleable(): void
+    public function itChecksThHundredPercentGlutenFreeFallbackResolverFirst(): void
     {
         /** @var class-string<RouteFallbackResolverContract>[] $handlersToReject */
         $handlersToReject = [];
+
+        $this->mockResolversToReject($handlersToReject);
+
+        $this->mock(HundredPercentGlutenFreeEateriesFallbackResolver::class)
+            ->shouldReceive('canHandle')
+            ->andReturnTrue()
+            ->once()
+            ->getMock()
+            ->shouldReceive('handle')
+            ->once();
+
+        $this->get('foobar');
+    }
+
+    #[Test]
+    public function itChecksTheRedirectFallbackResolverIfNoOtherResolvesReturnHandleable(): void
+    {
+        /** @var class-string<RouteFallbackResolverContract>[] $handlersToReject */
+        $handlersToReject = [
+            HundredPercentGlutenFreeEateriesFallbackResolver::class,
+        ];
 
         $this->mockResolversToReject($handlersToReject);
 
@@ -48,6 +70,7 @@ class FallbackControllerTest extends TestCase
     {
         /** @var class-string<RouteFallbackResolverContract>[] $handlersToReject */
         $handlersToReject = [
+            HundredPercentGlutenFreeEateriesFallbackResolver::class,
             RedirectFallbackResolver::class,
         ];
 

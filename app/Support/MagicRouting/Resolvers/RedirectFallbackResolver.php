@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\RouteFallbackResolvers;
+namespace App\Support\MagicRouting\Resolvers;
 
 use App\Actions\Redirects\CheckForRouteRedirectAction;
 use App\Actions\Redirects\HandleRedirectResponseAction;
@@ -30,7 +30,7 @@ class RedirectFallbackResolver implements RouteFallbackResolverContract
         return false;
     }
 
-    public function handle(Request $request): Responsable | RedirectResponse
+    public function handle(Request $request): Responsable|RedirectResponse
     {
         if ( ! $this->redirect) {
             // this should never happen

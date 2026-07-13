@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Support\RouteFallbackResolvers;
+namespace Tests\Unit\Support\MagicRouting\Resolvers;
 
 use App\Actions\Redirects\CheckForRouteRedirectAction;
 use App\Actions\Redirects\HandleRedirectResponseAction;
 use App\Models\Redirect;
-use App\Support\RouteFallbackResolvers\RedirectFallbackResolver;
+use App\Support\MagicRouting\Resolvers\RedirectFallbackResolver;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
