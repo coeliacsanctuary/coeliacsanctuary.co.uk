@@ -131,3 +131,5 @@ Please keep it at a reasonable length, matching the examples returned by the too
 ### Features
 
 An eatery can have many features, use the EateryFeatureList tool to list all of the features we have (eg 100% gluten free, Afternoon Tea, Gluten Free Menu) and assign any that match from your research.
+
+Note, only apply the 'Gluten Free Menu' feature if the eatery has a dedicated gluten free menu, rather than just options on a standard menu.
