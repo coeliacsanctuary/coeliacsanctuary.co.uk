@@ -32,14 +32,6 @@ class CountyController
         GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
         Inertia $inertia,
     ): Response {
-        // move to action in future
-        if ( ! $routeRecord->body) {
-            $agent = HundredPercentGlutenFreeCountyContentAgent::make($routeRecord);
-
-            $body = $agent->prompt('Generate the content');
-            $routeRecord->update(['body' => $body]);
-        }
-
         /** @var EateryCounty $county */
         $county = $routeRecord->location;
 
