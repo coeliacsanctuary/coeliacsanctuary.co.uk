@@ -118,6 +118,26 @@ class HundredPercentGlutenFreeCountyContentAgentTest extends TestCase
     }
 
     #[Test]
+    public function theSchemaContainsAMetaDescriptionKey(): void
+    {
+        $agent = $this->makeAgent();
+
+        $schema = $agent->schema(new JsonSchemaTypeFactory());
+
+        $this->assertArrayHasKey('meta_description', $schema);
+    }
+
+    #[Test]
+    public function theSchemaContainsAMetaKeywordsKey(): void
+    {
+        $agent = $this->makeAgent();
+
+        $schema = $agent->schema(new JsonSchemaTypeFactory());
+
+        $this->assertArrayHasKey('meta_keywords', $schema);
+    }
+
+    #[Test]
     public function theSchemaContainsAKeyForEachTown(): void
     {
         $agent = $this->makeAgent();

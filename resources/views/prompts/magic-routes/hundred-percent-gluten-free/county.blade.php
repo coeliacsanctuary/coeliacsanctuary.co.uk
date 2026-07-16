@@ -65,6 +65,12 @@ Focus the content on the gluten free aspects, rather than generic aspects, but d
     Place this this SEO rich town overview in the `{{ $eatery->town->slug }}` key in the structured output data.
 @endforeach
 
+## Metas
+
+Please also generate a meta description, for SEO, and place it in the `meta_description` key of the structured output data, ensure the name of the website (Coeliac Sanctuary) is included.
+
+Please also generate some meta keywords, for SEO, sticking to standard keyword conventions, and place it in the `meta_keywords` key of the structured output data, as an array of strings.
+
 ## Additional guidelines
 
 - Don't refer to the website, or the guide or anything as 'our' - refer to it in first person, ie 'my guide'

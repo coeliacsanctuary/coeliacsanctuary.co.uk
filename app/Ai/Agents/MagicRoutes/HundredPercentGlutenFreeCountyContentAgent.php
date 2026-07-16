@@ -73,6 +73,8 @@ class HundredPercentGlutenFreeCountyContentAgent implements Agent, HasStructured
     {
         return [
             'page_intro' => $schema->string()->required(),
+            'meta_description' => $schema->string()->required(),
+            'meta_keywords' => $schema->array()->items($schema->string())->required(),
             ...$this->eateriesGroupedByTown()
                 ->mapWithKeys(fn (Collection $eateries) => [$eateries->first()->town?->slug => $schema->string()->required()]),
         ];
