@@ -15,6 +15,19 @@ export type CountyPage = County & {
   towns: CountyPageTown[];
 };
 
+export type MagicRouteCountyPage = Exclude<
+  CountyPage,
+  'title' | 'eateries' | 'reviews' | 'towns'
+>;
+
+export type MagicRouteCountyTown = {
+  name: string;
+  slug: string;
+  link: string;
+  intro: string;
+  eateries: TownEatery[];
+};
+
 export type NationwidePage = County & {
   eateries: number;
   reviews: number;
