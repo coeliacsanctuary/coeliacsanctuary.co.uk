@@ -9,6 +9,7 @@ use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
+use App\Pipelines\EatingOut\GetEateries\GetEateriesForMagicRoutePipeline;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesFromCollectionPipeline;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromQueryBuilderConfigurationAction;
@@ -59,14 +60,14 @@ class GetEateriesFromMagicRoutePipelineTest extends TestCase
     #[Test]
     public function itCallsTheActions(): void
     {
+
         $this->expectPipelineToExecute(GetEateriesFromQueryBuilderConfigurationAction::class);
         $this->expectPipelineToExecute(GetNationwideBranchesFromQueryBuilderConfigurationAction::class);
         $this->expectPipelineToExecute(HydrateEateriesAction::class);
         $this->expectPipelineToExecute(HydrateBranchesAction::class);
         $this->expectPipelineToExecute(CheckForMissingEateriesAction::class);
         $this->expectPipelineToExecute(RelateEateriesAndBranchesAction::class);
-        $this->expectPipelineToExecute(SerialiseResultsAction::class);
 
-        $this->runPipeline(GetEateriesFromCollectionPipeline::class, new Configuration(), []);
+        $this->runPipeline(GetEateriesForMagicRoutePipeline::class, new Configuration(), []);
     }
 }
