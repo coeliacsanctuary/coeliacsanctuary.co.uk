@@ -14,6 +14,7 @@ class EateryMagicRouteRecord extends Model
     protected $table = 'wheretoeat_magic_route_records';
 
     protected $casts = [
+        'body' => 'array',
         'resolver_type' => EateryMagicRouteType::class,
         'builder_config' => Configuration::class,
     ];
