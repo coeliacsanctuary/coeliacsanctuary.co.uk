@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries;
 
-use App\Actions\OpenGraphImages\GenerateCountyOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
-use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeCountyContentAgent;
 use App\Concerns\FormatsMarkdown;
 use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
