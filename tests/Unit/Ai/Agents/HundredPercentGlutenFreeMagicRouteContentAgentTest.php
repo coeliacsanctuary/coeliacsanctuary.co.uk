@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Ai\Agents;
 
-use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeCountyContentAgent;
+use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeMagicRouteContentAgent;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
@@ -19,7 +19,7 @@ use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
 
-class HundredPercentGlutenFreeCountyContentAgentTest extends TestCase
+class HundredPercentGlutenFreeMagicRouteContentAgentTest extends TestCase
 {
     protected EateryCounty $county;
 
@@ -49,7 +49,7 @@ class HundredPercentGlutenFreeCountyContentAgentTest extends TestCase
         ]);
     }
 
-    protected function makeAgent(): HundredPercentGlutenFreeCountyContentAgent
+    protected function makeAgent(): HundredPercentGlutenFreeMagicRouteContentAgent
     {
         $dto = new GetEateriesPipelineData(filters: [], hydrated: $this->eateries);
 
@@ -58,23 +58,38 @@ class HundredPercentGlutenFreeCountyContentAgentTest extends TestCase
             ->shouldReceive('rawData')
             ->andReturn($dto);
 
-        return new HundredPercentGlutenFreeCountyContentAgent($this->routeRecord);
+        return new HundredPercentGlutenFreeMagicRouteContentAgent($this->routeRecord);
     }
 
     #[Test]
-    public function itThrowsWhenLocationIsNotACounty(): void
+    public function itThrowsWhenLocationIsNeitherACountyNorATown(): void
     {
-        $town = $this->create(EateryTown::class);
-
         $record = $this->create(EateryMagicRouteRecord::class, [
-            'location_type' => EateryTown::class,
-            'location_id' => $town->id,
+            'location_type' => Eatery::class,
+            'location_id' => $this->eateries->first()->id,
         ]);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Magic route must be a for a county');
+        $this->expectExceptionMessage('Magic route must be a for a town or county');
 
-        new HundredPercentGlutenFreeCountyContentAgent($record);
+        new HundredPercentGlutenFreeMagicRouteContentAgent($record);
+    }
+
+    protected function makeTownAgent(): HundredPercentGlutenFreeMagicRouteContentAgent
+    {
+        $townRecord = $this->create(EateryMagicRouteRecord::class, [
+            'location_type' => EateryTown::class,
+            'location_id' => $this->town->id,
+        ]);
+
+        $dto = new GetEateriesPipelineData(filters: [], hydrated: $this->eateries);
+
+        $this->mock(GetEateriesForMagicRoutePipeline::class)
+            ->shouldReceive('run')
+            ->shouldReceive('rawData')
+            ->andReturn($dto);
+
+        return new HundredPercentGlutenFreeMagicRouteContentAgent($townRecord);
     }
 
     #[Test]
@@ -147,5 +162,26 @@ class HundredPercentGlutenFreeCountyContentAgentTest extends TestCase
         $this->eateries->pluck('town.slug')->unique()->each(
             fn (string $slug) => $this->assertArrayHasKey($slug, $schema),
         );
+    }
+
+    #[Test]
+    public function itAcceptsATownLocation(): void
+    {
+        $this->assertInstanceOf(
+            HundredPercentGlutenFreeMagicRouteContentAgent::class,
+            $this->makeTownAgent(),
+        );
+    }
+
+    #[Test]
+    public function itReturnsEmptyInstructionsForTown(): void
+    {
+        $this->assertEmpty((string) $this->makeTownAgent()->instructions());
+    }
+
+    #[Test]
+    public function itReturnsEmptySchemaForTown(): void
+    {
+        $this->assertEmpty($this->makeTownAgent()->schema(new JsonSchemaTypeFactory()));
     }
 }
