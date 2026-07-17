@@ -12,6 +12,7 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesForMagicRoutePipeline;
+use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Testing\TestResponse;
@@ -109,6 +110,10 @@ class CountyControllerTest extends TestCase
 
     protected function visitMagicRoute(): TestResponse
     {
-        return $this->get('/eating-100-percent-gluten-free-in-' . $this->county->slug);
+        $path = app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->generateRoutePath([
+            'location' => $this->county->slug,
+        ]);
+
+        return $this->get($path);
     }
 }
