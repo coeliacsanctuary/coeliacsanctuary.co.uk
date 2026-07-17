@@ -9,4 +9,6 @@ use Laravel\Ai\Contracts\Agent;
 /**
  * @extends Agent
  */
-interface MagicRouteAgentContract {}
+interface MagicRouteAgentContract
+{
+}

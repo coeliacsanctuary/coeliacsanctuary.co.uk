@@ -10,7 +10,9 @@ class StubController
 {
     public ?StubDependency $receivedDep = null;
 
-    public function __construct(protected readonly StubResponse $response = new StubResponse()) {}
+    public function __construct(protected readonly StubResponse $response = new StubResponse())
+    {
+    }
 
     public function __invoke(StubDependency $dep): Responsable
     {

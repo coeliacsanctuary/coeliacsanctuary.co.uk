@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Concerns;
 
 use Illuminate\Support\Str;
 
-trait FormatsMarkdown {
+trait FormatsMarkdown
+{
     protected function formatMarkdown(string $string, ?callable $using = null)
     {
         return Str::of($string)
-            ->when($using !== null, fn(Str $str) => $str->tap($using))
+            ->when($using !== null, fn (Str $str) => $str->tap($using))
             ->replace('&quot;', '"')
             ->markdown([
                 'renderer' => [

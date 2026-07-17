@@ -112,7 +112,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent implements Agent, HasStruct
         ];
     }
 
-    protected function townSchema(JSONSchema $schema): array
+    protected function townSchema(JsonSchema $schema): array
     {
         return []; //todo
     }

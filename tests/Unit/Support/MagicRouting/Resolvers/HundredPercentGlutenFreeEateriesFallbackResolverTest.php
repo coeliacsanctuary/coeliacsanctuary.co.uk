@@ -9,8 +9,6 @@ use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\CountyController;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryMagicRouteRecord;
-use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
-use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
 use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
 use App\Support\MagicRouting\RouteToController;

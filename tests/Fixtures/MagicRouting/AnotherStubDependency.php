@@ -4,4 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Fixtures\MagicRouting;
 
-class AnotherStubDependency {}
+class AnotherStubDependency
+{
+}

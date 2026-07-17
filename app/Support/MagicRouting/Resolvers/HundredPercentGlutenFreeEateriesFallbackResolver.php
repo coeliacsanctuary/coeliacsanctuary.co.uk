@@ -41,12 +41,12 @@ class HundredPercentGlutenFreeEateriesFallbackResolver implements RouteFallbackR
     public function regex(): string
     {
         return Str::of($this->matchPattern())
-            ->pipe(function(Stringable $string) {
-               foreach($this->routeParameters() as $parameter) {
-                   $string = $string->replace('{'.$parameter.'}', '([a-z-]+)');
-               }
+            ->pipe(function (Stringable $string) {
+                foreach ($this->routeParameters() as $parameter) {
+                    $string = $string->replace('{' . $parameter . '}', '([a-z-]+)');
+                }
 
-               return $string;
+                return $string;
             })
             ->prepend('/^')
             ->append('$/')
@@ -56,14 +56,14 @@ class HundredPercentGlutenFreeEateriesFallbackResolver implements RouteFallbackR
     public function generateRoutePath(array $parameters = []): string
     {
         return Str::of($this->matchPattern())
-            ->pipe(function(Stringable $string) use ($parameters) {
-                foreach($parameters as $parameter => $value) {
+            ->pipe(function (Stringable $string) use ($parameters) {
+                foreach ($parameters as $parameter => $value) {
                     throw_if(
-                        !in_array($parameter, $this->routeParameters()),
+                        ! in_array($parameter, $this->routeParameters()),
                         new RuntimeException("Unexpected route parameter `{$parameter}`")
                     );
 
-                    $string = $string->replace('{'.$parameter.'}', $value);
+                    $string = $string->replace('{' . $parameter . '}', $value);
                 }
 
                 return $string;
