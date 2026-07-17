@@ -16,6 +16,7 @@ use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackR
 use App\Support\MagicRouting\RouteToController;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\Fixtures\MagicRouting\StubResponse;
 use Tests\TestCase;
 
@@ -35,6 +36,41 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
         $request = Request::create('/eating-out/london');
 
         $this->assertFalse(app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->canHandle($request));
+    }
+
+    #[Test]
+    public function itReturnsTheCorrectRegexString(): void
+    {
+        $this->assertSame(
+            '/^eating-100-percent-gluten-free-in-([a-z-]+)$/',
+            app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->regex(),
+        );
+    }
+
+    #[Test]
+    public function itGeneratesTheCorrectPathForASingleWordLocation(): void
+    {
+        $this->assertSame(
+            'eating-100-percent-gluten-free-in-london',
+            app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->generateRoutePath(['location' => 'london']),
+        );
+    }
+
+    #[Test]
+    public function itGeneratesTheCorrectPathForAHyphenatedLocation(): void
+    {
+        $this->assertSame(
+            'eating-100-percent-gluten-free-in-north-yorkshire',
+            app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->generateRoutePath(['location' => 'north-yorkshire']),
+        );
+    }
+
+    #[Test]
+    public function itThrowsARuntimeExceptionWhenAnUnexpectedParameterIsPassed(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->generateRoutePath(['county' => 'london']);
     }
 
     #[Test]

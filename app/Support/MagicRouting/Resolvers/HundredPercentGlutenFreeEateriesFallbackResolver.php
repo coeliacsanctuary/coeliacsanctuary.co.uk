@@ -18,19 +18,62 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
+use RuntimeException;
 
 class HundredPercentGlutenFreeEateriesFallbackResolver implements RouteFallbackResolverContract
 {
-    protected string $regex = '/^eating-100-percent-gluten-free-in-([a-z-]+)$/';
-
     public function canHandle(Request $request): bool
     {
-        return Str::isMatch($this->regex, $request->path());
+        return Str::isMatch($this->regex(), $request->path());
+    }
+
+    protected function matchPattern(): string
+    {
+        return 'eating-100-percent-gluten-free-in-{location}';
+    }
+
+    protected function routeParameters(): array
+    {
+        return ['location'];
+    }
+
+    public function regex(): string
+    {
+        return Str::of($this->matchPattern())
+            ->pipe(function(Stringable $string) {
+               foreach($this->routeParameters() as $parameter) {
+                   $string = $string->replace('{'.$parameter.'}', '([a-z-]+)');
+               }
+
+               return $string;
+            })
+            ->prepend('/^')
+            ->append('$/')
+            ->toString();
+    }
+
+    public function generateRoutePath(array $parameters = []): string
+    {
+        return Str::of($this->matchPattern())
+            ->pipe(function(Stringable $string) use ($parameters) {
+                foreach($parameters as $parameter => $value) {
+                    throw_if(
+                        !in_array($parameter, $this->routeParameters()),
+                        new RuntimeException("Unexpected route parameter `{$parameter}`")
+                    );
+
+                    $string = $string->replace('{'.$parameter.'}', $value);
+                }
+
+                return $string;
+            })
+            ->toString();
     }
 
     public function handle(Request $request): Responsable|RedirectResponse
     {
-        $location = Str::match($this->regex, $request->path());
+        $location = Str::match($this->regex(), $request->path());
 
         $routeRecord = app(FindEateryMagicRouteRecordAction::class)->handle(
             EateryMagicRouteType::HundredPercentGlutenFree,
