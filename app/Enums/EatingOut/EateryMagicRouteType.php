@@ -14,6 +14,13 @@ enum EateryMagicRouteType: string
 {
     case HundredPercentGlutenFree = 'hundred-percent-gluten-free';
 
+    public function label(): string
+    {
+        return match ($this) {
+            self::HundredPercentGlutenFree => 'Hundred Percent Gluten Free',
+        };
+    }
+
     public function builderConfiguration(): ?callable
     {
         return match ($this) {

@@ -10,7 +10,11 @@
 
     $totalEateries = $eateries->count();
     $totalTowns = $townGroups->count();
-    $averageRatingInCounty = $eateries->average(fn(Eatery $eatery) => (float)$eatery->average_rating);
+    $averageRatingInCounty = $eateries
+        ->filter(fn(Eatery $eatery) => (float)$eatery->average_rating > 0)
+        ->average(fn(Eatery $eatery) => (float)$eatery->average_rating);
+    $ratedEateries = $averageRatingInCounty = $eateries->filter(fn(Eatery $eatery) => (float)$eatery->average_rating > 0);
+
     $totalRatingsInCounty = $eateries->sum(fn(Eatery $eatery) => $eatery->reviews->count());
 
     $allEateriesInCounty = $county->activeTowns->sum(fn(EateryTown $town) => $town->live_eateries_count + $town->live_branches_count)
@@ -25,7 +29,7 @@ Feel free to use standard markdown/html markdown for emphasis.
 Please generate a SEO rich page introduction, at least 4 paragraphs, please include in a natural way:
     - Generic content about the county, what its known for, its tourist hot spots, with a specific focus on the towns included below
     - The number of 100% gluten free eateries in the county
-    - The average rating of those eateries, but only if the average is worth mentioning
+    - The average rating of those eateries, but only if the average is worth mentioning, ie a lower average rating isn't really worth shouting about, typically 4+.
     - The total number of eateries in that county overall in our eating out guide.
     - A link or multiple links to the main {{ $county->county }} within the eating out guide, but naturally, and where it makes sense.
     - Mix the structure, and wording up each time, dont start each one in a standard, consistent way, be unique, SEO rich, and natural.
@@ -37,6 +41,7 @@ Number of 100% Gluten Free Eateries in {{ $county->county }}: {{ $totalEateries 
 Number of eateries in {{ $county->county }}: {{ $allEateriesInCounty }}
 Average Rating of 100% GF Eateries in {{ $county->county }}: {{ $averageRatingInCounty }}/5
 Number of ratings: {{ $totalRatingsInCounty }}
+Number of 100% GF eateries with ratings in {{ $county->county }}: {{ $ratedEateries->count() }}
 Absolute Link: {{ $county->absoluteLink() }}
 
 Please place your SEO rich page introduction in the `page_intro` key of the structured output data.
@@ -74,4 +79,4 @@ Please also generate some meta keywords, for SEO, sticking to standard keyword c
 ## Additional guidelines
 
 - Don't refer to the website, or the guide or anything as 'our' - refer to it in first person, ie 'my guide'
-- When mentioning ratings, format them as 'x out of 5 stars', and round to the nearest half, if it is a whole number, then omit the .0, eg '4 out of 5 stars' or '3.5 out of 5 stars'
+- When mentioning ratings, format them as 'x out of 5 stars', and round to the nearest half, if it is a whole number, then omit the .0, eg '4 out of 5 stars' or '3.5 out of 5 stars' - however dont mention that it is rounded, just note that is how the number must be displayed.
