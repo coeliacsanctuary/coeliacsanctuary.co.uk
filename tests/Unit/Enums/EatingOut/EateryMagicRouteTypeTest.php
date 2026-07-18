@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Enums\EatingOut;
 
 use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeMagicRouteContentAgent;
-use App\Contracts\Ai\Agents\MagicRoutes\MagicRouteAgentContract;
+use App\Ai\Agents\MagicRoutes\MagicRouteAgent;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Models\EatingOut\Eatery;
@@ -79,7 +79,7 @@ class EateryMagicRouteTypeTest extends TestCase
 
         $agent = EateryMagicRouteType::HundredPercentGlutenFree->agent([$routeRecord]);
 
-        $this->assertInstanceOf(MagicRouteAgentContract::class, $agent);
+        $this->assertInstanceOf(MagicRouteAgent::class, $agent);
     }
 
     #[Test]
