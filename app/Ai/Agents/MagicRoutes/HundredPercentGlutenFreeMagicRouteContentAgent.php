@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Ai\Agents\MagicRoutes;
 
-use App\Contracts\Ai\Agents\MagicRoutes\MagicRouteAgentContract;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
@@ -14,13 +13,12 @@ use App\Pipelines\EatingOut\GetEateries\GetEateriesForMagicRoutePipeline;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
-use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\HasStructuredOutput;
 use Laravel\Ai\Promptable;
 use RuntimeException;
 use Stringable;
 
-class HundredPercentGlutenFreeMagicRouteContentAgent implements Agent, HasStructuredOutput, MagicRouteAgentContract
+class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent implements HasStructuredOutput
 {
     use Promptable;
 
@@ -30,6 +28,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent implements Agent, HasStruct
     public function __construct(protected EateryMagicRouteRecord $routeRecord)
     {
         throw_if(
+            // @phpstan-ignore-next-line
             $this->routeRecord->resolver_type !== EateryMagicRouteType::HundredPercentGlutenFree,
             new RuntimeException('Magic route must be hundred percent gluten free'),
         );
@@ -55,7 +54,10 @@ class HundredPercentGlutenFreeMagicRouteContentAgent implements Agent, HasStruct
         $pipeline = app(GetEateriesForMagicRoutePipeline::class);
         $pipeline->run($this->routeRecord->builder_config);
 
-        $this->eateries = $pipeline->rawData()->hydrated;
+        /** @var Collection<int, Eatery> $eateries */
+        $eateries = $pipeline->rawData()->hydrated;
+
+        $this->eateries = $eateries;
     }
 
     /**
@@ -63,9 +65,10 @@ class HundredPercentGlutenFreeMagicRouteContentAgent implements Agent, HasStruct
      */
     public function instructions(): Stringable|string
     {
-        return match(true) {
+        return match (true) {
             $this->isForCounty() => $this->countyInstructions(),
             $this->isForTown() => $this->townInstruction(),
+            default => throw new RuntimeException('Unknown location type'),
         };
     }
 
@@ -83,6 +86,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent implements Agent, HasStruct
         return '';  // todo
     }
 
+    /** @return Collection<int, Collection<int, Eatery>> */
     protected function eateriesGroupedByTown(): Collection
     {
         throw_if(
@@ -95,9 +99,10 @@ class HundredPercentGlutenFreeMagicRouteContentAgent implements Agent, HasStruct
 
     public function schema(JsonSchema $schema): array
     {
-        return match(true) {
+        return match (true) {
             $this->isForCounty() => $this->countySchema($schema),
             $this->isForTown() => $this->townSchema($schema),
+            default => throw new RuntimeException('Unknown location type'),
         };
     }
 
@@ -108,13 +113,13 @@ class HundredPercentGlutenFreeMagicRouteContentAgent implements Agent, HasStruct
             'meta_description' => $schema->string()->required(),
             'meta_keywords' => $schema->array()->items($schema->string())->required(),
             ...$this->eateriesGroupedByTown()
-                ->mapWithKeys(fn (Collection $eateries) => [$eateries->first()->town?->slug => $schema->string()->required()]),
+                ->mapWithKeys(fn (Collection $eateries) => [$eateries->first()?->town?->slug => $schema->string()->required()]),
         ];
     }
 
     protected function townSchema(JsonSchema $schema): array
     {
-        return []; //todo
+        return []; // todo
     }
 
     protected function isForCounty(): bool

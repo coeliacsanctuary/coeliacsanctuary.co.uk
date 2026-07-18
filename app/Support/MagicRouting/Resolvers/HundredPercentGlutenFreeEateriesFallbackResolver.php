@@ -81,15 +81,10 @@ class HundredPercentGlutenFreeEateriesFallbackResolver implements RouteFallbackR
             $this->buildConfiguration(...),
         );
 
-        // return inertia page with the resolved eateries
-        // if area, then return the page with list
-        // if town, and not london, return the page with the list
-        // if town, and london, return a page spit into sections via areas
-        // if county, return a page split into sections via towns
-
         $controller = match ($routeRecord->location::class) {
             EateryCounty::class => CountyController::class,
             EateryTown::class => 'EatingOut/MagicRoutes/HundredPercentGlutenFree/Town',
+            default => throw new RuntimeException('Unknown location type'),
         };
 
         return app(RouteToController::class)->handle(app($controller), [

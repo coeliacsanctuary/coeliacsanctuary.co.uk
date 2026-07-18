@@ -13,7 +13,6 @@ use App\Pipelines\EatingOut\GetEateries\Steps\HydrateBranchesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\HydrateEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\RelateEateriesAndBranchesAction;
 use App\Services\EatingOut\Collection\Configuration;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -23,12 +22,9 @@ class GetEateriesForMagicRoutePipeline
     protected ?GetEateriesPipelineData $rawDto = null;
 
     /**
-     * @param  array{categories: string[]|null, features: string[]|null, venueTypes: string[]|null, towns:
-     *     string[]|null, counties: string[]|null}  $filters
-     * @param  class-string<JsonResource>  $jsonResource
      * @return Collection<int, Eatery>
      */
-    public function run(Configuration $configuration, array $filters = []): Collection
+    public function run(Configuration $configuration): Collection
     {
         $pipes = [
             GetEateriesFromQueryBuilderConfigurationAction::class,
@@ -40,7 +36,7 @@ class GetEateriesForMagicRoutePipeline
         ];
 
         $pipelineData = new GetEateriesPipelineData(
-            filters: $filters,
+            filters: ['categories' => null, 'features' => null, 'venueTypes' => null],
             configuration: $configuration,
         );
 

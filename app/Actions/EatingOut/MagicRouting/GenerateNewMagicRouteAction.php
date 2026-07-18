@@ -11,6 +11,7 @@ use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Models\EatingOut\EateryTown;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
+use RuntimeException;
 
 class GenerateNewMagicRouteAction
 {
@@ -22,6 +23,7 @@ class GenerateNewMagicRouteAction
             EateryCounty::class => 'county_id',
             EateryTown::class => 'town_id',
             EateryArea::class => 'area_id',
+            default => throw new RuntimeException('Unsupported location type'),
         };
 
         $where = new Where("[parent].{$key}", '=', $location->id);
@@ -42,7 +44,7 @@ class GenerateNewMagicRouteAction
 
         $agent = $eateryMagicRouteType->agent([$routeRecord]);
 
-        $routeRecord->body = $agent->prompt('Generate the content');
+        $routeRecord->body = json_decode($agent->prompt('Generate the content')->text, true);
         $routeRecord->save();
 
         return $routeRecord;

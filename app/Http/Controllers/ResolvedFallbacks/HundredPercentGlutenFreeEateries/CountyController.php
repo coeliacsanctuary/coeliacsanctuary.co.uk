@@ -34,7 +34,7 @@ class CountyController
         $county = $routeRecord->location;
 
         /** @var Collection<int, Eatery> $eateries */
-        $eateries = $getEateriesForMagicRoutePipeline->run($routeRecord->builder_config, []);
+        $eateries = $getEateriesForMagicRoutePipeline->run($routeRecord->builder_config);
 
         return $inertia
             ->title("Eating 100% Gluten Free in {$county->county}")

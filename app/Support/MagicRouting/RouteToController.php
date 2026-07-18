@@ -6,10 +6,12 @@ namespace App\Support\MagicRouting;
 
 use Illuminate\Contracts\Support\Responsable;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionParameter;
 
 class RouteToController
 {
+    /** @param callable&object $controller */
     public function handle(callable $controller, array $knownDependencies = []): Responsable
     {
         $reflectedHandler = new ReflectionMethod($controller, '__invoke');
@@ -20,8 +22,10 @@ class RouteToController
                 return $knownDependencies[$parameter->getName()];
             }
 
+            $reflectionType = $parameter->getType();
+
             /** @var class-string $type */
-            $type = $parameter->getType()?->getName();
+            $type = $reflectionType instanceof ReflectionNamedType ? $reflectionType->getName() : null;
 
             return app($type);
         });
