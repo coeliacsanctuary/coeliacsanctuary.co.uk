@@ -99,27 +99,32 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
 
     public function schema(JsonSchema $schema): array
     {
-        return match (true) {
+        $eaterySchema =  match (true) {
             $this->isForCounty() => $this->countySchema($schema),
             $this->isForTown() => $this->townSchema($schema),
             default => throw new RuntimeException('Unknown location type'),
         };
-    }
 
-    protected function countySchema(JsonSchema $schema): array
-    {
         return [
             'page_intro' => $schema->string()->required(),
             'meta_description' => $schema->string()->required(),
             'meta_keywords' => $schema->array()->items($schema->string())->required(),
-            ...$this->eateriesGroupedByTown()
-                ->mapWithKeys(fn (Collection $eateries) => [$eateries->first()?->town?->slug => $schema->string()->required()]),
+            ...$eaterySchema,
         ];
     }
 
-    protected function townSchema(JsonSchema $schema): array
+    protected function countySchema(JsonSchema $schema): iterable
     {
-        return []; // todo
+        return $this->eateriesGroupedByTown()->mapWithKeys(fn (Collection $eateries) => [
+            $eateries->first()?->town?->slug => $schema->string()->required(),
+        ]);
+    }
+
+    protected function townSchema(JsonSchema $schema): iterable
+    {
+        return $this->eateries->mapWithKeys(fn (Eatery $eatery) => [
+            $eatery->slug => $schema->string()->required(),
+        ]);
     }
 
     protected function isForCounty(): bool

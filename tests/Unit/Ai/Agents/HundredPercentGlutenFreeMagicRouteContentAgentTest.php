@@ -180,8 +180,36 @@ class HundredPercentGlutenFreeMagicRouteContentAgentTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsEmptySchemaForTown(): void
+    public function theTownSchemaContainsAPageIntroKey(): void
     {
-        $this->assertEmpty($this->makeTownAgent()->schema(new JsonSchemaTypeFactory()));
+        $schema = $this->makeTownAgent()->schema(new JsonSchemaTypeFactory());
+
+        $this->assertArrayHasKey('page_intro', $schema);
+    }
+
+    #[Test]
+    public function theTownSchemaContainsAMetaDescriptionKey(): void
+    {
+        $schema = $this->makeTownAgent()->schema(new JsonSchemaTypeFactory());
+
+        $this->assertArrayHasKey('meta_description', $schema);
+    }
+
+    #[Test]
+    public function theTownSchemaContainsAMetaKeywordsKey(): void
+    {
+        $schema = $this->makeTownAgent()->schema(new JsonSchemaTypeFactory());
+
+        $this->assertArrayHasKey('meta_keywords', $schema);
+    }
+
+    #[Test]
+    public function theTownSchemaContainsAKeyForEachEatery(): void
+    {
+        $schema = $this->makeTownAgent()->schema(new JsonSchemaTypeFactory());
+
+        $this->eateries->pluck('slug')->each(
+            fn (string $slug) => $this->assertArrayHasKey($slug, $schema),
+        );
     }
 }
