@@ -13,6 +13,8 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesForMagicRoutePipeline;
+use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
+use App\Services\EatingOut\Collection\Builder\ValueObjects\Order;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use Database\Seeders\EateryScaffoldingSeeder;
 use PHPUnit\Framework\Attributes\Test;
@@ -143,6 +145,62 @@ class GenerateNewMagicRouteActionTest extends TestCase
         $this->assertTrue(
             $config->getWheres()->contains(
                 fn (Where $where) => $where->jsonSerialize()[0] === 'wheretoeat_assigned_features.feature_id'
+            )
+        );
+    }
+
+    #[Test]
+    public function itAlwaysAddsANameOrderClause(): void
+    {
+        $this->callAction(GenerateNewMagicRouteAction::class, EateryMagicRouteType::HundredPercentGlutenFree, $this->county);
+
+        $record = EateryMagicRouteRecord::query()->first();
+
+        $this->assertTrue(
+            $record->builder_config->getOrderings()->contains(
+                fn (Order $order) => $order->jsonSerialize() === ['[parent].name', 'asc', null, null, null]
+            )
+        );
+    }
+
+    #[Test]
+    public function itAddsATownJoinWhenTheLocationIsACounty(): void
+    {
+        $this->callAction(GenerateNewMagicRouteAction::class, EateryMagicRouteType::HundredPercentGlutenFree, $this->county);
+
+        $record = EateryMagicRouteRecord::query()->first();
+
+        $this->assertTrue(
+            $record->builder_config->getJoins()->contains(
+                fn (Join $join) => $join->jsonSerialize() === ['wheretoeat_towns', 'wheretoeat_towns.id', '[parent].town_id', null]
+            )
+        );
+    }
+
+    #[Test]
+    public function itAddsATownOrderWhenTheLocationIsACounty(): void
+    {
+        $this->callAction(GenerateNewMagicRouteAction::class, EateryMagicRouteType::HundredPercentGlutenFree, $this->county);
+
+        $record = EateryMagicRouteRecord::query()->first();
+
+        $this->assertTrue(
+            $record->builder_config->getOrderings()->contains(
+                fn (Order $order) => $order->jsonSerialize() === ['wheretoeat_towns.town', 'asc', null, null, null]
+            )
+        );
+    }
+
+    #[Test]
+    public function itDoesNotAddATownJoinWhenTheLocationIsATown(): void
+    {
+        $this->callAction(GenerateNewMagicRouteAction::class, EateryMagicRouteType::HundredPercentGlutenFree, $this->town);
+
+        $record = EateryMagicRouteRecord::query()->first();
+
+        $this->assertFalse(
+            $record->builder_config->getJoins()->contains(
+                fn (Join $join) => $join->jsonSerialize()[0] === 'wheretoeat_towns'
             )
         );
     }

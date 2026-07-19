@@ -9,6 +9,8 @@ use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Models\EatingOut\EateryTown;
+use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
+use App\Services\EatingOut\Collection\Builder\ValueObjects\Order;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
 use RuntimeException;
@@ -26,9 +28,16 @@ class GenerateNewMagicRouteAction
             default => throw new RuntimeException('Unsupported location type'),
         };
 
-        $where = new Where("[parent].{$key}", '=', $location->id);
+        $configuration = app(Configuration::class);
 
-        $configuration = app(Configuration::class)->addWhere($where);
+        $configuration->addWhere(new Where("[parent].{$key}", '=', $location->id));
+
+        if ($location instanceof EateryCounty) {
+            $configuration->addJoin(new Join('wheretoeat_towns', 'wheretoeat_towns.id', '[parent].town_id'));
+            $configuration->addOrder(new Order('wheretoeat_towns.town', 'asc'));
+        }
+
+        $configuration->addOrder(new Order('[parent].name', 'asc'));
 
         if ($eateryMagicRouteType->builderConfiguration()) {
             $eateryMagicRouteType->builderConfiguration()($configuration);
