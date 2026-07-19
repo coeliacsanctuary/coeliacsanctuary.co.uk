@@ -174,9 +174,27 @@ class HundredPercentGlutenFreeMagicRouteContentAgentTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsEmptyInstructionsForTown(): void
+    public function itRendersInstructionsForTown(): void
     {
-        $this->assertEmpty((string) $this->makeTownAgent()->instructions());
+        $this->assertNotEmpty((string) $this->makeTownAgent()->instructions());
+    }
+
+    #[Test]
+    public function theTownInstructionsMentionCoeliacSanctuary(): void
+    {
+        $this->assertStringContainsString('Coeliac Sanctuary', (string) $this->makeTownAgent()->instructions());
+    }
+
+    #[Test]
+    public function theTownInstructionsMentionGlutenFree(): void
+    {
+        $this->assertStringContainsString('gluten free', (string) $this->makeTownAgent()->instructions());
+    }
+
+    #[Test]
+    public function theTownInstructionsMentionTheTown(): void
+    {
+        $this->assertStringContainsString($this->town->town, (string) $this->makeTownAgent()->instructions());
     }
 
     #[Test]

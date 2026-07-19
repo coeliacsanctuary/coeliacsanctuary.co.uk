@@ -13,7 +13,7 @@
     $averageRatingInCounty = $eateries
         ->filter(fn(Eatery $eatery) => (float)$eatery->average_rating > 0)
         ->average(fn(Eatery $eatery) => (float)$eatery->average_rating);
-    $ratedEateries = $averageRatingInCounty = $eateries->filter(fn(Eatery $eatery) => (float)$eatery->average_rating > 0);
+    $ratedEateries = $eateries->filter(fn(Eatery $eatery) => (float)$eatery->average_rating > 0);
 
     $totalRatingsInCounty = $eateries->sum(fn(Eatery $eatery) => $eatery->reviews->count());
 

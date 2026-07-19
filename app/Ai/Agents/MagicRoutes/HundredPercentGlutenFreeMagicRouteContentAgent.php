@@ -47,6 +47,12 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
                 'activeTowns' => fn (Relation $towns) => $towns->withCount(['liveEateries', 'liveBranches']),
             ]);
         }
+
+        if($this->isForTown()) {
+            $this->routeRecord->location->loadMissing([
+               'liveEateries', 'liveBranches',
+            ]);
+        }
     }
 
     protected function parseEateries(): void
@@ -83,7 +89,10 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
 
     protected function townInstruction(): string
     {
-        return '';  // todo
+        return view('prompts.magic-routes.hundred-percent-gluten-free.town', [
+            'town' => $this->routeRecord->location,
+            'eateries' => $this->eateries,
+        ])->render();
     }
 
     /** @return Collection<int, Collection<int, Eatery>> */
@@ -123,7 +132,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
     protected function townSchema(JsonSchema $schema): iterable
     {
         return $this->eateries->mapWithKeys(fn (Eatery $eatery) => [
-            $eatery->slug => $schema->string()->required(),
+            $eatery->slug . ($eatery->branch ? "-{$eatery->branch->id}" : '') => $schema->string()->required(),
         ]);
     }
 
