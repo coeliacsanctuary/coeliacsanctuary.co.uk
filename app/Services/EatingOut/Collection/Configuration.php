@@ -142,6 +142,19 @@ class Configuration implements Castable, Jsonable
         return $this;
     }
 
+    public function addOrder(Order $order): self
+    {
+        $key = $this->itemKey($order);
+
+        $isDuplicate = collect($this->orderBy)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+
+        if ( ! $isDuplicate) {
+            $this->orderBy[] = $order;
+        }
+
+        return $this;
+    }
+
     /** @param array<int, mixed> $items */
     protected function deduplicateItems(array $items): array
     {

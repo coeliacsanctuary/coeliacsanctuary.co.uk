@@ -6,6 +6,7 @@ namespace Tests\Unit\Services\EatingOut\Collection\Builder;
 
 use App\Services\EatingOut\Collection\Builder\BranchQueryBuilder;
 use App\Services\EatingOut\Collection\Builder\QueryBuilder;
+use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
 use PHPUnit\Framework\Attributes\Test;
@@ -51,5 +52,14 @@ class BranchQueryBuilderTest extends QueryBuilderTestCase
         $sql = $this->getBuilder(new Configuration([$where]))->toSql();
 
         $this->assertStringContainsString('`wheretoeat_nationwide_branches`.`town_id` = 1', $sql);
+    }
+
+    #[Test]
+    public function itResolvesParentPlaceholderInJoinsToTheCorrectTable(): void
+    {
+        $join = new Join('foo', '[parent].id', '=', 'foo.branch_id');
+        $sql = $this->getBuilder(new Configuration(joins: [$join]))->toSql();
+
+        $this->assertStringContainsString('join `foo` on `wheretoeat_nationwide_branches`.`id` = `foo`.`branch_id`', $sql);
     }
 }

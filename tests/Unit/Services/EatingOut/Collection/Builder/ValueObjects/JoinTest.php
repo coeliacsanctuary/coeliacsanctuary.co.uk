@@ -42,4 +42,44 @@ class JoinTest extends TestCase
 
         $this->assertSame($builder, $result);
     }
+
+    #[Test]
+    public function itReplacesParentPlaceholderInFirstWhenTableIsProvided(): void
+    {
+        $join = new Join('foo', '[parent].id', '=', 'foo.parent_id');
+
+        $sql = $join(DB::table('foo'), 'wheretoeat')->toSql();
+
+        $this->assertStringContainsString('`wheretoeat`.`id`', $sql);
+    }
+
+    #[Test]
+    public function itReplacesParentPlaceholderInSecondWhenTableIsProvided(): void
+    {
+        $join = new Join('foo', 'foo.parent_id', '=', '[parent].id');
+
+        $sql = $join(DB::table('wheretoeat'), 'wheretoeat')->toSql();
+
+        $this->assertStringContainsString('`wheretoeat`.`id`', $sql);
+    }
+
+    #[Test]
+    public function itDoesNotReplaceWhenNoTableIsProvided(): void
+    {
+        $join = new Join('foo', '[parent].id', '=', 'foo.parent_id');
+
+        $sql = $join(DB::table('wheretoeat'))->toSql();
+
+        $this->assertStringContainsString('`[parent]`.`id`', $sql);
+    }
+
+    #[Test]
+    public function itDoesNotModifyValuesWithoutPlaceholderWhenTableIsProvided(): void
+    {
+        $join = new Join('foo', 'foo.bar', '=', 'wheretoeat.baz');
+
+        $sql = $join(DB::table('wheretoeat'), 'wheretoeat')->toSql();
+
+        $this->assertStringContainsString('join `foo` on `foo`.`bar` = `wheretoeat`.`baz`', $sql);
+    }
 }
