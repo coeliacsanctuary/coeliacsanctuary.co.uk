@@ -56,15 +56,15 @@ class EateryMagicRoutesResource extends Resource
                     ]);
                 }),
 
-            Number::make('Eateries', fn(EateryMagicRouteRecord $model) => app(GetEateriesForMagicRoutePipeline::class)->run($model->builder_config)->count())
+            Number::make('Eateries', fn (EateryMagicRouteRecord $model) => app(GetEateriesForMagicRoutePipeline::class)->run($model->builder_config)->count())
                 ->readonly()
                 ->exceptOnForms(),
 
             Number::make('Predicted Eateries')
                 ->readonly()
                 ->onlyOnForms()
-                ->dependsOn(['location', 'resolver_type', 'location_type'], function (Number $field, NovaRequest $request, FormData $data) {
-                    if(!$data->get('resolver_type') || !$data->get('location_type') || !$data->get('location')) {
+                ->dependsOn(['location', 'resolver_type', 'location_type'], function (Number $field, NovaRequest $request, FormData $data): void {
+                    if ( ! $data->get('resolver_type') || ! $data->get('location_type') || ! $data->get('location')) {
                         return;
                     }
 
@@ -92,9 +92,7 @@ class EateryMagicRoutesResource extends Resource
             Code::make('Configuration', 'builder_config')
                 ->hideFromIndex()
                 ->exceptOnForms()
-                ->resolveUsing(function ($foo, ?EateryMagicRouteRecord $resource) {
-                    return json_encode(json_decode($resource->getRawOriginal('builder_config'), true), JSON_PRETTY_PRINT);
-                })
+                ->resolveUsing(fn ($foo, ?EateryMagicRouteRecord $resource) => json_encode(json_decode($resource->getRawOriginal('builder_config'), true), JSON_PRETTY_PRINT))
                 ->readonly()
                 ->language('javascript'),
         ];
@@ -112,7 +110,7 @@ class EateryMagicRoutesResource extends Resource
         ];
     }
 
-    public static function beforeCreate(NovaRequest $request, Model $model)
+    public static function beforeCreate(NovaRequest $request, Model $model): void
     {
         /** @var EateryMagicRouteRecord $model */
 

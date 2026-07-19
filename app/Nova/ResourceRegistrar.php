@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Nova;
 
-use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Nova\Resources\AskSealiac\AskSealiacChatMessageResource;
 use App\Nova\Resources\AskSealiac\AskSealiacChatResource;
 use App\Nova\Resources\EatingOut\Areas;
