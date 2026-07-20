@@ -259,7 +259,7 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
     public function itThrowsARuntimeExceptionWhenTheLocationTypeIsUnknown(): void
     {
         $routeRecord = $this->build(EateryMagicRouteRecord::class)->make();
-        $routeRecord->setRelation('location', new class {});
+        $routeRecord->setRelation('location', new class () {});
 
         $this->mock(FindEateryMagicRouteRecordAction::class)
             ->shouldReceive('handle')

@@ -42,5 +42,6 @@ class GetEateriesPipelineData
         public LengthAwarePaginator|Collection|null $serialisedEateries = null,
         public bool $throwSearchException = true,
         public bool $hydrateFullReviews = false,
-    ) {}
+    ) {
+    }
 }

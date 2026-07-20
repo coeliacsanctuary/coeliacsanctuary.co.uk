@@ -133,7 +133,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
     {
         return [
             ...$this->eateries->mapWithKeys(function (Eatery $eatery) use ($schema) {
-                $branch = $eatery->relationLoaded('branch') && $eatery->branch ? $branch : null;
+                $branch = $eatery->relationLoaded('branch') && $eatery->branch ? $eatery->branch : null;
 
                 return [
                     $eatery->slug . ($branch ? "-{$branch->id}" : '') => $schema->string()->required(),
