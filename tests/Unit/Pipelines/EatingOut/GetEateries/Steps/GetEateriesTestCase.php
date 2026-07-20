@@ -385,7 +385,7 @@ abstract class GetEateriesTestCase extends TestCase
         return $toReturn;
     }
 
-    protected function callHydrateEateriesAction(?Collection $eateries = null): ?GetEateriesPipelineData
+    protected function callHydrateEateriesAction(?Collection $eateries = null, bool $hydrateFullReviews = false): ?GetEateriesPipelineData
     {
         if ( ! $eateries) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
@@ -402,7 +402,8 @@ abstract class GetEateriesTestCase extends TestCase
             town: $this->town,
             filters: [],
             eateries: $eateries,
-            paginator: $this->callPaginateEateriesAction($eateries)?->paginator
+            paginator: $this->callPaginateEateriesAction($eateries)?->paginator,
+            hydrateFullReviews: $hydrateFullReviews,
         );
 
         $this->callAction(HydrateEateriesAction::class, $pipelineData, $closure);
@@ -437,7 +438,7 @@ abstract class GetEateriesTestCase extends TestCase
         return $toReturn;
     }
 
-    protected function callHydrateBranchesAction(?Collection $eateries = null): ?GetEateriesPipelineData
+    protected function callHydrateBranchesAction(?Collection $eateries = null, bool $hydrateFullReviews = false): ?GetEateriesPipelineData
     {
         if ( ! $eateries) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
@@ -454,7 +455,8 @@ abstract class GetEateriesTestCase extends TestCase
             town: $this->town,
             filters: [],
             eateries: $eateries,
-            paginator: $this->callPaginateEateriesAction($eateries)?->paginator
+            paginator: $this->callPaginateEateriesAction($eateries)?->paginator,
+            hydrateFullReviews: $hydrateFullReviews,
         );
 
         $this->callAction(HydrateBranchesAction::class, $pipelineData, $closure);

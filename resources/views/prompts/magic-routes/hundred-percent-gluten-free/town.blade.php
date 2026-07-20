@@ -1,6 +1,7 @@
 @php
     use App\Models\EatingOut\Eatery;
     use App\Models\EatingOut\EateryCounty;
+    use App\Models\EatingOut\EateryReview;
     use App\Models\EatingOut\EateryTown;
     use Illuminate\Support\Collection;
 
@@ -25,13 +26,14 @@ Your task is to generate SEO rich content for a dedicated page on 100% gluten fr
 
 Feel free to use standard markdown/html markdown for emphasis.
 
-Please generate a SEO rich page introduction, at least 3 paragraphs, please include in a natural way:
+Please generate a SEO rich page introduction, 3 paragraphs long, please include in a natural way:
     - Generic content about the town, what its known for, its tourist hot spots, with a specific focus on the eateries included below
     - The number of 100% gluten free eateries in the town
     - The average rating of those eateries, but only if the average is worth mentioning, ie a lower average rating isn't really worth shouting about, typically 4+.
     - The total number of eateries in that town overall in our eating out guide.
     - A link or multiple links to the main {{ $town->town }} within the eating out guide, but naturally, and where it makes sense.
     - Mix the structure, and wording up each time, dont start each one in a standard, consistent way, be unique, SEO rich, and natural.
+    - Must be three paragraphs in total, this is an hard requirement, anything less than 3 paragraphs for the page intro will not be accepted.
 
 Focus the content on the gluten free aspects, rather than generic aspects, but dont repeat yourself.
 
@@ -43,22 +45,28 @@ Number of ratings: {{ $totalRatingsInTown }}
 Number of 100% GF eateries with ratings in {{ $town->town }}: {{ $ratedEateries->count() }}
 Absolute Link: {{ $town->absoluteLink() }}
 
-Please place your SEO rich page introduction in the `page_intro` key of the structured output data.
+Please place your three paragraph, SEO rich page introduction in the `page_intro` key of the structured output data.
 
 ## Eatery Breakdown
 
-For each town below, please generate an SEO rich content, up to two paragraphs, not too long, use the existing description, address and reviews and expand upon them, stick to facts, no made up content, and please include in a natural way:
+For each town below, please generate an SEO rich content, up to **two paragraphs**, not too long, use the existing description, address and reviews and expand upon them, stick to facts, no made up content, and please include in a natural way:
     - Expanded description
     - Nearby tourist areas to the address
     - A standout quote from a review as a block quote between the two paragraphs
     - If more than one review, a second stand out quote as a block quote after the second paragraph
-    - Mix the structure, and wording up each time, dont start each one in a standard, consistent way, be unique, SEO rich, and natural.
-    - There is no need to link to the town in this content..
+    - Mix the structure, and wording up each time, dont start each content in a standard, consistent way, be unique, SEO rich, and natural.
+    - There is no need to link to the town in this content...
+    - Must be no more than two paragraphs.
 
 Focus the content on the gluten free aspects, rather than generic aspects, but dont repeat yourself.
 
 @foreach($eateries as $eatery)
-    ### {{ $eatery->branch && $eatery->branch->name ? $eatey->branch->name : $eatery->name }}
+    @php
+        $branch = $eatery->relationLoaded('branch') && $eatery->branch ? $eatery->branch : null;
+        $reviews = ($branch && $branch->reviews ? $branch->reviews : $eatery->reviews)
+            ->filter(fn(EateryReview $review) => $review->review !== null);
+    @endphp
+    ### {{ $branch && $branch->name ? $branch->name : $eatery->name }}
 
     Description:
     {{ $eatery->info }}
@@ -67,14 +75,18 @@ Focus the content on the gluten free aspects, rather than generic aspects, but d
     Number of ratings: {{ $eatery->reviews->count() }}
 
     #### Reviews
-    @forelse($eatery->branch && $eatery->branch->reviews ? $eatery->branch->reviews : $eatery->reviews as $review)
+    @forelse($reviews as $review)
         {{ $review->review }}
 
         Rating: {{ $review->rating }} / 5
         How Expensive: {{ $review->price ?? 'n/a' }}
         Food Rating: {{ $review->food_rating }}
         Service Rating: {{ $review->service_rating }}
+        Author: {{ $review->name }}
         Date: {{ $review->created_at }}
+
+        ---
+
     @empty
         - no reviews found
     @endforelse
@@ -88,7 +100,16 @@ Please also generate a meta description, for SEO, and place it in the `meta_desc
 
 Please also generate some meta keywords, for SEO, sticking to standard keyword conventions, and place it in the `meta_keywords` key of the structured output data, as an array of strings.
 
+## Outro
+
+Please also generate an outro to end the page, two paragraphs long, and place it in the `outro` key of the structured output data.
+
+Just wrap up whats already been said, again, SEO-ified, natural content.
+
 ## Additional guidelines
 
 - Don't refer to the website, or the guide or anything as 'our' - refer to it in first person, ie 'my guide'
 - When mentioning ratings, format them as 'x out of 5 stars', and round to the nearest half, if it is a whole number, then omit the .0, eg '4 out of 5 stars' or '3.5 out of 5 stars' - however dont mention that it is rounded, just note that is how the number must be displayed.
+- When quoting review snippets in a block quote markdown block, also include the name and date, in human readable format, as citations, below the quote.
+- Ensure your page intro is three paragraphs long.
+- Ensure your outro is two paragraphs long.

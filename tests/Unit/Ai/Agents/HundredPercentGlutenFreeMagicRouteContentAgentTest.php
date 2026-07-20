@@ -230,4 +230,18 @@ class HundredPercentGlutenFreeMagicRouteContentAgentTest extends TestCase
             fn (string $slug) => $this->assertArrayHasKey($slug, $schema),
         );
     }
+
+    #[Test]
+    public function theTownSchemaContainsAnOutroKey(): void
+    {
+        $schema = $this->makeTownAgent()->schema(new JsonSchemaTypeFactory());
+
+        $this->assertArrayHasKey('outro', $schema);
+    }
+
+    #[Test]
+    public function theTownInstructionsMentionTheCounty(): void
+    {
+        $this->assertStringContainsString($this->county->county, (string) $this->makeTownAgent()->instructions());
+    }
 }

@@ -8,6 +8,7 @@ use App\Actions\EatingOut\MagicRouting\FindEateryMagicRouteRecordAction;
 use App\Contracts\RouteFallbackResolverContract;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\CountyController;
+use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\TownController;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
@@ -83,7 +84,7 @@ class HundredPercentGlutenFreeEateriesFallbackResolver implements RouteFallbackR
 
         $controller = match ($routeRecord->location::class) {
             EateryCounty::class => CountyController::class,
-            EateryTown::class => 'EatingOut/MagicRoutes/HundredPercentGlutenFree/Town',
+            EateryTown::class => TownController::class,
             default => throw new RuntimeException('Unknown location type'),
         };
 

@@ -38,6 +38,7 @@ class GetEateriesForMagicRoutePipeline
         $pipelineData = new GetEateriesPipelineData(
             filters: ['categories' => null, 'features' => null, 'venueTypes' => null],
             configuration: $configuration,
+            hydrateFullReviews: true,
         );
 
         /** @var GetEateriesPipelineData $pipeline */

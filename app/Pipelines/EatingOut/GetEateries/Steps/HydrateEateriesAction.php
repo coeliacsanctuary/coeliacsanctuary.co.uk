@@ -32,11 +32,11 @@ class HydrateEateriesAction implements GetEateriesPipelineActionContract
         $hydratedEateries = Eatery::query()
             ->with([/** @phpstan-ignore-line */
                 'country', 'county', 'town', 'town.county', 'type', 'venueType', 'cuisine', 'restaurants', 'area', 'area.town',
-                'reviews' => function (HasMany $builder) {
+                'reviews' => function (HasMany $builder) use ($pipelineData) {
                     /** @var HasMany<EateryReview, Eatery> $builder */
                     return $builder
                         ->withOutGlobalScopes()
-                        ->select(['id', 'wheretoeat_id', 'rating', 'nationwide_branch_id', 'how_expensive'])
+                        ->select($pipelineData->hydrateFullReviews ? '*' : ['id', 'wheretoeat_id', 'rating', 'nationwide_branch_id', 'how_expensive'])
                         ->latest();
                 },
                 'features' => function (BelongsToMany $builder) {

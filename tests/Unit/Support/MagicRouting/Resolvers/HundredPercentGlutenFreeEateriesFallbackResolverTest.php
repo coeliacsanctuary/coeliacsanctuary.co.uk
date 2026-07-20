@@ -7,8 +7,10 @@ namespace Tests\Unit\Support\MagicRouting\Resolvers;
 use App\Actions\EatingOut\MagicRouting\FindEateryMagicRouteRecordAction;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\CountyController;
+use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\TownController;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryMagicRouteRecord;
+use App\Models\EatingOut\EateryTown;
 use App\Services\EatingOut\Collection\Configuration;
 use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
 use App\Support\MagicRouting\RouteToController;
@@ -228,6 +230,49 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
     }
 
     #[Test]
+    public function itUsesTheTownControllerWhenTheRouteRecordLocationIsATown(): void
+    {
+        $routeRecord = $this->makeRouteRecordWithTown();
+
+        $this->mock(FindEateryMagicRouteRecordAction::class)
+            ->shouldReceive('handle')
+            ->andReturn($routeRecord);
+
+        $townController = $this->mock(TownController::class);
+
+        $this->mock(RouteToController::class)
+            ->shouldReceive('handle')
+            ->withArgs(function (mixed $controller) use ($townController) {
+                $this->assertSame($townController, $controller);
+
+                return true;
+            })
+            ->andReturn(new StubResponse())
+            ->once();
+
+        app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->handle(
+            Request::create('/eating-100-percent-gluten-free-in-london')
+        );
+    }
+
+    #[Test]
+    public function itThrowsARuntimeExceptionWhenTheLocationTypeIsUnknown(): void
+    {
+        $routeRecord = $this->build(EateryMagicRouteRecord::class)->make();
+        $routeRecord->setRelation('location', new class {});
+
+        $this->mock(FindEateryMagicRouteRecordAction::class)
+            ->shouldReceive('handle')
+            ->andReturn($routeRecord);
+
+        $this->expectException(RuntimeException::class);
+
+        app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->handle(
+            Request::create('/eating-100-percent-gluten-free-in-london')
+        );
+    }
+
+    #[Test]
     public function itPassesTheRouteRecordToRouteToControllerAsAKnownDependency(): void
     {
         $routeRecord = $this->makeRouteRecordWithCounty();
@@ -257,6 +302,14 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
     {
         $routeRecord = $this->build(EateryMagicRouteRecord::class)->make();
         $routeRecord->setRelation('location', new EateryCounty());
+
+        return $routeRecord;
+    }
+
+    protected function makeRouteRecordWithTown(): EateryMagicRouteRecord
+    {
+        $routeRecord = $this->build(EateryMagicRouteRecord::class)->make();
+        $routeRecord->setRelation('location', new EateryTown());
 
         return $routeRecord;
     }

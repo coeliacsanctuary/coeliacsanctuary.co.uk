@@ -46,6 +46,20 @@ export type CountyPageTown = Town & {
   total_eateries: number;
 };
 
+export type MagicRouteTownPage = Exclude<
+  CountyPageTown,
+  'county' | 'eateries' | 'attractions' | 'hotels' | 'total_eateries'
+> & {
+  image: string;
+  latlng: string;
+};
+
+export type MagicRouteTownPageEatery = {
+  key: string;
+  info: string;
+  details: TownEatery;
+};
+
 export type LondonPageBorough = Exclude<
   CountyPageTown,
   'attractions' | 'hotels'

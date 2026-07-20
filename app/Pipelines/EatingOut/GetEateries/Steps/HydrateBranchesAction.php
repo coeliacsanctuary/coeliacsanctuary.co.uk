@@ -38,7 +38,7 @@ class HydrateBranchesAction implements GetEateriesPipelineActionContract
             ->with([
                 'county', 'town', 'country',
                 'reviews' => fn (Relation $builder) => $builder
-                    ->select(['wheretoeat_reviews.id', 'wheretoeat_id', 'rating', 'nationwide_branch_id', 'how_expensive'])
+                    ->select($pipelineData->hydrateFullReviews ? '*' : ['wheretoeat_reviews.id', 'wheretoeat_id', 'rating', 'nationwide_branch_id', 'how_expensive'])
                     ->latest('wheretoeat_reviews.created_at'),
             ])
             ->get();

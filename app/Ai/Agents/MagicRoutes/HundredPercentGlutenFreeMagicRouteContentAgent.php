@@ -48,9 +48,9 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
             ]);
         }
 
-        if($this->isForTown()) {
+        if ($this->isForTown()) {
             $this->routeRecord->location->loadMissing([
-               'liveEateries', 'liveBranches',
+                'liveEateries', 'liveBranches',
             ]);
         }
     }
@@ -108,7 +108,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
 
     public function schema(JsonSchema $schema): array
     {
-        $eaterySchema =  match (true) {
+        $eaterySchema = match (true) {
             $this->isForCounty() => $this->countySchema($schema),
             $this->isForTown() => $this->townSchema($schema),
             default => throw new RuntimeException('Unknown location type'),
@@ -131,9 +131,16 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
 
     protected function townSchema(JsonSchema $schema): iterable
     {
-        return $this->eateries->mapWithKeys(fn (Eatery $eatery) => [
-            $eatery->slug . ($eatery->branch ? "-{$eatery->branch->id}" : '') => $schema->string()->required(),
-        ]);
+        return [
+            ...$this->eateries->mapWithKeys(function (Eatery $eatery) use ($schema) {
+                $branch = $eatery->relationLoaded('branch') && $eatery->branch ? $branch : null;
+
+                return [
+                    $eatery->slug . ($branch ? "-{$branch->id}" : '') => $schema->string()->required(),
+                ];
+            }),
+            'outro' => $schema->string()->required(),
+        ];
     }
 
     protected function isForCounty(): bool
