@@ -51,7 +51,7 @@ defineProps<{
       v-for="eatery in town.eateries"
       class="mb-8 flex flex-col space-y-2 last:mb-4"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <h3
           class="text-2xl font-semibold text-primary-dark transition hover:text-black lg:text-3xl"
         >

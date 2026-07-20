@@ -53,13 +53,13 @@ const eateryName = (eatery: TownEatery): string => {
   >
     <Heading classes="text-left">{{ eateryName(eatery.details) }}</Heading>
 
-    <div class="flex space-x-4">
+    <div class="flex flex-col space-y-4 md:flex-row md:space-x-4">
       <div
         class="prose prose-lg mt-0 max-w-none flex-1 xl:prose-xl"
         v-html="eatery.info"
       />
 
-      <div class="flex-shrink-none w-full max-w-22">
+      <div class="flex-shrink-none w-full md:max-w-16 xmd:max-w-20 lg:max-w-22">
         <Card
           theme="primary-light"
           faded
@@ -68,7 +68,8 @@ const eateryName = (eatery: TownEatery): string => {
           <div v-if="eatery.details.reviews.number > 0">
             <StarRating
               :rating="eatery.details.reviews.average"
-              size="w-10 h-10"
+              size="size-6 xs:size-8 md:size-10"
+              align="start"
               show-all
             />
 
@@ -98,7 +99,7 @@ const eateryName = (eatery: TownEatery): string => {
               :href="eatery.details.website"
               v-text="eatery.details.website"
               target="_blank"
-              class="hover:underline"
+              class="block w-full truncate hover:underline"
             />
           </p>
         </Card>
