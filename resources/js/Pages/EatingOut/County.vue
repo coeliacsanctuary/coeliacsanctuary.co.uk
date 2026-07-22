@@ -18,6 +18,7 @@ import useJourneyTracking from '@/composables/useJourneyTracking';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
+import useScreensize from '@/composables/useScreensize';
 
 const props = defineProps<{
   county: CountyPage;
@@ -64,122 +65,129 @@ useJourneyTracking().logWhenVisible(
     :towns="county.towns.length"
   />
 
-  <template v-if="topRated.length">
-    <TopPlaces>
-      <template #title>
-        Top rated places to eat gluten free in {{ county.name }}
-      </template>
-
-      <template #default>
-        <p class="prose prose-lg mb-2 max-w-none">
-          Discover the best rated places to eat gluten free in
-          <span
-            class="font-semibold"
-            v-text="county.name"
-          />, voted by people like you! From cozy cafes to restaurants, these
-          establishments offer exceptional gluten-free options. Enjoy a
-          delightful meal or snack, tailored to your dietary needs.
-        </p>
-
-        <div class="group grid gap-3 md:grid-cols-3">
-          <CountyEatery
-            v-for="eatery in topRated"
-            :key="eatery.name"
-            :eatery="eatery"
-          />
-        </div>
-      </template>
-    </TopPlaces>
-  </template>
-
-  <template v-if="mostRated.length">
-    <TopPlaces>
-      <template #title>
-        Most rated places to eat gluten free in {{ county.name }}
-      </template>
-
-      <template #default>
-        <p class="prose prose-lg mb-2 max-w-none">
-          Discover the most reviewed and highly praised places to eat gluten
-          free in
-          <span
-            class="font-semibold"
-            v-text="county.name"
-          />, loved by people just like you! These establishments have garnered
-          a significant number of reviews, ensuring a great gluten free
-          experience.
-        </p>
-
-        <div class="group grid gap-3 md:grid-cols-3">
-          <CountyEatery
-            v-for="eatery in mostRated"
-            :key="eatery.name"
-            :eatery="eatery"
-          />
-        </div>
-      </template>
-    </TopPlaces>
-  </template>
-
-  <div class="content_hint"></div>
-
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading> Gluten Free {{ county.name }} </Heading>
 
-    <p class="prose prose-lg max-w-none">
-      If you're heading to <span class="font-semibold">{{ county.name }}</span
+    <p class="prose prose-lg max-w-none lg:prose-xl">
+      If you're heading to
+      <span class="font-semibold">{{ county.name }}</span
       >, our eating out guide lists all the gluten free places in the towns,
       villages, and cities throughout the region. Explore the gluten-free
       options in <span class="font-semibold">{{ county.name }}s</span> diverse
-      culinary scene.
+      culinary scene...... Todo - better County intro will go here...
     </p>
+  </Card>
 
-    <Info class="flex">
-      <div class="inline-flex flex-col sm:flex-row sm:items-center">
-        <p class="prose prose-lg max-w-none md:prose-xl">
-          Most of the eateries in our Where to Eat guide are recommended by
-          people like you—those with coeliac disease or gluten intolerance who
-          know great local spots. If you know a place we’ve missed, let us know
-          and help grow our guide!
-        </p>
+  <div
+    class="flex flex-col justify-between space-y-4 xmd:flex-row-reverse xmd:space-y-0"
+  >
+    <div
+      class="xmd:flex-shrink-none w-full xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
+    >
+      <TopPlaces
+        v-if="topRated.length"
+        :collapsible="false"
+      >
+        <template #title>
+          Top rated places to eat gluten free in {{ county.name }}
+        </template>
 
-        <div class="flex items-center justify-center">
-          <CoeliacButton
-            theme="secondary"
-            size="xl"
-            :as="Link"
-            href="/wheretoeat/recommend-a-place"
-            label="Recommend a Place"
-            classes="font-semibold justify-center mt-2 sm:mt-0 sm:ml-2 sm:min-w-[230px]"
+        <template #default>
+          <div class="group grid gap-3">
+            <CountyEatery
+              v-for="eatery in topRated"
+              :key="eatery.name"
+              :eatery="eatery"
+              minimal
+            />
+          </div>
+        </template>
+      </TopPlaces>
+
+      <TopPlaces
+        v-if="mostRated.length"
+        :collapsible="false"
+      >
+        <template #title>
+          Most rated places to eat gluten free in {{ county.name }}
+        </template>
+
+        <template #default>
+          <div class="group grid gap-3">
+            <CountyEatery
+              v-for="eatery in mostRated"
+              :key="eatery.name"
+              :eatery="eatery"
+              minimal
+            />
+          </div>
+        </template>
+      </TopPlaces>
+
+      <div class="content_hint"></div>
+    </div>
+
+    <div class="flex-1">
+      <Card class="mt-3 flex flex-col space-y-4">
+        <Info class="flex">
+          <div class="inline-flex flex-col">
+            <p class="prose prose-sm max-w-none sm:prose-lg md:prose-xl">
+              Most of the eateries in our Where to Eat guide are recommended by
+              people like you—those with coeliac disease or gluten intolerance
+              who know great local spots. If you know a place we’ve missed, let
+              us know and help grow our guide!
+            </p>
+
+            <div class="mt-4 flex items-center justify-center">
+              <CoeliacButton
+                theme="secondary"
+                :size="useScreensize().screenIsGreaterThan('sm') ? 'lg' : 'md'"
+                :as="Link"
+                href="/wheretoeat/recommend-a-place"
+                label="Recommend a Place"
+                classes="font-semibold justify-center mt-2 sm:mt-0 sm:ml-2 sm:min-w-[230px]"
+              />
+            </div>
+          </div>
+        </Info>
+
+        <div class="content_hint"></div>
+
+        <div
+          class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:space-x-4"
+        >
+          <FormInput
+            v-model="townSearch"
+            name="search"
+            label=""
+            :placeholder="`Search for a town in ${county.name}...`"
+            hide-label
+            borders
+            class="w-full max-w-sm md:max-w-md"
+            :size="
+              useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
+            "
+          />
+
+          <FormSelect
+            v-model="currentSort"
+            name="sort"
+            :options="sortOptions"
+            label="Sort by"
+            borders
+            class="flex items-center justify-between space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+            wrapper-classes="flex-1 sm:flex-shrink-0"
+            :size="
+              useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
+            "
           />
         </div>
-      </div>
-    </Info>
+      </Card>
 
-    <div ref="townList">
-      <div class="mb-4 flex items-center justify-between">
-        <FormInput
-          v-model="townSearch"
-          name="search"
-          label=""
-          :placeholder="`Search for a town in ${county.name}...`"
-          hide-label
-          borders
-          class="w-full max-w-md"
-        />
-
-        <FormSelect
-          v-model="currentSort"
-          name="sort"
-          :options="sortOptions"
-          label="Sort by"
-          borders
-          class="flex items-center space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
-          size="small"
-        />
-      </div>
-
-      <div class="group grid gap-3 md:grid-cols-3">
+      <div
+        ref="townList"
+        class="group mt-3 grid gap-3"
+      >
         <template
           v-for="(town, index) in filteredTowns"
           :key="town.name"
@@ -193,7 +201,7 @@ useJourneyTracking().logWhenVisible(
         </template>
       </div>
     </div>
-  </Card>
+  </div>
 
   <JumpToContentButton
     v-if="townList"

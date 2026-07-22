@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import { Converter } from 'any-number-to-words';
 
 export const formatDate = (
   date: string,
@@ -9,18 +8,6 @@ export const formatDate = (
   dayjs.extend(advancedFormat);
 
   return dayjs(date).format(format);
-};
-
-export const numberToWords = (
-  number: number,
-  min: number = 0,
-  max: number = 10,
-): string => {
-  if (number <= min || number >= max) {
-    return number.toLocaleString();
-  }
-
-  return new Converter().toWords(number);
 };
 
 export const loadScript = (script: string) => {
