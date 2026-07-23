@@ -7,6 +7,7 @@ namespace App\Resources\EatingOut;
 use App\DataObjects\EatingOut\LatLng;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryTown;
+use App\Models\EatingOut\EateryType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -27,7 +28,10 @@ class LondonBoroughResource extends JsonResource
             'link' => $this->areas->count() > 1 ? $this->link() : $area->link(),
             'area_count' => $this->areas->count(),
             'top_areas' => $this->areas->sortByDesc('eateries_count')->take(3)->pluck('area'),
-            'locations' => $this->liveEateries->count() + $this->liveBranches->count(),
+            'eateries' => $this->liveEateries->where('type_id', EateryType::EATERY)->count() + $this->liveBranches->count(),
+            'attractions' => $this->liveEateries->where('type_id', EateryType::ATTRACTION)->count(),
+            'hotels' => $this->liveEateries->where('type_id', EateryType::HOTEL)->count(),
+            'total_eateries' => $this->liveEateries->count() + $this->liveBranches->count(),
         ];
     }
 }

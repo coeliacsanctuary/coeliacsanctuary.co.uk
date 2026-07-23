@@ -29,7 +29,7 @@ useJourneyTracking().logWhenVisible(
     ref="card"
     class="flex flex-col space-y-2 bg-linear-to-br from-primary/50 to-primary-light/50"
   >
-    <div class="flex justify-between">
+    <div class="flex justify-between space-x-1">
       <Link
         :href="eatery.link"
         prefetch

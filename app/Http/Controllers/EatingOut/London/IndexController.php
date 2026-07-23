@@ -37,8 +37,8 @@ class IndexController
                 new BreadcrumbItemData('London'),
             ]))
             ->metaImage($getOpenGraphImageAction->handle($county))
-            ->render('EatingOut/London', [
-                'london' => new LondonPageResource($county),
+            ->render('EatingOut/County', [
+                'county' => new LondonPageResource($county),
                 'topRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
                 'mostRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
             ]);

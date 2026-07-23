@@ -3,6 +3,9 @@ import Card from '@/Components/Card.vue';
 import {
   CountyEatery as CountyEateryType,
   CountyPage,
+  CountyPageTown,
+  LondonPage,
+  LondonPageBorough,
 } from '@/types/EateryTypes';
 import CountyHeading from '@/Components/PageSpecific/EatingOut/County/CountyHeading.vue';
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
@@ -19,9 +22,10 @@ import FormInput from '@/Components/Forms/FormInput.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import useScreensize from '@/composables/useScreensize';
+import LondonBorough from '@/Components/PageSpecific/EatingOut/County/LondonBorough.vue';
 
 const props = defineProps<{
-  county: CountyPage;
+  county: CountyPage | LondonPage;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
 }>();
@@ -37,7 +41,13 @@ const sortOptions = ref<FormSelectOption[]>([
 const currentSort = ref('alphabetical');
 
 const filteredTowns = computed(() => {
-  const towns = props.county.towns.filter((town) =>
+  let towns: CountyPageTown[] | LondonPageBorough[] = props.county.towns;
+
+  if ((<LondonPage>props.county).boroughs) {
+    towns = (<LondonPage>props.county).boroughs;
+  }
+
+  towns = towns.filter((town) =>
     town.name.toLowerCase().includes(townSearch.value.toLowerCase()),
   );
 
@@ -52,6 +62,9 @@ useJourneyTracking().logWhenVisible(
   useTemplateRef('townList'),
   'scrolled_into_view',
   'WhereToEatIndexCountyList',
+  {
+    county: props.county.name,
+  },
 );
 </script>
 
@@ -62,20 +75,17 @@ useJourneyTracking().logWhenVisible(
     :image="county.image"
     :name="county.name"
     :reviews="county.reviews"
-    :towns="county.towns.length"
+    :towns="county.name === 'London' ? 0 : county.towns.length"
+    :hide-towns="county.name === 'London'"
   />
 
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading> Gluten Free {{ county.name }} </Heading>
 
-    <p class="prose prose-lg max-w-none lg:prose-xl">
-      If you're heading to
-      <span class="font-semibold">{{ county.name }}</span
-      >, our eating out guide lists all the gluten free places in the towns,
-      villages, and cities throughout the region. Explore the gluten-free
-      options in <span class="font-semibold">{{ county.name }}s</span> diverse
-      culinary scene...... Todo - better County intro will go here...
-    </p>
+    <p
+      class="prose prose-lg max-w-none lg:prose-xl"
+      v-html="county.description"
+    />
   </Card>
 
   <div
@@ -160,7 +170,11 @@ useJourneyTracking().logWhenVisible(
             v-model="townSearch"
             name="search"
             label=""
-            :placeholder="`Search for a town in ${county.name}...`"
+            :placeholder="
+              county.name === 'London'
+                ? 'Search for a borough in London...'
+                : `Search for a town in ${county.name}...`
+            "
             hide-label
             borders
             class="w-full max-w-sm md:max-w-md"
@@ -192,7 +206,15 @@ useJourneyTracking().logWhenVisible(
           v-for="(town, index) in filteredTowns"
           :key="town.name"
         >
-          <CountyTown :town="town" />
+          <CountyTown
+            v-if="county.name !== 'London'"
+            :town="town"
+          />
+
+          <LondonBorough
+            v-if="county.name === 'London'"
+            :borough="town as LondonPageBorough"
+          />
 
           <div
             v-if="index > 0 && index % 3 === 0"
@@ -206,6 +228,8 @@ useJourneyTracking().logWhenVisible(
   <JumpToContentButton
     v-if="townList"
     :anchor="townList"
-    label="Jump to Towns List"
+    :label="
+      county.name === 'London' ? 'Jump to borough list' : 'Jump to Towns List'
+    "
   />
 </template>

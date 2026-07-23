@@ -10,6 +10,7 @@ export type County = {
 export type CountyPage = County & {
   latlng: string;
   image?: string;
+  description: string;
   eateries: number;
   reviews: number;
   towns: CountyPageTown[];
@@ -35,6 +36,8 @@ export type NationwidePage = County & {
 };
 
 export type LondonPage = Exclude<CountyPage, 'towns'> & {
+  name: 'London';
+  title: 'London';
   boroughs: LondonPageBorough[];
 };
 
@@ -60,13 +63,9 @@ export type MagicRouteTownPageEatery = {
   details: TownEatery;
 };
 
-export type LondonPageBorough = Exclude<
-  CountyPageTown,
-  'attractions' | 'hotels'
-> & {
+export type LondonPageBorough = CountyPageTown & {
   description: string;
   latlng: LatLng;
-  locations: number;
   area_count: number;
   top_areas: string[];
 };
