@@ -29,7 +29,7 @@ withDefaults(
     <Card class="mt-3 flex flex-col space-y-4">
       <DisclosureButton>
         <div class="flex items-center justify-between">
-          <SubHeading>
+          <SubHeading size="small">
             <slot name="title" />
           </SubHeading>
           <ChevronDownIcon

@@ -6,6 +6,7 @@ import {
   CountyPageTown,
   LondonPage,
   LondonPageBorough,
+  NearbyCounty,
 } from '@/types/EateryTypes';
 import CountyHeading from '@/Components/PageSpecific/EatingOut/County/CountyHeading.vue';
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
@@ -23,11 +24,13 @@ import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import useScreensize from '@/composables/useScreensize';
 import LondonBorough from '@/Components/PageSpecific/EatingOut/County/LondonBorough.vue';
+import SubHeading from '@/Components/SubHeading.vue';
 
 const props = defineProps<{
   county: CountyPage | LondonPage;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
+  nearby: NearbyCounty[];
 }>();
 
 const townList = ref<HTMLElement | null>(null);
@@ -94,6 +97,36 @@ useJourneyTracking().logWhenVisible(
     <div
       class="xmd:flex-shrink-none w-full xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
     >
+      <Card>
+        <SubHeading>Other counties nearby</SubHeading>
+
+        <div class="mt-4 flex flex-col space-y-4">
+          <div
+            v-for="nearbyCounty in nearby"
+            :key="nearbyCounty.link"
+            class="group relative"
+          >
+            <Link
+              class="absolute top-0 left-0 z-10 h-full w-full"
+              :href="nearbyCounty.link"
+            />
+
+            <div class="relative overflow-hidden">
+              <img
+                :src="nearbyCounty.image"
+                :alt="nearbyCounty.name"
+                class="h-auto w-full"
+              />
+
+              <div
+                class="absolute bottom-0 w-full bg-primary/80 px-8 py-2 text-center text-lg font-semibold transition group-hover:scale-110 group-hover:bg-primary/90"
+                v-text="nearbyCounty.name"
+              />
+            </div>
+          </div>
+        </div>
+      </Card>
+
       <TopPlaces
         v-if="topRated.length"
         :collapsible="false"

@@ -66,6 +66,8 @@ return [
             'stats' => 'cache.eating-out.stats',
             'top-rated-in-county' => 'coeliac.eating-out.top-rated-in-county.{county.slug}',
             'most-rated-in-county' => 'coeliac.eating-out.most-rated-in-county.{county.slug}',
+            'top-rated-in-town' => 'coeliac.eating-out.top-rated-in-county.{county.slug}.{town.slug}',
+            'most-rated-in-town' => 'coeliac.eating-out.most-rated-in-county.{county.slug}.{town.slug}',
             'site-map-counties' => 'coeliac.eating-out.site-map.counties',
             'site-map-towns' => 'coeliac.eating-out.site-map.towns',
             'site-map-areas' => 'coeliac.eating-out.site-map.areas',

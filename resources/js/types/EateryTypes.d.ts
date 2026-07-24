@@ -7,6 +7,10 @@ export type County = {
   link: string;
 };
 
+export type NearbyCounty = County & {
+  image: string;
+};
+
 export type CountyPage = County & {
   latlng: string;
   image?: string;
