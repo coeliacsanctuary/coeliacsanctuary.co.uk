@@ -161,10 +161,10 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
         return config('app.url') . $this->link();
     }
 
-    /** @return Collection<int, $this> */
+    /** @return Collection<int, static> */
     public function nearbyCounties(int $limit = 3): Collection
     {
-        $latlng = LatLng::fromString($this->latlng);
+        $latlng = LatLng::fromString((string)$this->latlng);
 
         return static::query()
             ->selectRaw('(

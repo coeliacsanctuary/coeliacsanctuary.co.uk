@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
 /** @mixin EateryTown */
 class LondonBoroughResource extends JsonResource
 {
-    /** @return array{name: string, description: string|null, latlng:LatLng, link: string, area_count: int, top_areas: Collection<int, string>, locations: int} */
+    /** @return array{name: string, description: string|null, latlng:LatLng, link: string, area_count: int, top_areas: Collection<int, string>, eateries: int, attractions: int, hotels: int, total_eateries: int} */
     public function toArray(Request $request)
     {
         /** @var EateryArea $area */

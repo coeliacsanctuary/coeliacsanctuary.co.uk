@@ -216,10 +216,10 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
         });
     }
 
-    /** @return Collection<int, $this> */
+    /** @return Collection<int, static> */
     public function nearbyTowns(int $limit = 3): Collection
     {
-        $latlng = LatLng::fromString($this->latlng);
+        $latlng = LatLng::fromString((string)$this->latlng);
 
         return static::query()
             ->selectRaw('(

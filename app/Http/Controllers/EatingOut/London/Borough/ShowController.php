@@ -12,9 +12,7 @@ use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Resources\EatingOut\LondonBoroughPageResource;
-use App\Resources\EatingOut\NearbyCountyResource;
 use App\Resources\EatingOut\NearbyTownResource;
-use App\Resources\EatingOut\TownCountyResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Inertia\Response;
 

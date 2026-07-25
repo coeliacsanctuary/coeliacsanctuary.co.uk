@@ -203,6 +203,7 @@ class NationwideBranchTest extends TestCase
             }
 
             $key = str_replace('{county.slug}', $county->slug, $key);
+            $key = str_replace('{town.slug}', $town->slug, $key);
 
             Cache::put($key, 'foo');
 
@@ -241,6 +242,7 @@ class NationwideBranchTest extends TestCase
             ]);
 
             $key = str_replace('{county.slug}', $county->slug, $key);
+            $key = str_replace('{town.slug}', $town->slug, $key);
 
             Cache::put($key, 'foo');
 
