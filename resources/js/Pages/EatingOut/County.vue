@@ -6,6 +6,7 @@ import {
   CountyPageTown,
   LondonPage,
   LondonPageBorough,
+  MagicRouteGuide,
   NearbyCounty,
 } from '@/types/EateryTypes';
 import CountyHeading from '@/Components/PageSpecific/EatingOut/County/CountyHeading.vue';
@@ -31,6 +32,7 @@ const props = defineProps<{
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
   nearby: NearbyCounty[];
+  guides: MagicRouteGuide[];
 }>();
 
 const townList = ref<HTMLElement | null>(null);
@@ -95,8 +97,35 @@ useJourneyTracking().logWhenVisible(
     class="flex flex-col justify-between space-y-4 xmd:flex-row-reverse xmd:space-y-0"
   >
     <div
-      class="xmd:flex-shrink-none w-full xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
+      class="xmd:flex-shrink-none flex w-full flex-col space-y-4 xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
     >
+      <Card
+        v-if="guides.length > 0"
+        class="flex flex-col space-y-3"
+      >
+        <SubHeading> Specialist guides in {{ county.name }} </SubHeading>
+
+        <p class="prose mt-4 max-w-none">
+          Are you heading to {{ county.name }}? Take a look at these specialist
+          guides I've put together for eating gluten free across
+          {{ county.name }}!
+        </p>
+
+        <ul>
+          <li
+            v-for="guide in guides"
+            :key="guide.link"
+          >
+            <Link
+              :href="guide.link"
+              class="text-lg font-semibold text-primary-dark hover:text-black"
+            >
+              {{ guide.title }}
+            </Link>
+          </li>
+        </ul>
+      </Card>
+
       <Card>
         <SubHeading>Other counties nearby</SubHeading>
 
@@ -171,7 +200,7 @@ useJourneyTracking().logWhenVisible(
     </div>
 
     <div class="flex-1">
-      <Card class="mt-3 flex flex-col space-y-4">
+      <Card class="flex flex-col space-y-4">
         <Info class="flex">
           <div class="inline-flex flex-col">
             <p class="prose prose-sm max-w-none sm:prose-lg md:prose-xl">

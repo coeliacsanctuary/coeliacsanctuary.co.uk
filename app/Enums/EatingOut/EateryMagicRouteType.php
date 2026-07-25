@@ -6,9 +6,11 @@ namespace App\Enums\EatingOut;
 
 use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeMagicRouteContentAgent;
 use App\Ai\Agents\MagicRoutes\MagicRouteAgent;
+use App\Contracts\RouteFallbackResolverContract;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
+use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
 
 enum EateryMagicRouteType: string
 {
@@ -36,6 +38,13 @@ enum EateryMagicRouteType: string
     {
         return match ($this) {
             self::HundredPercentGlutenFree => HundredPercentGlutenFreeMagicRouteContentAgent::make(...$params),
+        };
+    }
+
+    public function fallbackResolver(): RouteFallbackResolverContract
+    {
+        return match ($this) {
+            self::HundredPercentGlutenFree => app(HundredPercentGlutenFreeEateriesFallbackResolver::class),
         };
     }
 }

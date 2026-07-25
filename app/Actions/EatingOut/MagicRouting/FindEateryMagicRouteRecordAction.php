@@ -9,7 +9,7 @@ use App\Models\EatingOut\EateryMagicRouteRecord;
 
 class FindEateryMagicRouteRecordAction
 {
-    public function handle(EateryMagicRouteType $type, string $rawLocation, ?callable $withConfiguration = null): EateryMagicRouteRecord
+    public function handle(EateryMagicRouteType $type, string $rawLocation): EateryMagicRouteRecord
     {
         return EateryMagicRouteRecord::query()
             ->where('resolver_type', $type)

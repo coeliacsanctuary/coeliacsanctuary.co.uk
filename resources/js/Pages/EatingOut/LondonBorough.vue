@@ -164,7 +164,7 @@ useJourneyTracking().logWhenVisible(
     </div>
 
     <div class="flex-1">
-      <Card class="mt-3 flex flex-col space-y-4">
+      <Card class="flex flex-col space-y-4">
         <Info class="flex">
           <div class="inline-flex flex-col">
             <p class="prose prose-sm max-w-none sm:prose-lg md:prose-xl">

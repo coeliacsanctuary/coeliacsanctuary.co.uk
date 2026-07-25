@@ -6,6 +6,7 @@ namespace Tests\Unit\Enums\EatingOut;
 
 use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeMagicRouteContentAgent;
 use App\Ai\Agents\MagicRoutes\MagicRouteAgent;
+use App\Contracts\RouteFallbackResolverContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Models\EatingOut\Eatery;
@@ -14,6 +15,7 @@ use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesForMagicRoutePipeline;
 use App\Services\EatingOut\Collection\Configuration;
+use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
 use Database\Seeders\EateryScaffoldingSeeder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -104,5 +106,21 @@ class EateryMagicRouteTypeTest extends TestCase
         $agent = EateryMagicRouteType::HundredPercentGlutenFree->agent([$routeRecord]);
 
         $this->assertInstanceOf(HundredPercentGlutenFreeMagicRouteContentAgent::class, $agent);
+    }
+
+    #[Test]
+    public function itReturnsARouteFallbackResolverContractForHundredPercentGlutenFree(): void
+    {
+        $resolver = EateryMagicRouteType::HundredPercentGlutenFree->fallbackResolver();
+
+        $this->assertInstanceOf(RouteFallbackResolverContract::class, $resolver);
+    }
+
+    #[Test]
+    public function itReturnsAHundredPercentGlutenFreeEateriesFallbackResolverForHundredPercentGlutenFree(): void
+    {
+        $resolver = EateryMagicRouteType::HundredPercentGlutenFree->fallbackResolver();
+
+        $this->assertInstanceOf(HundredPercentGlutenFreeEateriesFallbackResolver::class, $resolver);
     }
 }

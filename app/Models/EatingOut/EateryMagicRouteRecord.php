@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use App\Contracts\RegexRouteFallbackResolver;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Services\EatingOut\Collection\Configuration;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Str;
 
 /**
  * @property EateryMagicRouteType $resolver_type
@@ -32,5 +35,34 @@ class EateryMagicRouteRecord extends Model
         $relation = $this->morphTo('location');
 
         return $relation;
+    }
+
+    /** @return Attribute<string, never> */
+    public function title(): Attribute
+    {
+        return Attribute::get(function () {
+            $location = match($this->location::class) {
+                EateryCounty::class => $this->location->county,
+                EateryTown::class => $this->location->town,
+                EateryArea::class => $this->location->area,
+            };
+
+            return match ($this->resolver_type) {
+                EateryMagicRouteType::HundredPercentGlutenFree => "Eating 100% Gluten Free in {$location}",
+            };
+        });
+    }
+
+    public function link(): ?string
+    {
+        $resolver = $this->resolver_type->fallbackResolver();
+
+        if ($resolver instanceof RegexRouteFallbackResolver) {
+            $path = $resolver->generateRoutePath(['location' => $this->raw_location]);
+
+            return Str::start($path, '/');
+        }
+
+        return null;
     }
 }

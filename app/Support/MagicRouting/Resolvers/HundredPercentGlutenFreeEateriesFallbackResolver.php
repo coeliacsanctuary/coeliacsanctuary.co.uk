@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\MagicRouting\Resolvers;
 
 use App\Actions\EatingOut\MagicRouting\FindEateryMagicRouteRecordAction;
+use App\Contracts\RegexRouteFallbackResolver;
 use App\Contracts\RouteFallbackResolverContract;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\CountyController;
@@ -22,7 +23,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use RuntimeException;
 
-class HundredPercentGlutenFreeEateriesFallbackResolver implements RouteFallbackResolverContract
+class HundredPercentGlutenFreeEateriesFallbackResolver implements RegexRouteFallbackResolver, RouteFallbackResolverContract
 {
     public function canHandle(Request $request): bool
     {
@@ -79,7 +80,6 @@ class HundredPercentGlutenFreeEateriesFallbackResolver implements RouteFallbackR
         $routeRecord = app(FindEateryMagicRouteRecordAction::class)->handle(
             EateryMagicRouteType::HundredPercentGlutenFree,
             $location,
-            $this->buildConfiguration(...),
         );
 
         $controller = match ($routeRecord->location::class) {
@@ -91,12 +91,5 @@ class HundredPercentGlutenFreeEateriesFallbackResolver implements RouteFallbackR
         return app(RouteToController::class)->handle(app($controller), [
             'routeRecord' => $routeRecord,
         ]);
-    }
-
-    protected function buildConfiguration(Configuration $configuration): Configuration
-    {
-        return $configuration
-            ->addJoin(new Join('wheretoeat_assigned_features', 'wheretoeat_assigned_features.wheretoeat_id', 'wheretoeat.id'))
-            ->addWhere(new Where('wheretoeat_assigned_features.feature_id', '=', 1)); // 100 percent gluten free
     }
 }

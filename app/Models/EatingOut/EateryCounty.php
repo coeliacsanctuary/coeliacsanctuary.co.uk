@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
@@ -125,6 +126,12 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
         return $this->belongsTo(EateryCountry::class, 'country_id');
     }
 
+    /** @retun MorphMany<EateryMagicRouteRecord, $this> */
+    public function magicRoutes(): MorphMany
+    {
+        return $this->morphMany(EateryMagicRouteRecord::class, 'location');
+    }
+
     public function keywords(): array
     {
         return [
@@ -164,7 +171,7 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
     /** @return Collection<int, static> */
     public function nearbyCounties(int $limit = 3): Collection
     {
-        $latlng = LatLng::fromString((string)$this->latlng);
+        $latlng = LatLng::fromString((string) $this->latlng);
 
         return static::query()
             ->selectRaw('(

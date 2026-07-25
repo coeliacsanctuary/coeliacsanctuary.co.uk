@@ -11,6 +11,7 @@ use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCounty;
 use App\Resources\EatingOut\CountyPageResource;
+use App\Resources\EatingOut\MagicRouteGuideResource;
 use App\Resources\EatingOut\NearbyCountyResource;
 use Inertia\Response;
 
@@ -38,6 +39,7 @@ class ShowController
                 'topRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
                 'mostRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
                 'nearby' => fn () => NearbyCountyResource::collection($county->nearbyCounties()),
+                'guides' => fn () => MagicRouteGuideResource::collection($county->magicRoutes),
             ]);
     }
 }
