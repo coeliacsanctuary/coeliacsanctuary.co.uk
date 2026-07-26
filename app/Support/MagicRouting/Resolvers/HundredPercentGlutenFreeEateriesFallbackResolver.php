@@ -12,9 +12,6 @@ use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\Coun
 use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\TownController;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
-use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
-use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
-use App\Services\EatingOut\Collection\Configuration;
 use App\Support\MagicRouting\RouteToController;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\RedirectResponse;

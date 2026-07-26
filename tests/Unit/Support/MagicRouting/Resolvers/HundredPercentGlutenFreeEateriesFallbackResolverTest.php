@@ -11,7 +11,6 @@ use App\Http\Controllers\ResolvedFallbacks\HundredPercentGlutenFreeEateries\Town
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Models\EatingOut\EateryTown;
-use App\Services\EatingOut\Collection\Configuration;
 use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
 use App\Support\MagicRouting\RouteToController;
 use Illuminate\Http\Request;
@@ -114,92 +113,6 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
 
         app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->handle(
             Request::create('/eating-100-percent-gluten-free-in-london')
-        );
-    }
-
-    #[Test]
-    public function itPassesAConfigurationCallableToTheFindEateryMagicRouteRecordAction(): void
-    {
-        $routeRecord = $this->makeRouteRecordWithCounty();
-
-        $this->mock(FindEateryMagicRouteRecordAction::class)
-            ->shouldReceive('handle')
-            ->withArgs(function (EateryMagicRouteType $type, string $location, mixed $callback) {
-                $this->assertIsCallable($callback);
-
-                return true;
-            })
-            ->andReturn($routeRecord)
-            ->once();
-
-        $this->mockRouteToController();
-
-        app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->handle(
-            Request::create('/eating-100-percent-gluten-free-in-london')
-        );
-    }
-
-    #[Test]
-    public function theBuildConfigurationCallbackAddsTheExpectedJoinToTheConfiguration(): void
-    {
-        $routeRecord = $this->makeRouteRecordWithCounty();
-        $capturedCallback = null;
-
-        $this->mock(FindEateryMagicRouteRecordAction::class)
-            ->shouldReceive('handle')
-            ->withArgs(function (EateryMagicRouteType $type, string $location, mixed $callback) use (&$capturedCallback) {
-                $capturedCallback = $callback;
-
-                return true;
-            })
-            ->andReturn($routeRecord);
-
-        $this->mockRouteToController();
-
-        app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->handle(
-            Request::create('/eating-100-percent-gluten-free-in-london')
-        );
-
-        $result = $capturedCallback(app(Configuration::class));
-
-        $joins = $result->getJoins();
-
-        $this->assertCount(1, $joins);
-        $this->assertSame(
-            ['wheretoeat_assigned_features', 'wheretoeat_assigned_features.wheretoeat_id', 'wheretoeat.id', null],
-            $joins->first()->jsonSerialize(),
-        );
-    }
-
-    #[Test]
-    public function theBuildConfigurationCallbackAddsTheExpectedWhereToTheConfiguration(): void
-    {
-        $routeRecord = $this->makeRouteRecordWithCounty();
-        $capturedCallback = null;
-
-        $this->mock(FindEateryMagicRouteRecordAction::class)
-            ->shouldReceive('handle')
-            ->withArgs(function (EateryMagicRouteType $type, string $location, mixed $callback) use (&$capturedCallback) {
-                $capturedCallback = $callback;
-
-                return true;
-            })
-            ->andReturn($routeRecord);
-
-        $this->mockRouteToController();
-
-        app(HundredPercentGlutenFreeEateriesFallbackResolver::class)->handle(
-            Request::create('/eating-100-percent-gluten-free-in-london')
-        );
-
-        $result = $capturedCallback(app(Configuration::class));
-
-        $wheres = $result->getWheres();
-
-        $this->assertCount(1, $wheres);
-        $this->assertSame(
-            ['wheretoeat_assigned_features.feature_id', '=', 1, 'and'],
-            $wheres->first()->jsonSerialize(),
         );
     }
 

@@ -126,7 +126,7 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
         return $this->belongsTo(EateryCountry::class, 'country_id');
     }
 
-    /** @retun MorphMany<EateryMagicRouteRecord, $this> */
+    /** @return MorphMany<EateryMagicRouteRecord, $this> */
     public function magicRoutes(): MorphMany
     {
         return $this->morphMany(EateryMagicRouteRecord::class, 'location');

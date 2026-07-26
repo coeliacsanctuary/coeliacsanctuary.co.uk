@@ -11,8 +11,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
+ * @property string $title
  * @property EateryMagicRouteType $resolver_type
  * @property array $body
  * @property Configuration $builder_config
@@ -37,7 +39,7 @@ class EateryMagicRouteRecord extends Model
         return $relation;
     }
 
-    /** @return Attribute<string, never> */
+    /** @return Attribute<non-falsy-string, never> */
     public function title(): Attribute
     {
         return Attribute::get(function () {
@@ -45,6 +47,7 @@ class EateryMagicRouteRecord extends Model
                 EateryCounty::class => $this->location->county,
                 EateryTown::class => $this->location->town,
                 EateryArea::class => $this->location->area,
+                default => throw new RuntimeException('Invalid location type'),
             };
 
             return match ($this->resolver_type) {
