@@ -105,7 +105,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
                 GenerateCountryDescriptionJob::dispatch($country);
                 GenerateCountyDescriptionJob::dispatch($county);
 
-                if($county->county === 'London') {
+                if ($county->county === 'London') {
                     GenerateBoroughDescriptionJob::dispatch($town);
                 }
             }

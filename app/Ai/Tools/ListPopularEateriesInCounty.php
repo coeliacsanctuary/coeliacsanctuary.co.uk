@@ -6,7 +6,6 @@ namespace App\Ai\Tools;
 
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
-use App\Models\EatingOut\EateryTown;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -40,7 +39,7 @@ class ListPopularEateriesInCounty implements Tool
             ->orderBy('reviews_count', 'desc')
             ->take(5)
             ->get()
-            ->map(fn(Eatery $eatery) => [
+            ->map(fn (Eatery $eatery) => [
                 'name' => $eatery->name,
                 'town' => $eatery->town?->town,
                 'address' => $eatery->address,

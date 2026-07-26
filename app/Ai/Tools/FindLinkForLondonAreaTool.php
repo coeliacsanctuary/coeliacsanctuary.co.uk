@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Ai\Tools;
 
 use App\Models\EatingOut\EateryArea;
-use App\Models\EatingOut\EateryTown;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
