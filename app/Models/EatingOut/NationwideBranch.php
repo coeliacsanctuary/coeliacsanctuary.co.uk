@@ -11,6 +11,7 @@ use App\Concerns\HasOpenGraphImage;
 use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
+use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
@@ -90,8 +91,9 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
                 CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
-            if (config('coeliac.generate_country_ai_descriptions') === true) {
+            if (config('coeliac.generate_eatery_ai_descriptions') === true) {
                 GenerateCountryDescriptionJob::dispatch($branch->country()->firstOrFail());
+                GenerateCountyDescriptionJob::dispatch($branch->county()->withoutGlobalScopes()->firstOrFail());
             }
         });
     }

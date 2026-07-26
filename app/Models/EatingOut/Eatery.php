@@ -15,6 +15,7 @@ use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
+use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -101,8 +102,9 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
                 CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
-            if (config('coeliac.generate_country_ai_descriptions') === true) {
+            if (config('coeliac.generate_eatery_ai_descriptions') === true) {
                 GenerateCountryDescriptionJob::dispatch($eatery->country()->firstOrFail());
+                GenerateCountyDescriptionJob::dispatch($eatery->county()->withoutGlobalScopes()->firstOrFail());
             }
         });
     }

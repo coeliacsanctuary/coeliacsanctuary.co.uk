@@ -6,6 +6,7 @@ namespace Tests;
 
 use App\Ai\Agents\AskSealiac;
 use App\Ai\Agents\EateryCountryDescriptionAgent;
+use App\Ai\Agents\EateryCountyDescriptionAgent;
 use ArrayAccess;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -39,6 +40,7 @@ abstract class TestCase extends BaseTestCase
         DB::connection()->getSchemaBuilder()->disableForeignKeyConstraints();
 
         EateryCountryDescriptionAgent::fake();
+        EateryCountyDescriptionAgent::fake();
         AskSealiac::fake();
     }
 
