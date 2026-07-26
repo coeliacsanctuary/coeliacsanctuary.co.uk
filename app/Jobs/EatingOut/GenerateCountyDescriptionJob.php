@@ -40,6 +40,10 @@ class GenerateCountyDescriptionJob implements ShouldBeUnique, ShouldQueue
 
     public function handle(): void
     {
+        if ($this->county->county === 'Nationwide') {
+            return;
+        }
+
         $response = EateryCountyDescriptionAgent::make()->prompt($this->buildPrompt());
 
         $this->county->update(['description' => $response->text]);

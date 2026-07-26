@@ -136,6 +136,30 @@ class GenerateCountyDescriptionJobTest extends TestCase
     }
 
     #[Test]
+    public function itDoesntPromptTheAgentForTheNationwideCounty(): void
+    {
+        EateryCountyDescriptionAgent::fake();
+
+        $nationwide = $this->create(EateryCounty::class, ['county' => 'Nationwide']);
+
+        (new GenerateCountyDescriptionJob($nationwide))->handle();
+
+        EateryCountyDescriptionAgent::assertNeverPrompted();
+    }
+
+    #[Test]
+    public function itDoesntUpdateTheDescriptionForTheNationwideCounty(): void
+    {
+        EateryCountyDescriptionAgent::fake(['AI generated description']);
+
+        $nationwide = $this->create(EateryCounty::class, ['county' => 'Nationwide', 'description' => null]);
+
+        (new GenerateCountyDescriptionJob($nationwide))->handle();
+
+        $this->assertNull($nationwide->refresh()->description);
+    }
+
+    #[Test]
     public function itIsUniqueToTheCounty(): void
     {
         $this->assertEquals(

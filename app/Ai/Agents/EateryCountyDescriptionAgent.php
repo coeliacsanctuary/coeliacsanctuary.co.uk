@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Ai\Agents;
 
 use App\Ai\Tools\FindLinkForTownTool;
+use App\Ai\Tools\ListPopularEateriesInCounty;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Promptable;
@@ -26,6 +27,7 @@ class EateryCountyDescriptionAgent implements Agent, HasTools
     {
         return [
             new FindLinkForTownTool(),
+            new ListPopularEateriesInCounty(),
         ];
     }
 }

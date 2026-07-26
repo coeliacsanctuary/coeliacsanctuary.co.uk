@@ -104,7 +104,7 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
 
             if (config('coeliac.generate_eatery_ai_descriptions') === true) {
                 GenerateCountryDescriptionJob::dispatch($eatery->country()->firstOrFail());
-                GenerateCountyDescriptionJob::dispatch($eatery->county()->withoutGlobalScopes()->firstOrFail());
+                GenerateCountyDescriptionJob::dispatch($eatery->county()->firstOrFail());
             }
         });
     }

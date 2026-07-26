@@ -93,7 +93,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
 
             if (config('coeliac.generate_eatery_ai_descriptions') === true) {
                 GenerateCountryDescriptionJob::dispatch($branch->country()->firstOrFail());
-                GenerateCountyDescriptionJob::dispatch($branch->county()->withoutGlobalScopes()->firstOrFail());
+                GenerateCountyDescriptionJob::dispatch($branch->county()->firstOrFail());
             }
         });
     }

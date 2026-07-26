@@ -85,7 +85,9 @@ useJourneyTracking().logWhenVisible(
   />
 
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading> Gluten Free {{ county.name }} </Heading>
+    <Heading>
+      Browse gluten free places to eat across {{ county.name }}
+    </Heading>
 
     <p
       class="prose prose-lg max-w-none lg:prose-xl"

@@ -6,6 +6,7 @@ namespace Tests\Unit\Ai\Agents;
 
 use App\Ai\Agents\EateryCountyDescriptionAgent;
 use App\Ai\Tools\FindLinkForTownTool;
+use App\Ai\Tools\ListPopularEateriesInCounty;
 use Laravel\Ai\Contracts\Tool;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -53,11 +54,11 @@ class EateryCountyDescriptionAgentTest extends TestCase
     {
         $tools = collect($this->agent->tools());
 
-        $this->assertCount(1, $tools);
+        $this->assertCount(2, $tools);
         $tools->each(fn ($tool) => $this->assertInstanceOf(Tool::class, $tool));
 
         $toolClasses = $tools->map(fn ($tool) => $tool::class)->values()->all();
 
-        $this->assertEquals([FindLinkForTownTool::class], $toolClasses);
+        $this->assertEquals([FindLinkForTownTool::class, ListPopularEateriesInCounty::class], $toolClasses);
     }
 }

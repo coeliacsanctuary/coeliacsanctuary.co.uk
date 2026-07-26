@@ -34,7 +34,7 @@ class LondonPageResource extends JsonResource
             'name' => $this->county,
             'slug' => $this->slug,
             'latlng' => (string)$this->latlng,
-            'description' => $this->formatMarkdown("If you're heading to **London**, our eating out guide lists all the gluten free places in the towns, villages, and cities throughout the region. Explore the gluten-free options in **London** diverse culinary scene...... Todo - better County intro will go here..."),
+            'description' => $this->formatMarkdown((string) $this->description),
             'image' => $this->image ?? $country->image,
             'boroughs' => new LondonBoroughCollection($this->activeTowns),
             'eateries' => $this->eateries_count,
