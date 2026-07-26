@@ -54,7 +54,7 @@ const toggle = (): void => {
         />
       </div>
 
-      <p
+      <div
         class="prose-md prose max-w-none md:prose-lg"
         v-html="country.description"
       />

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\EatingOut;
 
+use App\Concerns\FormatsMarkdown;
 use App\Enums\EatingOut\EateryType;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Cache;
 
 class GetCountyListAction
 {
+    use FormatsMarkdown;
+
     /** @return Collection<int, array{name: string, description: string, list: Collection<int, array>, counties: int<0, max>, eateries: mixed, top_counties: Collection<int,array>}> */
     public function handle(bool $force = false): Collection
     {
@@ -44,7 +47,7 @@ class GetCountyListAction
                 ->get()
                 ->map(fn (EateryCountry $country) => [
                     'name' => $country->country,
-                    'description' => app(GetCountryDescriptionAction::class)->handle($country),
+                    'description' => (string) $this->formatMarkdown((string) $country->description),
                     'list' => $country->counties->map($this->formatCounty(...)),
                     'counties' => $country->counties->count(),
                     'eateries' => $country->getAttribute('total_eateries_count'),

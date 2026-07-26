@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\EatingOut;
 
-use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\DataObjects\EatingOut\LatLng;
+use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -103,23 +103,55 @@ class EateryTest extends TestCase
     }
 
     #[Test]
-    public function itSetsTheCountryDescriptionAsNullOnSave(): void
+    public function itDispatchesTheCountryDescriptionJobOnSave(): void
     {
-        EateryCountryDescriptionAgent::fake();
-
         config()->set('coeliac.generate_country_ai_descriptions', true);
 
         $country = $this->create(EateryCountry::class, [
             'description' => 'foo bar',
         ]);
 
-        $this->assertNotNull($country->description);
+        Bus::fake();
 
         $this->create(Eatery::class, [
             'country_id' => $country->id,
         ]);
 
-        $this->assertNull($country->refresh()->description);
+        Bus::assertDispatched(GenerateCountryDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotClearTheExistingCountryDescriptionOnSave(): void
+    {
+        config()->set('coeliac.generate_country_ai_descriptions', true);
+
+        Bus::fake();
+
+        $country = $this->create(EateryCountry::class, [
+            'description' => 'foo bar',
+        ]);
+
+        $this->create(Eatery::class, [
+            'country_id' => $country->id,
+        ]);
+
+        $this->assertEquals('foo bar', $country->refresh()->description);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheCountryDescriptionJobWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_country_ai_descriptions', false);
+
+        $country = $this->create(EateryCountry::class);
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'country_id' => $country->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateCountryDescriptionJob::class);
     }
 
     #[Test]

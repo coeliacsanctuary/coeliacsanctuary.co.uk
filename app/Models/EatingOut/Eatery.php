@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
-use App\Actions\EatingOut\GetCountyListAction;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
@@ -15,6 +14,7 @@ use App\Contracts\Search\IsSearchable;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
+use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -102,9 +102,7 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
             }
 
             if (config('coeliac.generate_country_ai_descriptions') === true) {
-                $eatery->country()->update(['description' => null]);
-
-                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
+                GenerateCountryDescriptionJob::dispatch($eatery->country()->firstOrFail());
             }
         });
     }
