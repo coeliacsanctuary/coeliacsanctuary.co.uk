@@ -11,6 +11,7 @@ use App\Concerns\HasOpenGraphImage;
 use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
+use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
@@ -92,8 +93,21 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
             }
 
             if (config('coeliac.generate_eatery_ai_descriptions') === true) {
-                GenerateCountryDescriptionJob::dispatch($branch->country()->firstOrFail());
-                GenerateCountyDescriptionJob::dispatch($branch->county()->firstOrFail());
+                /** @var EateryCountry $country */
+                $country = $branch->country;
+
+                /** @var EateryCounty $county */
+                $county = $branch->county;
+
+                /** @var EateryTown $town */
+                $town = $branch->town;
+
+                GenerateCountryDescriptionJob::dispatch($country);
+                GenerateCountyDescriptionJob::dispatch($county);
+
+                if($county->county === 'London') {
+                    GenerateBoroughDescriptionJob::dispatch($town);
+                }
             }
         });
     }

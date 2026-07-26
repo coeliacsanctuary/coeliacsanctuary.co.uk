@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\EatingOut;
 
+use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
@@ -187,6 +188,67 @@ class NationwideBranchTest extends TestCase
         ]);
 
         Bus::assertNotDispatched(GenerateCountyDescriptionJob::class);
+    }
+
+    /** @return array{EateryCounty, EateryTown} */
+    protected function createLondonBorough(): array
+    {
+        $county = $this->create(EateryCounty::class, ['county' => 'London']);
+        $town = $this->create(EateryTown::class, ['county_id' => $county->id, 'town' => 'Camden']);
+
+        $this->create(Eatery::class, ['county_id' => $county->id, 'town_id' => $town->id]);
+
+        return [$county, $town];
+    }
+
+    #[Test]
+    public function itDispatchesTheBoroughDescriptionJobOnSaveForALondonBranch(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        [$county, $town] = $this->createLondonBorough();
+
+        Bus::fake();
+
+        $this->create(NationwideBranch::class, [
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+        ]);
+
+        Bus::assertDispatched(GenerateBoroughDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheBoroughDescriptionJobForANonLondonBranch(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        Bus::fake();
+
+        $this->create(NationwideBranch::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateBoroughDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheBoroughDescriptionJobWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', false);
+
+        [$county, $town] = $this->createLondonBorough();
+
+        Bus::fake();
+
+        $this->create(NationwideBranch::class, [
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateBoroughDescriptionJob::class);
     }
 
     #[Test]
