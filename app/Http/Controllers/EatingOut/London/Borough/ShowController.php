@@ -13,7 +13,7 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Resources\EatingOut\LondonBoroughPageResource;
 use App\Resources\EatingOut\MagicRouteGuideResource;
-use App\Resources\EatingOut\NearbyTownResource;
+use App\Resources\EatingOut\NearbyBoroughResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Inertia\Response;
 
@@ -53,7 +53,7 @@ class ShowController
                 'borough' => fn () => new LondonBoroughPageResource($borough),
                 'topRated' => fn () => $getTopRatedPlacesInTown->handle($borough),
                 'mostRated' => fn () => $getMostRatedPlacesInTown->handle($borough),
-                'nearby' => fn () => NearbyTownResource::collection($borough->nearbyTowns()),
+                'nearby' => fn () => NearbyBoroughResource::collection($borough->nearbyTowns()),
                 'guides' => fn () => MagicRouteGuideResource::collection($borough->magicRoutes),
             ]);
     }

@@ -1,6 +1,13 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { EateryFilters, TownEatery, TownPage } from '@/types/EateryTypes';
+import {
+  EateryFilters,
+  MagicRouteGuide,
+  NearbyCounty,
+  NearbyTown,
+  TownEatery,
+  TownPage,
+} from '@/types/EateryTypes';
 import TownHeading from '@/Components/PageSpecific/EatingOut/Town/TownHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
@@ -15,6 +22,8 @@ import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import SubHeading from '@/Components/SubHeading.vue';
+import { pluralise } from '@/helpers';
 
 const props = defineProps<{
   live_eateries_count: number;
@@ -25,6 +34,8 @@ const props = defineProps<{
     current: string;
     options: FormSelectOption[];
   };
+  nearby: NearbyTown[];
+  guides: MagicRouteGuide[];
 }>();
 
 const placeList = ref<HTMLElement | null>(null);
@@ -90,8 +101,6 @@ const reloadEateries = () => {
   router.reload({
     only: ['eateries'],
     reset: ['eateries'],
-    preserveState: true,
-    preserveScroll: true,
   });
 };
 
@@ -161,13 +170,92 @@ useJourneyTracking().logWhenVisible(
     class="content_hint"
   />
 
-  <div class="relative md:flex xmd:space-x-2">
-    <TownFilterSidebar
-      v-if="live_eateries_count > 0"
-      :filters="filters"
-      @filters-updated="handleFiltersChanged"
-      @sidebar-closed="reloadEateries"
-    />
+  <div
+    class="flex flex-col justify-between space-y-4 xmd:flex-row-reverse xmd:space-y-0"
+  >
+    <div
+      class="xmd:flex-shrink-none flex w-full flex-col space-y-4 xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
+    >
+      <Card
+        v-if="guides.length > 0"
+        class="flex flex-col space-y-3"
+      >
+        <SubHeading> Specialist guides in {{ town.name }} </SubHeading>
+
+        <p class="prose mt-4 max-w-none">
+          Are you heading to {{ town.name }}? Take a look at these specialist
+          guides I've put together for eating gluten free across
+          {{ town.name }}!
+        </p>
+
+        <ul>
+          <li
+            v-for="guide in guides"
+            :key="guide.link"
+          >
+            <Link
+              :href="guide.link"
+              class="text-lg font-semibold text-primary-dark hover:text-black"
+            >
+              {{ guide.title }}
+            </Link>
+          </li>
+        </ul>
+      </Card>
+
+      <Card>
+        <SubHeading>Other towns nearby</SubHeading>
+
+        <div class="mt-4 flex flex-col space-y-4">
+          <div
+            v-for="nearbyTown in nearby"
+            :key="nearbyTown.link"
+            class="flex flex-col space-y-2"
+          >
+            <Link
+              class="text-lg font-semibold text-primary-darkest transition hover:text-black lg:text-xl"
+              :href="nearbyTown.link"
+            >
+              {{ nearbyTown.name }}
+            </Link>
+
+            <ul class="flex space-x-4">
+              <li
+                v-if="nearbyTown.eateries > 0"
+                class="rounded-lg bg-primary/50 px-4 py-1 text-xs font-semibold"
+              >
+                {{ nearbyTown.eateries }}
+                {{ pluralise('Eatery', nearbyTown.eateries) }}
+              </li>
+
+              <li
+                v-if="nearbyTown.attractions > 0"
+                class="rounded-lg bg-primary-dark/50 px-4 py-1 text-xs font-semibold"
+              >
+                {{ nearbyTown.attractions }}
+                {{ pluralise('Attraction', nearbyTown.attractions) }}
+              </li>
+
+              <li
+                v-if="nearbyTown.hotels > 0"
+                class="rounded-lg bg-secondary/50 px-4 py-1 text-xs font-semibold"
+              >
+                {{ nearbyTown.hotels }}
+                {{ pluralise('Hotel', nearbyTown.hotels) }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </Card>
+
+      <TownFilterSidebar
+        v-if="live_eateries_count > 0"
+        :filters="filters"
+        fixed
+        @filters-updated="handleFiltersChanged"
+        @sidebar-closed="reloadEateries"
+      />
+    </div>
 
     <div
       v-if="live_eateries_count > 0"

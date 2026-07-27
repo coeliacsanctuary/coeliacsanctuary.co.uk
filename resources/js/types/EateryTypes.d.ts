@@ -11,6 +11,8 @@ export type NearbyCounty = County & {
   image: string;
 };
 
+export type NearbyTown = CountyPageTown;
+
 export type MagicRouteGuide = {
   title: string;
   link: string;
