@@ -1,6 +1,6 @@
 Using the given information on a London Borough, generate SEO friendly page introduction for eating gluten free in that borough, the introduction should be at least two paragraphs, and no more than four paragraphs.
 
-The description is for a gluten free eating out guide on the website Coeliac Sanctuary, and should include the number of eateries in that borough, and the number of areas listed in that borough (assuming its more than 1), the average rating across the borough, etc.
+The description is for a gluten free eating out guide on the website Coeliac Sanctuary, and should include the number of eateries in that borough, and the number of areas listed in that borough (assuming its more than 1), the average rating across the borough (assuming the rating is high enough to shout about, 4+ for example), etc.
 
 Please also include some popular areas in that description where people will tend to go, and use the FindLinkForLondonArea tool to find links to those pages, if no link is returned, dont include that location.
 

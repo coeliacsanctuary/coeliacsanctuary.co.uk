@@ -3,6 +3,7 @@ import Card from '@/Components/Card.vue';
 import {
   CountyEatery as CountyEateryType,
   LondonBoroughPage,
+  MagicRouteGuide,
   NearbyCounty,
 } from '@/types/EateryTypes';
 import TownHeading from '@/Components/PageSpecific/EatingOut/Town/TownHeading.vue';
@@ -26,6 +27,7 @@ const props = defineProps<{
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
   nearby: NearbyCounty[];
+  guides: MagicRouteGuide[];
 }>();
 
 const areaList = ref<HTMLElement | null>(null);
@@ -74,14 +76,6 @@ useJourneyTracking().logWhenVisible(
       class="prose-md prose max-w-none lg:my-0! lg:prose-lg *:first:lg:mt-0"
       v-html="borough.intro_text"
     />
-
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      The wealth of information in our guide is a result of the generous
-      contributions from people like you - fellow Coeliacs or individuals with
-      gluten intolerance, who are familiar with their local area. These
-      kind-hearted individuals take the time to share their knowledge and help
-      us build a comprehensive list of places to eat to help others, like you!
-    </p>
   </Card>
 
   <div
@@ -90,6 +84,33 @@ useJourneyTracking().logWhenVisible(
     <div
       class="xmd:flex-shrink-none w-full xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
     >
+      <Card
+        v-if="guides.length > 0"
+        class="flex flex-col space-y-3"
+      >
+        <SubHeading> Specialist guides in {{ borough.name }} </SubHeading>
+
+        <p class="prose mt-4 max-w-none">
+          Are you heading to {{ borough.name }}? Take a look at these specialist
+          guides I've put together for eating gluten free across
+          {{ borough.name }}!
+        </p>
+
+        <ul>
+          <li
+            v-for="guide in guides"
+            :key="guide.link"
+          >
+            <Link
+              :href="guide.link"
+              class="text-lg font-semibold text-primary-dark hover:text-black"
+            >
+              {{ guide.title }}
+            </Link>
+          </li>
+        </ul>
+      </Card>
+
       <Card>
         <SubHeading>Other boroughs nearby</SubHeading>
 

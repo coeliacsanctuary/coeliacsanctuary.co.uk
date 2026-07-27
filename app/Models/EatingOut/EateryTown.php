@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -155,6 +156,12 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
     public function reviews(): HasManyThrough
     {
         return $this->hasManyThrough(EateryReview::class, Eatery::class, 'town_id', 'wheretoeat_id');
+    }
+
+    /** @return MorphMany<EateryMagicRouteRecord, $this> */
+    public function magicRoutes(): MorphMany
+    {
+        return $this->morphMany(EateryMagicRouteRecord::class, 'location');
     }
 
     public function link(): string
