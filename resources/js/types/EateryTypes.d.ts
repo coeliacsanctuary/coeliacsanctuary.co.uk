@@ -90,7 +90,7 @@ export type NationwideEatery = {
   phone?: string;
   reviews: {
     number: number;
-    average: string;
+    average: StarRating;
   };
   type: string;
   venue_type?: string;

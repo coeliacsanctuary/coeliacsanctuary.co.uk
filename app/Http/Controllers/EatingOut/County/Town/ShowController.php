@@ -78,7 +78,7 @@ class ShowController
                         ],
                     ],
                 ],
-                'nearby' => fn () => NearbyTownResource::collection($town->nearbyTowns()),
+                'nearby' => fn () => NearbyTownResource::collection($town->nearbyTowns(5)),
                 'guides' => fn () => MagicRouteGuideResource::collection($town->magicRoutes),
             ])
             ->toResponse($request)

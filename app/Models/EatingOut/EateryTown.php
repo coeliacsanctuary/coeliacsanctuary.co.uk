@@ -244,7 +244,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
             ])
             ->addSelect(['id', 'town', 'county_id', 'slug'])
             ->with(['media', 'county', 'liveEateries', 'liveBranches'])
-            ->whereHas(['liveEateries'])
+            ->whereHas('liveEateries')
             ->where('county_id', $this->county_id)
             ->whereNot('id', $this->id)
             ->whereNot('town', 'nationwide')
