@@ -228,7 +228,6 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
         return <<<TEXT
         Looking for gluten free in **{$this->town}**? In our comprehensive eating out guide, you will find a wide range of gluten free options available at various locations in **{$this->town}**. From cafes, restaurants, attractions, to hotels, we've got you covered.
         TEXT;
-
     }
 
     /** @return Collection<int, static> */

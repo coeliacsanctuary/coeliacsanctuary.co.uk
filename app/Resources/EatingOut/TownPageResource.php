@@ -16,7 +16,7 @@ class TownPageResource extends JsonResource
 {
     use FormatsMarkdown;
 
-    /** @return array{name: string, slug: string, image: string, county: TownCountyResource} */
+    /** @return array{name: string, description: string, slug: string, image: string, county: TownCountyResource} */
     public function toArray(Request $request)
     {
         /** @var EateryCounty $county */
