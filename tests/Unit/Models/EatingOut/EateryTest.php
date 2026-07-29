@@ -8,6 +8,7 @@ use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
+use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -247,6 +248,55 @@ class EateryTest extends TestCase
         ]);
 
         Bus::assertNotDispatched(GenerateBoroughDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDispatchesTheTownDescriptionJobOnSaveForANonLondonEatery(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        Bus::fake();
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertDispatched(GenerateTownDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheTownDescriptionJobForALondonEatery(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        [$county, $town] = $this->createLondonBorough();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateTownDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheTownDescriptionJobWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', false);
+
+        Bus::fake();
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateTownDescriptionJob::class);
     }
 
     #[Test]

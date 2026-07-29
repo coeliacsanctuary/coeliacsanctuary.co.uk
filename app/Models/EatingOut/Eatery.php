@@ -12,6 +12,7 @@ use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
+use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
@@ -118,6 +119,8 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
 
                 if ($county->county === 'London') {
                     GenerateBoroughDescriptionJob::dispatch($town);
+                } else {
+                    GenerateTownDescriptionJob::dispatch($town);
                 }
             }
         });

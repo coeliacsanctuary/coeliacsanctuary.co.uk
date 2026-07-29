@@ -13,6 +13,7 @@ use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
+use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
@@ -107,6 +108,8 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
 
                 if ($county->county === 'London') {
                     GenerateBoroughDescriptionJob::dispatch($town);
+                } else {
+                    GenerateTownDescriptionJob::dispatch($town);
                 }
             }
         });
