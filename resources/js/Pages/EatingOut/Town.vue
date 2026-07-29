@@ -131,24 +131,10 @@ useJourneyTracking().logWhenVisible(
     v-if="live_eateries_count > 0"
     class="mt-3 flex flex-col space-y-4"
   >
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      Looking for gluten free in {{ town.name }}? In our comprehensive eating
-      out guide, you will find a wide range of gluten free options available at
-      various locations in
-      <span
-        class="font-semibold"
-        v-text="town.name"
-      />. From cafes, restaurants, attractions, to hotels, we've got you
-      covered.
-    </p>
-
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      The wealth of information in our guide is a result of the generous
-      contributions from people like you - fellow Coeliacs or individuals with
-      gluten intolerance, who are familiar with their local area. These
-      kind-hearted individuals take the time to share their knowledge and help
-      us build a comprehensive list of places to eat to help others, like you!
-    </p>
+    <div
+      class="prose-md prose w-full max-w-none lg:prose-lg"
+      v-html="town.description"
+    />
 
     <Warning>
       <p>

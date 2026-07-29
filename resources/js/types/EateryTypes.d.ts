@@ -129,6 +129,7 @@ export type Town = {
 };
 
 export type TownPage = Town & {
+  description: string;
   latlng: string;
   link: string;
   image?: string;
