@@ -11,6 +11,7 @@ use App\Concerns\HasOpenGraphImage;
 use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
+use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
 use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
 use App\Jobs\EatingOut\GenerateTownDescriptionJob;
@@ -107,7 +108,11 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
                 GenerateCountyDescriptionJob::dispatch($county);
 
                 if ($county->county === 'London') {
+                    /** @var ?EateryArea $area */
+                    $area = $branch->area;
+
                     GenerateBoroughDescriptionJob::dispatch($town);
+                    GenerateAreaDescriptionJob::dispatch($area);
                 } else {
                     GenerateTownDescriptionJob::dispatch($town);
                 }

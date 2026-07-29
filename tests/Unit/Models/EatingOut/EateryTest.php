@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Models\EatingOut;
 
 use App\DataObjects\EatingOut\LatLng;
+use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
 use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
@@ -17,6 +18,7 @@ use App\Models\Collections\CollectionGroup;
 use App\Models\Collections\CollectionGroupItem;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAlert;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCheck;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
@@ -194,31 +196,34 @@ class EateryTest extends TestCase
     {
         $county = $this->create(EateryCounty::class, ['county' => 'London']);
         $town = $this->create(EateryTown::class, ['county_id' => $county->id, 'town' => 'Camden']);
+        $area = $this->create(EateryArea::class, ['town_id' => $county->id, 'area' => 'Camden Lock']);
 
-        $this->create(Eatery::class, ['county_id' => $county->id, 'town_id' => $town->id]);
+        $this->create(Eatery::class, ['county_id' => $county->id, 'town_id' => $town->id, 'area_id' => $area->id]);
 
-        return [$county, $town];
+        return [$county, $town, $area];
     }
 
     #[Test]
-    public function itDispatchesTheBoroughDescriptionJobOnSaveForALondonEatery(): void
+    public function itDispatchesTheBoroughDescriptionAndAreaDescriptionJobsOnSaveForALondonEatery(): void
     {
         config()->set('coeliac.generate_eatery_ai_descriptions', true);
 
-        [$county, $town] = $this->createLondonBorough();
+        [$county, $town, $area] = $this->createLondonBorough();
 
         Bus::fake();
 
         $this->create(Eatery::class, [
             'county_id' => $county->id,
             'town_id' => $town->id,
+            'area_id' => $area->id,
         ]);
 
         Bus::assertDispatched(GenerateBoroughDescriptionJob::class);
+        Bus::assertDispatched(GenerateAreaDescriptionJob::class);
     }
 
     #[Test]
-    public function itDoesNotDispatchTheBoroughDescriptionJobForANonLondonEatery(): void
+    public function itDoesNotDispatchTheBoroughDescriptionOrAreaDescriptionJobsForANonLondonEatery(): void
     {
         config()->set('coeliac.generate_eatery_ai_descriptions', true);
 
@@ -231,23 +236,26 @@ class EateryTest extends TestCase
         ]);
 
         Bus::assertNotDispatched(GenerateBoroughDescriptionJob::class);
+        Bus::assertNotDispatched(GenerateAreaDescriptionJob::class);
     }
 
     #[Test]
-    public function itDoesNotDispatchTheBoroughDescriptionJobWhenTheConfigIsDisabled(): void
+    public function itDoesNotDispatchTheBoroughDescriptionOrAreaDescriptionJobsWhenTheConfigIsDisabled(): void
     {
         config()->set('coeliac.generate_eatery_ai_descriptions', false);
 
-        [$county, $town] = $this->createLondonBorough();
+        [$county, $town, $area] = $this->createLondonBorough();
 
         Bus::fake();
 
         $this->create(Eatery::class, [
             'county_id' => $county->id,
             'town_id' => $town->id,
+            'area_id' => $area->id,
         ]);
 
         Bus::assertNotDispatched(GenerateBoroughDescriptionJob::class);
+        Bus::assertNotDispatched(GenerateAreaDescriptionJob::class);
     }
 
     #[Test]
@@ -271,13 +279,14 @@ class EateryTest extends TestCase
     {
         config()->set('coeliac.generate_eatery_ai_descriptions', true);
 
-        [$county, $town] = $this->createLondonBorough();
+        [$county, $town, $area] = $this->createLondonBorough();
 
         Bus::fake();
 
         $this->create(Eatery::class, [
             'county_id' => $county->id,
             'town_id' => $town->id,
+            'area_id' => $area->id,
         ]);
 
         Bus::assertNotDispatched(GenerateTownDescriptionJob::class);
