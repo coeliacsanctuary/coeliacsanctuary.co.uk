@@ -50,6 +50,7 @@ use Spatie\SchemaOrg\Restaurant;
  * @property int | null $rating_count
  * @property string $full_name
  * @property string $typeDescription
+ * @property string $display_snippet
  */
 class Eatery extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
@@ -408,6 +409,24 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
             }
 
             return $this->type->name;
+        });
+    }
+
+    /** @return Attribute<string, never> */
+    public function displaySnippet(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->snippet) {
+                return $this->snippet;
+            }
+
+            $info = $this->info;
+
+            if ( ! $info && $this->relationLoaded('restaurants')) {
+                $info = $this->restaurants->first()?->info;
+            }
+
+            return Str::limit((string) $info, 125, preserveWords: true);
         });
     }
 

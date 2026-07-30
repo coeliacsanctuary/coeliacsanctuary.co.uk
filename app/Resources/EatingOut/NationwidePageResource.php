@@ -25,7 +25,7 @@ class NationwidePageResource extends JsonResource
                 /** @var BelongsToMany<EateryFeature, Eatery> $builder */
                 return $builder->where('feature', '100% Gluten Free');
             },
-            'eateries.venueType', 'eateries.type', 'eateries.cuisine', 'eateries.reviews',
+            'eateries.venueType', 'eateries.type', 'eateries.cuisine', 'eateries.reviews', 'eateries.restaurants',
         ]);
         $this->loadCount(['reviews']);
 

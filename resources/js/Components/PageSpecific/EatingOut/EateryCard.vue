@@ -10,7 +10,6 @@ import StarRating from '@/Components/StarRating.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { Link } from '@inertiajs/vue3';
 import Icon from '@/Components/Icon.vue';
-import EateryRestaurants from '@/Components/PageSpecific/EatingOut/EaterySnippetComponents/EateryRestaurants.vue';
 import ReportEateryModal from '@/Components/PageSpecific/EatingOut/Details/Modals/ReportEateryModal.vue';
 
 const props = defineProps<{ eatery: TownEatery }>();
@@ -171,13 +170,7 @@ const showReportPlaceModal = ref(false);
         </div>
 
         <div class="flex flex-1 flex-col space-y-2 md:space-y-4">
-          <EateryRestaurants
-            v-if="eatery.restaurants.length"
-            :restaurants="eatery.restaurants"
-          />
-
           <p
-            v-else
             class="prose max-w-none md:prose-lg"
             v-html="eatery.info"
           />

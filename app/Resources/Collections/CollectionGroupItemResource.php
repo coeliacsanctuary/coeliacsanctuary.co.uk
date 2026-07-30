@@ -71,7 +71,7 @@ class CollectionGroupItemResource extends JsonResource
         return [
             'name' => $this->item_title ?? $eatery->name,
             'full_location' => $eatery->full_location,
-            'description' => $this->item_description ?? $eatery->info,
+            'description' => $this->item_description ?? $eatery->display_snippet,
             'location' => [
                 'address' => collect(explode("\n", $eatery->address))
                     ->map(fn (string $line) => mb_trim($line))
@@ -92,7 +92,7 @@ class CollectionGroupItemResource extends JsonResource
         return [
             'name' => $this->item_title ?? ($branch->name ? "{$branch->name} - ({$branch->eatery->name})" : $branch->eatery->name),
             'full_location' => $branch->full_location,
-            'description' => $this->item_description ?? $branch->eatery->info,
+            'description' => $this->item_description ?? $branch->eatery->display_snippet,
             'location' => [
                 'address' => collect(explode("\n", $branch->address))
                     ->map(fn (string $line) => mb_trim($line))

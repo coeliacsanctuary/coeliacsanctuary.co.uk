@@ -19,6 +19,7 @@ use App\Models\Collections\CollectionGroupItem;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAlert;
 use App\Models\EatingOut\EateryArea;
+use App\Models\EatingOut\EateryAttractionRestaurant;
 use App\Models\EatingOut\EateryCheck;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
@@ -587,5 +588,91 @@ class EateryTest extends TestCase
         ]);
 
         $this->assertCount(1, $eatery->refresh()->associatedCollectionGroups);
+    }
+
+    #[Test]
+    public function itReturnsTheSnippetAsTheDisplaySnippetWhenItHasOne(): void
+    {
+        $eatery = $this->create(Eatery::class, [
+            'snippet' => 'A short and snappy summary',
+            'info' => 'Something much longer that we dont want to display',
+        ]);
+
+        $this->assertEquals('A short and snappy summary', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itFallsBackToATruncatedVersionOfTheInfoWhenItDoesntHaveASnippet(): void
+    {
+        $info = Str::repeat('word ', 100);
+
+        $eatery = $this->create(Eatery::class, [
+            'snippet' => null,
+            'info' => $info,
+        ]);
+
+        $this->assertEquals(Str::limit($info, 125, preserveWords: true), $eatery->display_snippet);
+        $this->assertStringEndsWith('...', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itDoesntTruncateInfoThatIsAlreadyShortEnough(): void
+    {
+        $eatery = $this->create(Eatery::class, [
+            'snippet' => null,
+            'info' => 'Short enough already',
+        ]);
+
+        $this->assertEquals('Short enough already', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itFallsBackToTheFirstAttractionRestaurantsInfoWhenTheEateryHasNoInfo(): void
+    {
+        $eatery = $this->build(Eatery::class)->attraction()->create([
+            'snippet' => null,
+            'info' => null,
+        ]);
+
+        $this->build(EateryAttractionRestaurant::class)
+            ->on($eatery)
+            ->create(['info' => 'The first restaurant in the attraction']);
+
+        $this->build(EateryAttractionRestaurant::class)
+            ->on($eatery)
+            ->create(['info' => 'The second restaurant in the attraction']);
+
+        $eatery->load('restaurants');
+
+        $this->assertEquals('The first restaurant in the attraction', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itReturnsAnEmptyStringWhenTheresNothingToDisplay(): void
+    {
+        $eatery = $this->create(Eatery::class, [
+            'snippet' => null,
+            'info' => null,
+        ]);
+
+        $this->assertEquals('', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itDoesntLazyLoadTheRestaurantsRelationToBuildTheSnippet(): void
+    {
+        $eatery = $this->build(Eatery::class)->attraction()->create([
+            'snippet' => null,
+            'info' => null,
+        ]);
+
+        $this->build(EateryAttractionRestaurant::class)
+            ->on($eatery)
+            ->create(['info' => 'The first restaurant in the attraction']);
+
+        $eatery = Eatery::query()->find($eatery->id);
+
+        $this->assertEquals('', $eatery->display_snippet);
+        $this->assertFalse($eatery->relationLoaded('restaurants'));
     }
 }

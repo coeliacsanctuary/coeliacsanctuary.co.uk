@@ -68,7 +68,7 @@ class EateryListResource extends JsonResource
                 'name' => $restaurant->restaurant_name,
                 'info' => $restaurant->info,
             ]),
-            'info' => $this->info,
+            'info' => $this->display_snippet,
             'is_fully_gf' => $this->features->where('feature', '100% Gluten Free')->isNotEmpty(),
             'location' => [
                 'address' => collect(explode("\n", $this->address))

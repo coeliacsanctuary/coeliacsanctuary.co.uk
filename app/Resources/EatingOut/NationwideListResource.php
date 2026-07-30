@@ -30,7 +30,7 @@ class NationwideListResource extends JsonResource
             'type' => $eateryType->name,
             'cuisine' => $this->cuisine?->cuisine,
             'website' => $this->website,
-            'info' => $this->info,
+            'info' => $this->display_snippet,
             'is_fully_gf' => $this->features->where('feature', '100% Gluten Free')->isNotEmpty(),
             'phone' => $this->phone,
             'reviews' => [

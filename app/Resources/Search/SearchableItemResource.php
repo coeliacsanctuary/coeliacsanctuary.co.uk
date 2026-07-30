@@ -8,7 +8,6 @@ use App\Contracts\Search\IsSearchable;
 use App\Enums\EatingOut\EateryType;
 use App\Models\Blogs\Blog;
 use App\Models\EatingOut\Eatery;
-use App\Models\EatingOut\EateryAttractionRestaurant;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\Recipes\Recipe;
 use App\Models\Shop\ShopProduct;
@@ -36,13 +35,8 @@ class SearchableItemResource extends JsonResource
 
         $description = match ($this->resource::class) {
             Blog::class, Recipe::class, ShopProduct::class => $this->resource->meta_description,
-            Eatery::class => $this->resource->type_id !== EateryType::ATTRACTION->value
-                ? $this->resource->info
-                : $this->resource->restaurants->map(fn (EateryAttractionRestaurant $restaurant): array => [
-                    'name' => $restaurant->restaurant_name,
-                    'info' => $restaurant->info,
-                ]),
-            default => $this->resource->eatery->info,
+            Eatery::class => $this->resource->display_snippet,
+            default => $this->resource->eatery->display_snippet,
         };
 
         $image = match ($this->resource::class) {

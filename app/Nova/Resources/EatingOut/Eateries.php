@@ -327,6 +327,13 @@ class Eateries extends Resource
                     })
                     ->fullWidth(),
 
+                Textarea::make('Snippet')
+                    ->alwaysShow()
+                    ->nullable()
+                    ->rules(['nullable', 'max:150'])
+                    ->help('A short summary shown on eatery cards and search results, leave blank to fall back to a truncated version of the info above.')
+                    ->fullWidth(),
+
                 Repeater::make('Attraction Restaurants', 'restaurants')
                     ->asHasMany(EateryAttractionRestaurantResource::class)
                     ->fullWidth()
