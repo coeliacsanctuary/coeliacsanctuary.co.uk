@@ -8,12 +8,48 @@ import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEater
 import NationwideEateryCard from '@/Components/PageSpecific/EatingOut/NationwideEateryCard.vue';
 import Heading from '@/Components/Heading.vue';
 import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
+import JumpToContentButton from '@/Components/JumpToContentButton.vue';
+import Warning from '@/Components/Warning.vue';
+import FormInput from '@/Components/Forms/FormInput.vue';
+import FormSelect from '@/Components/Forms/FormSelect.vue';
+import { FormSelectOption } from '@/Components/Forms/Props';
+import useScreensize from '@/composables/useScreensize';
+import { computed, ref } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   county: NationwidePage;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
 }>();
+
+const chainList = ref<HTMLElement | null>(null);
+const chainSearch = ref('');
+
+const sortOptions = ref<FormSelectOption[]>([
+  { label: 'Alphabetically', value: 'alphabetical' },
+  { label: 'Highest Rated', value: 'rating' },
+  { label: 'Most Reviewed', value: 'reviews' },
+]);
+
+const currentSort = ref('alphabetical');
+
+const filteredChains = computed(() => {
+  const chains = props.county.chains.filter((chain) =>
+    chain.name.toLowerCase().includes(chainSearch.value.toLowerCase()),
+  );
+
+  if (currentSort.value === 'rating') {
+    return [...chains].sort(
+      (a, b) => Number(b.reviews.average) - Number(a.reviews.average),
+    );
+  }
+
+  if (currentSort.value === 'reviews') {
+    return [...chains].sort((a, b) => b.reviews.number - a.reviews.number);
+  }
+
+  return chains;
+});
 </script>
 
 <template>
@@ -35,64 +71,136 @@ defineProps<{
       guide accurate, up to date and useful for anyone looking for gluten free
       places to eat across the UK.
     </p>
+
+    <Warning>
+      <p>
+        While we take every care to make sure our eating out guide is accurate,
+        places can change without notice, we always recommend that you check
+        ahead before making plans.
+      </p>
+
+      <p class="mt-2">
+        All eateries are recommended by our website visitors, and before going
+        live we check menus and reviews, but we do not vet or visit places to
+        independently check them.
+      </p>
+    </Warning>
   </Card>
 
-  <template v-if="topRated.length">
-    <TopPlaces>
-      <template #title>Top Rated Gluten Free Chain Restaurants</template>
+  <div
+    class="flex flex-col justify-between space-y-4 xmd:flex-row-reverse xmd:space-y-0"
+  >
+    <div
+      class="xmd:flex-shrink-none flex w-full flex-col space-y-4 xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
+    >
+      <TopPlaces
+        v-if="topRated.length"
+        :collapsible="false"
+      >
+        <template #title>Top Rated Gluten Free Chain Restaurants</template>
 
-      <template #default>
-        <p class="prose prose-lg max-w-none">
-          These are the three highest rated nationwide chains in our Where to
-          Eat guide, based on reviews from our community. If you're looking for
-          trusted gluten free options, these cafés, pubs and restaurants
-          consistently receive excellent feedback from people with coeliac
-          disease and those following a gluten free diet.
-        </p>
+        <template #default>
+          <div class="group grid gap-3">
+            <CountyEatery
+              v-for="eatery in topRated"
+              :key="eatery.name"
+              :eatery="eatery"
+              minimal
+            />
+          </div>
+        </template>
+      </TopPlaces>
 
-        <div class="group grid gap-3 md:grid-cols-3">
-          <CountyEatery
-            v-for="eatery in topRated"
-            :key="eatery.name"
-            :eatery="eatery"
+      <TopPlaces
+        v-if="mostRated.length"
+        :collapsible="false"
+      >
+        <template #title>
+          Most Reviewed Gluten Free Chain Restaurants
+        </template>
+
+        <template #default>
+          <div class="group grid gap-3">
+            <CountyEatery
+              v-for="eatery in mostRated"
+              :key="eatery.name"
+              :eatery="eatery"
+              minimal
+            />
+          </div>
+        </template>
+      </TopPlaces>
+
+      <div class="content_hint"></div>
+    </div>
+
+    <div class="flex-1">
+      <Card class="flex flex-col space-y-4">
+        <Heading>List of Gluten Free Nationwide Chains</Heading>
+
+        <div
+          class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:space-x-4"
+        >
+          <FormInput
+            v-model="chainSearch"
+            name="search"
+            label=""
+            placeholder="Search for a chain..."
+            hide-label
+            borders
+            class="w-full max-w-sm md:max-w-md"
+            :size="
+              useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
+            "
+          />
+
+          <FormSelect
+            v-model="currentSort"
+            name="sort"
+            :options="sortOptions"
+            label="Sort by"
+            borders
+            class="flex items-center justify-between space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+            wrapper-classes="flex-1 sm:flex-shrink-0"
+            :size="
+              useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
+            "
           />
         </div>
-      </template>
-    </TopPlaces>
-  </template>
+      </Card>
 
-  <template v-if="mostRated.length">
-    <TopPlaces>
-      <template #title> Most Reviewed Gluten Free Chain Restaurants </template>
+      <div
+        ref="chainList"
+        class="mt-3 flex flex-col space-y-4"
+      >
+        <template v-if="filteredChains.length">
+          <template
+            v-for="(eatery, index) in filteredChains"
+            :key="eatery.key"
+          >
+            <NationwideEateryCard :eatery="eatery" />
 
-      <template #default>
-        <p class="prose prose-lg max-w-none">
-          These are the three most reviewed chain restaurants in our Where to
-          Eat guide. With the highest number of community reviews, they're among
-          the most popular places to eat for people with coeliac disease and
-          those following a gluten free diet.
-        </p>
+            <div
+              v-if="index > 0 && index % 4 === 0"
+              class="content_hint"
+            />
+          </template>
+        </template>
 
-        <div class="group grid gap-3 md:grid-cols-3">
-          <CountyEatery
-            v-for="eatery in mostRated"
-            :key="eatery.name"
-            :eatery="eatery"
-          />
-        </div>
-      </template>
-    </TopPlaces>
-  </template>
-
-  <Card class="mt-3 flex flex-col space-y-4">
-    <Heading :border="false"> List of Gluten Free Nationwide Chains </Heading>
-  </Card>
-
-  <div class="group grid gap-3 md:grid-cols-2">
-    <NationwideEateryCard
-      v-for="eatery in county.chains"
-      :key="eatery.key"
-      :eatery="eatery"
-    />
+        <Card
+          v-else
+          class="px-8 py-8 text-center text-xl"
+        >
+          No chains found, try updating your search!
+        </Card>
+      </div>
+    </div>
   </div>
+
+  <JumpToContentButton
+    v-if="chainList"
+    :anchor="chainList"
+    label="Jump to Chain List"
+    side="left"
+  />
 </template>
