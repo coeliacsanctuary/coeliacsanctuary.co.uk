@@ -41,6 +41,10 @@ class GenerateCountryDescriptionJob implements ShouldQueue, ShouldBeUnique
 
     public function handle(): void
     {
+        if ($this->country->country === 'Nationwide') {
+            return;
+        }
+
         $response = EateryCountryDescriptionAgent::make()->prompt($this->buildPrompt());
 
         $this->country->update(['description' => $response->text]);

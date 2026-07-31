@@ -41,6 +41,7 @@ export type MagicRouteCountyTown = {
 };
 
 export type NationwidePage = County & {
+  description: string;
   eateries: number;
   reviews: number;
   chains: NationwideEatery[];

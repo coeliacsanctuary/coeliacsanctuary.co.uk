@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resources\EatingOut;
 
+use App\Concerns\FormatsMarkdown;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryFeature;
@@ -16,7 +17,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin EateryCounty */
 class NationwidePageResource extends JsonResource
 {
-    /** @return array{name: string, slug: string, chains: NationwideListCollection, eateries: int, reviews: int} */
+    use FormatsMarkdown;
+
+    /** @return array{name: string, slug: string, description: string, chains: NationwideListCollection, eateries: int, reviews: int} */
     public function toArray(Request $request)
     {
         $this->load([
@@ -32,6 +35,7 @@ class NationwidePageResource extends JsonResource
         return [
             'name' => $this->county,
             'slug' => $this->slug,
+            'description' => $this->formatMarkdown($this->description ?? $this->defaultNationwideDescription()),
             'chains' => new NationwideListCollection($this->eateries),
             'eateries' => $this->eateries->count(),
             'reviews' => $this->reviews_count,

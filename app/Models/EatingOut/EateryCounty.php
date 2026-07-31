@@ -132,6 +132,13 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
         return $this->morphMany(EateryMagicRouteRecord::class, 'location');
     }
 
+    public function defaultNationwideDescription(): string
+    {
+        return <<<TEXT
+        Discover nationwide chain restaurants, cafés and pubs offering **gluten free** options across the UK. Whether you're living with **coeliac** disease or following a gluten free diet, our guide helps you find places to eat, complete with reviews, ratings and useful information from the gluten free community.
+        TEXT;
+    }
+
     public function keywords(): array
     {
         return [

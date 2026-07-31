@@ -13,6 +13,7 @@ use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
 use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
+use App\Jobs\EatingOut\GenerateNationwideDescriptionJob;
 use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
@@ -112,6 +113,12 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
 
                 /** @var EateryCounty $county */
                 $county = $eatery->county;
+
+                if ($country->country === 'Nationwide') {
+                    GenerateNationwideDescriptionJob::dispatch($county);
+
+                    return;
+                }
 
                 /** @var EateryTown $town */
                 $town = $eatery->town;

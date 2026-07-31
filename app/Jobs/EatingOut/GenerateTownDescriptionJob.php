@@ -38,6 +38,10 @@ class GenerateTownDescriptionJob implements ShouldBeUnique, ShouldQueue
 
     public function handle(): void
     {
+        if ($this->town->county?->country?->country === 'Nationwide') {
+            return;
+        }
+
         if ($this->town->county->county === 'London') {
             return;
         }

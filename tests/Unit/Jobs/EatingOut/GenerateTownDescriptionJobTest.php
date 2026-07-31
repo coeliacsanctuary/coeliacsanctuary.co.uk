@@ -7,6 +7,7 @@ namespace Tests\Unit\Jobs\EatingOut;
 use App\Ai\Agents\EateryTownDescriptionAgent;
 use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
@@ -49,6 +50,18 @@ class GenerateTownDescriptionJobTest extends TestCase
     protected function createLondonBorough(): EateryTown
     {
         $county = $this->create(EateryCounty::class, ['county' => 'London']);
+        $town = $this->create(EateryTown::class, ['county_id' => $county->id, 'description' => null]);
+
+        $this->create(Eatery::class, ['county_id' => $county->id, 'town_id' => $town->id]);
+
+        return $town;
+    }
+
+    /** The town needs a live eatery, otherwise the hasPlaces scope hides its county. */
+    protected function createNationwideTown(): EateryTown
+    {
+        $country = $this->create(EateryCountry::class, ['country' => 'Nationwide']);
+        $county = $this->create(EateryCounty::class, ['county' => 'Nationwide', 'country_id' => $country->id]);
         $town = $this->create(EateryTown::class, ['county_id' => $county->id, 'description' => null]);
 
         $this->create(Eatery::class, ['county_id' => $county->id, 'town_id' => $town->id]);
@@ -163,6 +176,28 @@ class GenerateTownDescriptionJobTest extends TestCase
         EateryTownDescriptionAgent::fake(['AI generated description']);
 
         $town = $this->createLondonBorough();
+
+        (new GenerateTownDescriptionJob($town))->handle();
+
+        $this->assertNull($town->refresh()->description);
+    }
+
+    #[Test]
+    public function itDoesntPromptTheAgentForATownInTheNationwideCountry(): void
+    {
+        EateryTownDescriptionAgent::fake();
+
+        (new GenerateTownDescriptionJob($this->createNationwideTown()))->handle();
+
+        EateryTownDescriptionAgent::assertNeverPrompted();
+    }
+
+    #[Test]
+    public function itDoesntUpdateTheDescriptionForATownInTheNationwideCountry(): void
+    {
+        EateryTownDescriptionAgent::fake(['AI generated description']);
+
+        $town = $this->createNationwideTown();
 
         (new GenerateTownDescriptionJob($town))->handle();
 

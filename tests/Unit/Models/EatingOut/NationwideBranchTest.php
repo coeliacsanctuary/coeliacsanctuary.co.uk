@@ -8,6 +8,7 @@ use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
 use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
+use App\Jobs\EatingOut\GenerateNationwideDescriptionJob;
 use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
@@ -175,6 +176,42 @@ class NationwideBranchTest extends TestCase
         ]);
 
         Bus::assertDispatched(GenerateCountyDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDispatchesTheNationwideDescriptionJobOnSaveAlongsideTheLocationJobs(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        Bus::fake();
+
+        $this->create(NationwideBranch::class, [
+            'wheretoeat_id' => $this->eatery->id,
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertDispatched(GenerateNationwideDescriptionJob::class);
+        Bus::assertDispatched(GenerateCountyDescriptionJob::class);
+        Bus::assertDispatched(GenerateTownDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheNationwideDescriptionJobWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', false);
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        Bus::fake();
+
+        $this->create(NationwideBranch::class, [
+            'wheretoeat_id' => $this->eatery->id,
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateNationwideDescriptionJob::class);
     }
 
     #[Test]

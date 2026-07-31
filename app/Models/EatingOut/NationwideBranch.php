@@ -14,6 +14,7 @@ use App\Contracts\Search\IsSearchable;
 use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
 use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
+use App\Jobs\EatingOut\GenerateNationwideDescriptionJob;
 use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
@@ -103,6 +104,12 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
 
                 /** @var EateryTown $town */
                 $town = $branch->town;
+
+                $chain = $branch->eatery()->withoutGlobalScopes()->first();
+
+                if ($chain) {
+                    GenerateNationwideDescriptionJob::dispatch($chain->county);
+                }
 
                 GenerateCountryDescriptionJob::dispatch($country);
                 GenerateCountyDescriptionJob::dispatch($county);

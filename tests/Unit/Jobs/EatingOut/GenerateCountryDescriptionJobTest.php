@@ -136,6 +136,30 @@ class GenerateCountryDescriptionJobTest extends TestCase
     }
 
     #[Test]
+    public function itDoesntPromptTheAgentForTheNationwideCountry(): void
+    {
+        EateryCountryDescriptionAgent::fake();
+
+        $nationwide = $this->create(EateryCountry::class, ['country' => 'Nationwide']);
+
+        (new GenerateCountryDescriptionJob($nationwide))->handle();
+
+        EateryCountryDescriptionAgent::assertNeverPrompted();
+    }
+
+    #[Test]
+    public function itDoesntUpdateTheDescriptionForTheNationwideCountry(): void
+    {
+        EateryCountryDescriptionAgent::fake(['AI generated description']);
+
+        $nationwide = $this->create(EateryCountry::class, ['country' => 'Nationwide', 'description' => null]);
+
+        (new GenerateCountryDescriptionJob($nationwide))->handle();
+
+        $this->assertNull($nationwide->refresh()->description);
+    }
+
+    #[Test]
     public function itIsUniqueToTheCountry(): void
     {
         $this->assertEquals(
