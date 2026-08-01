@@ -107,7 +107,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
 
                 $chain = $branch->eatery()->withoutGlobalScopes()->first();
 
-                if ($chain) {
+                if ($chain && $chain->county) {
                     GenerateNationwideDescriptionJob::dispatch($chain->county);
                 }
 
@@ -115,7 +115,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
                 GenerateCountyDescriptionJob::dispatch($county);
 
                 if ($county->county === 'London') {
-                    /** @var ?EateryArea $area */
+                    /** @var EateryArea $area */
                     $area = $branch->area;
 
                     GenerateBoroughDescriptionJob::dispatch($town);

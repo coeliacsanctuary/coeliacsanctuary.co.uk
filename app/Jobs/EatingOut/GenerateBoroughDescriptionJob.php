@@ -38,7 +38,7 @@ class GenerateBoroughDescriptionJob implements ShouldBeUnique, ShouldQueue
 
     public function handle(): void
     {
-        if ($this->borough->county->county !== 'London') {
+        if ($this->borough->county?->county !== 'London') {
             return;
         }
 
@@ -52,7 +52,7 @@ class GenerateBoroughDescriptionJob implements ShouldBeUnique, ShouldQueue
         $this->borough->loadCount(['liveEateries', 'liveBranches']);
 
         $eateries = number_format($this->borough->live_eateries_count + $this->borough->live_branches_count);
-        $averageRating = number_format($this->borough->reviews()->avg('rating') ?? 0, 1);
+        $averageRating = number_format((float) $this->borough->reviews()->avg('rating'), 1);
 
         return <<<PROMPT
         Borough: {$this->borough->town}

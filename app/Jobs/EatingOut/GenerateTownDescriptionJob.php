@@ -42,7 +42,7 @@ class GenerateTownDescriptionJob implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        if ($this->town->county->county === 'London') {
+        if ($this->town->county?->county === 'London') {
             return;
         }
 
@@ -56,7 +56,7 @@ class GenerateTownDescriptionJob implements ShouldBeUnique, ShouldQueue
         $this->town->loadCount(['liveEateries', 'liveBranches']);
 
         $eateries = number_format($this->town->live_eateries_count + $this->town->live_branches_count);
-        $averageRating = number_format($this->town->reviews()->avg('rating') ?? 0, 1);
+        $averageRating = number_format((float) $this->town->reviews()->avg('rating'), 1);
 
         return <<<PROMPT
         Town: {$this->town->town}

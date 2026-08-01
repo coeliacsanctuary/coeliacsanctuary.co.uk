@@ -48,7 +48,7 @@ class ListPopularEateriesInCounty implements Tool
                 'link' => $eatery->absoluteLink(),
             ]);
 
-        return json_encode($places);
+        return (string) json_encode($places);
     }
 
     /**

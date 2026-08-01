@@ -127,7 +127,7 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
                 GenerateCountyDescriptionJob::dispatch($county);
 
                 if ($county->county === 'London') {
-                    /** @var ?EateryArea $area */
+                    /** @var EateryArea $area */
                     $area = $eatery->area;
 
                     GenerateBoroughDescriptionJob::dispatch($town);

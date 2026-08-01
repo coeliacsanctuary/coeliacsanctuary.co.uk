@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Stringable;
 
 /** @mixin EateryCounty */
 class NationwidePageResource extends JsonResource
@@ -31,14 +32,23 @@ class NationwidePageResource extends JsonResource
         return $this;
     }
 
-    /** @return array{name: string, slug: string, description: string, chains: NationwideListCollection, eateries: int, reviews: int} */
+    /** @return array{name: string, slug: string, description: string|Stringable, chains: NationwideListCollection, eateries: int, reviews: int} */
     public function toArray(Request $request)
     {
         $this->load([
             'eateries' => fn (HasMany $builder) => $builder
-                ->when($this->filters['categories'], fn (Builder $builder, array $categories) => $builder->hasCategories($categories))
-                ->when($this->filters['venueTypes'], fn (Builder $builder, array $venueTypes) => $builder->hasVenueTypes($venueTypes))
-                ->when($this->filters['features'], fn (Builder $builder, array $features) => $builder->hasFeatures($features))
+                ->when($this->filters['categories'], function (Builder $builder, array $categories) {
+                    /** @var Builder<Eatery> $builder */
+                    return $builder->hasCategories($categories);
+                })
+                ->when($this->filters['venueTypes'], function (Builder $builder, array $venueTypes) {
+                    /** @var Builder<Eatery> $builder */
+                    return $builder->hasVenueTypes($venueTypes);
+                })
+                ->when($this->filters['features'], function (Builder $builder, array $features) {
+                    /** @var Builder<Eatery> $builder */
+                    return $builder->hasFeatures($features);
+                })
                 ->orderBy('name'),
             'eateries.features' => function (BelongsToMany $builder) {
                 /** @var BelongsToMany<EateryFeature, Eatery> $builder */

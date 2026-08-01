@@ -11,13 +11,14 @@ use App\Models\EatingOut\EateryTown;
 use App\ResourceCollections\EatingOut\LondonBoroughAreaCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Stringable;
 
 /** @mixin EateryTown */
 class LondonBoroughPageResource extends JsonResource
 {
     use FormatsMarkdown;
 
-    /** @return array{name: string, slug: string, image: string, county: TownCountyResource, areas: LondonBoroughAreaCollection, intro_text: string} */
+    /** @return array{name: string, slug: string, image: string, latlng: string|null, county: TownCountyResource, areas: LondonBoroughAreaCollection, intro_text: string|Stringable} */
     public function toArray(Request $request)
     {
         /** @var EateryCounty $county */

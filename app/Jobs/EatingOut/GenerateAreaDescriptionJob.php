@@ -48,7 +48,7 @@ class GenerateAreaDescriptionJob implements ShouldBeUnique, ShouldQueue
         $this->area->loadCount(['liveEateries', 'liveBranches']);
 
         $eateries = number_format($this->area->live_eateries_count + $this->area->live_branches_count);
-        $averageRating = number_format($this->area->reviews()->avg('rating') ?? 0, 1);
+        $averageRating = number_format((float) $this->area->reviews()->avg('rating'), 1);
 
         return <<<PROMPT
         Area: {$this->area->area}
