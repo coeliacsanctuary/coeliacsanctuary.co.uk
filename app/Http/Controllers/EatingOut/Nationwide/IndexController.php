@@ -11,18 +11,29 @@ use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCounty;
 use App\Resources\EatingOut\NationwidePageResource;
+use App\Services\EatingOut\Filters\GetFiltersForNationwide;
+use Illuminate\Http\Request;
 use Inertia\Response;
 
 class IndexController
 {
     public function __invoke(
+        Request $request,
         Inertia $inertia,
+        GetFiltersForNationwide $getFiltersForNationwide,
         GetMostRatedPlacesInCountyAction $getMostRatedPlacesInCounty,
         GetTopRatedPlacesInCountyAction $getTopRatedPlacesInCounty,
         GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
     ): Response {
         /** @var EateryCounty $county */
         $county = EateryCounty::query()->firstWhere('slug', 'nationwide');
+
+        /** @var array{categories: string[] | null, venueTypes: string[] | null, features: string[] | null} $filters */
+        $filters = [
+            'categories' => $request->has('filter.category') ? explode(',', $request->string('filter.category')->toString()) : null,
+            'venueTypes' => $request->has('filter.venueType') ? explode(',', $request->string('filter.venueType')->toString()) : null,
+            'features' => $request->has('filter.feature') ? explode(',', $request->string('filter.feature')->toString()) : null,
+        ];
 
         return $inertia
             ->title('Gluten Free Nationwide Chains')
@@ -38,7 +49,8 @@ class IndexController
                 new BreadcrumbItemData('Nationwide Chains'),
             ]))
             ->render('EatingOut/Nationwide', [
-                'county' => new NationwidePageResource($county),
+                'county' => fn () => (new NationwidePageResource($county))->withFilters($filters),
+                'filters' => fn () => $getFiltersForNationwide->setCounty($county)->handle($filters),
                 'topRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
                 'mostRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
             ]);

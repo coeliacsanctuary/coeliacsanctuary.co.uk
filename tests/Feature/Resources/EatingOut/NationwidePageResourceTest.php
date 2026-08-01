@@ -89,6 +89,33 @@ class NationwidePageResourceTest extends TestCase
     }
 
     #[Test]
+    public function itFiltersTheChainsWhenGivenFilters(): void
+    {
+        $this->build(Eatery::class)->count(3)->create(['county_id' => $this->county->id]);
+        $attraction = $this->build(Eatery::class)->attraction()->create(['county_id' => $this->county->id]);
+
+        $resource = (new NationwidePageResource($this->county))
+            ->withFilters(['categories' => ['att'], 'venueTypes' => null, 'features' => null])
+            ->toArray(request());
+
+        $this->assertCount(1, $resource['chains']);
+        $this->assertEquals($attraction->id, $resource['chains']->first()->id);
+    }
+
+    #[Test]
+    public function itStillListsTheUnfilteredNumberOfChainsWhenFiltering(): void
+    {
+        $this->build(Eatery::class)->count(3)->create(['county_id' => $this->county->id]);
+        $this->build(Eatery::class)->attraction()->create(['county_id' => $this->county->id]);
+
+        $resource = (new NationwidePageResource($this->county))
+            ->withFilters(['categories' => ['att'], 'venueTypes' => null, 'features' => null])
+            ->toArray(request());
+
+        $this->assertEquals(4, $resource['eateries']);
+    }
+
+    #[Test]
     public function itListsTheNumberOfReviews(): void
     {
         $this->build(Eatery::class)

@@ -2,6 +2,7 @@
 import Card from '@/Components/Card.vue';
 import {
   CountyEatery as CountyEateryType,
+  EateryFilters,
   NationwidePage,
 } from '@/types/EateryTypes';
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
@@ -13,14 +14,21 @@ import Warning from '@/Components/Warning.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
+import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
 import useScreensize from '@/composables/useScreensize';
+import useBrowser from '@/composables/useBrowser';
+import { router } from '@inertiajs/vue3';
+import { RequestPayload } from '@inertiajs/core';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
   county: NationwidePage;
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
+  filters: EateryFilters;
 }>();
+
+const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
 const chainList = ref<HTMLElement | null>(null);
 const chainSearch = ref('');
@@ -50,6 +58,63 @@ const filteredChains = computed(() => {
 
   return chains;
 });
+
+const handleFiltersChanged = ({
+  filters,
+  preserveState = true,
+}: {
+  filters: EateryFilters;
+  preserveState: boolean;
+}) => {
+  const categoryFilter = filters.categories
+    .filter((filter) => filter.checked)
+    .map((filter) => filter.value);
+
+  const venueFilter = filters.venueTypes
+    .filter((filter) => filter.checked)
+    .map((filter) => filter.value);
+
+  const featureFilter = filters.features
+    .filter((filter) => filter.checked)
+    .map((filter) => filter.value);
+
+  const params: RequestPayload & {
+    filter?: { [T in 'category' | 'venueType' | 'feature']?: string };
+  } = {};
+
+  if (categoryFilter.length || venueFilter.length || featureFilter.length) {
+    params.filter = {};
+
+    if (categoryFilter.length) {
+      params.filter.category = categoryFilter.join(',');
+    }
+
+    if (venueFilter.length) {
+      params.filter.venueType = venueFilter.join(',');
+    }
+
+    if (featureFilter.length) {
+      params.filter.feature = featureFilter.join(',');
+    }
+  }
+
+  const lastScroll = window.scrollY;
+
+  router.get(useBrowser().currentPath(), params, {
+    preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
+    preserveScroll: true,
+    onFinish: () => {
+      // This avoids race conditions with hydration
+      requestAnimationFrame(() => {
+        window.scrollTo(0, lastScroll);
+      });
+    },
+  });
+};
+
+const reloadChains = () => {
+  router.reload({ only: ['county'] });
+};
 </script>
 
 <template>
@@ -120,6 +185,13 @@ const filteredChains = computed(() => {
         </template>
       </TopPlaces>
 
+      <TownFilterSidebar
+        :filters="filters"
+        fixed
+        @filters-updated="handleFiltersChanged"
+        @sidebar-closed="reloadChains"
+      />
+
       <div class="content_hint"></div>
     </div>
 
@@ -180,7 +252,7 @@ const filteredChains = computed(() => {
           v-else
           class="px-8 py-8 text-center text-xl"
         >
-          No chains found, try updating your search!
+          No chains found, try updating your search or filters!
         </Card>
       </div>
     </div>
