@@ -14,7 +14,6 @@ use App\Pipelines\EatingOut\GetEateries\GetEateriesInLondonAreaPipeline;
 use App\Resources\EatingOut\LondonAreaPageResource;
 use App\Resources\EatingOut\MagicRouteGuideResource;
 use App\Resources\EatingOut\NearbyAreaResource;
-use App\Resources\EatingOut\NearbyTownResource;
 use App\Services\EatingOut\Filters\GetFiltersForLondonArea;
 use Illuminate\Http\Request;
 use Inertia\Response;

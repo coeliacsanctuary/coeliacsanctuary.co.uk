@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Ai\Agents;
 
-use App\Ai\Tools\FindLinkForLondonAreaTool;
 use App\Ai\Tools\ListPopularEateriesInTown;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\HasTools;

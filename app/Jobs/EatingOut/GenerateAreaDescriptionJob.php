@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Jobs\EatingOut;
 
 use App\Ai\Agents\EateryAreaDescriptionAgent;
-use App\Ai\Agents\EateryTownDescriptionAgent;
 use App\Models\EatingOut\EateryArea;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;

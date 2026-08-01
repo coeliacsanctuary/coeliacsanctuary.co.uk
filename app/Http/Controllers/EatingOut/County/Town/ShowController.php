@@ -12,7 +12,6 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesPipeline;
 use App\Resources\EatingOut\MagicRouteGuideResource;
-use App\Resources\EatingOut\NearbyCountyResource;
 use App\Resources\EatingOut\NearbyTownResource;
 use App\Resources\EatingOut\TownPageResource;
 use App\Schema\PendingEaterySchema;

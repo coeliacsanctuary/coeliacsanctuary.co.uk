@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Jobs\EatingOut;
 
 use App\Ai\Agents\EateryAreaDescriptionAgent;
-use App\Ai\Agents\EateryBoroughDescriptionAgent;
 use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
-use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;

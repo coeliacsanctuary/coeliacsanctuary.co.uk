@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Ai\Tools;
 
 use App\Ai\Tools\ListPopularEateriesInArea;
-use App\Ai\Tools\ListPopularEateriesInTown;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;

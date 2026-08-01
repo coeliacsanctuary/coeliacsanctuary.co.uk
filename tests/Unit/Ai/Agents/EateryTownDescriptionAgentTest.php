@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Ai\Agents;
 
-use App\Ai\Agents\EateryBoroughDescriptionAgent;
 use App\Ai\Agents\EateryTownDescriptionAgent;
-use App\Ai\Tools\FindLinkForLondonAreaTool;
 use App\Ai\Tools\ListPopularEateriesInTown;
 use Laravel\Ai\Contracts\Tool;
 use PHPUnit\Framework\Attributes\Test;
