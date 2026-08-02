@@ -46,7 +46,7 @@ class GetNearbyEateriesAction
                 'address' => collect(explode("\n", $location->address))
                     ->map(fn (string $line) => mb_trim($line))
                     ->join(', '),
-                'info' => $location->display_snippet ?? $location->eatery->display_snippet,
+                'info' => $location->display_snippet ?? $location->eatery?->display_snippet,
                 'link' => $location->link(),
                 'distance' => Helpers::metersToMiles((float) $location->distance),
                 'ratings_count' => $location->reviews_count,
