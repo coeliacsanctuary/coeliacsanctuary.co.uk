@@ -32,7 +32,7 @@ onMounted(() => {
 
 <template>
   <div class="text-sm">
-    <ul class="flex flex-col space-y-px divide-y divide-grey-off">
+    <ul class="flex flex-col divide-y divide-grey-off">
       <li
         v-for="feature in features"
         :key="feature.key"

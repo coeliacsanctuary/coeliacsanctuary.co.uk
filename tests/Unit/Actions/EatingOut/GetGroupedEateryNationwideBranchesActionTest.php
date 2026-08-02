@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\EatingOut;
 
 use App\Actions\EatingOut\GetGroupedEateryNationwideBranchesAction;
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
@@ -13,6 +14,7 @@ use App\Models\EatingOut\NationwideBranch;
 use App\Resources\EatingOut\NationwideBranchResource;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -135,5 +137,70 @@ class GetGroupedEateryNationwideBranchesActionTest extends TestCase
         $branch = $this->handle($customFormatter::class)['England']['Cheshire']['Crewe']['_'][0];
 
         $this->assertInstanceOf($customFormatter::class, $branch);
+    }
+
+    #[Test]
+    public function itLoadsTheBranchesItselfWhenGivenAnEatery(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->build(NationwideBranch::class)->forEatery($eatery)->create(['name' => 'Branch One']);
+
+        $result = app(GetGroupedEateryNationwideBranchesAction::class)->handle($eatery);
+
+        $this->assertArrayHasKey('England', $result);
+        $this->assertCount(1, $result['England']['Cheshire']['Crewe']['_']);
+    }
+
+    #[Test]
+    public function whenGivenAnEateryItOnlyReturnsThatEateriesBranches(): void
+    {
+        $eatery = $this->create(Eatery::class);
+        $otherEatery = $this->create(Eatery::class);
+
+        $this->build(NationwideBranch::class)->forEatery($eatery)->create(['name' => 'Ours']);
+        $this->build(NationwideBranch::class)->forEatery($otherEatery)->create(['name' => 'Theirs']);
+
+        $result = app(GetGroupedEateryNationwideBranchesAction::class)->handle($eatery);
+
+        $branches = $result['England']['Cheshire']['Crewe']['_'];
+
+        $this->assertCount(1, $branches);
+        $this->assertEquals('Ours', $branches[0]->name);
+    }
+
+    #[Test]
+    public function whenGivenAnEateryItDoesntReturnBranchesThatArentLive(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->build(NationwideBranch::class)->forEatery($eatery)->create(['name' => 'Live One']);
+        $this->build(NationwideBranch::class)->forEatery($eatery)->notLive()->create(['name' => 'Dead One']);
+
+        $result = app(GetGroupedEateryNationwideBranchesAction::class)->handle($eatery);
+
+        $branches = $result['England']['Cheshire']['Crewe']['_'];
+
+        $this->assertCount(1, $branches);
+        $this->assertEquals('Live One', $branches[0]->name);
+    }
+
+    #[Test]
+    public function whenGivenAnEateryItEagerLoadsEverythingTheResourceNeeds(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->build(NationwideBranch::class)->count(3)->forEatery($eatery)->create();
+
+        DB::enableQueryLog();
+
+        app(GetGroupedEateryNationwideBranchesAction::class)->handle($eatery);
+
+        $queries = count(DB::getQueryLog());
+
+        DB::disableQueryLog();
+
+        // One per eager loaded relation, not one per branch.
+        $this->assertLessThan(10, $queries);
     }
 }

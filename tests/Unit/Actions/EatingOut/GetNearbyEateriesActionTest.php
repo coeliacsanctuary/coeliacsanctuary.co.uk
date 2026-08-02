@@ -204,7 +204,7 @@ class GetNearbyEateriesActionTest extends TestCase
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
-        $this->assertCount(4, $result);
+        $this->assertCount(5, $result);
         $this->assertEquals("{$nearbyBranch->wheretoeat_id}-{$nearbyBranch->id}", $result->first()['id']);
     }
 
@@ -240,18 +240,18 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
-    public function itOnlyReturnsFourRecordsByDefault(): void
+    public function itOnlyReturnsSixRecordsByDefault(): void
     {
         $eatery = $this->createEatery($this->london);
 
-        $this->build(Eatery::class)->count(5)->create([
+        $this->build(Eatery::class)->count(7)->create([
             ...$this->offset($this->london, 0.001),
             'county_id' => $this->county->id,
         ]);
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
-        $this->assertCount(4, $result);
+        $this->assertCount(6, $result);
     }
 
     #[Test]

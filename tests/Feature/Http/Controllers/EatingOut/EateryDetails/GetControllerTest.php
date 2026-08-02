@@ -206,6 +206,43 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
+    public function itDefersTheBranchesPropOnANationwidePage(): void
+    {
+        $page = $this
+            ->convertToNationwideEatery()
+            ->visitNationwideEatery()
+            ->viewData('page');
+
+        $this->assertArrayNotHasKey('branches', $page['props']);
+        $this->assertContains('branches', $page['deferredProps']['default']);
+    }
+
+    #[Test]
+    public function itHasTheBranchCountOnANationwidePage(): void
+    {
+        $this->build(NationwideBranch::class)->count(2)->forEatery($this->eatery)->create();
+
+        $this
+            ->convertToNationwideEatery()
+            ->visitNationwideEatery()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/Details')
+                    ->where('eatery.branch_count', 3)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itDoesntDeferABranchesPropOnANormalEateryPage(): void
+    {
+        $page = $this->visitEatery()->viewData('page');
+
+        $this->assertArrayNotHasKey('branches', $page['props']);
+        $this->assertArrayNotHasKey('deferredProps', $page);
+    }
+
+    #[Test]
     public function itCallsTheComputeBackLinkActionOnTheNationwidePage(): void
     {
         $this->expectAction(ComputeEateryBackLinkAction::class, return: ['foo', 'bar']);

@@ -21,6 +21,7 @@ import Info from '@/Components/Info.vue';
 import useScreensize from '@/composables/useScreensize';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import SubHeading from '@/Components/SubHeading.vue';
+import SidebarLayout from '@/Components/SidebarLayout.vue';
 
 const props = defineProps<{
   borough: LondonBoroughPage;
@@ -78,12 +79,8 @@ useJourneyTracking().logWhenVisible(
     />
   </Card>
 
-  <div
-    class="flex flex-col justify-between space-y-4 xmd:flex-row-reverse xmd:space-y-0"
-  >
-    <div
-      class="xmd:flex-shrink-none w-full xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
-    >
+  <SidebarLayout>
+    <template #sidebar>
       <Card
         v-if="guides.length > 0"
         class="flex flex-col space-y-3"
@@ -182,83 +179,81 @@ useJourneyTracking().logWhenVisible(
       </TopPlaces>
 
       <div class="content_hint"></div>
-    </div>
+    </template>
 
-    <div class="flex-1">
-      <Card class="flex flex-col space-y-4">
-        <Info class="flex">
-          <div class="inline-flex flex-col">
-            <p class="prose prose-sm max-w-none sm:prose-lg md:prose-xl">
-              Most of the eateries in our Where to Eat guide are recommended by
-              people like you—those with coeliac disease or gluten intolerance
-              who know great local spots. If you know a place we’ve missed, let
-              us know and help grow our guide!
-            </p>
+    <Card class="flex flex-col space-y-4">
+      <Info class="flex">
+        <div class="inline-flex flex-col">
+          <p class="prose prose-sm max-w-none sm:prose-lg md:prose-xl">
+            Most of the eateries in our Where to Eat guide are recommended by
+            people like you—those with coeliac disease or gluten intolerance who
+            know great local spots. If you know a place we’ve missed, let us
+            know and help grow our guide!
+          </p>
 
-            <div class="mt-4 flex items-center justify-center">
-              <CoeliacButton
-                theme="secondary"
-                :size="useScreensize().screenIsGreaterThan('sm') ? 'lg' : 'md'"
-                :as="Link"
-                href="/wheretoeat/recommend-a-place"
-                label="Recommend a Place"
-                classes="font-semibold justify-center mt-2 sm:mt-0 sm:ml-2 sm:min-w-[230px]"
-              />
-            </div>
+          <div class="mt-4 flex items-center justify-center">
+            <CoeliacButton
+              theme="secondary"
+              :size="useScreensize().screenIsGreaterThan('sm') ? 'lg' : 'md'"
+              :as="Link"
+              href="/wheretoeat/recommend-a-place"
+              label="Recommend a Place"
+              classes="font-semibold justify-center mt-2 sm:mt-0 sm:ml-2 sm:min-w-[230px]"
+            />
           </div>
-        </Info>
-
-        <div class="content_hint"></div>
-
-        <div
-          class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:space-x-4"
-        >
-          <FormInput
-            v-model="areaSearch"
-            name="search"
-            label=""
-            :placeholder="`Search for an area in ${borough.name}...`"
-            hide-label
-            borders
-            class="w-full max-w-sm md:max-w-md"
-            :size="
-              useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
-            "
-          />
-
-          <FormSelect
-            v-model="currentSort"
-            name="sort"
-            :options="sortOptions"
-            label="Sort by"
-            borders
-            class="flex items-center justify-between space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
-            wrapper-classes="flex-1 sm:flex-shrink-0"
-            :size="
-              useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
-            "
-          />
         </div>
-      </Card>
+      </Info>
+
+      <div class="content_hint"></div>
 
       <div
-        ref="areaList"
-        class="group mt-3 grid gap-3"
+        class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:space-x-4"
       >
-        <template
-          v-for="(area, index) in filteredAreas"
-          :key="area.name"
-        >
-          <CountyTown :town="area" />
+        <FormInput
+          v-model="areaSearch"
+          name="search"
+          label=""
+          :placeholder="`Search for an area in ${borough.name}...`"
+          hide-label
+          borders
+          class="w-full max-w-sm md:max-w-md"
+          :size="
+            useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
+          "
+        />
 
-          <div
-            v-if="index > 0 && index % 3 === 0"
-            class="content_mobile_hint"
-          />
-        </template>
+        <FormSelect
+          v-model="currentSort"
+          name="sort"
+          :options="sortOptions"
+          label="Sort by"
+          borders
+          class="flex items-center justify-between space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+          wrapper-classes="flex-1 sm:flex-shrink-0"
+          :size="
+            useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
+          "
+        />
       </div>
+    </Card>
+
+    <div
+      ref="areaList"
+      class="group mt-3 grid gap-3"
+    >
+      <template
+        v-for="(area, index) in filteredAreas"
+        :key="area.name"
+      >
+        <CountyTown :town="area" />
+
+        <div
+          v-if="index > 0 && index % 3 === 0"
+          class="content_mobile_hint"
+        />
+      </template>
     </div>
-  </div>
+  </SidebarLayout>
 
   <JumpToContentButton
     v-if="areaList"

@@ -36,6 +36,8 @@ useJourneyTracking().logWhenVisible(
   <div ref="card">
     <AiOverviewCard
       :endpoint="getEndpoint()"
+      collapsible
+      compact
       @on-error="$emit('onError')"
     >
       <template #title>

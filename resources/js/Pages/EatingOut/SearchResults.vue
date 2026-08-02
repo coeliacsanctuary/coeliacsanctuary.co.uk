@@ -87,14 +87,17 @@ const reloadEateries = () => {
   });
 };
 
-watch(() => props.term, () => {
-  router.reload({
-    only: ['eateries'],
-    reset: ['eateries'],
-    preserveState: true,
-    preserveScroll: true,
-  });
-});
+watch(
+  () => props.term,
+  () => {
+    router.reload({
+      only: ['eateries'],
+      reset: ['eateries'],
+      preserveState: true,
+      preserveScroll: true,
+    });
+  },
+);
 
 watch(sortOption, () => {
   router.reload({
@@ -161,7 +164,7 @@ watch(sortOption, () => {
     <div class="flex flex-col xmd:w-3/4 xmd:flex-1">
       <Info
         v-if="county"
-        class="mb-4 mx-4 xmd:mx-0"
+        class="mx-4 mb-4 xmd:mx-0"
       >
         <p class="prose prose-lg max-w-none">
           It looks like you're looking for places to eat in {{ county.name }},

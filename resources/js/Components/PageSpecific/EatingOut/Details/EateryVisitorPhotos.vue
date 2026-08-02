@@ -32,11 +32,11 @@ useJourneyTracking().logWhenVisible(
 <template>
   <Card
     ref="card"
-    class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8"
+    class="flex flex-col space-y-4"
   >
     <SubHeading>Photos from {{ eateryName() }}</SubHeading>
 
-    <p class="prose mt-2 max-w-none lg:max-xl:prose-lg xl:prose-xl">
+    <p class="prose max-w-none md:prose-lg">
       Here are some photos taken at <strong>{{ eateryName() }}</strong> that
       other visitors have submitted!
     </p>

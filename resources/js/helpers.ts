@@ -51,6 +51,27 @@ export const pluralise = (str: string, count: number): string => {
   return `${str}s`;
 };
 
+export type LatLng = { lat: number; lng: number };
+
+const EARTH_RADIUS_MILES = 3958.8;
+
+const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
+
+/** Great circle distance between two points, in miles. */
+export const distanceInMiles = (from: LatLng, to: LatLng): number => {
+  const deltaLat = toRadians(to.lat - from.lat);
+  const deltaLng = toRadians(to.lng - from.lng);
+
+  const a =
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(toRadians(from.lat)) *
+      Math.cos(toRadians(to.lat)) *
+      Math.sin(deltaLng / 2) *
+      Math.sin(deltaLng / 2);
+
+  return EARTH_RADIUS_MILES * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
 export const getTitle = (title: string | undefined): string => {
   const appName = 'Coeliac Sanctuary';
 

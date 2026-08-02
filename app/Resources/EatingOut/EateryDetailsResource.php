@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Resources\EatingOut;
 
-use App\Actions\EatingOut\GetGroupedEateryNationwideBranchesAction;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAttractionRestaurant;
 use App\Models\EatingOut\EateryFeature;
@@ -122,19 +121,10 @@ class EateryDetailsResource extends JsonResource
             ] : null,
             'branch' => $branch ? NationwideBranchResource::make($branch) : null,
             'is_nationwide' => $this->county_id === 1,
-            'nationwide_branches' => $this->getBranchList(),
+            'branch_count' => $this->nationwide_branches_count,
             'last_updated' => $this->updated_at,
             'last_updated_human' => $this->updated_at?->diffForHumans(),
             'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)->count() > 0,
         ];
-    }
-
-    protected function getBranchList(): ?array
-    {
-        if ( ! $this->relationLoaded('nationwideBranches')) {
-            return null;
-        }
-
-        return app(GetGroupedEateryNationwideBranchesAction::class)->handle($this->nationwideBranches);
     }
 }

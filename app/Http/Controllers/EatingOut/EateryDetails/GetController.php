@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\EatingOut\EateryDetails;
 
 use App\Actions\EatingOut\ComputeEateryBackLinkAction;
+use App\Actions\EatingOut\GetGroupedEateryNationwideBranchesAction;
 use App\Actions\EatingOut\GetNearbyEateriesAction;
 use App\Actions\EatingOut\LoadCompleteEateryDetailsForRequestAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
@@ -33,6 +34,7 @@ class GetController
         LoadCompleteEateryDetailsForRequestAction $loadCompleteEateryDetailsForRequestAction,
         ComputeEateryBackLinkAction $computeEateryBackLinkAction,
         GetNearbyEateriesAction $getNearbyEateriesAction,
+        GetGroupedEateryNationwideBranchesAction $getGroupedEateryNationwideBranchesAction,
     ): Response {
         if ($area->exists) {
             /** @var EateryCounty $county */
@@ -58,6 +60,18 @@ class GetController
 
         [$name, $previous] = $computeEateryBackLinkAction->handle($eatery);
 
+        $props = [
+            'eatery' => fn () => new EateryDetailsResource($eatery),
+            'previous' => $previous,
+            'name' => $name,
+            'nearbyEateries' => fn () => $getNearbyEateriesAction->handle($nationwideBranch->exists ? $nationwideBranch : $eatery),
+        ];
+
+        // Only chain pages have a branch list, and only they should pay for the follow up request.
+        if ($pageType === 'nationwide') {
+            $props['branches'] = Inertia::defer(fn () => $getGroupedEateryNationwideBranchesAction->handle($eatery));
+        }
+
         return $inertia
             ->title("Gluten free at {$eatery->full_name}")
             ->metaDescription("Eat gluten free at {$eatery->full_name}")
@@ -72,12 +86,7 @@ class GetController
                 $area->exists ? new BreadcrumbItemData($area->area, route('eating-out.london.borough.area', ['borough' => $town, 'area' => $area])) : null,
                 new BreadcrumbItemData($eatery->full_name),
             ])))
-            ->render('EatingOut/Details', [
-                'eatery' => fn () => new EateryDetailsResource($eatery),
-                'previous' => $previous,
-                'name' => $name,
-                'nearbyEateries' => fn() => $getNearbyEateriesAction->handle($nationwideBranch->exists ? $nationwideBranch : $eatery),
-            ])
+            ->render('EatingOut/Details', $props)
             ->toResponse($request)
             ->setStatusCode($eatery->closed_down ? Response::HTTP_GONE : Response::HTTP_OK);
     }

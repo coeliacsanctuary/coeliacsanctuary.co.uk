@@ -24,6 +24,7 @@ import { FormSelectOption } from '@/Components/Forms/Props';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import SubHeading from '@/Components/SubHeading.vue';
+import SidebarLayout from '@/Components/SidebarLayout.vue';
 
 type AlternateArea = {
   borough: string;
@@ -163,12 +164,8 @@ useJourneyTracking().logWhenVisible(
     class="content_hint"
   />
 
-  <div
-    class="flex flex-col justify-between space-y-4 xmd:flex-row-reverse xmd:space-y-0"
-  >
-    <div
-      class="xmd:flex-shrink-none flex w-full flex-col space-y-4 xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
-    >
+  <SidebarLayout>
+    <template #sidebar>
       <Card
         v-if="guides.length > 0"
         class="flex flex-col space-y-3"
@@ -248,12 +245,12 @@ useJourneyTracking().logWhenVisible(
         @filters-updated="handleFiltersChanged"
         @sidebar-closed="reloadEateries"
       />
-    </div>
+    </template>
 
     <div
       v-if="live_eateries_count > 0"
       ref="placeList"
-      class="flex flex-col xmd:w-3/4 xmd:flex-1"
+      class="flex flex-col"
     >
       <Info
         v-if="alternateAreas && alternateAreas.length"
@@ -342,7 +339,7 @@ useJourneyTracking().logWhenVisible(
         <Link :href="area.borough.link">Back to {{ area.borough.name }}</Link>
       </p>
     </Card>
-  </div>
+  </SidebarLayout>
 
   <JumpToContentButton
     v-if="placeList"

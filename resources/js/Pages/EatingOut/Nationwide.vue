@@ -15,6 +15,7 @@ import FormInput from '@/Components/Forms/FormInput.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
+import SidebarLayout from '@/Components/SidebarLayout.vue';
 import useScreensize from '@/composables/useScreensize';
 import useBrowser from '@/composables/useBrowser';
 import { router } from '@inertiajs/vue3';
@@ -141,12 +142,8 @@ const reloadChains = () => {
     </Warning>
   </Card>
 
-  <div
-    class="flex flex-col justify-between space-y-4 xmd:flex-row-reverse xmd:space-y-0"
-  >
-    <div
-      class="xmd:flex-shrink-none flex w-full flex-col space-y-4 xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
-    >
+  <SidebarLayout>
+    <template #sidebar>
       <TopPlaces
         v-if="topRated.length"
         :collapsible="false"
@@ -193,70 +190,68 @@ const reloadChains = () => {
       />
 
       <div class="content_hint"></div>
-    </div>
+    </template>
 
-    <div class="flex-1">
-      <Card class="flex flex-col space-y-4">
-        <Heading>List of Gluten Free Nationwide Chains</Heading>
-
-        <div
-          class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:space-x-4"
-        >
-          <FormInput
-            v-model="chainSearch"
-            name="search"
-            label=""
-            placeholder="Search for a chain..."
-            hide-label
-            borders
-            class="w-full max-w-sm md:max-w-md"
-            :size="
-              useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
-            "
-          />
-
-          <FormSelect
-            v-model="currentSort"
-            name="sort"
-            :options="sortOptions"
-            label="Sort by"
-            borders
-            class="flex items-center justify-between space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
-            wrapper-classes="flex-1 sm:flex-shrink-0"
-            :size="
-              useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
-            "
-          />
-        </div>
-      </Card>
+    <Card class="flex flex-col space-y-4">
+      <Heading>List of Gluten Free Nationwide Chains</Heading>
 
       <div
-        ref="chainList"
-        class="mt-3 flex flex-col space-y-4"
+        class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:space-x-4"
       >
-        <template v-if="filteredChains.length">
-          <template
-            v-for="(eatery, index) in filteredChains"
-            :key="eatery.key"
-          >
-            <NationwideEateryCard :eatery="eatery" />
+        <FormInput
+          v-model="chainSearch"
+          name="search"
+          label=""
+          placeholder="Search for a chain..."
+          hide-label
+          borders
+          class="w-full max-w-sm md:max-w-md"
+          :size="
+            useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
+          "
+        />
 
-            <div
-              v-if="index > 0 && index % 4 === 0"
-              class="content_hint"
-            />
-          </template>
-        </template>
-
-        <Card
-          v-else
-          class="px-8 py-8 text-center text-xl"
-        >
-          No chains found, try updating your search or filters!
-        </Card>
+        <FormSelect
+          v-model="currentSort"
+          name="sort"
+          :options="sortOptions"
+          label="Sort by"
+          borders
+          class="flex items-center justify-between space-x-2 xs:flex-col xs:items-start xs:space-x-0 sm:flex-row sm:items-center sm:space-x-2"
+          wrapper-classes="flex-1 sm:flex-shrink-0"
+          :size="
+            useScreensize().screenIsGreaterThan('md') ? 'large' : 'default'
+          "
+        />
       </div>
+    </Card>
+
+    <div
+      ref="chainList"
+      class="mt-3 flex flex-col space-y-4"
+    >
+      <template v-if="filteredChains.length">
+        <template
+          v-for="(eatery, index) in filteredChains"
+          :key="eatery.key"
+        >
+          <NationwideEateryCard :eatery="eatery" />
+
+          <div
+            v-if="index > 0 && index % 4 === 0"
+            class="content_hint"
+          />
+        </template>
+      </template>
+
+      <Card
+        v-else
+        class="px-8 py-8 text-center text-xl"
+      >
+        No chains found, try updating your search or filters!
+      </Card>
     </div>
-  </div>
+  </SidebarLayout>
 
   <JumpToContentButton
     v-if="chainList"

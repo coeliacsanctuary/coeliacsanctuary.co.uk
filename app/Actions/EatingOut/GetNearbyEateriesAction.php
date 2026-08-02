@@ -16,7 +16,7 @@ use InvalidArgumentException;
 class GetNearbyEateriesAction
 {
     /** @return Collection<int, array<string, mixed>> */
-    public function handle(Eatery|NationwideBranch|LatLng $location, int $limit = 4): Collection
+    public function handle(Eatery|NationwideBranch|LatLng $location, int $limit = 6): Collection
     {
         /** @var LatLng $latLng */
         $latLng = match ($location::class) {
