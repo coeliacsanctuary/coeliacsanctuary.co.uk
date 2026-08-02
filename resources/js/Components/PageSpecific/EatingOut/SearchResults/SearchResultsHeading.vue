@@ -24,7 +24,7 @@ const linkCards = [
       'Browse an interactive map with all of the places we know about marked that offer gluten free!',
     icon: MapIcon,
     href: `/wheretoeat/browse/${props.latlng?.lat},${props.latlng?.lng}/13`,
-    if: props.latlng !== null,
+    if: !!props.latlng,
   },
 ];
 </script>
@@ -62,7 +62,7 @@ const linkCards = [
           prefetch
         >
           <div
-            class="flex h-full w-full cursor-pointer flex-col items-center justify-center space-y-2 rounded-sm bg-linear-to-br from-primary/90 to-primary-light/90 p-2 shadow-lg shadow-sm transition duration-500 sm:hover:from-primary/95 sm:hover:to-primary-light/95 md:justify-between md:p-4"
+            class="flex h-full w-full cursor-pointer flex-col items-center justify-center space-y-2 rounded-sm bg-linear-to-br from-primary/90 to-primary-light/90 p-2 shadow-lg transition duration-500 sm:hover:from-primary/95 sm:hover:to-primary-light/95 md:justify-between md:p-4"
           >
             <div
               class="flex flex-1 flex-col items-center justify-center xs:w-full xs:flex-row md:flex-none md:items-start"

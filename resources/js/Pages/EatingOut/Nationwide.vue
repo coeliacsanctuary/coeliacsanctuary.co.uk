@@ -17,9 +17,8 @@ import { FormSelectOption } from '@/Components/Forms/Props';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
 import SidebarLayout from '@/Components/SidebarLayout.vue';
 import useScreensize from '@/composables/useScreensize';
-import useBrowser from '@/composables/useBrowser';
+import useEateryFilters from '@/composables/useEateryFilters';
 import { router } from '@inertiajs/vue3';
-import { RequestPayload } from '@inertiajs/core';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
@@ -29,7 +28,7 @@ const props = defineProps<{
   filters: EateryFilters;
 }>();
 
-const { screenIsGreaterThanOrEqualTo } = useScreensize();
+const { handleFiltersChanged } = useEateryFilters();
 
 const chainList = ref<HTMLElement | null>(null);
 const chainSearch = ref('');
@@ -59,59 +58,6 @@ const filteredChains = computed(() => {
 
   return chains;
 });
-
-const handleFiltersChanged = ({
-  filters,
-  preserveState = true,
-}: {
-  filters: EateryFilters;
-  preserveState: boolean;
-}) => {
-  const categoryFilter = filters.categories
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const venueFilter = filters.venueTypes
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const featureFilter = filters.features
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const params: RequestPayload & {
-    filter?: { [T in 'category' | 'venueType' | 'feature']?: string };
-  } = {};
-
-  if (categoryFilter.length || venueFilter.length || featureFilter.length) {
-    params.filter = {};
-
-    if (categoryFilter.length) {
-      params.filter.category = categoryFilter.join(',');
-    }
-
-    if (venueFilter.length) {
-      params.filter.venueType = venueFilter.join(',');
-    }
-
-    if (featureFilter.length) {
-      params.filter.feature = featureFilter.join(',');
-    }
-  }
-
-  const lastScroll = window.scrollY;
-
-  router.get(useBrowser().currentPath(), params, {
-    preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
-    preserveScroll: true,
-    onFinish: () => {
-      // This avoids race conditions with hydration
-      requestAnimationFrame(() => {
-        window.scrollTo(0, lastScroll);
-      });
-    },
-  });
-};
 
 const reloadChains = () => {
   router.reload({ only: ['county'] });
