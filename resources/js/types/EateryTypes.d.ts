@@ -415,8 +415,18 @@ type EditableEateryFieldComponent = {
   props?: Partial<Record<string, unknown>>;
 };
 
+export type EateryStatistics = {
+  total: number;
+  eateries: number;
+  attractions: number;
+  hotels: number;
+  branches: number;
+  reviews: number;
+};
+
 export type EateryCountryPropItem = {
   name: string;
+  image: string;
   description: string;
   list: EateryCountryList[];
   top_counties?: EateryCountryList[];

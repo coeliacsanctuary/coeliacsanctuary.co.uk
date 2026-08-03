@@ -15,7 +15,7 @@ class GetCountyListAction
 {
     use FormatsMarkdown;
 
-    /** @return Collection<int, array{name: string, description: string, list: Collection<int, array>, counties: int<0, max>, eateries: mixed, top_counties: Collection<int,array>}> */
+    /** @return Collection<int, array{name: string, image: string, description: string, list: Collection<int, array>, counties: int<0, max>, eateries: mixed, top_counties: Collection<int,array>}> */
     public function handle(bool $force = false): Collection
     {
         $key = config('coeliac.cacheable.eating-out.index-counts');
@@ -47,6 +47,7 @@ class GetCountyListAction
                 ->get()
                 ->map(fn (EateryCountry $country) => [
                     'name' => $country->country,
+                    'image' => $country->image,
                     'description' => (string) $this->formatMarkdown((string) $country->description),
                     'list' => $country->counties->map($this->formatCounty(...)),
                     'counties' => $country->counties->count(),
