@@ -1,5 +1,3 @@
-import { Feature } from 'ol';
-
 export type UrlParameters = {
   latLng?: string;
   zoom?: string;
@@ -14,9 +12,6 @@ export type MarkerProps = {
 };
 
 export type Marker = MarkerProps & {
-  loaded: boolean;
-  new: boolean;
   lat: number;
   lng: number;
-  element: Feature;
 };

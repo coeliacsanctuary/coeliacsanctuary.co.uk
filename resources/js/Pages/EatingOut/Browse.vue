@@ -53,6 +53,7 @@ const {
   createMap,
   getZoom,
   getExtent,
+  getSize,
   getViewableRadius,
   getLatLng,
   navigateTo,
@@ -122,7 +123,7 @@ const getPlaces = async (): Promise<EateryBrowseResource[]> => {
 const populateMap = (): void => {
   void getPlaces()
     .then((eateries: EateryBrowseResource[]) => {
-      processMapMarkers(eateries, getZoom(), getExtent());
+      processMapMarkers(eateries, getZoom(), getExtent(), getSize());
     })
     .finally(() => {
       isLoading.value = false;
@@ -251,10 +252,10 @@ const registerListeners = () => {
 
   eventBus.$on('map-moved', handleMapMove);
 
-  eventBus.$on<{ pixel: Pixel; markerLayer: VectorLayer<VectorSource> }>(
-    'cluster-clicked',
-    zoomIntoCluster,
-  );
+  eventBus.$on<{
+    pixel: Pixel;
+    markerLayer: VectorLayer<VectorSource>;
+  }>('cluster-clicked', zoomIntoCluster);
 
   eventBus.$on<FeatureLike>('clicked-feature', handleMapFeatureClick);
 };
