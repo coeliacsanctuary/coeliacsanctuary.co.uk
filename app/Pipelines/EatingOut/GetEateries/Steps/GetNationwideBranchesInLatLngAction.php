@@ -29,7 +29,7 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
         }
 
         /** @var Builder<NationwideBranch> $idQuery */
-        $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, Helpers::milesToMeters($pipelineData->latLng->radius))
+        $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, $pipelineData->isMeters ? $pipelineData->latLng->radius : Helpers::milesToMeters($pipelineData->latLng->radius))
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
                 /** @var Builder<Eatery> $query */
                 $query->where('closed_down', false);

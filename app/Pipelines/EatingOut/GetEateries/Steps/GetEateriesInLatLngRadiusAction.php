@@ -27,7 +27,7 @@ class GetEateriesInLatLngRadiusAction implements GetEateriesPipelineActionContra
         }
 
         /** @var Builder<Eatery> $idQuery */
-        $idQuery = Eatery::databaseSearchAroundLatLng($pipelineData->latLng, Helpers::milesToMeters($pipelineData->latLng->radius))
+        $idQuery = Eatery::databaseSearchAroundLatLng($pipelineData->latLng, $pipelineData->isMeters ? $pipelineData->latLng->radius : Helpers::milesToMeters($pipelineData->latLng->radius))
             ->whereRaw('(select county from wheretoeat_counties where wheretoeat_counties.id = wheretoeat.county_id) != ?', ['Nationwide']);
 
         if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
