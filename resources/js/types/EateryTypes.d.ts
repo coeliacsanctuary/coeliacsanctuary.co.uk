@@ -474,6 +474,8 @@ export type EateryBrowseResource = {
   isNationwideBranch: boolean;
   location: LatLng;
   color: string;
+  typeId: number;
+  venueTypeId: number | null;
 };
 
 export type NearbyEatery = {

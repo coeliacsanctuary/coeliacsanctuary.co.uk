@@ -100,7 +100,8 @@ export default () => {
         },
         properties: {
           id: marker.id,
-          color: marker.color,
+          typeId: marker.typeId,
+          venueTypeId: marker.venueTypeId,
         },
       }),
     );
@@ -172,7 +173,8 @@ export default () => {
       id: eatery.key,
       lat: eatery.location.lat,
       lng: eatery.location.lng,
-      color: eatery.color,
+      typeId: eatery.typeId,
+      venueTypeId: eatery.venueTypeId,
     }));
 
   /**

@@ -31,7 +31,10 @@ export const clusterStyle = (feature: FeatureLike): Style | Style[] => {
   const count: number = feature.get('point_count') as number;
 
   if (!count) {
-    return markerStyle(feature.get('color') as string);
+    return markerStyle(
+      feature.get('typeId') as number,
+      feature.get('venueTypeId') as number | null,
+    );
   }
 
   const { radius, fontSize, ringWidth } = clusterSizeForCount(count);
@@ -75,14 +78,32 @@ export const clusterStyle = (feature: FeatureLike): Style | Style[] => {
   ];
 };
 
-export const markerStyle = (color: string): Style =>
-  new Style({
+const markerStyles = new Map<string, Style>();
+
+export const markerStyle = (
+  typeId: number,
+  venueTypeId: number | null,
+): Style => {
+  const key = `${typeId}-${venueTypeId ?? ''}`;
+  const cached = markerStyles.get(key);
+
+  if (cached) {
+    return cached;
+  }
+
+  const style = new Style({
     image: new Icon({
-      size: [50, 50],
-      src: '/images/svg/marker.svg',
-      color,
+      scale: 0.36,
+      /** The pin's point, rather than its middle, sits on the coordinate. */
+      anchor: [0.5, 1],
+      src: `/api/wheretoeat/marker/${typeId}${venueTypeId ? `/${venueTypeId}` : ''}`,
     }),
   });
+
+  markerStyles.set(key, style);
+
+  return style;
+};
 
 export const searchLocationMarkerStyle = (): Style =>
   new Style({
