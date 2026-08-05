@@ -15,8 +15,8 @@ import VectorSource from 'ol/source/Vector';
 import { FeatureLike } from 'ol/Feature';
 import Loader from '@/Components/Loader.vue';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
-import { router, usePage } from '@inertiajs/vue3';
-import { DefaultProps } from '@/types/DefaultProps';
+import { router } from '@inertiajs/vue3';
+import { useDebounceFn } from '@vueuse/core';
 import 'ol/ol.css';
 import PlaceDetails from '@/Components/PageSpecific/EatingOut/Browse/PlaceDetails.vue';
 import useBrowser from '@/composables/useBrowser';
@@ -36,9 +36,9 @@ defineOptions({
   layout: CoeliacCompact as Component,
 });
 
-const isLoading = ref(true);
+const filterKeys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
 
-const wrapper: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
+const isLoading = ref(true);
 
 const mapFilters: Ref<Partial<EateryFilters>> = ref({});
 
@@ -59,7 +59,8 @@ const {
   navigateTo,
 } = Map(processedUrl, rawMarkerSource as Ref<VectorSource>);
 
-const cancelGetPlaces: Ref<AbortController | undefined> = ref(undefined);
+/** Kept out of the reactivity system, nothing renders from it. */
+let cancelGetPlaces: AbortController | undefined;
 
 const filtersForUrl: ComputedRef<{ filter: UrlFilter }> = computed(() => {
   const filter: UrlFilter = {};
@@ -84,9 +85,7 @@ const filtersForFilterBar: ComputedRef<
 > = computed(() => {
   const rtr: Partial<{ [T in EateryFilterKeys]: string[] }> = {};
 
-  const keys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
-
-  keys.forEach((key) => {
+  filterKeys.forEach((key) => {
     if (
       processedUrl.value[key] === undefined ||
       processedUrl.value[key] === ''
@@ -103,19 +102,18 @@ const filtersForFilterBar: ComputedRef<
 });
 
 const getPlaces = async (): Promise<EateryBrowseResource[]> => {
-  cancelGetPlaces.value = new AbortController();
+  cancelGetPlaces?.abort();
+  cancelGetPlaces = new AbortController();
 
   const response: AxiosResponse<DataResponse<EateryBrowseResource[]>> =
     await axios.get('/api/wheretoeat/browse', {
-      signal: cancelGetPlaces.value ? cancelGetPlaces.value.signal : undefined,
+      signal: cancelGetPlaces.signal,
       params: {
         ...getLatLng(),
         radius: getViewableRadius(),
         ...filtersForUrl.value,
       },
     });
-
-  cancelGetPlaces.value = undefined;
 
   return response.data.data;
 };
@@ -124,9 +122,18 @@ const populateMap = (): void => {
   void getPlaces()
     .then((eateries: EateryBrowseResource[]) => {
       processMapMarkers(eateries, getZoom(), getExtent(), getSize());
-    })
-    .finally(() => {
+
       isLoading.value = false;
+    })
+    .catch((error: unknown) => {
+      /** A superseded request always has a replacement already in flight. */
+      if (axios.isCancel(error)) {
+        return;
+      }
+
+      isLoading.value = false;
+
+      console.error(error);
     });
 };
 
@@ -152,34 +159,26 @@ const updateUrl = (latLng?: LatLng, zoom?: number) => {
 
   const paths = [`${latLng.lat},${latLng.lng}`, Math.round(zoom)];
 
-  const queryStrings: { [T in EateryFilterKeys]: string | undefined } = {
-    categories: mapFilters.value?.categories
-      ? getValueForFilter('categories')
-      : undefined,
-    venueTypes: mapFilters.value?.venueTypes
-      ? getValueForFilter('venueTypes')
-      : undefined,
-    features: mapFilters.value?.features
-      ? getValueForFilter('features')
-      : undefined,
-  };
+  const queryStrings = new URLSearchParams();
 
-  const { baseUrl } = usePage<DefaultProps>().props.meta;
+  filterKeys.forEach((key) => {
+    if (!mapFilters.value[key]) {
+      return;
+    }
 
-  const url = new URL(`${baseUrl}/wheretoeat/browse/${paths.join('/')}`);
-
-  Object.keys(queryStrings).forEach((key) => {
-    const value: string | undefined = queryStrings[key as keyof EateryFilters];
+    const value: string = getValueForFilter(key);
 
     if (!value) {
       return;
     }
 
-    url.searchParams.set(key, value);
+    queryStrings.set(key, value);
   });
 
-  router.get(url.toString(), undefined, {
-    replace: true,
+  const query = queryStrings.toString();
+
+  router.replace({
+    url: `/wheretoeat/browse/${paths.join('/')}${query ? `?${query}` : ''}`,
     preserveScroll: true,
     preserveState: true,
   });
@@ -188,9 +187,7 @@ const updateUrl = (latLng?: LatLng, zoom?: number) => {
 const handleFiltersChange = ({ filters }: { filters: EateryFilters }): void => {
   mapFilters.value = filters;
 
-  const keys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
-
-  keys.forEach((key) => {
+  filterKeys.forEach((key) => {
     processedUrl.value = {
       ...processedUrl.value,
       [key]: getValueForFilter(key),
@@ -215,9 +212,7 @@ const parseUrl = () => {
   processedUrl.value.latLng = latLng;
   processedUrl.value.zoom = zoom;
 
-  const keys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
-
-  keys.forEach((key) => {
+  filterKeys.forEach((key) => {
     if (queryStrings.has(key)) {
       processedUrl.value[key] = queryStrings.get(key) as string;
     }
@@ -239,9 +234,17 @@ const handleMapFeatureClick = (eatery: FeatureLike) => {
   showPlaceDetails.value = { id, branchId };
 };
 
-const handleMapMove = () => {
+/**
+ * Browsers rate limit history updates, and a pinch zoom settles over several
+ * move events, so the map is left to come to rest before anything is fetched.
+ */
+const debouncedMapMove = useDebounceFn(() => {
   updateUrl();
   populateMap();
+}, 250);
+
+const handleMapMove = (): void => {
+  void debouncedMapMove();
 };
 
 const registerListeners = () => {
@@ -270,7 +273,6 @@ onMounted(() => {
 
 <template>
   <div
-    ref="wrapper"
     class="map-container relative -mb-3 flex max-h-full min-h-[500px] flex-1 overflow-hidden"
   >
     <Loader
