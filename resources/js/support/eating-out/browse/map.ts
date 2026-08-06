@@ -148,6 +148,10 @@ export default (
 
   const getSize = (): Size | undefined => map.value.getSize();
 
+  /**
+   * The corner to corner distance is the diameter of the circle the viewport
+   * sits inside, and everything downstream measures from the centre point.
+   */
   const getViewableRadius = (): number => {
     const latLng = transformExtent(
       map.value.getView().calculateExtent(map.value.getSize()),
@@ -155,7 +159,7 @@ export default (
       'EPSG:4326',
     );
 
-    return getDistance([latLng[0], latLng[1]], [latLng[2], latLng[3]]);
+    return getDistance([latLng[0], latLng[1]], [latLng[2], latLng[3]]) / 2;
   };
 
   const getLatLng = (): LatLng => {
