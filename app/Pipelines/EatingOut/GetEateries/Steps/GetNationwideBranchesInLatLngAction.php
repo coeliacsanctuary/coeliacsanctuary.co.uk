@@ -29,10 +29,10 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
             return $next($pipelineData);
         }
 
-        /** @var Builder<NationwideBranch> $idQuery */
         /** A branch has no venue type of its own, it lives on the eatery it belongs to. */
         $venueType = DB::raw('(select venue_type_id from wheretoeat where wheretoeat.id = wheretoeat_nationwide_branches.wheretoeat_id) as venue_type_id');
 
+        /** @var Builder<NationwideBranch> $idQuery */
         $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, $pipelineData->isMeters ? $pipelineData->latLng->radius : Helpers::milesToMeters($pipelineData->latLng->radius), [$venueType])
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
                 /** @var Builder<Eatery> $query */
@@ -62,6 +62,7 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
             lat: $eatery->lat,
             lng: $eatery->lng,
             typeId: EateryType::EATERY,
+            /** @phpstan-ignore property.notFound */
             venueTypeId: $eatery->venue_type_id,
             distance: (float)$eatery->distance,
         ));

@@ -67,6 +67,7 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
             ->when(
                 $pipelineData->sort === 'rating',
                 fn (Builder $query) => $query->addSelect(DB::raw('coalesce((select (round(avg(r.rating) * 2) / 2) + (count(r.rating) * 0.001) from wheretoeat_reviews r where r.approved = 1 and r.nationwide_branch_id = wheretoeat_nationwide_branches.id), 0) as rating')),
+                fn (Builder $query) => $query->addSelect(DB::raw('0 as rating')),
             )
             ->whereIn('wheretoeat_nationwide_branches.id', $ids->pluck('id'))
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
@@ -87,7 +88,7 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
                 return $query;
             });
 
-        /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string, distance: null | float, rating?: float}> $pendingEateries */
+        /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string, distance: null | float, rating: float}> $pendingEateries */
         $pendingEateries = $query->toBase()->get();
 
         $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids, $pipelineData) {

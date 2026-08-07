@@ -64,6 +64,7 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             ->when(
                 $pipelineData->sort === 'rating',
                 fn (Builder $query) => $query->addSelect(DB::raw('coalesce((select (round(avg(r.rating) * 2) / 2) + (count(r.rating) * 0.001) from wheretoeat_reviews r where r.approved = 1 and r.wheretoeat_id = wheretoeat.id), 0) as rating')),
+                fn (Builder $query) => $query->addSelect(DB::raw('0 as rating')),
             )
             ->whereIn('id', $ids->pluck('id'));
 
@@ -79,7 +80,7 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             $query = $query->hasFeatures($pipelineData->filters['features']);
         }
 
-        /** @var Collection<int, object{id: int, name: string, distance: null | float, rating?: float}> $pendingEateries */
+        /** @var Collection<int, object{id: int, name: string, distance: null | float, rating: float}> $pendingEateries */
         $pendingEateries = $query->get(['id', 'name', 'distance']);
 
         $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids, $pipelineData) {

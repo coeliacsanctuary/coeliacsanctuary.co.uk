@@ -159,19 +159,20 @@ class GetEateriesInSearchAreaTest extends GetEateriesTestCase
     }
 
     #[Test]
-    public function itOnlySelectsTheRatingWhenSortingByRating(): void
+    public function itOnlyRunsTheRatingSubqueryWhenSortingByRating(): void
     {
         app('db')->enableQueryLog();
 
         $this->callGetEateriesInSearchAreaAction();
 
-        $this->assertStringNotContainsString('as rating', $this->searchAreaQuery());
+        $this->assertStringNotContainsString('from wheretoeat_reviews', $this->searchAreaQuery());
+        $this->assertStringContainsString('0 as rating', $this->searchAreaQuery());
 
         app('db')->flushQueryLog();
 
         $this->callGetEateriesInSearchAreaAction(sort: 'rating');
 
-        $this->assertStringContainsString('as rating', $this->searchAreaQuery());
+        $this->assertStringContainsString('from wheretoeat_reviews', $this->searchAreaQuery());
     }
 
     #[Test]
