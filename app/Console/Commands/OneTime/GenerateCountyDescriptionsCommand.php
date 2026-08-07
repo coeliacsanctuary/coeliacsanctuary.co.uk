@@ -17,7 +17,6 @@ class GenerateCountyDescriptionsCommand extends Command
     {
         EateryCounty::query()
             ->whereNot('county', 'Nationwide')
-            ->whereIn('county', ['Devon', 'Cheshire', 'London', 'Dorset', 'West Yorkshire', 'South Yorkshire']) // @todo - test code
             ->when( ! $this->option('force'), fn (Builder $query) => $query->whereNull('description'))
             ->lazy()
             ->each(function (EateryCounty $county): void {

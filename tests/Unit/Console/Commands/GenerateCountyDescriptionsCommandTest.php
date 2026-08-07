@@ -104,6 +104,6 @@ class GenerateCountyDescriptionsCommandTest extends TestCase
 
         $this->artisan(GenerateCountyDescriptionsCommand::class)->run();
 
-        Bus::assertDispatchedTimes(GenerateCountyDescriptionJob::class, 1);
+        Bus::assertDispatchedTimes(GenerateCountyDescriptionJob::class, 3);
     }
 }
