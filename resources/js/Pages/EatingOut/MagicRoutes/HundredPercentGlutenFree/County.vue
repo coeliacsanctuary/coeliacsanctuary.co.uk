@@ -49,6 +49,7 @@ defineProps<{
 
     <div
       v-for="eatery in town.eateries"
+      :key="eatery.key"
       class="mb-8 flex flex-col space-y-2 last:mb-4"
     >
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
