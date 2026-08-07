@@ -11,16 +11,24 @@ defineProps<{
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading> Coeliac Sanctuary Shop</Heading>
+    <Heading>
+      Shop Gluten Free Travel Translation Cards & Coeliac Stickers
+    </Heading>
 
     <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl">
-      Welcome to the Coeliac Sanctuary Shop, here you can find a range of
-      helpful items including Coeliac travel cards to help you explain Coeliac
-      and the need for gluten free, available in 50 languages, we cover most of
-      the world, so wherever you are visiting you can eat safely. You can also
-      find other products that make living with Coeliac easier such as my pends
-      and my water and freezer proof gluten free stickers and a few other bits
-      and bobs!
+      Whether you're travelling abroad or organising your gluten free kitchen at
+      home, you'll find products I've created to make living with coeliac
+      disease a little easier. My gluten free travel translation cards are
+      available in more than 60 languages and help you clearly communicate your
+      dietary requirements when eating out overseas. I also offer coeliac
+      awareness stickers to help identify gluten free food, storage containers
+      and kitchen equipment, reducing the risk of cross contamination.
+    </p>
+
+    <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl">
+      Every product has been designed using my own experience of living with
+      coeliac disease, with a focus on making everyday life and travel simpler,
+      safer and less stressful.
     </p>
   </Card>
 
