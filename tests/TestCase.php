@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Tests;
 
 use App\Ai\Agents\AskSealiac;
+use App\Ai\Agents\EateryAreaDescriptionAgent;
+use App\Ai\Agents\EateryBoroughDescriptionAgent;
 use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\Ai\Agents\EateryCountyDescriptionAgent;
+use App\Ai\Agents\EateryTownDescriptionAgent;
 use App\Support\State\EatingOut\Search\LatLngState;
 use App\Support\State\EatingOut\Search\SearchResultIdsState;
 use ArrayAccess;
@@ -43,6 +46,9 @@ abstract class TestCase extends BaseTestCase
 
         EateryCountryDescriptionAgent::fake();
         EateryCountyDescriptionAgent::fake();
+        EateryTownDescriptionAgent::fake();
+        EateryBoroughDescriptionAgent::fake();
+        EateryAreaDescriptionAgent::fake();
         AskSealiac::fake();
 
         LatLngState::$latLng = null;
