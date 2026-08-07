@@ -12,6 +12,7 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryFeature;
 use App\Models\EatingOut\EateryVenueType;
 use App\Services\EatingOut\LocationSearchService;
+use App\Support\State\EatingOut\Search\SearchResultIdsState;
 use Illuminate\Support\Collection;
 
 class GetEateriesInSearchAreaTest extends GetEateriesTestCase
@@ -122,5 +123,76 @@ class GetEateriesInSearchAreaTest extends GetEateriesTestCase
         $eateries = $this->callGetEateriesInSearchAreaAction();
 
         $this->assertCount(0, $eateries->eateries);
+    }
+
+    #[Test]
+    public function itExposesTheIdsOfEveryEateryInTheSearchArea(): void
+    {
+        $eateries = $this->callGetEateriesInSearchAreaAction();
+
+        $this->assertEqualsCanonicalizing(
+            $eateries->eateries->map(fn (PendingEatery $eatery) => $eatery->id)->all(),
+            SearchResultIdsState::$eateryIds,
+        );
+    }
+
+    #[Test]
+    public function theExposedIdsIgnoreTheAppliedFilters(): void
+    {
+        $unfiltered = $this->callGetEateriesInSearchAreaAction()->eateries;
+
+        SearchResultIdsState::reset();
+
+        $this->build(Eatery::class)->create([
+            'type_id' => 2,
+            'county_id' => $this->county->id,
+            'town_id' => $this->town->id,
+            'venue_type_id' => EateryVenueType::query()->first()->id,
+            'lat' => 51.50,
+            'lng' => -0.12,
+        ]);
+
+        $filtered = $this->callGetEateriesInSearchAreaAction(filters: ['categories' => ['att']]);
+
+        $this->assertCount(1, $filtered->eateries);
+        $this->assertCount($unfiltered->count() + 1, SearchResultIdsState::$eateryIds);
+    }
+
+    #[Test]
+    public function itOnlySelectsTheRatingWhenSortingByRating(): void
+    {
+        app('db')->enableQueryLog();
+
+        $this->callGetEateriesInSearchAreaAction();
+
+        $this->assertStringNotContainsString('as rating', $this->searchAreaQuery());
+
+        app('db')->flushQueryLog();
+
+        $this->callGetEateriesInSearchAreaAction(sort: 'rating');
+
+        $this->assertStringContainsString('as rating', $this->searchAreaQuery());
+    }
+
+    #[Test]
+    public function itDoesNotLoadTheCountyRelationToFilterOutNationwideEateries(): void
+    {
+        app('db')->enableQueryLog();
+
+        $this->callGetEateriesInSearchAreaAction();
+
+        $queries = collect(app('db')->getQueryLog())->pluck('query');
+
+        $this->assertTrue(
+            $queries->every(fn (string $query) => ! str_contains($query, 'from `wheretoeat_counties`')),
+            'The county relation is still being loaded to reject nationwide eateries.',
+        );
+    }
+
+    protected function searchAreaQuery(): string
+    {
+        return collect(app('db')->getQueryLog())
+            ->pluck('query')
+            ->first(fn (string $query) => str_contains($query, 'AS distance')) ?? '';
     }
 }

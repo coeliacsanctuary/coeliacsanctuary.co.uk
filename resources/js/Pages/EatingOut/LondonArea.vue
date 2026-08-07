@@ -50,13 +50,6 @@ const sortOption = ref(props.sort.current);
 
 const { handleFiltersChanged } = useEateryFilters();
 
-const reloadEateries = () => {
-  router.reload({
-    only: ['eateries'],
-    reset: ['eateries'],
-  });
-};
-
 watch(sortOption, () => {
   router.reload({
     only: ['eateries', 'sort'],
@@ -188,7 +181,6 @@ useJourneyTracking().logWhenVisible(
         :filters="filters"
         fixed
         @filters-updated="handleFiltersChanged"
-        @sidebar-closed="reloadEateries"
       />
     </template>
 

@@ -18,7 +18,6 @@ import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilt
 import SidebarLayout from '@/Components/SidebarLayout.vue';
 import useScreensize from '@/composables/useScreensize';
 import useEateryFilters from '@/composables/useEateryFilters';
-import { router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
@@ -59,9 +58,6 @@ const filteredChains = computed(() => {
   return chains;
 });
 
-const reloadChains = () => {
-  router.reload({ only: ['county'] });
-};
 </script>
 
 <template>
@@ -132,7 +128,6 @@ const reloadChains = () => {
         :filters="filters"
         fixed
         @filters-updated="handleFiltersChanged"
-        @sidebar-closed="reloadChains"
       />
 
       <div class="content_hint"></div>

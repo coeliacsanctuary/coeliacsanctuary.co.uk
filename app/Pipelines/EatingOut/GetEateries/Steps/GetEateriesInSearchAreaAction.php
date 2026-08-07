@@ -9,9 +9,11 @@ use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\LatLng;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EaterySearchTerm;
 use App\Services\EatingOut\LocationSearchService;
 use App\Support\Helpers;
 use App\Support\State\EatingOut\Search\LatLngState;
+use App\Support\State\EatingOut\Search\SearchResultIdsState;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -44,8 +46,6 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
 
         $ids = $ids
             ->reject(fn (Eatery $eatery) => $eatery->closed_down)
-            ->load(['county'])
-            ->reject(fn (Eatery $eatery) => $eatery->county?->county === 'Nationwide')
             ->each(function ($result): void {
                 if (isset($result->scoutMetadata()['_rankingInfo']['geoDistance'])) {
                     $distance = round($result->scoutMetadata()['_rankingInfo']['geoDistance'] / 1609, 1);
@@ -56,10 +56,15 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             ->sortBy('distance')
             ->values();
 
+        SearchResultIdsState::$eateryIds = $ids->pluck('id')->all();
+
         /** @var Builder<Eatery> $query */
         $query = Eatery::query()
             ->selectDistance($latLng, ['id', 'name'])
-            ->addSelect(DB::raw('coalesce((select (round(avg(r.rating) * 2) / 2) + (count(r.rating) * 0.001) from wheretoeat_reviews r where r.approved = 1 and r.wheretoeat_id = wheretoeat.id), 0) as rating'))
+            ->when(
+                $pipelineData->sort === 'rating',
+                fn (Builder $query) => $query->addSelect(DB::raw('coalesce((select (round(avg(r.rating) * 2) / 2) + (count(r.rating) * 0.001) from wheretoeat_reviews r where r.approved = 1 and r.wheretoeat_id = wheretoeat.id), 0) as rating')),
+            )
             ->whereIn('id', $ids->pluck('id'));
 
         if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
@@ -74,7 +79,7 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             $query = $query->hasFeatures($pipelineData->filters['features']);
         }
 
-        /** @var Collection<int, object{id: int, name: string, distance: null | float, rating: float}> $pendingEateries */
+        /** @var Collection<int, object{id: int, name: string, distance: null | float, rating?: float}> $pendingEateries */
         $pendingEateries = $query->get(['id', 'name', 'distance']);
 
         $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids, $pipelineData) {
@@ -117,8 +122,12 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
             return LatLngState::$latLng;
         }
 
-        /** @phpstan-ignore-next-line  */
-        $latLng = app(LocationSearchService::class)->getLatLng($pipelineData->searchTerm->term);
+        /** @var EaterySearchTerm $searchTerm */
+        $searchTerm = $pipelineData->searchTerm;
+
+        $latLng = $searchTerm->from_user_location
+            ? LatLng::fromString($searchTerm->term)
+            : app(LocationSearchService::class)->getLatLng($searchTerm->term);
 
         LatLngState::$latLng = $latLng;
 

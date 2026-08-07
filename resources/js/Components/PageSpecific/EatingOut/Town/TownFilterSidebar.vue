@@ -20,7 +20,31 @@ const viewSidebar = ref(false);
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
-defineEmits(['filtersUpdated', 'sidebarClosed']);
+const emits = defineEmits(['filtersUpdated']);
+
+const pendingUpdate = ref<null | {
+  filters: EateryFilters;
+  preserveState?: boolean;
+}>(null);
+
+const handleMobileUpdate = (update: {
+  filters: EateryFilters;
+  preserveState?: boolean;
+}): void => {
+  pendingUpdate.value = update;
+};
+
+const closeSidebar = (): void => {
+  viewSidebar.value = false;
+
+  if (!pendingUpdate.value) {
+    return;
+  }
+
+  emits('filtersUpdated', pendingUpdate.value);
+
+  pendingUpdate.value = null;
+};
 
 /** The height of the sticky nav, plus a small gap. */
 const stickyOffset = 56;
@@ -106,7 +130,7 @@ onUnmounted(() => {
     >
       <TownFilterSidebarContent
         :filters="filters"
-        @updated="$emit('filtersUpdated', $event)"
+        @updated="emits('filtersUpdated', $event)"
       />
     </div>
 
@@ -117,15 +141,12 @@ onUnmounted(() => {
     v-else
     :open="viewSidebar"
     side="right"
-    @close="
-      viewSidebar = false;
-      $emit('sidebarClosed');
-    "
+    @close="closeSidebar()"
   >
     <TownFilterSidebarContent
       class="!h-full"
       :filters="filters"
-      @updated="$emit('filtersUpdated', $event)"
+      @updated="handleMobileUpdate"
     />
   </Sidebar>
 </template>

@@ -31,7 +31,7 @@ class IndexController
         return [
             'data' => [
                 'eateries' => $getSearchResultsPipeline->run($searchTerm, $filters, $sort, ExploreEateryResource::class),
-                'filters' => $getFiltersForSearchResults->usingSearchKey($searchTerm->key)->handle($filters),
+                'filters' => $getFiltersForSearchResults->handle($filters),
                 'sort' => [
                     'current' => $sort,
                     'options' => [

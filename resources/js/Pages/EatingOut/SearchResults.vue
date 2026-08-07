@@ -9,7 +9,8 @@ import SidebarLayout from '@/Components/SidebarLayout.vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import { ref, watch } from 'vue';
 import { router, Link, InfiniteScroll } from '@inertiajs/vue3';
-import SearchResultsHeading from '@/Components/PageSpecific/EatingOut/SearchResults/SearchResultsHeading.vue';
+import Heading from '@/Components/Heading.vue';
+import SearchResultsLinks from '@/Components/PageSpecific/EatingOut/SearchResults/SearchResultsLinks.vue';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import Info from '@/Components/Info.vue';
 import { pluralise } from '@/helpers';
@@ -19,12 +20,13 @@ import useEateryFilters from '@/composables/useEateryFilters';
 
 const props = defineProps<{
   term: string;
+  prefillTerm: string;
   range: 1 | 2 | 5 | 10 | 20;
-  image: string;
   eateries: PaginatedCollection<TownEatery>;
   filters: EateryFilters;
   latlng?: LatLng;
-  county?: { name: string; link: string };
+  locationFound: boolean;
+  relatedPage?: { name: string; link: string };
   sort: {
     current: string;
     options: FormSelectOption[];
@@ -58,58 +60,46 @@ watch(sortOption, () => {
 </script>
 
 <template>
-  <SearchResultsHeading
-    :term="term"
-    :range="range"
-    :image="image"
-    :latlng="latlng"
-  />
-
-  <Card
-    v-if="eateries.data.length"
-    class="mt-3 flex flex-col space-y-4"
-  >
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      In our comprehensive eating out guide, you will find a wide range of
-      gluten-free options available at various locations around the UK, from
-      cafes, restaurants, attractions, to hotels, we've got you covered.
-    </p>
-
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      The wealth of information in our guide is a result of the generous
-      contributions from people like you - fellow Coeliacs or individuals with
-      gluten intolerance, who are familiar with their local area. These
-      kind-hearted individuals take the time to share their knowledge and help
-      us build a comprehensive list of places to eat to help others, like you!
-    </p>
-
-    <Warning>
-      <p>
-        While we take every care to make sure our eating out guide is accurate,
-        places can change without notice, we always recommend that you check
-        ahead before making plans.
-      </p>
-
-      <p class="mt-2">
-        All eateries are recommended by our website visitors, and before going
-        live we check menus and independent reviews. All eateries listed in our
-        eating guide are in no way endorsed by Coeliac Sanctuary.
-      </p>
-    </Warning>
+  <Card>
+    <Heading
+      :border="false"
+      :back-link="{
+        href: '/wheretoeat',
+        label: 'Back to the eating out guide',
+        position: 'bottom',
+      }"
+    >
+      Gluten Free places to eat within {{ range }} miles of {{ term }}
+    </Heading>
   </Card>
 
+  <Warning>
+    <p>
+      While we take every care to make sure our eating out guide is accurate,
+      places can change without notice, we always recommend that you check ahead
+      before making plans.
+    </p>
+
+    <p class="mt-2">
+      All eateries are recommended by our website visitors, and before going
+      live we check menus and independent reviews. All eateries listed in our
+      eating guide are in no way endorsed by Coeliac Sanctuary.
+    </p>
+  </Warning>
+
   <LocationSearch
-    :term="term"
+    :term="prefillTerm"
     :range="range"
   />
 
   <SidebarLayout>
     <template #sidebar>
+      <SearchResultsLinks :latlng="latlng" />
+
       <TownFilterSidebar
         :filters="filters"
         fixed
         @filters-updated="handleFiltersChanged"
-        @sidebar-closed="reloadEateries"
       />
     </template>
 
@@ -118,14 +108,15 @@ watch(sortOption, () => {
       class="flex flex-col"
     >
       <Info
-        v-if="county"
+        v-if="relatedPage"
         class="mb-4"
       >
         <p class="prose prose-lg max-w-none">
-          It looks like you're looking for places to eat in {{ county.name }},
-          you can get more detailed results on the dedicated
-          <Link :href="county.link">
-            {{ county.name }} page in my eating out guide.
+          It looks like you're looking for places to eat in
+          {{ relatedPage.name }}, you can get more detailed results on the
+          dedicated
+          <Link :href="relatedPage.link">
+            {{ relatedPage.name }} page in my eating out guide.
           </Link>
         </p>
       </Info>
@@ -173,7 +164,14 @@ watch(sortOption, () => {
           v-if="!eateries.data.length"
           class="px-8 py-8 text-center text-xl"
         >
-          No eateries found, try updating your filters or your search term!
+          <template v-if="locationFound">
+            No eateries found, try updating your filters or your search term!
+          </template>
+
+          <template v-else>
+            We couldn't find anywhere called "{{ term }}", check the spelling
+            and try searching again!
+          </template>
         </Card>
       </InfiniteScroll>
     </div>

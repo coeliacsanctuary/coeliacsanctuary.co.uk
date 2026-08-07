@@ -7,6 +7,8 @@ namespace Tests;
 use App\Ai\Agents\AskSealiac;
 use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\Ai\Agents\EateryCountyDescriptionAgent;
+use App\Support\State\EatingOut\Search\LatLngState;
+use App\Support\State\EatingOut\Search\SearchResultIdsState;
 use ArrayAccess;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -42,6 +44,9 @@ abstract class TestCase extends BaseTestCase
         EateryCountryDescriptionAgent::fake();
         EateryCountyDescriptionAgent::fake();
         AskSealiac::fake();
+
+        LatLngState::$latLng = null;
+        SearchResultIdsState::reset();
     }
 
     protected function assertSortedAlphabetically(array $items): void
