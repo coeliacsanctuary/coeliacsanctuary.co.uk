@@ -27,7 +27,7 @@ use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<Eatery> */
+/** @extends resource<Eatery> */
 /**
  * @codeCoverageIgnore
  */

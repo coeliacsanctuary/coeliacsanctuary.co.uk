@@ -73,11 +73,15 @@ This should be one of:
 
 The county may already exist in our database, use the SearchCounty tool to check, if not, it can be added as part of the process.
 
+If the county contains dashs
+
 ### Place Town
 
 If the county is London, then the town is the London Borough (Ie City of Westminster)
 
 The town / borough may already exist in our database, use the SearchTown tool to check, if not, it can be added as part of the process.
+
+If the town contains dashes, or may be known to have dashes (Eg Stockton-On-Tees or Stoke on Trent) then search both variations with the SearchTown tool before deciding the town doesnt exist.
 
 ### Place Area
 
@@ -96,6 +100,8 @@ If the website, or google business page lists a phone number, then use that, no 
 ### Website
 
 If the recommendation website is correct and accurate, use that, otherwise use one from search results, if one exists.
+
+Only use a dedicated website address in this field, not a social media URL etc.
 
 ### Facebook Page
 
@@ -128,6 +134,10 @@ This is the key data displayed to website visitors on eatery listings, the eater
 
 Please keep it at a reasonable length, matching the examples returned by the tool, and make it more about the eatery and what they offer, rather than random information about them, again, use the examples retuned and match the style.
 
+Don't include random food examples from the menu unless you're 100% certain they are gluten free examples.
+
 ### Features
 
 An eatery can have many features, use the EateryFeatureList tool to list all of the features we have (eg 100% gluten free, Afternoon Tea, Gluten Free Menu) and assign any that match from your research.
+
+Note, only apply the 'Gluten Free Menu' feature if the eatery has a dedicated gluten free menu, rather than just options on a standard menu.

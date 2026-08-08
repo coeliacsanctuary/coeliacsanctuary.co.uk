@@ -12,7 +12,6 @@ use App\Models\TemporaryFileUpload;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 use Tests\TestCase;
 
 class ProcessReviewImagesJobTest extends TestCase
@@ -34,19 +33,12 @@ class ProcessReviewImagesJobTest extends TestCase
             ->create();
 
         $file = UploadedFile::fake()->image('foo.jpg');
-        $file->store('/', 'uploads');
+        $uploadedFile = $file->store('/', 'uploads');
 
         $this->fileUpload = $this->create(TemporaryFileUpload::class, [
             'filename' => $file->name,
-            'path' => $file->path(),
+            'path' => $uploadedFile,
         ]);
-
-        Image::shouldReceive('make', 'resize')
-            ->once()
-            ->andReturnSelf()
-            ->getMock()
-            ->shouldReceive('encode')
-            ->andReturn($file->getContent());
     }
 
     #[Test]
