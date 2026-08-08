@@ -9,6 +9,7 @@ use App\Ai\Agents\EateryAreaDescriptionAgent;
 use App\Ai\Agents\EateryBoroughDescriptionAgent;
 use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\Ai\Agents\EateryCountyDescriptionAgent;
+use App\Ai\Agents\EateryNationwideDescriptionAgent;
 use App\Ai\Agents\EateryTownDescriptionAgent;
 use App\Support\State\EatingOut\Search\LatLngState;
 use App\Support\State\EatingOut\Search\SearchResultIdsState;
@@ -49,6 +50,7 @@ abstract class TestCase extends BaseTestCase
         EateryTownDescriptionAgent::fake();
         EateryBoroughDescriptionAgent::fake();
         EateryAreaDescriptionAgent::fake();
+        EateryNationwideDescriptionAgent::fake();
         AskSealiac::fake();
 
         LatLngState::$latLng = null;
