@@ -6,12 +6,12 @@ namespace App\Services\Static\Map;
 
 use App\Models\GoogleStaticMap;
 use Illuminate\Http\Client\Response;
+use Illuminate\Image\Image;
+use Illuminate\Image\ImageManager;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Intervention\Image\Image;
-use Intervention\Image\ImageManager;
 
 class GoogleMapService
 {
@@ -19,7 +19,6 @@ class GoogleMapService
 
     public function __construct(protected ImageManager $imageManager)
     {
-        //
     }
 
     public function renderMap(string $latLng, array $params = []): Image
@@ -39,7 +38,7 @@ class GoogleMapService
             /** @var GoogleStaticMap $googleStaticMap */
             $googleStaticMap = $this->existingRecord;
 
-            return $this->imageManager->make(Storage::disk('media')->get("/maps/{$googleStaticMap->uuid}-{$googleStaticMap->parameters}.jpg"));
+            return $this->imageManager->fromStorage("/maps/{$googleStaticMap->uuid}-{$googleStaticMap->parameters}.jpg", 'media');
         }
 
         return $this->resolveImageFromGoogle($latLng, $params);
@@ -61,7 +60,7 @@ class GoogleMapService
     {
         $this->existingRecord = GoogleStaticMap::query()
             ->where('latlng', $latLng)
-            ->where('parameters', md5((string)json_encode($parameters)))
+            ->where('parameters', md5((string) json_encode($parameters)))
             ->first();
     }
 
@@ -86,20 +85,19 @@ class GoogleMapService
     {
         $image = $this->getImageFromGoogle($latLng, $params);
 
-        $rawImage = $this->imageManager->make($image);
+        $rawImage = $this->imageManager->fromBytes($image);
 
         $uuid = $this->existingRecord->uuid ?? Str::uuid()->toString();
 
-        /** @var resource $encodedImageBlob */
-        $encodedImageBlob = $rawImage->encode('jpg');
+        $encodedImageBlob = $rawImage->toJpg();
 
-        $encodedParams = md5((string)json_encode($params));
+        $encodedParams = md5((string) json_encode($params));
 
-        Storage::disk('media')->put("maps/{$uuid}-{$encodedParams}.jpg", $encodedImageBlob);
+        Storage::disk('media')->put("maps/{$uuid}-{$encodedParams}.jpg", $encodedImageBlob->toBytes());
 
         $this->existingRecord = GoogleStaticMap::query()->updateOrCreate([
             'latlng' => $latLng,
-            'parameters' => md5((string)json_encode($params)),
+            'parameters' => md5((string) json_encode($params)),
         ], [
             'uuid' => $uuid,
             'last_fetched_at' => now(),

@@ -6,12 +6,12 @@ namespace Tests\Unit\Services\Static\Maps;
 
 use App\Models\GoogleStaticMap;
 use App\Services\Static\Map\GoogleMapService;
+use Illuminate\Image\ImageManager;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
-use Intervention\Image\ImageManager;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -34,13 +34,10 @@ class GoogleMapServiceTest extends TestCase
             'latlng' => $london,
         ]);
 
-        Storage::shouldReceive('disk')
-            ->once()
-            ->andReturnSelf()
-            ->getMock()
-            ->shouldReceive('get')
-            ->withArgs(["/maps/{$record->uuid}-{$record->parameters}.jpg"])
-            ->andReturn($this->getFakeImageString())
+        $this->mock(ImageManager::class)
+            ->shouldReceive('fromStorage')
+            ->withArgs(["/maps/{$record->uuid}-{$record->parameters}.jpg", 'media'])
+            ->andReturn(Image::fromBytes($this->getFakeImageString()))
             ->once();
 
         app(GoogleMapService::class)->renderMap($london);
@@ -57,8 +54,8 @@ class GoogleMapServiceTest extends TestCase
         ]);
 
         $this->mock(ImageManager::class)
-            ->shouldReceive('make')
-            ->andReturn(Image::make($this->getFakeImageString()));
+            ->shouldReceive('fromStorage')
+            ->andReturn(Image::fromBytes($this->getFakeImageString()));
 
         app(GoogleMapService::class)->renderMap($london);
 
