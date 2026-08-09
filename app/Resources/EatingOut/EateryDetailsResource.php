@@ -121,7 +121,7 @@ class EateryDetailsResource extends JsonResource
             ] : null,
             'branch' => $branch ? NationwideBranchResource::make($branch) : null,
             'is_nationwide' => $this->county_id === 1,
-            'branch_count' => $this->nationwide_branches_count,
+            'branch_count' => $this->whenCounted('nationwideBranches', default: 0),
             'last_updated' => $this->updated_at,
             'last_updated_human' => $this->updated_at?->diffForHumans(),
             'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)->count() > 0,

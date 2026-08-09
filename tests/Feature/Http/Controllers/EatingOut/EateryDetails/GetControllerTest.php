@@ -16,6 +16,7 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use Database\Seeders\EateryScaffoldingSeeder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -229,6 +230,21 @@ class GetControllerTest extends TestCase
                 fn (Assert $page) => $page
                     ->component('EatingOut/Details')
                     ->where('eatery.branch_count', 3)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itHasAZeroBranchCountOnANormalEateryPage(): void
+    {
+        Model::preventAccessingMissingAttributes();
+
+        $this
+            ->visitEatery()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/Details')
+                    ->where('eatery.branch_count', 0)
                     ->etc()
             );
     }
