@@ -7,7 +7,11 @@ namespace Tests\Unit\Notifications\EatingOut;
 use App\Infrastructure\MjmlMessage;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryRecommendation;
+use App\Models\EatingOut\EateryReview;
+use App\Models\EatingOut\EateryTown;
+use App\Models\EatingOut\EateryVenueType;
 use App\Notifications\EatingOut\EateryRecommendationAddedNotification;
+use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -52,6 +56,41 @@ class EateryRecommendationAddedNotificationTest extends TestCase
                 return true;
             }
         );
+    }
+
+    #[Test]
+    public function itRendersACardForEachNearbyEateryWithALinkToTheTown(): void
+    {
+        $this->seed(EateryScaffoldingSeeder::class);
+
+        /** @var EateryTown $town */
+        $town = EateryTown::query()->findOrFail(1);
+
+        /** @var EateryVenueType $venueType */
+        $venueType = EateryVenueType::query()->findOrFail(2);
+
+        /** @var Eatery $nearby */
+        $nearby = $this->create(Eatery::class, [
+            'venue_type_id' => $venueType->id,
+            'address' => "12 Market Street\nCrewe\nCW1 2AB",
+        ]);
+
+        $this->build(EateryReview::class)->count(2)->approved()->on($nearby)->create(['rating' => 4]);
+
+        /** @var Eatery $eatery */
+        $eatery = $this->eatery->fresh();
+
+        $content = (new EateryRecommendationAddedNotification($this->recommendation, $eatery))
+            ->toMail(new AnonymousNotifiable())
+            ->render();
+
+        $this->assertStringContainsString("More gluten free places in {$town->town}", $content);
+        $this->assertStringContainsString($nearby->name, $content);
+        $this->assertStringContainsString($venueType->venue_type, $content);
+        $this->assertStringContainsString('★ 4.0 (2 reviews)', $content);
+        $this->assertStringContainsString('12 Market Street', $content);
+        $this->assertStringContainsString($nearby->absoluteLink(), $content);
+        $this->assertStringContainsString($town->absoluteLink(), $content);
     }
 
     public static function mailDataProvider(): array
