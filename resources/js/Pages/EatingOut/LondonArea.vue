@@ -102,7 +102,7 @@ useJourneyTracking().logWhenVisible(
     class="content_hint"
   />
 
-  <SidebarLayout>
+  <SidebarLayout interleaved>
     <template #sidebar>
       <Card
         v-if="guides.length > 0"
@@ -131,7 +131,7 @@ useJourneyTracking().logWhenVisible(
         </ul>
       </Card>
 
-      <Card>
+      <Card class="order-1 xmd:order-0">
         <SubHeading>Other areas nearby</SubHeading>
 
         <div class="mt-4 flex flex-col space-y-4">

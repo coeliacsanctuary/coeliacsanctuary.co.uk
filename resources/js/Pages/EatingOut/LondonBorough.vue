@@ -79,7 +79,7 @@ useJourneyTracking().logWhenVisible(
     />
   </Card>
 
-  <SidebarLayout>
+  <SidebarLayout interleaved>
     <template #sidebar>
       <Card
         v-if="guides.length > 0"
@@ -108,7 +108,7 @@ useJourneyTracking().logWhenVisible(
         </ul>
       </Card>
 
-      <Card>
+      <Card class="order-1 xmd:order-0">
         <SubHeading>Other boroughs nearby</SubHeading>
 
         <div class="mt-4 flex flex-col space-y-4">
@@ -239,7 +239,7 @@ useJourneyTracking().logWhenVisible(
 
     <div
       ref="areaList"
-      class="group mt-3 grid gap-3"
+      class="group grid gap-3"
     >
       <template
         v-for="(area, index) in filteredAreas"
