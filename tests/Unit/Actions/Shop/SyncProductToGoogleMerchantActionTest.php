@@ -9,6 +9,8 @@ use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use App\Services\GoogleMerchant\GoogleMerchantProductManager;
+use Google\ApiCore\ApiException;
+use Google\ApiCore\ApiStatus;
 use Google\Shopping\Merchant\Products\V1\Condition;
 use Google\Shopping\Merchant\Products\V1\ProductInput;
 use Mockery;
@@ -130,6 +132,85 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
         $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
 
         $this->assertSame($existingId, $this->product->fresh()->google_merchant_product_id);
+    }
+
+    #[Test]
+    public function itClearsTheIdAndReinsertsWhenUpdateReturnsNotFound(): void
+    {
+        $existingId = 'accounts/12345/productInputs/ZW4~GB~' . $this->product->id;
+        $this->product->update(['google_merchant_product_id' => $existingId]);
+
+        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~new');
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('update')->with($existingId, Mockery::type(ProductInput::class))->once()->andThrow($this->notFoundException())
+            ->shouldReceive('insert')
+            ->withArgs(fn (ProductInput $input) => $input->getName() === '')
+            ->once()
+            ->andReturn($returned);
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+
+        $this->assertSame('accounts/12345/productInputs/ZW4~GB~new', $this->product->fresh()->google_merchant_product_id);
+    }
+
+    #[Test]
+    public function itRethrowsWhenUpdateFailsForAnyOtherReason(): void
+    {
+        $existingId = 'accounts/12345/productInputs/ZW4~GB~' . $this->product->id;
+        $this->product->update(['google_merchant_product_id' => $existingId]);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('update')->once()->andThrow(new ApiException('boom', 13, ApiStatus::INTERNAL))
+            ->shouldNotReceive('insert');
+
+        $this->expectException(ApiException::class);
+
+        try {
+            $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+        } finally {
+            $this->assertSame($existingId, $this->product->fresh()->google_merchant_product_id);
+        }
+    }
+
+    #[Test]
+    public function itClearsTheIdWhenDeleteReturnsNotFound(): void
+    {
+        $this->product->update([
+            'google_merchant_enabled' => false,
+            'google_merchant_product_id' => 'accounts/12345/productInputs/ZW4~GB~1',
+        ]);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('delete')->with('accounts/12345/productInputs/ZW4~GB~1')->once()->andThrow($this->notFoundException());
+
+        $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+
+        $this->assertNull($this->product->fresh()->google_merchant_product_id);
+    }
+
+    #[Test]
+    public function itRethrowsWhenDeleteFailsForAnyOtherReason(): void
+    {
+        $this->product->update([
+            'google_merchant_enabled' => false,
+            'google_merchant_product_id' => 'accounts/12345/productInputs/ZW4~GB~1',
+        ]);
+
+        $this->mock(GoogleMerchantProductManager::class)
+            ->shouldReceive('isEnabled')->andReturn(true)
+            ->shouldReceive('delete')->once()->andThrow(new ApiException('boom', 13, ApiStatus::INTERNAL));
+
+        $this->expectException(ApiException::class);
+
+        try {
+            $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+        } finally {
+            $this->assertSame('accounts/12345/productInputs/ZW4~GB~1', $this->product->fresh()->google_merchant_product_id);
+        }
     }
 
     #[Test]
@@ -263,5 +344,10 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
             ->andReturn($returned);
 
         $this->callAction(SyncProductToGoogleMerchantAction::class, $this->product);
+    }
+
+    protected function notFoundException(): ApiException
+    {
+        return new ApiException('The resource with name `Product` was not found.', 5, ApiStatus::NOT_FOUND);
     }
 }

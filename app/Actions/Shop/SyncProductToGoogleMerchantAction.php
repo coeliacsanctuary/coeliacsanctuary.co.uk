@@ -7,6 +7,8 @@ namespace App\Actions\Shop;
 use App\Models\Shop\ShopProduct;
 use App\Services\GoogleMerchant\GoogleMerchantProductManager;
 use App\Services\GoogleMerchant\Helpers;
+use Google\ApiCore\ApiException;
+use Google\ApiCore\ApiStatus;
 use Google\Shopping\Merchant\Products\V1\Availability;
 use Google\Shopping\Merchant\Products\V1\Condition;
 use Google\Shopping\Merchant\Products\V1\ProductAttributes;
@@ -36,13 +38,28 @@ class SyncProductToGoogleMerchantAction
             return;
         }
 
-        $googleProduct = $this->buildProduct($product);
-
-        $result = $product->google_merchant_product_id
-            ? $this->manager->update($product->google_merchant_product_id, $googleProduct)
-            : $this->manager->insert($googleProduct);
+        $result = $this->syncToMerchant($product);
 
         $product->update(['google_merchant_product_id' => $result->getName()]);
+    }
+
+    protected function syncToMerchant(ShopProduct $product): ProductInput
+    {
+        if ( ! $product->google_merchant_product_id) {
+            return $this->manager->insert($this->buildProduct($product));
+        }
+
+        try {
+            return $this->manager->update($product->google_merchant_product_id, $this->buildProduct($product));
+        } catch (ApiException $exception) {
+            if ( ! $this->isNotFound($exception)) {
+                throw $exception;
+            }
+        }
+
+        $product->update(['google_merchant_product_id' => null]);
+
+        return $this->manager->insert($this->buildProduct($product));
     }
 
     protected function removeFromMerchant(ShopProduct $product): void
@@ -51,9 +68,20 @@ class SyncProductToGoogleMerchantAction
             return;
         }
 
-        $this->manager->delete($product->google_merchant_product_id);
+        try {
+            $this->manager->delete($product->google_merchant_product_id);
+        } catch (ApiException $exception) {
+            if ( ! $this->isNotFound($exception)) {
+                throw $exception;
+            }
+        }
 
         $product->update(['google_merchant_product_id' => null]);
+    }
+
+    protected function isNotFound(ApiException $exception): bool
+    {
+        return $exception->getStatus() === ApiStatus::NOT_FOUND;
     }
 
     protected function buildProduct(ShopProduct $product): ProductInput
