@@ -22,7 +22,7 @@ class GenerateCountyDescriptionsCommand extends Command
             ->each(function (EateryCounty $county): void {
                 $this->info("Queueing description for {$county->county}");
 
-                GenerateCountyDescriptionJob::dispatchSync($county);
+                GenerateCountyDescriptionJob::dispatch($county);
             });
     }
 }
