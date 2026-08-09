@@ -46,6 +46,18 @@ class EateryCheckTest extends TestCase
     }
 
     #[Test]
+    public function itCastsWebsiteCheckDisabledUntilToDatetime(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $check = $this->build(EateryCheck::class)->websiteCheckDisabledUntil(now()->addMonths(6))->create([
+            'wheretoeat_id' => $eatery->id,
+        ]);
+
+        $this->assertInstanceOf(Carbon::class, $check->website_check_disabled_until);
+    }
+
+    #[Test]
     public function itCastsGoogleCheckedAtToDatetime(): void
     {
         $eatery = $this->create(Eatery::class);

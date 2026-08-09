@@ -13,9 +13,9 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 /**
  * @codeCoverageIgnore
  */
-class PermanentlyIgnoreEateryAlert extends Action
+class IgnoreEateryAlertForSixMonths extends Action
 {
-    public $name = 'Permanently Ignore';
+    public $name = 'Ignore for 6 Months';
 
     public $withoutActionEvents = true;
 
@@ -33,7 +33,10 @@ class PermanentlyIgnoreEateryAlert extends Action
 
             $model->update(['ignored' => true]);
 
-            $model->eatery->check->update(['disable_website_check' => true]);
+            $model->eatery->check()->updateOrCreate(
+                ['wheretoeat_id' => $model->eatery->id],
+                ['website_check_disabled_until' => now()->addMonths(6)],
+            );
         });
     }
 

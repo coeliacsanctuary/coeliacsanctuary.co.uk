@@ -65,7 +65,7 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
     }
 
     #[Test]
-    public function itExcludesEateriesWithWebsiteCheckDisabled(): void
+    public function itExcludesEateriesWithAnActiveWebsiteCheckSnooze(): void
     {
         $normalEatery = $this->create(Eatery::class, [
             'website' => 'https://example.com',
@@ -73,13 +73,16 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
             'county_id' => $this->regularCounty->id,
         ]);
 
-        $eateryWithDisableCheck = $this->create(Eatery::class, [
+        $snoozedEatery = $this->create(Eatery::class, [
             'website' => 'https://example.com',
-            'closed_down' => true,
+            'closed_down' => false,
             'county_id' => $this->regularCounty->id,
         ]);
 
-        $this->build(EateryCheck::class)->forEatery($eateryWithDisableCheck)->disableWebsiteCheck()->create();
+        $this->build(EateryCheck::class)
+            ->forEatery($snoozedEatery)
+            ->websiteCheckDisabledUntil(now()->addMonths(3))
+            ->create();
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
@@ -89,10 +92,33 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
             return true;
         });
 
-        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithDisableCheck) {
-            $this->assertFalse($job->eatery->is($eateryWithDisableCheck));
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($snoozedEatery) {
+            $this->assertFalse($job->eatery->is($snoozedEatery));
 
             return false;
+        });
+    }
+
+    #[Test]
+    public function itIncludesEateriesWhoseWebsiteCheckSnoozeHasExpired(): void
+    {
+        $eatery = $this->create(Eatery::class, [
+            'website' => 'https://example.com',
+            'closed_down' => false,
+            'county_id' => $this->regularCounty->id,
+        ]);
+
+        $this->build(EateryCheck::class)
+            ->forEatery($eatery)
+            ->websiteCheckDisabledUntil(now()->subDay())
+            ->create();
+
+        $this->artisan('coeliac:process-eatery-website-checks');
+
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery) {
+            $this->assertTrue($job->eatery->is($eatery));
+
+            return true;
         });
     }
 

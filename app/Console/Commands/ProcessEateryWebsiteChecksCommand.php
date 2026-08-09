@@ -38,7 +38,10 @@ class ProcessEateryWebsiteChecksCommand extends Command
                     ->orWhereHas(
                         'check',
                         fn (Builder $query) => $query
-                            ->where('disable_website_check', false) /** @phpstan-ignore-line */
+                            ->where(fn (Builder $query) => $query
+                                /** @var Builder<EateryCheck> $query */
+                                ->whereNull('website_check_disabled_until')
+                                ->orWhere('website_check_disabled_until', '<=', now())) /** @phpstan-ignore-line */
                             ->where(fn (Builder $query) => $query
                                 /** @var Builder<EateryCheck> $query */
                                 ->whereNull('website_checked_at')

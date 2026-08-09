@@ -15,7 +15,7 @@ class EateryCheck extends Model
     {
         return [
             'website_checked_at' => 'datetime',
-            'disable_website_check' => 'boolean',
+            'website_check_disabled_until' => 'datetime',
             'google_checked_at' => 'datetime',
             'disable_google_check' => 'boolean',
         ];

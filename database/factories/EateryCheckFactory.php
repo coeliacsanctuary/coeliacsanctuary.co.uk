@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCheck;
+use Carbon\CarbonInterface;
 
 class EateryCheckFactory extends Factory
 {
@@ -16,7 +17,7 @@ class EateryCheckFactory extends Factory
         return [
             'wheretoeat_id' => static::factoryForModel(Eatery::class),
             'website_checked_at' => null,
-            'disable_website_check' => false,
+            'website_check_disabled_until' => null,
             'google_checked_at' => null,
             'disable_google_check' => false,
         ];
@@ -51,10 +52,10 @@ class EateryCheckFactory extends Factory
         ]);
     }
 
-    public function disableWebsiteCheck(): self
+    public function websiteCheckDisabledUntil(CarbonInterface $until): self
     {
         return $this->state(fn () => [
-            'disable_website_check' => true,
+            'website_check_disabled_until' => $until,
         ]);
     }
 }
