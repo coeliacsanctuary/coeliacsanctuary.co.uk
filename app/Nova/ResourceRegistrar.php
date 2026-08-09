@@ -12,8 +12,9 @@ use App\Nova\Resources\EatingOut\Countries;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
 use App\Nova\Resources\EatingOut\EateryAlerts;
-use App\Nova\Resources\EatingOut\EateryCuisines;
 use App\Nova\Resources\EatingOut\EateryAttractionRestaurantResource;
+use App\Nova\Resources\EatingOut\EateryCuisines;
+use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
 use App\Nova\Resources\EatingOut\MyPlaces;
@@ -114,6 +115,7 @@ class ResourceRegistrar
             SealiacOverviews::class,
             EateryAiDescriptionResource::class,
             EateryAttractionRestaurantResource::class,
+            EateryMagicRoutesResource::class,
 
             // Search
             SearchResource::class,

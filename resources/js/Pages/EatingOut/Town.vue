@@ -1,6 +1,13 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { EateryFilters, TownEatery, TownPage } from '@/types/EateryTypes';
+import {
+  EateryFilters,
+  MagicRouteGuide,
+  NearbyCounty,
+  NearbyTown,
+  TownEatery,
+  TownPage,
+} from '@/types/EateryTypes';
 import TownHeading from '@/Components/PageSpecific/EatingOut/Town/TownHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
@@ -8,13 +15,14 @@ import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
 import { ref, useTemplateRef, watch } from 'vue';
 import { router, Link, InfiniteScroll } from '@inertiajs/vue3';
-import useScreensize from '@/composables/useScreensize';
-import { RequestPayload } from '@inertiajs/core';
-import useBrowser from '@/composables/useBrowser';
+import useEateryFilters from '@/composables/useEateryFilters';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import SubHeading from '@/Components/SubHeading.vue';
+import SidebarLayout from '@/Components/SidebarLayout.vue';
+import { pluralise } from '@/helpers';
 
 const props = defineProps<{
   live_eateries_count: number;
@@ -25,75 +33,15 @@ const props = defineProps<{
     current: string;
     options: FormSelectOption[];
   };
+  nearby: NearbyTown[];
+  guides: MagicRouteGuide[];
 }>();
 
 const placeList = ref<HTMLElement | null>(null);
 
 const sortOption = ref(props.sort.current);
 
-const { screenIsGreaterThanOrEqualTo } = useScreensize();
-
-const handleFiltersChanged = ({
-  filters,
-  preserveState = true,
-}: {
-  filters: EateryFilters;
-  preserveState: boolean;
-}) => {
-  const categoryFilter = filters.categories
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const venueFilter = filters.venueTypes
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const featureFilter = filters.features
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const params: RequestPayload & {
-    filter?: { [T in 'category' | 'venueType' | 'feature']?: string };
-  } = {};
-
-  if (categoryFilter.length || venueFilter.length || featureFilter.length) {
-    params.filter = {};
-
-    if (categoryFilter.length) {
-      params.filter.category = categoryFilter.join(',');
-    }
-
-    if (venueFilter.length) {
-      params.filter.venueType = venueFilter.join(',');
-    }
-
-    if (featureFilter.length) {
-      params.filter.feature = featureFilter.join(',');
-    }
-  }
-
-  const lastScroll = window.scrollY;
-
-  router.get(useBrowser().currentPath(), params, {
-    preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
-    preserveScroll: true,
-    onFinish: () => {
-      // This avoids race conditions with hydration
-      requestAnimationFrame(() => {
-        window.scrollTo(0, lastScroll);
-      });
-    },
-  });
-};
-
-const reloadEateries = () => {
-  router.reload({
-    only: ['eateries'],
-    reset: ['eateries'],
-    preserveState: true,
-    preserveScroll: true,
-  });
-};
+const { handleFiltersChanged } = useEateryFilters();
 
 watch(sortOption, () => {
   router.reload({
@@ -122,24 +70,10 @@ useJourneyTracking().logWhenVisible(
     v-if="live_eateries_count > 0"
     class="mt-3 flex flex-col space-y-4"
   >
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      Looking for gluten free in {{ town.name }}? In our comprehensive eating
-      out guide, you will find a wide range of gluten free options available at
-      various locations in
-      <span
-        class="font-semibold"
-        v-text="town.name"
-      />. From cafes, restaurants, attractions, to hotels, we've got you
-      covered.
-    </p>
-
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      The wealth of information in our guide is a result of the generous
-      contributions from people like you - fellow Coeliacs or individuals with
-      gluten intolerance, who are familiar with their local area. These
-      kind-hearted individuals take the time to share their knowledge and help
-      us build a comprehensive list of places to eat to help others, like you!
-    </p>
+    <div
+      class="prose-md prose w-full max-w-none lg:prose-lg"
+      v-html="town.description"
+    />
 
     <Warning>
       <p>
@@ -161,18 +95,92 @@ useJourneyTracking().logWhenVisible(
     class="content_hint"
   />
 
-  <div class="relative md:flex xmd:space-x-2">
-    <TownFilterSidebar
-      v-if="live_eateries_count > 0"
-      :filters="filters"
-      @filters-updated="handleFiltersChanged"
-      @sidebar-closed="reloadEateries"
-    />
+  <SidebarLayout>
+    <template #sidebar>
+      <Card
+        v-if="guides.length > 0"
+        class="flex flex-col space-y-3"
+      >
+        <SubHeading> Specialist guides in {{ town.name }} </SubHeading>
+
+        <p class="prose mt-4 max-w-none">
+          Are you heading to {{ town.name }}? Take a look at these specialist
+          guides I've put together for eating gluten free across
+          {{ town.name }}!
+        </p>
+
+        <ul>
+          <li
+            v-for="guide in guides"
+            :key="guide.link"
+          >
+            <Link
+              :href="guide.link"
+              class="text-lg font-semibold text-primary-dark hover:text-black"
+            >
+              {{ guide.title }}
+            </Link>
+          </li>
+        </ul>
+      </Card>
+
+      <Card>
+        <SubHeading>Other towns nearby</SubHeading>
+
+        <div class="mt-4 flex flex-col space-y-4">
+          <div
+            v-for="nearbyTown in nearby"
+            :key="nearbyTown.link"
+            class="flex flex-col space-y-2"
+          >
+            <Link
+              class="text-lg font-semibold text-primary-darkest transition hover:text-black lg:text-xl"
+              :href="nearbyTown.link"
+            >
+              {{ nearbyTown.name }}
+            </Link>
+
+            <ul class="flex space-x-4">
+              <li
+                v-if="nearbyTown.eateries > 0"
+                class="rounded-lg bg-primary/50 px-4 py-1 text-xs font-semibold"
+              >
+                {{ nearbyTown.eateries }}
+                {{ pluralise('Eatery', nearbyTown.eateries) }}
+              </li>
+
+              <li
+                v-if="nearbyTown.attractions > 0"
+                class="rounded-lg bg-primary-dark/50 px-4 py-1 text-xs font-semibold"
+              >
+                {{ nearbyTown.attractions }}
+                {{ pluralise('Attraction', nearbyTown.attractions) }}
+              </li>
+
+              <li
+                v-if="nearbyTown.hotels > 0"
+                class="rounded-lg bg-secondary/50 px-4 py-1 text-xs font-semibold"
+              >
+                {{ nearbyTown.hotels }}
+                {{ pluralise('Hotel', nearbyTown.hotels) }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </Card>
+
+      <TownFilterSidebar
+        v-if="live_eateries_count > 0"
+        :filters="filters"
+        fixed
+        @filters-updated="handleFiltersChanged"
+      />
+    </template>
 
     <div
       v-if="live_eateries_count > 0"
       ref="placeList"
-      class="flex flex-col xmd:w-3/4 xmd:flex-1"
+      class="flex flex-col"
     >
       <Card
         class="mb-4 flex space-y-2 xs:flex-row xs:items-center xs:justify-between xs:space-y-0"
@@ -233,7 +241,7 @@ useJourneyTracking().logWhenVisible(
         <Link :href="town.county.link">Back to {{ town.county.name }}</Link>
       </p>
     </Card>
-  </div>
+  </SidebarLayout>
 
   <JumpToContentButton
     v-if="placeList"

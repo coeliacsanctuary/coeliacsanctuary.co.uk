@@ -28,7 +28,7 @@ const imageClasses = computed(() => [
   'rounded-sm',
   'w-[130px]',
   'xxs:h-[112.5px]',
-  'xxs-w-[150px]',
+  'xxs:w-[150px]',
 ]);
 
 const imageOverlayClasses = computed(() => [

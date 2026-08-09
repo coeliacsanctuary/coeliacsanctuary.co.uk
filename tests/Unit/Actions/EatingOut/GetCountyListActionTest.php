@@ -90,6 +90,17 @@ class GetCountyListActionTest extends TestCase
     }
 
     #[Test]
+    public function eachCountryHasAnImageKey(): void
+    {
+        $collection = app(GetCountyListAction::class)->handle();
+
+        $collection->each(function (array $item): void {
+            $this->assertArrayHasKey('image', $item);
+            $this->assertStringContainsString('images/eating-out/', $item['image']);
+        });
+    }
+
+    #[Test]
     public function itExcludesTheNationwideCountry(): void
     {
         $this->build(EateryCountry::class)

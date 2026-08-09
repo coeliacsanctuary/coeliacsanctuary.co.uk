@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\EatingOut;
 
 use App\Actions\EatingOut\GetCountyListAction;
+use App\Actions\EatingOut\GetEateryGuideStatisticsAction;
 use App\Actions\EatingOut\GetMostRatedPlacesAction;
+use App\Actions\EatingOut\GetRecentlyAddedEateriesAction;
 use App\Actions\EatingOut\GetTopRatedPlacesAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Http\Response\Inertia;
@@ -20,6 +22,8 @@ class IndexController
         GetCountyListAction $getCountyListAction,
         GetTopRatedPlacesAction $getTopRatedPlacesAction,
         GetMostRatedPlacesAction $getMostRatedPlacesAction,
+        GetRecentlyAddedEateriesAction $getRecentlyAddedEateriesAction,
+        GetEateryGuideStatisticsAction $getEateryGuideStatisticsAction,
         GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction,
     ): Response {
         $ogImage = $getOpenGraphImageForRouteAction->handle('eatery', function (string $url, OpenGraphImage $image) {
@@ -42,6 +46,8 @@ class IndexController
                 'countries' => fn () => $getCountyListAction->handle(),
                 'topRated' => fn () => $getTopRatedPlacesAction->handle(),
                 'mostRated' => fn () => $getMostRatedPlacesAction->handle(),
+                'recentlyAdded' => fn () => $getRecentlyAddedEateriesAction->handle(),
+                'statistics' => fn () => $getEateryGuideStatisticsAction->handle(),
             ]);
     }
 }

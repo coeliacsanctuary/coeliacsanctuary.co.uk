@@ -12,6 +12,7 @@ import useScreensize from '@/composables/useScreensize';
 import eventBus from '@/eventBus';
 import { clusterStyle, searchLocationMarkerStyle } from '@/support/eating-out/browse/styles';
 import { Extent } from 'ol/extent';
+import { Size } from 'ol/size';
 import { getDistance } from 'ol/sphere';
 import { LatLng } from '@/types/EateryTypes';
 import { AnimationOptions } from 'ol/View';
@@ -126,7 +127,6 @@ export default (
         eventBus.$emit('cluster-clicked', {
           pixel: event.pixel,
           markerLayer: markerLayer.value,
-          currentZoom: getZoom(),
         });
 
         return;
@@ -146,6 +146,12 @@ export default (
 
   const getExtent = (): Extent => map.value.getView().calculateExtent();
 
+  const getSize = (): Size | undefined => map.value.getSize();
+
+  /**
+   * The corner to corner distance is the diameter of the circle the viewport
+   * sits inside, and everything downstream measures from the centre point.
+   */
   const getViewableRadius = (): number => {
     const latLng = transformExtent(
       map.value.getView().calculateExtent(map.value.getSize()),
@@ -153,7 +159,7 @@ export default (
       'EPSG:4326',
     );
 
-    return getDistance([latLng[0], latLng[1]], [latLng[2], latLng[3]]);
+    return getDistance([latLng[0], latLng[1]], [latLng[2], latLng[3]]) / 2;
   };
 
   const getLatLng = (): LatLng => {
@@ -199,12 +205,21 @@ export default (
     eventBus.$on('map-animate-to', (params) => {
       map.value.getView().animate(params as AnimationOptions);
     });
+
+    eventBus.$on<Extent>('map-fit-extent', (extent) => {
+      map.value.getView().fit(extent, {
+        padding: [80, 80, 80, 80],
+        duration: 500,
+        maxZoom: 17,
+      });
+    });
   });
 
   return {
     createMap,
     getZoom,
     getExtent,
+    getSize,
     getViewableRadius,
     navigateTo,
     getLatLng,

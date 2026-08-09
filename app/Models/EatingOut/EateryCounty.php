@@ -7,6 +7,7 @@ namespace App\Models\EatingOut;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasOpenGraphImage;
 use App\Contracts\HasOpenGraphImageContract;
+use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\Media;
 use App\Services\EatingOut\LocationSearchService;
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -123,6 +126,19 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
         return $this->belongsTo(EateryCountry::class, 'country_id');
     }
 
+    /** @return MorphMany<EateryMagicRouteRecord, $this> */
+    public function magicRoutes(): MorphMany
+    {
+        return $this->morphMany(EateryMagicRouteRecord::class, 'location');
+    }
+
+    public function defaultNationwideDescription(): string
+    {
+        return <<<TEXT
+        Discover nationwide chain restaurants, cafés and pubs offering **gluten free** options across the UK. Whether you're living with **coeliac** disease or following a gluten free diet, our guide helps you find places to eat, complete with reviews, ratings and useful information from the gluten free community.
+        TEXT;
+    }
+
     public function keywords(): array
     {
         return [
@@ -157,5 +173,35 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
     public function absoluteLink(): string
     {
         return config('app.url') . $this->link();
+    }
+
+    /** @return Collection<int, static> */
+    public function nearbyCounties(int $limit = 3): Collection
+    {
+        $latlng = LatLng::fromString((string) $this->latlng);
+
+        return static::query()
+            ->selectRaw('(
+                        6371000 * acos (
+                          cos ( radians(?) )
+                          * cos( radians( CAST(SUBSTRING_INDEX(latlng, \',\', 1) AS DECIMAL(10,7)) ) )
+                          * cos( radians( CAST(SUBSTRING_INDEX(latlng, \',\', -1) AS DECIMAL(10,7)) ) - radians(?) )
+                          + sin ( radians(?) )
+                          * sin( radians( CAST(SUBSTRING_INDEX(latlng, \',\', 1) AS DECIMAL(10,7)) ) )
+                        )
+                     ) AS distance', [
+                $latlng->lat,
+                $latlng->lng,
+                $latlng->lat,
+            ])
+            ->addSelect(['id', 'county', 'slug'])
+            ->with(['media'])
+            ->whereHas('activeTowns')
+            ->where('country_id', $this->country_id)
+            ->whereNot('id', $this->id)
+            ->whereNot('county', 'Nationwide')
+            ->orderBy('distance')
+            ->take($limit)
+            ->get();
     }
 }

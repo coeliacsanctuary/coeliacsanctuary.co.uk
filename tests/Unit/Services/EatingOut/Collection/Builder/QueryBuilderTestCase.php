@@ -242,4 +242,7 @@ abstract class QueryBuilderTestCase extends TestCase
 
     #[Test]
     abstract public function itResolvesParentPlaceholderInWhereClausesToTheCorrectTable(): void;
+
+    #[Test]
+    abstract public function itResolvesParentPlaceholderInJoinsToTheCorrectTable(): void;
 }

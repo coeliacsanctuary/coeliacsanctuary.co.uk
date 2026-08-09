@@ -10,8 +10,8 @@ use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesFromCollectionPipeline;
-use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInCollectionAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInCollectionAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromQueryBuilderConfigurationAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesFromQueryBuilderConfigurationAction;
 use App\Services\EatingOut\Collection\Configuration;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -53,8 +53,8 @@ class GetEateriesFromCollectionPipelineTest extends TestCase
     #[Test]
     public function itCallsTheActions(): void
     {
-        $this->expectPipelineToExecute(GetEateriesInCollectionAction::class);
-        $this->expectPipelineToExecute(GetNationwideBranchesInCollectionAction::class);
+        $this->expectPipelineToExecute(GetEateriesFromQueryBuilderConfigurationAction::class);
+        $this->expectPipelineToExecute(GetNationwideBranchesFromQueryBuilderConfigurationAction::class);
 
         $this->runPipeline(GetEateriesFromCollectionPipeline::class, new Configuration(), []);
     }

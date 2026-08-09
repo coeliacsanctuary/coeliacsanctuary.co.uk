@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\Resources\EatingOut;
 
+use App\Concerns\FormatsMarkdown;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Stringable;
 
 /** @mixin EateryTown */
 class TownPageResource extends JsonResource
 {
-    /** @return array{name: string, slug: string, image: string, county: TownCountyResource} */
+    use FormatsMarkdown;
+
+    /** @return array{name: string, description: string|Stringable, slug: string, image: string, latlng: string|null, county: TownCountyResource} */
     public function toArray(Request $request)
     {
         /** @var EateryCounty $county */
@@ -24,6 +28,7 @@ class TownPageResource extends JsonResource
 
         return [
             'name' => $this->town,
+            'description' => $this->formatMarkdown($this->description ?? $this->defaultDescription()),
             'slug' => $this->slug,
             'image' => $this->image ?? $county->image ?? $country->image,
             'latlng' => $this->latlng,

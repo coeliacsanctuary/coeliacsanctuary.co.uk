@@ -6,7 +6,9 @@ namespace Tests\Feature\Http\Controllers\EatingOut;
 
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\EatingOut\GetCountyListAction;
+use App\Actions\EatingOut\GetEateryGuideStatisticsAction;
 use App\Actions\EatingOut\GetMostRatedPlacesAction;
+use App\Actions\EatingOut\GetRecentlyAddedEateriesAction;
 use App\Actions\EatingOut\GetTopRatedPlacesAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Models\EatingOut\EateryCounty;
@@ -56,6 +58,22 @@ class IndexControllerTest extends TestCase
     public function itCallsTheMostRatedPlacesAction(): void
     {
         $this->expectAction(GetMostRatedPlacesAction::class);
+
+        $this->visitPage();
+    }
+
+    #[Test]
+    public function itCallsTheGetRecentlyAddedEateriesAction(): void
+    {
+        $this->expectAction(GetRecentlyAddedEateriesAction::class);
+
+        $this->visitPage();
+    }
+
+    #[Test]
+    public function itCallsTheGetEateryGuideStatisticsAction(): void
+    {
+        $this->expectAction(GetEateryGuideStatisticsAction::class);
 
         $this->visitPage();
     }

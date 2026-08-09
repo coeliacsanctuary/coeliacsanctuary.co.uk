@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\EatingOut\Filters;
 
-use App\Models\EatingOut\EaterySearchTerm;
+use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
 use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
+use App\Support\State\EatingOut\Search\SearchResultIdsState;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 
 class GetFiltersForSearchResultsTest extends GetFiltersTest
 {
     protected Collection $branches;
-
-    protected EaterySearchTerm $searchTerm;
 
     protected function setUp(): void
     {
@@ -28,16 +26,12 @@ class GetFiltersForSearchResultsTest extends GetFiltersTest
                 'town_id' => $this->town->id,
             ]);
 
-        $this->searchTerm = $this->create(EaterySearchTerm::class);
-
-        Cache::put("search-filters-{$this->searchTerm->key}", [
-            'eateryIds' => $this->eateries->pluck('id')->toArray(),
-            'branchIds' => $this->branches->pluck('id')->toArray(),
-        ]);
+        SearchResultIdsState::$eateryIds = $this->eateries->pluck('id')->toArray();
+        SearchResultIdsState::$branchIds = $this->branches->pluck('id')->toArray();
     }
 
     #[Test]
-    public function itCountsTheEateriesByTheCachedSearchIds(): void
+    public function itCountsTheEateriesByTheSearchResultIds(): void
     {
         app('db')->enableQueryLog();
 
@@ -64,7 +58,7 @@ class GetFiltersForSearchResultsTest extends GetFiltersTest
     }
 
     #[Test]
-    public function itCountsTheBranchesByTheCachedSearchIds(): void
+    public function itCountsTheBranchesByTheSearchResultIds(): void
     {
         app('db')->enableQueryLog();
 
@@ -120,8 +114,40 @@ class GetFiltersForSearchResultsTest extends GetFiltersTest
         }
     }
 
+    #[Test]
+    public function itCountsAgainstTheSearchResultsRegardlessOfTheAppliedFilters(): void
+    {
+        $unfiltered = $this->getFilters();
+
+        $venueType = EateryVenueType::query()->orderBy('venue_type')->firstOrFail();
+
+        $filtered = $this->getFilters(['venueTypes' => [$venueType->slug]]);
+
+        $this->assertEquals(
+            collect($unfiltered['categories'])->pluck('label')->all(),
+            collect($filtered['categories'])->pluck('label')->all(),
+        );
+    }
+
+    #[Test]
+    public function itKeepsTheOtherOptionsAvailableWhenAFilterIsApplied(): void
+    {
+        [$first, $second] = EateryVenueType::query()->orderBy('venue_type')->take(2)->get()->all();
+
+        $this->eateries->last()->update(['venue_type_id' => $second->id]);
+
+        $venueTypes = collect($this->getFilters(['venueTypes' => [$first->slug]])['venueTypes']);
+
+        $this->assertTrue($venueTypes->firstWhere('value', $first->slug)['checked']);
+
+        $this->assertNotNull(
+            $venueTypes->firstWhere('value', $second->slug),
+            'Filtering by one venue type removed the other venue types from the list.',
+        );
+    }
+
     protected function getFilters(array $filters = []): array
     {
-        return app(GetFiltersForSearchResults::class)->usingSearchKey($this->searchTerm->key)->handle($filters);
+        return app(GetFiltersForSearchResults::class)->handle($filters);
     }
 }

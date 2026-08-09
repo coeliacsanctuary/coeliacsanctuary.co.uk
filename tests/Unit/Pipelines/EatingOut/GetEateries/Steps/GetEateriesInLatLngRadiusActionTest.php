@@ -39,6 +39,32 @@ class GetEateriesInLatLngRadiusActionTest extends GetEateriesTestCase
     }
 
     #[Test]
+    public function itSetsTheVenueTypeIdOnThePendingEatery(): void
+    {
+        $venueType = $this->create(EateryVenueType::class);
+
+        Eatery::query()->update(['venue_type_id' => $venueType->id]);
+
+        $eateries = $this->callGetEateriesInLatLngAction()->eateries;
+
+        $this->assertNotEmpty($eateries);
+
+        $eateries->each(fn (PendingEatery $eatery) => $this->assertEquals($venueType->id, $eatery->venueTypeId));
+    }
+
+    #[Test]
+    public function itSetsANullVenueTypeIdWhenTheEateryHasNone(): void
+    {
+        Eatery::query()->update(['venue_type_id' => null]);
+
+        $eateries = $this->callGetEateriesInLatLngAction()->eateries;
+
+        $this->assertNotEmpty($eateries);
+
+        $eateries->each(fn (PendingEatery $eatery) => $this->assertNull($eatery->venueTypeId));
+    }
+
+    #[Test]
     public function itCanFilterTheEateriesByCategory(): void
     {
         $eatery = $this->build(Eatery::class)

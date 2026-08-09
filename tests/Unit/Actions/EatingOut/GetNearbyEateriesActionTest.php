@@ -7,34 +7,38 @@ namespace Tests\Unit\Actions\EatingOut;
 use App\Actions\EatingOut\GetNearbyEateriesAction;
 use App\DataObjects\EatingOut\LatLng;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\NationwideBranch;
 use Database\Seeders\EateryScaffoldingSeeder;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GetNearbyEateriesActionTest extends TestCase
 {
+    protected EateryCounty $county;
+
+    /** @var array{lat: float, lng: float} */
+    protected array $london = ['lat' => 51.5, 'lng' => -0.1];
+
+    /** @var array{lat: float, lng: float} */
+    protected array $edinburgh = ['lat' => 55.95, 'lng' => -3.18];
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->seed(EateryScaffoldingSeeder::class);
+
+        $this->county = $this->create(EateryCounty::class);
     }
 
     #[Test]
-    public function itReturnsAnEateryWithinTheGivenDistanceOfAnotherEatery(): void
+    public function itReturnsAnEateryNearAnotherEatery(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
+        $eatery = $this->createEatery($this->london);
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
-
-        $nearbyEatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
+        $nearbyEatery = $this->createEatery($this->offset($this->london, 0.001));
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
@@ -43,41 +47,25 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
-    public function itDoesntReturnAnEateryThatIsTooFarAway(): void
+    public function itReturnsTheClosestEateriesFirst(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
-        $edinburgh = ['lat' => 55.95, 'lng' => -3.18];
+        $eatery = $this->createEatery($this->london);
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
+        $nearbyEatery = $this->createEatery($this->offset($this->london, 0.001));
 
-        $nearbyEatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
-
-        $farawayEatery = $this->create(Eatery::class, [
-            'lat' => $edinburgh['lat'],
-            'lng' => $edinburgh['lng'],
-        ]);
+        $farawayEatery = $this->createEatery($this->edinburgh);
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
-        $this->assertCount(1, $result);
+        $this->assertCount(2, $result);
         $this->assertEquals($nearbyEatery->id, $result->first()['id']);
+        $this->assertEquals($farawayEatery->id, $result->last()['id']);
     }
 
     #[Test]
     public function itExcludesTheGivenEatery(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
-
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
+        $eatery = $this->createEatery($this->london);
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
@@ -85,21 +73,12 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsABranchWithinTheGivenDistanceOfAnEatery(): void
+    public function itReturnsABranchNearAnEatery(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
+        $eatery = $this->createEatery($this->london);
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
-
-        $parentEatery = $this->create(Eatery::class);
-        $branch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $parentEatery->id,
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
+        $parentEatery = $this->createNationwideEatery();
+        $branch = $this->createBranch($this->offset($this->london, 0.001), $parentEatery);
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
@@ -108,51 +87,28 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
-    public function itDoesntReturnABranchThatIsTooFarAwayFromTheGivenEatery(): void
+    public function itReturnsTheClosestBranchesToAnEateryFirst(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
-        $edinburgh = ['lat' => 55.95, 'lng' => -3.18];
+        $eatery = $this->createEatery($this->london);
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
+        $parentEatery = $this->createNationwideEatery();
+        $nearbyBranch = $this->createBranch($this->offset($this->london, 0.001), $parentEatery);
 
-        $parentEatery = $this->create(Eatery::class);
-        $nearbyBranch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $parentEatery->id,
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
-
-        $farAwayBranch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $parentEatery->id,
-            'lat' => $edinburgh['lat'],
-            'lng' => $edinburgh['lng'],
-        ]);
+        $farAwayBranch = $this->createBranch($this->edinburgh, $parentEatery);
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
-        $this->assertCount(1, $result);
+        $this->assertCount(2, $result);
         $this->assertEquals("{$parentEatery->id}-{$nearbyBranch->id}", $result->first()['id']);
+        $this->assertEquals("{$parentEatery->id}-{$farAwayBranch->id}", $result->last()['id']);
     }
 
     #[Test]
-    public function itReturnsABranchWithinTheGivenDistanceOfAnotherBranch(): void
+    public function itReturnsABranchNearAnotherBranch(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
+        $branch = $this->createBranch($this->london);
 
-        $branch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
-
-        $nearbyBranch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
+        $nearbyBranch = $this->createBranch($this->offset($this->london, 0.001));
 
         $result = app(GetNearbyEateriesAction::class)->handle($branch);
 
@@ -161,45 +117,25 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
-    public function itDoesntReturnAnBranchThatIsTooFarAway(): void
+    public function itReturnsTheClosestBranchesToAnotherBranchFirst(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
-        $edinburgh = ['lat' => 55.95, 'lng' => -3.18];
+        $branch = $this->createBranch($this->london);
 
-        $branch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
+        $nearbyBranch = $this->createBranch($this->offset($this->london, 0.001));
 
-        $nearbyBranch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
-
-        $farawayBranch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $edinburgh['lat'],
-            'lng' => $edinburgh['lng'],
-        ]);
+        $farawayBranch = $this->createBranch($this->edinburgh);
 
         $result = app(GetNearbyEateriesAction::class)->handle($branch);
 
-        $this->assertCount(1, $result);
+        $this->assertCount(2, $result);
         $this->assertEquals("{$nearbyBranch->wheretoeat_id}-{$nearbyBranch->id}", $result->first()['id']);
+        $this->assertEquals("{$farawayBranch->wheretoeat_id}-{$farawayBranch->id}", $result->last()['id']);
     }
 
     #[Test]
     public function itExcludesTheGivenBranch(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
-
-        $branch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
+        $branch = $this->createBranch($this->london);
 
         $result = app(GetNearbyEateriesAction::class)->handle($branch);
 
@@ -207,20 +143,11 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsAnEateryWithinTheGivenDistanceOfABranch(): void
+    public function itReturnsAnEateryNearABranch(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
+        $eatery = $this->createEatery($this->offset($this->london, 0.001));
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
-
-        $branch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
+        $branch = $this->createBranch($this->london);
 
         $result = app(GetNearbyEateriesAction::class)->handle($branch);
 
@@ -229,53 +156,29 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
-    public function itDoesntReturnAnEateryThatIsTooFarAwayFromTheGivenBranch(): void
+    public function itReturnsTheClosestEateriesToABranchFirst(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
-        $edinburgh = ['lat' => 55.95, 'lng' => -3.18];
+        $eatery = $this->createEatery($this->offset($this->london, 0.001));
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
+        $branch = $this->createBranch($this->london);
 
-        $branch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
-
-        $farAwayEatery = $this->create(Eatery::class, [
-            'lat' => $edinburgh['lat'],
-            'lng' => $edinburgh['lng'],
-        ]);
+        $farAwayEatery = $this->createEatery($this->edinburgh);
 
         $result = app(GetNearbyEateriesAction::class)->handle($branch);
 
-        $this->assertCount(1, $result);
+        $this->assertCount(2, $result);
         $this->assertEquals($eatery->id, $result->first()['id']);
+        $this->assertEquals($farAwayEatery->id, $result->last()['id']);
     }
 
     #[Test]
     public function itReturnsAMixtureOfEateriesAndBranches(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
+        $eatery = $this->createEatery($this->london);
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
+        $nearbyEatery = $this->createEatery($this->offset($this->london, 0.001));
 
-        $nearbyEatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
-
-        $nearbyBranch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'] + 0.002,
-            'lng' => $london['lng'],
-        ]);
+        $nearbyBranch = $this->createBranch($this->offset($this->london, 0.002));
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
@@ -288,42 +191,92 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
-    public function itOnlyReturnsFourRecordsByDefault(): void
+    public function itReturnsTheClosestRecordsFirstAcrossBothTypes(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
+        $eatery = $this->createEatery($this->london);
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
+        $this->build(Eatery::class)->count(4)->create([
+            ...$this->offset($this->london, 0.002),
+            'county_id' => $this->county->id,
         ]);
 
-        $this->build(Eatery::class)->count(5)->create([
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
+        $nearbyBranch = $this->createBranch($this->offset($this->london, 0.001));
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertCount(5, $result);
+        $this->assertEquals("{$nearbyBranch->wheretoeat_id}-{$nearbyBranch->id}", $result->first()['id']);
+    }
+
+    #[Test]
+    public function itDoesntReturnNationwideEateries(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $this->create(Eatery::class, [
+            ...$this->offset($this->london, 0.001),
+            'county_id' => 1,
         ]);
 
         $result = app(GetNearbyEateriesAction::class)->handle($eatery);
 
-        $this->assertCount(4, $result);
+        $this->assertEmpty($result);
+    }
+
+    #[Test]
+    public function itDoesntReturnNationwideBranches(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $this->create(NationwideBranch::class, [
+            ...$this->offset($this->london, 0.001),
+            'wheretoeat_id' => $this->createNationwideEatery()->id,
+            'county_id' => 1,
+        ]);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertEmpty($result);
+    }
+
+    #[Test]
+    public function itOnlyReturnsSixRecordsByDefault(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $this->build(Eatery::class)->count(7)->create([
+            ...$this->offset($this->london, 0.001),
+            'county_id' => $this->county->id,
+        ]);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertCount(6, $result);
+    }
+
+    #[Test]
+    public function itCanBeGivenACustomLimit(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $this->build(Eatery::class)->count(5)->create([
+            ...$this->offset($this->london, 0.001),
+            'county_id' => $this->county->id,
+        ]);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery, 2);
+
+        $this->assertCount(2, $result);
     }
 
     #[Test]
     public function itCanHandleARawLatLngBeingPassedInAndFindResults(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
+        $nearbyEatery = $this->createEatery($this->offset($this->london, 0.001));
 
-        $nearbyEatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
+        $nearbyBranch = $this->createBranch($this->offset($this->london, 0.002));
 
-        $nearbyBranch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'] + 0.002,
-            'lng' => $london['lng'],
-        ]);
-
-        $result = app(GetNearbyEateriesAction::class)->handle(new LatLng($london['lat'], $london['lng']));
+        $result = app(GetNearbyEateriesAction::class)->handle(new LatLng($this->london['lat'], $this->london['lng']));
 
         $this->assertCount(2, $result);
 
@@ -334,25 +287,59 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
+    public function itUsesTheSnippetForTheInfoWhenItIsSet(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $this->createEatery($this->offset($this->london, 0.001), [
+            'snippet' => 'This is the snippet',
+            'info' => 'This is the info',
+        ]);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertEquals('This is the snippet', $result->first()['info']);
+    }
+
+    #[Test]
+    public function itFallsBackToTheTruncatedInfoWhenThereIsNoSnippet(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $info = Str::repeat('word ', 50);
+
+        $this->createEatery($this->offset($this->london, 0.001), [
+            'snippet' => null,
+            'info' => $info,
+        ]);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertEquals(Str::limit($info, 125, preserveWords: true), $result->first()['info']);
+    }
+
+    #[Test]
+    public function itUsesTheParentEaterysSnippetForABranch(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $parentEatery = $this->createNationwideEatery(['snippet' => 'The parent eatery snippet']);
+
+        $this->createBranch($this->offset($this->london, 0.001), $parentEatery);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertEquals('The parent eatery snippet', $result->first()['info']);
+    }
+
+    #[Test]
     public function itReturnsEachResultInTheExpectedFormat(): void
     {
-        $london = ['lat' => 51.5, 'lng' => -0.1];
+        $eatery = $this->createEatery($this->london);
 
-        $eatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'],
-            'lng' => $london['lng'],
-        ]);
+        $this->createEatery($this->offset($this->london, 0.001));
 
-        $nearbyEatery = $this->create(Eatery::class, [
-            'lat' => $london['lat'] + 0.001,
-            'lng' => $london['lng'],
-        ]);
-
-        $nearbyBranch = $this->create(NationwideBranch::class, [
-            'wheretoeat_id' => $this->build(Eatery::class),
-            'lat' => $london['lat'] + 0.002,
-            'lng' => $london['lng'],
-        ]);
+        $this->createBranch($this->offset($this->london, 0.002));
 
         $results = app(GetNearbyEateriesAction::class)->handle($eatery);
 
@@ -361,5 +348,48 @@ class GetNearbyEateriesActionTest extends TestCase
         foreach ($results as $result) {
             $this->assertArrayHasKeys($expectedKeys, $result);
         }
+    }
+
+    /**
+     * @param  array{lat: float, lng: float}  $latLng
+     * @param  array<string, mixed>  $attributes
+     */
+    protected function createEatery(array $latLng = [], array $attributes = []): Eatery
+    {
+        return $this->create(Eatery::class, [
+            ...$latLng,
+            ...$attributes,
+            'county_id' => $this->county->id,
+        ]);
+    }
+
+    /**
+     * The parent of a nationwide branch is always a nationwide eatery, so it is
+     * never itself a nearby result.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    protected function createNationwideEatery(array $attributes = []): Eatery
+    {
+        return $this->create(Eatery::class, [...$attributes, 'county_id' => 1]);
+    }
+
+    /** @param  array{lat: float, lng: float}  $latLng */
+    protected function createBranch(array $latLng = [], ?Eatery $eatery = null): NationwideBranch
+    {
+        return $this->create(NationwideBranch::class, [
+            ...$latLng,
+            'wheretoeat_id' => $eatery?->id ?? $this->createNationwideEatery()->id,
+            'county_id' => $this->county->id,
+        ]);
+    }
+
+    /**
+     * @param  array{lat: float, lng: float}  $latLng
+     * @return array{lat: float, lng: float}
+     */
+    protected function offset(array $latLng, float $by): array
+    {
+        return ['lat' => $latLng['lat'] + $by, 'lng' => $latLng['lng']];
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Unit\Services\EatingOut\Collection\Builder;
 
 use App\Services\EatingOut\Collection\Builder\EateryQueryBuilder;
 use App\Services\EatingOut\Collection\Builder\QueryBuilder;
+use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
 use PHPUnit\Framework\Attributes\Test;
@@ -49,5 +50,14 @@ class EateryQueryBuilderTest extends QueryBuilderTestCase
         $sql = $this->getBuilder(new Configuration([$where]))->toSql();
 
         $this->assertStringContainsString('`wheretoeat`.`town_id` = 1', $sql);
+    }
+
+    #[Test]
+    public function itResolvesParentPlaceholderInJoinsToTheCorrectTable(): void
+    {
+        $join = new Join('foo', '[parent].id', '=', 'foo.wheretoeat_id');
+        $sql = $this->getBuilder(new Configuration(joins: [$join]))->toSql();
+
+        $this->assertStringContainsString('join `foo` on `wheretoeat`.`id` = `foo`.`wheretoeat_id`', $sql);
     }
 }

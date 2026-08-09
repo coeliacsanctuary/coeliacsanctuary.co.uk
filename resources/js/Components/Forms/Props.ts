@@ -118,6 +118,7 @@ export type FormSelectProps = BaseFormProps & {
   error?: string;
   size?: 'small' | 'default' | 'large';
   inputClasses?: string;
+  wrapperClasses?: string;
 };
 
 export const FormSelectPropsDefaults: Partial<FormSelectProps> = {
@@ -128,6 +129,7 @@ export const FormSelectPropsDefaults: Partial<FormSelectProps> = {
   error: undefined,
   size: 'default',
   inputClasses: '',
+  wrapperClasses: '',
 };
 
 export type FormMultiSelectProps = FormSelectProps & {

@@ -47,7 +47,7 @@ abstract class QueryBuilder
         $this->prependJoins($query);
 
         if ($this->configuration->getJoins()->isNotEmpty()) {
-            $this->configuration->getJoins()->each(fn ($join) => $join($query));
+            $this->configuration->getJoins()->each(fn ($join) => $join($query, $this->getTableName()));
         }
 
         if ($this->configuration->getWheres()->isNotEmpty()) {

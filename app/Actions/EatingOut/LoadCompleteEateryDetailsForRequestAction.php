@@ -69,11 +69,9 @@ class LoadCompleteEateryDetailsForRequestAction
             ->loadCount(['reviews']);
 
         if ($pageType === 'nationwide') {
-            $eatery->load([
-                'nationwideBranches' => fn ($query) => $query->where('live', true),
-                'nationwideBranches.eatery', 'nationwideBranches.area', 'nationwideBranches.area.town', 'nationwideBranches.town',
-                'nationwideBranches.town.county', 'nationwideBranches.county', 'nationwideBranches.country',
-            ]);
+            // The branches themselves are a deferred prop, loaded by
+            // GetGroupedEateryNationwideBranchesAction. Only the count is needed up front.
+            $eatery->loadCount('nationwideBranches');
         }
 
         if ($pageType === 'branch') {

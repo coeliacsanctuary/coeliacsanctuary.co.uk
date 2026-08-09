@@ -7,21 +7,49 @@ export type County = {
   link: string;
 };
 
+export type NearbyCounty = County & {
+  image: string;
+};
+
+export type NearbyTown = CountyPageTown;
+
+export type MagicRouteGuide = {
+  title: string;
+  link: string;
+};
+
 export type CountyPage = County & {
   latlng: string;
   image?: string;
+  description: string;
   eateries: number;
   reviews: number;
   towns: CountyPageTown[];
 };
 
+export type MagicRouteCountyPage = Exclude<
+  CountyPage,
+  'title' | 'eateries' | 'reviews' | 'towns'
+>;
+
+export type MagicRouteCountyTown = {
+  name: string;
+  slug: string;
+  link: string;
+  intro: string;
+  eateries: TownEatery[];
+};
+
 export type NationwidePage = County & {
+  description: string;
   eateries: number;
   reviews: number;
   chains: NationwideEatery[];
 };
 
 export type LondonPage = Exclude<CountyPage, 'towns'> & {
+  name: 'London';
+  title: 'London';
   boroughs: LondonPageBorough[];
 };
 
@@ -33,13 +61,23 @@ export type CountyPageTown = Town & {
   total_eateries: number;
 };
 
-export type LondonPageBorough = Exclude<
+export type MagicRouteTownPage = Exclude<
   CountyPageTown,
-  'attractions' | 'hotels'
+  'county' | 'eateries' | 'attractions' | 'hotels' | 'total_eateries'
 > & {
+  image: string;
+  latlng: string;
+};
+
+export type MagicRouteTownPageEatery = {
+  key: string;
+  info: string;
+  details: TownEatery;
+};
+
+export type LondonPageBorough = CountyPageTown & {
   description: string;
   latlng: LatLng;
-  locations: number;
   area_count: number;
   top_areas: string[];
 };
@@ -53,7 +91,7 @@ export type NationwideEatery = {
   phone?: string;
   reviews: {
     number: number;
-    average: string;
+    average: StarRating;
   };
   type: string;
   venue_type?: string;
@@ -92,6 +130,7 @@ export type Town = {
 };
 
 export type TownPage = Town & {
+  description: string;
   latlng: string;
   link: string;
   image?: string;
@@ -217,7 +256,7 @@ export type DetailedEatery = Exclude<TownEatery, 'key'> & {
   last_updated: string;
   last_updated_human: string;
   is_nationwide: boolean;
-  nationwide_branches?: EateryBranchesCollection;
+  branch_count: number;
   qualifies_for_ai: boolean;
 };
 
@@ -376,8 +415,18 @@ type EditableEateryFieldComponent = {
   props?: Partial<Record<string, unknown>>;
 };
 
+export type EateryStatistics = {
+  total: number;
+  eateries: number;
+  attractions: number;
+  hotels: number;
+  branches: number;
+  reviews: number;
+};
+
 export type EateryCountryPropItem = {
   name: string;
+  image: string;
   description: string;
   list: EateryCountryList[];
   top_counties?: EateryCountryList[];
@@ -425,6 +474,8 @@ export type EateryBrowseResource = {
   isNationwideBranch: boolean;
   location: LatLng;
   color: string;
+  typeId: number;
+  venueTypeId: number | null;
 };
 
 export type NearbyEatery = {

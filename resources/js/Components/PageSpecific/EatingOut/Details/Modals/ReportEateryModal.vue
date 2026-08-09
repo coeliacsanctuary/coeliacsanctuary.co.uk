@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Modal from '@/Components/Overlays/Modal.vue';
+import ModalHeading from '@/Components/Overlays/ModalHeading.vue';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
@@ -66,11 +67,8 @@ const submitForm = () => {
     size="small"
     @close="close()"
   >
-    <div
-      class="border-grey-mid relative border-b bg-grey-light p-3 pr-[34px] text-center text-sm font-semibold"
-    >
-      Report {{ eateryName }}
-    </div>
+    <ModalHeading :title="`Report ${eateryName}`" />
+
     <div class="p-3">
       <template v-if="hasSubmitted">
         <div class="flex items-center justify-center text-center text-green">

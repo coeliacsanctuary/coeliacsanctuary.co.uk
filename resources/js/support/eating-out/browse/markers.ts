@@ -3,103 +3,95 @@ import { Feature } from 'ol';
 import Supercluster, { PointFeature } from 'supercluster';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Point } from 'ol/geom';
-import { computed, onMounted, ref, watch } from 'vue';
+import { ref } from 'vue';
 import { Marker, MarkerProps } from '@/types/EatingOutBrowseTypes';
 import VectorSource from 'ol/source/Vector';
-import { Extent } from 'ol/extent';
-import { markerStyle } from '@/support/eating-out/browse/styles';
+import { boundingExtent, Extent, getHeight, getWidth } from 'ol/extent';
+import { Size } from 'ol/size';
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
 import { FeatureLike } from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import eventBus from '@/eventBus';
-import useScreensize from '@/composables/useScreensize';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
+/** The zoom level at which supercluster stops grouping markers together. */
+const maxClusterZoom = 15;
+
 export default () => {
-  const rawMarkerSource = ref<VectorSource>();
-  const markersOnMap = ref<Marker[]>([]);
+  const rawMarkerSource = ref<VectorSource>(new VectorSource());
 
-  const superClusterRadius = () => {
-    switch (useScreensize().currentBreakpoint()) {
-      case 'xxxs':
-      case 'xxs':
-      case 'xs':
-      default:
-        return 200;
-      case 'sm':
-      case 'xmd':
-        return 175;
-      case 'md':
-      case 'lg':
-        return 150;
-      case 'xl':
-        return 125;
-      case '2xl':
-        return 100;
+  /**
+   * None of this is rendered directly, and the supercluster index in particular
+   * is far too large to hand to Vue's deep reactivity, so it is all kept out of
+   * the reactivity system.
+   */
+  let markersOnMap: Marker[] = [];
+  let visibleMarkerIds: Set<string> = new Set();
+  let superCluster: Supercluster<MarkerProps> | undefined;
+  let loadedMarkerKey: string | undefined;
+  let loadedRadius: number | undefined;
+
+  /**
+   * Supercluster measures its radius against a 512px tile extent, whereas the
+   * map renders 256px tiles, so these are roughly double their on screen size.
+   */
+  const clusterRadiusForWidth = (width: number): number => {
+    if (width < 640) {
+      return 200;
     }
-  };
 
-  const createSupercluster = (): Supercluster<MarkerProps> => {
-    return new Supercluster<MarkerProps>({
-      radius: superClusterRadius(),
-      maxZoom: 15,
-    });
-  };
+    if (width < 1280) {
+      return 150;
+    }
 
-  const superCluster = ref<Supercluster<MarkerProps>>(createSupercluster());
+    return 110;
+  };
 
   const processMapMarkers = (
     eateries: EateryBrowseResource[],
     zoomLevel: number,
     extent: Extent,
+    size?: Size,
   ): void => {
-    const newMarkers = createMarkerArrayFromNewMarkers(eateries);
+    markersOnMap = createMarkerArrayFromNewMarkers(eateries);
 
-    const markers = markersOnMap.value.map((marker) => ({
-      ...marker,
-      loaded: false,
-    }));
-
-    newMarkers.forEach((marker) => {
-      const existingMarker = markers.find((m) => m.id === marker.id);
-
-      if (existingMarker) {
-        const existingMarkerIndex = markers.indexOf(existingMarker);
-
-        markers[existingMarkerIndex].loaded = true;
-
-        return;
-      }
-
-      markers.push(marker);
-    });
-
-    markers.forEach((marker) => {
-      if (!marker.loaded) {
-        rawMarkerSource.value?.removeFeature(marker.element as Feature);
-
-        return;
-      }
-
-      if (marker.new) {
-        rawMarkerSource.value?.addFeature(marker.element as Feature);
-      }
-    });
-
-    markersOnMap.value = markers.filter((m) => m.loaded);
-
-    rawMarkerSource.value?.clear();
-    rawMarkerSource.value?.addFeatures(
-      generateMarkerClusters(zoomLevel, extent),
+    rawMarkerSource.value.clear();
+    rawMarkerSource.value.addFeatures(
+      generateMarkerClusters(zoomLevel, extent, size),
     );
   };
 
-  const generateMarkerClusters = (
-    zoomLevel: number,
-    extent: Extent,
-  ): Feature[] => {
-    const geoJsonFeatures: PointFeature<MarkerProps>[] = markersOnMap.value.map(
+  /**
+   * Rebuilding the index is expensive, so it only happens when the set of
+   * markers has actually changed, or when the map has been resized enough to
+   * warrant a different cluster radius.
+   */
+  const loadSupercluster = (size?: Size): void => {
+    const radius = clusterRadiusForWidth(size ? size[0] : 1280);
+    const markerKey = markersOnMap
+      .map((marker) => marker.id)
+      .sort()
+      .join('|');
+
+    if (
+      superCluster &&
+      loadedRadius === radius &&
+      loadedMarkerKey === markerKey
+    ) {
+      return;
+    }
+
+    if (!superCluster || loadedRadius !== radius) {
+      superCluster = new Supercluster<MarkerProps>({
+        radius,
+        maxZoom: maxClusterZoom,
+      });
+
+      loadedRadius = radius;
+    }
+
+    const geoJsonFeatures: PointFeature<MarkerProps>[] = markersOnMap.map(
       (marker) => ({
         type: 'Feature',
         geometry: {
@@ -108,77 +100,102 @@ export default () => {
         },
         properties: {
           id: marker.id,
-          color: marker.color,
+          typeId: marker.typeId,
+          venueTypeId: marker.venueTypeId,
         },
       }),
     );
 
-    superCluster.value.load(geoJsonFeatures);
+    superCluster.load(geoJsonFeatures);
 
-    const bbox = [extent[0], extent[1], extent[2], extent[3]];
+    loadedMarkerKey = markerKey;
+  };
 
-    const bottomLeft = toLonLat([bbox[0], bbox[1]]);
-    const topRight = toLonLat([bbox[2], bbox[3]]);
+  const generateMarkerClusters = (
+    zoomLevel: number,
+    extent: Extent,
+    size?: Size,
+  ): Feature[] => {
+    loadSupercluster(size);
 
-    const clusters = superCluster.value.getClusters(
-      [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]],
-      zoomLevel,
-    );
+    const bottomLeft = toLonLat([extent[0], extent[1]]);
+    const topRight = toLonLat([extent[2], extent[3]]);
 
-    return clusters.map((c) => {
+    const clusters =
+      superCluster?.getClusters(
+        [bottomLeft[0], bottomLeft[1], topRight[0], topRight[1]],
+        Math.floor(zoomLevel),
+      ) ?? [];
+
+    const nowVisible = new Set<string>();
+
+    const features = clusters.map((c) => {
       const feature = new Feature({
         geometry: new Point(fromLonLat(c.geometry.coordinates)),
       });
 
       if (!c.properties?.cluster) {
-        useJourneyTracking().logEvent('other', 'WhereToEatMap/Marker', {
-          eateryId: c.properties.id as number,
-        });
+        nowVisible.add(c.properties.id as string);
       }
 
       feature.setProperties(c.properties);
 
       return feature;
     });
+
+    logNewlyVisibleMarkers(nowVisible);
+
+    return features;
+  };
+
+  /**
+   * A marker logs an impression when it appears on the map, and again if it
+   * later reappears, but not while it simply stays on screen.
+   */
+  const logNewlyVisibleMarkers = (nowVisible: Set<string>): void => {
+    nowVisible.forEach((id) => {
+      if (visibleMarkerIds.has(id)) {
+        return;
+      }
+
+      useJourneyTracking().logEvent('other', 'WhereToEatMap/Marker', {
+        eateryId: id,
+      });
+    });
+
+    visibleMarkerIds = nowVisible;
   };
 
   const createMarkerArrayFromNewMarkers = (
     eateries: EateryBrowseResource[],
-  ): Marker[] => {
-    return eateries
-      .map((eatery) => ({
-        id: eatery.key,
-        loaded: true,
-        new: true,
-        lat: eatery.location.lat,
-        lng: eatery.location.lng,
-        color: eatery.color,
-        element: new Feature({
-          id: eatery.key,
-          geometry: new Point(fromLonLat(getEateryLatLng(eatery))),
-          color: eatery.color,
-        }),
-      }))
-      .map((eatery: Marker) => {
-        eatery.element.setStyle(
-          markerStyle(eatery.element.getProperties().color as string),
-        );
+  ): Marker[] =>
+    eateries.map((eatery) => ({
+      id: eatery.key,
+      lat: eatery.location.lat,
+      lng: eatery.location.lng,
+      typeId: eatery.typeId,
+      venueTypeId: eatery.venueTypeId,
+    }));
 
-        return eatery;
-      });
+  /**
+   * A cluster clicked just as a new set of markers lands will have been indexed
+   * against the previous set, and supercluster throws on an id it no longer
+   * knows about.
+   */
+  const getClusterLeaves = (clusterId: number): PointFeature<MarkerProps>[] => {
+    try {
+      return superCluster?.getLeaves(clusterId, Infinity) ?? [];
+    } catch {
+      return [];
+    }
   };
-
-  const getEateryLatLng = (eatery: EateryBrowseResource): Coordinate =>
-    [eatery.location.lng, eatery.location.lat] as Coordinate;
 
   const zoomIntoCluster = ({
     pixel,
     markerLayer,
-    currentZoom,
   }: {
     pixel: Pixel;
     markerLayer: VectorLayer<VectorSource>;
-    currentZoom: number;
   }) => {
     markerLayer.getFeatures(pixel).then((clickedFeatures: FeatureLike[]) => {
       if (!clickedFeatures.length) {
@@ -193,32 +210,39 @@ export default () => {
           cluster_id: number;
         };
 
-      if (props.cluster && superCluster.value) {
-        let expansionZoom = superCluster.value.getClusterExpansionZoom(
-          props.cluster_id,
-        );
+      if (!props.cluster || !superCluster) {
+        return;
+      }
 
-        if (expansionZoom === currentZoom) {
-          expansionZoom = currentZoom + 1;
-        }
+      const leaves = getClusterLeaves(props.cluster_id);
 
-        if (expansionZoom > 17) {
-          expansionZoom = 17;
-        }
+      if (!leaves.length) {
+        return;
+      }
 
+      const extent = boundingExtent(
+        leaves.map((leaf) => fromLonLat(leaf.geometry.coordinates)),
+      );
+
+      /**
+       * Places sharing the same coordinates, nationwide branches most often,
+       * give a zero sized extent, which would fit to the maximum resolution, so
+       * zoom to the point they stop clustering instead.
+       */
+      if (getWidth(extent) === 0 && getHeight(extent) === 0) {
         eventBus.$emit('map-animate-to', {
           // eslint-disable-next-line
           center: clickedFeature.getGeometry()?.getCoordinates() as Coordinate,
-          zoom: expansionZoom,
+          zoom: maxClusterZoom + 1,
           duration: 500,
         });
+
+        return;
       }
+
+      eventBus.$emit('map-fit-extent', extent);
     });
   };
-
-  onMounted(() => {
-    rawMarkerSource.value = new VectorSource();
-  });
 
   return { processMapMarkers, zoomIntoCluster, rawMarkerSource };
 };

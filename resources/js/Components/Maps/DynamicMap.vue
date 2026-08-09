@@ -47,7 +47,7 @@ onMounted(() => {
 <template>
   <div
     v-if="title"
-    class="border-grey-mid relative border-b bg-grey-light p-3 pr-[34px] text-center text-sm font-semibold"
+    class="relative border-b border-grey-off bg-grey-light p-3 pr-[34px] text-center text-sm font-semibold"
     v-html="title"
   />
   <div

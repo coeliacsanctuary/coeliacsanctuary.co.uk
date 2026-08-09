@@ -21,7 +21,7 @@ class BrowseEateriesPipeline
      * @param  class-string<JsonResource>  $jsonResource
      * @return Collection<int, JsonResource>
      */
-    public function run(LatLng $latLng, array $filters, string $jsonResource = EateryBrowseResource::class): Collection
+    public function run(LatLng $latLng, array $filters, string $jsonResource = EateryBrowseResource::class, bool $isMeters = false): Collection
     {
         $pipes = [
             GetEateriesInLatLngRadiusAction::class,
@@ -32,7 +32,8 @@ class BrowseEateriesPipeline
         $pipelineData = new GetEateriesPipelineData(
             filters: $filters,
             latLng: $latLng,
-            jsonResource: $jsonResource
+            jsonResource: $jsonResource,
+            isMeters: $isMeters,
         );
 
         /** @var GetEateriesPipelineData $pipeline */

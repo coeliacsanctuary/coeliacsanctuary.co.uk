@@ -24,6 +24,7 @@ class ProcessReviewImagesJobTest extends TestCase
     {
         parent::setUp();
 
+        Storage::fake('uploads');
         Storage::fake('review-images');
 
         $this->seed(EateryScaffoldingSeeder::class);

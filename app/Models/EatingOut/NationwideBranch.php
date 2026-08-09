@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
-use App\Actions\EatingOut\GetCountyListAction;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
 use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
+use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
+use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
+use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
+use App\Jobs\EatingOut\GenerateNationwideDescriptionJob;
+use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
+use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -90,10 +95,34 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
                 CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
-            if (config('coeliac.generate_country_ai_descriptions') === true) {
-                $branch->country()->update(['description' => null]);
+            if (config('coeliac.generate_eatery_ai_descriptions') === true) {
+                /** @var EateryCountry $country */
+                $country = $branch->country;
 
-                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
+                /** @var EateryCounty $county */
+                $county = $branch->county;
+
+                /** @var EateryTown $town */
+                $town = $branch->town;
+
+                $chain = $branch->eatery()->withoutGlobalScopes()->first();
+
+                if ($chain && $chain->county) {
+                    GenerateNationwideDescriptionJob::dispatch($chain->county);
+                }
+
+                GenerateCountryDescriptionJob::dispatch($country);
+                GenerateCountyDescriptionJob::dispatch($county);
+
+                if ($county->county === 'London') {
+                    /** @var EateryArea $area */
+                    $area = $branch->area;
+
+                    GenerateBoroughDescriptionJob::dispatch($town);
+                    GenerateAreaDescriptionJob::dispatch($area);
+                } else {
+                    GenerateTownDescriptionJob::dispatch($town);
+                }
             }
         });
     }

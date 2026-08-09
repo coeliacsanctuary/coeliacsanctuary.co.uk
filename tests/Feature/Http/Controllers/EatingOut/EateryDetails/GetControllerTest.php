@@ -8,7 +8,6 @@ use App\Actions\EatingOut\ComputeEateryBackLinkAction;
 use App\Actions\EatingOut\GetNearbyEateriesAction;
 use App\Actions\EatingOut\LoadCompleteEateryDetailsForRequestAction;
 use App\Models\EatingOut\EateryArea;
-use Inertia\Support\Header;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -95,7 +94,7 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
-    public function itHasTheNearbyByEateriesInADeferredResponseWhenVisitingAnEatery(): void
+    public function itHasTheNearbyEateriesInTheResponseWhenVisitingAnEatery(): void
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
@@ -107,10 +106,7 @@ class GetControllerTest extends TestCase
             ->andReturn(collect())
             ->once();
 
-        $this->visitEatery([
-            Header::PARTIAL_ONLY => 'nearbyEateries',
-            Header::PARTIAL_COMPONENT => 'EatingOut/Details',
-        ])
+        $this->visitEatery()
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('EatingOut/Details')
@@ -186,7 +182,7 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
-    public function itHasTheNearbyByEateriesInADeferredResponseWhenVisitingANationwidePage(): void
+    public function itHasTheNearbyEateriesInTheResponseWhenVisitingANationwidePage(): void
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
@@ -200,16 +196,50 @@ class GetControllerTest extends TestCase
 
         $this
             ->convertToNationwideEatery()
-            ->visitNationwideEatery([
-                Header::PARTIAL_ONLY => 'nearbyEateries',
-                Header::PARTIAL_COMPONENT => 'EatingOut/Details',
-            ])
+            ->visitNationwideEatery()
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('EatingOut/Details')
                     ->has('nearbyEateries')
                     ->etc()
             );
+    }
+
+    #[Test]
+    public function itDefersTheBranchesPropOnANationwidePage(): void
+    {
+        $page = $this
+            ->convertToNationwideEatery()
+            ->visitNationwideEatery()
+            ->viewData('page');
+
+        $this->assertArrayNotHasKey('branches', $page['props']);
+        $this->assertContains('branches', $page['deferredProps']['default']);
+    }
+
+    #[Test]
+    public function itHasTheBranchCountOnANationwidePage(): void
+    {
+        $this->build(NationwideBranch::class)->count(2)->forEatery($this->eatery)->create();
+
+        $this
+            ->convertToNationwideEatery()
+            ->visitNationwideEatery()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('EatingOut/Details')
+                    ->where('eatery.branch_count', 3)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itDoesntDeferABranchesPropOnANormalEateryPage(): void
+    {
+        $page = $this->visitEatery()->viewData('page');
+
+        $this->assertArrayNotHasKey('branches', $page['props']);
+        $this->assertArrayNotHasKey('deferredProps', $page);
     }
 
     #[Test]
@@ -263,7 +293,7 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
-    public function itHasTheNearbyByEateriesInADeferredResponseWhenVisitingABranch(): void
+    public function itHasTheNearbyEateriesInTheResponseWhenVisitingABranch(): void
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
@@ -277,10 +307,7 @@ class GetControllerTest extends TestCase
 
         $this
             ->convertToNationwideEatery()
-            ->visitBranch([
-                Header::PARTIAL_ONLY => 'nearbyEateries',
-                Header::PARTIAL_COMPONENT => 'EatingOut/Details',
-            ])
+            ->visitBranch()
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('EatingOut/Details')
@@ -348,7 +375,7 @@ class GetControllerTest extends TestCase
     }
 
     #[Test]
-    public function itHasTheNearbyByEateriesInADeferredResponseWhenVisitingALondonEatery(): void
+    public function itHasTheNearbyEateriesInTheResponseWhenVisitingALondonEatery(): void
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
@@ -362,10 +389,7 @@ class GetControllerTest extends TestCase
 
         $this
             ->convertToLondonEatery()
-            ->visitLondonEatery([
-                Header::PARTIAL_ONLY => 'nearbyEateries',
-                Header::PARTIAL_COMPONENT => 'EatingOut/Details',
-            ])
+            ->visitLondonEatery()
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('EatingOut/Details')
