@@ -49,7 +49,7 @@ class ShowController
         /** @var Eatery|NationwideBranch|null $firstLocation */
         $firstLocation = $firstResult?->relationLoaded('branch') ? $firstResult->branch : $firstResult;
 
-        $firstLocation?->loadMissing(['town']);
+        $firstLocation?->loadMissing(['town.county']);
 
         $locationFound = LatLngState::$latLng !== null;
 
