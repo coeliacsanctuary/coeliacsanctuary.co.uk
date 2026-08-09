@@ -21,7 +21,7 @@ useJourneyTracking().logWhenVisible(
 <template>
   <Card
     ref="card"
-    class="relative flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2 transition hover:bg-linear-to-br hover:from-primary/30 hover:to-primary-light/30"
+    class="relative flex flex-col items-start gap-2 transition hover:bg-linear-to-br hover:from-primary/30 hover:to-primary-light/30 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4"
   >
     <Link
       :href="town.link"

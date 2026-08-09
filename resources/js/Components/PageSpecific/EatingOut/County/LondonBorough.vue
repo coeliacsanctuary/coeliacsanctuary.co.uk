@@ -43,7 +43,9 @@ const formattedAreas = (areas: LondonPageBorough['top_areas']): string => {
           )
       "
     />
-    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+    <div
+      class="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4"
+    >
       <h3 class="text-lg font-semibold md:max-lg:text-xl lg:text-2xl">
         {{ borough.name }}
       </h3>
