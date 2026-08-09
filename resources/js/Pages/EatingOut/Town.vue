@@ -22,7 +22,7 @@ import { FormSelectOption } from '@/Components/Forms/Props';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import SubHeading from '@/Components/SubHeading.vue';
 import SidebarLayout from '@/Components/SidebarLayout.vue';
-import { pluralise } from '@/helpers';
+import NearbyTowns from '@/Components/PageSpecific/EatingOut/Town/NearbyTowns.vue';
 
 const props = defineProps<{
   live_eateries_count: number;
@@ -124,50 +124,11 @@ useJourneyTracking().logWhenVisible(
         </ul>
       </Card>
 
-      <Card class="order-1 xmd:order-0">
-        <SubHeading>Other towns nearby</SubHeading>
-
-        <div class="mt-4 flex flex-col space-y-4">
-          <div
-            v-for="nearbyTown in nearby"
-            :key="nearbyTown.link"
-            class="flex flex-col space-y-2"
-          >
-            <Link
-              class="text-lg font-semibold text-primary-darkest transition hover:text-black lg:text-xl"
-              :href="nearbyTown.link"
-            >
-              {{ nearbyTown.name }}
-            </Link>
-
-            <ul class="flex space-x-4">
-              <li
-                v-if="nearbyTown.eateries > 0"
-                class="rounded-lg bg-primary/50 px-4 py-1 text-xs font-semibold"
-              >
-                {{ nearbyTown.eateries }}
-                {{ pluralise('Eatery', nearbyTown.eateries) }}
-              </li>
-
-              <li
-                v-if="nearbyTown.attractions > 0"
-                class="rounded-lg bg-primary-dark/50 px-4 py-1 text-xs font-semibold"
-              >
-                {{ nearbyTown.attractions }}
-                {{ pluralise('Attraction', nearbyTown.attractions) }}
-              </li>
-
-              <li
-                v-if="nearbyTown.hotels > 0"
-                class="rounded-lg bg-secondary/50 px-4 py-1 text-xs font-semibold"
-              >
-                {{ nearbyTown.hotels }}
-                {{ pluralise('Hotel', nearbyTown.hotels) }}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Card>
+      <NearbyTowns
+        class="order-1 xmd:order-0"
+        heading="Other towns nearby"
+        :towns="nearby"
+      />
 
       <TownFilterSidebar
         v-if="live_eateries_count > 0"

@@ -27,14 +27,16 @@
     @googlefonts
     @preloadImage
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+    @if(! app()->isLocal())
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-        gtag('config', 'G-5PWV6VHY13');
-    </script>
+            gtag('config', 'G-5PWV6VHY13');
+        </script>
+    @endif
 
     @if(config('coeliac.show_ads'))
         <script type="text/javascript" async="async" data-noptimize="1" data-cfasync="false" src="//scripts.mediavine.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"></script>

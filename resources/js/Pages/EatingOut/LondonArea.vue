@@ -23,6 +23,7 @@ import FormSelect from '@/Components/Forms/FormSelect.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import SubHeading from '@/Components/SubHeading.vue';
 import SidebarLayout from '@/Components/SidebarLayout.vue';
+import NearbyTowns from '@/Components/PageSpecific/EatingOut/Town/NearbyTowns.vue';
 
 type AlternateArea = {
   borough: string;
@@ -131,50 +132,11 @@ useJourneyTracking().logWhenVisible(
         </ul>
       </Card>
 
-      <Card class="order-1 xmd:order-0">
-        <SubHeading>Other areas nearby</SubHeading>
-
-        <div class="mt-4 flex flex-col space-y-4">
-          <div
-            v-for="nearbyArea in nearby"
-            :key="nearbyArea.link"
-            class="flex flex-col space-y-2"
-          >
-            <Link
-              class="text-lg font-semibold text-primary-darkest transition hover:text-black lg:text-xl"
-              :href="nearbyArea.link"
-            >
-              {{ nearbyArea.name }}
-            </Link>
-
-            <ul class="flex space-x-4">
-              <li
-                v-if="nearbyArea.eateries > 0"
-                class="rounded-lg bg-primary/50 px-4 py-1 text-xs font-semibold"
-              >
-                {{ nearbyArea.eateries }}
-                {{ pluralise('Eatery', nearbyArea.eateries) }}
-              </li>
-
-              <li
-                v-if="nearbyArea.attractions > 0"
-                class="rounded-lg bg-primary-dark/50 px-4 py-1 text-xs font-semibold"
-              >
-                {{ nearbyArea.attractions }}
-                {{ pluralise('Attraction', nearbyArea.attractions) }}
-              </li>
-
-              <li
-                v-if="nearbyArea.hotels > 0"
-                class="rounded-lg bg-secondary/50 px-4 py-1 text-xs font-semibold"
-              >
-                {{ nearbyArea.hotels }}
-                {{ pluralise('Hotel', nearbyArea.hotels) }}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Card>
+      <NearbyTowns
+        class="order-1 xmd:order-0"
+        heading="Other areas nearby"
+        :towns="nearby"
+      />
 
       <TownFilterSidebar
         v-if="live_eateries_count > 0"

@@ -21,7 +21,7 @@ useJourneyTracking().logWhenVisible(
 <template>
   <Card
     ref="card"
-    class="relative flex flex-row items-center justify-between transition hover:bg-linear-to-br hover:from-primary/30 hover:to-primary-light/30"
+    class="relative flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2 transition hover:bg-linear-to-br hover:from-primary/30 hover:to-primary-light/30"
   >
     <Link
       :href="town.link"
@@ -40,24 +40,24 @@ useJourneyTracking().logWhenVisible(
       {{ town.name }}
     </h3>
 
-    <ul class="flex space-x-4">
+    <ul class="flex flex-wrap gap-2">
       <li
         v-if="town.eateries > 0"
-        class="rounded-lg bg-primary/50 px-4 py-1 text-sm font-semibold"
+        class="rounded-lg bg-primary/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
       >
         {{ town.eateries }} {{ pluralise('Eatery', town.eateries) }}
       </li>
 
       <li
         v-if="town.attractions > 0"
-        class="rounded-lg bg-primary-dark/50 px-4 py-1 text-sm font-semibold"
+        class="rounded-lg bg-primary-dark/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
       >
         {{ town.attractions }} {{ pluralise('Attraction', town.attractions) }}
       </li>
 
       <li
         v-if="town.hotels > 0"
-        class="rounded-lg bg-secondary/50 px-4 py-1 text-sm font-semibold"
+        class="rounded-lg bg-secondary/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
       >
         {{ town.hotels }} {{ pluralise('Hotel', town.hotels) }}
       </li>

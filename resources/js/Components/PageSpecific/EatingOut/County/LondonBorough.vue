@@ -43,26 +43,28 @@ const formattedAreas = (areas: LondonPageBorough['top_areas']): string => {
           )
       "
     />
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
       <h3 class="text-lg font-semibold md:max-lg:text-xl lg:text-2xl">
         {{ borough.name }}
       </h3>
 
-      <ul class="flex space-x-4">
-        <li class="rounded-lg bg-primary px-4 py-1 text-sm font-semibold">
+      <ul class="flex flex-wrap gap-2">
+        <li
+          class="rounded-lg bg-primary px-4 py-1 text-sm font-semibold whitespace-nowrap"
+        >
           {{ borough.area_count }} {{ pluralise('Area', borough.area_count) }}
         </li>
 
         <li
           v-if="borough.eateries > 0"
-          class="rounded-lg bg-primary/50 px-4 py-1 text-sm font-semibold"
+          class="rounded-lg bg-primary/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
         >
           {{ borough.eateries }} {{ pluralise('Eatery', borough.eateries) }}
         </li>
 
         <li
           v-if="borough.attractions > 0"
-          class="rounded-lg bg-primary-dark/50 px-4 py-1 text-sm font-semibold"
+          class="rounded-lg bg-primary-dark/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
         >
           {{ borough.attractions }}
           {{ pluralise('Attraction', borough.attractions) }}
@@ -70,7 +72,7 @@ const formattedAreas = (areas: LondonPageBorough['top_areas']): string => {
 
         <li
           v-if="borough.hotels > 0"
-          class="rounded-lg bg-secondary/50 px-4 py-1 text-sm font-semibold"
+          class="rounded-lg bg-secondary/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
         >
           {{ borough.hotels }} {{ pluralise('Hotel', borough.hotels) }}
         </li>
