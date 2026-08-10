@@ -42,7 +42,7 @@ class GetNearbyEateriesAction
         $nearbyEateries = collect([...$eateries, ...$branches])
             ->map(fn (Eatery|NationwideBranch $location) => [
                 'id' => $location instanceof NationwideBranch ? "{$location->wheretoeat_id}-{$location->id}" : $location->id,
-                'name' => $location->name ?? $location->eatery?->name,
+                'name' => $location instanceof NationwideBranch ? ($location->name ?: $location->eatery->name) : $location->name,
                 'address' => collect(explode("\n", $location->address))
                     ->map(fn (string $line) => mb_trim($line))
                     ->join(', '),

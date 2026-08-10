@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { AdjustmentsHorizontalIcon } from '@heroicons/vue/24/solid';
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import TownFilterSidebarContent from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebarContent.vue';
 import useScreensize from '@/composables/useScreensize';
+import useStickyAdOffset from '@/composables/useStickyAdOffset';
 import { EateryFilters } from '@/types/EateryTypes';
 
 const props = withDefaults(
@@ -19,6 +20,8 @@ const props = withDefaults(
 const viewSidebar = ref(false);
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
+
+const { bottomRightHeight } = useStickyAdOffset();
 
 const emits = defineEmits(['filtersUpdated']);
 
@@ -60,6 +63,9 @@ let ticking = false;
  * viewport (under the nav) and the offset that bottom aligns the column, so a
  * column taller than the viewport scrolls with the content rather than having
  * its bottom clipped off screen.
+ *
+ * The bottom edge accounts for any sticky ads in the same corner as the
+ * column, so the filters are never left sitting behind them.
  */
 const updateOffset = (): void => {
   ticking = false;
@@ -72,7 +78,11 @@ const updateOffset = (): void => {
 
   lastScrollY = window.scrollY;
 
-  const bottomOffset = window.innerHeight - stickyColumn.value.offsetHeight - 8;
+  const bottomOffset =
+    window.innerHeight -
+    bottomRightHeight.value -
+    stickyColumn.value.offsetHeight -
+    8;
 
   top.value = Math.min(
     stickyOffset,
@@ -89,6 +99,15 @@ const handleScroll = (): void => {
 
   window.requestAnimationFrame(updateOffset);
 };
+
+/** Ads load late, so re-clamp when one appears or resizes rather than waiting for a scroll. */
+watch(bottomRightHeight, () => {
+  if (!props.fixed) {
+    return;
+  }
+
+  handleScroll();
+});
 
 onMounted(() => {
   if (!props.fixed) {

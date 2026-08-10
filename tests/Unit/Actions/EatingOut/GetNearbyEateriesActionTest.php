@@ -333,6 +333,48 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     #[Test]
+    public function itUsesTheBranchNameForABranchWithItsOwnName(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $parentEatery = $this->createNationwideEatery(['name' => 'Pho']);
+
+        $this->createBranch($this->offset($this->london, 0.001), $parentEatery, ['name' => 'Manchester Piccadilly']);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertEquals('Manchester Piccadilly', $result->first()['name']);
+    }
+
+    #[Test]
+    public function itFallsBackToTheParentEateryNameForABranchWithAnEmptyName(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $parentEatery = $this->createNationwideEatery(['name' => 'Pho']);
+
+        $this->createBranch($this->offset($this->london, 0.001), $parentEatery, ['name' => '']);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertEquals('Pho', $result->first()['name']);
+    }
+
+    #[Test]
+    public function itFallsBackToTheParentEateryNameForABranchWithNoName(): void
+    {
+        $eatery = $this->createEatery($this->london);
+
+        $parentEatery = $this->createNationwideEatery(['name' => 'Pho']);
+
+        $this->createBranch($this->offset($this->london, 0.001), $parentEatery, ['name' => null]);
+
+        $result = app(GetNearbyEateriesAction::class)->handle($eatery);
+
+        $this->assertEquals('Pho', $result->first()['name']);
+    }
+
+    #[Test]
     public function itReturnsEachResultInTheExpectedFormat(): void
     {
         $eatery = $this->createEatery($this->london);
@@ -374,11 +416,15 @@ class GetNearbyEateriesActionTest extends TestCase
         return $this->create(Eatery::class, [...$attributes, 'county_id' => 1]);
     }
 
-    /** @param  array{lat: float, lng: float}  $latLng */
-    protected function createBranch(array $latLng = [], ?Eatery $eatery = null): NationwideBranch
+    /**
+     * @param  array{lat: float, lng: float}  $latLng
+     * @param  array<string, mixed>  $attributes
+     */
+    protected function createBranch(array $latLng = [], ?Eatery $eatery = null, array $attributes = []): NationwideBranch
     {
         return $this->create(NationwideBranch::class, [
             ...$latLng,
+            ...$attributes,
             'wheretoeat_id' => $eatery?->id ?? $this->createNationwideEatery()->id,
             'county_id' => $this->county->id,
         ]);

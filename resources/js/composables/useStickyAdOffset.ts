@@ -11,6 +11,7 @@ let mutationObserver: MutationObserver | null = null;
 let refCount = 0;
 
 const adhesionHeight: Ref<number> = ref(0);
+const bottomRightHeight: Ref<number> = ref(0);
 
 const viewportCoverage = (el: Element): number => {
   const rect = el.getBoundingClientRect();
@@ -35,9 +36,10 @@ const updateCssVars = (): void => {
   });
 
   adhesionHeight.value = adhesionCoverage;
+  bottomRightHeight.value = Math.max(adhesionCoverage, videoCoverage);
 
   document.documentElement.style.setProperty('--sticky-bottom', `${adhesionCoverage}px`);
-  document.documentElement.style.setProperty('--sticky-bottom-right', `${Math.max(adhesionCoverage, videoCoverage)}px`);
+  document.documentElement.style.setProperty('--sticky-bottom-right', `${bottomRightHeight.value}px`);
 };
 
 const observeElement = (el: Element, set: Set<Element>): void => {
@@ -69,11 +71,15 @@ const teardown = (): void => {
   adhesionElements.clear();
   videoElements.clear();
   adhesionHeight.value = 0;
+  bottomRightHeight.value = 0;
   document.documentElement.style.removeProperty('--sticky-bottom');
   document.documentElement.style.removeProperty('--sticky-bottom-right');
 };
 
-export default function useStickyAdOffset(): { adhesionHeight: Ref<number> } {
+export default function useStickyAdOffset(): {
+  adhesionHeight: Ref<number>;
+  bottomRightHeight: Ref<number>;
+} {
   onMounted(() => {
     if (refCount++ === 0) {
       setup();
@@ -86,5 +92,5 @@ export default function useStickyAdOffset(): { adhesionHeight: Ref<number> } {
     }
   });
 
-  return { adhesionHeight };
+  return { adhesionHeight, bottomRightHeight };
 }
