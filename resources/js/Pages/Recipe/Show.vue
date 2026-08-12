@@ -124,10 +124,10 @@ const handleCommentReset = () => {
   <div
     class="relative flex flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
-    <aside class="flex flex-col space-y-3 lg:w-[350px] lg:flex-shrink-0">
-      <Card
-        class="lg:sticky lg:top-14 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto"
-      >
+    <aside
+      class="flex flex-col space-y-3 lg:w-[350px] lg:flex-shrink-0 lg:self-start"
+    >
+      <Card>
         <div
           ref="recipeElem"
           class="absolute"
