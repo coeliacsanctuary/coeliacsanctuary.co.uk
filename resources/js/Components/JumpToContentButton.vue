@@ -15,7 +15,9 @@ const show = ref(true);
 
 onMounted(() => {
   new IntersectionObserver((entries) => {
-    show.value = entries[0].intersectionRatio === 0;
+    show.value =
+      entries[0].intersectionRatio === 0 &&
+      entries[0].boundingClientRect.top > 0;
   }).observe(props.anchor);
 });
 

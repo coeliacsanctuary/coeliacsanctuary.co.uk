@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<CoeliacButtonProps>(), {
   iconOnly: false,
   target: undefined,
   iconClasses: '',
+  labelClasses: '',
 });
 
 const classes = computed((): string[] => {
@@ -141,7 +142,7 @@ const isLinkComponent = computed(() => {
   >
     <span
       v-if="!iconOnly"
-      :class="{ 'opacity-0': loading }"
+      :class="[{ 'opacity-0': loading }, labelClasses]"
       v-html="label"
     />
 

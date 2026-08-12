@@ -45,7 +45,7 @@ const isMounted = ref(false);
     :announcement="announcement"
   />
 
-  <div class="relative flex min-h-screen flex-col bg-gray-100">
+  <div class="relative flex min-h-screen flex-col overflow-x-clip bg-gray-100">
     <CoeliacHeader :metas="meta" />
 
     <div

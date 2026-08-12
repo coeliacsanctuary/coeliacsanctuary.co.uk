@@ -77,6 +77,7 @@ export type CoeliacButtonProps = {
   iconOnly?: boolean;
   target?: string;
   iconClasses?: string;
+  labelClasses?: string;
 };
 
 export type CustomComponent =

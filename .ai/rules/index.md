@@ -11,10 +11,11 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Enums/** | .ai/rules/enums.md |
 | database/factories/** | .ai/rules/factories.md |
 | app/Http/** | .ai/rules/http.md |
+| resources/js/** | .ai/rules/js.md |
 | database/migrations/** | .ai/rules/migrations.md |
 | app/Models/**, app/Models/*.php | .ai/rules/models.md |
-| app/Pipelines/** | .ai/rules/pipelines.md |
 | **/*.php | .ai/rules/php.md |
+| app/Pipelines/** | .ai/rules/pipelines.md |
 | tests/RequestFactories/** | .ai/rules/request-factories.md |
 | app/Http/Requests/** | .ai/rules/requests.md |
 | app/ResourceCollections/** | .ai/rules/resource-collections.md |

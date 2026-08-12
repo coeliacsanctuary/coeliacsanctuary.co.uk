@@ -9,6 +9,7 @@ import SubHeading from '@/Components/SubHeading.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import useScreensize from '@/composables/useScreensize';
 import EateryCountryCountyCard from '@/Components/PageSpecific/EatingOut/Index/EateryCountryCountyCard.vue';
+import SnapScrollRow from '@/Components/SnapScrollRow.vue';
 import { ChevronDownIcon } from '@heroicons/vue/24/solid';
 
 const props = defineProps<{
@@ -45,37 +46,6 @@ const toggleLabel = computed(() => {
 
   return `View all ${props.country.counties} counties in ${props.country.name}`;
 });
-
-const tileRow = useTemplateRef<HTMLElement>('tileRow');
-const activeTile = ref(0);
-
-/** Track which of the top county tiles is snapped into view on mobile. */
-const updateActiveTile = (): void => {
-  if ( ! tileRow.value) {
-    return;
-  }
-
-  const { scrollLeft, offsetLeft, children } = tileRow.value;
-
-  const distances = Array.from(children).map((child) =>
-    Math.abs((child as HTMLElement).offsetLeft - offsetLeft - scrollLeft),
-  );
-
-  activeTile.value = distances.indexOf(Math.min(...distances));
-};
-
-const scrollToTile = (index: number): void => {
-  const tile = tileRow.value?.children[index] as HTMLElement | undefined;
-
-  if ( ! tile || ! tileRow.value) {
-    return;
-  }
-
-  tileRow.value.scrollTo({
-    left: tile.offsetLeft - tileRow.value.offsetLeft,
-    behavior: 'smooth',
-  });
-};
 
 const toggleButton = useTemplateRef<HTMLButtonElement>('toggleButton');
 
@@ -182,38 +152,19 @@ const toggle = (): void => {
           Top rated areas in {{ country.name }}
         </SubHeading>
 
-        <div class="relative">
-          <div
-            ref="tileRow"
-            class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 xl:grid-cols-3"
-            @scroll="updateActiveTile"
-          >
+        <SnapScrollRow
+          :items="country.top_counties ?? []"
+          :label="(county) => `Show ${county.name}`"
+        >
+          <template #default="{ item, itemClasses }">
             <EateryCountryCountyCard
-              v-for="county in country.top_counties"
-              :key="county.slug"
-              :county="county"
+              :county="item"
               :country="country.name"
-              class="w-[78%] shrink-0 snap-start sm:w-auto sm:shrink"
+              :class="itemClasses"
               top
             />
-          </div>
-
-          <div
-            class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-linear-to-l from-white to-transparent sm:hidden"
-          />
-        </div>
-
-        <div class="flex justify-center space-x-2 sm:hidden">
-          <button
-            v-for="(county, index) in country.top_counties"
-            :key="county.slug"
-            type="button"
-            class="size-2.5 cursor-pointer rounded-full transition"
-            :class="index === activeTile ? 'bg-primary-dark' : 'bg-grey-off'"
-            :aria-label="`Show ${county.name}`"
-            @click="scrollToTile(index)"
-          />
-        </div>
+          </template>
+        </SnapScrollRow>
       </div>
 
       <transition
