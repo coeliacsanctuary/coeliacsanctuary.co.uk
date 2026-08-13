@@ -5,7 +5,7 @@ export type RecipeDetailCard = HomeHoverItem & {
   square_image: string;
   description: string;
   date: string;
-  features?: { feature: string }[];
+  features: { feature: string; slug: string }[];
   nutrition: {
     servings: string;
     calories: number;

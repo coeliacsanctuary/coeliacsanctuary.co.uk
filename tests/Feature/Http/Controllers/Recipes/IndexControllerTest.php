@@ -10,6 +10,7 @@ use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Recipes\GetRecipeFiltersForIndexAction;
 use App\Actions\Recipes\GetRecipesForIndexAction;
 use App\Contracts\Recipes\FilterableRecipeRelation;
+use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeMeal;
@@ -140,6 +141,25 @@ class IndexControllerTest extends TestCase
                     ->where('recipes.meta.current_page', 2)
                     ->where('recipes.meta.per_page', 12)
                     ->where('recipes.meta.total', 30)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itReturnsTheFeaturesForEachRecipe(): void
+    {
+        $recipe = Recipe::query()->latest()->firstOrFail();
+
+        $recipe->features()->sync([]);
+
+        $recipe->features()->attach(
+            $this->create(RecipeFeature::class, ['feature' => 'Vegan', 'slug' => 'vegan'])->id
+        );
+
+        $this->get(route('recipe.index'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->where('recipes.data.0.features', [['feature' => 'Vegan', 'slug' => 'vegan']])
                     ->etc()
             );
     }

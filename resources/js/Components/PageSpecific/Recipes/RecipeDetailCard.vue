@@ -4,9 +4,25 @@ import { Link } from '@inertiajs/vue3';
 import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
 import { RecipeDetailCard } from '@/types/RecipeTypes';
 import useJourneyTracking from '@/composables/useJourneyTracking';
-import { useTemplateRef } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 
-const props = defineProps<{ recipe: RecipeDetailCard }>();
+const props = withDefaults(
+  defineProps<{ recipe: RecipeDetailCard; eager?: boolean }>(),
+  { eager: false },
+);
+
+const nutritionSummary = computed(() =>
+  [
+    props.recipe.nutrition.servings
+      ? `Makes ${props.recipe.nutrition.servings}`
+      : null,
+    props.recipe.nutrition.calories
+      ? `${props.recipe.nutrition.calories} calories per ${props.recipe.nutrition.portion_size}`
+      : null,
+  ]
+    .filter(Boolean)
+    .join(' · '),
+);
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('card'),
@@ -19,7 +35,10 @@ useJourneyTracking().logWhenVisible(
 </script>
 
 <template>
-  <Card ref="card">
+  <Card
+    ref="card"
+    class="overflow-hidden"
+  >
     <div class="group flex-1">
       <Link
         :href="recipe.link"
@@ -30,7 +49,11 @@ useJourneyTracking().logWhenVisible(
           v-if="recipe.square_image"
           :alt="recipe.header_image_alt_text ?? recipe.title"
           :src="recipe.image"
-          loading="lazy"
+          :loading="eager ? 'eager' : 'lazy'"
+          :fetchpriority="eager ? 'high' : 'auto'"
+          width="1200"
+          height="630"
+          class="aspect-[1200/630] w-full object-cover"
         />
         <RecipeSquareImage
           v-else
@@ -56,44 +79,35 @@ useJourneyTracking().logWhenVisible(
       </div>
     </div>
 
-    <div class="-m-4 mt-4 flex flex-col bg-grey-light p-4 text-sm shadow-inner">
-      <div class="flex flex-col space-y-4">
-        <div
-          v-if="recipe.features.length"
-          class="flex flex-col"
+    <div
+      class="-mx-4 mt-4 -mb-4 flex flex-col space-y-3 bg-primary-lightest/60 p-4"
+    >
+      <ul
+        v-if="recipe.features.length"
+        class="flex flex-wrap gap-2"
+      >
+        <li
+          v-for="feature in recipe.features"
+          :key="feature.slug"
         >
-          <h4 class="font-semibold">This recipe is</h4>
-          <ul class="flex flex-wrap gap-2 gap-y-1">
-            <li
-              v-for="feature in recipe.features"
-              :key="feature.slug"
-              class="after:content-[','] last:after:content-['']"
-            >
-              <Link
-                :href="`/recipe?features=${feature.slug}`"
-                class="font-semibold text-primary-dark transition hover:text-black"
-              >
-                {{ feature.feature }}
-              </Link>
-            </li>
-          </ul>
-        </div>
+          <Link
+            :href="`/recipe?features=${feature.slug}`"
+            class="inline-block rounded-full border border-secondary bg-secondary/50 px-2 py-1 text-sm font-semibold transition hover:bg-secondary"
+          >
+            {{ feature.feature }}
+          </Link>
+        </li>
+      </ul>
 
-        <div class="flex flex-col">
-          <span class="font-semibold">
-            Makes {{ recipe.nutrition.servings }}
-          </span>
+      <span
+        v-if="nutritionSummary"
+        class="text-sm font-semibold text-grey-darker"
+        v-text="nutritionSummary"
+      />
 
-          <span class="font-semibold">
-            {{ recipe.nutrition.calories }} calories per
-            {{ recipe.nutrition.portion_size }}
-          </span>
-        </div>
-      </div>
-
-      <div class="mt-4 flex justify-between">
-        <div>Added on {{ recipe.date }}</div>
-      </div>
+      <span class="text-xs text-grey-dark italic">
+        Added on {{ recipe.date }}
+      </span>
     </div>
   </Card>
 </template>
