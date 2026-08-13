@@ -11,8 +11,8 @@ export type RelatedBlogSimpleCard = BlogSimpleCard & {
 export type BlogDetailCard = HomeHoverItem & {
   description: string;
   date: string;
-  comments_count?: number;
-  tags?: BlogTag[];
+  comments_count: number;
+  tags: BlogTag[];
 };
 
 export type BlogPage = {

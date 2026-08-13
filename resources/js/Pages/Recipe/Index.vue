@@ -175,12 +175,22 @@ const resultSummary = computed(() => {
       Coeliac Sanctuary Recipes
     </Heading>
 
-    <p class="prose max-w-none md:prose-lg">
-      Why not check out some of our fabulous, gluten free, coeliac recipes! All
-      of our recipes are tried and tested by us, and as much as we can, we will
-      always use simple, easy to get ingredients, readily available in most
-      supermarkets, so anyone can make them at home!
-    </p>
+    <div class="prose prose-lg max-w-none font-semibold md:prose-xl">
+      <p>
+        Every recipe on Coeliac Sanctuary is completely gluten free, and every
+        one of them has been tried and tested in my own kitchen before it makes
+        it onto the site.
+      </p>
+
+      <p>
+        I stick to simple, easy to get ingredients you'll find in most
+        supermarkets, so there's no tracking down specialist flours or ordering
+        something obscure online just to make dinner. There are gluten free
+        bakes and puddings, midweek dinners, breakfasts and lunches, and plenty
+        that's dairy free, vegetarian or vegan too — use the filters below to
+        narrow things down to exactly what you're after.
+      </p>
+    </div>
 
     <div class="grid gap-3 md:grid-cols-3">
       <RecipeListFilterCard
@@ -258,7 +268,7 @@ const resultSummary = computed(() => {
         class="col-span-full items-center space-y-4"
       >
         <p class="text-center text-xl">
-          Sorry, we can't find any recipes using the options you've provided...
+          Sorry, I can't find any recipes using the options you've provided...
         </p>
 
         <CoeliacButton

@@ -163,4 +163,15 @@ class IndexControllerTest extends TestCase
                     ->etc()
             );
     }
+
+    #[Test]
+    public function itHasTheMetaDescription(): void
+    {
+        $this->get(route('recipe.index'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->where('meta.description', 'Gluten free recipes from Coeliac Sanctuary — tried and tested coeliac friendly bakes, dinners, breakfasts and puddings, all using simple supermarket ingredients.')
+                    ->etc()
+            );
+    }
 }

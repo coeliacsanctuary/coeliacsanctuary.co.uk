@@ -37,7 +37,7 @@ class IndexController
 
         return $inertia
             ->title('Gluten Free Recipes')
-            ->metaDescription('Coeliac Sanctuary gluten free recipe list, all of our fabulous gluten free recipes which I have been tried and tested! ')
+            ->metaDescription('Gluten free recipes from Coeliac Sanctuary — tried and tested coeliac friendly bakes, dinners, breakfasts and puddings, all using simple supermarket ingredients.')
             ->metaTags(['coeliac sanctuary recipes', 'recipe index', 'recipe list', 'gluten free recipes', 'recipes', 'coeliac recipes'])
             ->metaImage($getOpenGraphImageForRouteAction->handle('recipe'))
             ->metaFeed(route('recipe.feed'))

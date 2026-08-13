@@ -206,4 +206,26 @@ class IndexControllerTest extends TestCase
                     ->etc()
             );
     }
+
+    #[Test]
+    public function itHasTheDefaultMetaDescriptionWhenThereIsNoTag(): void
+    {
+        $this->get(route('blog.index'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->where('meta.description', 'Gluten free and coeliac blogs from Coeliac Sanctuary — coeliac news, new gluten free product launches, free from range reviews, and life with coeliac disease.')
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itHasATagSpecificMetaDescriptionWhenThereIsATag(): void
+    {
+        $this->get(route('blog.index.tags', ['tag' => $this->tag->slug]))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->where('meta.description', "Coeliac Sanctuary gluten free blogs tagged with {$this->tag->tag} — coeliac news, new product launches, free from reviews, and life with coeliac disease.")
+                    ->etc()
+            );
+    }
 }
