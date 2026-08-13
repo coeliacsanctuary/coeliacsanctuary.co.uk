@@ -1,24 +1,41 @@
 <script setup lang="ts">
 import { ArrowDownIcon } from '@heroicons/vue/24/solid';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const props = withDefaults(
   defineProps<{
     anchor: HTMLElement;
     label: string;
     side?: 'right' | 'left';
+    showAfter?: HTMLElement;
   }>(),
-  { side: 'right' },
+  { side: 'right', showAfter: undefined },
 );
 
-const show = ref(true);
+const anchorIsBelowViewport = ref(true);
+
+const hasScrolledPastShowAfter = ref(!props.showAfter);
+
+const show = computed(
+  () => anchorIsBelowViewport.value && hasScrolledPastShowAfter.value,
+);
 
 onMounted(() => {
   new IntersectionObserver((entries) => {
-    show.value =
+    anchorIsBelowViewport.value =
       entries[0].intersectionRatio === 0 &&
       entries[0].boundingClientRect.top > 0;
   }).observe(props.anchor);
+
+  if (!props.showAfter) {
+    return;
+  }
+
+  new IntersectionObserver((entries) => {
+    hasScrolledPastShowAfter.value =
+      entries[0].intersectionRatio === 0 &&
+      entries[0].boundingClientRect.top < 0;
+  }).observe(props.showAfter);
 });
 
 const scrollToAnchor = () => {

@@ -26,6 +26,8 @@ const props = defineProps<{
 
 const header = ref<HTMLElement>();
 
+const headerEnd = ref<HTMLElement>();
+
 const recipeElem = ref<HTMLElement>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
@@ -95,6 +97,11 @@ const handleCommentReset = () => {
     :recipe="recipe"
     :back-link="backLink"
     :recipe-element="recipeElem"
+  />
+
+  <div
+    ref="headerEnd"
+    class="absolute"
   />
 
   <Card class="mt-3 flex flex-col space-y-4">
@@ -228,8 +235,9 @@ const handleCommentReset = () => {
   />
 
   <JumpToContentButton
-    v-if="recipeElem"
+    v-if="recipeElem && headerEnd"
     :anchor="recipeElem"
+    :show-after="headerEnd"
     label="Jump to recipe"
   />
 </template>
