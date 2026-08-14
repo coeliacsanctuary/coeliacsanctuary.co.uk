@@ -15,12 +15,16 @@ use App\Scopes\LiveScope;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string $description
  * @property string $meta_tags
+ * @property int $recipes_count
+ * @property int $blogs_count
+ * @property int $eateries_count
  */
 class Collection extends Model implements HasMedia
 {
@@ -83,6 +87,12 @@ class Collection extends Model implements HasMedia
     public function groups(): HasMany
     {
         return $this->hasMany(CollectionGroup::class)->orderBy('position');
+    }
+
+    /** @return HasManyThrough<CollectionGroupItem, CollectionGroup, $this> */
+    public function items(): HasManyThrough
+    {
+        return $this->hasManyThrough(CollectionGroupItem::class, CollectionGroup::class, 'collection_id', 'collection_group_id');
     }
 
     protected function linkRoot(): string

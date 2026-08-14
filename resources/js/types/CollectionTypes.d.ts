@@ -4,7 +4,11 @@ import { EateryLocation, StarRating } from '@/types/EateryTypes';
 export type CollectionDetailCard = HomeHoverItem & {
   description: string;
   date: string;
-  number_of_items: number;
+  items: {
+    recipes: number;
+    blogs: number;
+    eateries: number;
+  };
 };
 
 export type CollectionPage = {
