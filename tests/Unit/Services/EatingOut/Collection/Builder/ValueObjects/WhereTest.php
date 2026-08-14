@@ -63,4 +63,14 @@ class WhereTest extends TestCase
 
         $this->assertSame($builder, $result);
     }
+
+    #[Test]
+    public function itReplacesTheParentPlaceholderWithTheGivenTable(): void
+    {
+        $where = new Where('[parent].foo', '=', 'bar');
+
+        $sql = $where(DB::table('wheretoeat'), 'mytable')->toSql();
+
+        $this->assertStringContainsString('`mytable`.`foo` = ?', $sql);
+    }
 }

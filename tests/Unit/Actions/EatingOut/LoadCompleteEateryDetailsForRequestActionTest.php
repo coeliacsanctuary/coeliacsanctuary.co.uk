@@ -89,6 +89,36 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
     }
 
     #[Test]
+    public function itLoadsTheBranchCountButNotTheBranchesForANationwideEatery(): void
+    {
+        $this->build(NationwideBranch::class)->count(2)->forEatery($this->eatery)->create();
+
+        app(LoadCompleteEateryDetailsForRequestAction::class)->handle(
+            $this->eatery,
+            $this->eatery->county()->first(),
+            $this->eatery->town()->first(),
+            new NationwideBranch(),
+            'nationwide'
+        );
+
+        $this->assertEquals(2, $this->eatery->nationwide_branches_count);
+        $this->assertFalse($this->eatery->relationLoaded('nationwideBranches'));
+    }
+
+    #[Test]
+    public function itDoesntLoadTheBranchCountForANormalEatery(): void
+    {
+        app(LoadCompleteEateryDetailsForRequestAction::class)->handle(
+            $this->eatery,
+            $this->eatery->county()->first(),
+            $this->eatery->town()->first(),
+            new NationwideBranch(),
+        );
+
+        $this->assertNull($this->eatery->nationwide_branches_count);
+    }
+
+    #[Test]
     public function itRelatesTheNationwideTownToTheEateryIfItIsANationwideEatery(): void
     {
         $this->eatery->setRelation('town', null);
@@ -143,26 +173,6 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
         $this->assertNotNull($this->eatery->town);
         $this->assertFalse($this->eatery->town()->first()->is($this->eatery->town));
         $this->assertEquals('nationwide', $this->eatery->town->town);
-    }
-
-    #[Test]
-    public function itLoadsTheAdminReviewRelationship(): void
-    {
-        $review = $this->build(EateryReview::class)->adminReview()->on($this->eatery)->create();
-
-        $this->eatery->setRelation('adminReview', null);
-        $this->assertNull($this->eatery->adminReview);
-
-        app(LoadCompleteEateryDetailsForRequestAction::class)->handle(
-            $this->eatery,
-            $this->eatery->county()->first(),
-            $this->eatery->town()->first(),
-            new NationwideBranch(),
-        );
-
-        $this->assertNotNull($this->eatery->adminReview);
-        ;
-        $this->assertTrue($review->is($this->eatery->adminReview));
     }
 
     #[Test]
@@ -288,15 +298,15 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
     }
 
     #[Test]
-    public function itDoesntLoadNotAdminReviewsInTheReviewsRelationship(): void
+    public function itLoadsNotAdminReviewsInTheReviewsRelationshipInTheFirstPosition(): void
     {
         $this->build(EateryReview::class)
-            ->adminReview()
-            ->on($this->eatery)
-            ->create();
-
-        $review = $this->build(EateryReview::class)
             ->approved()
+            ->on($this->eatery)
+            ->create(['created_at' => now()->subHour()]);
+
+        $adminReview = $this->build(EateryReview::class)
+            ->adminReview()
             ->on($this->eatery)
             ->create();
 
@@ -311,8 +321,8 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
         );
 
         $this->assertNotNull($this->eatery->reviews);
-        $this->assertCount(1, $this->eatery->reviews);
-        $this->assertTrue($review->is($this->eatery->reviews->first()));
+        $this->assertCount(2, $this->eatery->reviews);
+        $this->assertTrue($adminReview->is($this->eatery->reviews->first()));
     }
 
     #[Test]

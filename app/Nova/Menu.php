@@ -21,7 +21,8 @@ use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
 use App\Nova\Resources\EatingOut\EateryAlerts;
-use App\Nova\Resources\EatingOut\EateryCollections;
+use App\Nova\Resources\EatingOut\EateryCuisines;
+use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideEateries;
@@ -94,8 +95,12 @@ class Menu
                 MenuItem::resource(AnnouncementResource::class),
                 MenuItem::resource(RedirectResource::class),
                 MenuItem::resource(SealiacOverviews::class),
-                MenuItem::make('Refresh ads.txt')->path('/refresh-ads-txt'),
             ])->icon('home'),
+
+            MenuSection::make('Tools', [
+                MenuItem::make('Eatery Collection Builder')->path('/eatery-collections-query-builder'),
+                MenuItem::make('Refresh ads.txt')->path('/refresh-ads-txt'),
+            ])->icon('wrench'),
 
             MenuSection::make('Ask Sealiac Chat', [
                 MenuItem::resource(AskSealiacChatResource::class),
@@ -105,10 +110,17 @@ class Menu
                 MenuGroup::make('Locations', [
                     MenuItem::resource(Eateries::class),
                     MenuItem::resource(NationwideEateries::class),
-                    MenuItem::resource(EateryCollections::class),
+                ]),
+
+                MenuGroup::make('Management', [
                     MenuItem::resource(Counties::class),
                     MenuItem::resource(Towns::class),
                     MenuItem::resource(Areas::class),
+                    MenuItem::resource(EateryCuisines::class),
+                ]),
+
+                MenuGroup::make('Magic Routes', [
+                    MenuItem::resource(EateryMagicRoutesResource::class),
                 ]),
 
                 MenuGroup::make('Feedback', [

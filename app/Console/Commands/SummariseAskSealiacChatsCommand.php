@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Ai\Agents\SummariseAskSealiacChatAgent;
 use App\Models\AskSealiacChat;
 use Exception;
 use Illuminate\Console\Command;
-use OpenAI\Laravel\Facades\OpenAI;
 
 class SummariseAskSealiacChatsCommand extends Command
 {
@@ -22,23 +22,10 @@ class SummariseAskSealiacChatsCommand extends Command
             ->lazy()
             ->each(function (AskSealiacChat $chat): void {
                 try {
-                    $conversation = $chat->messages
-                        ->flatMap(fn ($message) => [
-                            ['role' => 'user', 'content' => $message->prompt],
-                            ['role' => 'assistant', 'content' => $message->response],
-                        ])
-                        ->all();
-
-                    $result = OpenAI::chat()->create([
-                        'model' => 'gpt-4o-mini',
-                        'messages' => [
-                            ['role' => 'system', 'content' => 'Summarise the following conversation in a single concise paragraph. Focus on the main topic and intent of the user.'],
-                            ...$conversation,
-                        ],
-                    ]);
+                    $response = (new SummariseAskSealiacChatAgent($chat))->prompt('Please summarise the above conversation.');
 
                     $chat->updateQuietly([
-                        'summary' => $result->choices[0]->message->content,
+                        'summary' => $response->text,
                     ]);
 
                     $this->info("Summarised chat {$chat->id}");

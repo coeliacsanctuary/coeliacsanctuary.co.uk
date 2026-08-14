@@ -21,7 +21,7 @@ class HydratePage
         Blog::class => ['media'],
         Recipe::class => ['media'],
         Eatery::class => ['country', 'county', 'town', 'restaurants', 'area', 'cuisine'],
-        NationwideBranch::class => ['eatery', 'country', 'county', 'town', 'area', 'eatery.cuisine'],
+        NationwideBranch::class => ['eatery', 'country', 'county', 'town', 'area', 'eatery.cuisine', 'eatery.restaurants'],
         ShopProduct::class => ['variants', 'prices'],
     ];
 

@@ -83,9 +83,9 @@ class IndexControllerTest extends TestCase
         $this->visitPage()
             ->assertInertia(
                 fn (Assert $page) => $page
-                    ->component('EatingOut/London')
-                    ->has('london')
-                    ->where('london.name', 'London')
+                    ->component('EatingOut/County')
+                    ->has('county')
+                    ->where('county.name', 'London')
                     ->etc()
             );
     }

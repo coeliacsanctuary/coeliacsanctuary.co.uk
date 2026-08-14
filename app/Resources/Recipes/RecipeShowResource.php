@@ -9,6 +9,7 @@ use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeNutrition;
 use App\Resources\Collections\FeaturedInCollectionSimpleCardViewResource;
+use App\Resources\Faqs\FaqResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -19,7 +20,11 @@ class RecipeShowResource extends JsonResource
     /** @return array */
     public function toArray(Request $request)
     {
-        $this->load(['associatedCollections', 'associatedCollections.collection', 'associatedCollections.collection.media']);
+        $this->load([
+            'relatedRecipes', 'relatedRecipes.media',
+            'associatedCollectionGroups', 'associatedCollectionGroups.group.collection', 'associatedCollectionGroups.group.collection.media',
+            'faqs',
+        ]);
 
         /** @var RecipeNutrition $nutrition */
         $nutrition = $this->nutrition;
@@ -28,17 +33,23 @@ class RecipeShowResource extends JsonResource
             'id' => $this->id,
             'print_url' => route('recipe.print', ['recipe' => $this]),
             'title' => $this->title,
+            'header_image_alt_text' => $this->header_image_alt_text,
+            'short_title' => $this->short_title,
             'image' => $this->main_image_as_webp ?? $this->main_image,
             'square_image' => $this->square_image_as_webp ?? $this->square_image,
             'published' => $this->published,
             'updated' => $this->lastUpdated,
             'author' => $this->author,
+            'meta_description' => $this->meta_description,
             'description' => $this->description,
-            'ingredients' => Str::markdown($this->ingredients, [
-                'renderer' => [
-                    'soft_break' => '<br />',
-                ],
-            ]),
+            'body' => $this->body ? Str::of($this->body)
+                ->replace('&quot;', '"')
+                ->markdown([
+                    'renderer' => [
+                        'soft_break' => '<br />',
+                    ],
+                ]) : null,
+            'ingredients' => $this->processIngredients(),
             'method' => Str::markdown($this->method),
             'features' => $this->features()->get()->map($this->processFeature(...))->values(),
             'allergens' => $this->containsAllergens()->map($this->processAllergen(...))->values(),
@@ -56,8 +67,43 @@ class RecipeShowResource extends JsonResource
                 'sugar' => $nutrition->sugar,
                 'protein' => $nutrition->protein,
             ],
-            'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollections),
+            'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollectionGroups),
+            'faqs' => $this->faqs->isNotEmpty() ? FaqResource::collection($this->faqs) : null,
+            'related_recipes' => RelatedRecipeCardViewResource::collection($this->relatedRecipes),
         ];
+    }
+
+    /** @return list<array{heading: string|null, items: list<string>}> */
+    protected function processIngredients(): array
+    {
+        $groups = [];
+        $group = ['heading' => null, 'items' => []];
+
+        foreach (preg_split("/\r\n|\r|\n/", (string) $this->ingredients) ?: [] as $line) {
+            $line = mb_trim($line);
+
+            if ($line === '') {
+                continue;
+            }
+
+            if (preg_match('#^</?(?:strong|b)>([^<]+)</?(?:strong|b)>$#i', $line, $matches) !== 1) {
+                $group['items'][] = $line;
+
+                continue;
+            }
+
+            if ($group['heading'] !== null || $group['items'] !== []) {
+                $groups[] = $group;
+            }
+
+            $group = ['heading' => mb_trim($matches[1]), 'items' => []];
+        }
+
+        if ($group['heading'] !== null || $group['items'] !== []) {
+            $groups[] = $group;
+        }
+
+        return $groups;
     }
 
     protected function processFeature(RecipeFeature $feature): array

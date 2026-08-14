@@ -6,9 +6,12 @@ import FormInput from '@/Components/Forms/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ref, useTemplateRef } from 'vue';
-import { CheckCircleIcon } from '@heroicons/vue/24/outline';
-import Heading from '@/Components/Heading.vue';
+import { ComponentPublicInstance, ref, useTemplateRef } from 'vue';
+import {
+  CheckCircleIcon,
+  ChatBubbleLeftRightIcon,
+  ArrowUturnLeftIcon,
+} from '@heroicons/vue/24/outline';
 import SubHeading from '@/Components/SubHeading.vue';
 import { ucfirst } from '@/helpers';
 import useJourneyTracking from '@/composables/useJourneyTracking';
@@ -41,6 +44,15 @@ const hasSubmitted = ref(false);
 
 const commentSubmitting = ref(false);
 
+const formCard = useTemplateRef<ComponentPublicInstance>('formCard');
+
+const scrollToForm = (): void => {
+  (formCard.value?.$el as HTMLElement | undefined)?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  });
+};
+
 const submitComment = () => {
   commentSubmitting.value = true;
 
@@ -68,46 +80,80 @@ useJourneyTracking().logWhenVisible(
 </script>
 
 <template>
-  <Card ref="card">
-    <Heading as="h3">Your Comments</Heading>
+  <Card
+    ref="card"
+    class="space-y-4"
+  >
+    <div class="flex items-baseline gap-3">
+      <SubHeading
+        as="h2"
+        classes="text-primary-dark"
+      >
+        Comments
+      </SubHeading>
+
+      <span
+        v-if="comments.meta.total"
+        class="rounded-lg bg-primary/40 px-3 py-1 text-sm font-semibold"
+        v-text="comments.meta.total"
+      />
+    </div>
 
     <div
       v-if="comments.data.length"
       class="flex flex-col space-y-4"
     >
-      <div
+      <article
         v-for="(comment, index) in comments.data"
         :key="`${comment.name}-${index}`"
-        class="flex flex-col space-y-2 border-l-8 border-secondary bg-linear-to-br from-primary/30 to-primary-light/30 p-3 shadow-sm"
+        class="flex flex-col rounded-lg border border-primary-light bg-primary-light/25 p-4"
       >
-        <div
-          class="prose prose-sm max-w-none md:prose-base"
-          v-text="comment.comment.replaceAll('<br />', '\n')"
-        />
-        <div class="flex space-x-2 text-xs font-medium text-grey">
+        <header class="flex items-center gap-3">
           <span
-            class="font-semibold"
-            v-text="comment.name"
+            class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/50 font-semibold text-primary-dark uppercase"
+            aria-hidden="true"
+            v-text="comment.name.charAt(0)"
           />
-          <span v-text="comment.published" />
-        </div>
-        <div
-          v-if="comment.reply"
-          class="mt-2 flex flex-col space-y-2 bg-white/80 p-3"
-        >
-          <div class="flex space-x-2 text-sm font-medium text-grey">
+
+          <span class="flex flex-col leading-tight">
             <span
               class="font-semibold"
-              v-text="'Alison @ Coeliac Sanctuary'"
+              v-text="comment.name"
             />
-            <span v-text="comment.reply.published" />
-          </div>
+
+            <span
+              class="text-xs text-grey"
+              v-text="comment.published"
+            />
+          </span>
+        </header>
+
+        <div
+          class="mt-3 text-sm whitespace-pre-line md:text-base"
+          v-text="comment.comment.replaceAll('<br />', '\n')"
+        />
+
+        <div
+          v-if="comment.reply"
+          class="mt-4 flex flex-col rounded-lg border-l-4 border-secondary bg-white p-3 sm:ml-8"
+        >
+          <header class="flex items-center gap-2 text-sm">
+            <ArrowUturnLeftIcon class="size-4 shrink-0 text-secondary" />
+
+            <span class="font-semibold">Alison @ Coeliac Sanctuary</span>
+
+            <span
+              class="text-xs text-grey"
+              v-text="comment.reply.published"
+            />
+          </header>
+
           <div
-            class="prose prose-sm max-w-none md:prose-base"
+            class="prose prose-sm mt-2 max-w-none md:prose-base"
             v-html="comment.reply.comment"
           />
         </div>
-      </div>
+      </article>
 
       <div
         class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4"
@@ -139,17 +185,45 @@ useJourneyTracking().logWhenVisible(
 
     <div
       v-else
-      class="my-8 font-semibold"
+      class="flex flex-col items-center gap-3 py-8 text-center"
     >
-      There's no comments on this {{ module }}, why not leave one?
+      <span
+        class="flex size-20 items-center justify-center rounded-full bg-primary-light/50"
+      >
+        <ChatBubbleLeftRightIcon class="size-10 text-primary-dark" />
+      </span>
+
+      <p class="text-lg font-semibold">No comments yet</p>
+
+      <p class="max-w-md text-grey-dark">
+        {{
+          module === 'recipe'
+            ? 'Made this one, or planning to? Let us know how you got on.'
+            : 'Got something to add? Start the conversation.'
+        }}
+      </p>
+
+      <CoeliacButton
+        as="button"
+        type="button"
+        theme="primary"
+        label="Leave a comment"
+        bold
+        class="mt-1 justify-center"
+        @click="scrollToForm"
+      />
     </div>
   </Card>
 
-  <Card>
-    <SubHeading>Submit Comment</SubHeading>
+  <Card
+    ref="formCard"
+    class="mt-3"
+  >
+    <SubHeading classes="text-primary-dark">Leave a Comment</SubHeading>
 
     <p class="mt-3">
-      Want to leave a comment on this blog? Feel free to join the discussion!
+      Want to leave a comment on this {{ module }}? Feel free to join the
+      discussion!
     </p>
 
     <form

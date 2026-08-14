@@ -5,22 +5,25 @@ declare(strict_types=1);
 namespace App\Resources\Collections;
 
 use App\Models\Collections\Collection;
-use App\Models\Collections\CollectionItem;
+use App\Models\Collections\CollectionGroupItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin CollectionItem */
+/** @mixin CollectionGroupItem */
 class FeaturedInCollectionSimpleCardViewResource extends JsonResource
 {
     /** @return array{title: string, link: string} */
     public function toArray(Request $request)
     {
         /** @var Collection $collection */
-        $collection = $this->collection;
+        $collection = $this->group?->collection;
 
         return [
             'title' => $collection->title,
             'link' => route('collection.show', ['collection' => $collection]),
+            'image' => $collection->main_image_as_webp ?? $collection->main_image,
+            'header_image_alt_text' => $collection->header_image_alt_text,
+            'description' => $collection->meta_description,
         ];
     }
 }

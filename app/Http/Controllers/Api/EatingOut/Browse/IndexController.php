@@ -12,7 +12,7 @@ class IndexController
     public function __invoke(EatingOutBrowseRequest $request, BrowseEateriesPipeline $browseEateriesPipeline): array
     {
         return [
-            'data' => $browseEateriesPipeline->run($request->latLng(), $request->filters()),
+            'data' => $browseEateriesPipeline->run($request->latLng(), $request->filters(), isMeters: true),
         ];
     }
 }

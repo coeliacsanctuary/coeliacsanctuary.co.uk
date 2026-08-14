@@ -171,18 +171,26 @@ class ListEateriesInTownTool extends BaseTool
                 ->string()
                 ->default('alphabetical')
                 ->enum(['rating', 'alphabetical'])
+                ->nullable()
+                ->required()
                 ->description('The sort order, default is alphabetical, the other option is by rating.'),
             'venueTypes' => $schema
                 ->array()
                 ->items($schema->string())
+                ->nullable()
+                ->required()
                 ->description('any venue type slugs to filter on, eg pub, chip shop'),
             'type' => $schema
                 ->array()
                 ->items($schema->string())
+                ->nullable()
+                ->required()
                 ->description('any type slugs to filter on, eg eatery, attraction, hotel'),
             'features' => $schema
                 ->array()
                 ->items($schema->string())
+                ->nullable()
+                ->required()
                 ->description('any feature slugs to filter on, eg gluten free menu'),
         ];
     }

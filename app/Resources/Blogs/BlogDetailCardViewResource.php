@@ -14,13 +14,14 @@ use Illuminate\Support\Stringable;
 /** @mixin Blog */
 class BlogDetailCardViewResource extends JsonResource
 {
-    /** @return array{title: string|Stringable, link: string, image: string, date: string, description: string, comments_count: int|null, tags: BlogTagCollection} */
+    /** @return array{title: string|Stringable, link: string, image: string, header_image_alt_text: string|null, date: string, description: string, comments_count: int, tags: BlogTagCollection} */
     public function toArray(Request $request)
     {
         return [
             'title' => Str::of($this->title)->replace('&quot;', '"'),
             'link' => $this->link,
             'image' => $this->main_image_as_webp ?? $this->main_image,
+            'header_image_alt_text' => $this->header_image_alt_text,
             'date' => $this->published,
             'description' => $this->meta_description,
             'comments_count' => $this->comments_count,

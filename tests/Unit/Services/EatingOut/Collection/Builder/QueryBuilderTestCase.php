@@ -239,4 +239,10 @@ abstract class QueryBuilderTestCase extends TestCase
 
         $this->assertStringContainsString('limit 100', $sql);
     }
+
+    #[Test]
+    abstract public function itResolvesParentPlaceholderInWhereClausesToTheCorrectTable(): void;
+
+    #[Test]
+    abstract public function itResolvesParentPlaceholderInJoinsToTheCorrectTable(): void;
 }

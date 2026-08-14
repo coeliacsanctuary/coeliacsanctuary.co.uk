@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Console\Commands\ApplyMassDiscountsCommand;
 use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
+use App\Console\Commands\CleanUpNovaPreviewsCommand;
 use App\Console\Commands\CloseBasketsCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Console\Commands\ProcessEateryWebsiteChecksCommand;
@@ -15,6 +16,7 @@ use App\Http\Api\V1\Middleware\ExternalApiSourceMiddleware;
 use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Response\Inertia;
+use App\Jobs\Metrics\Orchestrators\BaseOrchestratorJob;
 use App\Models\Shop\ShopOrderDownloadLink;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
@@ -125,6 +127,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
         $schedule->command(SummariseAskSealiacChatsCommand::class)->everyMinute();
         $schedule->command(ProcessEateryWebsiteChecksCommand::class)->daily();
+        $schedule->command(CleanUpNovaPreviewsCommand::class)->daily();
+
+        BaseOrchestratorJob::scheduleAll($schedule);
 
         if (app()->environment('production')) {
             $schedule->command('about')->thenPing('http://beats.envoyer.io/heartbeat/oKkQ7etgPUsSnOW');

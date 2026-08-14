@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\CheckForRouteRedirectAction;
+use App\Contracts\RouteFallbackResolverContract;
+use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
+use App\Support\MagicRouting\Resolvers\RedirectFallbackResolver;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class FallbackController
 {
-    public function __invoke(Request $request, CheckForRouteRedirectAction $checkForRouteRedirectAction): RedirectResponse
+    public function __invoke(Request $request): Responsable|RedirectResponse
     {
-        $redirect = $checkForRouteRedirectAction->handle($request->path());
+        /** @var class-string<RouteFallbackResolverContract>[] $resolvers */
+        $resolvers = [
+            HundredPercentGlutenFreeEateriesFallbackResolver::class,
+            RedirectFallbackResolver::class,
+        ];
 
-        if ($redirect) {
-            $redirect->increment('hits');
-
-            return redirect($redirect->to, $redirect->status);
-        }
-
-        abort(Response::HTTP_NOT_FOUND);
+        return collect($resolvers)
+            ->map(fn (string $resolver) => app($resolver))
+            ->first(fn (RouteFallbackResolverContract $resolver) => $resolver->canHandle($request))
+            ?->handle($request) ?? abort(Response::HTTP_NOT_FOUND);
     }
 }

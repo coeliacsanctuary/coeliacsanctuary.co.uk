@@ -268,4 +268,36 @@ class ShopProductTest extends TestCase
 
         $this->assertEquals(['current_price' => '£1.00', 'raw_price' => 100], $product->price);
     }
+
+    #[Test]
+    public function googleMerchantEnabledDefaultsToTrue(): void
+    {
+        $product = $this->create(ShopProduct::class);
+
+        $this->assertTrue($product->google_merchant_enabled);
+    }
+
+    #[Test]
+    public function googleMerchantEnabledIsCastToBoolean(): void
+    {
+        $product = $this->create(ShopProduct::class);
+
+        $this->assertIsBool($product->google_merchant_enabled);
+    }
+
+    #[Test]
+    public function googleMerchantProductIdDefaultsToNull(): void
+    {
+        $product = $this->create(ShopProduct::class);
+
+        $this->assertNull($product->google_merchant_product_id);
+    }
+
+    #[Test]
+    public function theFactoryCanCreateAGoogleMerchantDisabledProduct(): void
+    {
+        $product = $this->build(ShopProduct::class)->googleMerchantDisabled()->create();
+
+        $this->assertFalse($product->google_merchant_enabled);
+    }
 }

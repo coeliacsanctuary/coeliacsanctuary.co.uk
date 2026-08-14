@@ -6,7 +6,9 @@ namespace Tests\Feature\Http\Controllers\EatingOut;
 
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\EatingOut\GetCountyListAction;
+use App\Actions\EatingOut\GetEateryGuideStatisticsAction;
 use App\Actions\EatingOut\GetMostRatedPlacesAction;
+use App\Actions\EatingOut\GetRecentlyAddedEateriesAction;
 use App\Actions\EatingOut\GetTopRatedPlacesAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Models\EatingOut\EateryCounty;
@@ -61,9 +63,27 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
+    public function itCallsTheGetRecentlyAddedEateriesAction(): void
+    {
+        $this->expectAction(GetRecentlyAddedEateriesAction::class);
+
+        $this->visitPage();
+    }
+
+    #[Test]
+    public function itCallsTheGetEateryGuideStatisticsAction(): void
+    {
+        $this->expectAction(GetEateryGuideStatisticsAction::class);
+
+        $this->visitPage();
+    }
+
+    #[Test]
     public function itCallsTheGetOpenGraphImageForRouteAction(): void
     {
-        $this->expectAction(GetOpenGraphImageForRouteAction::class, ['eatery']);
+        $this->expectAction(GetOpenGraphImageForRouteAction::class, [
+            static fn (string $route, mixed $alterUrl = null) => $route === 'eatery',
+        ]);
 
         $this->visitPage();
     }

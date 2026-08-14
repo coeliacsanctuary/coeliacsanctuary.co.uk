@@ -11,6 +11,8 @@ use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCounty;
 use App\Resources\EatingOut\LondonPageResource;
+use App\Resources\EatingOut\MagicRouteGuideResource;
+use App\Resources\EatingOut\NearbyCountyResource;
 use Inertia\Response;
 
 class IndexController
@@ -37,10 +39,12 @@ class IndexController
                 new BreadcrumbItemData('London'),
             ]))
             ->metaImage($getOpenGraphImageAction->handle($county))
-            ->render('EatingOut/London', [
-                'london' => new LondonPageResource($county),
+            ->render('EatingOut/County', [
+                'county' => new LondonPageResource($county),
                 'topRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
                 'mostRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
+                'nearby' => fn () => NearbyCountyResource::collection($county->nearbyCounties()),
+                'guides' => fn () => MagicRouteGuideResource::collection($county->magicRoutes),
             ]);
     }
 }

@@ -12,7 +12,7 @@
     "@vue/compiler-sfc": "^3.2.22",
     "form-backend-validation": "^2.3.3",
     "laravel-mix": "^6.0.41",
-    "laravel-nova-devtool": "file:vendor/laravel/nova-devtool",
+      "laravel-nova-devtool": "file:vendor/laravel/nova-devtool",
     "lodash": "^4.17.21",
     "postcss": "^8.3.11",
     "vue-loader": "^16.8.3"

@@ -5,8 +5,6 @@ declare(strict_types=1);
 return [
     'show_ads' => env('SHOW_ADS', true),
 
-    'enable_eatery_collections' => env('ENABLE_EATERY_COLLECTIONS', false),
-
     'images_url' => env('IMAGES_URL'),
 
     'shop' => [
@@ -45,7 +43,7 @@ return [
     ],
 
     'generate_og_images' => (bool) env('GENERATE_OG_IMAGES', true),
-    'generate_country_ai_descriptions' => (bool) env('GENERATE_COUNTRY_AI_DESCRIPTIONS', true),
+    'generate_eatery_ai_descriptions' => (bool) env('GENERATE_EATERY_AI_DESCRIPTIONS', true),
 
     'cacheable' => [
         'blogs' => [
@@ -65,9 +63,13 @@ return [
             'top-rated' => 'cache.eating-out.top-rated',
             'most-rated' => 'cache.eating-out.most-rated',
             'index-counts' => 'cache.eating-out.index-counts',
+            'recently-added' => 'cache.eating-out.recently-added',
+            'guide-statistics' => 'cache.eating-out.guide-statistics',
             'stats' => 'cache.eating-out.stats',
             'top-rated-in-county' => 'coeliac.eating-out.top-rated-in-county.{county.slug}',
             'most-rated-in-county' => 'coeliac.eating-out.most-rated-in-county.{county.slug}',
+            'top-rated-in-town' => 'coeliac.eating-out.top-rated-in-county.{county.slug}.{town.slug}',
+            'most-rated-in-town' => 'coeliac.eating-out.most-rated-in-county.{county.slug}.{town.slug}',
             'site-map-counties' => 'coeliac.eating-out.site-map.counties',
             'site-map-towns' => 'coeliac.eating-out.site-map.towns',
             'site-map-areas' => 'coeliac.eating-out.site-map.areas',
@@ -79,6 +81,7 @@ return [
             'home' => 'cache.eating-out-reviews.home',
             'top-rated' => 'cache.eating-out.top-rated',
             'most-rated' => 'cache.eating-out.most-rated',
+            'guide-statistics' => 'cache.eating-out.guide-statistics',
             'stats' => 'cache.eating-out.stats',
             'top-rated-in-county' => 'coeliac.eating-out.top-rated-in-county.{eatery.county.slug}',
             'most-rated-in-county' => 'coeliac.eating-out.most-rated-in-county.{eatery.county.slug}',

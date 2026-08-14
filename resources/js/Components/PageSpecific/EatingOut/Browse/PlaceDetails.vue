@@ -10,6 +10,9 @@ import { LinkIcon } from '@heroicons/vue/24/solid';
 import { pluralise } from '@/helpers';
 import { Link } from '@inertiajs/vue3';
 import Icon from '@/Components/Icon.vue';
+import FacebookIcon from '@/Icons/FacebookIcon.vue';
+import InstagramIcon from '@/Icons/InstagramIcon.vue';
+import type { Component } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -54,6 +57,36 @@ const closeSidebar = () => {
 
   isLoading.value = true;
 };
+
+const socialLink = computed(
+  (): { url: string; label: string; icon: Component } | null => {
+    if (placeDetails.value?.website) {
+      return {
+        url: placeDetails.value.website,
+        label: 'Visit Website',
+        icon: LinkIcon as Component,
+      };
+    }
+
+    if (placeDetails.value?.facebook_url) {
+      return {
+        url: placeDetails.value.facebook_url,
+        label: 'Facebook',
+        icon: FacebookIcon as Component,
+      };
+    }
+
+    if (placeDetails.value?.instagram_url) {
+      return {
+        url: placeDetails.value.instagram_url,
+        label: 'Instagram',
+        icon: InstagramIcon as Component,
+      };
+    }
+
+    return null;
+  },
+);
 
 const icon = computed((): string => {
   if (placeDetails.value?.type === 'Hotel / B&B') {
@@ -112,15 +145,15 @@ const icon = computed((): string => {
                 >
                   <span
                     class="text-base"
-                    v-text="
-                      placeDetails.full_location.includes('Nationwide')
-                        ? 'Nationwide Chain'
-                        : placeDetails.full_location
-                    "
+                    v-text="placeDetails.full_location"
                   />
                   <div>
                     <span>
-                      {{ placeDetails.venue_type
+                      {{
+                        placeDetails.isNationwideBranch
+                          ? 'Nationwide Chain, '
+                          : ''
+                      }}{{ placeDetails.venue_type
                       }}{{
                         placeDetails.cuisine ? `, ${placeDetails.cuisine}` : ''
                       }}
@@ -130,45 +163,24 @@ const icon = computed((): string => {
 
                 <div>
                   <a
-                    v-if="placeDetails.website"
+                    v-if="socialLink"
                     class="mt-2 inline-flex items-center rounded-full bg-primary-light/90 px-3 py-1 text-xs leading-none font-semibold text-black transition-all ease-in-out hover:bg-primary-light/100"
-                    :href="placeDetails.website"
+                    :href="socialLink.url"
                     target="_blank"
                   >
-                    <LinkIcon class="mr-2 h-4 w-4" />
+                    <component
+                      :is="socialLink.icon"
+                      class="!mr-2 !h-4 !w-4"
+                    />
 
-                    Visit Website
+                    {{ socialLink.label }}
                   </a>
                 </div>
               </div>
             </div>
           </div>
 
-          <div
-            v-if="placeDetails.restaurants.length"
-            class="flex flex-col space-y-3 p-3"
-          >
-            <div
-              v-for="restaurant in placeDetails.restaurants"
-              :key="restaurant.name"
-            >
-              <h4
-                v-if="restaurant.name"
-                class="font-semibold"
-                v-text="restaurant.name"
-              />
-
-              <p
-                class="prose prose-sm max-w-none sm:max-lg:prose-base lg:prose-lg"
-                v-text="restaurant.info"
-              />
-            </div>
-          </div>
-
-          <div
-            v-else
-            class="px-3"
-          >
+          <div class="px-3">
             <p
               class="prose prose-sm max-w-none sm:max-lg:prose-base lg:prose-lg"
               v-text="placeDetails.info"

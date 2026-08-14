@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Ai\Agents\EateryDescriptionAgent;
 use App\Models\EateryAiDescription;
 use App\Models\EatingOut\Eatery;
 use Exception;
 use Illuminate\Console\Command;
-use OpenAI\Laravel\Facades\OpenAI;
 
 class GenerateAiEateryDescriptionsCommand extends Command
 {
@@ -25,18 +25,11 @@ class GenerateAiEateryDescriptionsCommand extends Command
             ->lazy()
             ->each(function (Eatery $eatery): void {
                 try {
-                    $result = OpenAI::chat()->create([
-                        'model' => 'gpt-4o-mini',
-                        'messages' => [
-                            ['role' => 'system', 'content' => view('prompts.eatery-description', ['eatery' => $eatery])->render()],
-                        ],
-                    ]);
-
-                    $response = $result->choices[0]->message->content;
+                    $response = (new EateryDescriptionAgent($eatery))->prompt('Generate the description');
 
                     EateryAiDescription::query()->create([
                         'wheretoeat_id' => $eatery->id,
-                        'description' => $response,
+                        'description' => $response->text,
                     ]);
 
                     $eatery->updateQuietly([

@@ -11,7 +11,6 @@ use App\Models\EatingOut\NationwideBranch;
 use App\Models\SealiacOverview;
 use Exception;
 use Illuminate\Support\Str;
-use OpenAI\Laravel\Facades\OpenAI;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -29,8 +28,6 @@ class GetControllerTest extends TestCase
         $this->branch = $this->create(NationwideBranch::class, [
             'wheretoeat_id' => $this->eatery->id,
         ]);
-
-        OpenAI::fake();
     }
 
     #[Test]

@@ -11,6 +11,9 @@ use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryFeature;
+use App\Models\EatingOut\EateryVenueType;
+use App\Services\EatingOut\Filters\GetFiltersForNationwide;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Testing\TestResponse;
@@ -69,6 +72,14 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
+    public function itCallsTheGetFiltersForNationwideService(): void
+    {
+        $this->expectAction(GetFiltersForNationwide::class);
+
+        $this->visitPage();
+    }
+
+    #[Test]
     public function itRendersTheInertiaPage(): void
     {
         $this->visitPage()
@@ -81,8 +92,94 @@ class IndexControllerTest extends TestCase
             );
     }
 
-    protected function visitPage(): TestResponse
+    #[Test]
+    public function itRendersTheFiltersOnThePage(): void
     {
-        return $this->get(route('eating-out.nationwide'));
+        $this->visitPage()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->has('filters.categories')
+                    ->has('filters.venueTypes')
+                    ->has('filters.features')
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itReturnsAllOfTheChainsWhenNoFiltersAreGiven(): void
+    {
+        $this->build(Eatery::class)->attraction()->create(['county_id' => $this->county->id]);
+
+        $this->visitPage()->assertInertia(fn (Assert $page) => $page->has('county.chains', 2)->etc());
+    }
+
+    #[Test]
+    public function itFiltersTheChainsByCategory(): void
+    {
+        $attraction = $this->build(Eatery::class)->attraction()->create(['county_id' => $this->county->id]);
+
+        $this->visitPage(['filter' => ['category' => 'att']])
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->has('county.chains', 1)
+                    ->where('county.chains.0.key', $attraction->id)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itFiltersTheChainsByVenueType(): void
+    {
+        $venueType = EateryVenueType::query()->where('id', 2)->firstOrFail();
+
+        $eatery = $this->build(Eatery::class)->create([
+            'county_id' => $this->county->id,
+            'venue_type_id' => $venueType->id,
+        ]);
+
+        $this->visitPage(['filter' => ['venueType' => $venueType->slug]])
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->has('county.chains', 1)
+                    ->where('county.chains.0.key', $eatery->id)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itFiltersTheChainsByFeature(): void
+    {
+        $feature = EateryFeature::query()->orderBy('feature')->firstOrFail();
+
+        $eatery = $this->build(Eatery::class)->create(['county_id' => $this->county->id]);
+
+        $feature->eateries()->attach($eatery);
+
+        $this->visitPage(['filter' => ['feature' => $feature->slug]])
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->has('county.chains', 1)
+                    ->where('county.chains.0.key', $eatery->id)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itStillReportsTheUnfilteredNumberOfChainsWhenFiltering(): void
+    {
+        $this->build(Eatery::class)->attraction()->create(['county_id' => $this->county->id]);
+
+        $this->visitPage(['filter' => ['category' => 'att']])
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->has('county.chains', 1)
+                    ->where('county.eateries', 2)
+                    ->etc()
+            );
+    }
+
+    protected function visitPage(array $params = []): TestResponse
+    {
+        return $this->get(route('eating-out.nationwide', $params));
     }
 }

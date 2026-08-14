@@ -145,9 +145,6 @@ class IndexControllerTest extends TestCase
     public function itCallsTheGetFiltersForSearchResults(): void
     {
         $this->mock(GetFiltersForSearchResults::class)
-            ->shouldReceive('usingSearchKey')
-            ->once()
-            ->andReturnSelf()
             ->shouldReceive('handle')
             ->once()
             ->andReturn([]);

@@ -18,7 +18,6 @@ use Illuminate\Http\Request;
 use Jpeters8889\PolymorphicPanel\PolymorphicPanel;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Select;
@@ -28,7 +27,7 @@ use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
-/** @extends Resource<Eatery> */
+/** @extends resource<Eatery> */
 /**
  * @codeCoverageIgnore
  */
@@ -68,21 +67,40 @@ class NationwideEateries extends Resource
             ]),
 
             ...$request->viaRelationship() === false ? [Panel::make('Details', [
-                Hidden::make('Type', 'type_id')->default(1),
+                Select::make('Type', 'type_id')
+                    ->displayUsingLabels()
+                    ->fullWidth()
+                    ->filterable()
+                    ->rules(['required'])
+                    ->default(1)
+                    ->options([
+                        1 => 'Eatery',
+                        2 => 'Attraction',
+                        3 => 'Hotel',
+                    ]),
 
                 Select::make('Venue Type', 'venue_type_id')
                     ->hideFromIndex()
                     ->displayUsingLabels()
-                    ->options($this->getVenueTypes(1))
+                    ->dependsOn(['type_id'], function (Select $field, NovaRequest $request): void {
+                        match ($request->type_id) {
+                            default => $field->options($this->getVenueTypes(1))->rules(['required']),
+                            2 => $field->options($this->getVenueTypes(2))->rules(['required']),
+                            3 => $field->readonly()->options($this->getVenueTypes(3))->default(26)->setValue(26),
+                        };
+                    })
                     ->fullWidth()
                     ->rules(['required']),
 
                 Select::make('Cuisine', 'cuisine_id')
                     ->hideFromIndex()
-                    ->displayUsingLabels()
                     ->fullWidth()
-                    ->options($this->getCuisines())
-                    ->rules(['required']),
+                    ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
+                        return match ($request->type_id) {
+                            1 => $field->options($this->getCuisines())->rules(['required']),
+                            default => $field->hide()->setValue(29),
+                        };
+                    }),
 
                 Textarea::make('Info')
                     ->alwaysShow()
@@ -123,6 +141,7 @@ class NationwideEateries extends Resource
     {
         return EateryVenueType::query()
             ->when($typeId, fn (Builder $query) => $query->where('type_id', $typeId))
+            ->orderBy('venue_type')
             ->get()
             ->mapWithKeys(fn (EateryVenueType $venueType) => [$venueType->id => $venueType->venue_type])
             ->toArray();

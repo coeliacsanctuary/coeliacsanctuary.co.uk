@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Middleware;
 
-use App\Actions\CheckForRouteRedirectAction;
+use App\Actions\Redirects\CheckForRouteRedirectAction;
+use App\Actions\Redirects\HandleRedirectResponseAction;
 use App\Models\Blogs\Blog;
 use App\Models\Redirect;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -62,34 +63,7 @@ class AddRouteModelBindingFallbacksMiddlewareTest extends TestCase
     }
 
     #[Test]
-    public function ifCheckForRouteRedirectActionReturnsARedirectInstanceItRedirectsUsingTheToAndStatus(): void
-    {
-        $blog = $this->create(Blog::class, [
-            'live' => false,
-        ]);
-
-        $redirect = $this->create(Redirect::class, [
-            'to' => '/blog',
-            'status' => Response::HTTP_TEMPORARY_REDIRECT,
-        ]);
-
-        $this->mock(CheckForRouteRedirectAction::class)
-            ->shouldReceive('handle')
-            ->withArgs(function ($argPath) use ($blog) {
-                $this->assertEquals("blog/{$blog->slug}", $argPath);
-
-                return true;
-            })
-            ->andReturn($redirect)
-            ->once();
-
-        $this->get(route('blog.show', $blog))
-            ->assertStatus($redirect->status)
-            ->assertRedirect($redirect->to);
-    }
-
-    #[Test]
-    public function ifCheckForRouteRedirectActionReturnsARedirectInstanceItIncrementsTheHitsCount(): void
+    public function ifCheckForRouteRedirectActionReturnsARedirectInstanceItCalsTheHandleRedirectResponseAction(): void
     {
         $blog = $this->create(Blog::class, [
             'live' => false,
@@ -111,9 +85,16 @@ class AddRouteModelBindingFallbacksMiddlewareTest extends TestCase
             ->andReturn($redirect)
             ->once();
 
-        $this->get(route('blog.show', $blog));
+        $this->mock(HandleRedirectResponseAction::class)
+            ->shouldReceive('handle')
+            ->withArgs(function ($redirectArg) use ($redirect) {
+                $this->assertTrue($redirect->is($redirectArg));
 
-        $this->assertEquals(6, $redirect->fresh()->hits);
+                return true;
+            })
+            ->once();
+
+        $this->get(route('blog.show', $blog));
     }
 
     #[Test]

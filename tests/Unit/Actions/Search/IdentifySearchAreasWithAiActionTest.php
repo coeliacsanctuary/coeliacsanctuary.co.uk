@@ -4,156 +4,75 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Search;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Search\IdentifySearchAreasWithAiAction;
+use App\Ai\Agents\SearchAreasAgent;
 use App\DataObjects\Search\SearchAiResponse;
 use App\Models\Search\Search;
 use App\Models\Search\SearchAiResponse as SearchAiResponseModel;
-use OpenAI\Laravel\Facades\OpenAI;
-use OpenAI\Resources\Chat;
-use OpenAI\Responses\Chat\CreateResponse;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use RuntimeException;
 
 class IdentifySearchAreasWithAiActionTest extends TestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
-
     }
 
     #[Test]
     public function itUsesACachedResponseFromTheDatabaseIfThereIsOneForTheSearchHistory(): void
     {
         $searchHistory = $this->create(Search::class);
-        $aiResponse = $this->create(SearchAiResponseModel::class, [
+        $this->create(SearchAiResponseModel::class, [
             'search_id' => $searchHistory->id,
         ]);
 
-        OpenAI::fake();
+        SearchAreasAgent::fake();
 
         app(IdentifySearchAreasWithAiAction::class)->handle($searchHistory);
 
-        OpenAI::assertNothingSent();
+        SearchAreasAgent::assertNeverPrompted();
     }
 
     #[Test]
-    public function itUsesTheCorrectAiModel(): void
+    public function itPromptsTheAgentWithTheSearchTerm(): void
     {
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'foo',
-                    ],
-                ],
-            ],
-        ])]);
+        SearchAreasAgent::fake([['shop' => 30, 'eating-out' => 40, 'blogs' => 10, 'recipes' => 20, 'explanation' => 'foobar', 'location' => null]]);
 
-        app(IdentifySearchAreasWithAiAction::class)->handle($this->create(Search::class));
+        app(IdentifySearchAreasWithAiAction::class)->handle($this->create(Search::class, ['term' => 'manchester restaurant']));
 
-        OpenAI::assertSent(Chat::class, function (string $method, array $parameters): bool {
-            $this->assertEquals('create', $method);
-
-            $this->assertArrayHasKey('model', $parameters);
-            $this->assertEquals('gpt-3.5-turbo-1106', $parameters['model']);
-
-            return true;
-        });
+        SearchAreasAgent::assertPrompted('manchester restaurant');
     }
 
     #[Test]
-    public function itPassesTheCorrectPrompt(): void
+    public function itReturnsNullIfTheAgentThrowsAnException(): void
     {
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'foo',
-                    ],
-                ],
-            ],
-        ])]);
-
-        app(IdentifySearchAreasWithAiAction::class)->handle($this->create(Search::class, ['term' => 'foo']));
-
-        OpenAI::assertSent(Chat::class, function (string $method, array $parameters): bool {
-            $this->assertEquals('create', $method);
-
-            $this->assertArrayHasKey('messages', $parameters);
-            $this->assertIsArray($parameters['messages']);
-            $this->assertCount(1, $parameters['messages']);
-            $this->assertArrayHasKeys(['role', 'content'], $parameters['messages'][0]);
-            $this->assertEquals('system', $parameters['messages'][0]['role']);
-            $this->assertEquals(view('prompts.search', ['searchTerm' => 'foo'])->render(), $parameters['messages'][0]['content']);
-
-            return true;
-        });
-    }
-
-    #[Test]
-    public function itReturnsNullIfJsonValidationFails(): void
-    {
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'not json',
-                    ],
-                ],
-            ],
-        ])]);
+        SearchAreasAgent::fake(fn () => throw new RuntimeException('Agent failed'));
 
         $this->assertNull(app(IdentifySearchAreasWithAiAction::class)->handle($this->create(Search::class)));
     }
 
     #[Test]
-    public function itJsonDecodesTheResponseAndReturnsItAsASearchAiResponse(): void
+    public function itReturnsASearchAiResponseFromTheAgentResult(): void
     {
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => json_encode([
-                            'blogs' => 10,
-                            'recipes' => 20,
-                            'shop' => 30,
-                            'eating-out' => 40,
-                            'explanation' => 'foobar',
-                        ]),
-                    ],
-                ],
-            ],
-        ])]);
+        SearchAreasAgent::fake([['shop' => 30, 'eating-out' => 40, 'blogs' => 10, 'recipes' => 20, 'explanation' => 'foobar', 'location' => null]]);
 
         $response = app(IdentifySearchAreasWithAiAction::class)->handle($this->create(Search::class));
 
         $this->assertInstanceOf(SearchAiResponse::class, $response);
-        $this->assertEquals(10, $response->blogs);
-        $this->assertEquals(20, $response->recipes);
         $this->assertEquals(30, $response->shop);
         $this->assertEquals(40, $response->eatingOut);
+        $this->assertEquals(10, $response->blogs);
+        $this->assertEquals(20, $response->recipes);
         $this->assertEquals('foobar', $response->reasoning);
+        $this->assertNull($response->location);
     }
 
     #[Test]
-    public function itCreatesAnSearchAiResponseAgainstTheHistoryClass(): void
+    public function itCreatesASearchAiResponseAgainstTheSearchRecord(): void
     {
-        OpenAI::fake([CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => json_encode([
-                            'blogs' => 10,
-                            'recipes' => 20,
-                            'shop' => 30,
-                            'eating-out' => 40,
-                            'explanation' => 'foobar',
-                        ]),
-                    ],
-                ],
-            ],
-        ])]);
+        SearchAreasAgent::fake([['shop' => 30, 'eating-out' => 40, 'blogs' => 10, 'recipes' => 20, 'explanation' => 'foobar', 'location' => null]]);
 
         $searchHistory = $this->create(Search::class);
 

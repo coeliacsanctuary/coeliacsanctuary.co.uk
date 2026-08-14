@@ -104,25 +104,9 @@ useJourneyTracking().logWhenVisible(
         />
 
         <p
-          v-if="typeof item.description === 'string'"
           class="prose max-w-none flex-1 lg:prose-xl"
           v-text="item.description"
         />
-
-        <div
-          v-for="(restaurant, index) in item.description"
-          v-else
-          :key="index"
-        >
-          <p
-            class="prose-xl max-w-none flex-1 font-semibold lg:prose-2xl"
-            v-text="restaurant.title"
-          />
-          <p
-            class="prose max-w-none flex-1 lg:prose-xl"
-            v-text="restaurant.info"
-          />
-        </div>
 
         <div class="mt-auto flex items-end justify-between">
           <div class="flex items-end space-x-2">

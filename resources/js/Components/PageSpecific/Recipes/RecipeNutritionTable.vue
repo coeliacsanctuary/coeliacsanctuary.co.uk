@@ -12,13 +12,13 @@ withDefaults(
 
 <template>
   <div
-    class="w-fit overflow-hidden rounded-lg border-2 border-primary text-xs xs:text-sm"
+    class="overflow-hidden rounded-lg border-2 border-primary text-xs xs:text-sm"
   >
     <div
       class="grid divide-x-2 divide-primary border-primary bg-primary-light/50 font-semibold"
       :class="{
         'grid-cols-6 text-center *:p-1': direction === 'horizontal',
-        'grid-cols-4 divide-y-2 *:p-2': direction === 'vertical',
+        'w-full grid-cols-4 divide-y-2 *:p-2': direction === 'vertical',
       }"
     >
       <div
@@ -43,12 +43,7 @@ withDefaults(
         {{ nutrition.calories }}
       </div>
 
-      <div
-        class=""
-        :class="{ 'col-span-3': direction === 'vertical' }"
-      >
-        Carbs
-      </div>
+      <div :class="{ 'col-span-3': direction === 'vertical' }">Carbs</div>
       <div
         class="bg-white"
         :class="{
@@ -59,12 +54,7 @@ withDefaults(
         {{ nutrition.carbs }}<sub>g</sub>
       </div>
 
-      <div
-        class=""
-        :class="{ 'col-span-3': direction === 'vertical' }"
-      >
-        Fibre
-      </div>
+      <div :class="{ 'col-span-3': direction === 'vertical' }">Fibre</div>
       <div
         class="bg-white"
         :class="{
@@ -75,12 +65,7 @@ withDefaults(
         {{ nutrition.fibre }}<sub>g</sub>
       </div>
 
-      <div
-        class=""
-        :class="{ 'col-span-3': direction === 'vertical' }"
-      >
-        Fat
-      </div>
+      <div :class="{ 'col-span-3': direction === 'vertical' }">Fat</div>
       <div
         class="bg-white"
         :class="{
@@ -103,7 +88,6 @@ withDefaults(
       </div>
 
       <div
-        class=""
         :class="{
           '!border-r-0': direction === 'horizontal',
           'col-span-3 !border-b-0': direction === 'vertical',

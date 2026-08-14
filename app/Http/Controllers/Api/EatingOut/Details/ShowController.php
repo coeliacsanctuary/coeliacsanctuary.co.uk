@@ -18,7 +18,7 @@ class ShowController
     public function __invoke(Request $request, Eatery $eatery): EateryBrowseDetailsResource|EateryAppResource
     {
         $eatery->load([
-            'country', 'county', 'town', 'town.county', 'restaurants', 'venueType', 'type', 'cuisine',
+            'country', 'county', 'town', 'town.county', 'area', 'area.town', 'restaurants', 'venueType', 'type', 'cuisine',
             'reviews' => function (HasMany $builder) use ($request) {
                 /** @var HasMany<EateryReview, Eatery> $builder */
                 return $builder->where('approved', 1)
@@ -29,7 +29,10 @@ class ShowController
         ]);
 
         if ($request->has('branchId')) {
-            $branch = $eatery->nationwideBranches()->where('id', $request->integer('branchId'))->firstOrFail();
+            $branch = $eatery->nationwideBranches()
+                ->where('id', $request->integer('branchId'))
+                ->with(['country', 'county', 'town', 'town.county', 'area', 'area.town'])
+                ->firstOrFail();
 
             $eatery->setRelation('branch', $branch);
         }

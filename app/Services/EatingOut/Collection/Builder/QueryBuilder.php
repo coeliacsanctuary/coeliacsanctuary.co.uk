@@ -47,7 +47,7 @@ abstract class QueryBuilder
         $this->prependJoins($query);
 
         if ($this->configuration->getJoins()->isNotEmpty()) {
-            $this->configuration->getJoins()->each(fn ($join) => $join($query));
+            $this->configuration->getJoins()->each(fn ($join) => $join($query, $this->getTableName()));
         }
 
         if ($this->configuration->getWheres()->isNotEmpty()) {
@@ -78,6 +78,7 @@ abstract class QueryBuilder
         $counts->each(function (Count $count) use ($query): void {
             $query
                 ->addSelect(
+                    /** @phpstan-ignore argument.type */
                     DB::raw("(select count(*) from {$this->prefixTable($count->table)} where {$this->prefixTable($count->localKey)} = {$this->prefixTable($count->foreignKey)}) as {$count->alias}")
                 )
                 ->having($count->alias, $count->operator, $count->value);
@@ -92,6 +93,7 @@ abstract class QueryBuilder
         $averages->each(function (Average $average) use ($query): void {
             $query
                 ->addSelect(
+                    /** @phpstan-ignore argument.type */
                     DB::raw("(select avg({$average->column}) from {$this->prefixTable($average->table)} where {$this->prefixTable($average->localKey)} = {$this->prefixTable($average->foreignKey)}) as {$average->alias}")
                 )
                 ->having($average->alias, $average->operator, $average->value);
@@ -106,7 +108,7 @@ abstract class QueryBuilder
         $query->where(function (Builder $builder) use ($clauses): void {
             $clauses->each(function (Where|Collection $where) use ($builder): void {
                 if ($where instanceof Where) {
-                    $where($builder);
+                    $where($builder, $this->getTableName());
 
                     return;
                 }
@@ -127,6 +129,7 @@ abstract class QueryBuilder
                 $query->leftJoin($this->prefixTable($order->table), $this->prefixTable($order->localKey), '=', $this->prefixTable($order->foreignKey));
             }
 
+            /** @phpstan-ignore argument.type */
             $query->orderBy($this->prefixTable($order->column), $order->direction);
         });
     }

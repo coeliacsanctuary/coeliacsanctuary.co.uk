@@ -57,6 +57,14 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         static::addGlobalScope(fn (Builder $builder) => $builder->whereHas('variants'));
     }
 
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return [
+            'google_merchant_enabled' => 'boolean',
+        ];
+    }
+
     public function getRouteKeyName()
     {
         return 'slug';
@@ -175,7 +183,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
         return $this->variants->filter(fn (ShopProductVariant $variant) => $variant->live)->count() > 0;
     }
 
-    protected function isInStock(): bool
+    public function isInStock(): bool
     {
         return $this
             ->variants()

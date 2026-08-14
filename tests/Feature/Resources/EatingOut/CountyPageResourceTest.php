@@ -34,13 +34,33 @@ class CountyPageResourceTest extends TestCase
     #[Test]
     public function itReturnsTheCorrectKeys(): void
     {
-        $keys = ['name', 'slug', 'image', 'towns', 'eateries', 'reviews'];
+        $keys = ['name', 'slug', 'latlng', 'description', 'image', 'towns', 'eateries', 'reviews'];
 
         $resource = (new CountyPageResource($this->county))->toArray(request());
 
         foreach ($keys as $key) {
             $this->assertArrayHasKey($key, $resource);
         }
+    }
+
+    #[Test]
+    public function itFormatsTheCountyDescriptionAsMarkdown(): void
+    {
+        $this->county->updateQuietly(['description' => 'A **gluten free** county']);
+
+        $resource = (new CountyPageResource($this->county))->toArray(request());
+
+        $this->assertStringContainsString('<strong>gluten free</strong>', (string) $resource['description']);
+    }
+
+    #[Test]
+    public function itReturnsAnEmptyDescriptionWhenTheCountyDoesntHaveOne(): void
+    {
+        $this->county->updateQuietly(['description' => null]);
+
+        $resource = (new CountyPageResource($this->county))->toArray(request());
+
+        $this->assertEmpty((string) $resource['description']);
     }
 
     #[Test]

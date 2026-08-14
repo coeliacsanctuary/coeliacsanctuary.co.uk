@@ -9,12 +9,13 @@ use App\Concerns\ClearsCache;
 use App\Concerns\Comments\Commentable;
 use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
+use App\Concerns\Faqs\Faqable;
 use App\Concerns\LinkableModel;
 use App\Contracts\Comments\HasComments;
+use App\Contracts\Faqs\HasFaqs;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
-use App\Models\EatingOut\EateryCollection;
 use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Support\Collections\CanBeCollected;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
@@ -33,8 +35,9 @@ use Spatie\SchemaOrg\Schema;
 /**
  * @implements Collectable<$this>
  * @implements HasComments<$this>
+ * @implements HasFaqs<$this>
  */
-class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearchable
+class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable
 {
     /** @use CanBeCollected<$this> */
     use CanBeCollected;
@@ -46,7 +49,10 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     use Commentable;
 
     use DisplaysDates;
+
     use DisplaysMedia;
+    /** @use Faqable<$this> */
+    use Faqable;
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
@@ -124,10 +130,10 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
         return $this->belongsTo(BlogTag::class, 'primary_tag_id');
     }
 
-    /** @return BelongsTo<EateryCollection, $this> */
-    public function eateryCollection(): BelongsTo
+    /** @return HasMany<BlogMetric, $this> */
+    public function metrics(): HasMany
     {
-        return $this->belongsTo(EateryCollection::class, 'eatery_collection_id');
+        return $this->hasMany(BlogMetric::class);
     }
 
     protected function linkRoot(): string

@@ -6,10 +6,16 @@ import {
   VNodeProps,
 } from 'vue';
 
+export type ArticleFaq = {
+  question: string;
+  answer: string;
+};
+
 export type HomeHoverItem = {
   title: string;
   link: string;
   image: string;
+  header_image_alt_text?: string;
   square_image?: string;
   type?: 'Blog' | 'Recipe';
 };
@@ -71,6 +77,7 @@ export type CoeliacButtonProps = {
   iconOnly?: boolean;
   target?: string;
   iconClasses?: string;
+  labelClasses?: string;
 };
 
 export type CustomComponent =

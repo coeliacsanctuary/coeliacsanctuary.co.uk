@@ -28,3 +28,4 @@ yarn-error.log
 /.claude
 /boost.json
 /.ai/mcp/
+google-auth.json

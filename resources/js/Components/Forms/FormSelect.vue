@@ -88,7 +88,10 @@ const classes = (): string[] => {
         v-text="'*'"
       />
     </label>
-    <div class="relative rounded-md shadow-xs">
+    <div
+      class="relative rounded-md shadow-xs"
+      :class="wrapperClasses"
+    >
       <select
         v-model="value"
         :name="name"

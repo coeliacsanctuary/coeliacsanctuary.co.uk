@@ -109,6 +109,7 @@ class ShowController
 
         return $inertia
             ->title('Checkout')
+            ->disableAds()
             ->doNotTrack()
             ->render('Shop/Checkout', $props);
     }

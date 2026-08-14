@@ -24,7 +24,9 @@ class IndexController
     ): Response {
         return $inertia
             ->title('Gluten Free Blogs' . ($tag->exists ? " tagged with {$tag->tag}" : ''))
-            ->metaDescription('Coeliac Sanctuary gluten free blog list | All of our Coeliac blog posts in one list')
+            ->metaDescription($tag->exists
+                ? "Coeliac Sanctuary gluten free blogs tagged with {$tag->tag} — coeliac news, new product launches, free from reviews, and life with coeliac disease."
+                : 'Gluten free and coeliac blogs from Coeliac Sanctuary — coeliac news, new gluten free product launches, free from range reviews, and life with coeliac disease.')
             ->metaTags(['coeliac sanctuary blog', 'blog', 'coeliac blog', 'gluten free blog', ...($tag->exists ? ["{$tag->tag} blogs"] : [])])
             ->metaImage($getOpenGraphImageForRouteAction->handle('blog'))
             ->metaFeed(route('blog.feed'))

@@ -4,88 +4,77 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Actions\CheckForRouteRedirectAction;
-use App\Models\Redirect;
-use Illuminate\Http\Response;
+use App\Contracts\RouteFallbackResolverContract;
+use App\Support\MagicRouting\Resolvers\HundredPercentGlutenFreeEateriesFallbackResolver;
+use App\Support\MagicRouting\Resolvers\RedirectFallbackResolver;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FallbackControllerTest extends TestCase
 {
-    #[Test]
-    public function itCallsTheCheckForRouteRedirectAction(): void
+    /** @param class-string<RouteFallbackResolverContract>[] $handlers  */
+    protected function mockResolversToReject(array $handlers): void
     {
-        $this->mock(CheckForRouteRedirectAction::class)
-            ->shouldReceive('handle')
-            ->withArgs(function ($argPath) {
-                $this->assertEquals('foobar', $argPath);
+        foreach ($handlers as $handler) {
+            $this->mock($handler)
+                ->shouldReceive('canHandle')
+                ->andReturnFalse()
+                ->once()
+                ->getMock()
+                ->shouldNotReceive('handle');
+        }
+    }
 
-                return true;
-            })
+    #[Test]
+    public function itChecksThHundredPercentGlutenFreeFallbackResolverFirst(): void
+    {
+        /** @var class-string<RouteFallbackResolverContract>[] $handlersToReject */
+        $handlersToReject = [];
+
+        $this->mockResolversToReject($handlersToReject);
+
+        $this->mock(HundredPercentGlutenFreeEateriesFallbackResolver::class)
+            ->shouldReceive('canHandle')
+            ->andReturnTrue()
+            ->once()
+            ->getMock()
+            ->shouldReceive('handle')
             ->once();
 
         $this->get('foobar');
     }
 
     #[Test]
-    public function ifCheckForRouteRedirectActionReturnsARedirectInstanceItRedirectsUsingTheGivenToAndStatus(): void
+    public function itChecksTheRedirectFallbackResolverIfNoOtherResolvesReturnHandleable(): void
     {
-        $redirect = $this->create(Redirect::class, [
-            'to' => '/blog',
-            'status' => Response::HTTP_TEMPORARY_REDIRECT,
-        ]);
+        /** @var class-string<RouteFallbackResolverContract>[] $handlersToReject */
+        $handlersToReject = [
+            HundredPercentGlutenFreeEateriesFallbackResolver::class,
+        ];
 
-        $this->mock(CheckForRouteRedirectAction::class)
+        $this->mockResolversToReject($handlersToReject);
+
+        $this->mock(RedirectFallbackResolver::class)
+            ->shouldReceive('canHandle')
+            ->andReturnTrue()
+            ->once()
+            ->getMock()
             ->shouldReceive('handle')
-            ->withArgs(function ($argPath) {
-                $this->assertEquals('foobar', $argPath);
-
-                return true;
-            })
-            ->andReturn($redirect)
-            ->once();
-
-        $this->get('foobar')
-            ->assertStatus($redirect->status)
-            ->assertRedirect($redirect->to);
-    }
-
-    #[Test]
-    public function ifCheckForRouteRedirectActionReturnsARedirectInstanceItIncrementsTheHitsCount(): void
-    {
-        $redirect = $this->create(Redirect::class, [
-            'to' => '/blog',
-            'status' => Response::HTTP_TEMPORARY_REDIRECT,
-            'hits' => 5,
-        ]);
-
-        $this->mock(CheckForRouteRedirectAction::class)
-            ->shouldReceive('handle')
-            ->withArgs(function ($argPath) {
-                $this->assertEquals('foobar', $argPath);
-
-                return true;
-            })
-            ->andReturn($redirect)
             ->once();
 
         $this->get('foobar');
-
-        $this->assertEquals(6, $redirect->refresh()->hits);
     }
 
     #[Test]
-    public function ifCheckForRouteRedirectActionReturnsNullItReturnsNotFound(): void
+    public function ifAllResolversReturnNotHandleableItReturnsNotFound(): void
     {
-        $this->mock(CheckForRouteRedirectAction::class)
-            ->shouldReceive('handle')
-            ->withArgs(function ($argPath) {
-                $this->assertEquals('foobar', $argPath);
+        /** @var class-string<RouteFallbackResolverContract>[] $handlersToReject */
+        $handlersToReject = [
+            HundredPercentGlutenFreeEateriesFallbackResolver::class,
+            RedirectFallbackResolver::class,
+        ];
 
-                return true;
-            })
-            ->andReturnNull()
-            ->once();
+        $this->mockResolversToReject($handlersToReject);
 
         $this->get('foobar')->assertNotFound();
     }

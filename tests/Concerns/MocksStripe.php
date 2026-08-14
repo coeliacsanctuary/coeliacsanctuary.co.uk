@@ -137,9 +137,6 @@ trait MocksStripe
                     'exp_year' => '24',
                 ]),
                 'type' => 'Card',
-                'wallet' => [
-                    'type' => 'Card',
-                ],
             ]),
             'balance_transaction' => BalanceTransaction::constructFrom([
                 'fee' => $fee,

@@ -19,15 +19,14 @@ use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToBranches;
 use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToEateries;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\ExposeSearchResultEateryIdsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromFiltersAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromQueryBuilderConfigurationAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInAreaAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInCollectionAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInLatLngRadiusAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInSearchAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInTownAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesFromFiltersAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInCollectionAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesFromQueryBuilderConfigurationAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInLatLngAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInLondonAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInTownAction;
@@ -151,7 +150,7 @@ abstract class GetEateriesTestCase extends TestCase
             eateries: $eateries,
         );
 
-        $this->callAction(GetEateriesInCollectionAction::class, $pipelineData, $closure);
+        $this->callAction(GetEateriesFromQueryBuilderConfigurationAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }
@@ -175,7 +174,6 @@ abstract class GetEateriesTestCase extends TestCase
         return $toReturn;
     }
 
-
     protected function callGetEateriesFromFiltersAction(Collection $eateries = new Collection(), array $filters = []): ?GetEateriesPipelineData
     {
         $toReturn = null;
@@ -195,7 +193,7 @@ abstract class GetEateriesTestCase extends TestCase
         return $toReturn;
     }
 
-    protected function callGetEateriesInSearchAreaAction(Collection $eateries = new Collection(), array $filters = []): ?GetEateriesPipelineData
+    protected function callGetEateriesInSearchAreaAction(Collection $eateries = new Collection(), array $filters = [], string $sort = 'alphabetical'): ?GetEateriesPipelineData
     {
         Eatery::query()->update([
             'lat' => 55.5,
@@ -210,6 +208,7 @@ abstract class GetEateriesTestCase extends TestCase
 
         $pipelineData = new GetEateriesPipelineData(
             searchTerm: $this->eaterySearchTerm,
+            sort: $sort,
             filters: $filters,
             eateries: $eateries,
         );
@@ -276,7 +275,7 @@ abstract class GetEateriesTestCase extends TestCase
             eateries: $eateries,
         );
 
-        $this->callAction(GetNationwideBranchesInCollectionAction::class, $pipelineData, $closure);
+        $this->callAction(GetNationwideBranchesFromQueryBuilderConfigurationAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }
@@ -386,7 +385,7 @@ abstract class GetEateriesTestCase extends TestCase
         return $toReturn;
     }
 
-    protected function callHydrateEateriesAction(?Collection $eateries = null): ?GetEateriesPipelineData
+    protected function callHydrateEateriesAction(?Collection $eateries = null, bool $hydrateFullReviews = false): ?GetEateriesPipelineData
     {
         if ( ! $eateries) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
@@ -403,7 +402,8 @@ abstract class GetEateriesTestCase extends TestCase
             town: $this->town,
             filters: [],
             eateries: $eateries,
-            paginator: $this->callPaginateEateriesAction($eateries)?->paginator
+            paginator: $this->callPaginateEateriesAction($eateries)?->paginator,
+            hydrateFullReviews: $hydrateFullReviews,
         );
 
         $this->callAction(HydrateEateriesAction::class, $pipelineData, $closure);
@@ -438,7 +438,7 @@ abstract class GetEateriesTestCase extends TestCase
         return $toReturn;
     }
 
-    protected function callHydrateBranchesAction(?Collection $eateries = null): ?GetEateriesPipelineData
+    protected function callHydrateBranchesAction(?Collection $eateries = null, bool $hydrateFullReviews = false): ?GetEateriesPipelineData
     {
         if ( ! $eateries) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
@@ -455,7 +455,8 @@ abstract class GetEateriesTestCase extends TestCase
             town: $this->town,
             filters: [],
             eateries: $eateries,
-            paginator: $this->callPaginateEateriesAction($eateries)?->paginator
+            paginator: $this->callPaginateEateriesAction($eateries)?->paginator,
+            hydrateFullReviews: $hydrateFullReviews,
         );
 
         $this->callAction(HydrateBranchesAction::class, $pipelineData, $closure);
@@ -542,25 +543,6 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $this->callAction(SerialiseResultsAction::class, $pipelineData, $closure);
-
-        return $toReturn;
-    }
-
-    protected function callExposeResultResultEateryIdsAction(Collection $eateries = new Collection(), array $filters = []): ?GetEateriesPipelineData
-    {
-        $toReturn = null;
-
-        $closure = function (GetEateriesPipelineData $pipelineData) use (&$toReturn): void {
-            $toReturn = $pipelineData;
-        };
-
-        $pipelineData = new GetEateriesPipelineData(
-            searchTerm: $this->eaterySearchTerm,
-            filters: $filters,
-            eateries: $eateries,
-        );
-
-        $this->callAction(ExposeSearchResultEateryIdsAction::class, $pipelineData, $closure);
 
         return $toReturn;
     }

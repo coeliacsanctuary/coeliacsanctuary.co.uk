@@ -59,7 +59,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itReturnsNotFoundForAnEateryThatDoesntExist(callable $route, callable $data, callable $before): void
+    public function itReturnsNotFoundForAnEateryThatDoesntExist(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -68,7 +68,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itReturnsNotFoundForAnEateryThatIsNotLive(callable $route, callable $data, callable $before): void
+    public function itReturnsNotFoundForAnEateryThatIsNotLive(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -79,7 +79,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAnInvalidRating(callable $route, callable $data, callable $before): void
+    public function itErrorsWithoutAnInvalidRating(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -101,7 +101,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itFailsWithAnInvalidMethodValue(callable $route, callable $data, callable $before): void
+    public function itFailsWithAnInvalidMethodValue(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -120,7 +120,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutABranchNameWhenTheEateryIsNationwide(callable $route, callable $data, callable $before): void
+    public function itErrorsWithoutABranchNameWhenTheEateryIsNationwide(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -135,7 +135,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAName(callable $route, callable $data, callable $before): void
+    public function itErrorsWithoutAName(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -151,7 +151,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAEmail(callable $route, callable $data, callable $before): void
+    public function itErrorsWithoutAEmail(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -170,7 +170,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAReviewField(callable $route, callable $data, callable $before): void
+    public function itErrorsWithoutAReviewField(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -186,7 +186,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAReviewFieldThatIsTooLong(callable $route, callable $data, callable $before): void
+    public function itErrorsWithoutAReviewFieldThatIsTooLong(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -195,7 +195,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithAnInvalidFoodRatingValue(callable $route, callable $data, callable $before): void
+    public function itErrorsWithAnInvalidFoodRatingValue(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -211,7 +211,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithAnInvalidServiceRatingValue(callable $route, callable $data, callable $before): void
+    public function itErrorsWithAnInvalidServiceRatingValue(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -227,7 +227,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsWithoutAnInvalidHowExpensiveField(callable $route, callable $data, callable $before): void
+    public function itErrorsWithoutAnInvalidHowExpensiveField(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -246,7 +246,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsIfSubmittingMoreThan6Images(callable $route, callable $data, callable $before): void
+    public function itErrorsIfSubmittingMoreThan6Images(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -256,7 +256,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsIfAnImageDoesntExistInTheTable(callable $route, callable $data, callable $before): void
+    public function itErrorsIfAnImageDoesntExistInTheTable(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -266,7 +266,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itErrorsIfSubmittingWithAdminReviewWithoutAUser(callable $route, callable $data, callable $before): void
+    public function itErrorsIfSubmittingWithAdminReviewWithoutAUser(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -277,7 +277,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itReturnsOk(callable $route, callable $data, callable $before): void
+    public function itReturnsOk(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -286,7 +286,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itReturnsOkWithAdminReviewWhenLoggedIn(callable $route, callable $data, callable $before): void
+    public function itReturnsOkWithAdminReviewWhenLoggedIn(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -297,7 +297,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itReturnsOkWithAdminReviewWhenLoggedInAndAllowsNoLimitOnTheReviewBody(callable $route, callable $data, callable $before): void
+    public function itReturnsOkWithAdminReviewWhenLoggedInAndAllowsNoLimitOnTheReviewBody(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -308,7 +308,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itExecutesDetermineNationwideBranchFromNamePipeline(callable $route, callable $data, callable $before): void
+    public function itExecutesDetermineNationwideBranchFromNamePipeline(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 
@@ -319,7 +319,7 @@ class StoreControllerTest extends TestCase
 
     #[Test]
     #[DataProvider('routesToVisit')]
-    public function itCallsTheCreateEateryReviewAction(callable $route, callable $data, callable $before): void
+    public function itCallsTheCreateEateryReviewAction(callable $route, callable $data, callable $before, callable $after): void
     {
         $before($this);
 

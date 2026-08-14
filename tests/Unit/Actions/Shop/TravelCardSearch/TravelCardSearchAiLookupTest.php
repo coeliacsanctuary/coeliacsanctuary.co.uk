@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop\TravelCardSearch;
 
+use App\Ai\Agents\TravelCardSearchAgent;
 use App\Actions\Shop\TravelCardSearch\SearchTravelCardCountyOrLanguageAction;
 use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookupAction;
-use OpenAI\Laravel\Facades\OpenAI;
-use OpenAI\Resources\Chat;
-use OpenAI\Responses\Chat\CreateResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -18,36 +16,15 @@ class TravelCardSearchAiLookupTest extends TestCase
     {
         parent::setUp();
 
-        OpenAI::fake([
-            CreateResponse::fake([
-                'choices' => [[
-                    'message' => [
-                        'content' => json_encode([
-                            'results' => ['foobar'],
-                        ]),
-                    ],
-                ]],
-            ]),
-        ]);
+        TravelCardSearchAgent::fake([['results' => ['foobar'], 'explanation' => 'test']]);
     }
 
     #[Test]
-    public function itUsesTheTravelCardLookupPrompt(): void
+    public function itPromptsTheTravelCardSearchAgentWithTheSearchTerm(): void
     {
         app(TravelCardSearchAiLookupAction::class)->handle('foo');
 
-        OpenAI::assertSent(Chat::class, function (string $method, array $data) {
-            $this->assertEquals('create', $method);
-            $message = $data['messages'][0];
-
-            $this->assertArrayHasKey('role', $message);
-            $this->assertEquals('system', $message['role']);
-
-            $this->assertArrayHasKey('content', $message);
-            $this->assertEquals(view('prompts.travel-card-lookup', ['searchTerm' => 'foo'])->render(), $message['content']);
-
-            return true;
-        });
+        TravelCardSearchAgent::assertPrompted('foo');
     }
 
     #[Test]
@@ -61,35 +38,7 @@ class TravelCardSearchAiLookupTest extends TestCase
     #[Test]
     public function itDoesntCallTheActionIfThereIsNoResult(): void
     {
-        OpenAI::fake([
-            CreateResponse::fake([
-                'choices' => [[
-                    'message' => [
-                        'content' => json_encode([
-                            'results' => [],
-                        ]),
-                    ],
-                ]],
-            ]),
-        ]);
-
-        $this->dontExpectAction(SearchTravelCardCountyOrLanguageAction::class);
-
-        app(TravelCardSearchAiLookupAction::class)->handle('foo');
-    }
-
-    #[Test]
-    public function itHandlesTheExceptionIfTheResultIsntValidJson(): void
-    {
-        OpenAI::fake([
-            CreateResponse::fake([
-                'choices' => [[
-                    'message' => [
-                        'content' => 'foo',
-                    ],
-                ]],
-            ]),
-        ]);
+        TravelCardSearchAgent::fake([['results' => [], 'explanation' => 'no match']]);
 
         $this->dontExpectAction(SearchTravelCardCountyOrLanguageAction::class);
 

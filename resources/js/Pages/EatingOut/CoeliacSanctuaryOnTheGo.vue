@@ -82,7 +82,7 @@ defineProps<{ image: string }>();
 
       <a
         title="Apple App Store"
-        href="https://apps.apple.com/us/app/coeliac-sanctuary-on-the-go/id1608694621"
+        href="https://apps.apple.com/gb/app/gluten-free-on-the-go/id1608694621"
         target="_blank"
         class="flex flex-col items-center space-y-2 rounded-sm bg-linear-to-br from-primary/30 to-primary-light/30 p-2 sm:h-full sm:max-w-1/2 lg:p-4"
       >

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use App\Models\User;
 use App\Support\Helpers;
@@ -19,6 +20,28 @@ class HelpersTest extends TestCase
         $ratio = 1609.344;
 
         $this->assertEquals(round($miles * $ratio), Helpers::milesToMeters($miles));
+    }
+
+    #[Test]
+    #[DataProvider('searchTermProvider')]
+    public function itCanFormatASearchTerm(string $term, string $expected): void
+    {
+        $this->assertEquals($expected, Helpers::formatSearchTerm($term));
+    }
+
+    public static function searchTermProvider(): array
+    {
+        return [
+            'lower case postcode' => ['cw1 2ab', 'CW1 2AB'],
+            'mixed case postcode' => ['Sw1a 1aa', 'SW1A 1AA'],
+            'postcode without a space' => ['cw12ab', 'CW12AB'],
+            'single letter postcode area' => ['m1 1ae', 'M1 1AE'],
+            'padded postcode' => ['  cw1 2ab  ', 'CW1 2AB'],
+            'town' => ['crewe', 'Crewe'],
+            'multi word town' => ['newcastle upon tyne', 'Newcastle Upon Tyne'],
+            'county' => ['yorkshire', 'Yorkshire'],
+            'phrase' => ['fish and chips', 'Fish and Chips'],
+        ];
     }
 
     #[Test]

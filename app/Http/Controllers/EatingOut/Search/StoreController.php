@@ -12,7 +12,13 @@ class StoreController
 {
     public function __invoke(SearchCreateRequest $request, CreateSearchAction $createSearchAction): RedirectResponse
     {
-        $searchTerm = $createSearchAction->handle($request->string('term')->toString(), $request->integer('range'));
+        $fromUserLocation = $request->filled('latlng');
+
+        $searchTerm = $createSearchAction->handle(
+            $fromUserLocation ? $request->string('latlng')->toString() : $request->string('term')->toString(),
+            $request->integer('range'),
+            $fromUserLocation,
+        );
 
         return new RedirectResponse(route('eating-out.search.show', ['eaterySearchTerm' => $searchTerm]));
     }

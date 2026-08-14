@@ -18,26 +18,23 @@ trait ClearsCache
                 $keys = config("coeliac.cacheable.{$model->cacheKey()}");
 
                 foreach ($keys as $key) {
-                    if (preg_match('/(.*)\.\{([a-z.]+)}/', $key, $matches)) {
-                        $wildcard = $matches[2];
-                        $bits = explode('.', $wildcard);
-                        $column = array_pop($bits);
+                    if (preg_match_all('/\{([a-z.]+)}/', $key, $matches)) {
+                        foreach ($matches[1] as $wildcard) {
+                            $bits = explode('.', $wildcard);
+                            $column = array_pop($bits);
 
-                        $record = $model;
+                            $record = $model;
 
-                        foreach ($bits as $bit) {
-                            $record = $record->$bit;
+                            foreach ($bits as $bit) {
+                                $record = $record->$bit;
+                            }
+
+                            if ( ! $record) {
+                                continue 2;
+                            }
+
+                            $key = str_replace("{{$wildcard}}", $record->$column, $key);
                         }
-
-                        if ( ! $record) {
-                            continue;
-                        }
-
-                        $key = str_replace("{{$wildcard}}", $record->$column, $key);
-
-                        Cache::delete($key);
-
-                        continue;
                     }
 
                     Cache::delete($key);

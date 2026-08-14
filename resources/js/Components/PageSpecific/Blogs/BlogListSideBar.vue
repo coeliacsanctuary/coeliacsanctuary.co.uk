@@ -1,34 +1,51 @@
 <script lang="ts" setup>
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
-import { ref, watch } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { Deferred, Link } from '@inertiajs/vue3';
 import { BlogTagCount } from '@/types/BlogTypes';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { pluralise } from '@/helpers';
 
 const emits = defineEmits(['close']);
 
 const props = defineProps<{
   open: boolean;
-  tags: BlogTagCount[];
+
+  /** Deferred, so absent until the follow up request lands. */
+  tags?: BlogTagCount[];
 }>();
 
 const emitClose = () => emits('close');
 
 const searchText = ref('');
 
-const tagsToDisplay = (): BlogTagCount[] => {
-  let { tags } = props;
+const maximumTagsToDisplay = 15;
 
-  if (searchText.value !== '') {
-    tags = tags.filter((tag) =>
-      tag.tag.toLowerCase().includes(searchText.value.toLowerCase()),
-    );
+const matchingTags = computed((): BlogTagCount[] => {
+  const tags = props.tags ?? [];
+
+  if (searchText.value === '') {
+    return tags;
   }
 
-  return tags.slice(0, 15);
-};
+  return tags.filter((tag) =>
+    tag.tag.toLowerCase().includes(searchText.value.toLowerCase()),
+  );
+});
+
+const tagsToDisplay = computed((): BlogTagCount[] =>
+  matchingTags.value.slice(0, maximumTagsToDisplay),
+);
+
+const truncationHint = computed((): string | null => {
+  if (matchingTags.value.length <= maximumTagsToDisplay) {
+    return null;
+  }
+
+  return `Showing ${tagsToDisplay.value.length} of ${matchingTags.value.length} ${pluralise('tag', matchingTags.value.length)} — search to narrow down`;
+});
 
 watch(
   () => props.open,
@@ -70,32 +87,53 @@ watch(
           />
         </div>
 
-        <ul
-          v-if="tagsToDisplay().length"
-          class="flex flex-col px-3"
-        >
-          <li
-            v-for="tag in tagsToDisplay()"
-            :key="tag.slug"
-          >
-            <Link
-              :href="`/blog/tags/${tag.slug}`"
-              class="flex cursor-pointer items-center justify-between border-b border-dashed border-grey-off-dark py-2 transition hover:bg-grey-light"
-            >
-              <span v-text="tag.tag" />
-              <span
-                class="text-sm text-grey"
-                v-text="`${tag.blogs_count} Blogs`"
-              />
-            </Link>
-          </li>
-        </ul>
+        <Deferred data="tags">
+          <template #fallback>
+            <div class="grid animate-pulse gap-2 px-3">
+              <div
+                v-for="placeholder in 8"
+                :key="placeholder"
+                class="flex items-center justify-between rounded-sm bg-primary-light/30 p-2"
+              >
+                <div class="h-4 w-1/2 rounded-sm bg-primary-light/60" />
+                <div class="h-3 w-1/5 rounded-sm bg-primary-light/60" />
+              </div>
+            </div>
+          </template>
 
-        <span
-          v-else
-          class="font-italic px-3"
-          v-text="'No tags found...'"
-        />
+          <ul
+            v-if="tagsToDisplay.length"
+            class="flex flex-col px-3"
+          >
+            <li
+              v-for="tag in tagsToDisplay"
+              :key="tag.slug"
+            >
+              <Link
+                :href="`/blog/tags/${tag.slug}`"
+                class="flex cursor-pointer items-center justify-between border-b border-dashed border-grey-off-dark py-2 transition hover:bg-grey-light"
+              >
+                <span v-text="tag.tag" />
+                <span
+                  class="text-sm text-grey"
+                  v-text="`${tag.blogs_count} Blogs`"
+                />
+              </Link>
+            </li>
+          </ul>
+
+          <span
+            v-else
+            class="font-italic px-3"
+            v-text="'No tags found...'"
+          />
+
+          <span
+            v-if="truncationHint"
+            class="px-3 pt-2 text-sm text-grey italic"
+            v-text="truncationHint"
+          />
+        </Deferred>
 
         <div class="flex-1 p-4">
           <CoeliacButton

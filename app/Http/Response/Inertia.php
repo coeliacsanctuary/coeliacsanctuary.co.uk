@@ -19,8 +19,11 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Inertia\DeferProp;
 use Inertia\Inertia as BaseInertia;
+use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
 use Inertia\MergeProp;
+use Inertia\ProvidesScrollMetadata;
 use Inertia\Response;
+use Inertia\ScrollProp;
 use Money\Money;
 use Spatie\SchemaOrg\Schema;
 
@@ -55,9 +58,7 @@ class Inertia
             $this->includeBasket();
         }
 
-        if (request()->hasHeader('X-Journey-Token')) {
-            BaseInertia::share('journey.token', request()->header('X-Journey-Token'));
-        }
+        BaseInertia::share('journey.token', fn (): ?string => LogPageViewMiddleware::getToken());
 
         $this->schema = [$this->baseSchema()];
 
@@ -132,6 +133,13 @@ class Inertia
     public function doNotTrack(): self
     {
         BaseInertia::share('meta.doNotTrack', true);
+
+        return $this;
+    }
+
+    public function disableAds(): self
+    {
+        BaseInertia::share('meta.hideAds', true);
 
         return $this;
     }
@@ -234,5 +242,11 @@ class Inertia
     public static function merge(mixed $value): MergeProp
     {
         return BaseInertia::merge($value);
+    }
+
+    /** @return ScrollProp<mixed> */
+    public static function scroll(mixed $value, string $wrapper = 'data', ProvidesScrollMetadata|callable|null $metadata = null): ScrollProp
+    {
+        return BaseInertia::scroll($value, $wrapper, $metadata);
     }
 }

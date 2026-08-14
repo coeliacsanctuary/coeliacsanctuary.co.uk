@@ -41,11 +41,21 @@ const howExpensive = (review: EateryReview) => {
   <div class="py-6">
     <div class="flex items-center justify-between">
       <div class="flex flex-col">
-        <h4
-          class="font-bold lg:text-xl"
-          v-text="review.body ? review.name : 'Anonymous'"
-        />
+        <div class="flex flex-wrap items-center gap-2">
+          <h4
+            class="font-bold md:text-lg"
+            v-text="review.body ? review.name : 'Anonymous'"
+          />
+          <span
+            v-if="review.admin_review"
+            class="block rounded-full border border-secondary bg-secondary/50 px-2 py-1 text-xs font-semibold"
+          >
+            Coeliac Sanctuary
+          </span>
+        </div>
+
         <time
+          class="text-xs text-grey-dark"
           :datetime="review.published"
           :title="formatDate(review.published, 'Do MMM YYYY h:mm a')"
           v-text="review.date_diff"
@@ -62,7 +72,7 @@ const howExpensive = (review: EateryReview) => {
     </div>
 
     <div
-      class="prose mt-2 max-w-none lg:prose-lg"
+      class="prose mt-2 max-w-none"
       v-html="
         review.body
           ? review.body
@@ -80,35 +90,33 @@ const howExpensive = (review: EateryReview) => {
     <div>
       <ul
         v-if="reviewHasRatings(review)"
-        class="mt-3 grid grid-cols-1 gap-3 sm:text-lg"
-        :class="
-          review.branch_name && showingAllReviews
-            ? 'sm:grid-cols-4'
-            : 'sm:grid-cols-3'
-        "
+        class="mt-3 grid grid-cols-1 gap-2 text-sm xxs:grid-cols-2 xl:grid-cols-4"
       >
         <li
           v-if="review.branch_name && showingAllReviews"
-          class="flex space-x-2 rounded-sm bg-primary-light/50 px-3 py-2 leading-none sm:flex-col sm:max-xl:space-x-0 sm:max-md:space-y-1 md:max-xl:space-y-2 xl:flex-row xl:space-y-0 xl:space-x-2"
+          class="flex flex-col gap-0.5 rounded-sm bg-primary-light/50 px-3 py-2 leading-none"
         >
           <strong>Location:</strong>
           <span v-text="ucfirst(review.branch_name)" />
         </li>
+
         <li
           v-if="review.expense"
-          class="flex space-x-2 rounded-sm bg-primary-light/50 px-3 py-2 leading-none sm:flex-col sm:max-xl:space-x-0 sm:max-md:space-y-1 md:max-xl:space-y-2 xl:flex-row xl:space-y-0 xl:space-x-2"
+          class="flex flex-col gap-0.5 rounded-sm bg-primary-light/50 px-3 py-2 leading-none"
           v-html="howExpensive(review)"
         />
+
         <li
           v-if="review.food_rating"
-          class="flex space-x-2 rounded-sm bg-primary-light/50 px-2 py-2 leading-none sm:flex-col sm:max-xl:space-x-0 sm:max-md:space-y-1 md:max-xl:space-y-2 xl:flex-row xl:space-y-0 xl:space-x-2"
+          class="flex flex-col gap-0.5 rounded-sm bg-primary-light/50 px-3 py-2 leading-none"
         >
           <strong>Food:</strong>
           <span v-text="ucfirst(review.food_rating)" />
         </li>
+
         <li
           v-if="review.service_rating"
-          class="flex space-x-2 rounded-sm bg-primary-light/50 px-2 py-2 leading-none sm:flex-col sm:space-y-1 sm:space-x-0 md:space-y-2 xl:flex-row xl:space-y-0 xl:space-x-2"
+          class="flex flex-col gap-0.5 rounded-sm bg-primary-light/50 px-3 py-2 leading-none"
         >
           <strong>Service:</strong>
           <span v-text="ucfirst(review.service_rating)" />

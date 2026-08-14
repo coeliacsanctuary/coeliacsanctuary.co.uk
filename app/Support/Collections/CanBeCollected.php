@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Collections;
 
-use App\Models\Collections\CollectionItem;
+use App\Models\Collections\CollectionGroupItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 trait CanBeCollected
 {
-    /** @return MorphMany<CollectionItem, T> */
-    public function associatedCollections(): MorphMany
+    /** @return MorphMany<CollectionGroupItem, T> */
+    public function associatedCollectionGroups(): MorphMany
     {
-        return $this->morphMany(CollectionItem::class, 'item');
+        return $this->morphMany(CollectionGroupItem::class, 'item');
     }
 }

@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
-use App\Actions\EatingOut\GetCountyListAction;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
 use App\Concerns\HasSealiacOverview;
 use App\Contracts\HasOpenGraphImageContract;
 use App\Contracts\Search\IsSearchable;
+use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
+use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
+use App\Jobs\EatingOut\GenerateNationwideDescriptionJob;
+use App\Jobs\EatingOut\GenerateTownDescriptionJob;
+use App\Support\Collections\CanBeCollected;
+use App\Support\Collections\Collectable;
 use App\DataObjects\EatingOut\LatLng;
+use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
+use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
-use App\Jobs\OpenGraphImages\CreateEateryMapPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Schema\EaterySchema;
 use App\Scopes\LiveScope;
@@ -35,6 +41,7 @@ use Spatie\SchemaOrg\Restaurant;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
+ * @implements Collectable<$this>
  *
  * @property string | null $average_rating
  * @property string | null $formatted_address
@@ -44,9 +51,13 @@ use Spatie\SchemaOrg\Restaurant;
  * @property int | null $rating_count
  * @property string $full_name
  * @property string $typeDescription
+ * @property string $display_snippet
  */
-class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
+class Eatery extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
+    /** @use CanBeCollected<$this> */
+    use CanBeCollected;
+
     use ClearsCache;
     use HasEateryDetails;
 
@@ -93,14 +104,37 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
                 CreateEatingOutOpenGraphImageJob::dispatch($town);
                 CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
                 CreateEateryAppPageOpenGraphImageJob::dispatch();
-                CreateEateryMapPageOpenGraphImageJob::dispatch();
                 CreateEateryIndexPageOpenGraphImageJob::dispatch();
             }
 
-            if (config('coeliac.generate_country_ai_descriptions') === true) {
-                $eatery->country()->update(['description' => null]);
+            if (config('coeliac.generate_eatery_ai_descriptions') === true) {
+                /** @var EateryCountry $country */
+                $country = $eatery->country;
 
-                dispatch(fn () => app(GetCountyListAction::class)->handle(force: true));
+                /** @var EateryCounty $county */
+                $county = $eatery->county;
+
+                if ($country->country === 'Nationwide') {
+                    GenerateNationwideDescriptionJob::dispatch($county);
+
+                    return;
+                }
+
+                /** @var EateryTown $town */
+                $town = $eatery->town;
+
+                GenerateCountryDescriptionJob::dispatch($country);
+                GenerateCountyDescriptionJob::dispatch($county);
+
+                if ($county->county === 'London') {
+                    /** @var EateryArea $area */
+                    $area = $eatery->area;
+
+                    GenerateBoroughDescriptionJob::dispatch($town);
+                    GenerateAreaDescriptionJob::dispatch($area);
+                } else {
+                    GenerateTownDescriptionJob::dispatch($town);
+                }
             }
         });
     }
@@ -382,6 +416,24 @@ class Eatery extends Model implements HasOpenGraphImageContract, IsSearchable
             }
 
             return $this->type->name;
+        });
+    }
+
+    /** @return Attribute<string, never> */
+    public function displaySnippet(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->snippet) {
+                return $this->snippet;
+            }
+
+            $info = $this->info;
+
+            if ( ! $info && $this->relationLoaded('restaurants')) {
+                $info = $this->restaurants->first()?->info;
+            }
+
+            return Str::limit((string) $info, 125, preserveWords: true);
         });
     }
 

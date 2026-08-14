@@ -14,8 +14,8 @@ class IndexController
     public function __invoke(Inertia $inertia, GetCollectionsForIndexAction $getCollectionsForIndexAction, GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction): Response
     {
         return $inertia
-            ->title('Collections')
-            ->metaDescription('Coeliac Sanctuary Collections | Some of our favourite things, all grouped together in collections!')
+            ->title('Gluten Free Collections')
+            ->metaDescription('Gluten free collections from Coeliac Sanctuary — recipes, blog posts and coeliac friendly places to eat, grouped together by theme so everything you need is on one page.')
             ->metaImage($getOpenGraphImageForRouteAction->handle('collection'))
             ->render('Collection/Index', [
                 'collections' => $getCollectionsForIndexAction->handle(),

@@ -11,8 +11,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 
 class ProcessReviewImagesJob implements ShouldQueue
 {
@@ -31,6 +31,7 @@ class ProcessReviewImagesJob implements ShouldQueue
         TemporaryFileUpload::query()
             ->findMany($this->fileIds)
             ->each(function (TemporaryFileUpload $file): void {
+                /** @var string $rawFile */
                 $rawFile = Storage::disk('uploads')->get($file->path);
 
                 $this->persistImage($file, $rawFile);
@@ -39,18 +40,21 @@ class ProcessReviewImagesJob implements ShouldQueue
             });
     }
 
-    protected function persistImage(TemporaryFileUpload $file, ?string $rawFile): void
+    protected function persistImage(TemporaryFileUpload $file, string $rawFile): void
     {
-        Storage::disk('review-images')->put($file->filename, (string) $rawFile, 'public');
+        $image = Image::fromBytes($rawFile)->orient();
+
+        Storage::disk('review-images')->put($file->filename, $image->toBytes(), 'public');
     }
 
-    protected function generateThumbnail(?string $rawFile, TemporaryFileUpload $file): void
+    protected function generateThumbnail(string $rawFile, TemporaryFileUpload $file): void
     {
-        $thumbnail = Image::make($rawFile)
-            ->resize(250, 250, fn ($constraint) => $constraint->aspectRatio())
-            ->encode(quality: 80);
+        $thumbnail = Image::fromBytes($rawFile)
+            ->orient()
+            ->scale(250, 250)
+            ->quality(80);
 
-        Storage::disk('review-images')->put('thumbs/' . $file->filename, (string) $thumbnail, 'public');
+        Storage::disk('review-images')->put('thumbs/' . $file->filename, $thumbnail->toBytes(), 'public');
     }
 
     protected function storeImageRow(TemporaryFileUpload $file): void

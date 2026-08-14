@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Code;
 
 use Algolia\ScoutExtended\Searchable\Aggregator;
+use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeMagicRouteContentAgent;
+use App\Ai\Agents\MagicRoutes\MagicRouteAgent;
 use App\Ai\Tools\AskSealiac\BaseTool;
 use App\Contracts\Search\IsSearchable;
 use App\Feeds\Feed;
@@ -60,7 +62,15 @@ class CodeArchitectureTest extends CodeAssertionsTestCase
     {
         $this->assertClassesIn('app/Ai/Agents')
             ->areClasses()
-            ->implements(Agent::class);
+            ->implements(Agent::class)->except(HundredPercentGlutenFreeMagicRouteContentAgent::class);
+    }
+
+    #[Test]
+    public function allMagicRouteAiAgentsFollowTheSamePattern(): void
+    {
+        $this->assertClassesIn('app/Ai/Agents/MagicRoutes')
+            ->areClasses()
+            ->extend(MagicRouteAgent::class)->except(MagicRouteAgent::class);
     }
 
     #[Test]
@@ -322,14 +332,6 @@ class CodeArchitectureTest extends CodeAssertionsTestCase
             ->areClasses()
             ->extends(Aggregator::class)
             ->implements(IsSearchable::class);
-    }
-
-    #[Test]
-    public function allAiPromptsFollowTheCorrectPattern(): void
-    {
-        $this->assertClassesIn('app/Support/Ai/Prompts')
-            ->areClasses()
-            ->hasSuffix('Prompt');
     }
 
     #[Test]

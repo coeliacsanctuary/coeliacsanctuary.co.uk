@@ -6,7 +6,10 @@
     :full-width-content="fullWidthContent"
   >
     <template #field>
-      <div class="flex flex-wrap gap-2">
+      <div
+        class="flex flex-wrap gap-2"
+        v-if="field.showToolbar"
+      >
         <Button
           variant="outline"
           as="span"

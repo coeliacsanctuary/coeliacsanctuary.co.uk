@@ -5,7 +5,14 @@ declare(strict_types=1);
 namespace Tests;
 
 use App\Ai\Agents\AskSealiac;
+use App\Ai\Agents\EateryAreaDescriptionAgent;
+use App\Ai\Agents\EateryBoroughDescriptionAgent;
 use App\Ai\Agents\EateryCountryDescriptionAgent;
+use App\Ai\Agents\EateryCountyDescriptionAgent;
+use App\Ai\Agents\EateryNationwideDescriptionAgent;
+use App\Ai\Agents\EateryTownDescriptionAgent;
+use App\Support\State\EatingOut\Search\LatLngState;
+use App\Support\State\EatingOut\Search\SearchResultIdsState;
 use ArrayAccess;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -39,7 +46,15 @@ abstract class TestCase extends BaseTestCase
         DB::connection()->getSchemaBuilder()->disableForeignKeyConstraints();
 
         EateryCountryDescriptionAgent::fake();
+        EateryCountyDescriptionAgent::fake();
+        EateryTownDescriptionAgent::fake();
+        EateryBoroughDescriptionAgent::fake();
+        EateryAreaDescriptionAgent::fake();
+        EateryNationwideDescriptionAgent::fake();
         AskSealiac::fake();
+
+        LatLngState::$latLng = null;
+        SearchResultIdsState::reset();
     }
 
     protected function assertSortedAlphabetically(array $items): void

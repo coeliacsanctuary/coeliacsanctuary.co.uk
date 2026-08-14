@@ -24,4 +24,27 @@ class HydrateEateriesActionTest extends GetEateriesTestCase
         $this->assertInstanceOf(Collection::class, $hydratedEateries->hydrated);
         $this->assertInstanceOf(Eatery::class, $hydratedEateries->hydrated->first());
     }
+
+    #[Test]
+    public function itOnlyLoadsLimitedReviewColumnsWhenHydrateFullReviewsIsFalse(): void
+    {
+        $hydratedEateries = $this->callHydrateEateriesAction(hydrateFullReviews: false);
+
+        $review = $hydratedEateries->hydrated->first()->reviews->first();
+
+        $this->assertArrayHasKey('id', $review->getAttributes());
+        $this->assertArrayNotHasKey('review', $review->getAttributes());
+        $this->assertArrayNotHasKey('name', $review->getAttributes());
+    }
+
+    #[Test]
+    public function itLoadsAllReviewColumnsWhenHydrateFullReviewsIsTrue(): void
+    {
+        $hydratedEateries = $this->callHydrateEateriesAction(hydrateFullReviews: true);
+
+        $review = $hydratedEateries->hydrated->first()->reviews->first();
+
+        $this->assertArrayHasKey('review', $review->getAttributes());
+        $this->assertArrayHasKey('name', $review->getAttributes());
+    }
 }

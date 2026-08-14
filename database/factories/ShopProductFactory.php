@@ -22,6 +22,7 @@ class ShopProductFactory extends Factory
             'long_description' => $this->faker->paragraphs(2, true),
             'shipping_method_id' => 1,
             'pinned' => false,
+            'google_merchant_enabled' => true,
         ];
     }
 
@@ -35,5 +36,10 @@ class ShopProductFactory extends Factory
     public function pinned(): self
     {
         return $this->state(fn () => ['pinned' => true]);
+    }
+
+    public function googleMerchantDisabled(): self
+    {
+        return $this->state(fn () => ['google_merchant_enabled' => false]);
     }
 }

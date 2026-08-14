@@ -54,9 +54,9 @@ class SearchRecipesTool extends BaseTool
     {
         return [
             'value' => $schema->string()->required(),
-            'allergens' => $schema->array()->items($schema->string())->nullable(),
-            'meals' => $schema->array()->items($schema->string())->nullable(),
-            'features' => $schema->array()->items($schema->string())->nullable(),
+            'allergens' => $schema->array()->items($schema->string())->nullable()->required(),
+            'meals' => $schema->array()->items($schema->string())->nullable()->required(),
+            'features' => $schema->array()->items($schema->string())->nullable()->required(),
         ];
     }
 }

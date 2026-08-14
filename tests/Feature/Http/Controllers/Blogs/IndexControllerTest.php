@@ -72,7 +72,7 @@ class IndexControllerTest extends TestCase
                         'blogs.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'tags', 'comments_count'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 0')
                     ->where('blogs.data.1.title', 'Blog 1')
@@ -97,7 +97,7 @@ class IndexControllerTest extends TestCase
                         'blogs.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'tags', 'comments_count'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 12')
                     ->where('blogs.data.1.title', 'Blog 13')
@@ -165,7 +165,7 @@ class IndexControllerTest extends TestCase
                 fn (Assert $page) => $page
                     ->component('Blog/Index')
                     ->has('blogs')
-                    ->has('blogs.data', 2, fn (Assert $page) => $page->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'tags', 'comments_count']))
+                    ->has('blogs.data', 2, fn (Assert $page) => $page->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count']))
                     ->where('blogs.data.0.title', 'Blog 0')
                     ->has('blogs.links')
                     ->has('blogs.meta')
@@ -194,7 +194,7 @@ class IndexControllerTest extends TestCase
                         'blogs.data',
                         12,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'description', 'date', 'image', 'link', 'description', 'tags', 'comments_count'])
+                            ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 12')
                     ->where('blogs.data.1.title', 'Blog 13')
@@ -203,6 +203,28 @@ class IndexControllerTest extends TestCase
                     ->where('blogs.meta.current_page', 2)
                     ->where('blogs.meta.per_page', 12)
                     ->where('blogs.meta.total', 30)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itHasTheDefaultMetaDescriptionWhenThereIsNoTag(): void
+    {
+        $this->get(route('blog.index'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->where('meta.description', 'Gluten free and coeliac blogs from Coeliac Sanctuary — coeliac news, new gluten free product launches, free from range reviews, and life with coeliac disease.')
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itHasATagSpecificMetaDescriptionWhenThereIsATag(): void
+    {
+        $this->get(route('blog.index.tags', ['tag' => $this->tag->slug]))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->where('meta.description', "Coeliac Sanctuary gluten free blogs tagged with {$this->tag->tag} — coeliac news, new product launches, free from reviews, and life with coeliac disease.")
                     ->etc()
             );
     }

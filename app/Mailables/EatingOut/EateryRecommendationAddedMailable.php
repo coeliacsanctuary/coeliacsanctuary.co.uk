@@ -31,8 +31,11 @@ class EateryRecommendationAddedMailable extends BaseMailable
         return $town
             ->eateries()
             ->chaperone('town')
-            ->with(['area', 'county', 'country'])
+            ->with(['area', 'county', 'country', 'venueType'])
+            ->withAvg('reviews as rating', 'rating')
+            ->withCount('reviews as rating_count')
             ->whereNot('id', $this->eatery->id)
+            ->where('closed_down', false)
             ->inRandomOrder()
             ->take(5)
             ->get();

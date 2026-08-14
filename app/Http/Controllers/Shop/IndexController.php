@@ -21,12 +21,12 @@ class IndexController
             ->get();
 
         return $inertia
-            ->title('Shop - Travel Cards, Wristbands and more')
-            ->metaDescription('Coeliac Sanctuary gluten free and coeliac travel cards, wristbands, stickers and other helpful products for Coeliacs.')
+            ->title('Gluten Free Travel Translation Cards & Stickers')
+            ->metaDescription('Shop gluten free translation cards in over 60 langauges and coeliac stickers. Designed to help you communicate your dietary needs and travel with confidence.')
             ->metaTags([
                 'Gluten free merchandise', 'coeliac sanctuary shop', 'coeliac travel cards', 'gluten free travel cards',
-                'travelling abroad', 'gluten free abroad', 'coeliac travel', 'gluten free travel', 'coeliac wristbands',
-                'gluten free stickers', 'gluten free wristbands', 'gluten free waterproof stickers', 'coeliac shop',
+                'travelling abroad', 'gluten free abroad', 'coeliac travel', 'gluten free travel',
+                'gluten free stickers', 'gluten free waterproof stickers', 'coeliac shop',
             ])
             ->metaImage($getOpenGraphImageForRouteAction->handle('shop'))
             ->breadcrumbs(collect([

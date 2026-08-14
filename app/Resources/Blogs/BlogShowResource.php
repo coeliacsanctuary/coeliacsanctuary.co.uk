@@ -7,6 +7,7 @@ namespace App\Resources\Blogs;
 use App\Models\Blogs\Blog;
 use App\ResourceCollections\Blogs\BlogTagCollection;
 use App\Resources\Collections\FeaturedInCollectionSimpleCardViewResource;
+use App\Resources\Faqs\FaqResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -18,7 +19,7 @@ class BlogShowResource extends JsonResource
     /** @return array{id: number, title: string|Stringable, image: string, published: string, updated: string, description: string, body: string|Stringable, hasTwitterEmbed: bool, tags: BlogTagCollection} */
     public function toArray(Request $request)
     {
-        $this->load(['associatedCollections', 'associatedCollections.collection', 'associatedCollections.collection.media']);
+        $this->load(['associatedCollectionGroups', 'associatedCollectionGroups.group.collection', 'associatedCollectionGroups.group.collection.media', 'faqs']);
 
         $twitterReplacements = [
             '<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
@@ -41,9 +42,13 @@ class BlogShowResource extends JsonResource
                     ],
                 ]),
             'hasTwitterEmbed' => Str::contains($this->body, $twitterReplacements),
+            'header_image_alt_text' => $this->header_image_alt_text,
+            'short_title' => $this->short_title,
             'show_author' => $this->show_author,
             'tags' => new BlogTagCollection($this->tags),
-            'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollections),
+            'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollectionGroups),
+            'faqs' => $this->faqs->isNotEmpty() ? FaqResource::collection($this->faqs) : null,
+            'faq_display' => $this->faq_display,
         ];
     }
 }

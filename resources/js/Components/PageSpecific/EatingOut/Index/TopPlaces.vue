@@ -5,23 +5,38 @@ import SubHeading from '@/Components/SubHeading.vue';
 import { ChevronDownIcon } from '@heroicons/vue/24/solid';
 import Card from '@/Components/Card.vue';
 
-withDefaults(defineProps<{ showBreakpoint?: string }>(), {
-  showBreakpoint: 'md',
-});
+withDefaults(
+  defineProps<{
+    showBreakpoint?: string;
+    collapsible?: boolean;
+  }>(),
+  {
+    showBreakpoint: 'md',
+    collapsible: true,
+  },
+);
 </script>
 
 <template>
   <Disclosure
     v-slot="{ open }"
-    :default-open="useScreensize().screenIsGreaterThanOrEqualTo(showBreakpoint)"
+    :default-open="
+      collapsible
+        ? useScreensize().screenIsGreaterThanOrEqualTo(showBreakpoint)
+        : true
+    "
   >
-    <Card class="mt-3 flex flex-col space-y-4">
+    <Card class="flex flex-col space-y-4">
       <DisclosureButton>
         <div class="flex items-center justify-between">
-          <SubHeading>
+          <SubHeading
+            text-size="small"
+            class="pb-2"
+          >
             <slot name="title" />
           </SubHeading>
           <ChevronDownIcon
+            v-if="collapsible"
             :class="open ? 'rotate-180 transform' : ''"
             class="size-8 flex-shrink-0 transition"
           />

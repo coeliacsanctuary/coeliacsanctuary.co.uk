@@ -29,6 +29,15 @@ class Helpers
         return $meters / 1609.344;
     }
 
+    public static function formatSearchTerm(string $term): string
+    {
+        if (Str::of($term)->trim()->isMatch('/^[a-z]{1,2}\d/i')) {
+            return Str::upper(mb_trim($term));
+        }
+
+        return Str::apa($term);
+    }
+
     public static function formatMoney(Money $money): string
     {
         $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);

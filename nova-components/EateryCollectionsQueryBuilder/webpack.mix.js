@@ -5,8 +5,8 @@ mix.extend('nova', new NovaExtension());
 
 mix
   .setPublicPath('dist')
-  .js('resources/js/field.js', 'js')
+  .js('resources/js/tool.js', 'js')
   .vue({ version: 3 })
-  .css('resources/css/field.css', 'css')
+  .css('resources/css/tool.css', 'css')
   .nova('jpeters8889/eatery-collections-query-builder')
   .version();

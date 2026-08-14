@@ -23,7 +23,7 @@ const wholeNumber = ref(0);
 const hasHalf = ref(false);
 
 const loadStars = () => {
-  let stars = 0;
+  let stars: string | number = 0;
 
   if (props.rating) {
     stars = props.rating;

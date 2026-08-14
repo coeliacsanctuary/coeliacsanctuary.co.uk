@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\EatingOut\Latest\IndexController as WhereToEatLates
 use App\Http\Controllers\Api\EatingOut\LatLng\GetController as WhereToEatLatLngGetController;
 use App\Http\Controllers\Api\EatingOut\Lookup\GetController as WhereToEatLookupGetController;
 use App\Http\Controllers\Api\EatingOut\Lookup\IndexController as WhereToEatLookupIndexController;
+use App\Http\Controllers\Api\EatingOut\Marker\GetController as MarkerGetController;
 use App\Http\Controllers\Api\EatingOut\Random\ShowController as RandomShowController;
 use App\Http\Controllers\Api\EatingOut\Ratings\Latest\IndexController as WhereToEatRatingsLatestIndexController;
 use App\Http\Controllers\Api\EatingOut\RecommendAPlace\StoreController as WhereToEatRecommendAPlaceStoreController;
@@ -48,6 +49,10 @@ Route::post('browse/search', BrowseSearchStoreController::class)->name('api.wher
 Route::post('check-recommended-place', CheckRecommendedPlaceGetController::class)->name('api.wheretoeat.check-recommended-place');
 
 Route::get('random', RandomShowController::class)->name('api.wheretoeat.random');
+
+Route::get('marker/{typeId}/{venueTypeId?}', MarkerGetController::class)
+    ->whereNumber(['typeId', 'venueTypeId'])
+    ->name('api.wheretoeat.marker.get');
 
 Route::get('{eatery}', DetailsShowController::class)->name('api.wheretoeat.get');
 

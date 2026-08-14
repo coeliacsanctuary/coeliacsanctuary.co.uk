@@ -6,8 +6,8 @@ namespace App\Nova\Resources\EatingOut;
 
 use App\Models\EatingOut\EateryAlert;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
+use App\Nova\Actions\EatingOut\IgnoreEateryAlertForSixMonths;
 use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
-use App\Nova\Actions\EatingOut\PermanentlyIgnoreEateryAlert;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -17,6 +17,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -65,6 +66,9 @@ class EateryAlerts extends Resource
                 ->displayUsing(fn (string $details) => Str::wordWrap($details, 100, '<br />'))
                 ->asHtml(),
 
+            URL::make('Website', 'eatery.website')
+                ->showOnIndex(),
+
             Boolean::make('Completed')
                 ->filterable()
                 ->showOnPreview(),
@@ -90,7 +94,7 @@ class EateryAlerts extends Resource
                 ->withoutConfirmation()
                 ->canRun(fn ($request, EateryAlert $report) => $report->completed === false && $report->ignored === false),
 
-            PermanentlyIgnoreEateryAlert::make()
+            IgnoreEateryAlertForSixMonths::make()
                 ->showInline()
                 ->canRun(fn ($request, EateryAlert $report) => $report->completed === false && $report->ignored === false),
         ];

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Jobs\Shop\SyncProductToGoogleMerchantJob;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProductVariant;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -66,6 +68,7 @@ class ProductVariant extends Resource
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
         return $query
+            ->withoutGlobalScopes()
             ->with(['product'])
             ->addSelect(['total_sold' => ShopOrderItem::query()
                 ->selectRaw('sum(quantity)')
@@ -93,6 +96,34 @@ class ProductVariant extends Resource
         }
 
         return $fillFields;
+    }
+
+    public static function afterCreate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        if ( ! $model->product) {
+            return;
+        }
+
+        /** @var ShopProductVariant $model */
+        SyncProductToGoogleMerchantJob::dispatch($model->product);
+    }
+
+    public static function afterUpdate(NovaRequest $request, Model $model): void
+    {
+        if ( ! config('google-merchant.enabled')) {
+            return;
+        }
+
+        if ( ! $model->product) {
+            return;
+        }
+
+        /** @var ShopProductVariant $model */
+        SyncProductToGoogleMerchantJob::dispatch($model->product);
     }
 
     public static function redirectAfterCreate(NovaRequest $request, $resource)

@@ -30,6 +30,7 @@ import CoeliacPlusTravelCardEnglishTranslation from '@/Components/PageSpecific/S
 import ProductAiOverview from '@/Components/PageSpecific/Shop/ProductAiOverview.vue';
 import ProductImageModal from '@/Components/PageSpecific/Shop/ProductImageModal.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import TravelCardImportantInformation from '@/Components/PageSpecific/Shop/TravelCardImportantInformation.vue';
 
 type Product = ShopProductDetail | ShopTravelCardProductDetail;
 
@@ -58,6 +59,15 @@ const travelCardProduct = computed(() =>
 );
 
 const additionalDetails: ProductAdditionalDetailAccordionProps[] = [
+  travelCardProduct.value
+    ? {
+        title: 'Important Information',
+        component: TravelCardImportantInformation as CustomComponent,
+        headerComponent: Card as CustomComponent,
+        headerClasses: 'mx-3 mt-0! sm:p-4 flex-row !w-auto',
+        wrapperComponent: 'div',
+      }
+    : undefined,
   travelCardProduct.value && travelCardProduct.value.countries.length
     ? {
         title: 'Where can I use this travel card?',

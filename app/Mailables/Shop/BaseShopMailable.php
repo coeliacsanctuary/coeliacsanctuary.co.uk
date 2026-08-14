@@ -36,7 +36,7 @@ abstract class BaseShopMailable extends BaseMailable
                 ->map(fn (ShopProduct $product) => new NotificationRelatedObject(
                     title: $product->title,
                     image: $product->main_image,
-                    link: $product->link,
+                    link: $product->absolute_link,
                 )),
         ], $data);
     }

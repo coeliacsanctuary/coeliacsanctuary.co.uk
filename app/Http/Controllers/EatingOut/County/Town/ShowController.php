@@ -11,6 +11,8 @@ use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesPipeline;
+use App\Resources\EatingOut\MagicRouteGuideResource;
+use App\Resources\EatingOut\NearbyTownResource;
 use App\Resources\EatingOut\TownPageResource;
 use App\Schema\PendingEaterySchema;
 use App\Services\EatingOut\Filters\GetFiltersForTown;
@@ -60,7 +62,7 @@ class ShowController
             ->render('EatingOut/Town', [
                 'live_eateries_count' => $town->liveEateries->count() + $town->liveBranches->count(),
                 'town' => fn () => new TownPageResource($town),
-                'eateries' => $pipeline,
+                'eateries' => $inertia->scroll($pipeline),
                 'filters' => fn () => $getFiltersForTown->setTown($town)->handle($filters),
                 'sort' => [
                     'current' => $sort,
@@ -75,6 +77,8 @@ class ShowController
                         ],
                     ],
                 ],
+                'nearby' => fn () => NearbyTownResource::collection($town->nearbyTowns(5)),
+                'guides' => fn () => MagicRouteGuideResource::collection($town->magicRoutes),
             ])
             ->toResponse($request)
             ->setStatusCode($town->liveEateries->count() === 0 && $town->liveBranches->count() === 0 ? Response::HTTP_GONE : Response::HTTP_OK);

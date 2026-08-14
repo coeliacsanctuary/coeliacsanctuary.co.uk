@@ -23,8 +23,9 @@ class CountyReviewsQuery
             ->select('wheretoeat.*')
             ->addSelect(DB::raw('avg(rating) as rating'))
             ->addSelect(DB::raw('count(wheretoeat_reviews.wheretoeat_id) as rating_count'))
-            ->with(['town', 'area'])
+            ->with(['town', 'area', 'restaurants'])
             ->groupBy('wheretoeat.id')
+            /** @phpstan-ignore argument.type */
             ->orderByRaw($rating)
             ->take(3)
             ->get()

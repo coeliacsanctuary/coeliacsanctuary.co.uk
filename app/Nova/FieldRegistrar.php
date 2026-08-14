@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace App\Nova;
 
 use Jpeters8889\AddressField\FieldServiceProvider as AddressFieldServiceProvider;
+use Jpeters8889\RelatedRecipesSearch\FieldServiceProvider as RelatedRecipesSearchFieldServiceProvider;
 use Jpeters8889\AdvancedNovaMediaLibrary\AdvancedNovaMediaLibraryServiceProvider;
 use Jpeters8889\Body\FieldServiceProvider as BodyFieldServiceProvider;
+use Jpeters8889\CollectionItemSearch\FieldServiceProvider as CollectionItemSearchFieldServiceProvider;
 use Jpeters8889\CountryIcon\FieldServiceProvider as CountryFieldServiceProvider;
 use Jpeters8889\EateryLocationSearch\FieldServiceProvider as EateryLocationSearchFieldServiceProvider;
 use Jpeters8889\EateryOpeningTimes\FieldServiceProvider as EateryOpeningTimesFieldServiceProvider;
+use Jpeters8889\EateryRecommendationAiStatus\FieldServiceProvider as EateryRecommendationAiStatusFieldServiceProvider;
+use Jpeters8889\EateryRecommendationEligibility\FieldServiceProvider as EateryRecommendationEligibilityFieldServiceProvider;
 use Jpeters8889\HiddenWritableField\FieldServiceProvider as HiddenWritableFieldServiceProvider;
 use Jpeters8889\PolymorphicPanel\FieldServiceProvider as PolymorphicPanelFieldServiceProvider;
+use Jpeters8889\PreviewButton\FieldServiceProvider as PreviewButtonFieldServiceProvider;
 use Jpeters8889\ShopGenerateResendSlipButton\FieldServiceProvider as ShopGenerateResendSlipButtonFieldServiceProvider;
 use Jpeters8889\ShopOrderOpenDispatchSlip\FieldServiceProvider as ShopDispatchSlipFieldServiceProvider;
 use Jpeters8889\ShopOrderShippingAction\FieldServiceProvider as ShopShippingActionFieldServiceProvider;
@@ -34,7 +39,12 @@ class FieldRegistrar
             ShopShippingActionFieldServiceProvider::class,
             ShopGenerateResendSlipButtonFieldServiceProvider::class,
             HiddenWritableFieldServiceProvider::class,
+            CollectionItemSearchFieldServiceProvider::class,
             EateryLocationSearchFieldServiceProvider::class,
+            EateryRecommendationAiStatusFieldServiceProvider::class,
+            EateryRecommendationEligibilityFieldServiceProvider::class,
+            PreviewButtonFieldServiceProvider::class,
+            RelatedRecipesSearchFieldServiceProvider::class,
         ];
 
         foreach ($customFields as $customField) {

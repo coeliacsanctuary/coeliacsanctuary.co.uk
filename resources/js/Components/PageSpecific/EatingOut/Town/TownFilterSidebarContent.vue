@@ -78,6 +78,14 @@ const resetFilters = () => {
 
     <div class="px-3">
       <FormCheckboxGroup
+        v-model="featureFilters"
+        label="Special Feature"
+        @change="filtersChanged"
+      />
+    </div>
+
+    <div class="px-3">
+      <FormCheckboxGroup
         v-model="eateryTypeFilters"
         label="Venue Category"
         @change="filtersChanged"
@@ -88,14 +96,6 @@ const resetFilters = () => {
       <FormCheckboxGroup
         v-model="venueTypeFilters"
         label="Venue Type"
-        @change="filtersChanged"
-      />
-    </div>
-
-    <div class="px-3">
-      <FormCheckboxGroup
-        v-model="featureFilters"
-        label="Special Feature"
         @change="filtersChanged"
       />
     </div>

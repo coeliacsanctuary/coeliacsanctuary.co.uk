@@ -8,8 +8,12 @@ import ShopBasketHeader from '@/Layouts/Components/ShopBasketHeader.vue';
 import ShopFooterCta from '@/Layouts/Components/ShopFooterCta.vue';
 import PopupCta from '@/Layouts/Components/PopupCta.vue';
 import Loader from '@/Components/Loader.vue';
+import AdBlocker from '@/Components/AdBlocker.vue';
 import eventBus from '@/eventBus';
 import Announcement from '@/Layouts/Components/Announcement.vue';
+import useStickyAdOffset from '@/composables/useStickyAdOffset';
+
+useStickyAdOffset();
 
 defineProps<{
   meta: MetaProps;
@@ -41,7 +45,7 @@ const isMounted = ref(false);
     :announcement="announcement"
   />
 
-  <div class="relative flex min-h-screen flex-col bg-gray-100">
+  <div class="relative flex min-h-screen flex-col overflow-x-clip bg-gray-100">
     <CoeliacHeader :metas="meta" />
 
     <div
@@ -83,4 +87,6 @@ const isMounted = ref(false);
       on-top
     />
   </teleport>
+
+  <AdBlocker v-if="meta.hideAds" />
 </template>

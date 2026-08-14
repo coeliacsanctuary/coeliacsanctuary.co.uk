@@ -11,16 +11,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin CollectionModel */
 class CollectionDetailCardViewResource extends JsonResource
 {
-    /** @return array{title: string, link: string, image: string, date: string, description: string, number_of_items: int} */
+    /** @return array{title: string, link: string, image: string, header_image_alt_text: string|null, date: string, description: string, items: array{recipes: int, blogs: int, eateries: int}} */
     public function toArray(Request $request)
     {
         return [
             'title' => $this->title,
             'link' => $this->link,
-            'image' => $this->main_image_as_wepb ?? $this->main_image,
+            'image' => $this->main_image_as_webp ?? $this->main_image,
+            'header_image_alt_text' => $this->header_image_alt_text,
             'date' => $this->lastUpdated,
             'description' => $this->meta_description,
-            'number_of_items' => $this->items_count,
+            'items' => [
+                'recipes' => $this->recipes_count,
+                'blogs' => $this->blogs_count,
+                'eateries' => $this->eateries_count,
+            ],
         ];
     }
 }

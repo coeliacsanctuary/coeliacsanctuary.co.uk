@@ -14,9 +14,11 @@ class Where implements JsonSerializable
         //
     }
 
-    public function __invoke(Builder $query): Builder
+    public function __invoke(Builder $query, ?string $table = null): Builder
     {
-        return $query->where($this->key, $this->operator, $this->value, $this->boolean);
+        $key = $table ? str_replace('[parent]', $table, $this->key) : $this->key;
+
+        return $query->where($key, $this->operator, $this->value, $this->boolean);
     }
 
     public function jsonSerialize(): array

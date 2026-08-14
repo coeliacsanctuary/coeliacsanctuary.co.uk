@@ -25,6 +25,7 @@ class GetNationwideBranchesFromFiltersAction implements GetEateriesPipelineActio
         /** @var Builder<Eatery> $query */
         $query = NationwideBranch::query()
             /** @lang mysql */
+            /** @phpstan-ignore argument.type */
             ->selectRaw(Arr::join([
                 'wheretoeat.id as id',
                 'wheretoeat_nationwide_branches.id as branch_id',
@@ -33,7 +34,7 @@ class GetNationwideBranchesFromFiltersAction implements GetEateriesPipelineActio
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
                 /** @var Builder<Eatery> $query */
-                $query->where('closed_down', false); /** @phpstan-ignore-line */
+                $query->where('closed_down', false);
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
                 }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Actions\Search;
 
+use App\Ai\Agents\SearchAreasAgent;
 use App\DataObjects\Search\SearchAiResponse;
 use App\Models\Search\Search;
-use OpenAI\Laravel\Facades\OpenAI;
+use Laravel\Ai\Responses\StructuredAgentResponse;
 use Throwable;
 
 class IdentifySearchAreasWithAiAction
@@ -18,27 +19,10 @@ class IdentifySearchAreasWithAiAction
         }
 
         try {
-            $result = OpenAI::chat()->create([
-                'model' => 'gpt-3.5-turbo-1106',
-                'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => view('prompts.search', ['searchTerm' => $search->term])->render(),
-                    ],
-                ],
-            ]);
+            /** @var StructuredAgentResponse $response */
+            $response = (new SearchAreasAgent())->prompt($search->term);
 
-            /** @var string $response */
-            $response = $result->choices[0]->message->content;
-
-            if ( ! json_validate($response)) {
-                return null;
-            }
-
-            /** @var array $json */
-            $json = json_decode($response, true);
-
-            $aiResponse = SearchAiResponse::fromResponse($json);
+            $aiResponse = SearchAiResponse::fromResponse($response->toArray());
 
             $search->aiResponse()->create($aiResponse->toModel());
 

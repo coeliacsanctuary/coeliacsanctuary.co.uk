@@ -14,7 +14,7 @@ class CreateShippingAddressAction
     {
         return $customer->addresses()->create([
             'name' => $customer->name,
-            ...get_object_vars($addressDetails),
+            ...$addressDetails->toArray(),
         ]);
     }
 }

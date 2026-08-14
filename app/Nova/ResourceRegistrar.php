@@ -13,7 +13,8 @@ use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
 use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EateryAttractionRestaurantResource;
-use App\Nova\Resources\EatingOut\EateryCollections;
+use App\Nova\Resources\EatingOut\EateryCuisines;
+use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
 use App\Nova\Resources\EatingOut\MyPlaces;
@@ -29,7 +30,7 @@ use App\Nova\Resources\Main\AnnouncementResource;
 use App\Nova\Resources\Main\Blog;
 use App\Nova\Resources\Main\BlogTag;
 use App\Nova\Resources\Main\Collection;
-use App\Nova\Resources\Main\CollectionItem;
+use App\Nova\Resources\Main\CollectionGroup;
 use App\Nova\Resources\Main\CommentReply;
 use App\Nova\Resources\Main\Comments;
 use App\Nova\Resources\Main\PopupResource;
@@ -79,7 +80,7 @@ class ResourceRegistrar
             Blog::class,
             BlogTag::class,
             Collection::class,
-            CollectionItem::class,
+            CollectionGroup::class,
             Recipe::class,
             RecipeAllergens::class,
             RecipeNutritionalInformation::class,
@@ -97,11 +98,11 @@ class ResourceRegistrar
             Eateries::class,
             NationwideEateries::class,
             NationwideBranches::class,
-            EateryCollections::class,
             Countries::class,
             Counties::class,
             Towns::class,
             Areas::class,
+            EateryCuisines::class,
             Reviews::class,
             ReviewImage::class,
             MyPlaces::class,
@@ -114,6 +115,7 @@ class ResourceRegistrar
             SealiacOverviews::class,
             EateryAiDescriptionResource::class,
             EateryAttractionRestaurantResource::class,
+            EateryMagicRoutesResource::class,
 
             // Search
             SearchResource::class,

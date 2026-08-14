@@ -34,6 +34,10 @@ useJourneyTracking().logWhenVisible(
       class="mx-auto my-2 h-px w-full bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
     />
 
+    <div v-if="$slots.default">
+      <slot />
+    </div>
+
     <section
       :class="{
         'sm:grid-cols-3': perRow === 3,

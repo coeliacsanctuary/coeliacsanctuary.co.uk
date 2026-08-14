@@ -43,7 +43,7 @@ class NationwideBranches extends Resource
 
     public static $perPageViaRelationship = 25;
 
-    public static $search = ['id', 'name', 'town.town', 'county.county'];
+    public static $search = ['id', 'name', 'address', 'area.area', 'town.town', 'county.county'];
 
     public function authorizedToView(Request $request)
     {
@@ -70,7 +70,7 @@ class NationwideBranches extends Resource
                 ->fullWidth()
                 ->exceptOnForms(),
 
-            Boolean::make('Live'),
+            Boolean::make('Live')->filterable(),
 
             Panel::make('Location', [
                 EateryLocationSearch::make('Location Search', 'location', fn () => null)

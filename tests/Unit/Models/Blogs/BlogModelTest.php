@@ -7,6 +7,9 @@ namespace Tests\Unit\Models\Blogs;
 use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
 use App\Models\Blogs\Blog;
+use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Scopes\LiveScope;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
@@ -14,6 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\CanBePublishedTestTrait;
 use Tests\Concerns\CommentableTestTrait;
 use Tests\Concerns\DisplaysMediaTestTrait;
+use Tests\Concerns\FaqableTestTrait;
 use Tests\Concerns\LinkableModelTestTrait;
 use Tests\TestCase;
 
@@ -22,6 +26,7 @@ class BlogModelTest extends TestCase
     use CanBePublishedTestTrait;
     use CommentableTestTrait;
     use DisplaysMediaTestTrait;
+    use FaqableTestTrait;
     use LinkableModelTestTrait;
 
     protected Blog $blog;
@@ -39,6 +44,8 @@ class BlogModelTest extends TestCase
         $this->setUpLinkableModelTest(fn (array $params) => $this->create(Blog::class, $params));
 
         $this->setUpCommentsTest(fn (array $params = []) => $this->create(Blog::class, $params));
+
+        $this->setUpFaqsTest(fn (array $params = []) => $this->create(Blog::class, $params));
 
         $this->setUpCanBePublishedModelTest(fn (array $params = []) => $this->create(Blog::class, $params));
     }
@@ -92,5 +99,22 @@ class BlogModelTest extends TestCase
 
             $this->assertFalse(Cache::has($key));
         }
+    }
+
+    #[Test]
+    public function itCanBeAssociatedWithACollectionGroup(): void
+    {
+        $blog = $this->create(Blog::class);
+        $group = $this->create(CollectionGroup::class, ['collection_id' => $this->create(Collection::class)->id]);
+
+        $this->assertEmpty($blog->associatedCollectionGroups);
+
+        $this->create(CollectionGroupItem::class, [
+            'collection_group_id' => $group->id,
+            'item_id' => $blog->id,
+            'item_type' => Blog::class,
+        ]);
+
+        $this->assertCount(1, $blog->refresh()->associatedCollectionGroups);
     }
 }

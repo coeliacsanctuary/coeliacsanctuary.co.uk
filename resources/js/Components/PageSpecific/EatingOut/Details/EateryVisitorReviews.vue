@@ -20,6 +20,9 @@ import { StarRating as StarRatingType } from '@/types/EateryTypes';
 import { router } from '@inertiajs/vue3';
 import EateryReview from '@/Components/PageSpecific/EatingOut/Details/Reviews/EateryReview.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { ChatBubbleLeftRightIcon } from '@heroicons/vue/24/outline';
+import { pluralise } from '@/helpers';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
@@ -58,7 +61,20 @@ const filteredReviews: ComputedRef<EateryReviewType[]> = computed(() => {
   return thisReviews.filter((review) => review.body);
 });
 
+const hasNoReviews = computed(() => reviews.value.length === 0);
+
+const clearFilters = (): void => {
+  reviewFilter.value = undefined;
+  hideReviewsWithoutBody.value = false;
+};
+
 const displayAddReviewModal = ref(false);
+
+const openAddReview = (): void => {
+  displayAddReviewModal.value = true;
+};
+
+defineExpose({ openAddReview });
 
 onMounted(() => {
   if (
@@ -91,14 +107,16 @@ useJourneyTracking().logWhenVisible(
 <template>
   <Card
     ref="card"
-    class="lg:rounded-lg lg:p-8"
+    class="flex flex-col space-y-4"
   >
-    <SubHeading>Visitor reviews from {{ eateryName() }}</SubHeading>
+    <SubHeading class="pb-4">
+      Visitor reviews from {{ eateryName() }}
+    </SubHeading>
 
-    <div
-      class="mx-auto mt-2 md:grid md:gap-x-8 md:max-xl:grid-cols-3 xl:grid-cols-4"
-    >
+    <div class="mx-auto w-full xl:grid xl:grid-cols-10 xl:gap-x-8">
       <RatingsBreakdown
+        v-if="!hasNoReviews"
+        class="xl:col-span-3"
         :average="eatery.reviews.average"
         :breakdown="eatery.reviews.ratings"
         :count="eatery.reviews.number"
@@ -115,11 +133,13 @@ useJourneyTracking().logWhenVisible(
         with other people!
       </RatingsBreakdown>
 
-      <div class="mt-8 md:col-span-2 md:mt-0 xl:col-span-3">
+      <div
+        :class="hasNoReviews ? 'xl:col-span-10' : 'mt-8 xl:col-span-7 xl:mt-0'"
+      >
         <div class="flow-root">
           <div
             v-if="reviews.length > 0 || eatery.branch"
-            class="mb-2 flex w-auto flex-col justify-between space-y-4 rounded-sm bg-primary-light/50 px-3 py-1 sm:flex-row sm:space-y-0 sm:space-x-16"
+            class="mb-6 flex w-auto flex-col justify-between space-y-4 rounded-sm bg-primary-light/50 px-3 py-2 sm:flex-row sm:space-y-0 sm:space-x-16"
           >
             <div
               class="flex-1"
@@ -146,25 +166,66 @@ useJourneyTracking().logWhenVisible(
             </div>
           </div>
 
-          <div class="-my-6 divide-y divide-gray-200">
-            <template
-              v-if="!hideReviewsWithoutBody || filteredReviews.length > 0"
-            >
-              <EateryReview
-                v-for="review in filteredReviews"
-                :key="review.id"
-                :review="review"
-                :eatery-name="eateryName()"
-                :showing-all-reviews="!eatery.branch || showAllReviews"
+          <div
+            v-if="filteredReviews.length > 0"
+            class="-my-6 divide-y divide-gray-200"
+          >
+            <EateryReview
+              v-for="review in filteredReviews"
+              :key="review.id"
+              :review="review"
+              :eatery-name="eateryName()"
+              :showing-all-reviews="!eatery.branch || showAllReviews"
+            />
+          </div>
+
+          <div
+            v-else
+            class="flex min-h-64 flex-col items-center justify-center gap-3 rounded-sm bg-primary-lightest/60 p-6 text-center"
+          >
+            <ChatBubbleLeftRightIcon class="size-12 text-primary" />
+
+            <template v-if="hasNoReviews">
+              <p class="text-lg font-semibold">No reviews yet</p>
+
+              <p class="max-w-md text-sm text-grey-dark">
+                Nobody has reviewed {{ eateryName() }} yet &mdash; if you've
+                been, let other people know what the gluten free options were
+                like!
+              </p>
+
+              <CoeliacButton
+                v-if="!eatery.closed_down"
+                as="button"
+                type="button"
+                theme="light"
+                size="lg"
+                bold
+                label="Be the first to review"
+                @click="displayAddReviewModal = true"
               />
             </template>
 
-            <div
-              v-else
-              class="py-6 text-lg"
-            >
-              No reviews found...
-            </div>
+            <template v-else>
+              <p class="text-lg font-semibold">No reviews match your filters</p>
+
+              <p class="max-w-md text-sm text-grey-dark">
+                {{ eateryName() }} has
+                {{ reviews.length }}
+                {{ pluralise('review', reviews.length) }}, but none of them
+                match what you're filtering on.
+              </p>
+
+              <CoeliacButton
+                as="button"
+                type="button"
+                theme="light"
+                size="lg"
+                bold
+                label="Show all reviews"
+                @click="clearFilters()"
+              />
+            </template>
           </div>
         </div>
       </div>

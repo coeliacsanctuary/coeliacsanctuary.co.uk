@@ -3,16 +3,17 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\About\IndexController as AboutIndexController;
+use App\Http\Controllers\AdsTxt\GetController as AdsTxtGetController;
 use App\Http\Controllers\Comments\GetController;
 use App\Http\Controllers\Contact\IndexController as ContactIndexController;
 use App\Http\Controllers\Contact\StoreController as ContactStoreController;
 use App\Http\Controllers\CookiePolicy\IndexController as CookiePolicyIndexController;
 use App\Http\Controllers\Email\ShowController as EmailShowController;
-use App\Http\Controllers\AdsTxt\GetController as AdsTxtGetController;
 use App\Http\Controllers\FallbackController;
 use App\Http\Controllers\Feed\IndexController as FeedController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Newsletter\StoreController as NewsletterStoreController;
+use App\Http\Controllers\Nova\Preview\PreviewController;
 use App\Http\Controllers\Popup\Activity\StoreController as PopupActivityStoreController;
 use App\Http\Controllers\PrivacyPolicy\IndexController as PrivacyPolicyIndexController;
 use App\Http\Controllers\Shop\TravelCards\IndexController as ShopTravelCardsLandingPageIndexController;
@@ -65,5 +66,9 @@ Route::get('static/map/{latlng}', StaticMapGetController::class)
     ->where('latlng', '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$');
 
 Route::view('cs-adm/preview-button', 'static.button-preview');
+
+Route::middleware(['auth'])
+    ->get('preview/{token}', PreviewController::class)
+    ->name('nova-preview.show');
 
 Route::fallback(FallbackController::class)->name('fallback');

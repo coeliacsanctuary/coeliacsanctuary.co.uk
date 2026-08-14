@@ -11,7 +11,6 @@ use App\Http\Response\Inertia;
 use App\Models\Blogs\Blog;
 use App\Resources\Blogs\BlogShowResource;
 use App\Resources\Blogs\RelatedBlogSimpleCardViewResource;
-use Illuminate\Http\RedirectResponse;
 use Inertia\Response;
 
 class ShowController
@@ -21,11 +20,7 @@ class ShowController
         Inertia $inertia,
         FindRelatedBlogsAction $findRelatedBlogsAction,
         GetCommentsForItemAction $commentsForItemAction,
-    ): Response | RedirectResponse {
-        if ($blog->eateryCollection) {
-            return redirect($blog->eateryCollection->link);
-        }
-
+    ): Response {
         return $inertia
             ->title($blog->title)
             ->metaDescription($blog->meta_description)

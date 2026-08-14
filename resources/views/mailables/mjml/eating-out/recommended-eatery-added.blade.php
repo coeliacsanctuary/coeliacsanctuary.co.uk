@@ -49,31 +49,5 @@ $hideRelatedGap = true;
         </mj-column>
     </mj-section>
 
-    @if($nearbyEateries->isNotEmpty())
-        <mj-section mj-class="light-section" padding-top="30px">
-            <mj-column>
-                <mj-text mj-class="inner">
-                    <h2>Have you also visited these locations in {{ $eatery->town->town }}? Why not leave those a review too!</h2>
-                </mj-text>
-            </mj-column>
-        </mj-section>
-
-        <mj-section mj-class="light-section">
-            @foreach($nearbyEateries as $nearbyEatery)
-                <mj-column width="100%" padding-top="20px" vertical-align="middle">
-                </mj-column>
-                <mj-column width="80%" vertical-align="middle">
-                    <mj-text mj-class="inner">
-                        <a href="{{ $nearbyEatery->absoluteLink() }}">{{ $nearbyEatery->name }}</a><br/>
-                        {{ $nearbyEatery->first_line_of_address }}
-                    </mj-text>
-                </mj-column>
-                <mj-column width="20%" vertical-align="middle">
-                    <mj-button mj-class="blue" align="center" href="{{ $nearbyEatery->absoluteLink() }}">
-                        Review?
-                    </mj-button>
-                </mj-column>
-            @endforeach
-        </mj-section>
-    @endif
+    <x-mjml-nearby-eateries :eateries="$nearbyEateries" :town="$eatery->town" />
 @endsection

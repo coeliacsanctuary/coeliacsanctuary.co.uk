@@ -3,9 +3,27 @@ import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import { BlogDetailCard } from '@/types/BlogTypes';
 import useJourneyTracking from '@/composables/useJourneyTracking';
-import { useTemplateRef } from 'vue';
+import useSingleRowFit from '@/composables/useSingleRowFit';
+import { computed, useTemplateRef } from 'vue';
+import { pluralise } from '@/helpers';
 
-const props = defineProps<{ blog: BlogDetailCard }>();
+const props = withDefaults(
+  defineProps<{ blog: BlogDetailCard; eager?: boolean }>(),
+  { eager: false },
+);
+
+const { visibleCount } = useSingleRowFit(
+  useTemplateRef<HTMLElement>('tagRow'),
+  () => props.blog.tags.length,
+);
+
+const tagsToDisplay = computed(() =>
+  props.blog.tags.slice(0, visibleCount.value),
+);
+
+const remainingTagCount = computed(
+  () => props.blog.tags.length - visibleCount.value,
+);
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('card'),
@@ -18,7 +36,10 @@ useJourneyTracking().logWhenVisible(
 </script>
 
 <template>
-  <Card ref="card">
+  <Card
+    ref="card"
+    class="overflow-hidden"
+  >
     <div class="group flex-1">
       <Link
         :href="blog.link"
@@ -26,14 +47,21 @@ useJourneyTracking().logWhenVisible(
         prefetch
       >
         <img
-          :alt="blog.title"
+          :alt="blog.header_image_alt_text ?? blog.title"
           :src="blog.image"
-          loading="lazy"
+          :loading="eager ? 'eager' : 'lazy'"
+          :fetchpriority="eager ? 'high' : 'auto'"
+          width="1200"
+          height="630"
+          class="aspect-[1200/630] w-full object-cover"
         />
       </Link>
 
       <div class="mt-4 flex flex-1 flex-col space-y-3">
-        <Link :href="blog.link">
+        <Link
+          :href="blog.link"
+          prefetch
+        >
           <h2
             class="text-xl font-semibold transition group-hover:text-primary-dark hover:text-primary-dark md:text-2xl"
             v-text="blog.title"
@@ -49,34 +77,48 @@ useJourneyTracking().logWhenVisible(
       </div>
     </div>
 
-    <div class="-m-4 mt-4 flex flex-col bg-grey-light p-4 text-sm shadow-inner">
-      <div class="flex flex-col">
-        <h4 class="mb-1 font-semibold">Tagged With</h4>
-        <ul class="flex flex-wrap gap-2 gap-y-1">
-          <li
-            v-for="tag in blog.tags"
-            :key="tag.slug"
-            class="after:content-[','] last:after:content-['']"
+    <div
+      class="-mx-4 mt-4 -mb-4 flex flex-col space-y-3 bg-primary-lightest/60 p-4"
+    >
+      <ul
+        ref="tagRow"
+        class="flex gap-2 overflow-hidden"
+      >
+        <li
+          v-for="tag in tagsToDisplay"
+          :key="tag.slug"
+          class="shrink-0"
+        >
+          <Link
+            :href="`/blog/tags/${tag.slug}`"
+            class="inline-block rounded-full border border-secondary bg-secondary/50 px-2 py-1 text-sm font-semibold whitespace-nowrap transition hover:bg-secondary"
           >
-            <Link
-              :href="`/blog/tags/${tag.slug}`"
-              class="font-semibold text-primary-dark transition hover:text-black"
-            >
-              {{ tag.tag }}
-            </Link>
-          </li>
-        </ul>
-      </div>
+            {{ tag.tag }}
+          </Link>
+        </li>
 
-      <div class="mt-4 flex justify-between">
-        <div>Added on {{ blog.date }}</div>
+        <li
+          v-if="remainingTagCount"
+          class="shrink-0"
+        >
+          <Link
+            :href="blog.link"
+            class="inline-block px-1 py-1 text-sm whitespace-nowrap text-grey-dark transition hover:text-black"
+            prefetch
+          >
+            +{{ remainingTagCount }} more
+          </Link>
+        </li>
+      </ul>
 
-        <div>
-          {{ blog.comments_count }} Comment{{
-            blog.comments_count !== 1 ? 's' : ''
-          }}
-        </div>
-      </div>
+      <span class="text-sm font-semibold text-grey-darker">
+        {{ blog.comments_count }}
+        {{ pluralise('comment', blog.comments_count) }}
+      </span>
+
+      <span class="text-xs text-grey-dark italic">
+        Added on {{ blog.date }}
+      </span>
     </div>
   </Card>
 </template>

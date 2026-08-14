@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Modal from '@/Components/Overlays/Modal.vue';
+import ModalHeading from '@/Components/Overlays/ModalHeading.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { computed, onMounted, Ref, ref } from 'vue';
 import type { Component } from 'vue';
@@ -289,11 +290,8 @@ const openReport = () => {
     size="medium"
     @close="close()"
   >
-    <div
-      class="border-grey-mid relative border-b bg-grey-light p-3 pr-[34px] text-center text-sm font-semibold"
-    >
-      Suggest Edits for {{ eateryName }}
-    </div>
+    <ModalHeading :title="`Suggest Edits for ${eateryName}`" />
+
     <div class="p-3">
       <div
         v-if="loading"
@@ -333,7 +331,7 @@ const openReport = () => {
           </p>
         </div>
 
-        <ul class="divide-blue-light flex flex-col divide-y">
+        <ul class="flex flex-col divide-y divide-primary-light/50">
           <template v-for="field in fields">
             <li
               v-if="field.shouldDisplay"
@@ -342,7 +340,7 @@ const openReport = () => {
             >
               <div
                 v-if="field.updated"
-                class="bg-blue-light/25 flex flex-col space-y-2 rounded-sm p-1 text-center"
+                class="flex flex-col space-y-2 rounded-sm bg-primary-light/25 p-2 text-center"
               >
                 <span>Thanks for your suggestion!</span>
                 <span
@@ -361,14 +359,14 @@ const openReport = () => {
                   <span
                     :class="
                       isFieldBeingEdited(field)
-                        ? 'text-blue-dark text-sm font-semibold'
+                        ? 'text-sm font-semibold text-primary-dark'
                         : ''
                     "
                     >{{ field.label }}</span
                   >
                   <span
                     v-if="isFieldNotBeingEdited(field)"
-                    class="text-blue-dark cursor-pointer text-xs font-semibold transition hover:text-black"
+                    class="cursor-pointer text-xs font-semibold text-primary-dark transition hover:text-black"
                     @click="openField(field)"
                   >
                     Update

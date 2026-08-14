@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Unit\Models\Collections;
 
 use App\Jobs\OpenGraphImages\CreateCollectionIndexPageOpenGraphImageJob;
-use App\Models\Blogs\Blog;
 use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
 use App\Scopes\LiveScope;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
@@ -58,19 +58,6 @@ class CollectionModelTest extends TestCase
     }
 
     #[Test]
-    public function itCanHaveItemsAddedToTheCollection(): void
-    {
-        $this->assertEmpty($this->collection->items);
-
-        /** @var Blog $blog */
-        $blog = $this->create(Blog::class);
-
-        $this->collection->addItem($blog, $blog->meta_description)->refresh();
-
-        $this->assertNotEmpty($this->collection->items);
-    }
-
-    #[Test]
     public function itClearsCacheWhenARowIsCreated(): void
     {
         foreach (config('coeliac.cacheable.collections') as $key) {
@@ -80,6 +67,32 @@ class CollectionModelTest extends TestCase
 
             $this->assertFalse(Cache::has($key));
         }
+    }
+
+    #[Test]
+    public function itHasManyGroups(): void
+    {
+        $collection = $this->create(Collection::class);
+
+        $this->assertEmpty($collection->groups);
+
+        $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $this->assertCount(1, $collection->refresh()->groups);
+    }
+
+    #[Test]
+    public function groupsAreOrderedByPosition(): void
+    {
+        $collection = $this->create(Collection::class);
+
+        $first = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+        $second = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $groups = $collection->refresh()->groups;
+
+        $this->assertTrue($groups->first()->is($first));
+        $this->assertTrue($groups->last()->is($second));
     }
 
     #[Test]

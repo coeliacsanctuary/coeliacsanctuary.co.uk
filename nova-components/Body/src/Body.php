@@ -29,11 +29,14 @@ class Body extends Field
 
     protected bool $mustBeValidHtml = false;
 
+    protected bool $showToolbar = true;
+
     public function __construct($name, $attribute = null, ?callable $resolveCallback = null)
     {
         parent::__construct($name, $attribute, $resolveCallback);
 
         $this->rows('25');
+        $this->withMeta(['showToolbar' => true]);
     }
 
     public function rules($rules)
@@ -136,6 +139,14 @@ class Body extends Field
     public function mustBeValidHtml(): self
     {
         $this->mustBeValidHtml = true;
+
+        return $this;
+    }
+
+    public function noToolbar(): self
+    {
+        $this->showToolbar = false;
+        $this->withMeta(['showToolbar' => false]);
 
         return $this;
     }

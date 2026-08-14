@@ -126,6 +126,8 @@ abstract class Chartable
             'type' => $this->type(),
             'data' => $this->data($dateRange),
             'options' => $this->chartOptions($dateRange),
+            'height' => $this->chartHeight(),
+            'helpText' => $this->helpText(),
         ];
     }
 
@@ -203,5 +205,15 @@ abstract class Chartable
         }
 
         return $data;
+    }
+
+    protected function chartHeight(): string|int
+    {
+        return 'auto';
+    }
+
+    protected function helpText(): ?string
+    {
+        return null;
     }
 }

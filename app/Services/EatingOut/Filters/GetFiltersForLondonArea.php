@@ -39,11 +39,13 @@ class GetFiltersForLondonArea extends GetFilters
 
         return $builder
             ->select('*')
+            /** @phpstan-ignore argument.type */
             ->selectRaw("({$this->eateryQuery()}) + ({$this->branchQuery()}) as eateries_count");
     }
 
     protected function orderBy(Builder $builder, string $field): Builder
     {
+        /** @phpstan-ignore argument.type */
         return $builder->orderByRaw("eateries_count desc, {$field} asc");
     }
 
@@ -76,6 +78,9 @@ class GetFiltersForLondonArea extends GetFilters
             ->toRawSql();
     }
 
+    /**
+     * @param  null|(callable(EateryType|EateryVenueType|EateryFeature): array)  $mergeWithMap
+     */
     protected function resolveFilters(string $filterable, string $filterName, string $orderBy, string $nameColumn, string $checkedColumn, ?callable $mergeWithMap = null): Collection
     {
         if ($filterable === EateryFeature::class) {
@@ -92,8 +97,7 @@ class GetFiltersForLondonArea extends GetFilters
         $this->value = match ($filterable) {
             EateryType::class => 'wheretoeat.type_id',
             EateryVenueType::class => 'wheretoeat.venue_type_id',
-            EateryFeature::class => 'wheretoeat_assigned_features.feature_id',
-            default => throw new RuntimeException('Unknown filterable'),
+            default => 'wheretoeat_assigned_features.feature_id',
         };
 
         $filters = parent::resolveFilters($filterable, $filterName, $orderBy, $nameColumn, $checkedColumn, $mergeWithMap);

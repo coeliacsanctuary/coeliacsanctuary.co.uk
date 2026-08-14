@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Actions\CheckForRouteRedirectAction;
+use App\Actions\Redirects\CheckForRouteRedirectAction;
+use App\Actions\Redirects\HandleRedirectResponseAction;
 use Closure;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -20,9 +21,7 @@ class AddRouteModelBindingFallbacksMiddleware
                 $redirect = app(CheckForRouteRedirectAction::class)->handle($request->path());
 
                 if ($redirect) {
-                    $redirect->increment('hits');
-
-                    return redirect($redirect->to, $redirect->status);
+                    return app(HandleRedirectResponseAction::class)->handle($redirect);
                 }
 
                 throw $exception;

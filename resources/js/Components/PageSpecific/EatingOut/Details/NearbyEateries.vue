@@ -1,121 +1,109 @@
 <script setup lang="ts">
 import { NearbyEatery } from '@/types/EateryTypes';
 import { Deferred, Link } from '@inertiajs/vue3';
-import Loader from '@/Components/Loader.vue';
 import Card from '@/Components/Card.vue';
-import CoeliacButton from '@/Components/CoeliacButton.vue';
 import StarRating from '@/Components/StarRating.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import { pluralise } from '@/helpers';
 
 defineProps<{ eateryName: string; nearbyEateries?: NearbyEatery[] }>();
 </script>
 
 <template>
-  <Deferred data="nearbyEateries">
-    <template #fallback>
-      <Loader
-        :absolute="false"
-        color="primary"
-        size="size-12"
-        display
-        class="py-12"
-      />
-    </template>
+  <div>
+    <Deferred data="nearbyEateries">
+      <template #fallback>
+        <Card class="flex flex-col space-y-4">
+          <SubHeading
+            text-size="small"
+            class="pb-2"
+          >
+            Nearest places to {{ eateryName }}
+          </SubHeading>
 
-    <template v-if="nearbyEateries && nearbyEateries.length">
-      <Card class="lg:rounded-lg lg:p-8">
-        <SubHeading>Other locations near {{ eateryName }}</SubHeading>
-
-        <p class="prose-lg mt-4 max-w-none lg:prose-xl">
-          Not sure about eating at {{ eateryName }}? Here are some other
-          locations within half a mile of {{ eateryName }} that you might enjoy!
-        </p>
-      </Card>
-
-      <div class="grid gap-3 sm:mx-3 sm:grid-cols-2 2xl:mx-0 2xl:grid-cols-4">
-        <Card
-          v-for="nearbyEatery in nearbyEateries"
-          :key="nearbyEatery.id"
-          class="mx-3 flex flex-col space-y-2 sm:mx-0"
-        >
-          <div class="flex flex-col space-y-1">
-            <div class="flex items-end justify-between">
-              <h3
-                class="text-xl font-semibold"
-                v-text="nearbyEatery.name"
-              />
-              <div class="text-sm text-grey-dark">
-                {{ nearbyEatery.distance.toFixed(2) }}m away
-              </div>
+          <div class="grid animate-pulse gap-3">
+            <div
+              v-for="placeholder in 3"
+              :key="placeholder"
+              class="flex flex-col space-y-2 rounded-sm bg-primary-light/30 p-4"
+            >
+              <div class="h-5 w-3/4 rounded-sm bg-primary-light/60" />
+              <div class="h-4 w-1/2 rounded-sm bg-primary-light/60" />
+              <div class="h-3 w-full rounded-sm bg-primary-light/60" />
             </div>
+          </div>
+        </Card>
+      </template>
+
+      <Card
+        v-if="nearbyEateries && nearbyEateries.length"
+        class="flex flex-col space-y-4"
+      >
+        <SubHeading
+          text-size="small"
+          class="pb-2"
+        >
+          Nearest places to {{ eateryName }}
+        </SubHeading>
+
+        <p class="prose prose-sm max-w-none">
+          Not sure about eating at {{ eateryName }}? Here are the nearest places
+          to it that you might enjoy!
+        </p>
+
+        <div class="grid gap-3">
+          <Card
+            v-for="nearbyEatery in nearbyEateries"
+            :key="nearbyEatery.id"
+            class="group relative flex flex-col space-y-2 bg-linear-to-br from-primary/50 to-primary-light/50 transition hover:from-primary/30 hover:to-primary-light/30"
+          >
+            <Link
+              class="absolute top-0 left-0 z-10 h-full w-full"
+              :href="nearbyEatery.link"
+              prefetch
+            />
+
+            <h3
+              class="text-lg font-semibold"
+              v-text="nearbyEatery.name"
+            />
+
+            <p class="text-xs font-semibold text-grey-darker">
+              Around {{ nearbyEatery.distance.toFixed(1) }} miles away
+            </p>
 
             <div
               v-if="nearbyEatery.ratings_count > 0"
-              class="flex items-center justify-between gap-2"
+              class="flex flex-col space-y-0.5"
             >
-              <span class="flex-1">
-                Rated
-                <strong>{{ nearbyEatery.average_rating }} stars</strong> from
-                <strong
-                  >{{ nearbyEatery.ratings_count }} review{{
-                    nearbyEatery.ratings_count > 1 ? 's' : ''
-                  }}</strong
-                >
-              </span>
-
               <StarRating
                 :rating="nearbyEatery.average_rating"
                 show-all
-                size="size-4"
+                align="start"
+                size="w-4 h-4"
               />
+
+              <p class="text-xs font-semibold text-grey-dark">
+                {{ nearbyEatery.average_rating }} from
+                {{ nearbyEatery.ratings_count }}
+                {{ pluralise('rating', nearbyEatery.ratings_count) }}
+              </p>
             </div>
 
-            <div
-              v-else
-              class="flex items-center justify-between space-x-2"
-            >
-              <span class="text-grey-dark italic">
-                {{ nearbyEatery.name }} doesnt have a rating yet...
-              </span>
-
-              <div>
-                <CoeliacButton
-                  size="sm"
-                  label="Review..."
-                  theme="light"
-                  :as="Link"
-                  :href="`${nearbyEatery.link}#leave-review`"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="h-px w-full bg-primary" />
-
-          <div class="flex-1">
             <p
-              class="prose max-w-none"
-              v-text="nearbyEatery.info"
-            />
-          </div>
+              v-else
+              class="text-xs text-grey-dark italic"
+            >
+              No ratings yet &mdash; be the first to review!
+            </p>
 
-          <p
-            class="prose-sm max-w-none"
-            v-text="nearbyEatery.address"
-          />
-
-          <div class="">
-            <CoeliacButton
-              :as="Link"
-              :label="`Read more about ${nearbyEatery.name}`"
-              theme="secondary"
-              bold
-              size="md"
-              :href="nearbyEatery.link"
+            <p
+              class="text-xs text-grey-dark"
+              v-text="nearbyEatery.address"
             />
-          </div>
-        </Card>
-      </div>
-    </template>
-  </Deferred>
+          </Card>
+        </div>
+      </Card>
+    </Deferred>
+  </div>
 </template>

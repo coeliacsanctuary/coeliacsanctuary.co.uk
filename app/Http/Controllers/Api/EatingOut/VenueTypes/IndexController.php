@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 
 class IndexController
 {
-    /** @return Collection<int, array{id: int, type_id: int, label: string, count: int}> */
+    /** @return Collection<int, array{id: int, type_id: int<0, max>, label: string, count: int<0, max>}> */
     public function __invoke(): Collection
     {
         return EateryVenueType::query()
