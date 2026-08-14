@@ -9,6 +9,7 @@ use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
+use App\Enums\Collections\CollectionDisplayType;
 use App\Jobs\OpenGraphImages\CreateCollectionIndexPageOpenGraphImageJob;
 use App\Models\Media;
 use App\Scopes\LiveScope;
@@ -25,6 +26,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int $recipes_count
  * @property int $blogs_count
  * @property int $eateries_count
+ * @property CollectionDisplayType $display_type
  */
 class Collection extends Model implements HasMedia
 {
@@ -43,6 +45,7 @@ class Collection extends Model implements HasMedia
     protected $casts = [
         'display_on_homepage' => 'bool',
         'remove_from_homepage' => 'datetime',
+        'display_type' => CollectionDisplayType::class,
     ];
 
     protected static function booted(): void

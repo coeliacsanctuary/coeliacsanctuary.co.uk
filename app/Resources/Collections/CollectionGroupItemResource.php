@@ -48,7 +48,7 @@ class CollectionGroupItemResource extends JsonResource
             'description' => $this->item_description ?? $blog->meta_description,
             'image' => $blog->main_image_as_webp ?? $blog->main_image,
             'header_image_alt_text' => $blog->header_image_alt_text,
-            'date' => $blog->lastUpdated,
+            'date' => $blog->published,
             'link' => $blog->link,
         ];
     }
@@ -61,7 +61,7 @@ class CollectionGroupItemResource extends JsonResource
             'image' => $recipe->main_image_as_webp ?? $recipe->main_image,
             'header_image_alt_text' => $recipe->header_image_alt_text,
             'square_image' => $recipe->square_image_as_webp ?? $recipe->square_image,
-            'date' => $recipe->lastUpdated,
+            'date' => $recipe->published,
             'link' => $recipe->link,
         ];
     }

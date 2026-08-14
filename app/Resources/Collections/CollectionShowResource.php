@@ -20,8 +20,9 @@ class CollectionShowResource extends JsonResource
             'title' => $this->title,
             'image' => $this->main_image_as_webp ?? $this->main_image,
             'header_image_alt_text' => $this->header_image_alt_text,
+            'display_type' => $this->display_type,
             'published' => $this->published,
-            'updated' => $this->lastUpdated,
+            'updated' => $this->lastUpdated === $this->published ? null : $this->lastUpdated,
             'description' => $this->description,
             'body' => Str::of($this->body)
                 ->replace('&quot;', '"')

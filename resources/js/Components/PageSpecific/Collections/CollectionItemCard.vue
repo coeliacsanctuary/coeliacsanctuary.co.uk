@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import {
+  CollectionDisplayType,
   CollectionItem,
   BlogCollectionItem as BlogCollectionItemType,
   RecipeCollectionItem as RecipeCollectionItemType,
@@ -11,7 +12,10 @@ import BlogCollectionItem from '@/Components/PageSpecific/Collections/Items/Blog
 import RecipeCollectionItem from '@/Components/PageSpecific/Collections/Items/RecipeCollectionItem.vue';
 import EateryCollectionItem from '@/Components/PageSpecific/Collections/Items/EateryCollectionItem.vue';
 
-const props = defineProps<{ item: CollectionItem }>();
+const props = defineProps<{
+  item: CollectionItem;
+  displayType: CollectionDisplayType;
+}>();
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('card'),
@@ -25,20 +29,26 @@ useJourneyTracking().logWhenVisible(
 </script>
 
 <template>
-  <div ref="card">
+  <div
+    ref="card"
+    class="flex flex-col"
+  >
     <BlogCollectionItem
       v-if="item.type === 'Blog'"
       :item="item as BlogCollectionItemType"
+      :display-type="displayType"
     />
 
     <RecipeCollectionItem
       v-if="item.type === 'Recipe'"
       :item="item as RecipeCollectionItemType"
+      :display-type="displayType"
     />
 
     <EateryCollectionItem
       v-if="item.type === 'Eatery' || item.type === 'NationwideBranch'"
       :item="item as EateryCollectionItemType"
+      :display-type="displayType"
     />
   </div>
 </template>

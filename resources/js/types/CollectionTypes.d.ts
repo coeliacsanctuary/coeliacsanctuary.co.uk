@@ -11,14 +11,16 @@ export type CollectionDetailCard = HomeHoverItem & {
   };
 };
 
+export type CollectionDisplayType = 'grid' | 'list';
+
 export type CollectionPage = {
   id: number;
   title: string;
+  display_type: CollectionDisplayType;
   image: string;
   header_image_alt_text?: string;
   published: string;
-  updated: string;
-  author: string;
+  updated?: string;
   description: string;
   body?: string;
   groups: CollectionGroup[];
