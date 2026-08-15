@@ -17,6 +17,7 @@ import RecipeAttributes from '@/Components/PageSpecific/Recipes/RecipeAttributes
 import RecipeIngredients from '@/Components/PageSpecific/Recipes/RecipeIngredients.vue';
 import RecipeMethod from '@/Components/PageSpecific/Recipes/RecipeMethod.vue';
 import RelatedRecipesRow from '@/Components/PageSpecific/Recipes/RelatedRecipesRow.vue';
+import AuthorCard from '@/Components/PageSpecific/Shared/AuthorCard.vue';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -171,49 +172,15 @@ const handleCommentReset = () => {
         />
       </Card>
 
-      <Card
+      <AuthorCard
         v-if="['Alison Peters', 'Alison Wheatley'].includes(recipe.author)"
-        faded
-        theme="primary-light"
-      >
-        <div
-          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
-        >
-          <img
-            alt="Alison Peters"
-            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-            src="/images/misc/alison.png"
-          />
-          <div class="prose max-w-2xl md:prose-xl">
-            <strong>Alison Peters</strong> has been Coeliac since June 2014 and
-            launched Coeliac Sanctuary in August of that year, and since then
-            has aimed to provide a one stop shop for Coeliacs, from blogs, to
-            recipes, eating out guide and online shop.
-          </div>
-        </div>
-      </Card>
+        author="Alison Peters"
+      />
 
-      <Card
+      <AuthorCard
         v-if="recipe.author === 'Jamie Peters'"
-        faded
-        theme="primary-light"
-      >
-        <div
-          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
-        >
-          <img
-            alt="Alison Peters"
-            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-            src="/images/misc/jamie.png"
-          />
-          <div class="prose max-w-2xl md:prose-xl">
-            While not a coeliac, <strong>Jamie Peters</strong> is married to
-            one, he's the brains behind this website, and alongside software
-            development he has always enjoyed cooking and baking, and will adapt
-            his old family favourites so Alison can eat them too.
-          </div>
-        </div>
-      </Card>
+        author="Jamie Peters"
+      />
     </div>
   </div>
 

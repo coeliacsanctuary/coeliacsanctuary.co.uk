@@ -35,7 +35,7 @@ export type RecipePage = {
   image: string;
   square_image: string;
   published: string;
-  updated: string;
+  updated: string | null;
   author: string;
   description: string;
   meta_description: string;

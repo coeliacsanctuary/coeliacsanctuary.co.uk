@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property string $title
  * @property string $meta_description
  * @property string $main_image
- * @property string $lastUpdated
+ * @property string|null $lastUpdated
  */
 interface Collectable
 {

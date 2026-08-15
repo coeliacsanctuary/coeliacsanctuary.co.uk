@@ -10,10 +10,12 @@ import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
 import RenderedString from '@/Components/RenderedString.vue';
 import { Page } from '@inertiajs/core';
-import { loadScript } from '@/helpers';
+import { loadScript, pluralise } from '@/helpers';
 import BlogSimpleCard from '@/Components/PageSpecific/Blogs/BlogSimpleCard.vue';
 import collect, { Collection } from 'collect.js';
 import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
+import AuthorCard from '@/Components/PageSpecific/Shared/AuthorCard.vue';
+import ReadingProgressBar from '@/Components/ReadingProgressBar.vue';
 
 const props = defineProps<{
   blog: BlogPage;
@@ -22,6 +24,8 @@ const props = defineProps<{
 }>();
 
 const header = ref<HTMLElement>();
+
+const articleElem = ref<HTMLElement>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
 const isLoadingComments = ref(false);
@@ -95,7 +99,12 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
 </script>
 
 <template>
-  <Card class="mt-3 flex flex-col space-y-4">
+  <ReadingProgressBar
+    v-if="articleElem"
+    :article="articleElem"
+  />
+
+  <Card class="mt-3 flex flex-col space-y-4 overflow-hidden">
     <Heading
       :back-link="{
         href: '/blog',
@@ -105,45 +114,50 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
       {{ blog.title }}
     </Heading>
 
+    <div class="-mx-4">
+      <img
+        :alt="blog.header_image_alt_text ?? blog.title"
+        :src="blog.image"
+        loading="eager"
+        fetchpriority="high"
+        width="1200"
+        height="630"
+        class="aspect-[1200/630] w-full object-cover"
+      />
+    </div>
+
     <p
       class="prose prose-lg max-w-none font-semibold md:prose-xl"
       v-html="blog.description"
     />
 
-    <div
-      class="-m-4 -mb-4! flex flex-col space-y-4 bg-grey-light p-4 text-sm shadow-inner"
-    >
-      <div>
-        <strong>Tagged With</strong>
-        <ul class="flex flex-wrap space-x-1">
-          <li
-            v-for="tag in blog.tags"
-            :key="tag.slug"
-            class="after:content-[','] last:after:content-['']"
+    <div class="-mx-4 -mb-4 flex flex-col space-y-3 bg-primary-lightest/60 p-4">
+      <ul class="flex flex-wrap gap-2">
+        <li
+          v-for="tag in blog.tags"
+          :key="tag.slug"
+        >
+          <Link
+            :href="`/blog/tags/${tag.slug}`"
+            class="inline-block rounded-full border border-secondary bg-secondary/50 px-2 py-1 text-sm font-semibold whitespace-nowrap transition hover:bg-secondary"
           >
-            <Link
-              :href="`/blog/tags/${tag.slug}`"
-              class="font-semibold text-primary-dark hover:text-grey-dark"
-            >
-              {{ tag.tag }}
-            </Link>
-          </li>
-        </ul>
-      </div>
+            {{ tag.tag }}
+          </Link>
+        </li>
+      </ul>
 
-      <div>
-        <p v-if="blog.updated">Last updated {{ blog.updated }}</p>
-        <p>Published {{ blog.published }}</p>
-      </div>
+      <span class="text-sm font-semibold text-grey-darker">
+        {{ blog.reading_time }} min read · {{ blog.comments_count }}
+        {{ pluralise('comment', blog.comments_count) }}
+      </span>
+
+      <span class="text-xs text-grey-dark italic">
+        Published {{ blog.published
+        }}<template v-if="blog.updated">
+          · Last updated {{ blog.updated }}
+        </template>
+      </span>
     </div>
-  </Card>
-
-  <Card no-padding>
-    <img
-      :alt="blog.header_image_alt_text ?? blog.title"
-      :src="blog.image"
-      loading="lazy"
-    />
   </Card>
 
   <FaqCard
@@ -157,7 +171,10 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
   >
     <div class="flex-1">
       <Card>
-        <div class="prose prose-lg max-w-none md:prose-xl">
+        <div
+          ref="articleElem"
+          class="prose prose-lg max-w-none md:prose-xl"
+        >
           <RenderedString :content="blog.body" />
         </div>
       </Card>
@@ -168,27 +185,10 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
         :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
       />
 
-      <Card
+      <AuthorCard
         v-if="blog.show_author"
-        faded
-        theme="primary-light"
-      >
-        <div
-          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
-        >
-          <img
-            alt="Alison Peters"
-            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-            src="/images/misc/alison.png"
-          />
-          <div class="prose max-w-2xl md:prose-xl">
-            <strong>Alison Peters</strong> has been Coeliac since June 2014 and
-            launched Coeliac Sanctuary in August of that year, and since then
-            has aimed to provide a one stop shop for Coeliacs, from blogs, to
-            recipes, eating out guide and online shop.
-          </div>
-        </div>
-      </Card>
+        author="Alison Peters"
+      />
 
       <Comments
         :id="blog.id"
