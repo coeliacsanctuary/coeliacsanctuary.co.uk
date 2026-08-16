@@ -46,7 +46,9 @@ class ShowController
             ->metaFeed(route('blog.feed'))
             ->render('Blog/Show', [
                 'blog' => new BlogShowResource($blog),
-                'relatedBlogs' => RelatedBlogSimpleCardViewResource::collection($findRelatedBlogsAction->handle($blog)),
+                'relatedBlogs' => RelatedBlogSimpleCardViewResource::collection(
+                    $findRelatedBlogsAction->handle($blog->tags, $blog->primaryTag, $blog->id)
+                ),
                 'comments' => fn () => $commentsForItemAction->handle($blog),
             ]);
     }

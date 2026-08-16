@@ -6,52 +6,59 @@ namespace App\Actions\Blogs;
 
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 class FindRelatedBlogsAction
 {
-    /** @return Collection<int, Blog> */
-    public function handle(Blog $blog, int $limit = 10): Collection
+    /**
+     * @param  Collection<int, BlogTag>  $tags
+     * @return Collection<int, Blog>
+     */
+    public function handle(Collection $tags, ?BlogTag $primaryTag = null, ?int $excludeBlogId = null, int $limit = 10): Collection
     {
-        $primaryTag = collect();
+        $primaryTagBlogs = collect();
 
-        if ($blog->primaryTag) {
-            $primaryTag = $blog
-                ->primaryTag
-                ->load(['blogs' => fn (Relation $query) => $query->where('blogs.id', '!=', $blog->id)->latest()])
-                ->blogs
-                ->each(
-                    fn (Blog $b) => $b
-                        ->setAttribute('related_tag', $blog->primaryTag->tag)
-                        ->setAttribute('related_tag_url', $blog->primaryTag->link())
-                )
+        if ($primaryTag) {
+            $primaryTagBlogs = $this->loadBlogs(collect([$primaryTag]), $excludeBlogId)
+                ->pluck('blogs')
+                ->flatten()
                 ->take($limit);
 
-            if ($primaryTag->count() === $limit) {
-                return $primaryTag;
+            if ($primaryTagBlogs->count() === $limit) {
+                return $primaryTagBlogs;
             }
         }
 
         /** @var Collection<int, Blog> $relatedBlogs */
-        $relatedBlogs = $blog
-            ->tags()
-            ->when($blog->primary_tag_id, fn (Builder $query) => $query->where('blog_tags.id', '!=', $blog->primary_tag_id))
-            ->with(['blogs' => fn (Relation $query) => $query->where('blogs.id', '!=', $blog->id)->latest()])
-            ->get()
-            ->each(
-                fn (BlogTag $blogTag) => $blogTag->blogs->each(fn (Blog $blog) => $blog
-                    ->setAttribute('related_tag', $blogTag->tag)
-                    ->setAttribute('related_tag_url', $blogTag->link()))
-            )
+        $relatedBlogs = $this
+            ->loadBlogs($tags->reject(fn (BlogTag $tag): bool => $tag->is($primaryTag)), $excludeBlogId)
             ->pluck('blogs')
-            ->when($primaryTag->isNotEmpty(), fn (Collection $collection) => $primaryTag->concat($collection))
+            ->when($primaryTagBlogs->isNotEmpty(), fn (Collection $collection) => $primaryTagBlogs->concat($collection))
             ->flatten()
             ->unique('id')
             ->values()
             ->take($limit);
 
         return $relatedBlogs;
+    }
+
+    /**
+     * @param  Collection<int, BlogTag>  $tags
+     * @return Collection<int, BlogTag>
+     */
+    protected function loadBlogs(Collection $tags, ?int $excludeBlogId): Collection
+    {
+        return $tags
+            ->each(fn (BlogTag $tag) => $tag->load([
+                'blogs' => fn (Relation $query) => $query
+                    ->when($excludeBlogId, fn ($query) => $query->where('blogs.id', '!=', $excludeBlogId))
+                    ->latest(),
+            ]))
+            ->each(
+                fn (BlogTag $tag) => $tag->blogs->each(fn (Blog $blog) => $blog
+                    ->setAttribute('related_tag', $tag->tag)
+                    ->setAttribute('related_tag_url', $tag->link()))
+            );
     }
 }

@@ -157,6 +157,58 @@ export default {
       return el.value || null;
     },
 
+    /**
+     * The BlogTag Nova resource titles itself "Tag Name - (12 blogs)", so both
+     * the tag list and the primary tag select carry the count suffix.
+     */
+    stripTagCount(tag) {
+      const index = tag.lastIndexOf(' - (');
+
+      return index === -1 ? tag : tag.substring(0, index);
+    },
+
+    getTags() {
+      const container = document.querySelector('[dusk="tags-selected-tags"]');
+
+      if (!container) {
+        return [];
+      }
+
+      return Array.from(container.querySelectorAll('p.font-semibold')).map(
+        (el) => this.stripTagCount(el.textContent.trim()),
+      );
+    },
+
+    getPrimaryTag() {
+      const value = this.getFieldValue('primary_tag_id');
+
+      return value ? this.stripTagCount(value) : null;
+    },
+
+    getFaqs() {
+      const container = document.querySelector('[dusk="faqs"]');
+
+      if (!container) {
+        return [];
+      }
+
+      return Array.from(
+        container.querySelectorAll('[dusk$="-repeater-row"]'),
+      ).reduce((faqs, row) => {
+        const question = row.querySelector('[dusk="question"]');
+        const answer = row.querySelector('[dusk="answer"]');
+
+        if (question?.value) {
+          faqs.push({
+            question: question.value,
+            answer: answer?.value ?? null,
+          });
+        }
+
+        return faqs;
+      }, []);
+    },
+
     async openPreview() {
       this.isLoading = true;
       this.previewErrors = [];
@@ -164,6 +216,7 @@ export default {
       const payload = {
         model: this.field.model,
         title: this.getFieldValue('title'),
+        short_title: this.getFieldValue('short_title'),
         description: this.getFieldValue('description'),
         body: this.getFieldValue('body'),
         primary_image_url:
@@ -174,7 +227,12 @@ export default {
           this.getGalleryFirstImageUrl('social') ??
           this.field.social_image_url ??
           null,
+        header_image_alt_text: this.getFieldValue('header_image_alt_text'),
         show_author: this.getFieldValue('show_author') ?? true,
+        tags: this.getTags(),
+        primary_tag_id: this.getPrimaryTag(),
+        faqs: this.getFaqs(),
+        faq_display: this.getFieldValue('faq_display'),
         body_images: this.getBodyImages(),
       };
 

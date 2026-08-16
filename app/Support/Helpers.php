@@ -38,6 +38,12 @@ class Helpers
         return Str::apa($term);
     }
 
+    /** @return int<1, max> */
+    public static function readingTime(string $body): int
+    {
+        return max(1, (int) ceil(str_word_count(strip_tags($body)) / 200));
+    }
+
     public static function formatMoney(Money $money): string
     {
         $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);

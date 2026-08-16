@@ -1,21 +1,20 @@
 <script lang="ts" setup>
 import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
 import Card from '@/Components/Card.vue';
-import Heading from '@/Components/Heading.vue';
-import { Link, router } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import Comments from '@/Components/PageSpecific/Shared/Comments.vue';
-import { computed, onMounted, ref, Ref } from 'vue';
+import { onMounted, ref, Ref } from 'vue';
 import { BlogPage, RelatedBlogSimpleCard } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
 import RenderedString from '@/Components/RenderedString.vue';
 import { Page } from '@inertiajs/core';
-import { loadScript, pluralise } from '@/helpers';
-import BlogSimpleCard from '@/Components/PageSpecific/Blogs/BlogSimpleCard.vue';
-import collect, { Collection } from 'collect.js';
+import { loadScript } from '@/helpers';
 import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
 import AuthorCard from '@/Components/PageSpecific/Shared/AuthorCard.vue';
 import ReadingProgressBar from '@/Components/ReadingProgressBar.vue';
+import BlogArticleHeader from '@/Components/PageSpecific/Blogs/BlogArticleHeader.vue';
+import BlogSidebar from '@/Components/PageSpecific/Blogs/BlogSidebar.vue';
 
 const props = defineProps<{
   blog: BlogPage;
@@ -83,19 +82,6 @@ const handleCommentReset = () => {
     },
   );
 };
-
-type GroupedBlogs = {
-  tag: RelatedBlogSimpleCard['related_tag'];
-  blogs: Collection<RelatedBlogSimpleCard>;
-};
-
-const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
-  return collect(props.relatedBlogs)
-    .groupBy('related_tag')
-    .map((blogs, tag: string) => ({ tag, blogs }))
-    .values()
-    .all() as GroupedBlogs[];
-});
 </script>
 
 <template>
@@ -104,61 +90,7 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
     :article="articleElem"
   />
 
-  <Card class="mt-3 flex flex-col space-y-4 overflow-hidden">
-    <Heading
-      :back-link="{
-        href: '/blog',
-        label: 'Back to all blogs.',
-      }"
-    >
-      {{ blog.title }}
-    </Heading>
-
-    <div class="-mx-4">
-      <img
-        :alt="blog.header_image_alt_text ?? blog.title"
-        :src="blog.image"
-        loading="eager"
-        fetchpriority="high"
-        width="1200"
-        height="630"
-        class="aspect-[1200/630] w-full object-cover"
-      />
-    </div>
-
-    <p
-      class="prose prose-lg max-w-none font-semibold md:prose-xl"
-      v-html="blog.description"
-    />
-
-    <div class="-mx-4 -mb-4 flex flex-col space-y-3 bg-primary-lightest/60 p-4">
-      <ul class="flex flex-wrap gap-2">
-        <li
-          v-for="tag in blog.tags"
-          :key="tag.slug"
-        >
-          <Link
-            :href="`/blog/tags/${tag.slug}`"
-            class="inline-block rounded-full border border-secondary bg-secondary/50 px-2 py-1 text-sm font-semibold whitespace-nowrap transition hover:bg-secondary"
-          >
-            {{ tag.tag }}
-          </Link>
-        </li>
-      </ul>
-
-      <span class="text-sm font-semibold text-grey-darker">
-        {{ blog.reading_time }} min read · {{ blog.comments_count }}
-        {{ pluralise('comment', blog.comments_count) }}
-      </span>
-
-      <span class="text-xs text-grey-dark italic">
-        Published {{ blog.published
-        }}<template v-if="blog.updated">
-          · Last updated {{ blog.updated }}
-        </template>
-      </span>
-    </div>
-  </Card>
+  <BlogArticleHeader :blog="blog" />
 
   <FaqCard
     v-if="blog.faqs && blog.faq_display === 'top'"
@@ -201,37 +133,12 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
       />
     </div>
 
-    <aside class="flex flex-1 flex-col space-y-3 lg:max-w-[350px]">
-      <template
-        v-for="group in groupedRelatedBlogs"
-        :key="group.tag"
-      >
-        <Card class="flex w-full flex-col space-y-3">
-          <h3 class="text-lg font-semibold">
-            Other blogs tagged with {{ group.tag }}
-          </h3>
-
-          <BlogSimpleCard
-            v-for="groupBlog in group.blogs"
-            :key="groupBlog.title"
-            :blog="groupBlog"
-            :hover="false"
-          />
-
-          <Link
-            :href="group.blogs.first().related_tag_url"
-            class="mt-5 text-lg font-semibold text-primary-dark hover:text-grey-darker"
-          >
-            View more blogs tagged with {{ group.tag }}
-          </Link>
-        </Card>
-      </template>
-
+    <BlogSidebar :related-blogs="relatedBlogs">
       <FeaturedInCollectionCard
         v-if="blog.featured_in?.length"
         :collections="blog.featured_in"
         title="This blog is featured in"
       />
-    </aside>
+    </BlogSidebar>
   </div>
 </template>

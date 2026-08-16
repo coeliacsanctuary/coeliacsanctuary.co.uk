@@ -20,6 +20,7 @@ use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
+use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -119,7 +120,7 @@ class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia,
     /** @return Attribute<int<1, max>, never> */
     public function readingTime(): Attribute
     {
-        return Attribute::get(fn (): int => max(1, (int) ceil(str_word_count(strip_tags($this->body)) / 200)));
+        return Attribute::get(fn (): int => Helpers::readingTime($this->body));
     }
 
     /** @return BelongsToMany<BlogTag, $this> */

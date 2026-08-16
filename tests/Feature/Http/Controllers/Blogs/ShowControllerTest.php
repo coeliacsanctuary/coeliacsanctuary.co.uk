@@ -8,7 +8,9 @@ use App\Actions\Blogs\FindRelatedBlogsAction;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Comments\GetCommentsForItemAction;
 use App\Models\Blogs\Blog;
+use App\Models\Blogs\BlogTag;
 use App\Models\Faqs\Faq;
+use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -62,7 +64,9 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itCallsTheFindRelatedBlogsAction(): void
     {
-        $this->expectAction(FindRelatedBlogsAction::class, [Blog::class]);
+        $this->expectAction(FindRelatedBlogsAction::class, [
+            fn (Collection $tags, ?BlogTag $primaryTag, ?int $blogId): bool => $blogId === $this->blog->id,
+        ]);
 
         $this->visitBlog();
     }

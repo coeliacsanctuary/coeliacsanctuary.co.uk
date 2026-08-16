@@ -1,19 +1,43 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import Heading from '@/Components/Heading.vue';
-import { onMounted } from 'vue';
-import { BlogPage } from '@/types/BlogTypes';
+import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { BlogPage, RelatedBlogSimpleCard } from '@/types/BlogTypes';
 import RenderedString from '@/Components/RenderedString.vue';
 import { loadScript } from '@/helpers';
+import AuthorCard from '@/Components/PageSpecific/Shared/AuthorCard.vue';
+import ReadingProgressBar from '@/Components/ReadingProgressBar.vue';
+import BlogArticleHeader from '@/Components/PageSpecific/Blogs/BlogArticleHeader.vue';
+import BlogSidebar from '@/Components/PageSpecific/Blogs/BlogSidebar.vue';
 
 const props = defineProps<{
   blog: BlogPage;
+  relatedBlogs: RelatedBlogSimpleCard[];
 }>();
 
+const articleElem = ref<HTMLElement>();
+
+/**
+ * This page renders in an iframe inside Nova, where following a link would
+ * strand the editor on the real site with no way back to their preview.
+ */
+const blockNavigation = (event: MouseEvent): void => {
+  if ((event.target as HTMLElement).closest('a')) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+};
+
 onMounted(() => {
+  document.addEventListener('click', blockNavigation, { capture: true });
+
   if (props.blog.hasTwitterEmbed) {
     loadScript('https://platform.twitter.com/widgets.js');
   }
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', blockNavigation, { capture: true });
 });
 </script>
 
@@ -21,75 +45,48 @@ onMounted(() => {
   <div
     class="mb-4 bg-yellow-100 px-4 py-3 text-sm font-semibold text-yellow-800 shadow"
   >
-    Preview mode — this blog has not been published.
+    Preview mode — this blog has not been published. Comments and collections
+    are not shown, and links are disabled.
   </div>
 
-  <Card class="mt-3 flex flex-col space-y-4">
-    <Heading>
-      {{ blog.title }}
-    </Heading>
+  <ReadingProgressBar
+    v-if="articleElem"
+    :article="articleElem"
+  />
 
-    <p
-      class="prose prose-lg max-w-none font-semibold md:prose-xl"
-      v-html="blog.description"
-    />
+  <BlogArticleHeader :blog="blog" />
 
-    <div
-      class="-m-4 -mb-4! flex flex-col space-y-4 bg-grey-light p-4 text-sm shadow-inner"
-    >
-      <div v-if="blog.tags.length">
-        <strong>Tagged With</strong>
-        <ul class="flex flex-wrap space-x-1">
-          <li
-            v-for="tag in blog.tags"
-            :key="tag.slug"
-            class="after:content-[','] last:after:content-['']"
-          >
-            <span class="font-semibold text-primary-dark">{{ tag.tag }}</span>
-          </li>
-        </ul>
-      </div>
+  <FaqCard
+    v-if="blog.faqs && blog.faq_display === 'top'"
+    :faqs="blog.faqs"
+    :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
+  />
 
-      <div>
-        <p>Published {{ blog.published }}</p>
-      </div>
-    </div>
-  </Card>
-
-  <Card
-    v-if="blog.image"
-    no-padding
+  <div
+    class="flex w-full flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
-    <img
-      :alt="blog.header_image_alt_text ?? blog.title"
-      :src="blog.image"
-      loading="lazy"
-    />
-  </Card>
+    <div class="flex-1">
+      <Card>
+        <div
+          ref="articleElem"
+          class="article-body @container prose prose-lg max-w-none md:prose-xl"
+        >
+          <RenderedString :content="blog.body" />
+        </div>
+      </Card>
 
-  <Card>
-    <div class="article-body @container prose prose-lg max-w-none md:prose-xl">
-      <RenderedString :content="blog.body" />
-    </div>
-  </Card>
-
-  <Card
-    v-if="blog.show_author"
-    faded
-    theme="primary-light"
-  >
-    <div class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4">
-      <img
-        alt="Alison Peters"
-        class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-        src="/images/misc/alison.png"
+      <FaqCard
+        v-if="blog.faqs && (!blog.faq_display || blog.faq_display === 'bottom')"
+        :faqs="blog.faqs"
+        :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
       />
-      <div class="prose max-w-2xl md:prose-xl">
-        <strong>Alison Peters</strong> has been Coeliac since June 2014 and
-        launched Coeliac Sanctuary in August of that year, and since then has
-        aimed to provide a one stop shop for Coeliacs, from blogs, to recipes,
-        eating out guide and online shop.
-      </div>
+
+      <AuthorCard
+        v-if="blog.show_author"
+        author="Alison Peters"
+      />
     </div>
-  </Card>
+
+    <BlogSidebar :related-blogs="relatedBlogs" />
+  </div>
 </template>
