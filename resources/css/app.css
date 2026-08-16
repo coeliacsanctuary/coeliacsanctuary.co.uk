@@ -34,6 +34,10 @@
         display: none;
     }
 
+    .article-body :is(h1, h2, h3, h4, h5, h6) {
+        clear: both;
+    }
+
     @media only screen and (min-width: 1024px) {
         main div.flex-col > aside.space-y-3:has(+ div.flex-col) {
             overflow: unset;

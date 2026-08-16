@@ -4,7 +4,10 @@ export default () => {
     event: string,
     attributes: object = {},
   ) => {
-    if (typeof window === 'undefined' || import.meta.env.VITE_APP_ENV === 'local') {
+    if (
+      typeof window === 'undefined' ||
+      import.meta.env.VITE_APP_ENV === 'local'
+    ) {
       return;
     }
 

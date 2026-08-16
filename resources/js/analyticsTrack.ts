@@ -5,7 +5,10 @@ import { getTitle } from '@/helpers';
 export default () => {
   type Event = { detail: { page: Page<{ meta?: { title?: string } }> } };
 
-  if (typeof window === 'undefined' || import.meta.env.VITE_APP_ENV === 'local') {
+  if (
+    typeof window === 'undefined' ||
+    import.meta.env.VITE_APP_ENV === 'local'
+  ) {
     return;
   }
 

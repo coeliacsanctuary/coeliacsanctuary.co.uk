@@ -18,7 +18,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mb-4 bg-yellow-100 px-4 py-3 text-sm font-semibold text-yellow-800 shadow">
+  <div
+    class="mb-4 bg-yellow-100 px-4 py-3 text-sm font-semibold text-yellow-800 shadow"
+  >
     Preview mode — this blog has not been published.
   </div>
 
@@ -66,7 +68,7 @@ onMounted(() => {
   </Card>
 
   <Card>
-    <div class="prose prose-lg max-w-none md:prose-xl">
+    <div class="article-body @container prose prose-lg max-w-none md:prose-xl">
       <RenderedString :content="blog.body" />
     </div>
   </Card>
@@ -76,9 +78,7 @@ onMounted(() => {
     faded
     theme="primary-light"
   >
-    <div
-      class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
-    >
+    <div class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4">
       <img
         alt="Alison Peters"
         class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
@@ -86,9 +86,9 @@ onMounted(() => {
       />
       <div class="prose max-w-2xl md:prose-xl">
         <strong>Alison Peters</strong> has been Coeliac since June 2014 and
-        launched Coeliac Sanctuary in August of that year, and since then
-        has aimed to provide a one stop shop for Coeliacs, from blogs, to
-        recipes, eating out guide and online shop.
+        launched Coeliac Sanctuary in August of that year, and since then has
+        aimed to provide a one stop shop for Coeliacs, from blogs, to recipes,
+        eating out guide and online shop.
       </div>
     </div>
   </Card>

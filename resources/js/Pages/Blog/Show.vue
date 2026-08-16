@@ -173,7 +173,7 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
       <Card>
         <div
           ref="articleElem"
-          class="prose prose-lg max-w-none md:prose-xl"
+          class="article-body @container prose prose-lg max-w-none md:prose-xl"
         >
           <RenderedString :content="blog.body" />
         </div>
