@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import SubHeading from '@/Components/SubHeading.vue';
 import { Link } from '@inertiajs/vue3';
 import { EaterySimpleHomeResource } from '@/types/EateryTypes';
 import { ArrowRightIcon } from '@heroicons/vue/24/outline';
@@ -18,52 +19,55 @@ useJourneyTracking().logWhenVisible(
 <template>
   <Card
     ref="card"
-    class="space-y-4 pb-10"
+    class="space-y-4 overflow-hidden"
   >
-    <h3 class="text-center text-2xl font-semibold text-primary-dark">
+    <SubHeading
+      as="h2"
+      text-size="xs"
+    >
       Latest Eateries
-    </h3>
+    </SubHeading>
 
     <p class="prose">
-      Here are the latest places that have been added to our comprehensive
+      Here are the latest places that have been added to my comprehensive
       <Link href="/eating-out">Eating Out</Link> guide.
     </p>
 
-    <ul class="divide-y divide-primary-dark/80">
+    <ul class="-mx-2 divide-y divide-grey-off-light">
       <li
         v-for="eatery in eateries"
         :key="eatery.link"
-        class="flex flex-col py-2"
       >
         <Link
           :href="eatery.link"
-          class="text-lg font-semibold text-primary-dark hover:text-black hover:underline"
+          class="group flex flex-col rounded-sm px-2 py-3 transition hover:bg-primary-lightest/60"
           prefetch
         >
-          {{ eatery.name }}
-        </Link>
+          <span
+            class="font-semibold text-primary-dark transition group-hover:text-black"
+            v-text="eatery.name"
+          />
 
-        <Link
-          :href="eatery.location.link"
-          class="hover:underline"
-        >
-          {{ eatery.location.name }}
+          <span
+            class="text-sm text-grey-darker"
+            v-text="eatery.location.name"
+          />
+
+          <span
+            class="mt-1 text-xs text-grey-dark italic"
+            v-text="eatery.created_at"
+          />
         </Link>
-        <span
-          class="mt-4! block text-sm italic"
-          v-text="eatery.created_at"
-        />
       </li>
     </ul>
 
-    <p class="prose prose-lg">
-      <Link
-        href="/eating-out"
-        class="inline-flex items-center space-x-2"
-      >
-        <span>View more places to eat!</span>
-        <ArrowRightIcon class="size-4" />
-      </Link>
-    </p>
+    <Link
+      href="/eating-out"
+      class="-mx-4 -mb-4 mt-4! flex items-center justify-center space-x-2 bg-primary-lightest/60 p-4 font-semibold transition hover:bg-primary-light/60"
+    >
+      <span>View more places to eat!</span>
+
+      <ArrowRightIcon class="size-4" />
+    </Link>
   </Card>
 </template>

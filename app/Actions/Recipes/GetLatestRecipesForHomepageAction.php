@@ -22,7 +22,7 @@ class GetLatestRecipesForHomepageAction
             fn () => RecipeSimpleCardViewResource::collection(Recipe::query()
                 ->take(4)
                 ->latest()
-                ->with(['media'])
+                ->with(['media', 'nutrition'])
                 ->get())
         );
 

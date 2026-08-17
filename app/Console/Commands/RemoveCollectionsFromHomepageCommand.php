@@ -16,9 +16,10 @@ class RemoveCollectionsFromHomepageCommand extends Command
         Collection::query()
             ->where('display_on_homepage', true)
             ->where('remove_from_homepage', '<', now())
-            ->update([
+            ->get()
+            ->each(fn (Collection $collection) => $collection->update([
                 'display_on_homepage' => false,
                 'remove_from_homepage' => null,
-            ]);
+            ]));
     }
 }

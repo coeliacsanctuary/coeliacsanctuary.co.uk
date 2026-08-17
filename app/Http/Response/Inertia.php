@@ -231,6 +231,11 @@ class Inertia
             ->url($url)
             ->name($name)
             ->author(Schema::person()->name('Alison Peters'))
+            ->potentialAction(
+                Schema::searchAction()
+                    ->target(Schema::entryPoint()->urlTemplate("{$url}/search?q={search_term_string}"))
+                    ->setProperty('query-input', 'required name=search_term_string')
+            )
             ->toScript();
     }
 
