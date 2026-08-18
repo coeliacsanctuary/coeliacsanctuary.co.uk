@@ -10,6 +10,8 @@ return [
     'shop' => [
         'abandoned_basket_time_limit' => 2,
 
+        'popular_products_window_days' => (int) env('SHOP_POPULAR_PRODUCTS_WINDOW_DAYS', 7),
+
         'product_postage_description' => <<<'TEXT'
             <ul>
                 <li>Orders are only processed on normal UK working days.</li>
@@ -91,6 +93,9 @@ return [
         ],
         'products' => [
             'site-map' => 'coeliac.shop.products.site-map',
+        ],
+        'shop-reviews' => [
+            'index' => 'coeliac.shop.reviews.index',
         ],
     ],
 ];

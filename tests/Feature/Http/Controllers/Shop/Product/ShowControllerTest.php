@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Product;
 
+use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
@@ -50,6 +51,24 @@ class ShowControllerTest extends TestCase
     public function itRendersTheShopProductPage(): void
     {
         $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/Product'));
+    }
+
+    #[Test]
+    public function itLinksToTheRealCategoryUrlInTheBreadcrumbSchema(): void
+    {
+        /** @var ShopCategory $category */
+        $category = $this->product->categories()->first();
+
+        $this->makeRequest()->assertInertia(function (Assert $page) use ($category): void {
+            /** @var string[] $schema */
+            $schema = $page->toArray()['props']['meta']['schema'];
+
+            $breadcrumbs = collect($schema)->first(fn (string $item) => str_contains($item, 'BreadcrumbList'));
+
+            $this->assertNotNull($breadcrumbs);
+            $this->assertStringContainsString(route('shop.category', $category), $breadcrumbs);
+            $this->assertStringNotContainsString('\/shop\/slug', $breadcrumbs);
+        });
     }
 
     #[Test]

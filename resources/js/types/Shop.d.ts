@@ -7,6 +7,30 @@ export type ShopCategoryIndex = {
   link: string;
   image: string;
   travelCardSearch: boolean;
+  products_count?: number;
+  price?: string | null;
+  reviews_count?: number;
+};
+
+export type ShopPopularProduct = {
+  title: string;
+  link: string;
+  image: string;
+  price: string;
+  rating?: {
+    average: StarRating;
+    count: number;
+  };
+};
+
+export type ShopIndexReview = {
+  name: string | null;
+  review: string;
+  rating: StarRating;
+  product: {
+    title: string;
+    link: string;
+  } | null;
 };
 
 export type ShopBaseProduct = {

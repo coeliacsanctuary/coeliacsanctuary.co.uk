@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use App\Concerns\ClearsCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShopOrderReviewItem extends Model
 {
+    use ClearsCache;
+
     protected $casts = [
         'rating' => 'float',
     ];
@@ -29,5 +32,10 @@ class ShopOrderReviewItem extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(ShopOrder::class, 'order_id');
+    }
+
+    protected function cacheKey(): string
+    {
+        return 'shop-reviews';
     }
 }
