@@ -48,9 +48,11 @@ export type ShopProductIndex = ShopBaseProduct & {
   id: number;
   link: string;
   price: string;
+  in_stock: boolean;
   number_of_variants: number;
   primary_variant: number;
   primary_variant_quantity: number;
+  footnote: string | null;
 };
 
 export type ShopProductDetail = ShopBaseProduct & {

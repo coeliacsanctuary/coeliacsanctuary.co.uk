@@ -98,7 +98,7 @@ onMounted(() => {
       <Heading :border="false">Where are you heading?</Heading>
 
       <p class="prose max-w-none md:max-xl:prose-lg xl:prose-xl">
-        Enter the country or language below and we'll try and find the best
+        Enter the country or language below and I'll try and find the best
         travel card for you!
       </p>
 
@@ -164,7 +164,7 @@ onMounted(() => {
           v-if="searchResult.type === 'country'"
           :border="false"
         >
-          Here are our travel cards that can be used in
+          Here are my travel cards that can be used in
           <span class="text-primary-dark">{{ searchResult.term }}</span>
         </Heading>
 
@@ -172,7 +172,7 @@ onMounted(() => {
           v-else
           :border="false"
         >
-          Here are our travel cards that can be used in
+          Here are my travel cards that can be used in
           <span class="text-primary-dark">{{ searchResult.term }}</span>
           speaking areas
         </Heading>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use App\Models\Shop\ShopCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -54,5 +55,14 @@ class Helpers
     public static function requestIsFromApp(Request $request): bool
     {
         return (bool) ($request->userAgent() && Str::of($request->userAgent())->contains(['CoeliacSanctuaryOntheGo', 'okhttp'], true));
+    }
+
+    public static function isTravelCard(int|ShopCategory|null $category): bool
+    {
+        if ($category === null) {
+            return false;
+        }
+
+        return in_array($category instanceof ShopCategory ? $category->id : $category, [1, 11], true);
     }
 }

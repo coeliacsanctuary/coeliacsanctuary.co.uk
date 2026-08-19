@@ -21,7 +21,7 @@ class ShopCategoryIndexResource extends JsonResource
             'description' => $this->description,
             'link' => $this->link,
             'image' => $this->main_image_as_webp ?? $this->main_image,
-            'travelCardSearch' => $this->id === 1 || $this->id === 11,
+            'travelCardSearch' => Helpers::isTravelCard($this->id),
             'products_count' => $this->whenCounted('products'),
             'price' => $this->whenLoaded('products', fn () => $this->categoryPrice()),
             'reviews_count' => $this->whenLoaded('products', fn () => $this->products->sum('reviews_count')),
