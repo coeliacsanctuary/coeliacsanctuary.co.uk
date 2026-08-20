@@ -45,7 +45,7 @@
     @vite('resources/js/app.ts')
     @inertiaHead
 </head>
-<body class="mb-0">
+<body class="mb-0 {{ data_get($page, 'props.meta.bodyClass') }}">
 @inertia
 @if(app()->isLocal())
     <div class="fixed bottom-0 right-0 bg-red text-white text-xs font-semibold leading-0 p-2">

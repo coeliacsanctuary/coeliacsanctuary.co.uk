@@ -151,6 +151,13 @@ class Inertia
         return $this;
     }
 
+    public function bodyClass(string $class): self
+    {
+        BaseInertia::share('meta.bodyClass', $class);
+
+        return $this;
+    }
+
     /** @param array<string, mixed> | Arrayable<string, mixed> $props */
     public function render(string $component, array|Arrayable $props = []): Response
     {

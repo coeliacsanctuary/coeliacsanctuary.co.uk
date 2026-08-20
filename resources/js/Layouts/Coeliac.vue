@@ -12,14 +12,17 @@ import AdBlocker from '@/Components/AdBlocker.vue';
 import eventBus from '@/eventBus';
 import Announcement from '@/Layouts/Components/Announcement.vue';
 import useStickyAdOffset from '@/composables/useStickyAdOffset';
+import useBodyClass from '@/composables/useBodyClass';
 
 useStickyAdOffset();
 
-defineProps<{
+const props = defineProps<{
   meta: MetaProps;
   popup?: PopupProps;
   announcement?: AnnouncementProps;
 }>();
+
+useBodyClass(() => props.meta.bodyClass);
 
 const isShop = computed(
   (): boolean =>

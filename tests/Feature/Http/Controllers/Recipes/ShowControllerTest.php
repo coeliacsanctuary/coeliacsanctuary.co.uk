@@ -69,4 +69,12 @@ class ShowControllerTest extends TestCase
                     ->etc()
             );
     }
+
+    #[Test]
+    public function itSetsTheMediavineBodyClass(): void
+    {
+        $this->visitRecipe()
+            ->assertInertia(fn (Assert $page) => $page->where('meta.bodyClass', 'mv-recipe')->etc())
+            ->assertSee('<body class="mb-0 mv-recipe">', false);
+    }
 }

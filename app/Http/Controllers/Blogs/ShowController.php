@@ -44,6 +44,7 @@ class ShowController
                 new BreadcrumbItemData($blog->title),
             ]))
             ->metaFeed(route('blog.feed'))
+            ->bodyClass('mv-blog')
             ->render('Blog/Show', [
                 'blog' => new BlogShowResource($blog),
                 'relatedBlogs' => RelatedBlogSimpleCardViewResource::collection(

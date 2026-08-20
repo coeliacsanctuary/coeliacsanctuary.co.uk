@@ -18,6 +18,7 @@ export type MetaProps = {
   doNotTrack?: true;
   feed?: string;
   hideAds?: boolean;
+  bodyClass?: string;
   alternateMetas?: {
     [T: string]: string;
   };

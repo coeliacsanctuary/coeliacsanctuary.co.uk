@@ -84,6 +84,14 @@ class ShowControllerTest extends TestCase
             );
     }
 
+    #[Test]
+    public function itSetsTheMediavineBodyClass(): void
+    {
+        $this->visitBlog()
+            ->assertInertia(fn (Assert $page) => $page->where('meta.bodyClass', 'mv-blog')->etc())
+            ->assertSee('<body class="mb-0 mv-blog">', false);
+    }
+
     /** @return string[] */
     protected function schemaFor(TestResponse $response): array
     {
