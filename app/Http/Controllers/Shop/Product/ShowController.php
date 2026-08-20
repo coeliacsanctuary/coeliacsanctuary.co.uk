@@ -12,6 +12,8 @@ use App\Models\Shop\ShopProduct;
 use App\Resources\Shop\ShopProductResource;
 use App\Resources\Shop\ShopProductReviewResource;
 use App\Resources\Shop\ShopTravelCardProductResource;
+use App\Schema\FaqSchema;
+use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
@@ -33,18 +35,20 @@ class ShowController
             return redirect(route('shop.product', $product), LaravelResponse::HTTP_MOVED_PERMANENTLY);
         }
 
+        $product->load(['categories', 'prices', 'variants', 'media', 'reviews', 'addOns', 'addOns.prices', 'faqs']);
+
+        if ($product->currentPrices()->isEmpty()) {
+            abort(LaravelResponse::HTTP_NOT_FOUND);
+        }
+
         /** @var class-string<JsonResource> $resource */
         $resource = ShopProductResource::class;
 
-        /** @var string[] | array{string, mixed} $relations */
-        $relations = ['categories', 'prices', 'variants', 'media', 'reviews', 'addOns'];
-
-        if ($product->categories->pluck('title')->containsAny(['Coeliac Gluten Free Travel Cards', 'Coeliac+ Other Allergen Travel Cards', 'Coeliac Gluten Free Travel Cards - Defective'])) {
+        if (Helpers::isTravelCard($product->categories->first())) {
             $resource = ShopTravelCardProductResource::class;
-            $relations['travelCardSearchTerms'] = fn (Relation $builder) => $builder->where('type', 'country'); /** @phpstan-ignore-line  */
-        }
 
-        $product->load($relations);
+            $product->load(['travelCardSearchTerms' => fn (Relation $builder) => $builder->where('type', 'country')]); /** @phpstan-ignore-line  */
+        }
 
         $reviews = $product->reviews()
             ->with(['parent'])
@@ -60,7 +64,10 @@ class ShowController
             ->metaDescription($product->meta_description)
             ->metaTags(explode(',', $product->meta_keywords))
             ->metaImage($product->social_image)
-            ->schema($product->schema()->toScript())
+            ->schema(array_values(array_filter([
+                $product->schema()->toScript(),
+                $product->faqs->isNotEmpty() ? FaqSchema::make($product->faqs)->toScript() : null,
+            ])))
             ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Shop', route('shop.index')),

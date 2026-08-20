@@ -1,19 +1,15 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import {
-  ProductAdditionalDetailAccordionProps,
   ShopProductDetail,
   ShopProductReview,
-  ShopProductVariant,
   ShopTravelCardProductDetail,
 } from '@/types/Shop';
 import { PaginatedResponse } from '@/types/GenericTypes';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import StarRating from '@/Components/StarRating.vue';
-import { computed, nextTick, Ref, ref, useTemplateRef, watch } from 'vue';
+import { computed, onMounted, Ref, ref, useTemplateRef, watch } from 'vue';
+import { useElementVisibility } from '@vueuse/core';
 import { router, usePage } from '@inertiajs/vue3';
-import Modal from '@/Components/Overlays/Modal.vue';
-import { MinusIcon, PlusIcon } from '@heroicons/vue/24/outline';
 import ProductReviews from '@/Components/PageSpecific/Shop/ProductReviews.vue';
 import ProductAddBasketForm from '@/Components/PageSpecific/Shop/ProductAddBasketForm.vue';
 import { pluralise } from '@/helpers';
@@ -24,20 +20,23 @@ import useBrowser from '@/composables/useBrowser';
 import { StarRating as StarRatingType } from '@/types/EateryTypes';
 import { CustomComponent } from '@/types/Types';
 import TravelCardProductCountries from '@/Components/PageSpecific/Shop/TravelCardProductCountries.vue';
-import ProductAdditionalDetailsAccordionItem from '@/Components/PageSpecific/Shop/ProductAdditionalDetailsAccordionItem.vue';
 import StandardTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/StandardTravelCardEnglishTranslation.vue';
 import CoeliacPlusTravelCardEnglishTranslation from '@/Components/PageSpecific/Shop/CoeliacPlusTravelCardEnglishTranslation.vue';
 import ProductAiOverview from '@/Components/PageSpecific/Shop/ProductAiOverview.vue';
 import ProductImageModal from '@/Components/PageSpecific/Shop/ProductImageModal.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import TravelCardImportantInformation from '@/Components/PageSpecific/Shop/TravelCardImportantInformation.vue';
+import ProductLongDescription from '@/Components/PageSpecific/Shop/ProductLongDescription.vue';
+import ProductJumpNav from '@/Components/PageSpecific/Shop/ProductJumpNav.vue';
+import ShopDeliveryFacts from '@/Components/PageSpecific/Shop/ShopDeliveryFacts.vue';
+import ProductStickyBuyBar from '@/Components/PageSpecific/Shop/ProductStickyBuyBar.vue';
+import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
 
 type Product = ShopProductDetail | ShopTravelCardProductDetail;
 
 const props = defineProps<{
   product: Product;
   reviews: PaginatedResponse<ShopProductReview>;
-  productShippingText: string;
   currentReviewFilter: StarRatingType | undefined;
 }>();
 
@@ -46,83 +45,40 @@ const isTravelCardProduct = (
 ): product is ShopTravelCardProductDetail =>
   (product as ShopTravelCardProductDetail).is_travel_card;
 
-const englishTranslationComponent = (category: string): CustomComponent => {
-  if (category.toLowerCase().includes('coeliac+')) {
-    return CoeliacPlusTravelCardEnglishTranslation as CustomComponent;
-  }
-
-  return StandardTravelCardEnglishTranslation as CustomComponent;
-};
-
 const travelCardProduct = computed(() =>
   isTravelCardProduct(props.product) ? props.product : undefined,
 );
 
-const additionalDetails: ProductAdditionalDetailAccordionProps[] = [
-  travelCardProduct.value
-    ? {
-        title: 'Important Information',
-        component: TravelCardImportantInformation as CustomComponent,
-        headerComponent: Card as CustomComponent,
-        headerClasses: 'mx-3 mt-0! sm:p-4 flex-row !w-auto',
-        wrapperComponent: 'div',
-      }
-    : undefined,
-  travelCardProduct.value && travelCardProduct.value.countries.length
-    ? {
-        title: 'Where can I use this travel card?',
-        component: TravelCardProductCountries as CustomComponent,
-        props: {
-          countries: travelCardProduct.value.countries,
-          product: travelCardProduct.value.title,
-        },
-        headerComponent: Card as CustomComponent,
-        headerClasses: 'mx-3 mt-0! sm:p-4 flex-row !w-auto',
-        wrapperComponent: 'div',
-      }
-    : undefined,
-  travelCardProduct.value
-    ? {
-        title: 'What does my travel card say?',
-        component: englishTranslationComponent(
-          travelCardProduct.value.category.title,
-        ),
-        props: {
-          product: travelCardProduct.value.title,
-          canNotEat: travelCardProduct.value.title
-            .toLowerCase()
-            .includes('chinese')
-            ? 'soy sauce'
-            : '',
-        },
-        headerComponent: Card as CustomComponent,
-        headerClasses: 'mx-3 mt-0! sm:p-4 flex-row !w-auto',
-        wrapperComponent: 'div',
-      }
-    : undefined,
-  {
-    title: 'Postage Information',
-    content: props.productShippingText,
-    wrapperComponent: Card as CustomComponent,
-    wrapperClasses: 'mx-3 mt-0! sm:p-4',
-  },
-].filter((detail) => detail !== undefined);
+const englishTranslationComponent = computed((): CustomComponent => {
+  if (props.product.category.title.toLowerCase().includes('coeliac+')) {
+    return CoeliacPlusTravelCardEnglishTranslation as CustomComponent;
+  }
 
-const selectedVariant = ref<undefined | ShopProductVariant>(undefined);
+  return StandardTravelCardEnglishTranslation as CustomComponent;
+});
+
+const hasCountries = computed(
+  () => (travelCardProduct.value?.countries.length ?? 0) > 0,
+);
+
+// Undefined rather than a zero-count object, so the template narrows on a single v-if.
+const rating = computed(() =>
+  props.product.rating?.count ? props.product.rating : undefined,
+);
+
+const jumpSections = computed(() =>
+  [
+    { id: 'description', label: 'Description' },
+    hasCountries.value ? { id: 'where-to-use', label: 'Where to use it' } : null,
+    travelCardProduct.value
+      ? { id: 'what-it-says', label: 'What it says' }
+      : null,
+    props.product.faqs ? { id: 'questions', label: 'Questions' } : null,
+    rating.value ? { id: 'reviews', label: 'Reviews' } : null,
+  ].filter((section) => section !== null),
+);
 
 const viewImage = ref<false | number>(false);
-
-const showReviews = ref(false);
-
-const scrollToReviews = async (): Promise<void> => {
-  showReviews.value = true;
-
-  if (typeof document !== 'undefined') {
-    await nextTick(() => {
-      document.getElementById('reviews-dropdown')?.scrollIntoView();
-    });
-  }
-};
 
 const reviewFilter = ref<undefined | StarRatingType>(props.currentReviewFilter);
 
@@ -195,6 +151,17 @@ const loadMoreReviews = () => {
 
 const showAiOverview = ref(true);
 
+const buyBox = useTemplateRef<HTMLElement>('buyBox');
+
+const buyBoxIsVisible = useElementVisibility(buyBox);
+
+// useElementVisibility starts false, so gate on mount to stop the bar flashing in on first paint.
+const hasMounted = ref(false);
+
+onMounted(() => (hasMounted.value = true));
+
+const showStickyBar = computed(() => hasMounted.value && !buyBoxIsVisible.value);
+
 useJourneyTracking().logWhenVisible(
   useTemplateRef('description'),
   'scrolled_into_view',
@@ -215,229 +182,243 @@ useJourneyTracking().logWhenVisible(
 </script>
 
 <template>
-  <Card class="m-3 flex flex-col space-y-4 p-0">
-    <div class="mx-auto">
-      <!-- Product details -->
-      <div class="space-y-3 md:self-end lg:space-y-4">
-        <Heading
-          :back-link="{
-            label: `Back to <strong>${product.category.title}</strong>`,
-            href: product.category.link,
-            position: 'top',
-            direction: 'left',
-          }"
+  <Card class="mt-3 space-y-4">
+    <Heading
+      :back-link="{
+        label: `Back to <strong>${product.category.title}</strong>`,
+        href: product.category.link,
+        position: 'top',
+        direction: 'left',
+      }"
+    >
+      {{ product.title }}
+    </Heading>
+
+    <div class="gap-6 lg:grid lg:grid-cols-5 lg:gap-8">
+      <!-- Gallery -->
+      <div class="flex flex-col space-y-3 lg:col-span-3">
+        <button
+          type="button"
+          class="cursor-zoom-in overflow-hidden rounded-lg lg:min-h-0 lg:flex-1"
+          :aria-label="`View a larger image of ${product.title}`"
+          @click="viewImage = -1"
         >
-          {{ product.title }}
-        </Heading>
+          <!-- Fills the column height on desktop so a single wide image doesn't leave a gap
+               below it next to the taller buy box. -->
+          <img
+            :src="product.image"
+            :alt="product.title"
+            width="1200"
+            height="630"
+            fetchpriority="high"
+            class="aspect-[1200/630] w-full object-cover object-center lg:aspect-auto lg:h-full"
+          />
+        </button>
 
         <div
-          class="space-y-3 md:grid md:max-lg:grid-cols-2 md:max-lg:gap-3 lg:grid-cols-3 lg:max-2xl:gap-5 2xl:gap-7"
+          v-if="product.additional_images?.length"
+          class="grid grid-cols-4 gap-2 sm:grid-cols-5"
         >
-          <!-- Product images -->
-          <div class="flex flex-col space-y-4 md:col-start-1">
-            <div
-              class="cursor-zoom-in"
-              @click="viewImage = -1"
-            >
-              <div class="overflow-hidden rounded-lg">
-                <img
-                  :src="product.image"
-                  :alt="product.title"
-                  class="h-full w-full object-cover object-center"
-                />
-              </div>
-            </div>
+          <button
+            v-for="(image, index) in product.additional_images"
+            :key="image"
+            type="button"
+            class="cursor-zoom-in overflow-hidden rounded-lg"
+            :aria-label="`View image ${index + 1} of ${product.title}`"
+            @click="
+              () => {
+                viewImage = index;
 
-            <div
-              v-if="product.additional_images?.length"
-              class="grid grid-cols-4 gap-2"
-            >
-              <div
-                v-for="(image, index) in product.additional_images"
-                :key="image"
-                class="cursor-zoom-in overflow-hidden rounded-lg"
-                @click="
-                  () => {
-                    viewImage = index;
+                useJourneyTracking().logEvent(
+                  'clicked',
+                  'ShopProduct/ViewImage',
+                  { image: index },
+                );
+              }
+            "
+          >
+            <img
+              :src="image"
+              :alt="`${product.title} — image ${index + 1}`"
+              width="300"
+              height="300"
+              loading="lazy"
+              class="aspect-square w-full object-cover object-center"
+            />
+          </button>
+        </div>
+      </div>
 
-                    useJourneyTracking().logEvent(
-                      'clicked',
-                      'ShopProduct\ViewImage',
-                      {
-                        image: index,
-                      },
-                    );
-                  }
-                "
-              >
-                <img
-                  :src="image"
-                  :alt="product.title"
-                  class="h-full w-full object-cover object-center"
-                />
-              </div>
-            </div>
-          </div>
-
-          <section class="flex flex-col space-y-5 lg:col-span-2">
-            <div
-              class="flex flex-col items-center space-y-2 border-b pb-5 md:items-start"
-            >
-              <div class="mb-4 flex flex-col">
-                <p v-if="product.prices.old_price">
-                  was
-                  <span
-                    class="font-semibold text-red line-through"
-                    v-text="product.prices.old_price"
-                  />
-                  now
-                </p>
-                <p
-                  class="text-3xl leading-none font-semibold xs:text-4xl"
-                  v-text="product.prices.current_price"
-                />
-              </div>
-
-              <div
-                v-if="product.rating && product.rating.count > 0"
-                class="group flex-1 cursor-pointer"
-                @click="scrollToReviews()"
-              >
-                <div class="flex items-center space-x-2 font-semibold">
-                  <p
-                    class="text-gray-500 group-hover:text-primary-dark xs:max-xl:text-base"
-                  >
-                    Rated
-                  </p>
-
-                  <StarRating
-                    size="w-4 h-4 xs:max-xl:w-5 xs:max-xl:h-5 xl:w-6 xl:h-6"
-                    :rating="product.rating.average"
-                  />
-
-                  <p
-                    class="text-gray-500 group-hover:text-primary-dark xs:max-xl:text-lg"
-                  >
-                    from
-                    {{ product.rating.count }}
-                    {{ pluralise('review', product.rating.count) }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex-1 space-y-6">
+      <!-- Buy box -->
+      <div
+        id="buy-box"
+        ref="buyBox"
+        class="mt-6 scroll-mt-20 md:scroll-mt-32 lg:col-span-2 lg:mt-0 lg:self-start"
+      >
+        <div
+          class="space-y-4 rounded-sm border border-primary-light/60 bg-primary-lightest/50 p-4"
+        >
+          <div class="flex flex-col">
               <p
-                class="prose max-w-none xs:max-xl:prose-lg xl:prose-xl"
-                v-html="product.description"
+                v-if="product.prices.old_price"
+                class="text-sm"
+              >
+                was
+                <span
+                  class="font-semibold text-red line-through"
+                  v-text="product.prices.old_price"
+                />
+                now
+              </p>
+
+              <p
+                class="text-3xl leading-none font-semibold xs:text-4xl"
+                v-text="product.prices.current_price"
               />
             </div>
 
-            <!-- Product form -->
-            <ProductAddBasketForm
-              :product="product"
-              @selected-variant="(variant) => (selectedVariant = variant)"
+            <a
+              v-if="rating"
+              href="#reviews"
+              class="group flex items-center space-x-2"
+            >
+              <StarRating
+                size="size-5"
+                :rating="rating.average"
+                show-all
+              />
+
+              <span
+                class="text-sm font-semibold text-grey-dark group-hover:text-primary-dark"
+              >
+                {{ rating.count }}
+                {{ pluralise('review', rating.count) }}
+              </span>
+            </a>
+
+            <div
+              class="prose max-w-none border-t border-primary-light/60 pt-4 md:prose-lg"
+              v-html="product.description"
             />
-          </section>
+
+          <ProductAddBasketForm :product="product" />
+
+          <TravelCardImportantInformation v-if="travelCardProduct" />
         </div>
       </div>
     </div>
   </Card>
 
-  <Card
-    ref="description"
-    class="mx-3 mt-0! sm:p-4"
-  >
-    <SubHeading as="h3">Full Description</SubHeading>
+  <ProductJumpNav :sections="jumpSections" />
 
-    <div
-      class="prose prose-lg max-w-none"
-      v-html="product.long_description"
+  <div
+    ref="description"
+    id="description"
+    class="scroll-mt-20 md:scroll-mt-32"
+  >
+    <ProductLongDescription :description="product.long_description" />
+  </div>
+
+  <div
+    v-if="travelCardProduct && hasCountries"
+    id="where-to-use"
+    class="scroll-mt-20 md:scroll-mt-32"
+  >
+    <TravelCardProductCountries
+      :countries="travelCardProduct.countries"
+      :product="travelCardProduct.title"
     />
-  </Card>
+  </div>
+
+  <div
+    v-if="travelCardProduct"
+    id="what-it-says"
+    class="scroll-mt-20 md:scroll-mt-32"
+  >
+    <Component
+      :is="englishTranslationComponent"
+      :product="travelCardProduct.title"
+      :can-not-eat="
+        travelCardProduct.title.toLowerCase().includes('chinese')
+          ? 'soy sauce'
+          : ''
+      "
+    />
+  </div>
+
+  <div
+    v-if="product.faqs"
+    id="questions"
+    class="scroll-mt-20 md:scroll-mt-32"
+  >
+    <FaqCard
+      :faqs="product.faqs"
+      :title="`Common questions about my ${product.title}`"
+    />
+  </div>
 
   <ProductAiOverview
-    v-if="showAiOverview"
-    class="mx-3 mt-0! sm:p-4"
+    v-if="showAiOverview && rating"
     :product-name="product.title"
     :product-id="product.id"
     @on-error="showAiOverview = false"
   />
 
-  <ProductAdditionalDetailsAccordionItem
-    v-for="additionalDetail in additionalDetails"
-    :key="additionalDetail.title"
-    v-bind="additionalDetail"
-  />
-
-  <Card
+  <div
     ref="reviews"
-    class="mx-3 mt-0! mb-3 sm:p-4 lg:mt-1!"
+    id="reviews"
+    class="scroll-mt-20 md:scroll-mt-32"
   >
-    <Disclosure
-      v-if="product.rating"
-      as="div"
-    >
-      <h3>
-        <DisclosureButton
-          class="group relative flex w-full cursor-pointer items-center justify-between py-2 text-left"
-          @click="showReviews = !showReviews"
-        >
-          <SubHeading
-            as="h3"
-            :classes="
-              showReviews
-                ? 'text-primary-dark flex items-center'
-                : ' flex items-center'
-            "
-          >
-            <span class="mr-4">Reviews</span>
-            <StarRating
-              size="size-4"
-              :rating="product.rating.average"
-              show-all
-            />
-            <span class="ml-2 font-sans text-sm">
-              {{ product.rating.count }}
-              {{ pluralise('review', product.rating.count) }}
-            </span>
-          </SubHeading>
-          <span class="ml-6 flex items-center">
-            <PlusIcon
-              v-if="!showReviews"
-              class="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
-              aria-hidden="true"
-            />
-            <MinusIcon
-              v-else
-              class="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
-              aria-hidden="true"
-            />
-          </span>
-        </DisclosureButton>
-      </h3>
-
-      <DisclosurePanel
-        v-show="showReviews"
-        id="reviews-dropdown"
-        as="div"
-        class="pb-6"
-        static
+    <Card class="space-y-4">
+      <SubHeading
+        classes="text-primary-dark flex flex-wrap items-center gap-x-4 gap-y-1"
       >
-        <ProductReviews
-          :product-name="product.title"
-          :reviews="allReviews"
-          :rating="product.rating"
-          :filtered-on="reviewFilter"
-          @load-more="loadMoreReviews()"
-          @set-rating="
-            (rating: StarRatingType | undefined) =>
-              (reviewFilter = reviewFilter === rating ? undefined : rating)
-          "
-        />
-      </DisclosurePanel>
-    </Disclosure>
-  </Card>
+        <span>Reviews</span>
+
+        <template v-if="rating">
+          <StarRating
+            size="size-5"
+            :rating="rating.average"
+            show-all
+          />
+
+          <span class="font-sans text-sm text-grey-dark">
+            {{ rating.count }}
+            {{ pluralise('review', rating.count) }}
+          </span>
+        </template>
+      </SubHeading>
+
+      <ProductReviews
+        v-if="rating"
+        :product-name="product.title"
+        :reviews="allReviews"
+        :rating="rating"
+        :filtered-on="reviewFilter"
+        @load-more="loadMoreReviews()"
+        @set-rating="
+          (rating: StarRatingType | undefined) =>
+            (reviewFilter = reviewFilter === rating ? undefined : rating)
+        "
+      />
+
+      <p
+        v-else
+        class="text-sm text-grey-dark italic"
+      >
+        My {{ product.title }} hasn't been reviewed yet — customers are invited
+        to leave a review 10 days after their order has shipped, so check back
+        soon.
+      </p>
+    </Card>
+  </div>
+
+  <ShopDeliveryFacts />
+
+  <ProductStickyBuyBar
+    :product="product"
+    :show="showStickyBar"
+  />
 
   <ProductImageModal
     :title="product.title"

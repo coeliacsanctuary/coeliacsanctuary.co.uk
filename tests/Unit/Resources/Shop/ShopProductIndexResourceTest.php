@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tests\Unit\Resources\Shop;
 
 use App\Models\Shop\ShopCategory;
+use App\Models\Shop\ShopOrderReview;
+use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\TravelCardSearchTerm;
 use App\Resources\Shop\ShopProductIndexResource;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\MissingValue;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -63,6 +66,36 @@ class ShopProductIndexResourceTest extends TestCase
         $resource = (new ShopProductIndexResource($this->product))->toArray(new Request());
 
         $this->assertSame('Covers France', $resource['footnote']);
+    }
+
+    #[Test]
+    public function itDoesNotReturnARatingWhenTheReviewsRelationIsntLoaded(): void
+    {
+        $this->product->unsetRelation('reviews');
+
+        $resource = (new ShopProductIndexResource($this->product))->toArray(new Request());
+
+        $this->assertInstanceOf(MissingValue::class, $resource['rating']);
+    }
+
+    #[Test]
+    public function itCountsEachReviewOnceEvenWhenItHasSeveralItems(): void
+    {
+        $review = $this->build(ShopOrderReview::class)->create();
+
+        foreach (['The real review', 'Same as above', 'Same as above'] as $body) {
+            $this->build(ShopOrderReviewItem::class)
+                ->forReview($review)
+                ->forProduct($this->product)
+                ->create(['review' => $body, 'rating' => 5]);
+        }
+
+        $this->product->load('reviews');
+
+        $resource = (new ShopProductIndexResource($this->product))->toArray(new Request());
+
+        $this->assertSame(1, $resource['rating']['count']);
+        $this->assertSame(5.0, $resource['rating']['average']);
     }
 
     protected function attachCountry(string $term): void

@@ -1,5 +1,5 @@
 import { StarRating } from '@/types/EateryTypes';
-import { CustomComponent } from '@/types/Types';
+import { ArticleFaq } from '@/types/Types';
 
 export type ShopCategoryIndex = {
   title: string;
@@ -67,6 +67,7 @@ export type ShopProductDetail = ShopBaseProduct & {
   };
   rating?: ShopProductRating;
   add_ons?: ShopProductAddOn;
+  faqs: ArticleFaq[] | null;
 };
 
 export type ShopProductAddOn = {
@@ -202,15 +203,3 @@ export type TravelCardFeedbackItem = {
   link: string;
 };
 
-export type ProductAdditionalDetailAccordionProps = {
-  title: string;
-  openByDefault?: boolean;
-  content?: string;
-  component?: CustomComponent;
-  props?: Record<string, unknown>;
-  headerComponent?: CustomComponent;
-  headerClasses?: string;
-  wrapperComponent?: CustomComponent;
-  wrapperClasses?: string;
-  panelClasses?: string;
-};
