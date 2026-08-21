@@ -31,6 +31,7 @@ import ProductJumpNav from '@/Components/PageSpecific/Shop/ProductJumpNav.vue';
 import ShopDeliveryFacts from '@/Components/PageSpecific/Shop/ShopDeliveryFacts.vue';
 import ProductStickyBuyBar from '@/Components/PageSpecific/Shop/ProductStickyBuyBar.vue';
 import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
+import { ChatBubbleLeftRightIcon } from '@heroicons/vue/24/outline';
 
 type Product = ShopProductDetail | ShopTravelCardProductDetail;
 
@@ -402,14 +403,20 @@ useJourneyTracking().logWhenVisible(
         "
       />
 
-      <p
+      <div
         v-else
-        class="text-sm text-grey-dark italic"
+        class="flex min-h-64 flex-col items-center justify-center gap-3 rounded-sm bg-primary-lightest/60 p-6 text-center"
       >
-        My {{ product.title }} hasn't been reviewed yet — customers are invited
-        to leave a review 10 days after their order has shipped, so check back
-        soon.
-      </p>
+        <ChatBubbleLeftRightIcon class="size-12 text-primary" />
+
+        <p class="text-lg font-semibold">No reviews yet</p>
+
+        <p class="max-w-md text-sm text-grey-dark">
+          Nobody has reviewed my {{ product.title }} yet — every customer is
+          invited to leave a review 10 days after their order has shipped, so
+          check back soon!
+        </p>
+      </div>
     </Card>
   </div>
 
