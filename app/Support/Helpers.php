@@ -6,8 +6,11 @@ namespace App\Support;
 
 use App\Models\Shop\ShopCategory;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use League\ISO3166\ISO3166;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\IntlMoneyFormatter;
 use Money\Money;
@@ -64,5 +67,33 @@ class Helpers
         }
 
         return in_array($category instanceof ShopCategory ? $category->id : $category, [1, 11], true);
+    }
+
+    public static function countryCode(string $country): ?string
+    {
+        try {
+            return match (Str::lower($country)) {
+                'england' => 'gb-eng',
+                'wales' => 'gb-wls',
+                'scotland', 'orkney islands', 'shetland islands' => 'gb-sct',
+                'america', 'usa' => 'us',
+                'channel islands' => 'gb',
+                'czech republic' => 'cz',
+                'turkey' => 'tr',
+                'vietnam' => 'vn',
+                'south korea' => 'kr',
+                'north korea' => 'kp',
+                'laos' => 'la',
+                'burma' => 'mm',
+                'democratic republic of the congo' => 'cd',
+                'vatican city' => 'va',
+                'curacao' => 'cw',
+                'aland islands' => 'ax',
+                'st lucia' => 'lc',
+                default => Str::lower(Arr::get(app(ISO3166::class)->name($country), 'alpha2')),
+            };
+        } catch (Exception) {
+            return null;
+        }
     }
 }
