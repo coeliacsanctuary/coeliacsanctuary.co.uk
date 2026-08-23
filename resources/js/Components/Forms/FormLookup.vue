@@ -15,11 +15,15 @@ const props = withDefaults(
 
 const emits = defineEmits(['search', 'unlock', 'typed']);
 
-const value = ref('');
+const value = ref(props.initialValue ?? '');
 
 const results = ref<object[]>([]);
 
 const showResultsBox = ref(false);
+
+const highlightedIndex = ref(-1);
+
+const suppressSearch = ref(false);
 
 const classes = (): string[] => {
   const base = [
@@ -77,6 +81,11 @@ const classes = (): string[] => {
 };
 
 const performSearch = () => {
+  if (suppressSearch.value) {
+    suppressSearch.value = false;
+    return;
+  }
+
   if (value.value === '' || props.lock) {
     showResultsBox.value = false;
     return;
@@ -88,6 +97,7 @@ const performSearch = () => {
     })
     .then((response) => {
       showResultsBox.value = true;
+      highlightedIndex.value = -1;
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       results.value = <object[]>response.data[props.resultKey];
@@ -100,9 +110,45 @@ const reset = () => {
   value.value = '';
   showResultsBox.value = false;
   results.value = [];
+  highlightedIndex.value = -1;
 };
 
-defineExpose({ reset, value });
+const setValue = (newValue: string) => {
+  suppressSearch.value = true;
+  value.value = newValue;
+  showResultsBox.value = false;
+  results.value = [];
+  highlightedIndex.value = -1;
+};
+
+const close = () => {
+  showResultsBox.value = false;
+  highlightedIndex.value = -1;
+};
+
+const resultCount = (): number => results.value.length + (props.allowAny ? 1 : 0);
+
+const clickSlottedResult = (event: KeyboardEvent) => {
+  const slottedResult = (event.currentTarget as HTMLElement).firstElementChild;
+
+  if (slottedResult instanceof HTMLElement) {
+    slottedResult.click();
+  }
+};
+
+const move = (step: number) => {
+  const total = resultCount();
+
+  if (!showResultsBox.value || total === 0) {
+    return;
+  }
+
+  highlightedIndex.value = (highlightedIndex.value + step + total) % total;
+
+  document.getElementById(`${props.name}-result-${highlightedIndex.value}`)?.focus();
+};
+
+defineExpose({ reset, value, setValue, close });
 
 watch(
   () => props.preselectTerm,
@@ -166,6 +212,9 @@ watchDebounced(value, performSearch, { debounce: 500 });
           ...(max ? { max } : null),
         }"
         @keyup="$emit('typed')"
+        @keydown.down.prevent="move(1)"
+        @keydown.up.prevent="move(-1)"
+        @keydown.esc.prevent="close()"
       />
 
       <div
@@ -198,24 +247,45 @@ watchDebounced(value, performSearch, { debounce: 500 });
       class="rounded-b-md border border-t-0 border-grey-off shadow-xs focus:border-grey-dark"
       :class="resultsClasses"
     >
-      <ul v-if="results.length > 0 || allowAny">
+      <ul
+        v-if="results.length > 0 || allowAny"
+        @keydown.down.prevent="move(1)"
+        @keydown.up.prevent="move(-1)"
+        @keydown.esc.prevent="close()"
+      >
         <li
           v-for="(result, index) in results"
           :key="index"
         >
-          <slot
-            name="item"
-            v-bind="result"
-          />
+          <button
+            :id="`${name}-result-${index}`"
+            type="button"
+            class="block w-full cursor-pointer text-left"
+            @keydown.enter.prevent="clickSlottedResult"
+            @focus="highlightedIndex = index"
+          >
+            <slot
+              name="item"
+              v-bind="result"
+            />
+          </button>
         </li>
         <li v-if="allowAny">
-          <slot
-            name="item"
-            v-bind="{
-              ...fallbackObject,
-              [fallbackKey]: value,
-            }"
-          />
+          <button
+            :id="`${name}-result-${results.length}`"
+            type="button"
+            class="block w-full cursor-pointer text-left"
+            @keydown.enter.prevent="clickSlottedResult"
+            @focus="highlightedIndex = results.length"
+          >
+            <slot
+              name="item"
+              v-bind="{
+                ...fallbackObject,
+                [fallbackKey]: value,
+              }"
+            />
+          </button>
         </li>
       </ul>
 

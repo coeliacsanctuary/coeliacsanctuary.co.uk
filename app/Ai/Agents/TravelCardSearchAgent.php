@@ -8,6 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\HasStructuredOutput;
+use Illuminate\Support\Collection;
 use Laravel\Ai\Promptable;
 use Laravel\Ai\Responses\StructuredAgentResponse;
 use Stringable;
@@ -30,7 +31,8 @@ class TravelCardSearchAgent implements Agent, HasStructuredOutput
         ];
     }
 
-    public function lookup(string $searchTerm): ?string
+    /** @return Collection<int, non-empty-string> */
+    public function lookup(string $searchTerm): Collection
     {
         /** @var StructuredAgentResponse $response */
         $response = $this->prompt($searchTerm);
@@ -38,6 +40,9 @@ class TravelCardSearchAgent implements Agent, HasStructuredOutput
         /** @var array<int, string> $results */
         $results = $response['results'];
 
-        return collect($results)->first();
+        return collect($results)
+            ->map(fn (string $result) => mb_trim($result))
+            ->filter(fn (string $result) => mb_strlen($result) > 0)
+            ->values();
     }
 }

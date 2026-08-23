@@ -10,19 +10,13 @@ use Throwable;
 
 class TravelCardSearchAiLookupAction
 {
-    /** @return Collection<int, array{id: int, term: string, type: string}> */
-    public function handle(string $searchTerm): ?Collection
+    /** @return Collection<int, non-empty-string> */
+    public function handle(string $searchTerm): Collection
     {
         try {
-            $result = (new TravelCardSearchAgent())->lookup($searchTerm);
-
-            if ($result) {
-                return app(SearchTravelCardCountyOrLanguageAction::class)->handle($result);
-            }
+            return (new TravelCardSearchAgent())->lookup($searchTerm);
         } catch (Throwable) {
-            //
+            return collect();
         }
-
-        return collect();
     }
 }

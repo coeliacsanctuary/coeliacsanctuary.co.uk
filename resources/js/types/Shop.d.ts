@@ -196,10 +196,34 @@ type PaypalPayment = {
   paypalAccount?: string;
 };
 
-export type TravelCardFeedbackItem = {
-  review: string;
-  name: string;
-  product: string;
-  link: string;
+export type TravelCardDestinationChip = {
+  term: string;
+  flag: string | null;
+};
+
+export type TravelCardDestination = {
+  term: string;
+  type: string;
+  flag: string | null;
+  products: ShopProductIndex[];
+};
+
+export type TravelCardSearchResult = {
+  term: string;
+  destinations: TravelCardDestination[];
+  covers_all: ShopProductIndex[];
+};
+
+export type TravelCardReviewSummary = {
+  reviews: ShopIndexReview[];
+  count: number;
+  average: number | null;
+};
+
+export type TravelCardLookupResult = {
+  id: number | null;
+  term: string;
+  value: string;
+  type: string;
 };
 

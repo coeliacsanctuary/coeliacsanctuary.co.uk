@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop\TravelCardSearch;
 
-use App\Ai\Agents\TravelCardSearchAgent;
-use App\Actions\Shop\TravelCardSearch\SearchTravelCardCountyOrLanguageAction;
 use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookupAction;
+use App\Ai\Agents\TravelCardSearchAgent;
+use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -16,32 +16,50 @@ class TravelCardSearchAiLookupTest extends TestCase
     {
         parent::setUp();
 
-        TravelCardSearchAgent::fake([['results' => ['foobar'], 'explanation' => 'test']]);
+        TravelCardSearchAgent::fake([['results' => ['Spain'], 'explanation' => 'test']]);
+    }
+
+    /** @return Collection<int, string> */
+    protected function lookup(string $searchTerm = 'benidorm'): Collection
+    {
+        return $this->callAction(TravelCardSearchAiLookupAction::class, $searchTerm);
     }
 
     #[Test]
     public function itPromptsTheTravelCardSearchAgentWithTheSearchTerm(): void
     {
-        app(TravelCardSearchAiLookupAction::class)->handle('foo');
+        $this->lookup('benidorm');
 
-        TravelCardSearchAgent::assertPrompted('foo');
+        TravelCardSearchAgent::assertPrompted('benidorm');
     }
 
     #[Test]
-    public function itCallsTheSearchTravelCardCountyOrLanguageActionWithTheResult(): void
+    public function itReturnsTheCountriesTheAgentResolved(): void
     {
-        $this->expectAction(SearchTravelCardCountyOrLanguageAction::class, ['foobar'], return: collect());
-
-        app(TravelCardSearchAiLookupAction::class)->handle('foo');
+        $this->assertEquals(['Spain'], $this->lookup()->all());
     }
 
     #[Test]
-    public function itDoesntCallTheActionIfThereIsNoResult(): void
+    public function itReturnsEveryCountryForAMultiPlaceSearch(): void
+    {
+        TravelCardSearchAgent::fake([['results' => ['Spain', 'Greece'], 'explanation' => 'two places']]);
+
+        $this->assertEquals(['Spain', 'Greece'], $this->lookup('benidorm and rhodes')->all());
+    }
+
+    #[Test]
+    public function itReturnsNothingWhenTheAgentFindsNoMatch(): void
     {
         TravelCardSearchAgent::fake([['results' => [], 'explanation' => 'no match']]);
 
-        $this->dontExpectAction(SearchTravelCardCountyOrLanguageAction::class);
+        $this->assertCount(0, $this->lookup('asdfgh'));
+    }
 
-        app(TravelCardSearchAiLookupAction::class)->handle('foo');
+    #[Test]
+    public function itDiscardsBlankResults(): void
+    {
+        TravelCardSearchAgent::fake([['results' => ['Spain', '  ', ''], 'explanation' => 'padded']]);
+
+        $this->assertEquals(['Spain'], $this->lookup()->all());
     }
 }
