@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Ai\Agents;
 
 use App\Ai\Agents\TravelCardSearchAgent;
+use Illuminate\Support\Collection;
 use Laravel\Ai\Contracts\HasStructuredOutput;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -49,14 +50,18 @@ class TravelCardSearchAgentTest extends TestCase
     {
         TravelCardSearchAgent::fake([['results' => ['France'], 'explanation' => 'test']]);
 
-        $this->assertEquals('France', $this->agent->lookup('Paris'));
+        $results = $this->agent->lookup('Paris');
+
+        $this->assertInstanceOf(Collection::class, $results);
+        $this->assertcount(1, $results);
+        $this->assertEquals('France', $results->first());
     }
 
     #[Test]
-    public function lookupReturnsNullWhenTheAgentReturnsNoResults(): void
+    public function lookupReturnsAnEmptyResultSetWhenTheAgentReturnsNoResults(): void
     {
         TravelCardSearchAgent::fake([['results' => [], 'explanation' => 'no match']]);
 
-        $this->assertNull($this->agent->lookup('xyzzy'));
+        $this->assertEmpty($this->agent->lookup('xyzzy'));
     }
 }

@@ -80,6 +80,8 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
         $this->product->update(['google_merchant_product_id' => 'accounts/12345/productInputs/ZW4~GB~1']);
         ShopProductVariant::query()->update(['quantity' => 0]);
 
+        $this->product->unsetRelation('variants');
+
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('delete')->with('accounts/12345/productInputs/ZW4~GB~1')->once();
