@@ -14,8 +14,8 @@ class CloseBasketAction
 {
     public function handle(ShopOrder $order): void
     {
-        if ($order->state_id !== OrderState::BASKET) {
-            throw new RuntimeException('Order must be in basket state');
+        if ( ! in_array($order->state_id, [OrderState::BASKET, OrderState::PENDING], true)) {
+            throw new RuntimeException('Order must be in basket or pending state');
         }
 
         $order->update(['state_id' => OrderState::EXPIRED]);

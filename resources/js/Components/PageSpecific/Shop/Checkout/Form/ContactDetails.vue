@@ -2,8 +2,8 @@
 import FormInput from '@/Components/Forms/FormInput.vue';
 import { computed, ComputedRef, reactive, watch } from 'vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/outline';
-import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
+import { ArrowRightIcon } from '@heroicons/vue/24/outline';
+import CheckoutStepHeader from '@/Components/PageSpecific/Shop/Checkout/CheckoutStepHeader.vue';
 import useShopStore from '@/stores/useShopStore';
 import { CheckoutContactStep } from '@/types/Shop';
 import axios, { AxiosError } from 'axios';
@@ -33,12 +33,12 @@ const disableButton = computed((): boolean => {
     return true;
   }
 
-  if (data.email !== data.email_confirmation) {
-    return true;
-  }
-
   return false;
 });
+
+const summary = computed((): string[] =>
+  [data.name, data.email].filter((line) => line !== ''),
+);
 
 const storeCustomerDetails = async (): Promise<void> => {
   try {
@@ -88,25 +88,15 @@ const track = (label: string, value?: string) => {
 
 <template>
   <div class="flex flex-col space-y-6">
-    <h2
-      class="flex items-center justify-between text-3xl font-semibold"
-      :class="{
-        'cursor-pointer text-primary-dark': !error && (show || completed),
-        'text-grey-off': !error && !show,
-        'text-red': error,
-      }"
-      @click="completed ? $emit('toggle') : undefined"
-    >
-      <span>Your Details</span>
-      <CheckIcon
-        v-if="completed && !error"
-        class="h-8 w-8 text-green"
-      />
-      <ExclamationCircleIcon
-        v-if="error"
-        class="h-8 w-8 text-red"
-      />
-    </h2>
+    <CheckoutStepHeader
+      :step="1"
+      title="Your details"
+      :show="show"
+      :completed="completed"
+      :error="error"
+      :summary="summary"
+      @toggle="$emit('toggle')"
+    />
 
     <form
       v-if="show"
@@ -114,9 +104,9 @@ const track = (label: string, value?: string) => {
       @keyup.enter="submitForm()"
     >
       <p class="prose mt-2! max-w-none xl:prose-lg">
-        To start the checkout process we just need some basic details from you
-        including your name, the email address for your order confirmation, and
-        optionally, a telephone number.
+        To get started I just need a few basic details - your name, the email
+        address I'll send your order confirmation to, and optionally, a
+        telephone number.
       </p>
 
       <FormInput
@@ -140,18 +130,6 @@ const track = (label: string, value?: string) => {
         required
         borders
         @blur-sm="() => track('Email', data.email)"
-      />
-
-      <FormInput
-        v-model="data.email_confirmation"
-        :error="errors.email_confirmation"
-        type="email"
-        label="Confirm Email"
-        name="email_confirmation"
-        autocomplete="email"
-        required
-        borders
-        @blur-sm="() => track('EmailConfirmation', data.email_confirmation)"
       />
 
       <FormInput

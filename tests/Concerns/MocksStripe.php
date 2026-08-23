@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Concerns;
 
 use Illuminate\Support\Str;
+use Stripe\Exception\ApiConnectionException;
 use Stripe\BalanceTransaction;
 use Stripe\Card;
 use Stripe\Charge;
@@ -68,6 +69,17 @@ trait MocksStripe
                 'status' => $status,
                 ...$params,
             ]))
+            ->once();
+    }
+
+    protected function mockPaymentIntentRetrievalFailure(): void
+    {
+        $paymentIntent = $this->partialMock(PaymentIntentService::class);
+
+        $this->getStripeClient()->paymentIntents = $paymentIntent;
+
+        $paymentIntent->shouldReceive('retrieve')
+            ->andThrow(new ApiConnectionException('Could not connect to Stripe'))
             ->once();
     }
 

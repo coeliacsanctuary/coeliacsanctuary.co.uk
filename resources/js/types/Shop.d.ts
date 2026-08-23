@@ -139,7 +139,6 @@ export type ShopBasketItem = {
 export type CheckoutContactStep = {
   name: string;
   email: string;
-  email_confirmation: string;
   phone?: string;
   subscribeToNewsletter: boolean;
 };
@@ -226,4 +225,3 @@ export type TravelCardLookupResult = {
   value: string;
   type: string;
 };
-

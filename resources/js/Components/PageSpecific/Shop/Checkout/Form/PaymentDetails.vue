@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/outline';
+import { ArrowRightIcon, LockClosedIcon } from '@heroicons/vue/24/outline';
+import CheckoutStepHeader from '@/Components/PageSpecific/Shop/Checkout/CheckoutStepHeader.vue';
 import PaymentWidget from '@/Components/PageSpecific/Shop/Checkout/Form/Components/PaymentWidget.vue';
 import { CheckoutBillingStep } from '@/types/Shop';
 import useShopStore from '@/stores/useShopStore';
@@ -11,21 +12,41 @@ import FormInput from '@/Components/Forms/FormInput.vue';
 import eventBus from '@/eventBus';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
-defineProps<{ show: boolean; completed: boolean; paymentToken: string }>();
+defineProps<{
+  show: boolean;
+  completed: boolean;
+  error: boolean;
+  paymentToken: string;
+}>();
 
 const emits = defineEmits(['continue', 'toggle']);
 
 const store = useShopStore();
 
-const shippingDetails = computed(() => store.shippingDetails);
+const billingAddressSelect = ref<'same' | 'other'>('same');
 
-let fields = reactive<CheckoutBillingStep>({
-  name: store.customerName,
-  country: store.selectedCountry,
-  ...shippingDetails.value,
+const fields = reactive<CheckoutBillingStep>({
+  name: '',
+  address_1: '',
+  address_2: '',
+  address_3: '',
+  town: '',
+  county: '',
+  postcode: '',
+  country: '',
 });
 
-const billingAddressSelect = ref<'same' | 'other'>('same');
+const billingDetails = (): CheckoutBillingStep => {
+  if (billingAddressSelect.value === 'other') {
+    return { ...fields };
+  }
+
+  return {
+    name: store.customerName,
+    country: store.selectedCountry,
+    ...store.shippingDetails,
+  };
+};
 
 const selectOptions: FormSelectOption[] = [
   { value: 'same', label: 'Same as shipping address' },
@@ -37,13 +58,15 @@ const submitting = ref(false);
 const paymentValid = ref(false);
 
 const submit = () => {
+  const details = billingDetails();
+
   submitting.value = true;
-  store.setBillingDetails(fields);
+  store.setBillingDetails(details);
 
   useJourneyTracking().logEvent(
     'clicked',
     'Checkout/Form/PaymentDetails/Submit',
-    fields,
+    details,
     true,
   );
 
@@ -88,24 +111,19 @@ watch(billingAddressSelect, () => {
   );
 
   if (billingAddressSelect.value === 'same') {
-    // eslint-disable-next-line no-const-assign
-    fields = reactive({
-      name: store.customerName,
-      country: store.selectedCountry,
-      ...store.shippingDetails,
-    });
-
     return;
   }
 
-  fields.name = '';
-  fields.address_1 = '';
-  fields.address_2 = '';
-  fields.address_3 = '';
-  fields.town = '';
-  fields.county = '';
-  fields.postcode = '';
-  fields.country = '';
+  Object.assign(fields, {
+    name: '',
+    address_1: '',
+    address_2: '',
+    address_3: '',
+    town: '',
+    county: '',
+    postcode: '',
+    country: '',
+  });
 });
 
 eventBus.$on('payment-failed', () => {
@@ -126,24 +144,18 @@ const track = (label: string, value?: string) => {
 
 <template>
   <div class="flex flex-col space-y-6 pt-4">
-    <h2
-      class="flex justify-between text-3xl font-semibold"
-      :class="{
-        'cursor-pointer text-primary-dark': show || completed,
-        'text-grey-off': !show,
-      }"
-      @click="completed ? $emit('toggle') : undefined"
-    >
-      <span>Payment Details</span>
-      <CheckIcon
-        v-if="completed"
-        class="h-8 w-8 text-green"
-      />
-    </h2>
+    <CheckoutStepHeader
+      :step="3"
+      title="Payment"
+      :show="show"
+      :completed="completed"
+      :error="error"
+      @toggle="$emit('toggle')"
+    />
 
     <template v-if="show">
       <p class="prose mt-2! max-w-none xl:prose-lg">
-        Thanks for letting us know where you went your order shipped, finally we
+        Thanks for letting me know where you want your order shipped, finally I
         need to know how you'd like to pay.
       </p>
 
@@ -255,6 +267,13 @@ const track = (label: string, value?: string) => {
         :loading="submitting"
         @click="submit()"
       />
+
+      <p class="flex items-center justify-center gap-2 text-sm text-grey-dark">
+        <LockClosedIcon class="size-4 shrink-0" />
+        <span
+          >Payments are handled by Stripe - I never see your card details.</span
+        >
+      </p>
     </template>
   </div>
 </template>

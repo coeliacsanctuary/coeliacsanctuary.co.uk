@@ -9,12 +9,20 @@ import { Link } from '@inertiajs/vue3';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import { useTemplateRef } from 'vue';
 
-defineProps<{ products: ShopPopularProduct[] }>();
+const props = withDefaults(
+  defineProps<{
+    products: ShopPopularProduct[];
+    trackingLabel?: string;
+  }>(),
+  {
+    trackingLabel: 'ShopIndexPopularProducts',
+  },
+);
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('card'),
   'scrolled_into_view',
-  'ShopIndexPopularProducts',
+  props.trackingLabel,
 );
 </script>
 

@@ -2,11 +2,11 @@
 import FormInput from '@/Components/Forms/FormInput.vue';
 import { computed, ComputedRef, reactive, ref, watch } from 'vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/outline';
+import { ArrowRightIcon } from '@heroicons/vue/24/outline';
+import CheckoutStepHeader from '@/Components/PageSpecific/Shop/Checkout/CheckoutStepHeader.vue';
 import useShopStore from '@/stores/useShopStore';
 import AddressLookup from '@/Components/PageSpecific/Shop/Checkout/Form/Components/AddressLookup.vue';
 import { CheckoutShippingStep } from '@/types/Shop';
-import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
 import { storeToRefs } from 'pinia';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
@@ -24,6 +24,18 @@ const errors: ComputedRef<Partial<CheckoutShippingStep>> = computed(
   () => store.getErrors.shipping || {},
 );
 
+const postcodeFormatError = computed((): string | undefined => {
+  if (country.value !== 'United Kingdom' || data.postcode === '') {
+    return undefined;
+  }
+
+  if (/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(data.postcode.trim())) {
+    return undefined;
+  }
+
+  return 'Please enter a valid UK postcode';
+});
+
 const disableButton = computed((): boolean => {
   if (data.address_1 === '') {
     return true;
@@ -37,7 +49,19 @@ const disableButton = computed((): boolean => {
     return true;
   }
 
+  if (postcodeFormatError.value) {
+    return true;
+  }
+
   return false;
+});
+
+const summary = computed((): string[] => {
+  const address = [data.address_1, data.town, data.postcode].filter(
+    (line) => line !== '',
+  );
+
+  return address.length ? [address.join(', '), country.value] : [];
 });
 
 const handleAddressLookup = (address: CheckoutShippingStep) => {
@@ -111,25 +135,15 @@ const track = (label: string, value?: string) => {
 
 <template>
   <div class="flex flex-col space-y-6 pt-4">
-    <h2
-      class="flex justify-between text-3xl font-semibold"
-      :class="{
-        'cursor-pointer text-primary-dark': !error && (show || completed),
-        'text-grey-off': !error && !show,
-        'text-red': error,
-      }"
-      @click="completed ? $emit('toggle') : undefined"
-    >
-      <span>Shipping Details</span>
-      <CheckIcon
-        v-if="completed && !error"
-        class="h-8 w-8 text-green"
-      />
-      <ExclamationCircleIcon
-        v-if="error"
-        class="h-8 w-8 text-red"
-      />
-    </h2>
+    <CheckoutStepHeader
+      :step="2"
+      title="Delivery"
+      :show="show"
+      :completed="completed"
+      :error="error"
+      :summary="summary"
+      @toggle="$emit('toggle')"
+    />
 
     <form
       v-if="show"
@@ -137,7 +151,7 @@ const track = (label: string, value?: string) => {
       @keyup.enter="submitForm()"
     >
       <p class="prose mt-2! max-w-none xl:prose-lg">
-        Thanks {{ store.customerName }}, next we need to know where to send your
+        Thanks {{ store.customerName }}, next I need to know where to send your
         order.
       </p>
 
@@ -203,7 +217,7 @@ const track = (label: string, value?: string) => {
 
       <FormInput
         v-model="data.postcode"
-        :error="errors?.postcode"
+        :error="errors?.postcode || postcodeFormatError"
         :label="postcodeLabel"
         name="postcode"
         autocomplete="postcode"

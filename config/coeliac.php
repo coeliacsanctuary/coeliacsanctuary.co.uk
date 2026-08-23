@@ -11,6 +11,8 @@ return [
         'abandoned_basket_time_limit' => 2,
 
         'popular_products_window_days' => (int) env('SHOP_POPULAR_PRODUCTS_WINDOW_DAYS', 7),
+
+        'pending_order_timeout_minutes' => (int) env('SHOP_PENDING_ORDER_TIMEOUT_MINUTES', 60),
     ],
 
     'generate_og_images' => (bool) env('GENERATE_OG_IMAGES', true),
