@@ -80,7 +80,7 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
             <img
               :src="product.image"
               :alt="product.title"
-              class="h-17 w-17 flex-none rounded-md object-cover object-center xs:h-20 xs:w-20 sm:h-24 sm:w-24"
+              class="h-17 w-17 flex-none rounded-md object-cover object-center xs:h-19 xs:w-19 sm:h-25 sm:w-25"
             />
             <div class="flex-auto space-y-1">
               <h3

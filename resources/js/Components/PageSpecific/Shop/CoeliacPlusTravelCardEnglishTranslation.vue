@@ -3,6 +3,7 @@ import { XMarkIcon } from '@heroicons/vue/24/outline';
 import Card from '@/Components/Card.vue';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
+import SubHeading from '@/Components/SubHeading.vue';
 
 withDefaults(defineProps<{ product: string; canNotEat?: string }>(), {
   canNotEat: '',
@@ -10,21 +11,21 @@ withDefaults(defineProps<{ product: string; canNotEat?: string }>(), {
 </script>
 
 <template>
-  <div class="relative -mt-1 flex flex-col space-y-3 px-3">
-    <Card>
-      <p class="prose prose-lg max-w-none">
-        If you’re wondering what exactly our <strong v-text="product" /> card
-        says in English, you’re in the right place. We’ve included the full
-        English translation of the card here so you can see exactly what
-        information it shares. It’s especially useful if you’re giving this to
-        someone else or want to double-check what’s being communicated before
-        you travel.
-      </p>
-    </Card>
-  </div>
+  <Card class="space-y-4">
+    <SubHeading classes="text-primary-dark">
+      What does my travel card say?
+    </SubHeading>
 
-  <div class="mx-auto max-w-2xl px-3">
-    <TabGroup>
+    <p class="prose max-w-none md:prose-lg">
+      If you're wondering what exactly my <strong v-text="product" /> card says
+      in English, here's the full translation so you can see precisely what
+      information it shares. It's especially handy if you're giving it to
+      someone else, or you just want to double-check what's being communicated
+      before you travel.
+    </p>
+
+    <div class="mx-auto w-full max-w-2xl">
+      <TabGroup>
       <TabList class="my-3 flex justify-center space-x-5">
         <Tab
           v-slot="{ selected }"
@@ -195,7 +196,8 @@ withDefaults(defineProps<{ product: string; canNotEat?: string }>(), {
             </div>
           </div>
         </TabPanel>
-      </TabPanels>
-    </TabGroup>
-  </div>
+        </TabPanels>
+      </TabGroup>
+    </div>
+  </Card>
 </template>

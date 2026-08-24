@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('address-search', AddressSearchStoreController::class)->name('api.shop.address-search');
 Route::get('address-search/{id}', AddressSearchShowController::class)->name('api.shop.address-search.get');
 
-Route::post('travel-card-search', TravelCardSearchStoreController::class)->name('api.shop.travel-card-search.store');
+Route::post('travel-card-search', TravelCardSearchStoreController::class)
+    ->middleware('throttle:20,1')
+    ->name('api.shop.travel-card-search.store');
 Route::get('travel-card-search/{travelCardSearchTerm}', TravelCardSearchGetController::class)->name('api.shop.travel-card-search.get');
 
 Route::get('products', ShopProductIndexController::class)->name('api.shop.products.index');

@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  RadioGroup,
-  RadioGroupDescription,
-  RadioGroupLabel,
-  RadioGroupOption,
-} from '@headlessui/vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import Icon from '@/Components/Icon.vue';
 import { ShopProductDetail, ShopProductVariant } from '@/types/Shop';
 import { computed, onMounted, ref, Ref, watch } from 'vue';
 import useAddToBasket from '@/composables/useAddToBasket';
@@ -98,6 +91,15 @@ watch(quantity, () => {
     quantity.value,
     includeAddOn.value,
   );
+
+  useJourneyTracking().logEvent(
+    'clicked',
+    'ShopProduct/AddBasketForm/ChangedQuantity',
+    {
+      title: props.product.title,
+      quantity: quantity.value,
+    },
+  );
 });
 
 watch(includeAddOn, () => {
@@ -108,18 +110,14 @@ watch(includeAddOn, () => {
     includeAddOn.value,
   );
 
-  console.log('quantity');
-
   useJourneyTracking().logEvent(
     'clicked',
-    'ShopProduct/AddBasketForm/ChangedQuantity',
+    'ShopProduct/AddBasketForm/ToggledAddOn',
     {
       title: props.product.title,
-      quantity: quantity.value,
+      included: includeAddOn.value,
     },
   );
-
-  console.log('quantity2');
 });
 
 const addToBasket = () => {
@@ -130,7 +128,7 @@ const addToBasket = () => {
   useJourneyTracking().logEvent('clicked', 'ShopProduct/AddBasketForm/Submit', {
     title: props.product.title,
     variant: selectedVariant.value?.title,
-    quantity,
+    quantity: quantity.value,
   });
 };
 
@@ -175,7 +173,7 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
         </label>
 
         <div
-          class="flex w-full flex-col justify-between space-y-4 rounded-md border border-grey-off p-2 text-base text-gray-900 shadow-xs xs:flex-row xs:items-start xs:space-y-0 xs:space-x-2 md:text-lg"
+          class="flex w-full flex-col justify-between space-y-4 rounded-md border border-grey-off bg-white p-2 text-base text-gray-900 shadow-xs xs:flex-row xs:items-start xs:space-y-0 xs:space-x-2 md:text-lg"
         >
           <div class="flex-1">
             Include a digital PDF of your travel card delivered straight to your

@@ -9,10 +9,12 @@ use App\Jobs\Shop\SyncProductToGoogleMerchantJob;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Nova\Actions\Shop\CreateTravelCardFullSet;
+use App\Nova\FieldOverrides\Repeater;
 use App\Nova\FieldOverrides\Stack;
 use App\Nova\Filters\ProductQuantity;
 use App\Nova\Filters\ShopLiveProducts;
 use App\Nova\Metrics\ProductSalesTrend;
+use App\Nova\Repeaters\Faq as FaqRepeatable;
 use App\Nova\Resource;
 use App\Nova\Resources\Main\SealiacOverviews;
 use Illuminate\Database\Eloquent\Builder;
@@ -169,6 +171,12 @@ class Products extends Resource
                     ->fullWidth()
                     ->alwaysShow()
                     ->rules(['required']),
+            ]),
+
+            new Panel('FAQ', [
+                Repeater::make('FAQs', 'faqs')
+                    ->asMorphMany()
+                    ->repeatables([FaqRepeatable::make()]),
             ]),
 
             new Panel('Image', [

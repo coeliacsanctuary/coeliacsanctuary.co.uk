@@ -18,6 +18,10 @@ class VerifyDiscountCodeAction
 {
     public function handle(ShopDiscountCode $discountCode, string $basketToken): void
     {
+        if ($discountCode->start_at->isFuture() || $discountCode->end_at->isPast()) {
+            throw new RuntimeException('This discount code is not currently active');
+        }
+
         $discountCode->loadCount('used');
 
         if ($discountCode->max_claims > 0 && $discountCode->used_count >= $discountCode->max_claims) {

@@ -35,11 +35,16 @@
     @endforeach
     @foreach($products as $product)
         <url>
-            <loc>{{ $category->absolute_link }}</loc>
+            <loc>{{ $product->absolute_link }}</loc>
             <changefreq>weekly</changefreq>
             <priority>0.9</priority>
         </url>
     @endforeach
+    <url>
+        <loc>{{ route('shop.travel-cards.landing-page') }}</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
 
 
     <!-- Blogs -->

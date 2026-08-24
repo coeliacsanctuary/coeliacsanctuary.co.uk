@@ -1,5 +1,5 @@
 import { StarRating } from '@/types/EateryTypes';
-import { CustomComponent } from '@/types/Types';
+import { ArticleFaq } from '@/types/Types';
 
 export type ShopCategoryIndex = {
   title: string;
@@ -7,6 +7,30 @@ export type ShopCategoryIndex = {
   link: string;
   image: string;
   travelCardSearch: boolean;
+  products_count?: number;
+  price?: string | null;
+  reviews_count?: number;
+};
+
+export type ShopPopularProduct = {
+  title: string;
+  link: string;
+  image: string;
+  price: string;
+  rating?: {
+    average: StarRating;
+    count: number;
+  };
+};
+
+export type ShopIndexReview = {
+  name: string | null;
+  review: string;
+  rating: StarRating;
+  product: {
+    title: string;
+    link: string;
+  } | null;
 };
 
 export type ShopBaseProduct = {
@@ -24,9 +48,11 @@ export type ShopProductIndex = ShopBaseProduct & {
   id: number;
   link: string;
   price: string;
+  in_stock: boolean;
   number_of_variants: number;
   primary_variant: number;
   primary_variant_quantity: number;
+  footnote: string | null;
 };
 
 export type ShopProductDetail = ShopBaseProduct & {
@@ -41,6 +67,7 @@ export type ShopProductDetail = ShopBaseProduct & {
   };
   rating?: ShopProductRating;
   add_ons?: ShopProductAddOn;
+  faqs: ArticleFaq[] | null;
 };
 
 export type ShopProductAddOn = {
@@ -112,7 +139,6 @@ export type ShopBasketItem = {
 export type CheckoutContactStep = {
   name: string;
   email: string;
-  email_confirmation: string;
   phone?: string;
   subscribeToNewsletter: boolean;
 };
@@ -169,22 +195,33 @@ type PaypalPayment = {
   paypalAccount?: string;
 };
 
-export type TravelCardFeedbackItem = {
-  review: string;
-  name: string;
-  product: string;
-  link: string;
+export type TravelCardDestinationChip = {
+  term: string;
+  flag: string | null;
 };
 
-export type ProductAdditionalDetailAccordionProps = {
-  title: string;
-  openByDefault?: boolean;
-  content?: string;
-  component?: CustomComponent;
-  props?: Record<string, unknown>;
-  headerComponent?: CustomComponent;
-  headerClasses?: string;
-  wrapperComponent?: CustomComponent;
-  wrapperClasses?: string;
-  panelClasses?: string;
+export type TravelCardDestination = {
+  term: string;
+  type: string;
+  flag: string | null;
+  products: ShopProductIndex[];
+};
+
+export type TravelCardSearchResult = {
+  term: string;
+  destinations: TravelCardDestination[];
+  covers_all: ShopProductIndex[];
+};
+
+export type TravelCardReviewSummary = {
+  reviews: ShopIndexReview[];
+  count: number;
+  average: number | null;
+};
+
+export type TravelCardLookupResult = {
+  id: number | null;
+  term: string;
+  value: string;
+  type: string;
 };

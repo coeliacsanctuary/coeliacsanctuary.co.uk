@@ -138,6 +138,53 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
+    public function itDoesntCreateASecondDiscountCodeUsedRecordWhenTheOrderIsSubmittedAgain(): void
+    {
+        $this->create(ShopDiscountCode::class, ['code' => 'foobar']);
+
+        $session = ['discountCode' => app(Encrypter::class)->encrypt('foobar')];
+
+        $this->makeRequest(session: $session)->assertCreated();
+
+        $this->basket->refresh()->update(['state_id' => OrderState::BASKET]);
+
+        $this->makeRequest(session: $session)->assertCreated();
+
+        $this->assertDatabaseCount(ShopDiscountCodesUsed::class, 1);
+    }
+
+    #[Test]
+    public function itFailsTheOrderIfTheDiscountCodeNoLongerVerifies(): void
+    {
+        $discountCode = $this->create(ShopDiscountCode::class, ['code' => 'foobar', 'max_claims' => 1]);
+
+        $this->create(ShopDiscountCodesUsed::class, [
+            'discount_id' => $discountCode->id,
+            'order_id' => $this->build(ShopOrder::class)->asBasket()->create()->id,
+        ]);
+
+        $this->makeRequest(session: ['discountCode' => app(Encrypter::class)->encrypt('foobar')])
+            ->assertSessionHasErrors('basket');
+
+        $this->assertEquals(OrderState::BASKET, $this->basket->refresh()->state_id);
+        $this->assertDatabaseEmpty(ShopPayment::class);
+    }
+
+    #[Test]
+    public function itForgetsAnUnverifiableDiscountCodeSoTheTotalIsRecalculated(): void
+    {
+        $discountCode = $this->create(ShopDiscountCode::class, ['code' => 'foobar', 'max_claims' => 1]);
+
+        $this->create(ShopDiscountCodesUsed::class, [
+            'discount_id' => $discountCode->id,
+            'order_id' => $this->build(ShopOrder::class)->asBasket()->create()->id,
+        ]);
+
+        $this->makeRequest(session: ['discountCode' => app(Encrypter::class)->encrypt('foobar')])
+            ->assertSessionMissing('discountCode');
+    }
+
+    #[Test]
     public function itCreatesAShopPaymentRecord(): void
     {
         $this->assertDatabaseEmpty(ShopPayment::class);
@@ -221,13 +268,6 @@ class StoreControllerTest extends TestCase
             'contact email is numeric' => [['contact.email' => 123], 'contact.email'],
             'contact email is bool' => [['contact.email' => true], 'contact.email'],
             'contact email is not an email address' => [['contact.email' => 'foobar'], 'contact.email'],
-
-            // contact email confirmation
-            'missing contact email confirmation' => [['contact.email_confirmation' => null], ['contact.email']],
-            'contact email confirmation is numeric' => [['contact.email_confirmation' => 123], ['contact.email']],
-            'contact email confirmation is bool' => [['contact.email_confirmation' => true], ['contact.email']],
-            'contact email confirmation is not an email address' => [['contact.email_confirmation' => 'foobar'], ['contact.email']],
-            'contact email and email confirmation do not match' => [['contact.email' => 'foo@bar.com', 'contact.email_confirmation' => 'bar@baz.com'], ['contact.email']],
 
             // contact subscribe to newsletter
             'contact subscribe to email is not a bool' => [['contact.subscribeToNewsletter' => 'foo'], ['contact.subscribeToNewsletter']],
