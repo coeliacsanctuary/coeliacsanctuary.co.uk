@@ -20,7 +20,7 @@ const isList = computed(() => props.displayType === 'list');
     class="group flex-1 overflow-hidden"
     :class="{ 'md:flex-row md:gap-4': isList }"
   >
-    <div :class="{ 'md:max-w-16 md:min-w-1/4 md:flex-none': isList }">
+    <div :class="{ 'md:max-w-3xs md:min-w-1/4 md:flex-none': isList }">
       <Link
         :href="item.link"
         class="mb-0 flex flex-col"

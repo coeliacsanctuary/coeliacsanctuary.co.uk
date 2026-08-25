@@ -11,7 +11,7 @@ import { Link } from '@inertiajs/vue3';
     <Heading>Thanks for reviewing your order!</Heading>
 
     <div class="flex items-center justify-center text-center text-green">
-      <CheckCircleIcon class="h-24 w-24" />
+      <CheckCircleIcon class="size-24" />
     </div>
 
     <p class="prose max-w-none md:prose-lg">

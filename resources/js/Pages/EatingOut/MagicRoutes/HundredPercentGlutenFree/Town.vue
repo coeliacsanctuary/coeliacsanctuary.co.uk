@@ -59,7 +59,9 @@ const eateryName = (eatery: TownEatery): string => {
         v-html="eatery.info"
       />
 
-      <div class="flex-shrink-none w-full md:max-w-16 xmd:max-w-20 lg:max-w-22">
+      <div
+        class="flex-shrink-none w-full md:max-w-3xs xmd:max-w-xs lg:max-w-sm"
+      >
         <Card
           theme="primary-light"
           faded

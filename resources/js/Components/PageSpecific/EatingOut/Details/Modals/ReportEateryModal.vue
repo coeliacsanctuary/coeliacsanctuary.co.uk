@@ -72,7 +72,7 @@ const submitForm = () => {
     <div class="p-3">
       <template v-if="hasSubmitted">
         <div class="flex items-center justify-center text-center text-green">
-          <CheckCircleIcon class="h-24 w-24" />
+          <CheckCircleIcon class="size-24" />
         </div>
 
         <p class="md:prose-md prose mb-2 max-w-none text-center">

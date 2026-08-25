@@ -15,7 +15,7 @@ withDefaults(
     "
   >
     <div
-      class="xmd:flex-shrink-none w-full xmd:ml-4 xmd:w-1/3 xmd:max-w-20 lg:max-w-24"
+      class="xmd:flex-shrink-none w-full xmd:ml-4 xmd:w-1/3 xmd:max-w-xs lg:max-w-sm"
       :class="[
         interleaved
           ? 'contents xmd:flex xmd:flex-col xmd:gap-4'
