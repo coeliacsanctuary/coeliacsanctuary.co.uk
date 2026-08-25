@@ -22,11 +22,15 @@ class ReviewMyOrderRequestFactory extends RequestFactory
     public function forProducts(Collection $products): self
     {
         return $this->state([
-            'products' => $products->map(fn (ShopOrderItem $item) => [
-                'id' => $item->product_id,
-                'rating' => $this->faker->numberBetween(1, 5),
-                'review' => $this->faker->paragraph,
-            ])->toArray(),
+            'products' => $products
+                ->unique('product_id')
+                ->map(fn (ShopOrderItem $item) => [
+                    'id' => $item->product_id,
+                    'rating' => $this->faker->numberBetween(1, 5),
+                    'review' => $this->faker->paragraph,
+                ])
+                ->values()
+                ->toArray(),
         ]);
     }
 }

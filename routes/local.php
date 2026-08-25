@@ -26,7 +26,9 @@ use App\Models\Shop\ShopPaymentRefund;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
@@ -251,22 +253,36 @@ Route::get('/mail/shop/abandoned-cart/{orderId?}', function (?int $basketId = nu
     return Mjml::new()->sidecar()->toHtml($content);
 });
 
-Route::get('/mail/shop/review-invitation/{orderId?}', function (?int $orderId = null): string {
+Route::get('/mail/shop/review-invitation/{orderId?}', function (Request $request, ?int $orderId = null): string {
     $order = ShopOrder::query()
         ->where('state_id', OrderState::SHIPPED)
         ->with(['items', 'items.product.media', 'payment', 'customer', 'address', 'reviewInvitation'])
         ->whereHas('reviewInvitation')
+        ->when($request->boolean('reset') === false, fn (Builder $builder) => $builder->whereDoesntHave('reviewInvitation.review'))
+        ->when($request->has('items'), fn (Builder $builder) => $builder->has('items', '>=', max($request->integer('items', 2), 2)))
+        ->when($request->boolean('variants'), fn (Builder $builder) => $builder->whereIn(
+            'id',
+            DB::table('shop_order_items')
+                ->select('order_id')
+                ->groupBy('order_id', 'product_id')
+                ->havingRaw('COUNT(*) > 1'),
+        ))
         ->when(
             $orderId,
             fn (Builder $builder) => $builder->findOrFail($orderId),
-            fn (Builder $builder) => $builder->latest()->first(),
+            fn (Builder $builder) => $builder->latest()->firstOrFail(),
         );
+
+    if ($request->boolean('reset')) {
+        $order->reviewedItems()->delete();
+        $order->reviewInvitation?->review()->delete();
+    }
 
     $content = view('mailables.mjml.shop.static.review-invitation', [
         'key' => 'foo',
         'date' => now(),
         'order' => $order,
-        'reason' => 'mailables.mjml.shop.static.review-invitation',
+        'reason' => 'as an invitation to review your order',
         'delayText' => '10 days',
         'reviewLink' => URL::temporarySignedRoute(
             'shop.review-order',

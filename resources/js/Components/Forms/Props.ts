@@ -103,6 +103,7 @@ export type FormSelectOption = {
 export type FormMultiSelectOption = {
   label?: string;
   value: string;
+  isOther?: boolean;
 };
 
 export type FormSelectGroup = {

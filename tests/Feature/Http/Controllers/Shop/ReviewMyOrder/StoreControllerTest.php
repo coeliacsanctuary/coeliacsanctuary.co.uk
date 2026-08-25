@@ -27,6 +27,8 @@ class StoreControllerTest extends TestCase
 
     protected ShopProductVariant $variant;
 
+    protected ShopOrderItem $item;
+
     protected ShopOrderReviewInvitation $invitation;
 
     public function setUp(): void
@@ -35,7 +37,7 @@ class StoreControllerTest extends TestCase
 
         $this->seed(ShopScaffoldingSeeder::class);
 
-        $this->withCategoriesAndProducts(1, 1);
+        $this->withCategoriesAndProducts(1, 1, 2);
 
         $this->order = $this->build(ShopOrder::class)
             ->asShipped()
@@ -71,7 +73,7 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itAllowsRequestsWithoutAName(): void
     {
-        $this->makeRequest(['name' => null])->assertSessionHasErrors('name');
+        $this->makeRequest(['name' => null])->assertSessionDoesntHaveErrors('name');
     }
 
     #[Test]
@@ -162,6 +164,52 @@ class StoreControllerTest extends TestCase
     public function itErrorsIfAProductHasAnInvalidReview(): void
     {
         $this->makeRequest(['products' => [['review' => 123]]])->assertSessionHasErrors('products.0.review');
+    }
+
+    #[Test]
+    public function itErrorsIfTheSameProductIsSubmittedTwice(): void
+    {
+        $this->makeRequest(['products' => [
+            ['id' => $this->product->id, 'rating' => 5, 'review' => 'foo'],
+            ['id' => $this->product->id, 'rating' => 4, 'review' => 'bar'],
+        ]])->assertSessionHasErrors('products.1.id');
+    }
+
+    #[Test]
+    public function itOnlyCreatesOneReviewItemPerProductForAnOrderWithMultipleVariants(): void
+    {
+        $secondVariant = $this->product->variants->last();
+
+        $this->create(ShopOrderItem::class, [
+            'order_id' => $this->order->id,
+            'product_id' => $this->product->id,
+            'product_variant_id' => $secondVariant->id,
+            'product_price' => 200,
+        ]);
+
+        $this->makeRequest(products: $this->order->refresh()->items);
+
+        $this->assertDatabaseCount(ShopOrderReviewItem::class, 1);
+    }
+
+    #[Test]
+    public function itErrorsIfTheNameIsTooLong(): void
+    {
+        $this->makeRequest(['name' => str_repeat('a', 256)])->assertSessionHasErrors('name');
+    }
+
+    #[Test]
+    public function itErrorsIfAReviewIsTooLong(): void
+    {
+        $this->makeRequest(['products' => [
+            ['id' => $this->product->id, 'rating' => 5, 'review' => str_repeat('a', 1001)],
+        ]])->assertSessionHasErrors('products.0.review');
+    }
+
+    #[Test]
+    public function itErrorsIfAWhereHeardValueIsTooLong(): void
+    {
+        $this->makeRequest(['whereHeard' => [str_repeat('a', 256)]])->assertSessionHasErrors('whereHeard.0');
     }
 
     #[Test]

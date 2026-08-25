@@ -13,13 +13,13 @@ class ReviewMyOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string'],
+            'name' => ['nullable', 'string', 'max:255'],
             'whereHeard' => ['array'],
-            'whereHeard.*' => ['string'],
+            'whereHeard.*' => ['string', 'max:255'],
             'products' => ['required', 'array'],
-            'products.*.id' => ['required', 'int', 'bail', 'exists:shop_products,id', new ReviewProductIsInOrderRule()],
+            'products.*.id' => ['required', 'int', 'bail', 'distinct', 'exists:shop_products,id', new ReviewProductIsInOrderRule()],
             'products.*.rating' => ['required', 'numeric', Rule::in(range(1, 5))],
-            'products.*.review' => ['string', 'nullable'],
+            'products.*.review' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }
