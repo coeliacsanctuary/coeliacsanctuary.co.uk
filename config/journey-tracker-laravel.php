@@ -13,6 +13,11 @@ return [
         '/cs-adm/*',
         'fallback',
         '/nova*',
+        '/ads.txt',
+        '/blog/feed',
+        '/feed',
+        '/recipe/feed',
+        '/sitemap.xml',
     ],
 
     'internal-event-endpoint' => 'api/event',
