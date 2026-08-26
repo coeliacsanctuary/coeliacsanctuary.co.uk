@@ -47,6 +47,7 @@ use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
 use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DiscountCode;
+use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderItem;
 use App\Nova\Resources\Shop\OrderReviewItem;
@@ -148,6 +149,7 @@ class ResourceRegistrar
             CustomsFee::class,
             PostageArea::class,
             MassDiscount::class,
+            Holidays::class,
             OrderReviews::class,
             OrderReviewItem::class,
             OrderSourcesResource::class,

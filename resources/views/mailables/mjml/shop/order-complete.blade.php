@@ -17,6 +17,12 @@ $newOrder = true;
         Thanks a bunch for your recent order at the Coeliac Sanctuary shop! Check out the details of your order
         below.
     </mj-text>
+    @if($holidayNotice)
+        <mj-text mj-class="inner" padding-top="10px">
+            <strong>{{ $holidayNotice }}</strong>
+        </mj-text>
+    @endif
+
     <mj-text mj-class="inner" padding-top="10px">
         Thanks, Alison - Coeliac Sanctuary
     </mj-text>

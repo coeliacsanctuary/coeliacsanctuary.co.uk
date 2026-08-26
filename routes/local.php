@@ -6,6 +6,7 @@ use App\Actions\OpenGraphImages\GenerateCountyOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateEateryOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateNationwideBranchOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateTownOpenGraphImageAction;
+use App\Actions\Shop\GetActiveShopHolidayAction;
 use App\DataObjects\NotificationRelatedObject;
 use App\Enums\EatingOut\EateryType;
 use App\Enums\Shop\OrderState;
@@ -49,6 +50,7 @@ Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = nu
         'date' => now(),
         'order' => $order,
         'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'holidayNotice' => app(GetActiveShopHolidayAction::class)->handle()?->notice,
         'notifiable' => $order->customer,
         'relatedTitle' => 'products',
         'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(

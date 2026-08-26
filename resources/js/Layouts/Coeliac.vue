@@ -6,6 +6,7 @@ import { computed, ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import ShopBasketHeader from '@/Layouts/Components/ShopBasketHeader.vue';
 import ShopFooterCta from '@/Layouts/Components/ShopFooterCta.vue';
+import ShopHolidayConfirmModal from '@/Components/PageSpecific/Shop/ShopHolidayConfirmModal.vue';
 import PopupCta from '@/Layouts/Components/PopupCta.vue';
 import Loader from '@/Components/Loader.vue';
 import AdBlocker from '@/Components/AdBlocker.vue';
@@ -57,6 +58,8 @@ const isMounted = ref(false);
     />
 
     <ShopBasketHeader v-if="isShop" />
+
+    <ShopHolidayConfirmModal v-if="isShop" />
 
     <div
       class="h-0 overflow-hidden"

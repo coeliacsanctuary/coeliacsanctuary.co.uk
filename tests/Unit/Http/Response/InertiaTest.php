@@ -6,6 +6,8 @@ namespace Tests\Unit\Http\Response;
 
 use PHPUnit\Framework\Attributes\Test;
 use App\Http\Response\Inertia;
+use App\Models\Shop\ShopHoliday;
+use Illuminate\Routing\Route;
 use Tests\TestCase;
 
 class InertiaTest extends TestCase
@@ -97,5 +99,52 @@ class InertiaTest extends TestCase
         $this->factory->doNotTrack();
 
         $this->assertTrue($this->factory->getShared('meta.doNotTrack'));
+    }
+
+    #[Test]
+    public function itSharesTheActiveShopHolidayOnShopRoutes(): void
+    {
+        $holiday = $this->create(ShopHoliday::class);
+
+        $this->assertEquals(
+            ['id' => $holiday->id, 'notice' => $holiday->notice],
+            $this->inertiaForRoute('shop.index')->getShared('shopHoliday'),
+        );
+    }
+
+    #[Test]
+    public function itSharesTheActiveShopHolidayOnTheCheckoutRoute(): void
+    {
+        $holiday = $this->create(ShopHoliday::class);
+
+        $this->assertEquals(
+            ['id' => $holiday->id, 'notice' => $holiday->notice],
+            $this->inertiaForRoute('shop.basket.checkout')->getShared('shopHoliday'),
+        );
+    }
+
+    #[Test]
+    public function itDoesntShareAShopHolidayOnNonShopRoutes(): void
+    {
+        $this->create(ShopHoliday::class);
+
+        $this->assertNull($this->inertiaForRoute('blog.index')->getShared('shopHoliday'));
+    }
+
+    #[Test]
+    public function itDoesntShareAShopHolidayWhenThereIsntAnActiveOne(): void
+    {
+        $this->build(ShopHoliday::class)->upcoming()->create();
+
+        $this->assertNull($this->inertiaForRoute('shop.index')->getShared('shopHoliday'));
+    }
+
+    protected function inertiaForRoute(string $name): Inertia
+    {
+        $route = (new Route('GET', '/foo', []))->name($name);
+
+        request()->setRouteResolver(fn () => $route);
+
+        return new Inertia();
     }
 }
