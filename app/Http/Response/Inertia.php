@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Inertia\DeferProp;
 use Inertia\Inertia as BaseInertia;
-use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
+use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
 use Inertia\MergeProp;
 use Inertia\ProvidesScrollMetadata;
 use Inertia\Response;
@@ -59,7 +59,7 @@ class Inertia
             $this->includeShopHoliday();
         }
 
-        BaseInertia::share('journey.token', fn (): ?string => LogPageViewMiddleware::getToken());
+        BaseInertia::share('journey.token', fn (): ?string => JourneyTracker::token());
 
         $this->schema = [$this->baseSchema()];
 
