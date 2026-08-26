@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d04d1d6935309ed5bf8dd29f85135e9",
+    "content-hash": "5eda2cad98ab81b7e5022af49f9bca68",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -3285,27 +3285,34 @@
         },
         {
             "name": "jpeters8889/journey-tracker-laravel",
-            "version": "0.5.2",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jpeters8889/journey-tracker-laravel.git",
-                "reference": "b0500f4ce591c557d14f9da67893abd13c972cfc"
+                "reference": "eb7b73a66eb92e6a12a98c9d7ef7ba03c34736ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/b0500f4ce591c557d14f9da67893abd13c972cfc",
-                "reference": "b0500f4ce591c557d14f9da67893abd13c972cfc",
+                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/eb7b73a66eb92e6a12a98c9d7ef7ba03c34736ef",
+                "reference": "eb7b73a66eb92e6a12a98c9d7ef7ba03c34736ef",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^12.0|^13.0",
-                "php": "^8.3",
+                "laravel/framework": "^12.61|^13.23",
+                "php": "^8.4",
                 "spatie/laravel-package-tools": "^1.92"
             },
             "require-dev": {
-                "orchestra/testbench": "*",
-                "pestphp/pest": "*",
-                "pestphp/pest-plugin-laravel": "*"
+                "driftingly/rector-laravel": "^2.5",
+                "larastan/larastan": "^3.10.0",
+                "laravel/pint": "^1.30.5",
+                "orchestra/testbench": "^10.0|^11.0",
+                "pestphp/pest": "^5.1.1",
+                "pestphp/pest-plugin-laravel": "^5.0.1",
+                "pestphp/pest-plugin-phpstan": "^5.2",
+                "pestphp/pest-plugin-rector": "^5.0.4",
+                "pestphp/pest-plugin-type-coverage": "^5.0.2",
+                "rector/rector": "^2.6.3"
             },
             "type": "library",
             "extra": {
@@ -3328,17 +3335,65 @@
                     "Tests\\": "tests/"
                 }
             },
+            "scripts": {
+                "phpstan": [
+                    "@composer run stan"
+                ],
+                "stan": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "vendor/bin/phpstan analyse --memory-limit 4048M"
+                ],
+                "pint": [
+                    "vendor/bin/pint"
+                ],
+                "test": [
+                    "vendor/bin/pest"
+                ],
+                "type-coverage": [
+                    "php -d memory_limit=-1 ./vendor/bin/pest --type-coverage --min=100"
+                ],
+                "coverage": [
+                    "php -d memory_limit=-1 ./vendor/bin/pest --coverage --min=100"
+                ],
+                "rector": [
+                    "vendor/bin/rector process"
+                ],
+                "rector-dry": [
+                    "vendor/bin/rector process --dry-run"
+                ],
+                "pre-commit": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "composer run rector-dry",
+                    "composer run pint",
+                    "composer run stan",
+                    "composer run type-coverage",
+                    "composer run test"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
             "authors": [
                 {
                     "name": "Jamie Peters",
                     "email": "jamie@jamie-peters.co.uk"
                 }
             ],
+            "description": "Server-side Laravel SDK for journey-tracker.cloud: automatic page view tracking, custom events, journey tagging, and a fluent query builder for the data you collect.",
+            "homepage": "https://journey-tracker.cloud",
+            "keywords": [
+                "analytics",
+                "journey-tracker",
+                "laravel",
+                "page-views",
+                "sdk",
+                "tracking"
+            ],
             "support": {
-                "source": "https://github.com/jpeters8889/journey-tracker-laravel/tree/v0.5.2",
-                "issues": "https://github.com/jpeters8889/journey-tracker-laravel/issues"
+                "issues": "https://github.com/jpeters8889/journey-tracker-laravel/issues",
+                "source": "https://github.com/jpeters8889/journey-tracker-laravel"
             },
-            "time": "2026-05-17T13:05:28+00:00"
+            "time": "2026-08-26T09:27:53+00:00"
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
