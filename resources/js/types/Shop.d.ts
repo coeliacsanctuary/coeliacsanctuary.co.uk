@@ -225,3 +225,8 @@ export type TravelCardLookupResult = {
   value: string;
   type: string;
 };
+
+export type ShopHolidayProps = {
+  id: number;
+  notice: string;
+};

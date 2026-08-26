@@ -44,6 +44,7 @@ use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DiscountCode;
+use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
@@ -171,6 +172,7 @@ class Menu
                     MenuItem::resource(PostagePrice::class),
                     MenuItem::resource(CustomsFee::class),
                     MenuItem::resource(MassDiscount::class),
+                    MenuItem::resource(Holidays::class),
                     MenuItem::resource(OrderSourcesResource::class),
                 ]),
 

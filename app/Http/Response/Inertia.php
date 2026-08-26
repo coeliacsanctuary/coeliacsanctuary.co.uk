@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Response;
 
 use App\Actions\GetPopupCtaAction;
+use App\Actions\Shop\GetActiveShopHolidayAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Actions\Shop\ResolveBasketAction;
 use App\DataObjects\BreadcrumbItemData;
@@ -52,6 +53,10 @@ class Inertia
 
         if (Request::hasCookie('basket_token') && ! Request::routeIs('shop.basket.checkout')) {
             $this->includeBasket();
+        }
+
+        if (Request::routeIs('shop.*')) {
+            $this->includeShopHoliday();
         }
 
         BaseInertia::share('journey.token', fn (): ?string => JourneyTracker::token());
@@ -190,6 +195,20 @@ class Inertia
 
         BaseInertia::share('basket.items', $items);
         BaseInertia::share('basket.subtotal', Helpers::formatMoney(Money::GBP($subtotal)));
+    }
+
+    protected function includeShopHoliday(): void
+    {
+        $holiday = app(GetActiveShopHolidayAction::class)->handle();
+
+        if ( ! $holiday) {
+            return;
+        }
+
+        BaseInertia::share('shopHoliday', [
+            'id' => $holiday->id,
+            'notice' => $holiday->notice,
+        ]);
     }
 
     protected function loadCta(): void

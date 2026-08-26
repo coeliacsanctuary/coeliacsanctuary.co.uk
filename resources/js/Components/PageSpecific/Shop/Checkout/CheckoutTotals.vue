@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { nextTick } from 'vue';
+import { computed, nextTick } from 'vue';
 import CheckoutDiscountCode from '@/Components/PageSpecific/Shop/Checkout/CheckoutDiscountCode.vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
-import { router } from '@inertiajs/vue3';
+import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
+import { router, usePage } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import { ShopHolidayProps } from '@/types/Shop';
 
 defineProps<{
   subtotal: string;
@@ -14,6 +16,11 @@ defineProps<{
   totalFees: string;
   total: string;
 }>();
+
+const shopHoliday = computed(
+  (): ShopHolidayProps | undefined =>
+    usePage<{ shopHoliday?: ShopHolidayProps }>().props.shopHoliday,
+);
 
 const removeDiscountCode = () => {
   router.delete('/shop/basket/discount', {
@@ -108,6 +115,22 @@ const removeDiscountCode = () => {
         <dd v-text="total" />
       </div>
     </dl>
+
+    <div
+      v-if="shopHoliday"
+      class="mt-4 flex gap-3 rounded-md border border-l-8 border-secondary bg-secondary/50 p-3 shadow-sm"
+    >
+      <ExclamationCircleIcon class="size-6 shrink-0" />
+
+      <div class="space-y-1">
+        <p class="font-semibold">Please note</p>
+
+        <p
+          class="text-sm leading-relaxed"
+          v-text="shopHoliday.notice"
+        />
+      </div>
+    </div>
 
     <div
       v-if="!discount"
