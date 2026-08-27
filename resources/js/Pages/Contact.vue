@@ -7,7 +7,6 @@ import FormInput from '@/Components/Forms/FormInput.vue';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
-import { InertiaForm } from '@/types/Core';
 import { ref } from 'vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 
@@ -23,7 +22,7 @@ const form = useForm<ContactForm>('post', '/contact', {
   email: '',
   subject: '',
   message: '',
-}) as InertiaForm<ContactForm>;
+});
 
 const hasSubmittedForm = ref(false);
 

@@ -4,9 +4,9 @@ export type MapProps = {
   zoom?: number;
 };
 
-export const MapPropDefaults: Partial<MapProps> = {
+export const MapPropDefaults = {
   zoom: 16,
-};
+} satisfies Partial<MapProps>;
 
 export type MapModalProps = MapProps & {
   title?: string;
@@ -25,12 +25,11 @@ export type StaticMapProps = MapProps & {
   additionalParams?: Record<string, string>;
 };
 
-export const StaticMapPropDefaults: Partial<StaticMapProps> = {
+export const StaticMapPropDefaults = {
   ...MapPropDefaults,
   title: undefined,
   mapClasses:
     'min-h-map-small md:max-lg:min-h-map lg:max-xl:min-h-map-small xl:min-h-map',
   canExpand: true,
   lazy: false,
-  additionalParams: undefined,
-};
+} satisfies Partial<StaticMapProps>;

@@ -80,7 +80,7 @@ useJourneyTracking().logWhenVisible(
 
     <Link
       :href="collection.link"
-      class="-mx-4 -mb-4 mt-4! flex items-center justify-center space-x-2 bg-primary-lightest/60 p-4 font-semibold transition hover:bg-primary-light/60"
+      class="-mx-4 mt-4! -mb-4 flex items-center justify-center space-x-2 bg-primary-lightest/60 p-4 font-semibold transition hover:bg-primary-light/60"
       prefetch
     >
       <span>View more {{ collection.title }} items</span>

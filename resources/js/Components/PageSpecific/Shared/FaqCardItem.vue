@@ -56,7 +56,11 @@ watch(
     <button
       type="button"
       class="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition duration-300 hover:bg-primary-lightest"
-      :class="isOpen ? 'rounded-t-sm bg-primary-lightest' : 'rounded-sm bg-primary-lightest/50'"
+      :class="
+        isOpen
+          ? 'rounded-t-sm bg-primary-lightest'
+          : 'rounded-sm bg-primary-lightest/50'
+      "
       :aria-expanded="isOpen"
       @click="$emit('open', index)"
     >
@@ -83,7 +87,7 @@ watch(
       ref="panel"
       style="height: 0; overflow: hidden"
     >
-      <div class="border-t border-primary-light px-3 pb-3 pt-2">
+      <div class="border-t border-primary-light px-3 pt-2 pb-3">
         <p
           class="prose prose-lg max-w-none md:prose-xl"
           v-html="faq.answer"

@@ -2,7 +2,7 @@
 import { Message as MessageType } from '@/types/AskSealiac';
 import Message from '@/Layouts/Components/AskSealiac/Message.vue';
 import MessageLoader from '@/Layouts/Components/AskSealiac/MessageLoader.vue';
-import { nextTick, onMounted, ref, TransitionGroup, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   messages: MessageType[];

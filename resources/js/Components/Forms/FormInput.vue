@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { InputPropDefaults, InputProps } from '@/Components/Forms/Props';
-import { defineModel } from 'vue';
 import { ExclamationCircleIcon } from '@heroicons/vue/20/solid';
 
 const props = withDefaults(defineProps<InputProps>(), InputPropDefaults);

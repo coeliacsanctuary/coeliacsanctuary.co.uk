@@ -16,7 +16,7 @@ const stats = computed((): string[] => {
   return [
     products ? `${products} ${pluralise('product', products)}` : null,
     price,
-  ].filter((stat) => !!stat);
+  ].filter((stat): stat is string => !!stat);
 });
 
 useJourneyTracking().logWhenVisible(

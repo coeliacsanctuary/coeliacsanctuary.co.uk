@@ -9,8 +9,16 @@ const props = defineProps<{ statistics: EateryStatistics }>();
 
 const rows = computed(() =>
   [
-    { icon: 'eatery', label: 'Places to eat', value: props.statistics.eateries },
-    { icon: 'dinner', label: 'Chain branches', value: props.statistics.branches },
+    {
+      icon: 'eatery',
+      label: 'Places to eat',
+      value: props.statistics.eateries,
+    },
+    {
+      icon: 'dinner',
+      label: 'Chain branches',
+      value: props.statistics.branches,
+    },
     {
       icon: 'attraction',
       label: 'Attractions',

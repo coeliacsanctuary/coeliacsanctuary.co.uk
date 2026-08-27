@@ -13,7 +13,6 @@ import { router, usePage } from '@inertiajs/vue3';
 import ProductReviews from '@/Components/PageSpecific/Shop/ProductReviews.vue';
 import ProductAddBasketForm from '@/Components/PageSpecific/Shop/ProductAddBasketForm.vue';
 import { pluralise } from '@/helpers';
-import { Page } from '@inertiajs/core';
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import useBrowser from '@/composables/useBrowser';
@@ -70,7 +69,9 @@ const rating = computed(() =>
 const jumpSections = computed(() =>
   [
     { id: 'description', label: 'Description' },
-    hasCountries.value ? { id: 'where-to-use', label: 'Where to use it' } : null,
+    hasCountries.value
+      ? { id: 'where-to-use', label: 'Where to use it' }
+      : null,
     travelCardProduct.value
       ? { id: 'what-it-says', label: 'What it says' }
       : null,
@@ -89,9 +90,7 @@ const allReviews: Ref<PaginatedResponse<ShopProductReview>> = ref(
 
 const loadReviews = (
   url: string,
-  then: (
-    event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>,
-  ) => void,
+  then: (reviews: PaginatedResponse<ShopProductReview> | undefined) => void,
 ) => {
   router.get(
     url,
@@ -101,7 +100,11 @@ const loadReviews = (
       preserveState: true,
       only: ['reviews'],
       replace: true,
-      onSuccess: then,
+      onSuccess: (page) =>
+        then(
+          (page.props as { reviews?: PaginatedResponse<ShopProductReview> })
+            .reviews,
+        ),
     },
   );
 };
@@ -109,19 +112,18 @@ const loadReviews = (
 watch(reviewFilter, () => {
   const url = usePage().url;
 
-  loadReviews(
-    url,
-    (event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>) => {
-      // eslint-disable-next-line no-restricted-globals
-      useBrowser().replaceHistory(url, null);
+  loadReviews(url, (reviews) => {
+    // eslint-disable-next-line no-restricted-globals
+    useBrowser().replaceHistory(url, null);
 
-      allReviews.value.data = event.props.reviews.data;
-      allReviews.value.links = event.props.reviews.links;
-      allReviews.value.meta = event.props.reviews.meta;
+    if (!reviews) {
+      return;
+    }
 
-      return false;
-    },
-  );
+    allReviews.value.data = reviews.data;
+    allReviews.value.links = reviews.links;
+    allReviews.value.meta = reviews.meta;
+  });
 });
 
 const loadMoreReviews = () => {
@@ -131,23 +133,18 @@ const loadMoreReviews = () => {
 
   const url = usePage().url;
 
-  loadReviews(
-    props.reviews.links.next,
-    (event: Page<{ reviews: PaginatedResponse<ShopProductReview> }>) => {
-      // eslint-disable-next-line no-restricted-globals
-      useBrowser().replaceHistory(url, null);
+  loadReviews(props.reviews.links.next, (reviews) => {
+    // eslint-disable-next-line no-restricted-globals
+    useBrowser().replaceHistory(url, null);
 
-      if (!event.props.reviews) {
-        return true;
-      }
+    if (!reviews) {
+      return;
+    }
 
-      allReviews.value.data.push(...event.props.reviews.data);
-      allReviews.value.links = event.props.reviews.links;
-      allReviews.value.meta = event.props.reviews.meta;
-
-      return false;
-    },
-  );
+    allReviews.value.data.push(...reviews.data);
+    allReviews.value.links = reviews.links;
+    allReviews.value.meta = reviews.meta;
+  });
 };
 
 const showAiOverview = ref(true);
@@ -161,7 +158,9 @@ const hasMounted = ref(false);
 
 onMounted(() => (hasMounted.value = true));
 
-const showStickyBar = computed(() => hasMounted.value && !buyBoxIsVisible.value);
+const showStickyBar = computed(
+  () => hasMounted.value && !buyBoxIsVisible.value,
+);
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('description'),
@@ -260,47 +259,47 @@ useJourneyTracking().logWhenVisible(
           class="space-y-4 rounded-sm border border-primary-light/60 bg-primary-lightest/50 p-4"
         >
           <div class="flex flex-col">
-              <p
-                v-if="product.prices.old_price"
-                class="text-sm"
-              >
-                was
-                <span
-                  class="font-semibold text-red line-through"
-                  v-text="product.prices.old_price"
-                />
-                now
-              </p>
-
-              <p
-                class="text-3xl leading-none font-semibold xs:text-4xl"
-                v-text="product.prices.current_price"
-              />
-            </div>
-
-            <a
-              v-if="rating"
-              href="#reviews"
-              class="group flex items-center space-x-2"
+            <p
+              v-if="product.prices.old_price"
+              class="text-sm"
             >
-              <StarRating
-                size="size-5"
-                :rating="rating.average"
-                show-all
-              />
-
+              was
               <span
-                class="text-sm font-semibold text-grey-dark group-hover:text-primary-dark"
-              >
-                {{ rating.count }}
-                {{ pluralise('review', rating.count) }}
-              </span>
-            </a>
+                class="font-semibold text-red line-through"
+                v-text="product.prices.old_price"
+              />
+              now
+            </p>
 
-            <div
-              class="prose max-w-none border-t border-primary-light/60 pt-4 md:prose-lg"
-              v-html="product.description"
+            <p
+              class="text-3xl leading-none font-semibold xs:text-4xl"
+              v-text="product.prices.current_price"
             />
+          </div>
+
+          <a
+            v-if="rating"
+            href="#reviews"
+            class="group flex items-center space-x-2"
+          >
+            <StarRating
+              size="size-5"
+              :rating="rating.average"
+              show-all
+            />
+
+            <span
+              class="text-sm font-semibold text-grey-dark group-hover:text-primary-dark"
+            >
+              {{ rating.count }}
+              {{ pluralise('review', rating.count) }}
+            </span>
+          </a>
+
+          <div
+            class="prose max-w-none border-t border-primary-light/60 pt-4 md:prose-lg"
+            v-html="product.description"
+          />
 
           <ProductAddBasketForm :product="product" />
 
@@ -313,8 +312,8 @@ useJourneyTracking().logWhenVisible(
   <ProductJumpNav :sections="jumpSections" />
 
   <div
-    ref="description"
     id="description"
+    ref="description"
     class="scroll-mt-20 md:scroll-mt-32"
   >
     <ProductLongDescription :description="product.long_description" />
@@ -366,8 +365,8 @@ useJourneyTracking().logWhenVisible(
   />
 
   <div
-    ref="reviews"
     id="reviews"
+    ref="reviews"
     class="scroll-mt-20 md:scroll-mt-32"
   >
     <Card class="space-y-4">
@@ -434,6 +433,5 @@ useJourneyTracking().logWhenVisible(
     :open="viewImage !== false"
     :current-image="viewImage !== false ? viewImage : undefined"
     @close="viewImage = false"
-    @change-image="(image) => (viewImage = image)"
   />
 </template>

@@ -10,9 +10,9 @@ export const formatDate = (
   return dayjs(date).format(format);
 };
 
-export const loadScript = (script: string) => {
+export const loadScript = (script: string): Promise<unknown> => {
   if (typeof document === 'undefined') {
-    return;
+    return new Promise(() => {});
   }
 
   return new Promise((resolve) => {

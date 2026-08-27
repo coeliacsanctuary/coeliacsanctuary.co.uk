@@ -9,7 +9,10 @@ const isSticky = ref(false);
 defineEmits(['open-search']);
 
 onMounted(() => {
-  if (typeof document !== 'undefined' && document.getElementById('header')) {
+  const header =
+    typeof document === 'undefined' ? null : document.getElementById('header');
+
+  if (header) {
     new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -20,7 +23,7 @@ onMounted(() => {
         threshold: 0.5,
         rootMargin: '0px',
       },
-    ).observe(document.getElementById('header'));
+    ).observe(header);
   }
 });
 

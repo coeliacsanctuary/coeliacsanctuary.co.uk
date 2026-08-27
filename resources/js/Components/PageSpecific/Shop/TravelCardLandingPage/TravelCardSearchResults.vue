@@ -10,7 +10,9 @@ const props = defineProps<{
 }>();
 
 const names = computed((): string => {
-  const terms = props.search.destinations.map((destination) => destination.term);
+  const terms = props.search.destinations.map(
+    (destination) => destination.term,
+  );
 
   if (terms.length < 2) {
     return terms.join('');
@@ -59,7 +61,8 @@ const isSingleDestination = computed(
       class="space-y-3 rounded-sm border border-primary-light/60 bg-primary-lightest/40 p-4"
     >
       <h3 class="font-coeliac text-xl font-semibold text-primary-dark">
-        Good news — one card covers {{ isSingleDestination ? 'it' : 'them all' }}
+        Good news — one card covers
+        {{ isSingleDestination ? 'it' : 'them all' }}
       </h3>
 
       <p class="prose max-w-none md:prose-lg">

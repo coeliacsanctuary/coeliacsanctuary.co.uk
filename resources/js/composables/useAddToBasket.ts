@@ -1,7 +1,6 @@
 import { useForm } from 'laravel-precognition-vue-inertia';
 import eventBus from '@/eventBus';
 import { VisitOptions } from '@inertiajs/core';
-import { InertiaForm } from '@/types/Core';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import useLocalStorage from '@/composables/useLocalStorage';
 import { router, usePage } from '@inertiajs/vue3';
@@ -37,7 +36,7 @@ export default () => {
       quantity: 1,
       include_add_on: false,
     },
-  ) as InertiaForm<Partial<AddBasketPayload>>;
+  );
 
   const prepareAddBasketForm = (
     productId: number,

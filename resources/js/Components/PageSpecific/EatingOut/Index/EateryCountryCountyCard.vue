@@ -19,7 +19,11 @@ const counts = computed(() =>
   [
     { key: 'eateries', label: 'eatery', value: props.county.eateries },
     { key: 'branches', label: 'chain', value: props.county.branches },
-    { key: 'attractions', label: 'attraction', value: props.county.attractions },
+    {
+      key: 'attractions',
+      label: 'attraction',
+      value: props.county.attractions,
+    },
     { key: 'hotels', label: 'hotel', value: props.county.hotels },
   ].filter((count) => count.value > 0),
 );

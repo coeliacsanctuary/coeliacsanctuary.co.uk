@@ -71,7 +71,7 @@ useJourneyTracking().logWhenVisible(
 
     <Link
       href="/eating-out"
-      class="-mx-4 -mb-4 mt-4! flex items-center justify-center space-x-2 bg-primary-lightest/60 p-4 font-semibold transition hover:bg-primary-light/60"
+      class="-mx-4 mt-4! -mb-4 flex items-center justify-center space-x-2 bg-primary-lightest/60 p-4 font-semibold transition hover:bg-primary-light/60"
     >
       <span>Explore the Eating Out guide</span>
 

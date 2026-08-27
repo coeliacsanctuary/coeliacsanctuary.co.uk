@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Modal from '@/Components/Overlays/Modal.vue';
+import { EateryBranchLookupResult } from '@/types/EateryTypes';
 import ModalHeading from '@/Components/Overlays/ModalHeading.vue';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
@@ -7,7 +8,6 @@ import { useForm } from 'laravel-precognition-vue-inertia';
 import { ref } from 'vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import useUrl from '@/composables/useUrl';
-import { InertiaForm } from '@/types/Core';
 import FormLookup from '@/Components/Forms/FormLookup.vue';
 
 const props = defineProps<{
@@ -33,15 +33,17 @@ const branchName = (): string => {
   return '';
 };
 
-const form = useForm('post', generateUrl('report'), {
-  details: '',
-  branch_id: props.branchId,
-  ...(props.isNationwide ? { branch_name: branchName() } : null),
-}) as InertiaForm<{
+type ReportForm = {
   details: string;
   branch_id?: number;
   branch_name?: string;
-}>;
+};
+
+const form = useForm<ReportForm>('post', generateUrl('report'), {
+  details: '',
+  branch_id: props.branchId,
+  ...(props.isNationwide ? { branch_name: branchName() } : null),
+});
 
 const close = () => {
   emits('close');
@@ -132,7 +134,7 @@ const submitForm = () => {
                   required
                   @unlock="form.branch_name = ''"
                 >
-                  <template #item="{ name }">
+                  <template #item="{ name }: EateryBranchLookupResult">
                     <div
                       class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
                       @click="form.branch_name = name"

@@ -20,7 +20,6 @@ import {
 import { computed, ref } from 'vue';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { InertiaForm } from '@/types/Core';
 
 const props = defineProps<{
   id: string;
@@ -83,13 +82,14 @@ const form = useForm<FormData>(
       rating: undefined,
     })),
   },
-) as InertiaForm<FormData>;
+);
 
 const isRated = (index: number): boolean =>
   !skipped.value[index] && form.products[index].rating !== undefined;
 
 const ratedCount = computed(
-  (): number => props.products.filter((product, index) => isRated(index)).length,
+  (): number =>
+    props.products.filter((product, index) => isRated(index)).length,
 );
 
 const submittedProducts = (): ProductEntry[] =>
@@ -177,7 +177,9 @@ const submitForm = () => {
     @submit.prevent="submitForm()"
   >
     <Card class="flex flex-col space-y-4">
-      <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <div
+        class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"
+      >
         <SubHeading
           as="h2"
           text-size="small"

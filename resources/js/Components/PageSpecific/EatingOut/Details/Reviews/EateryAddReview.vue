@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DetailedEatery } from '@/types/EateryTypes';
+import { DetailedEatery, EateryBranchLookupResult } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { computed, ComputedRef, Ref, ref } from 'vue';
@@ -13,7 +13,6 @@ import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import UploadReviewImages from '@/Components/PageSpecific/EatingOut/Details/Reviews/UploadReviewImages.vue';
 import useUrl from '@/composables/useUrl';
-import { InertiaForm } from '@/types/Core';
 import FormLookup from '@/Components/Forms/FormLookup.vue';
 import { usePage } from '@inertiajs/vue3';
 import { DefaultProps } from '@/types/DefaultProps';
@@ -62,7 +61,7 @@ const form = useForm<ReviewFormPayload>('post', generateUrl('reviews'), {
   images: [],
   ...(isAdmin() ? { admin_review: false } : null),
   ...(props.eatery.county.id === 1 ? { branch_name: branchName() } : null),
-}) as InertiaForm<ReviewFormPayload>;
+});
 
 const characterLimit = 1500;
 
@@ -244,7 +243,7 @@ const eateryName = (): string => {
             fallback-key="name"
             @unlock="form.branch_name = ''"
           >
-            <template #item="{ name }">
+            <template #item="{ name }: EateryBranchLookupResult">
               <div
                 class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
                 @click="form.branch_name = name"

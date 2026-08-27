@@ -38,8 +38,14 @@ const updateCssVars = (): void => {
   adhesionHeight.value = adhesionCoverage;
   bottomRightHeight.value = Math.max(adhesionCoverage, videoCoverage);
 
-  document.documentElement.style.setProperty('--sticky-bottom', `${adhesionCoverage}px`);
-  document.documentElement.style.setProperty('--sticky-bottom-right', `${bottomRightHeight.value}px`);
+  document.documentElement.style.setProperty(
+    '--sticky-bottom',
+    `${adhesionCoverage}px`,
+  );
+  document.documentElement.style.setProperty(
+    '--sticky-bottom-right',
+    `${bottomRightHeight.value}px`,
+  );
 };
 
 const observeElement = (el: Element, set: Set<Element>): void => {
@@ -52,8 +58,12 @@ const observeElement = (el: Element, set: Set<Element>): void => {
 };
 
 const scan = (): void => {
-  document.querySelectorAll(ADHESION_SELECTOR).forEach((el) => observeElement(el, adhesionElements));
-  document.querySelectorAll(VIDEO_SELECTOR).forEach((el) => observeElement(el, videoElements));
+  document
+    .querySelectorAll(ADHESION_SELECTOR)
+    .forEach((el) => observeElement(el, adhesionElements));
+  document
+    .querySelectorAll(VIDEO_SELECTOR)
+    .forEach((el) => observeElement(el, videoElements));
 };
 
 const setup = (): void => {

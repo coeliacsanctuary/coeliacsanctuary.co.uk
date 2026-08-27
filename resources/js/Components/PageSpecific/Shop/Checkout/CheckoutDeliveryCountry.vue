@@ -5,7 +5,6 @@ import Loader from '@/Components/Loader.vue';
 import useShopStore from '@/stores/useShopStore';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import { useForm } from 'laravel-precognition-vue-inertia';
-import { InertiaForm } from '@/types/Core';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
@@ -17,9 +16,13 @@ const props = defineProps<{
 
 const store = useShopStore();
 
-const countryForm = useForm('patch', '/shop/basket', {
-  postage_country_id: props.selectedCountry,
-}) as InertiaForm<{ postage_country_id: number }>;
+const countryForm = useForm<{ postage_country_id: number }>(
+  'patch',
+  '/shop/basket',
+  {
+    postage_country_id: props.selectedCountry,
+  },
+);
 
 const updateStore = () => {
   const selectedOption: FormSelectOption | undefined = props.countries.find(

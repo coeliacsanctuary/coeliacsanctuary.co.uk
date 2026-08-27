@@ -48,8 +48,7 @@ const viewAll = ref([false, false]);
 
         <ul
           :class="{
-            'grid gap-2 sm:grid-cols-2 lg:grid-cols-3':
-              countries.length === 1,
+            'grid gap-2 sm:grid-cols-2 lg:grid-cols-3': countries.length === 1,
             'flex flex-col space-y-2': countries.length > 1,
           }"
         >

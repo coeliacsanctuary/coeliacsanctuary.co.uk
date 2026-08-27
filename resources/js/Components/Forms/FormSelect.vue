@@ -6,6 +6,7 @@ import {
   FormSelectPropsDefaults,
 } from '@/Components/Forms/Props';
 import { ExclamationCircleIcon } from '@heroicons/vue/20/solid';
+import { computed } from 'vue';
 
 const props = withDefaults(
   defineProps<FormSelectProps>(),
@@ -13,6 +14,11 @@ const props = withDefaults(
 );
 
 const value = defineModel<string | number | boolean>();
+
+const hasGroupedOptions = computed(
+  (): boolean =>
+    props.options[0] !== undefined && 'options' in props.options[0],
+);
 
 const classes = (): string[] => {
   const base = [
@@ -111,7 +117,7 @@ const classes = (): string[] => {
           v-text="placeholder"
         />
 
-        <template v-if="options[0].options">
+        <template v-if="hasGroupedOptions">
           <optgroup
             v-for="group in <FormSelectGroup[]>options"
             :key="group.label"

@@ -12,7 +12,12 @@ const props = withDefaults(
     backText?: string;
     additionalMapUrl?: string;
   }>(),
-  { additionalMapUrl: '' },
+  {
+    image: undefined,
+    backLink: undefined,
+    backText: undefined,
+    additionalMapUrl: '',
+  },
 );
 
 const linkCards = [

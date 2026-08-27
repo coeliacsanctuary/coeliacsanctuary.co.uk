@@ -29,9 +29,9 @@ defineProps<{
     <div class="prose max-w-none md:prose-lg">
       <p>
         My cards are listed by country and by language, so try searching for
-        where the country rather than the town or city — <strong>France</strong>
-        rather than <strong>Paris</strong>, or <strong>Spain</strong> rather
-        than <strong>Benidorm</strong>.
+        where the country rather than the town or city —
+        <strong>France</strong> rather than <strong>Paris</strong>, or
+        <strong>Spain</strong> rather than <strong>Benidorm</strong>.
       </p>
 
       <p>

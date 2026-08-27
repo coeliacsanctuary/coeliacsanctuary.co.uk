@@ -133,7 +133,7 @@ useJourneyTracking().logWhenVisible(
         </p>
 
         <Link
-          class="-mx-4 -mb-4 mt-4! flex items-center justify-center bg-white/40 p-4 font-semibold transition hover:bg-white/70"
+          class="-mx-4 mt-4! -mb-4 flex items-center justify-center bg-white/40 p-4 font-semibold transition hover:bg-white/70"
           href="/about"
         >
           Read more about me

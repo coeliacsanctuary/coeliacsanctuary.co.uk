@@ -264,7 +264,7 @@ export type EateryBranchesCollection = {
   [Country: string]: {
     [County: string]: {
       [Town: string]: {
-        [Area: string | null]: EateryNationwideBranch[];
+        [Area: string]: EateryNationwideBranch[];
       };
     };
   };
@@ -488,4 +488,13 @@ export type NearbyEatery = {
   distance: number;
   ratings_count: number;
   average_rating: StarRating;
+};
+
+export type EateryLocationLookupResult = {
+  id: string;
+  label: string;
+};
+
+export type EateryBranchLookupResult = {
+  name: string;
 };

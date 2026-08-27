@@ -4,7 +4,9 @@ import Card from '@/Components/Card.vue';
 
 <template>
   <Card class="space-y-4">
-    <div class="h-8 w-2/3 animate-pulse rounded-sm bg-primary-light/50 sm:w-1/3" />
+    <div
+      class="h-8 w-2/3 animate-pulse rounded-sm bg-primary-light/50 sm:w-1/3"
+    />
 
     <div
       class="mx-auto h-px w-full bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"

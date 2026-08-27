@@ -11,16 +11,17 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-    @font-face {
-        font-family: 'Hangyaboly';
-        src: url('../fonts/Hangyaboly.woff2') format('woff2'),
-        url('../fonts/Hangyaboly.woff') format('woff');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-    }
+  @font-face {
+    font-family: 'Hangyaboly';
+    src:
+      url('../fonts/Hangyaboly.woff2') format('woff2'),
+      url('../fonts/Hangyaboly.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
 
-    *,
+  *,
   ::after,
   ::before,
   ::backdrop,
@@ -30,17 +31,19 @@
 }
 
 @layer utilities {
-    .content_hint, .content_desktop_hint, .content_mobile_hint {
-        display: none;
-    }
+  .content_hint,
+  .content_desktop_hint,
+  .content_mobile_hint {
+    display: none;
+  }
 
-    .article-body :is(h1, h2, h3, h4, h5, h6) {
-        clear: both;
-    }
+  .article-body :is(h1, h2, h3, h4, h5, h6) {
+    clear: both;
+  }
 
-    @media only screen and (min-width: 1024px) {
-        main div.flex-col > aside.space-y-3:has(+ div.flex-col) {
-            overflow: unset;
-        }
+  @media only screen and (min-width: 1024px) {
+    main div.flex-col > aside.space-y-3:has(+ div.flex-col) {
+      overflow: unset;
     }
+  }
 }

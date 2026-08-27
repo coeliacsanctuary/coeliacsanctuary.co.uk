@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-withDefaults(
-  defineProps<{ interleaved?: boolean; contentFirst?: boolean }>(),
-  { interleaved: false, contentFirst: false },
-);
+withDefaults(defineProps<{ interleaved?: boolean; contentFirst?: boolean }>(), {
+  interleaved: false,
+  contentFirst: false,
+});
 </script>
 
 <template>

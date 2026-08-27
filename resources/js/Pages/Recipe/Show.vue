@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { PaginatedResponse } from '@/types/GenericTypes';
+import { Comment } from '@/types/Types';
 import { ref, Ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { RecipePage } from '@/types/RecipeTypes';
