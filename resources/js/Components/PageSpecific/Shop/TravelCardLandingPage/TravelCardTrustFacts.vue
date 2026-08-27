@@ -40,7 +40,7 @@ const facts = computed((): Fact[] => {
       icon: LanguageIcon,
       title: 'Professionally translated',
       description:
-        "Every card is translated by a native speaker, never by Google Translate, so what it says is accurate and easy to follow.",
+        'Every card is translated by a native speaker, never by Google Translate, so what it says is accurate and easy to follow.',
     },
     {
       icon: ShieldCheckIcon,

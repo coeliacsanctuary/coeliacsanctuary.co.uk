@@ -39,7 +39,8 @@ const faqs: ArticleFaq[] = [
       "Search by country rather than language and I'll show you everything that would work there, including cards in a language that's widely understood locally even if it isn't the official one. If there's genuinely nothing, do get in touch — new languages usually get added because somebody asked.",
   },
   {
-    question: 'I have other allergies as well as coeliac, which card do I need?',
+    question:
+      'I have other allergies as well as coeliac, which card do I need?',
     answer:
       'My Coeliac+ cards. One side explains coeliac disease and cross contamination, and the reverse has a tick box list so you can flag other allergens or dietary needs like vegetarian or vegan.',
   },
@@ -51,7 +52,7 @@ const faqs: ArticleFaq[] = [
   {
     question: 'How long does delivery take?',
     answer:
-      "Orders are dispatched within two working days and UK orders go First Class, with Royal Mail aiming to deliver most of them the next working day. International orders go by Royal Mail International Standard, which can take up to three or four weeks depending on the country.",
+      'Orders are dispatched within two working days and UK orders go First Class, with Royal Mail aiming to deliver most of them the next working day. International orders go by Royal Mail International Standard, which can take up to three or four weeks depending on the country.',
   },
 ];
 </script>

@@ -10,7 +10,10 @@ import { fromLonLat, toLonLat, transformExtent } from 'ol/proj';
 import { UrlParameters } from '@/types/EatingOutBrowseTypes';
 import useScreensize from '@/composables/useScreensize';
 import eventBus from '@/eventBus';
-import { clusterStyle, searchLocationMarkerStyle } from '@/support/eating-out/browse/styles';
+import {
+  clusterStyle,
+  searchLocationMarkerStyle,
+} from '@/support/eating-out/browse/styles';
 import { Extent } from 'ol/extent';
 import { Size } from 'ol/size';
 import { getDistance } from 'ol/sphere';
@@ -27,7 +30,9 @@ export default (
   const map: Ref<Map> = ref() as Ref<Map>;
   const view: Ref<View> = ref() as Ref<View>;
   const markerLayer = ref<VectorLayer<VectorSource>>();
-  const searchLocationSource = ref<VectorSource>(new VectorSource());
+  const searchLocationSource = ref<VectorSource>(
+    new VectorSource(),
+  ) as Ref<VectorSource>;
   const searchLocationLayer = ref<VectorLayer<VectorSource>>();
 
   const initialLatLng = computed((): Coordinate => {

@@ -34,7 +34,7 @@ const formParamsToSearchParams = (): URLSearchParams => {
   });
 };
 
-const landmark: Ref<Element> = ref();
+const landmark = ref<Element>() as Ref<Element>;
 
 const resultsElem: Ref<null | {
   reset: () => void;

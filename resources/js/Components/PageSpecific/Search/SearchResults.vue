@@ -4,7 +4,6 @@ import Loader from '@/Components/Loader.vue';
 import Card from '@/Components/Card.vue';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import useInfiniteScrollCollection from '@/composables/useInfiniteScrollCollection';
-import useSearch from '@/composables/useSearch';
 import { onMounted, ref } from 'vue';
 import { LatLng } from '@/types/EateryTypes';
 import SearchEateriesCta from '@/Components/PageSpecific/Search/SearchEateriesCta.vue';
@@ -27,8 +26,6 @@ onMounted(() => {
   emits('mounted');
 });
 
-const { searchForm } = useSearch();
-
 const { reset, pause, items, refreshUrl, requestOptions } =
   useInfiniteScrollCollection<SearchResultType>('results', ref(props.landmark));
 
@@ -44,7 +41,7 @@ defineExpose({ reset, pause, refreshUrl, requestOptions });
 
 <template>
   <Card
-    v-if="searchForm.processing || shouldLoad"
+    v-if="shouldLoad"
     class="mt-4! w-full"
   >
     <Loader

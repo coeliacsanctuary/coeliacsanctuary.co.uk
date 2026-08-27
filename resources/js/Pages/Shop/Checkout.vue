@@ -154,7 +154,7 @@ const submitPendingOrder = async (payload: CheckoutForm): Promise<boolean> => {
   }
 };
 
-const stripePayload = (payload: CheckoutForm): Partial<ConfirmPaymentData> => ({
+const stripePayload = (payload: CheckoutForm): ConfirmPaymentData => ({
   return_url: useUrl().generateUrl('done'),
   payment_method_data: {
     billing_details: {

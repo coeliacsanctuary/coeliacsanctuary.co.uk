@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useScreensize from '@/composables/useScreensize';
+import useScreensize, { BreakPoint } from '@/composables/useScreensize';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import { ChevronDownIcon } from '@heroicons/vue/24/solid';
@@ -7,7 +7,7 @@ import Card from '@/Components/Card.vue';
 
 withDefaults(
   defineProps<{
-    showBreakpoint?: string;
+    showBreakpoint?: BreakPoint;
     collapsible?: boolean;
   }>(),
   {

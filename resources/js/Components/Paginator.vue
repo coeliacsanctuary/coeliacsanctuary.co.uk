@@ -4,7 +4,7 @@ import useScreensize from '@/composables/useScreensize';
 
 type Page = {
   type: 'page' | 'dots';
-  number?: number;
+  number: number;
   current?: boolean;
   static?: boolean;
 };

@@ -2,9 +2,11 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "lint": "eslint ./resources/js --cache --ext .js,.ts,.vue",
-        "lint-fix": "eslint ./resources/js --cache --ext .js,.ts,.vue --fix",
-        "format": "prettier --log-level log --write \"resources/js/**/*.{vue,ts}\"",
+        "lint": "eslint ./resources/js --cache --cache-strategy content --ext .js,.ts,.vue",
+        "lint-fix": "eslint ./resources/js --cache --cache-strategy content --ext .js,.ts,.vue --fix",
+        "format": "prettier --log-level log --write \"resources/js/**/*.{vue,ts}\" \"resources/css/**/*.css\" \"*.{ts,cjs}\" tsconfig.json",
+        "format:check": "prettier --check \"resources/js/**/*.{vue,ts}\" \"resources/css/**/*.css\" \"*.{ts,cjs}\" tsconfig.json",
+        "typecheck": "vue-tsc --noEmit -p tsconfig.json",
         "dev": "vite",
         "build": "vite build && vite build --ssr",
         "build-eatery-location-search": "cd nova-components/EateryLocationSearch && npm run dev",
@@ -35,7 +37,8 @@
         "prettier-plugin-tailwindcss": "^0.6.11",
         "tailwindcss": "^4.0.0",
         "typescript": "^6.0.3",
-        "vite": "^5.0.0"
+        "vite": "^5.0.0",
+        "vue-tsc": "^3.3.11"
     },
     "dependencies": {
         "@googlemaps/polyline-codec": "^1.0.28",

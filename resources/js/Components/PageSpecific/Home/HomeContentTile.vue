@@ -20,7 +20,11 @@ const meta = computed<string | undefined>(() => {
     return props.item.date;
   }
 
-  const { servings, calories, portion_size: portionSize } = props.item.nutrition;
+  const {
+    servings,
+    calories,
+    portion_size: portionSize,
+  } = props.item.nutrition;
 
   return (
     [

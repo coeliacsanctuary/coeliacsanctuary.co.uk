@@ -6,13 +6,12 @@ import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { nextTick } from 'vue';
 import eventBus from '@/eventBus';
-import { InertiaForm } from '@/types/Core';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
-const form = useForm('patch', '/shop/basket', {
+const form = useForm<{ discount: string }>('patch', '/shop/basket', {
   discount: '',
-}) as InertiaForm<{ discount: string }>;
+});
 
 const applyDiscountCode = () => {
   form.submit({

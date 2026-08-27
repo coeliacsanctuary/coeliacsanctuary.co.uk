@@ -8,7 +8,6 @@ import { Marker, MarkerProps } from '@/types/EatingOutBrowseTypes';
 import VectorSource from 'ol/source/Vector';
 import { boundingExtent, Extent, getHeight, getWidth } from 'ol/extent';
 import { Size } from 'ol/size';
-import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
 import { FeatureLike } from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
@@ -134,8 +133,8 @@ export default () => {
         geometry: new Point(fromLonLat(c.geometry.coordinates)),
       });
 
-      if (!c.properties?.cluster) {
-        nowVisible.add(c.properties.id as string);
+      if (!('cluster' in c.properties)) {
+        nowVisible.add(c.properties.id);
       }
 
       feature.setProperties(c.properties);
@@ -230,12 +229,15 @@ export default () => {
        * zoom to the point they stop clustering instead.
        */
       if (getWidth(extent) === 0 && getHeight(extent) === 0) {
-        eventBus.$emit('map-animate-to', {
-          // eslint-disable-next-line
-          center: clickedFeature.getGeometry()?.getCoordinates() as Coordinate,
-          zoom: maxClusterZoom + 1,
-          duration: 500,
-        });
+        const clickedGeometry = clickedFeature.getGeometry();
+
+        if (clickedGeometry instanceof Point) {
+          eventBus.$emit('map-animate-to', {
+            center: clickedGeometry.getCoordinates(),
+            zoom: maxClusterZoom + 1,
+            duration: 500,
+          });
+        }
 
         return;
       }

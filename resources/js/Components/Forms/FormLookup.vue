@@ -1,10 +1,14 @@
-<script lang="ts" setup>
+<script
+  lang="ts"
+  setup
+  generic="TResult extends object = Record<string, unknown>"
+>
 import {
   FormLookupPropDefaults,
   FormLookupProps,
 } from '@/Components/Forms/Props';
 import { ExclamationCircleIcon, XCircleIcon } from '@heroicons/vue/20/solid';
-import { ref, watch } from 'vue';
+import { ref, shallowRef, watch } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 import axios from 'axios';
 
@@ -15,9 +19,14 @@ const props = withDefaults(
 
 const emits = defineEmits(['search', 'unlock', 'typed']);
 
+defineSlots<{
+  item(props: TResult): unknown;
+  'no-results'(): unknown;
+}>();
+
 const value = ref(props.initialValue ?? '');
 
-const results = ref<object[]>([]);
+const results = shallowRef<TResult[]>([]);
 
 const showResultsBox = ref(false);
 
@@ -100,7 +109,7 @@ const performSearch = () => {
       highlightedIndex.value = -1;
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      results.value = <object[]>response.data[props.resultKey];
+      results.value = response.data[props.resultKey] as TResult[];
 
       emits('search', results.value);
     });
@@ -126,7 +135,14 @@ const close = () => {
   highlightedIndex.value = -1;
 };
 
-const resultCount = (): number => results.value.length + (props.allowAny ? 1 : 0);
+const fallbackResult = (): TResult =>
+  ({
+    ...props.fallbackObject,
+    [props.fallbackKey ?? '']: value.value,
+  }) as TResult;
+
+const resultCount = (): number =>
+  results.value.length + (props.allowAny ? 1 : 0);
 
 const clickSlottedResult = (event: KeyboardEvent) => {
   const slottedResult = (event.currentTarget as HTMLElement).firstElementChild;
@@ -145,7 +161,9 @@ const move = (step: number) => {
 
   highlightedIndex.value = (highlightedIndex.value + step + total) % total;
 
-  document.getElementById(`${props.name}-result-${highlightedIndex.value}`)?.focus();
+  document
+    .getElementById(`${props.name}-result-${highlightedIndex.value}`)
+    ?.focus();
 };
 
 defineExpose({ reset, value, setValue, close });
@@ -280,10 +298,7 @@ watchDebounced(value, performSearch, { debounce: 500 });
           >
             <slot
               name="item"
-              v-bind="{
-                ...fallbackObject,
-                [fallbackKey]: value,
-              }"
+              v-bind="fallbackResult()"
             />
           </button>
         </li>

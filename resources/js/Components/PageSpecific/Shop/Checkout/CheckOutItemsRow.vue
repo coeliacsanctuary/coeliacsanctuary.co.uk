@@ -14,7 +14,6 @@ const props = defineProps<{ item: ShopBasketItem }>();
 const isLoading = ref(false);
 const hasError = ref(false);
 const isDeletingItem = ref(false);
-const isRemovingAddon = ref(false);
 const includeAddOn = ref(props.item.add_on?.in_basket ?? false);
 
 const alterQuantity = (action: 'increase' | 'decrease') => {

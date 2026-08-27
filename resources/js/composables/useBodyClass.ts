@@ -1,6 +1,8 @@
 import { onUnmounted, watch } from 'vue';
 
-export default function useBodyClass(bodyClass: () => string | undefined): void {
+export default function useBodyClass(
+  bodyClass: () => string | undefined,
+): void {
   let applied = bodyClass();
 
   const apply = (value: string | undefined): void => {
