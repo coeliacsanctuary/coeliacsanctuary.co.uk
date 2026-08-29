@@ -15,10 +15,6 @@ createServer((page) =>
 
     title: getTitle,
 
-    progress: {
-      color: '#4B5563',
-    },
-
     resolve: async (name) => {
       // @ts-ignore
       const pages: Record<string, () => Promise<() => InertiaPage>> =

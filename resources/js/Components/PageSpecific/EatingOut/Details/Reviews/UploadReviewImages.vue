@@ -28,7 +28,7 @@ const imageClasses = computed(() => [
   'rounded-sm',
   'w-[130px]',
   'xxs:h-[112.5px]',
-  'xxs-w-[150px]',
+  'xxs:w-[150px]',
 ]);
 
 const imageOverlayClasses = computed(() => [
@@ -219,7 +219,7 @@ const deleteImage = (id: string) => {
           class="cursor-pointer text-6xl text-primary-dark"
           @click="uploadImage()"
         >
-          <PlusIcon class="h-16 w-16" />
+          <PlusIcon class="size-16" />
         </li>
       </ul>
 

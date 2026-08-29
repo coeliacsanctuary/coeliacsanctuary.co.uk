@@ -29,6 +29,7 @@ class GetController
 
         return $inertia
             ->doNotTrack()
+            ->disableAds()
             ->metaTags([], false)
             ->title('Download my Products!')
             ->render('Shop/DownloadMyProducts/DownloadMyProducts', [

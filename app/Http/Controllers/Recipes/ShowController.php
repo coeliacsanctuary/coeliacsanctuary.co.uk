@@ -45,6 +45,7 @@ class ShowController
                 new BreadcrumbItemData('Recipes', route('recipe.index')),
                 new BreadcrumbItemData($recipe->title),
             ]))
+            ->bodyClass('mv-recipe')
             ->render('Recipe/Show', [
                 'recipe' => new RecipeShowResource($recipe),
                 'comments' => fn () => $getCommentsForItemAction->handle($recipe),

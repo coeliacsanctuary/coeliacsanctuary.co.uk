@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\Collections;
 
 use PHPUnit\Framework\Attributes\Test;
+use App\Enums\Collections\CollectionDisplayType;
 use App\Models\Collections\Collection;
 use App\Models\Collections\CollectionGroup;
 use App\Models\Collections\CollectionGroupItem;
@@ -61,6 +62,21 @@ class ShowControllerTest extends TestCase
                     ->component('Collection/Show')
                     ->has('collection')
                     ->where('collection.title', 'Collection 0')
+                    ->where('collection.display_type', CollectionDisplayType::GRID->value)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itRendersTheInertiaPageWithTheListDisplayType(): void
+    {
+        $this->collection->update(['display_type' => CollectionDisplayType::LIST]);
+
+        $this->visitCollection()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('Collection/Show')
+                    ->where('collection.display_type', CollectionDisplayType::LIST->value)
                     ->etc()
             );
     }
@@ -86,6 +102,25 @@ class ShowControllerTest extends TestCase
                     ->component('Collection/Show')
                     ->has('collection.groups.0.items', 1)
                     ->where('collection.groups.0.items.0.title', $liveRecipe->title)
+            );
+    }
+
+    #[Test]
+    public function itStillRendersTheCollectionWhenNoneOfItsItemsAreLive(): void
+    {
+        $group = CollectionGroup::query()->first();
+
+        $deadRecipe = $this->create(Recipe::class, ['live' => false]);
+
+        $this->build(CollectionGroupItem::class)->forRecipe($deadRecipe)->create(['collection_group_id' => $group->id]);
+
+        $this->visitCollection()
+            ->assertOk()
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('Collection/Show')
+                    ->has('collection.groups.0.items', 0)
+                    ->etc()
             );
     }
 }

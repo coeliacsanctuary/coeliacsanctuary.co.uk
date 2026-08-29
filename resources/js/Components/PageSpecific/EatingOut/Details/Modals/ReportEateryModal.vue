@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Modal from '@/Components/Overlays/Modal.vue';
+import { EateryBranchLookupResult } from '@/types/EateryTypes';
+import ModalHeading from '@/Components/Overlays/ModalHeading.vue';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { ref } from 'vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import useUrl from '@/composables/useUrl';
-import { InertiaForm } from '@/types/Core';
 import FormLookup from '@/Components/Forms/FormLookup.vue';
 
 const props = defineProps<{
@@ -32,15 +33,17 @@ const branchName = (): string => {
   return '';
 };
 
-const form = useForm('post', generateUrl('report'), {
-  details: '',
-  branch_id: props.branchId,
-  ...(props.isNationwide ? { branch_name: branchName() } : null),
-}) as InertiaForm<{
+type ReportForm = {
   details: string;
   branch_id?: number;
   branch_name?: string;
-}>;
+};
+
+const form = useForm<ReportForm>('post', generateUrl('report'), {
+  details: '',
+  branch_id: props.branchId,
+  ...(props.isNationwide ? { branch_name: branchName() } : null),
+});
 
 const close = () => {
   emits('close');
@@ -66,15 +69,12 @@ const submitForm = () => {
     size="small"
     @close="close()"
   >
-    <div
-      class="border-grey-mid relative border-b bg-grey-light p-3 pr-[34px] text-center text-sm font-semibold"
-    >
-      Report {{ eateryName }}
-    </div>
+    <ModalHeading :title="`Report ${eateryName}`" />
+
     <div class="p-3">
       <template v-if="hasSubmitted">
         <div class="flex items-center justify-center text-center text-green">
-          <CheckCircleIcon class="h-24 w-24" />
+          <CheckCircleIcon class="size-24" />
         </div>
 
         <p class="md:prose-md prose mb-2 max-w-none text-center">
@@ -134,7 +134,7 @@ const submitForm = () => {
                   required
                   @unlock="form.branch_name = ''"
                 >
-                  <template #item="{ name }">
+                  <template #item="{ name }: EateryBranchLookupResult">
                     <div
                       class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
                       @click="form.branch_name = name"

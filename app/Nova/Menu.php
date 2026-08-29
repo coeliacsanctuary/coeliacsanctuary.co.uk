@@ -21,6 +21,8 @@ use App\Nova\Resources\EatingOut\Counties;
 use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
 use App\Nova\Resources\EatingOut\EateryAlerts;
+use App\Nova\Resources\EatingOut\EateryCuisines;
+use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideEateries;
@@ -42,6 +44,7 @@ use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DiscountCode;
+use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
@@ -108,9 +111,17 @@ class Menu
                 MenuGroup::make('Locations', [
                     MenuItem::resource(Eateries::class),
                     MenuItem::resource(NationwideEateries::class),
+                ]),
+
+                MenuGroup::make('Management', [
                     MenuItem::resource(Counties::class),
                     MenuItem::resource(Towns::class),
                     MenuItem::resource(Areas::class),
+                    MenuItem::resource(EateryCuisines::class),
+                ]),
+
+                MenuGroup::make('Magic Routes', [
+                    MenuItem::resource(EateryMagicRoutesResource::class),
                 ]),
 
                 MenuGroup::make('Feedback', [
@@ -161,6 +172,7 @@ class Menu
                     MenuItem::resource(PostagePrice::class),
                     MenuItem::resource(CustomsFee::class),
                     MenuItem::resource(MassDiscount::class),
+                    MenuItem::resource(Holidays::class),
                     MenuItem::resource(OrderSourcesResource::class),
                 ]),
 

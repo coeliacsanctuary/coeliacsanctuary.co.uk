@@ -106,12 +106,12 @@ const alterQuantity = (
             :class="{ '!border-b-0': !!item.add_on }"
           >
             <div
-              class="hidden h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200 sm:block"
+              class="hidden size-24 shrink-0 overflow-hidden rounded-md border border-gray-200 sm:block"
             >
               <img
                 :src="item.image"
                 :alt="item.title"
-                class="h-full w-full object-cover object-center"
+                class="aspect-square object-cover"
               />
             </div>
 

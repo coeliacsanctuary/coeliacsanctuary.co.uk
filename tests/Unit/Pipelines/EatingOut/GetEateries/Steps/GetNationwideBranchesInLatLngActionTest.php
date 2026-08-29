@@ -42,6 +42,33 @@ class GetNationwideBranchesInLatLngActionTest extends GetEateriesTestCase
         $this->assertCount(10, $newCollection->eateries); // 5 in setup, 5 from above
     }
 
+    /** A branch has no venue type of its own, it comes from the eatery it belongs to. */
+    #[Test]
+    public function itSetsTheVenueTypeIdFromTheParentEatery(): void
+    {
+        $venueType = $this->create(EateryVenueType::class);
+
+        Eatery::query()->update(['venue_type_id' => $venueType->id]);
+
+        $eateries = $this->callGetBranchesInLatLngRadiusAction()->eateries;
+
+        $this->assertNotEmpty($eateries);
+
+        $eateries->each(fn (PendingEatery $eatery) => $this->assertEquals($venueType->id, $eatery->venueTypeId));
+    }
+
+    #[Test]
+    public function itSetsANullVenueTypeIdWhenTheParentEateryHasNone(): void
+    {
+        Eatery::query()->update(['venue_type_id' => null]);
+
+        $eateries = $this->callGetBranchesInLatLngRadiusAction()->eateries;
+
+        $this->assertNotEmpty($eateries);
+
+        $eateries->each(fn (PendingEatery $eatery) => $this->assertNull($eatery->venueTypeId));
+    }
+
     #[Test]
     public function itCanFilterTheEateriesByCategory(): void
     {

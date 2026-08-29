@@ -34,7 +34,19 @@ const styles = () => ({
 
 <template>
   <div class="mb-1 h-full">
+    <img
+      v-if="lazy"
+      :src="url"
+      :alt="title ? `Map showing the location of ${title}` : ''"
+      :class="mapClasses"
+      :style="{ cursor: canExpand ? 'pointer' : 'default' }"
+      class="w-full object-cover"
+      loading="lazy"
+      @click.stop="props.canExpand ? (openModal = true) : undefined"
+    />
+
     <div
+      v-else
       :class="mapClasses"
       :style="styles()"
       class="w-full"

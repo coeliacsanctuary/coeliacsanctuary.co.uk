@@ -9,7 +9,7 @@ const props = defineProps<{
   branchId?: number;
 }>();
 
-const emit = defineEmits(['onError']);
+defineEmits(['onError']);
 
 const getEndpoint = (): string => {
   let url = `/api/wheretoeat/${props.eateryId}/sealiac`;
@@ -36,6 +36,8 @@ useJourneyTracking().logWhenVisible(
   <div ref="card">
     <AiOverviewCard
       :endpoint="getEndpoint()"
+      collapsible
+      compact
       @on-error="$emit('onError')"
     >
       <template #title>

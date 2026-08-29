@@ -15,6 +15,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use RuntimeException;
 
@@ -28,11 +29,14 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
             return $next($pipelineData);
         }
 
+        /** A branch has no venue type of its own, it lives on the eatery it belongs to. */
+        $venueType = DB::raw('(select venue_type_id from wheretoeat where wheretoeat.id = wheretoeat_nationwide_branches.wheretoeat_id) as venue_type_id');
+
         /** @var Builder<NationwideBranch> $idQuery */
-        $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, Helpers::milesToMeters($pipelineData->latLng->radius))
+        $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, $pipelineData->isMeters ? $pipelineData->latLng->radius : Helpers::milesToMeters($pipelineData->latLng->radius), [$venueType])
             ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
                 /** @var Builder<Eatery> $query */
-                $query->where('closed_down', false); /** @phpstan-ignore-line */
+                $query->where('closed_down', false);
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
                 }
@@ -58,6 +62,8 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
             lat: $eatery->lat,
             lng: $eatery->lng,
             typeId: EateryType::EATERY,
+            /** @phpstan-ignore property.notFound */
+            venueTypeId: $eatery->venue_type_id,
             distance: (float)$eatery->distance,
         ));
 

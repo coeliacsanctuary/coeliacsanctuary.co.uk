@@ -1,15 +1,17 @@
 <script lang="ts" setup>
 import { HomepageCollection } from '@/types/CollectionTypes';
 import Card from '@/Components/Card.vue';
-import HomeHoverItem from '@/Components/PageSpecific/Home/HomeHoverItem.vue';
+import SubHeading from '@/Components/SubHeading.vue';
+import HomeContentTile from '@/Components/PageSpecific/Home/HomeContentTile.vue';
 import { Link } from '@inertiajs/vue3';
+import { ArrowRightIcon } from '@heroicons/vue/24/outline';
 import { computed, useTemplateRef } from 'vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{ collection: HomepageCollection }>();
 
 const collectionWrapperClasses = computed(() => {
-  const base = ['group', 'grid', 'grid-cols-1'];
+  const base = ['grid', 'grid-cols-1', 'gap-4'];
 
   if (
     props.collection.items_to_display === 2 ||
@@ -47,10 +49,16 @@ useJourneyTracking().logWhenVisible(
 </script>
 
 <template>
-  <Card ref="card">
-    <h2 class="font-coeliac text-3xl font-semibold md:text-5xl">
+  <Card
+    ref="card"
+    class="space-y-4 overflow-hidden"
+  >
+    <SubHeading
+      as="h2"
+      text-size="small"
+    >
       {{ collection.title }}
-    </h2>
+    </SubHeading>
 
     <p
       class="prose max-w-none sm:prose-lg"
@@ -58,23 +66,26 @@ useJourneyTracking().logWhenVisible(
     />
 
     <div
-      class="mx-auto my-2 h-px w-4/5 bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
+      class="mx-auto h-px w-full bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
     />
 
     <section :class="collectionWrapperClasses">
-      <HomeHoverItem
+      <HomeContentTile
         v-for="item in collection.items"
         :key="item.link"
         :item="item"
+        landscape
       />
     </section>
 
     <Link
       :href="collection.link"
-      class="text-lg font-semibold text-primary-dark transition hover:text-grey-dark"
+      class="-mx-4 mt-4! -mb-4 flex items-center justify-center space-x-2 bg-primary-lightest/60 p-4 font-semibold transition hover:bg-primary-light/60"
       prefetch
     >
-      View more {{ collection.title }} items
+      <span>View more {{ collection.title }} items</span>
+
+      <ArrowRightIcon class="size-4" />
     </Link>
   </Card>
 </template>

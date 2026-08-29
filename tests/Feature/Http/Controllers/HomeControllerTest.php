@@ -105,7 +105,7 @@ class HomeControllerTest extends TestCase
                         'blogs.latest',
                         3,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
+                            ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'date'])
                     )
                     ->where('blogs.latest.0.title', 'Blog 0')
                     ->where('blogs.latest.1.title', 'Blog 1')
@@ -125,7 +125,7 @@ class HomeControllerTest extends TestCase
                         'blogs.latest',
                         3,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
+                            ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'date'])
                     )
                     ->where('blogs.latest.0.title', 'Blog 1')
                     ->where('blogs.latest.1.title', 'Blog 2')
@@ -145,7 +145,7 @@ class HomeControllerTest extends TestCase
                         'recipes.latest',
                         4,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
+                            ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'square_image', 'date', 'nutrition'])
                     )
                     ->where('recipes.latest.0.title', 'Recipe 0')
                     ->where('recipes.latest.1.title', 'Recipe 1')
@@ -165,7 +165,7 @@ class HomeControllerTest extends TestCase
                         'recipes.latest',
                         4,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
+                            ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'square_image', 'date', 'nutrition'])
                     )
                     ->where('recipes.latest.0.title', 'Recipe 1')
                     ->where('recipes.latest.1.title', 'Recipe 2')
@@ -189,7 +189,7 @@ class HomeControllerTest extends TestCase
                         'blogs.top',
                         3,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
+                            ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'date'])
                     )
                     ->where('blogs.top.0.title', 'Blog 0')
                     ->where('blogs.top.1.title', 'Blog 1')
@@ -214,7 +214,7 @@ class HomeControllerTest extends TestCase
                         'recipes.top',
                         4,
                         fn (Assert $page) => $page
-                            ->hasAll(['title', 'image', 'header_image_alt_text', 'link'])
+                            ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'square_image', 'date', 'nutrition'])
                     )
                     ->where('recipes.top.0.title', 'Recipe 0')
                     ->where('recipes.top.1.title', 'Recipe 1')

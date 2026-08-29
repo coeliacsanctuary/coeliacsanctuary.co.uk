@@ -1,9 +1,10 @@
 import { useForm } from 'laravel-precognition-vue-inertia';
 import eventBus from '@/eventBus';
 import { VisitOptions } from '@inertiajs/core';
-import { InertiaForm } from '@/types/Core';
 import useGoogleEvents from '@/composables/useGoogleEvents';
-import { router } from '@inertiajs/vue3';
+import useLocalStorage from '@/composables/useLocalStorage';
+import { router, usePage } from '@inertiajs/vue3';
+import { ShopBasketItem, ShopHolidayProps } from '@/types/Shop';
 
 type AddBasketPayload = {
   product_id: number;
@@ -12,7 +13,20 @@ type AddBasketPayload = {
   include_add_on: boolean;
 };
 
+export type ShopHolidayConfirmation = {
+  notice: string;
+  storageKey: string;
+  onConfirm: () => void;
+};
+
 export default () => {
+  const page = usePage<{
+    shopHoliday?: ShopHolidayProps;
+    basket?: { items: ShopBasketItem[] };
+  }>();
+
+  const { isInLocalStorage } = useLocalStorage();
+
   const addBasketForm = useForm<Partial<AddBasketPayload>>(
     'put',
     '/shop/basket',
@@ -22,7 +36,7 @@ export default () => {
       quantity: 1,
       include_add_on: false,
     },
-  ) as InertiaForm<Partial<AddBasketPayload>>;
+  );
 
   const prepareAddBasketForm = (
     productId: number,
@@ -36,7 +50,24 @@ export default () => {
     addBasketForm.include_add_on = includeAddOn;
   };
 
-  const submitAddBasketForm = (
+  const holidayStorageKey = (holiday: ShopHolidayProps): string =>
+    `shop-holiday-${holiday.id}`;
+
+  const holidayNeedsConfirming = (
+    holiday: ShopHolidayProps | undefined,
+  ): holiday is ShopHolidayProps => {
+    if (!holiday) {
+      return false;
+    }
+
+    if (!page.props.basket?.items.length) {
+      return true;
+    }
+
+    return !isInLocalStorage(holidayStorageKey(holiday));
+  };
+
+  const sendAddBasketForm = (
     params: Partial<VisitOptions> = {},
     callback?: () => void,
   ) => {
@@ -62,6 +93,25 @@ export default () => {
         }
       },
     });
+  };
+
+  const submitAddBasketForm = (
+    params: Partial<VisitOptions> = {},
+    callback?: () => void,
+  ) => {
+    const holiday = page.props.shopHoliday;
+
+    if (holidayNeedsConfirming(holiday)) {
+      eventBus.$emit<ShopHolidayConfirmation>('confirm-shop-holiday', {
+        notice: holiday.notice,
+        storageKey: holidayStorageKey(holiday),
+        onConfirm: () => sendAddBasketForm(params, callback),
+      });
+
+      return;
+    }
+
+    sendAddBasketForm(params, callback);
   };
 
   return { addBasketForm, prepareAddBasketForm, submitAddBasketForm };

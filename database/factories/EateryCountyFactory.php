@@ -18,7 +18,7 @@ class EateryCountyFactory extends Factory
         return [
             'country_id' => 1,
             'county' => $county,
-            'latlng' => 'foo',
+            'latlng' => '51.1,-1.2',
             'slug' => Str::slug($county),
             'legacy' => ucfirst(Str::slug($county)),
         ];

@@ -6,19 +6,17 @@ namespace App\Http\Controllers\Api\EatingOut\Details;
 
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReview;
-use App\Resources\EatingOut\EateryAppResource;
 use App\Resources\EatingOut\EateryBrowseDetailsResource;
-use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 
 class ShowController
 {
-    public function __invoke(Request $request, Eatery $eatery): EateryBrowseDetailsResource|EateryAppResource
+    public function __invoke(Request $request, Eatery $eatery): EateryBrowseDetailsResource
     {
         $eatery->load([
-            'country', 'county', 'town', 'town.county', 'restaurants', 'venueType', 'type', 'cuisine',
+            'country', 'county', 'town', 'town.county', 'area', 'area.town', 'restaurants', 'venueType', 'type', 'cuisine',
             'reviews' => function (HasMany $builder) use ($request) {
                 /** @var HasMany<EateryReview, Eatery> $builder */
                 return $builder->where('approved', 1)
@@ -29,13 +27,12 @@ class ShowController
         ]);
 
         if ($request->has('branchId')) {
-            $branch = $eatery->nationwideBranches()->where('id', $request->integer('branchId'))->firstOrFail();
+            $branch = $eatery->nationwideBranches()
+                ->where('id', $request->integer('branchId'))
+                ->with(['country', 'county', 'town', 'town.county', 'area', 'area.town'])
+                ->firstOrFail();
 
             $eatery->setRelation('branch', $branch);
-        }
-
-        if (Helpers::requestIsFromApp($request)) {
-            return new EateryAppResource($eatery);
         }
 
         return new EateryBrowseDetailsResource($eatery);

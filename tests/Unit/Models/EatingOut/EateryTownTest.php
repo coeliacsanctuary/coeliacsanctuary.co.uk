@@ -7,8 +7,11 @@ namespace Tests\Unit\Models\EatingOut;
 use App\Models\EatingOut\EateryCountry;
 use PHPUnit\Framework\Attributes\Test;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
+use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Models\EatingOut\EateryTown;
+use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
@@ -55,5 +58,50 @@ class EateryTownTest extends TestCase
         ]);
 
         $this->assertNotNull($town->latlng);
+    }
+
+    #[Test]
+    public function itHasMagicRoutes(): void
+    {
+        Bus::fake();
+
+        $this->seed(EateryScaffoldingSeeder::class);
+        $this->create(Eatery::class);
+
+        $town = EateryTown::query()->firstOrFail();
+
+        $record = $this->create(EateryMagicRouteRecord::class, [
+            'location_type' => EateryTown::class,
+            'location_id' => $town->id,
+        ]);
+
+        $this->assertCount(1, $town->magicRoutes);
+        $this->assertTrue($record->is($town->magicRoutes->first()));
+    }
+
+    #[Test]
+    public function itDoesntReturnMagicRoutesForOtherLocations(): void
+    {
+        Bus::fake();
+
+        $this->seed(EateryScaffoldingSeeder::class);
+        $this->create(Eatery::class);
+
+        $town = EateryTown::query()->firstOrFail();
+        $county = EateryCounty::query()->firstOrFail();
+
+        $this->create(EateryMagicRouteRecord::class, [
+            'location_type' => EateryCounty::class,
+            'location_id' => $county->id,
+        ]);
+
+        $otherTown = $this->create(EateryTown::class, ['county_id' => $county->id]);
+
+        $this->create(EateryMagicRouteRecord::class, [
+            'location_type' => EateryTown::class,
+            'location_id' => $otherTown->id,
+        ]);
+
+        $this->assertCount(0, $town->magicRoutes);
     }
 }

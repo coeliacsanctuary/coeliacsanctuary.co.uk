@@ -6,6 +6,7 @@ namespace App\Models\Recipes;
 
 use App\Concerns\Recipes\FiltersRecipeRelations;
 use App\Contracts\Recipes\FilterableRecipeRelation;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -13,6 +14,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class RecipeAllergen extends Model implements FilterableRecipeRelation
 {
     use FiltersRecipeRelations;
+
+    /**
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    public function scopeSelectableAsFilter(Builder $query): Builder
+    {
+        return $query->where('slug', '!=', 'gluten');
+    }
 
     /** @return BelongsToMany<Recipe, $this> */
     public function recipes(): BelongsToMany

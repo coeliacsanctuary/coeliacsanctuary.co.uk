@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import useBrowser from '@/composables/useBrowser';
 
-type BreakPoint =
+export type BreakPoint =
   | 'xxxs'
   | 'xxs'
   | 'xs'

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $published
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property string $lastUpdated
+ * @property string|null $lastUpdated
  */
 trait DisplaysDates
 {
@@ -32,14 +32,14 @@ trait DisplaysDates
         });
     }
 
-    /** @return Attribute<string, never> */
+    /** @return Attribute<string | null, never> */
     public function lastUpdated(): Attribute
     {
         return Attribute::get(function () {
             $date = $this->publish_at ?? $this->created_at;
 
-            if ($date === $this->updated_at) {
-                return $this->published;
+            if ($date->clone()->startOfSecond()->equalTo($this->updated_at->clone()->startOfSecond())) {
+                return null;
             }
 
             if ($this->updated_at < Carbon::now()->subMonth()) {

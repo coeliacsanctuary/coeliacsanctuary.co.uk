@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 type TimePicker = { value: number; label: string };
-type Time = [null, null] | [number, number];
+type Time = [undefined, undefined] | [number, number];
 type DayDetail = {
   key: Days;
   label: string;
@@ -48,7 +48,7 @@ const minutes: ComputedRef<TimePicker[]> = computed(() => [
 
 const splitTime = (time: string | null): Time => {
   if (!time) {
-    return [null, null];
+    return [undefined, undefined];
   }
 
   const split = time.split(':');
@@ -61,8 +61,12 @@ const constructDay = (day: Days, isClosed = null): DayDetail => ({
   label: day.charAt(0).toUpperCase() + day.slice(1),
   closed:
     isClosed === null ? props.currentOpeningTimes[day][0] === null : isClosed,
-  start: isClosed ? [null, null] : splitTime(props.currentOpeningTimes[day][0]),
-  end: isClosed ? [null, null] : splitTime(props.currentOpeningTimes[day][1]),
+  start: isClosed
+    ? [undefined, undefined]
+    : splitTime(props.currentOpeningTimes[day][0]),
+  end: isClosed
+    ? [undefined, undefined]
+    : splitTime(props.currentOpeningTimes[day][1]),
 });
 
 const emitChange = () => {
@@ -76,7 +80,7 @@ onMounted(() => {
 
 <template>
   <div class="text-sm">
-    <ul class="flex flex-col space-y-px divide-y divide-grey-off">
+    <ul class="flex flex-col divide-y divide-grey-off">
       <li
         v-for="day in openingTimes"
         :key="day.key"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import FormInput from '@/Components/Forms/FormInput.vue';
 import { ref, watch } from 'vue';
+import { EateryLocationLookupResult } from '@/types/EateryTypes';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { MapPinIcon } from '@heroicons/vue/24/solid';
 import axios, { AxiosResponse } from 'axios';
@@ -41,7 +41,7 @@ const goToLocation = (id: string) => {
   emits('loading');
 
   axios
-    .get(`/api/wheretoeat/lookup/${id}`, { term: search.value })
+    .get(`/api/wheretoeat/lookup/${id}`)
     .then((response: AxiosResponse<LatLng>) => {
       emits('navigate-to', response.data);
       lookup.value?.reset();
@@ -103,7 +103,7 @@ watch(hasError, (check) => {
           placeholder="Search..."
           lookup-endpoint="/api/wheretoeat/lookup"
         >
-          <template #item="{ id, label }">
+          <template #item="{ id, label }: EateryLocationLookupResult">
             <div
               class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
               @click="goToLocation(id)"

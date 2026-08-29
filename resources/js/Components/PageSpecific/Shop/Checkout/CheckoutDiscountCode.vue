@@ -6,13 +6,12 @@ import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { nextTick } from 'vue';
 import eventBus from '@/eventBus';
-import { InertiaForm } from '@/types/Core';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
-const form = useForm('patch', '/shop/basket', {
+const form = useForm<{ discount: string }>('patch', '/shop/basket', {
   discount: '',
-}) as InertiaForm<{ discount: string }>;
+});
 
 const applyDiscountCode = () => {
   form.submit({
@@ -51,17 +50,17 @@ const logExpandDiscountCode = () => {
   <Disclosure
     v-slot="{ open }"
     as="div"
-    class="rounded-sm bg-secondary/50 p-2"
+    class="rounded-sm border border-primary-light/60 bg-white/60 p-3"
   >
     <DisclosureButton
-      class="flex w-full items-center justify-between text-left"
+      class="flex w-full items-center justify-between gap-2 text-left text-sm font-semibold text-grey-dark hover:text-primary-dark"
       :class="{ 'mb-2': open }"
       @click="logExpandDiscountCode()"
     >
       <span>Got a discount code?</span>
       <ChevronDownIcon
-        class="h-6 w-6"
-        :class="{ hidden: open }"
+        class="size-5 shrink-0 transition-transform"
+        :class="{ 'rotate-180': open }"
       />
     </DisclosureButton>
 
@@ -85,7 +84,7 @@ const logExpandDiscountCode = () => {
             placeholder="Enter your discount code..."
             hide-label
             class="w-full"
-            :borders="false"
+            borders
             :error="form.errors.discount"
             hide-error-background
           />

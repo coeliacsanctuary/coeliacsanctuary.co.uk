@@ -20,7 +20,9 @@ use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\CanBePublishedTestTrait;
 use Tests\Concerns\CommentableTestTrait;
+use Tests\Concerns\DisplaysDatesTestTrait;
 use Tests\Concerns\DisplaysMediaTestTrait;
+use Tests\Concerns\FaqableTestTrait;
 use Tests\Concerns\LinkableModelTestTrait;
 use Tests\TestCase;
 
@@ -28,7 +30,9 @@ class RecipeModelTest extends TestCase
 {
     use CanBePublishedTestTrait;
     use CommentableTestTrait;
+    use DisplaysDatesTestTrait;
     use DisplaysMediaTestTrait;
+    use FaqableTestTrait;
     use LinkableModelTestTrait;
 
     protected Recipe $recipe;
@@ -50,7 +54,11 @@ class RecipeModelTest extends TestCase
 
         $this->setUpCommentsTest(fn (array $params = []) => $this->create(Recipe::class, $params));
 
+        $this->setUpFaqsTest(fn (array $params = []) => $this->create(Recipe::class, $params));
+
         $this->setUpCanBePublishedModelTest(fn (array $params = []) => $this->create(Recipe::class, $params));
+
+        $this->setUpDisplaysDatesTest(fn (array $params = []) => $this->create(Recipe::class, $params));
 
         $this->item->addMedia(UploadedFile::fake()->image('square.jpg'))->toMediaCollection('square');
     }

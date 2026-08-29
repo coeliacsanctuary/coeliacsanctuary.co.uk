@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\Static\Map;
 
 use App\Services\Static\Map\GoogleMapService;
-use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Image;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -26,7 +26,7 @@ class GetControllerTest extends TestCase
             ->shouldReceive('renderMap')
             ->withArgs([$london, []])
             ->once()
-            ->andReturn(Image::make($this->getFakeImageString()));
+            ->andReturn(Image::fromBytes($this->getFakeImageString()));
 
         $this->get(route('static.map', ['latlng' => $london]))->assertOk();
     }
@@ -41,7 +41,7 @@ class GetControllerTest extends TestCase
             ->shouldReceive('renderMap')
             ->withArgs([$london, $params])
             ->once()
-            ->andReturn(Image::make($this->getFakeImageString()));
+            ->andReturn(Image::fromBytes($this->getFakeImageString()));
 
         $this->get(route('static.map', ['latlng' => $london, 'params' => json_encode($params)]))->assertOk();
     }
@@ -53,7 +53,7 @@ class GetControllerTest extends TestCase
 
         $this->mock(GoogleMapService::class)
             ->shouldReceive('renderMap')
-            ->andReturn(Image::make($this->getFakeImageString()));
+            ->andReturn(Image::fromBytes($this->getFakeImageString()));
 
         $this->get(route('static.map', ['latlng' => $london]))->assertHeader('Content-Type', 'image/jpeg');
     }

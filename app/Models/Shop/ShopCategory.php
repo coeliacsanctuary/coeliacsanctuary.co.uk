@@ -64,11 +64,6 @@ class ShopCategory extends Model implements HasMedia
             ->format('webp');
     }
 
-    public function getRouteKey()
-    {
-        return 'slug';
-    }
-
     protected function linkRoot(): string
     {
         return 'shop';

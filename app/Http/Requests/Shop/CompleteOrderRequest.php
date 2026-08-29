@@ -14,7 +14,7 @@ class CompleteOrderRequest extends FormRequest
         return [
             'contact' => ['required', 'array'],
             'contact.name' => ['required', 'string'],
-            'contact.email' => ['required', 'string', 'email', 'confirmed'],
+            'contact.email' => ['required', 'string', 'email'],
             'contact.phone' => ['nullable'],
             'contact.subscribeToNewsletter' => ['nullable', 'boolean'],
             //

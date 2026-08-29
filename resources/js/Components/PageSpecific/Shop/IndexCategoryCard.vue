@@ -3,11 +3,21 @@ import { Link } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
 import { ShopCategoryIndex } from '@/types/Shop';
 import useJourneyTracking from '@/composables/useJourneyTracking';
-import { useTemplateRef } from 'vue';
+import { computed, useTemplateRef } from 'vue';
+import { pluralise } from '@/helpers';
 
 const props = defineProps<{
   category: ShopCategoryIndex;
 }>();
+
+const stats = computed((): string[] => {
+  const { products_count: products, price } = props.category;
+
+  return [
+    products ? `${products} ${pluralise('product', products)}` : null,
+    price,
+  ].filter((stat): stat is string => !!stat);
+});
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('card'),
@@ -33,11 +43,19 @@ useJourneyTracking().logWhenVisible(
       prefetch
     >
       <div class="relative overflow-hidden rounded-sm">
-        <div class="">
-          <img
-            :src="category.image"
-            :alt="category.title"
-            class="h-full w-full object-cover object-center"
+        <img
+          :src="category.image"
+          alt=""
+          class="h-full w-full object-cover object-center"
+        />
+
+        <div
+          v-if="stats.length"
+          class="absolute top-0 right-0 hidden p-3 sm:block"
+        >
+          <p
+            class="rounded-sm bg-primary-light/90 px-3 py-2 font-semibold shadow-lg lg:text-lg"
+            v-text="stats.join(', ')"
           />
         </div>
         <div
@@ -55,7 +73,7 @@ useJourneyTracking().logWhenVisible(
           </div>
 
           <div
-            class="mt-6 flex shrink-0 items-center justify-center rounded-md border border-white/25 bg-primary-alt/0 px-4 py-3 text-base font-medium text-white hover:bg-primary-dark/50 xs:mt-0 xs:max-xmd:ml-8 xmd:ml-0 xmd:w-full xl:text-lg"
+            class="mt-6 flex shrink-0 items-center justify-center rounded-md border border-white/25 bg-primary-alt/0 px-4 py-3 text-base font-medium text-white transition group-hover:bg-primary-dark/50 xs:mt-0 xs:max-xmd:ml-8 xmd:ml-0 xmd:w-full xl:text-lg"
           >
             Shop Now
           </div>

@@ -10,12 +10,29 @@ const props = defineProps<{
   eatery: DetailedEatery;
 }>();
 
-const eateryName = computed(() => {
-  if (props.eatery.branch && props.eatery.branch.name) {
-    return props.eatery.branch.name;
+/**
+ * The town the heading advertises, taken from the branch on a branch page.
+ * Nationwide chains have no meaningful town, so they drop the location entirely.
+ */
+const locationName = computed(() => {
+  if (props.eatery.branch) {
+    return props.eatery.branch.town.name;
   }
 
-  return props.eatery.name;
+  if (props.eatery.town.name === 'Nationwide') {
+    return null;
+  }
+
+  return props.eatery.town.name;
+});
+
+/** Leads with the brand name rather than the branch name, which is already the h1. */
+const heading = computed(() => {
+  if (locationName.value) {
+    return `Gluten free at ${props.eatery.name} in ${locationName.value}`;
+  }
+
+  return `Gluten free at ${props.eatery.name}`;
 });
 
 useJourneyTracking().logWhenVisible(
@@ -32,7 +49,7 @@ useJourneyTracking().logWhenVisible(
 <template>
   <Card
     ref="card"
-    class="space-y-2 lg:space-y-4 lg:rounded-lg lg:p-8"
+    class="flex flex-col space-y-4"
   >
     <template v-if="eatery.restaurants.length">
       <SubHeading>
@@ -43,7 +60,7 @@ useJourneyTracking().logWhenVisible(
       <div
         v-for="restaurant in eatery.restaurants"
         :key="restaurant.name"
-        class="mt-4"
+        class="flex flex-col space-y-1"
       >
         <h4
           v-if="restaurant.name"
@@ -52,43 +69,43 @@ useJourneyTracking().logWhenVisible(
           {{ restaurant.name }}
         </h4>
 
-        <p class="prose max-w-none md:prose-lg lg:prose-xl">
+        <p class="prose max-w-none md:prose-lg">
           {{ restaurant.info }}
         </p>
       </div>
     </template>
 
     <template v-else>
-      <SubHeading> Here's what we know about {{ eateryName }} </SubHeading>
+      <SubHeading>{{ heading }}</SubHeading>
 
       <p
-        class="prose mt-4 max-w-none sm:prose-lg lg:prose-xl"
+        class="prose max-w-none md:prose-lg"
         v-html="eatery.info"
       />
     </template>
 
     <ul
       v-if="eatery.features"
-      class="grid grid-cols-1 gap-2 xxs:max-sm:grid-cols-2 sm:max-xmd:grid-cols-3 xmd:gap-3 xmd:max-xl:grid-cols-4 lg:gap-3 xl:grid-cols-6"
+      class="grid grid-cols-1 gap-3 xxs:grid-cols-2 xl:grid-cols-3"
     >
       <li
         v-for="feature in eatery.features"
         :key="feature.slug"
-        class="flex items-center space-x-2 leading-none lg:space-x-4"
+        class="flex items-center gap-2 leading-none"
       >
-        <div class="h-8 w-8 shrink-0 text-primary lg:h-12 lg:w-12">
-          <Icon
-            :name="feature.slug"
-            class="h-8 w-8 lg:h-12 lg:w-12"
-          />
-        </div>
+        <Icon
+          :name="feature.slug"
+          class="size-8 shrink-0 text-primary lg:size-10"
+        />
 
-        <span class="block leading-none font-semibold lg:text-xl">
+        <span class="block text-sm leading-none font-semibold md:text-base">
           {{ feature.name }}
         </span>
       </li>
     </ul>
 
-    <p class="text-sm italic">Last Updated: {{ eatery.last_updated_human }}</p>
+    <p class="text-xs text-grey-dark italic">
+      Last updated {{ eatery.last_updated_human }}
+    </p>
   </Card>
 </template>

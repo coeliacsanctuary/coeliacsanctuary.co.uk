@@ -11,6 +11,7 @@ use App\Http\Response\Inertia;
 use App\Models\Blogs\Blog;
 use App\Resources\Blogs\BlogShowResource;
 use App\Resources\Blogs\RelatedBlogSimpleCardViewResource;
+use App\Schema\FaqSchema;
 use Inertia\Response;
 
 class ShowController
@@ -27,23 +28,28 @@ class ShowController
             ->metaTags(explode(',', $blog->meta_tags))
             ->metaImage($blog->social_image)
             ->alternateMetas([
-                'article:publisher' => 'https://www.facebook.com/coeliacsanctuary',
                 'article:section' => 'Food',
                 'article:published_time' => $blog->created_at,
                 'article:modified_time' => $blog->updated_at,
                 'article:author' => 'Coeliac Sanctuary',
-                'article.tags' => $blog->meta_tags,
+                'article:tag' => $blog->meta_tags,
             ])
-            ->schema($blog->schema()->toScript())
+            ->schema(array_values(array_filter([
+                $blog->schema()->toScript(),
+                $blog->faqs->isNotEmpty() ? FaqSchema::make($blog->faqs)->toScript() : null,
+            ])))
             ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Blogs', route('blog.index')),
                 new BreadcrumbItemData($blog->title),
             ]))
             ->metaFeed(route('blog.feed'))
+            ->bodyClass('mv-blog')
             ->render('Blog/Show', [
                 'blog' => new BlogShowResource($blog),
-                'relatedBlogs' => RelatedBlogSimpleCardViewResource::collection($findRelatedBlogsAction->handle($blog)),
+                'relatedBlogs' => RelatedBlogSimpleCardViewResource::collection(
+                    $findRelatedBlogsAction->handle($blog->tags, $blog->primaryTag, $blog->id)
+                ),
                 'comments' => fn () => $commentsForItemAction->handle($blog),
             ]);
     }

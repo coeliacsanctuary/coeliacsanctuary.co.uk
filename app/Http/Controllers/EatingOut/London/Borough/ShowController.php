@@ -4,19 +4,28 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\London\Borough;
 
+use App\Actions\EatingOut\GetMostRatedPlacesInTownAction;
+use App\Actions\EatingOut\GetTopRatedPlacesInTownAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Resources\EatingOut\LondonBoroughPageResource;
+use App\Resources\EatingOut\MagicRouteGuideResource;
+use App\Resources\EatingOut\NearbyBoroughResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Inertia\Response;
 
 class ShowController
 {
-    public function __invoke(EateryTown $borough, Inertia $inertia, GetEatingOutOpenGraphImageAction $getOpenGraphImageAction): Response
-    {
+    public function __invoke(
+        EateryTown $borough,
+        Inertia $inertia,
+        GetTopRatedPlacesInTownAction $getTopRatedPlacesInTown,
+        GetMostRatedPlacesInTownAction $getMostRatedPlacesInTown,
+        GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
+    ): Response {
         /** @var EateryCounty $county */
         $county = EateryCounty::query()->where('slug', 'london')->first();
 
@@ -42,6 +51,10 @@ class ShowController
             ]))
             ->render('EatingOut/LondonBorough', [
                 'borough' => fn () => new LondonBoroughPageResource($borough),
+                'topRated' => fn () => $getTopRatedPlacesInTown->handle($borough),
+                'mostRated' => fn () => $getMostRatedPlacesInTown->handle($borough),
+                'nearby' => fn () => NearbyBoroughResource::collection($borough->nearbyTowns()),
+                'guides' => fn () => MagicRouteGuideResource::collection($borough->magicRoutes),
             ]);
     }
 }

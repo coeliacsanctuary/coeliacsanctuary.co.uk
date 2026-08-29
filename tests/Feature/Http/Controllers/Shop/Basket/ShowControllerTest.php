@@ -10,6 +10,7 @@ use App\Actions\Shop\CheckForPendingOrderAction;
 use App\Actions\Shop\CreatePaymentIntentAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Actions\Shop\ResolveBasketAction;
+use App\Enums\Shop\OrderState;
 use App\Enums\Shop\PostageArea;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopOrder;
@@ -26,6 +27,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 use Money\Money;
 use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
+use Stripe\PaymentIntent;
 use Tests\Concerns\MocksStripe;
 use Tests\TestCase;
 
@@ -100,6 +102,36 @@ class ShowControllerTest extends TestCase
         $this
             ->withCookie('basket_token', $order->token)
             ->get(route('shop.basket.checkout'));
+    }
+
+    #[Test]
+    public function itRedirectsToTheDonePageIfThePendingOrderHasAlreadyBeenPaidFor(): void
+    {
+        $order = $this->build(ShopOrder::class)->asPending()->create();
+
+        $this->mockRetrievePaymentIntent($order->payment_intent_secret, PaymentIntent::STATUS_SUCCEEDED);
+
+        $this
+            ->withCookie('basket_token', $order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertRedirect(route('shop.basket.done', [
+                'payment_intent' => $order->payment_intent_id,
+                'payment_intent_client_secret' => $order->payment_intent_secret,
+            ]));
+    }
+
+    #[Test]
+    public function itLeavesAPaidPendingOrderAlone(): void
+    {
+        $order = $this->build(ShopOrder::class)->asPending()->create();
+
+        $this->mockRetrievePaymentIntent($order->payment_intent_secret, PaymentIntent::STATUS_SUCCEEDED);
+
+        $this
+            ->withCookie('basket_token', $order->token)
+            ->get(route('shop.basket.checkout'));
+
+        $this->assertEquals(OrderState::PENDING, $order->refresh()->state_id);
     }
 
     #[Test]

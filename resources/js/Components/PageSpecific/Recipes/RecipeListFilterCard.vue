@@ -6,10 +6,11 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue';
-import { Ref, ref, watch } from 'vue';
+import { computed, WritableComputedRef } from 'vue';
 import Icon from '@/Components/Icon.vue';
 import { SelectBoxItem } from '@/types/Types';
 import useGoogleEvents from '@/composables/useGoogleEvents';
+import { pluralise } from '@/helpers';
 
 export type RecipeFilterOption = SelectBoxItem & {
   disabled: boolean;
@@ -22,27 +23,25 @@ const props = defineProps<{
   currentOptions: string[];
 }>();
 
-const selectedOptions: Ref<(string | number)[]> = ref(props.currentOptions);
-
 const emit = defineEmits(['changed']);
 
-watch(selectedOptions, () => emit('changed', selectedOptions.value));
-
-watch(
-  () => props.currentOptions,
-  () => (selectedOptions.value = props.currentOptions),
-);
+const selectedOptions: WritableComputedRef<(string | number)[]> = computed({
+  get: () => props.currentOptions,
+  set: (options) => emit('changed', options),
+});
 
 const optionClasses = (disabled: boolean, selected: boolean): string[] => {
   const base = [
     'p-2',
     'border-b',
-    'border-secondary',
+    'border-secondary/50',
     'transition',
     'cursor-pointer',
     'last:border-b-0',
     'flex',
     'justify-between',
+    'items-center',
+    'gap-2',
   ];
 
   if (selected) {
@@ -77,24 +76,27 @@ const openBox = (open: boolean) => {
     >
       <ListboxButton
         :class="
-          open ? 'rounded-t-lg bg-secondary' : 'rounded-lg bg-secondary/70'
+          open
+            ? 'rounded-t-lg border-secondary bg-secondary/60'
+            : 'rounded-lg border-secondary/50 bg-secondary/25'
         "
-        class="flex w-full items-center justify-between p-2 text-lg font-semibold transition hover:bg-secondary/100"
+        class="flex w-full items-center justify-between gap-2 border p-2 font-semibold transition hover:bg-secondary/60"
         @click="openBox(!open)"
       >
-        <div class="flex items-center">
+        <div class="flex items-center gap-2">
           <ArrowDownCircleIcon
             :class="{ 'rotate-180': open }"
-            class="transition-duration-500 mr-2 h-8 w-8 transition"
+            class="size-5 shrink-0 text-primary-dark transition duration-500"
           />
+
           <span v-text="label" />
         </div>
-        <div v-if="selectedOptions.length">
-          <span
-            class="font-normal text-grey-dark"
-            v-text="selectedOptions.length + '/' + options.length"
-          />
-        </div>
+
+        <span
+          v-if="selectedOptions.length"
+          class="rounded-full bg-primary-dark px-2 py-0.5 text-xs leading-none font-semibold text-white"
+          v-text="selectedOptions.length"
+        />
       </ListboxButton>
 
       <transition
@@ -106,7 +108,7 @@ const openBox = (open: boolean) => {
         leave-to-class="transform scale-95 opacity-0"
       >
         <ListboxOptions
-          class="absolute z-10 w-full overflow-hidden rounded-b-lg border-2 border-secondary bg-white shadow-lg"
+          class="absolute z-10 max-h-[60vh] w-full overflow-y-auto rounded-b-lg border border-secondary bg-white text-sm shadow-lg"
         >
           <ListboxOption
             v-for="option in options"
@@ -120,12 +122,21 @@ const openBox = (open: boolean) => {
             :disabled="option.disabled"
             :value="option.value"
           >
-            <div class="flex space-x-2">
-              <Icon :name="option.value.toString()" />
+            <div class="flex min-w-0 items-center space-x-2">
+              <Icon
+                :name="option.value.toString()"
+                class="size-5 shrink-0"
+              />
+
               <span v-text="option.label" />
             </div>
 
-            <span v-text="`(${option.recipeCount} recipes)`" />
+            <span
+              class="shrink-0 text-xs text-grey-dark"
+              v-text="
+                `${option.recipeCount} ${pluralise('recipe', option.recipeCount)}`
+              "
+            />
           </ListboxOption>
         </ListboxOptions>
       </transition>

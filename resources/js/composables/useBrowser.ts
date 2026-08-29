@@ -21,7 +21,7 @@ export default () => {
 
   const absoluteUrl = (): string => {
     if (!hasWindowObject) {
-      return `https://www.coeliacsanctaury.co.uk/${usePage().url}`;
+      return `https://www.coeliacsanctuary.co.uk${usePage().url}`;
     }
 
     return window.location.origin + window.location.pathname;

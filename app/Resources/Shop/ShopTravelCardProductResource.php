@@ -6,12 +6,10 @@ namespace App\Resources\Shop;
 
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\TravelCardSearchTerm;
-use Exception;
+use App\Support\Helpers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use League\ISO3166\ISO3166;
 
 /** @mixin ShopProduct */
 class ShopTravelCardProductResource extends ShopProductResource
@@ -73,7 +71,7 @@ class ShopTravelCardProductResource extends ShopProductResource
                 ])
                 ->map(fn (TravelCardSearchTerm $term) => [
                     'country' => Str::title($term->term),
-                    'code' => $this->countryCode($term->term),
+                    'code' => Helpers::countryCode($term->term),
                 ])
                 ->unique('country')
                 ->values()
@@ -81,22 +79,5 @@ class ShopTravelCardProductResource extends ShopProductResource
         ]);
 
         return $sortedCountries->values();
-    }
-
-    protected function countryCode(string $country): ?string
-    {
-        try {
-            return match (Str::lower($country)) {
-                'england' => 'gb-eng',
-                'wales' => 'gb-wls',
-                'scotland', 'orkney islands', 'shetland islands' => 'gb-sct',
-                'america', 'usa' => 'us',
-                'channel islands' => 'gb',
-                'czech republic' => 'cz',
-                default => Str::lower(Arr::get(app(ISO3166::class)->name($country), 'alpha2')),
-            };
-        } catch (Exception) {
-            return null;
-        }
     }
 }

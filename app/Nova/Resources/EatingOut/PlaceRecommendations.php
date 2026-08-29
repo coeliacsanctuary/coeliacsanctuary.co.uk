@@ -8,15 +8,18 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryVenueType;
 use App\Models\EatingOut\NationwideBranch;
+use App\Nova\Actions\EatingOut\CheckEateryRecommendationWithAi;
 use App\Nova\Actions\EatingOut\CompleteReportOrRecommendation;
 use App\Nova\Actions\EatingOut\ConvertRecommendationToEatery;
 use App\Nova\Actions\EatingOut\IgnoreAndSendAddedToSmallBusinessBlog;
 use App\Nova\Actions\EatingOut\IgnoreAndSendPlaceAlreadyExists;
 use App\Nova\Actions\EatingOut\IgnoreReportOrRecommendation;
+use App\Nova\Actions\EatingOut\ViewAiRecommendationData;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Jpeters8889\EateryRecommendationAiStatus\EateryRecommendationAiStatus;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Email;
@@ -70,6 +73,17 @@ class PlaceRecommendations extends Resource
             Boolean::make('Ignored')
                 ->filterable()
                 ->showOnPreview(),
+
+            EateryRecommendationAiStatus::make('AI Status'),
+
+            Boolean::make('AI Eligible')
+                ->resolveUsing(
+                    fn ($value, $resource) =>
+                    $resource->aiData?->completed_at !== null && $resource->aiData->failed_at === null
+                        ? $resource->aiData->is_eligible
+                        : null
+                )
+                ->nullable(),
 
             Panel::make('User', [
                 Text::make('name')->showOnPreview()->hideFromIndex(),
@@ -127,6 +141,17 @@ class PlaceRecommendations extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
+            CheckEateryRecommendationWithAi::make()
+                ->showInline()
+                ->sole()
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->aiData()->exists() === false),
+
+            ViewAiRecommendationData::make()
+                ->showInline()
+                ->withoutConfirmation()
+                ->sole()
+                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->aiData()->exists() === true),
+
             ConvertRecommendationToEatery::make()
                 ->showInline()
                 ->withoutConfirmation()
@@ -156,6 +181,7 @@ class PlaceRecommendations extends Resource
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->where('email', '!=', 'alisondwheatley@gmail.com')
+            ->with('aiData')
             ->reorder()
             ->orderByRaw('(completed = 1 or ignored = 1) asc')
             ->orderByDesc('updated_at');

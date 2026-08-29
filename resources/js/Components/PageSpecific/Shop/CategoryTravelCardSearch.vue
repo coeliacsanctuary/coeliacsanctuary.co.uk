@@ -2,13 +2,14 @@
 import Card from '@/Components/Card.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
-import { InertiaForm } from '@/types/Core';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 
-const form = useForm('get', '/gluten-free-travel-translation-cards', {
-  term: '',
-}) as InertiaForm<{ term: string }>;
+const form = useForm<{ term: string }>(
+  'get',
+  '/gluten-free-travel-translation-cards',
+  { term: '' },
+);
 </script>
 
 <template>
@@ -16,7 +17,7 @@ const form = useForm('get', '/gluten-free-travel-translation-cards', {
     <SubHeading>Not sure which card you need?</SubHeading>
 
     <p class="prose prose-xl">
-      Enter a country or language below and we'll try and find the best travel
+      Enter a country or language below and I'll try and find the best travel
       card for you!
     </p>
 

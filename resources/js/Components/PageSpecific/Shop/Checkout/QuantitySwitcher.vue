@@ -1,30 +1,67 @@
 <script setup lang="ts">
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/solid';
+import { computed } from 'vue';
 
-defineProps<{
-  quantity: number;
-}>();
+const props = withDefaults(
+  defineProps<{
+    quantity: number;
+    size?: 'sm' | 'lg';
+  }>(),
+  {
+    size: 'sm',
+  },
+);
 
 defineEmits(['alter']);
+
+const classes = computed(() => {
+  if (props.size === 'lg') {
+    return {
+      wrapper: 'h-7',
+      button: 'w-8',
+      count: 'w-8',
+      icon: 'h-4 w-4',
+    };
+  }
+
+  return {
+    wrapper: 'h-5',
+    button: 'w-6',
+    count: 'w-6',
+    icon: 'h-4 w-4',
+  };
+});
 </script>
 
 <template>
-  <div class="flex h-5 space-x-px leading-none font-semibold">
-    <div
-      class="flex w-6 shrink-0 cursor-pointer items-center justify-center rounded-l-full bg-secondary"
+  <div
+    class="flex space-x-px leading-none font-semibold"
+    :class="classes.wrapper"
+  >
+    <button
+      type="button"
+      aria-label="Decrease quantity"
+      class="flex shrink-0 cursor-pointer items-center justify-center rounded-l-full bg-secondary transition-colors hover:bg-secondary/80"
+      :class="classes.button"
       @click="$emit('alter', 'decrease')"
     >
-      <MinusIcon class="h-4 w-4" />
-    </div>
+      <MinusIcon :class="classes.icon" />
+    </button>
+
     <div
-      class="flex w-6 shrink-0 items-center justify-center bg-secondary"
+      class="flex shrink-0 items-center justify-center bg-secondary"
+      :class="classes.count"
       v-text="quantity"
     />
-    <div
-      class="flex w-6 shrink-0 cursor-pointer items-center justify-center rounded-r-full bg-secondary"
+
+    <button
+      type="button"
+      aria-label="Increase quantity"
+      class="flex shrink-0 cursor-pointer items-center justify-center rounded-r-full bg-secondary transition-colors hover:bg-secondary/80"
+      :class="classes.button"
       @click="$emit('alter', 'increase')"
     >
-      <PlusIcon class="h-4 w-4" />
-    </div>
+      <PlusIcon :class="classes.icon" />
+    </button>
   </div>
 </template>

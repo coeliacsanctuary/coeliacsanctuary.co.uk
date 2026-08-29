@@ -1,16 +1,27 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { CollectionGroup } from '@/types/CollectionTypes';
-import CollectionItemCard from '@/Components/PageSpecific/Collections/CollectionItemCard.vue';
+import {
+  CollectionDisplayType,
+  CollectionGroup,
+} from '@/types/CollectionTypes';
 import SubHeading from '@/Components/SubHeading.vue';
+import RenderedString from '@/Components/RenderedString.vue';
+import CollectionItems from '@/Components/PageSpecific/Collections/CollectionItems.vue';
 
-defineProps<{ group: CollectionGroup }>();
+withDefaults(
+  defineProps<{
+    group: CollectionGroup;
+    displayType: CollectionDisplayType;
+    wrapped?: boolean;
+  }>(),
+  { wrapped: true },
+);
 </script>
 
 <template>
   <Card
-    v-if="group.title || group.body"
-    class="flex flex-col"
+    v-if="wrapped"
+    class="gap-4"
   >
     <SubHeading v-if="group.title">
       {{ group.title }}
@@ -19,14 +30,20 @@ defineProps<{ group: CollectionGroup }>();
     <article
       v-if="group.body"
       class="prose prose-lg max-w-none md:prose-xl"
-      :class="{ 'mt-4': !!group.title }"
-      v-html="group.body"
+    >
+      <RenderedString :content="group.body" />
+    </article>
+
+    <CollectionItems
+      v-if="group.items.length"
+      :items="group.items"
+      :display-type="displayType"
     />
   </Card>
 
-  <CollectionItemCard
-    v-for="item in group.items"
-    :key="item.title"
-    :item="item"
+  <CollectionItems
+    v-else
+    :items="group.items"
+    :display-type="displayType"
   />
 </template>

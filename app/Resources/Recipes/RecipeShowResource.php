@@ -9,6 +9,7 @@ use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeNutrition;
 use App\Resources\Collections\FeaturedInCollectionSimpleCardViewResource;
+use App\Resources\Faqs\FaqResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -22,6 +23,7 @@ class RecipeShowResource extends JsonResource
         $this->load([
             'relatedRecipes', 'relatedRecipes.media',
             'associatedCollectionGroups', 'associatedCollectionGroups.group.collection', 'associatedCollectionGroups.group.collection.media',
+            'faqs',
         ]);
 
         /** @var RecipeNutrition $nutrition */
@@ -38,6 +40,7 @@ class RecipeShowResource extends JsonResource
             'published' => $this->published,
             'updated' => $this->lastUpdated,
             'author' => $this->author,
+            'meta_description' => $this->meta_description,
             'description' => $this->description,
             'body' => $this->body ? Str::of($this->body)
                 ->replace('&quot;', '"')
@@ -46,11 +49,7 @@ class RecipeShowResource extends JsonResource
                         'soft_break' => '<br />',
                     ],
                 ]) : null,
-            'ingredients' => Str::markdown($this->ingredients, [
-                'renderer' => [
-                    'soft_break' => '<br />',
-                ],
-            ]),
+            'ingredients' => $this->processIngredients(),
             'method' => Str::markdown($this->method),
             'features' => $this->features()->get()->map($this->processFeature(...))->values(),
             'allergens' => $this->containsAllergens()->map($this->processAllergen(...))->values(),
@@ -69,9 +68,42 @@ class RecipeShowResource extends JsonResource
                 'protein' => $nutrition->protein,
             ],
             'featured_in' => FeaturedInCollectionSimpleCardViewResource::collection($this->associatedCollectionGroups),
-            'faqs' => $this->faqs,
+            'faqs' => $this->faqs->isNotEmpty() ? FaqResource::collection($this->faqs) : null,
             'related_recipes' => RelatedRecipeCardViewResource::collection($this->relatedRecipes),
         ];
+    }
+
+    /** @return list<array{heading: string|null, items: list<string>}> */
+    protected function processIngredients(): array
+    {
+        $groups = [];
+        $group = ['heading' => null, 'items' => []];
+
+        foreach (preg_split("/\r\n|\r|\n/", (string) $this->ingredients) ?: [] as $line) {
+            $line = mb_trim($line);
+
+            if ($line === '') {
+                continue;
+            }
+
+            if (preg_match('#^</?(?:strong|b)>([^<]+)</?(?:strong|b)>$#i', $line, $matches) !== 1) {
+                $group['items'][] = $line;
+
+                continue;
+            }
+
+            if ($group['heading'] !== null || $group['items'] !== []) {
+                $groups[] = $group;
+            }
+
+            $group = ['heading' => mb_trim($matches[1]), 'items' => []];
+        }
+
+        if ($group['heading'] !== null || $group['items'] !== []) {
+            $groups[] = $group;
+        }
+
+        return $groups;
     }
 
     protected function processFeature(RecipeFeature $feature): array

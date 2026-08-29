@@ -89,6 +89,36 @@ class LoadCompleteEateryDetailsForRequestActionTest extends TestCase
     }
 
     #[Test]
+    public function itLoadsTheBranchCountButNotTheBranchesForANationwideEatery(): void
+    {
+        $this->build(NationwideBranch::class)->count(2)->forEatery($this->eatery)->create();
+
+        app(LoadCompleteEateryDetailsForRequestAction::class)->handle(
+            $this->eatery,
+            $this->eatery->county()->first(),
+            $this->eatery->town()->first(),
+            new NationwideBranch(),
+            'nationwide'
+        );
+
+        $this->assertEquals(2, $this->eatery->nationwide_branches_count);
+        $this->assertFalse($this->eatery->relationLoaded('nationwideBranches'));
+    }
+
+    #[Test]
+    public function itDoesntLoadTheBranchCountForANormalEatery(): void
+    {
+        app(LoadCompleteEateryDetailsForRequestAction::class)->handle(
+            $this->eatery,
+            $this->eatery->county()->first(),
+            $this->eatery->town()->first(),
+            new NationwideBranch(),
+        );
+
+        $this->assertNull($this->eatery->nationwide_branches_count);
+    }
+
+    #[Test]
     public function itRelatesTheNationwideTownToTheEateryIfItIsANationwideEatery(): void
     {
         $this->eatery->setRelation('town', null);

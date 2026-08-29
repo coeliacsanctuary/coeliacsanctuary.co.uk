@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\EatingOut;
 
-use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\DataObjects\EatingOut\LatLng;
+use App\Jobs\EatingOut\GenerateAreaDescriptionJob;
+use App\Jobs\EatingOut\GenerateBoroughDescriptionJob;
+use App\Jobs\EatingOut\GenerateCountryDescriptionJob;
+use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
+use App\Jobs\EatingOut\GenerateNationwideDescriptionJob;
+use App\Jobs\EatingOut\GenerateTownDescriptionJob;
 use App\Jobs\OpenGraphImages\CreateEateryAppPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
@@ -14,6 +19,8 @@ use App\Models\Collections\CollectionGroup;
 use App\Models\Collections\CollectionGroupItem;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAlert;
+use App\Models\EatingOut\EateryArea;
+use App\Models\EatingOut\EateryAttractionRestaurant;
 use App\Models\EatingOut\EateryCheck;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
@@ -103,23 +110,288 @@ class EateryTest extends TestCase
     }
 
     #[Test]
-    public function itSetsTheCountryDescriptionAsNullOnSave(): void
+    public function itDispatchesTheCountryDescriptionJobOnSave(): void
     {
-        EateryCountryDescriptionAgent::fake();
-
-        config()->set('coeliac.generate_country_ai_descriptions', true);
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
 
         $country = $this->create(EateryCountry::class, [
             'description' => 'foo bar',
         ]);
 
-        $this->assertNotNull($country->description);
+        Bus::fake();
 
         $this->create(Eatery::class, [
             'country_id' => $country->id,
         ]);
 
-        $this->assertNull($country->refresh()->description);
+        Bus::assertDispatched(GenerateCountryDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotClearTheExistingCountryDescriptionOnSave(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        Bus::fake();
+
+        $country = $this->create(EateryCountry::class, [
+            'description' => 'foo bar',
+        ]);
+
+        $this->create(Eatery::class, [
+            'country_id' => $country->id,
+        ]);
+
+        $this->assertEquals('foo bar', $country->refresh()->description);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheCountryDescriptionJobWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', false);
+
+        $country = $this->create(EateryCountry::class);
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'country_id' => $country->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateCountryDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDispatchesTheCountyDescriptionJobOnSave(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertDispatched(GenerateCountyDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheCountyDescriptionJobWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', false);
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateCountyDescriptionJob::class);
+    }
+
+    /** @return array{EateryCounty, EateryTown} */
+    protected function createLondonBorough(): array
+    {
+        $county = $this->create(EateryCounty::class, ['county' => 'London']);
+        $town = $this->create(EateryTown::class, ['county_id' => $county->id, 'town' => 'Camden']);
+        $area = $this->create(EateryArea::class, ['town_id' => $county->id, 'area' => 'Camden Lock']);
+
+        $this->create(Eatery::class, ['county_id' => $county->id, 'town_id' => $town->id, 'area_id' => $area->id]);
+
+        return [$county, $town, $area];
+    }
+
+    #[Test]
+    public function itDispatchesTheBoroughDescriptionAndAreaDescriptionJobsOnSaveForALondonEatery(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        [$county, $town, $area] = $this->createLondonBorough();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+            'area_id' => $area->id,
+        ]);
+
+        Bus::assertDispatched(GenerateBoroughDescriptionJob::class);
+        Bus::assertDispatched(GenerateAreaDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheBoroughDescriptionOrAreaDescriptionJobsForANonLondonEatery(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateBoroughDescriptionJob::class);
+        Bus::assertNotDispatched(GenerateAreaDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheBoroughDescriptionOrAreaDescriptionJobsWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', false);
+
+        [$county, $town, $area] = $this->createLondonBorough();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+            'area_id' => $area->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateBoroughDescriptionJob::class);
+        Bus::assertNotDispatched(GenerateAreaDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDispatchesTheTownDescriptionJobOnSaveForANonLondonEatery(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        Bus::fake();
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertDispatched(GenerateTownDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheTownDescriptionJobForALondonEatery(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        [$county, $town, $area] = $this->createLondonBorough();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+            'area_id' => $area->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateTownDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheTownDescriptionJobWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', false);
+
+        Bus::fake();
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateTownDescriptionJob::class);
+    }
+
+    /** @return array{EateryCountry, EateryCounty, EateryTown} */
+    protected function createNationwideLocation(): array
+    {
+        $country = $this->create(EateryCountry::class, ['country' => 'Nationwide']);
+        $county = $this->create(EateryCounty::class, ['county' => 'Nationwide', 'country_id' => $country->id]);
+        $town = $this->create(EateryTown::class, ['county_id' => $county->id, 'town' => 'Nationwide']);
+
+        $this->create(Eatery::class, ['country_id' => $country->id, 'county_id' => $county->id, 'town_id' => $town->id]);
+
+        return [$country, $county, $town];
+    }
+
+    #[Test]
+    public function itDispatchesTheNationwideDescriptionJobOnSaveForANationwideChain(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        [$country, $county, $town] = $this->createNationwideLocation();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'country_id' => $country->id,
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+        ]);
+
+        Bus::assertDispatched(GenerateNationwideDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheOtherDescriptionJobsForANationwideChain(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        [$country, $county, $town] = $this->createNationwideLocation();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'country_id' => $country->id,
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateCountryDescriptionJob::class);
+        Bus::assertNotDispatched(GenerateCountyDescriptionJob::class);
+        Bus::assertNotDispatched(GenerateTownDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheNationwideDescriptionJobForANonNationwideEatery(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', true);
+
+        $county = EateryCounty::query()->firstOrFail();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'county_id' => $county->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateNationwideDescriptionJob::class);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchTheNationwideDescriptionJobWhenTheConfigIsDisabled(): void
+    {
+        config()->set('coeliac.generate_eatery_ai_descriptions', false);
+
+        [$country, $county, $town] = $this->createNationwideLocation();
+
+        Bus::fake();
+
+        $this->create(Eatery::class, [
+            'country_id' => $country->id,
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+        ]);
+
+        Bus::assertNotDispatched(GenerateNationwideDescriptionJob::class);
     }
 
     #[Test]
@@ -259,6 +531,7 @@ class EateryTest extends TestCase
             }
 
             $key = str_replace('{county.slug}', $county->slug, $key);
+            $key = str_replace('{town.slug}', $town->slug, $key);
 
             Cache::put($key, 'foo');
 
@@ -290,6 +563,7 @@ class EateryTest extends TestCase
             ]);
 
             $key = str_replace('{county.slug}', $county->slug, $key);
+            $key = str_replace('{town.slug}', $town->slug, $key);
 
             Cache::put($key, 'foo');
 
@@ -399,5 +673,91 @@ class EateryTest extends TestCase
         ]);
 
         $this->assertCount(1, $eatery->refresh()->associatedCollectionGroups);
+    }
+
+    #[Test]
+    public function itReturnsTheSnippetAsTheDisplaySnippetWhenItHasOne(): void
+    {
+        $eatery = $this->create(Eatery::class, [
+            'snippet' => 'A short and snappy summary',
+            'info' => 'Something much longer that we dont want to display',
+        ]);
+
+        $this->assertEquals('A short and snappy summary', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itFallsBackToATruncatedVersionOfTheInfoWhenItDoesntHaveASnippet(): void
+    {
+        $info = Str::repeat('word ', 100);
+
+        $eatery = $this->create(Eatery::class, [
+            'snippet' => null,
+            'info' => $info,
+        ]);
+
+        $this->assertEquals(Str::limit($info, 125, preserveWords: true), $eatery->display_snippet);
+        $this->assertStringEndsWith('...', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itDoesntTruncateInfoThatIsAlreadyShortEnough(): void
+    {
+        $eatery = $this->create(Eatery::class, [
+            'snippet' => null,
+            'info' => 'Short enough already',
+        ]);
+
+        $this->assertEquals('Short enough already', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itFallsBackToTheFirstAttractionRestaurantsInfoWhenTheEateryHasNoInfo(): void
+    {
+        $eatery = $this->build(Eatery::class)->attraction()->create([
+            'snippet' => null,
+            'info' => null,
+        ]);
+
+        $this->build(EateryAttractionRestaurant::class)
+            ->on($eatery)
+            ->create(['info' => 'The first restaurant in the attraction']);
+
+        $this->build(EateryAttractionRestaurant::class)
+            ->on($eatery)
+            ->create(['info' => 'The second restaurant in the attraction']);
+
+        $eatery->load('restaurants');
+
+        $this->assertEquals('The first restaurant in the attraction', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itReturnsAnEmptyStringWhenTheresNothingToDisplay(): void
+    {
+        $eatery = $this->create(Eatery::class, [
+            'snippet' => null,
+            'info' => null,
+        ]);
+
+        $this->assertEquals('', $eatery->display_snippet);
+    }
+
+    #[Test]
+    public function itDoesntLazyLoadTheRestaurantsRelationToBuildTheSnippet(): void
+    {
+        $eatery = $this->build(Eatery::class)->attraction()->create([
+            'snippet' => null,
+            'info' => null,
+        ]);
+
+        $this->build(EateryAttractionRestaurant::class)
+            ->on($eatery)
+            ->create(['info' => 'The first restaurant in the attraction']);
+
+        $eatery = Eatery::query()->find($eatery->id);
+
+        $this->assertEquals('', $eatery->display_snippet);
+        $this->assertFalse($eatery->relationLoaded('restaurants'));
     }
 }

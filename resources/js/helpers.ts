@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import { Converter } from 'any-number-to-words';
 
 export const formatDate = (
   date: string,
@@ -11,21 +10,9 @@ export const formatDate = (
   return dayjs(date).format(format);
 };
 
-export const numberToWords = (
-  number: number,
-  min: number = 0,
-  max: number = 10,
-): string => {
-  if (number <= min || number >= max) {
-    return number.toLocaleString();
-  }
-
-  return new Converter().toWords(number);
-};
-
-export const loadScript = (script: string) => {
+export const loadScript = (script: string): Promise<unknown> => {
   if (typeof document === 'undefined') {
-    return;
+    return new Promise(() => {});
   }
 
   return new Promise((resolve) => {
@@ -64,10 +51,33 @@ export const pluralise = (str: string, count: number): string => {
   return `${str}s`;
 };
 
+export type LatLng = { lat: number; lng: number };
+
+const EARTH_RADIUS_MILES = 3958.8;
+
+const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
+
+/** Great circle distance between two points, in miles. */
+export const distanceInMiles = (from: LatLng, to: LatLng): number => {
+  const deltaLat = toRadians(to.lat - from.lat);
+  const deltaLng = toRadians(to.lng - from.lng);
+
+  const a =
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(toRadians(from.lat)) *
+      Math.cos(toRadians(to.lat)) *
+      Math.sin(deltaLng / 2) *
+      Math.sin(deltaLng / 2);
+
+  return EARTH_RADIUS_MILES * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
 export const getTitle = (title: string | undefined): string => {
   const appName = 'Coeliac Sanctuary';
 
-  return title && title !== '' && title !== appName
-    ? `${title} - ${appName}`
-    : 'Coeliac Sanctuary - Coeliac Blog, Gluten Free Places to Eat, Reviews, and more!';
+  if (!title || title === '' || title === appName) {
+    title = 'Gluten Free Recipes, Blog & UK Places to Eat';
+  }
+
+  return `${title} - ${appName}`;
 };

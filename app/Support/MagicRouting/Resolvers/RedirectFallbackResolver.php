@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Support\MagicRouting\Resolvers;
+
+use App\Actions\Redirects\CheckForRouteRedirectAction;
+use App\Actions\Redirects\HandleRedirectResponseAction;
+use App\Contracts\RouteFallbackResolverContract;
+use App\Models\Redirect;
+use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use RuntimeException;
+
+class RedirectFallbackResolver implements RouteFallbackResolverContract
+{
+    protected ?Redirect $redirect = null;
+
+    public function canHandle(Request $request): bool
+    {
+        $redirect = app(CheckForRouteRedirectAction::class)->handle($request->path());
+
+        if ($redirect) {
+            $this->redirect = $redirect;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function handle(Request $request): Responsable|RedirectResponse
+    {
+        if ( ! $this->redirect) {
+            // this should never happen
+            throw new RuntimeException('Redirect not found.');
+        }
+
+        return app(HandleRedirectResponseAction::class)->handle($this->redirect);
+    }
+}

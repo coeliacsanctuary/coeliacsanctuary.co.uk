@@ -7,9 +7,12 @@ namespace Tests\Feature\Http\Controllers\Recipes;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\Actions\Recipes\BuildRecipeIndexDescriptionAction;
+use App\Actions\Recipes\BuildRecipeIndexTitleAction;
 use App\Actions\Recipes\GetRecipeFiltersForIndexAction;
 use App\Actions\Recipes\GetRecipesForIndexAction;
 use App\Contracts\Recipes\FilterableRecipeRelation;
+use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use App\Models\Recipes\RecipeFeature;
 use App\Models\Recipes\RecipeMeal;
@@ -142,5 +145,84 @@ class IndexControllerTest extends TestCase
                     ->where('recipes.meta.total', 30)
                     ->etc()
             );
+    }
+
+    #[Test]
+    public function itReturnsTheFeaturesForEachRecipe(): void
+    {
+        $recipe = Recipe::query()->latest()->firstOrFail();
+
+        $recipe->features()->sync([]);
+
+        $recipe->features()->attach(
+            $this->create(RecipeFeature::class, ['feature' => 'Vegan', 'slug' => 'vegan'])->id
+        );
+
+        $this->get(route('recipe.index'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->where('recipes.data.0.features', [['feature' => 'Vegan', 'slug' => 'vegan']])
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itHasTheMetaDescription(): void
+    {
+        $this->get(route('recipe.index'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->where('meta.description', 'Gluten free recipes from Coeliac Sanctuary — tried and tested coeliac friendly bakes, dinners, breakfasts and puddings, all using simple supermarket ingredients.')
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itCallsTheBuildRecipeIndexTitleAction(): void
+    {
+        $this->expectAction(BuildRecipeIndexTitleAction::class, [function ($filters): bool {
+            $this->assertSame(['vegan'], $filters['features']);
+
+            return true;
+        }], return: 'Gluten Free Vegan Recipes');
+
+        $this->get(route('recipe.index', ['features' => 'vegan']))
+            ->assertInertia(fn (Assert $page) => $page->where('meta.title', 'Gluten Free Vegan Recipes')->etc());
+    }
+
+    #[Test]
+    public function itCallsTheBuildRecipeIndexDescriptionAction(): void
+    {
+        $this->expectAction(BuildRecipeIndexDescriptionAction::class, [function ($filters): bool {
+            $this->assertSame(['vegan'], $filters['features']);
+
+            return true;
+        }], return: 'A description of vegan recipes');
+
+        $this->get(route('recipe.index', ['features' => 'vegan']))
+            ->assertInertia(fn (Assert $page) => $page->where('meta.description', 'A description of vegan recipes')->etc());
+    }
+
+    #[Test]
+    public function itDoesntIndexThePageWhenMoreThanOneFilterIsSelected(): void
+    {
+        $this->get(route('recipe.index', ['features' => 'vegan', 'meals' => 'breakfast']))
+            ->assertInertia(fn (Assert $page) => $page->where('meta.doNotTrack', true)->etc());
+    }
+
+    #[Test]
+    public function itIndexesThePageWhenASingleFilterIsSelected(): void
+    {
+        $this->get(route('recipe.index', ['features' => 'vegan']))
+            ->assertInertia(fn (Assert $page) => $page->missing('meta.doNotTrack')->etc());
+    }
+
+    #[Test]
+    public function itKeepsTheFilterAndPageInTheCanonicalUrl(): void
+    {
+        $this->get(route('recipe.index', ['features' => 'vegan', 'page' => 2]))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('meta.currentUrl', route('recipe.index') . '?features=vegan&page=2')
+                ->etc());
     }
 }

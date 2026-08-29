@@ -20,6 +20,12 @@ interface FilterableRecipeRelation
      * @param Builder<TModel> $query
      * @return Builder<TModel>
      */
+    public function scopeSelectableAsFilter(Builder $query): Builder;
+
+    /**
+     * @param Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     public function scopeHasRecipesWithFeatures(Builder $query, array $features): Builder;
 
     /**

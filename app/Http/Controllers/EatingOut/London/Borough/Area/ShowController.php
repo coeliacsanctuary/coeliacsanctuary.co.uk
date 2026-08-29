@@ -12,6 +12,8 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Pipelines\EatingOut\GetEateries\GetEateriesInLondonAreaPipeline;
 use App\Resources\EatingOut\LondonAreaPageResource;
+use App\Resources\EatingOut\MagicRouteGuideResource;
+use App\Resources\EatingOut\NearbyAreaResource;
 use App\Services\EatingOut\Filters\GetFiltersForLondonArea;
 use Illuminate\Http\Request;
 use Inertia\Response;
@@ -76,6 +78,7 @@ class ShowController
                 new BreadcrumbItemData($area->area),
             ]))
             ->render('EatingOut/LondonArea', [
+                'live_eateries_count' => $area->liveEateries->count() + $area->liveBranches->count(),
                 'area' => fn () => new LondonAreaPageResource($area),
                 'alternateAreas' => fn () => $otherAreas,
                 'eateries' => $inertia->scroll(fn () => $getEateriesPipeline->run($area, $filters, $sort)),
@@ -93,6 +96,8 @@ class ShowController
                         ],
                     ],
                 ],
+                'nearby' => fn () => NearbyAreaResource::collection($area->nearbyAreas(5)),
+                'guides' => fn () => MagicRouteGuideResource::collection($area->magicRoutes),
             ]);
     }
 }

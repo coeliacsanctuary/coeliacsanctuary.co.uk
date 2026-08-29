@@ -117,8 +117,6 @@ trait SeedsWebsite
         return $this;
     }
 
-
-
     protected function withCategoriesAndProducts($categories = 5, $products = 2, $variants = 1, ?callable $then = null): static
     {
         Storage::fake('media');

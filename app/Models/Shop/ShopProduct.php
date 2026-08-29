@@ -6,12 +6,15 @@ namespace App\Models\Shop;
 
 use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
+use App\Concerns\Faqs\Faqable;
 use App\Concerns\HasSealiacOverview;
 use App\Concerns\LinkableModel;
 use App\Concerns\Shop\HasPrices;
+use App\Contracts\Faqs\HasFaqs;
 use App\Contracts\Search\IsSearchable;
 use App\Enums\Shop\OrderState;
 use App\Models\Media;
+use App\Schema\ShopReturnPolicySchema;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -35,11 +38,16 @@ use Spatie\SchemaOrg\Schema;
  * @property float $average_rating
  * @property array{current_price: string, old_price?: string} $price
  * @property Carbon $created_at
+ *
+ * @implements HasFaqs<$this>
  */
-class ShopProduct extends Model implements HasMedia, IsSearchable
+class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
 {
     use ClearsCache;
     use DisplaysMedia;
+
+    /** @use Faqable<$this> */
+    use Faqable;
 
     /** @use HasPrices<$this> */
     use HasPrices;
@@ -129,7 +137,9 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     /** @return HasMany<ShopOrderReviewItem, $this> */
     public function reviews(): HasMany
     {
-        return $this->hasMany(ShopOrderReviewItem::class, 'product_id');
+        return $this
+            ->hasMany(ShopOrderReviewItem::class, 'product_id')
+            ->whereIn('shop_order_review_items.id', ShopOrderReviewItem::deduplicatedIds());
     }
 
     /** @return HasOne<ShopProductAddOn, $this> */
@@ -157,7 +167,11 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
     /** @return Attribute<float, never> */
     public function averageRating(): Attribute
     {
-        return Attribute::get(fn () => round($this->reviews->average('rating') * 2) / 2);
+        return Attribute::get(function () {
+            $this->loadMissing('reviews');
+
+            return round($this->reviews->average('rating') * 2) / 2;
+        });
     }
 
     protected function linkRoot(): string
@@ -185,28 +199,29 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
 
     public function isInStock(): bool
     {
-        return $this
-            ->variants()
-            ->pluck('quantity')
-            ->filter(fn ($quantity) => $quantity > 0)
-            ->count() > 0;
+        $this->loadMissing('variants');
+
+        return $this->variants->contains(fn (ShopProductVariant $variant) => $variant->quantity > 0);
     }
 
     protected function baseShippingRate(): int
     {
+        $this->loadMissing(['variants', 'shippingMethod.prices']);
+
         return $this
-            ->shippingMethod()
-            ->first()
-            ?->prices()
+            ->shippingMethod
+            ?->prices
             ->where('postage_country_area_id', 1)
-            ->where('max_weight', '>', $this->variants[0]?->weight)
-            ->orderBy('price')
-            ->firstOrFail()
+            ->where('max_weight', '>', $this->variants->first()?->weight)
+            ->sortBy('price')
+            ->first()
             ->price ?? 0;
     }
 
     public function schema(): ProductSchema
     {
+        $this->loadMissing(['reviews.parent', 'variants', 'prices', 'shippingMethod.prices']);
+
         return Schema::product()
             ->sku((string) $this->id)
             ->name($this->title)
@@ -220,13 +235,14 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
             ->offers(
                 Schema::offer()
                     ->price($this->currentPrice / 100)
-                    ->priceValidUntil($this->currentPrices()->first()->end_at ?? now()->addYear())
+                    ->priceValidUntil($this->currentPrices()->first()->end_at ?? now()->addYear()->startOfDay())
                     ->availability($this->isInStock() ? Schema::itemAvailability()::InStock : Schema::itemAvailability()::OutOfStock)
                     ->priceCurrency('GBP')
                     ->url($this->absolute_link)
+                    ->hasMerchantReturnPolicy(ShopReturnPolicySchema::make())
                     ->shippingDetails(
                         Schema::offerShippingDetails()
-                            ->shippingDestination(Schema::definedRegion()->addressCountry('UK'))
+                            ->shippingDestination(Schema::definedRegion()->addressCountry('GB'))
                             ->deliveryTime(
                                 Schema::shippingDeliveryTime()
                                     ->businessDays(
@@ -239,7 +255,7 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
                                                 Schema::dayOfWeek()::Friday,
                                             ])
                                     )
-                                    ->cutoffTime(Carbon::createFromTime(14))
+                                    ->setProperty('cutoffTime', '14:00:00Z')
                                     ->handlingTime(Schema::quantitativeValue()->minValue(0)->maxValue(1)->unitCode('DAY'))
                                     ->transitTime(Schema::quantitativeValue()->minValue(1)->maxValue(3)->unitCode('DAY'))
                             )
@@ -251,26 +267,33 @@ class ShopProduct extends Model implements HasMedia, IsSearchable
                     )
             )
             ->if(
-                $this->reviews()->count() > 0,
+                $this->reviews->isNotEmpty(),
                 function (ProductSchema $schema) {
-                    /** @var array{ReviewContract} $reviews */
-                    $reviews = $this->reviews()
-                        ->latest()
-                        ->with(['parent'])
-                        ->get()
-                        ->map(
-                            fn (ShopOrderReviewItem $review) => Schema::review()
-                                ->reviewRating(Schema::rating()->ratingValue($review->rating)->bestRating(5))
-                                ->author(Schema::person()->name($review->parent?->name ?: ''))
-                        )
-                        ->toArray();
+                    /** @var list<ReviewContract> $reviews */
+                    $reviews = [];
+
+                    foreach ($this->reviews->sortByDesc('created_at') as $review) {
+                        if ($review->review === null || $review->review === '' || $review->created_at === null) {
+                            continue;
+                        }
+
+                        $reviews[] = Schema::review()
+                            ->reviewRating(Schema::rating()->ratingValue($review->rating)->bestRating(5))
+                            ->reviewBody($review->review)
+                            ->datePublished($review->created_at)
+                            ->author(Schema::person()->name($review->parent?->name ?: ''));
+
+                        if (count($reviews) === 20) {
+                            break;
+                        }
+                    }
 
                     return $schema
-                        ->reviews($reviews)
+                        ->review($reviews)
                         ->aggregateRating(
                             Schema::aggregateRating()
-                                ->ratingValue((float) $this->reviews()->average('rating'))
-                                ->reviewCount($this->reviews()->count())
+                                ->ratingValue(round((float) $this->reviews->average('rating'), 2))
+                                ->reviewCount($this->reviews->count())
                         );
                 }
             );

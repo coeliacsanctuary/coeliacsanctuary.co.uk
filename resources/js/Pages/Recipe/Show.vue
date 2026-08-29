@@ -1,23 +1,24 @@
 <script lang="ts" setup>
 import { PaginatedResponse } from '@/types/GenericTypes';
+import { Comment } from '@/types/Types';
 import { ref, Ref } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import { RecipePage } from '@/types/RecipeTypes';
 import Card from '@/Components/Card.vue';
-import Heading from '@/Components/Heading.vue';
 import Comments from '@/Components/PageSpecific/Shared/Comments.vue';
-import { PrinterIcon } from '@heroicons/vue/20/solid';
-import RecipeSquareImage from '@/Components/PageSpecific/Recipes/RecipeSquareImage.vue';
 import RecipeNutritionTable from '@/Components/PageSpecific/Recipes/RecipeNutritionTable.vue';
 import { Page } from '@inertiajs/core';
-import ArticleFaqCard from '@/Components/PageSpecific/Shared/ArticleFaqCard.vue';
+import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
 import SubHeading from '@/Components/SubHeading.vue';
-import Warning from '@/Components/Warning.vue';
-import Info from '@/Components/Info.vue';
 import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import RenderedString from '@/Components/RenderedString.vue';
-import RecipeSimpleCard from '@/Components/PageSpecific/Recipes/RecipeSimpleCard.vue';
+import RecipeHeader from '@/Components/PageSpecific/Recipes/RecipeHeader.vue';
+import RecipeAttributes from '@/Components/PageSpecific/Recipes/RecipeAttributes.vue';
+import RecipeIngredients from '@/Components/PageSpecific/Recipes/RecipeIngredients.vue';
+import RecipeMethod from '@/Components/PageSpecific/Recipes/RecipeMethod.vue';
+import RelatedRecipesRow from '@/Components/PageSpecific/Recipes/RelatedRecipesRow.vue';
+import AuthorCard from '@/Components/PageSpecific/Shared/AuthorCard.vue';
 
 const props = defineProps<{
   recipe: RecipePage;
@@ -26,6 +27,8 @@ const props = defineProps<{
 }>();
 
 const header = ref<HTMLElement>();
+
+const headerEnd = ref<HTMLElement>();
 
 const recipeElem = ref<HTMLElement>();
 
@@ -87,129 +90,31 @@ const handleCommentReset = () => {
 </script>
 
 <template>
-  <div ref="header" />
-  <Card class="mt-3 flex flex-col space-y-4">
-    <Heading
-      :back-link="{
-        href: backLink,
-        label: 'Back to all recipes.',
-      }"
-    >
-      {{ recipe.title }}
-    </Heading>
+  <div
+    ref="header"
+    class="absolute"
+  />
 
+  <RecipeHeader
+    :recipe="recipe"
+    :back-link="backLink"
+    :recipe-element="recipeElem"
+  />
+
+  <div
+    ref="headerEnd"
+    class="absolute"
+  />
+
+  <Card class="mt-3 flex flex-col space-y-4">
     <div
       class="prose prose-lg max-w-none font-semibold md:prose-xl"
       v-text="recipe.description"
     />
 
-    <div
-      class="flex flex-col space-y-4 lg:flex-row lg:justify-between lg:space-y-0 lg:space-x-4"
-    >
-      <Info
-        v-if="recipe.features.length"
-        class="lg:w-md"
-      >
-        <h3 class="mb-1 text-lg font-semibold text-grey-darkest">
-          This recipe is...
-        </h3>
-
-        <ul class="flex flex-row flex-wrap gap-2 gap-y-1 leading-tight">
-          <li
-            v-for="feature in recipe.features"
-            :key="feature.slug"
-            class="after:content-[','] last:after:content-['']"
-          >
-            <Link
-              :href="`/recipe?features=${feature.slug}`"
-              class="font-semibold text-primary-dark hover:text-grey-darker"
-            >
-              {{ feature.feature }}
-            </Link>
-          </li>
-        </ul>
-      </Info>
-
-      <Info
-        class="lg:w-md"
-        no-icon
-        theme="light"
-      >
-        <ul class="">
-          <li>
-            <strong class="font-semibold">Preparation Time:</strong>
-            {{ recipe.timing.prep_time }}
-          </li>
-          <li>
-            <strong class="font-semibold">Cooking Time:</strong>
-            {{ recipe.timing.cook_time }}
-          </li>
-          <li>
-            <strong class="font-semibold">
-              This recipe makes {{ recipe.nutrition.servings }}
-            </strong>
-          </li>
-        </ul>
-      </Info>
-
-      <Warning
-        v-if="recipe.allergens.length"
-        class="lg:w-md"
-      >
-        <h3 class="mb-1 text-lg font-semibold text-red-dark">
-          This recipe contains:
-        </h3>
-
-        <ul class="flex flex-row flex-wrap gap-2 gap-y-1 leading-tight">
-          <li
-            v-for="allergen in recipe.allergens"
-            :key="allergen.slug"
-            class="font-semibold text-black after:content-[','] last:after:content-['']"
-            v-text="allergen.allergen"
-          />
-        </ul>
-      </Warning>
-    </div>
-
-    <div
-      class="-m-4 !mt-4 -mb-4! flex justify-between bg-grey-light p-4 shadow-inner"
-    >
-      <div>
-        <p v-if="recipe.updated">
-          <span class="font-semibold">Last updated</span> {{ recipe.updated }}
-        </p>
-        <p><span class="font-semibold">Added</span> {{ recipe.published }}</p>
-        <p>
-          <span class="font-semibold">Recipe by </span>
-          <span
-            class="[&>a]:font-semibold [&>a]:text-primary-dark [&>a]:hover:text-grey-darker"
-            v-html="recipe.author"
-          />
-        </p>
-      </div>
-
-      <div>
-        <a
-          :href="recipe.print_url"
-          target="_blank"
-        >
-          <PrinterIcon class="h-12 w-12" />
-        </a>
-      </div>
-    </div>
-  </Card>
-
-  <Card no-padding>
-    <img
-      v-if="recipe.square_image"
-      :alt="recipe.header_image_alt_text ?? recipe.title"
-      :src="recipe.image"
-      loading="lazy"
-    />
-    <RecipeSquareImage
-      v-else
-      :alt="recipe.header_image_alt_text ?? recipe.title"
-      :src="recipe.image"
+    <RecipeAttributes
+      :features="recipe.features"
+      :allergens="recipe.allergens"
     />
   </Card>
 
@@ -219,158 +124,88 @@ const handleCommentReset = () => {
     </div>
   </Card>
 
-  <ArticleFaqCard
+  <FaqCard
     v-if="recipe.faqs"
     :faqs="recipe.faqs"
     :title="`Here are some tips and FAQs about ${recipe.short_title || recipe.title}`"
   />
 
   <div
-    ref="recipeElem"
     class="relative flex flex-col space-y-3 lg:flex-row lg:space-y-0 lg:space-x-3"
   >
     <aside
-      class="space-y-3 lg:ml-3 lg:grid lg:w-[350px] lg:flex-shrink-0 lg:grid-cols-1 lg:self-start lg:overflow-auto"
+      class="flex flex-col space-y-3 lg:w-[350px] lg:flex-shrink-0 lg:self-start"
     >
+      <Card>
+        <div
+          ref="recipeElem"
+          class="absolute"
+        />
+
+        <RecipeIngredients :groups="recipe.ingredients" />
+      </Card>
+
       <FeaturedInCollectionCard
         v-if="recipe.featured_in?.length"
         :collections="recipe.featured_in"
         title="This recipe is featured in"
-        class="hidden lg:flex"
       />
-
-      <Card>
-        <SubHeading classes="text-primary-dark">Ingredients</SubHeading>
-
-        <div
-          class="prose prose-lg max-w-none md:prose-xl"
-          v-html="recipe.ingredients"
-        />
-      </Card>
-
-      <Card class="hidden lg:flex">
-        <h3 class="mb-4 text-base font-semibold">
-          Nutritional Information (Per {{ recipe.nutrition.portion_size }})
-        </h3>
-
-        <RecipeNutritionTable
-          direction="vertical"
-          :nutrition="recipe.nutrition"
-        />
-      </Card>
-
-      <Card
-        v-if="recipe.related_recipes?.length"
-        class="hidden lg:flex"
-      >
-        <SubHeading classes="text-primary-dark">Related Recipes</SubHeading>
-
-        <RecipeSimpleCard
-          v-for="relatedRecipe in recipe.related_recipes"
-          :key="relatedRecipe.title"
-          :recipe="relatedRecipe"
-        />
-      </Card>
     </aside>
 
-    <div class="flex flex-col space-y-3">
-      <Card class="space-y-3">
+    <div class="flex flex-1 flex-col space-y-3">
+      <Card class="space-y-4">
         <SubHeading classes="text-primary-dark">Method</SubHeading>
 
-        <article
-          class="prose prose-lg max-w-none md:prose-xl"
-          v-html="recipe.method"
-        />
+        <RecipeMethod :method="recipe.method" />
 
-        <h3 class="mt-4 mb-2 text-base font-semibold lg:hidden">
-          Nutritional Information (Per {{ recipe.nutrition.portion_size }})
-        </h3>
+        <div class="space-y-2">
+          <h3 class="text-base font-semibold">
+            Nutritional Information (Per {{ recipe.nutrition.portion_size }})
+          </h3>
 
-        <RecipeNutritionTable
-          class="lg:hidden"
-          :nutrition="recipe.nutrition"
+          <RecipeNutritionTable :nutrition="recipe.nutrition" />
+        </div>
+
+        <p
+          v-if="recipe.updated"
+          class="text-sm text-grey-dark"
+          v-text="`Last updated ${recipe.updated}`"
         />
       </Card>
 
-      <Card
+      <AuthorCard
         v-if="['Alison Peters', 'Alison Wheatley'].includes(recipe.author)"
-        faded
-        theme="primary-light"
-      >
-        <div
-          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
-        >
-          <img
-            alt="Alison Peters"
-            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-            src="/images/misc/alison.png"
-          />
-          <div class="prose max-w-2xl md:prose-xl">
-            <strong>Alison Peters</strong> has been Coeliac since June 2014 and
-            launched Coeliac Sanctuary in August of that year, and since then
-            has aimed to provide a one stop shop for Coeliacs, from blogs, to
-            recipes, eating out guide and online shop.
-          </div>
-        </div>
-      </Card>
-
-      <Card
-        v-if="recipe.author === 'Jamie Peters'"
-        faded
-        theme="primary-light"
-      >
-        <div
-          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
-        >
-          <img
-            alt="Alison Peters"
-            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-            src="/images/misc/jamie.png"
-          />
-          <div class="prose max-w-2xl md:prose-xl">
-            While not a coeliac, <strong>Jamie Peters</strong> is married to
-            one, he's the brains behind this website, and alongside software
-            development he has always enjoyed cooking and baking, and will adapt
-            his old family favourites so Alison can eat them too.
-          </div>
-        </div>
-      </Card>
-
-      <Card
-        v-if="recipe.related_recipes?.length"
-        class="lg:hidden"
-      >
-        <SubHeading classes="text-primary-dark">Related Recipes</SubHeading>
-
-        <RecipeSimpleCard
-          v-for="relatedRecipe in recipe.related_recipes"
-          :key="relatedRecipe.title"
-          :recipe="relatedRecipe"
-        />
-      </Card>
-
-      <FeaturedInCollectionCard
-        v-if="recipe.featured_in?.length"
-        :collections="recipe.featured_in"
-        title="This recipe is featured in"
-        class="lg:hidden"
+        author="Alison Peters"
       />
 
-      <Comments
-        :id="recipe.id"
-        :comments="allComments"
-        module="recipe"
-        :is-loading="isLoadingComments"
-        :has-loaded-more="hasLoadedMoreComments"
-        @load-more="loadMoreComments"
-        @reset="handleCommentReset"
+      <AuthorCard
+        v-if="recipe.author === 'Jamie Peters'"
+        author="Jamie Peters"
       />
     </div>
   </div>
 
+  <RelatedRecipesRow
+    v-if="recipe.related_recipes?.length"
+    :recipes="recipe.related_recipes"
+    class="mt-3"
+  />
+
+  <Comments
+    :id="recipe.id"
+    :comments="allComments"
+    module="recipe"
+    class="mt-3"
+    :is-loading="isLoadingComments"
+    :has-loaded-more="hasLoadedMoreComments"
+    @load-more="loadMoreComments"
+    @reset="handleCommentReset"
+  />
+
   <JumpToContentButton
-    v-if="recipeElem"
+    v-if="recipeElem && headerEnd"
     :anchor="recipeElem"
+    :show-after="headerEnd"
     label="Jump to recipe"
   />
 </template>

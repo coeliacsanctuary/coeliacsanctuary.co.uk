@@ -7,6 +7,7 @@ namespace App\Models\EatingOut;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasOpenGraphImage;
 use App\Contracts\HasOpenGraphImageContract;
+use App\DataObjects\EatingOut\LatLng;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Models\Media;
 use App\Services\EatingOut\LocationSearchService;
@@ -17,8 +18,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -163,6 +166,12 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
         return $this->hasManyThrough(EateryReview::class, Eatery::class, 'area_id', 'wheretoeat_id');
     }
 
+    /** @return MorphMany<EateryMagicRouteRecord, $this> */
+    public function magicRoutes(): MorphMany
+    {
+        return $this->morphMany(EateryMagicRouteRecord::class, 'location');
+    }
+
     public function link(): string
     {
         return '/' . implode('/', [
@@ -217,5 +226,41 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
                 return null;
             }
         });
+    }
+
+    public function defaultDescription(): string
+    {
+        return <<<TEXT
+        Looking for gluten free in **{$this->area}**? In our comprehensive eating out guide, you will find a wide range of gluten free options available at various locations in **{$this->area}**. From cafes, restaurants, attractions, to hotels, we've got you covered.
+        TEXT;
+    }
+
+    /** @return Collection<int, static> */
+    public function nearbyAreas(int $limit = 3): Collection
+    {
+        $latlng = LatLng::fromString((string)$this->latlng);
+
+        return static::query()
+            ->selectRaw('(
+                        6371000 * acos (
+                          cos ( radians(?) )
+                          * cos( radians( CAST(SUBSTRING_INDEX(latlng, \',\', 1) AS DECIMAL(10,7)) ) )
+                          * cos( radians( CAST(SUBSTRING_INDEX(latlng, \',\', -1) AS DECIMAL(10,7)) ) - radians(?) )
+                          + sin ( radians(?) )
+                          * sin( radians( CAST(SUBSTRING_INDEX(latlng, \',\', 1) AS DECIMAL(10,7)) ) )
+                        )
+                     ) AS distance', [
+                $latlng->lat,
+                $latlng->lng,
+                $latlng->lat,
+            ])
+            ->addSelect(['id', 'area', 'town_id', 'slug'])
+            ->with(['media', 'town', 'liveEateries', 'liveBranches'])
+            ->whereHas('liveEateries')
+            ->whereNot('id', $this->id)
+            ->whereNot('area', 'nationwide')
+            ->orderBy('distance')
+            ->take($limit)
+            ->get();
     }
 }

@@ -13,6 +13,8 @@ use App\Nova\Resources\EatingOut\Eateries;
 use App\Nova\Resources\EatingOut\EateryAiDescriptionResource;
 use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EateryAttractionRestaurantResource;
+use App\Nova\Resources\EatingOut\EateryCuisines;
+use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
 use App\Nova\Resources\EatingOut\MyPlaces;
@@ -45,6 +47,7 @@ use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
 use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DiscountCode;
+use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderItem;
 use App\Nova\Resources\Shop\OrderReviewItem;
@@ -100,6 +103,7 @@ class ResourceRegistrar
             Counties::class,
             Towns::class,
             Areas::class,
+            EateryCuisines::class,
             Reviews::class,
             ReviewImage::class,
             MyPlaces::class,
@@ -112,6 +116,7 @@ class ResourceRegistrar
             SealiacOverviews::class,
             EateryAiDescriptionResource::class,
             EateryAttractionRestaurantResource::class,
+            EateryMagicRoutesResource::class,
 
             // Search
             SearchResource::class,
@@ -144,6 +149,7 @@ class ResourceRegistrar
             CustomsFee::class,
             PostageArea::class,
             MassDiscount::class,
+            Holidays::class,
             OrderReviews::class,
             OrderReviewItem::class,
             OrderSourcesResource::class,

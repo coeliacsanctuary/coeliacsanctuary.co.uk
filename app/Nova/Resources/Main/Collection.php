@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\Main;
 
+use App\Enums\Collections\CollectionDisplayType;
 use App\Models\Collections\Collection as CollectionModel;
 use App\Models\Collections\CollectionGroup as CollectionGroupModel;
 use App\Nova\Resource;
@@ -135,6 +136,14 @@ class Collection extends Resource
                     ->canHaveImages()
                     ->fullWidth()
                     ->nullable(),
+            ]),
+
+            new Panel('Layout', [
+                Select::make('Display Type', 'display_type')
+                    ->options(collect(CollectionDisplayType::cases())->mapWithKeys(fn (CollectionDisplayType $type) => [$type->value => $type->name()]))
+                    ->default(CollectionDisplayType::GRID->value)
+                    ->displayUsingLabels()
+                    ->help('Grid lays the items out as cards, best for recipe and blog collections. List stacks them vertically as rows under each group heading, best for eateries broken down by county.'),
             ]),
 
             Repeater::make('Groups', 'groups')

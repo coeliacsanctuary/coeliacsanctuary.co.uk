@@ -1,19 +1,129 @@
 <script lang="ts" setup>
 import { AdjustmentsHorizontalIcon } from '@heroicons/vue/24/solid';
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import TownFilterSidebarContent from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebarContent.vue';
 import useScreensize from '@/composables/useScreensize';
+import useStickyAdOffset from '@/composables/useStickyAdOffset';
 import { EateryFilters } from '@/types/EateryTypes';
 
-const props = defineProps<{
-  filters: EateryFilters;
-}>();
+const props = withDefaults(
+  defineProps<{
+    filters: EateryFilters;
+    fixed?: boolean;
+  }>(),
+  {
+    fixed: false,
+  },
+);
+
 const viewSidebar = ref(false);
 
 const { screenIsGreaterThanOrEqualTo } = useScreensize();
 
-defineEmits(['filtersUpdated', 'sidebarClosed']);
+const { bottomRightHeight } = useStickyAdOffset();
+
+const emits = defineEmits(['filtersUpdated']);
+
+const pendingUpdate = ref<null | {
+  filters: EateryFilters;
+  preserveState?: boolean;
+}>(null);
+
+const handleMobileUpdate = (update: {
+  filters: EateryFilters;
+  preserveState?: boolean;
+}): void => {
+  pendingUpdate.value = update;
+};
+
+const closeSidebar = (): void => {
+  viewSidebar.value = false;
+
+  if (!pendingUpdate.value) {
+    return;
+  }
+
+  emits('filtersUpdated', pendingUpdate.value);
+
+  pendingUpdate.value = null;
+};
+
+/** The height of the sticky nav, plus a small gap. */
+const stickyOffset = 56;
+
+const stickyColumn = ref<HTMLElement | null>(null);
+const top = ref(stickyOffset);
+
+let lastScrollY = 0;
+let ticking = false;
+
+/**
+ * Move the sticky offset with the scroll, clamped between the top of the
+ * viewport (under the nav) and the offset that bottom aligns the column, so a
+ * column taller than the viewport scrolls with the content rather than having
+ * its bottom clipped off screen.
+ *
+ * The bottom edge accounts for any sticky ads in the same corner as the
+ * column, so the filters are never left sitting behind them.
+ */
+const updateOffset = (): void => {
+  ticking = false;
+
+  if (!stickyColumn.value) {
+    return;
+  }
+
+  const delta = window.scrollY - lastScrollY;
+
+  lastScrollY = window.scrollY;
+
+  const bottomOffset =
+    window.innerHeight -
+    bottomRightHeight.value -
+    stickyColumn.value.offsetHeight -
+    8;
+
+  top.value = Math.min(
+    stickyOffset,
+    Math.max(Math.min(stickyOffset, bottomOffset), top.value - delta),
+  );
+};
+
+const handleScroll = (): void => {
+  if (ticking) {
+    return;
+  }
+
+  ticking = true;
+
+  window.requestAnimationFrame(updateOffset);
+};
+
+/** Ads load late, so re-clamp when one appears or resizes rather than waiting for a scroll. */
+watch(bottomRightHeight, () => {
+  if (!props.fixed) {
+    return;
+  }
+
+  handleScroll();
+});
+
+onMounted(() => {
+  if (!props.fixed) {
+    return;
+  }
+
+  lastScrollY = window.scrollY;
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('resize', handleScroll, { passive: true });
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('resize', handleScroll);
+});
 </script>
 
 <template>
@@ -31,28 +141,31 @@ defineEmits(['filtersUpdated', 'sidebarClosed']);
     </div>
   </div>
 
-  <div v-if="screenIsGreaterThanOrEqualTo('xmd')">
-    <TownFilterSidebarContent
-      :filters="filters"
-      @updated="$emit('filtersUpdated', $event)"
-    />
+  <template v-if="screenIsGreaterThanOrEqualTo('xmd')">
+    <div
+      ref="stickyColumn"
+      :class="{ 'xmd:sticky xmd:h-fit': fixed }"
+      :style="fixed ? { top: `${top}px` } : undefined"
+    >
+      <TownFilterSidebarContent
+        :filters="filters"
+        @updated="emits('filtersUpdated', $event)"
+      />
+    </div>
 
     <div class="content_desktop_hint"></div>
-  </div>
+  </template>
 
   <Sidebar
     v-else
     :open="viewSidebar"
     side="right"
-    @close="
-      viewSidebar = false;
-      $emit('sidebarClosed');
-    "
+    @close="closeSidebar()"
   >
     <TownFilterSidebarContent
       class="!h-full"
       :filters="filters"
-      @updated="$emit('filtersUpdated', $event)"
+      @updated="handleMobileUpdate"
     />
   </Sidebar>
 </template>

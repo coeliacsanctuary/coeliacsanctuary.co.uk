@@ -1,21 +1,29 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { EateryFilters, TownEatery, LondonAreaPage } from '@/types/EateryTypes';
+import {
+  EateryFilters,
+  TownEatery,
+  LondonAreaPage,
+  NearbyTown,
+  MagicRouteGuide,
+} from '@/types/EateryTypes';
 import TownHeading from '@/Components/PageSpecific/EatingOut/Town/TownHeading.vue';
 import Warning from '@/Components/Warning.vue';
 import { PaginatedCollection } from '@/types/GenericTypes';
 import EateryCard from '@/Components/PageSpecific/EatingOut/EateryCard.vue';
 import TownFilterSidebar from '@/Components/PageSpecific/EatingOut/Town/TownFilterSidebar.vue';
-import { ref, watch } from 'vue';
+import { ref, useTemplateRef, watch } from 'vue';
 import { router, Link, InfiniteScroll } from '@inertiajs/vue3';
-import useScreensize from '@/composables/useScreensize';
-import { RequestPayload } from '@inertiajs/core';
-import useBrowser from '@/composables/useBrowser';
+import useEateryFilters from '@/composables/useEateryFilters';
 import Info from '@/Components/Info.vue';
 import { pluralise } from '@/helpers';
 import JumpToContentButton from '@/Components/JumpToContentButton.vue';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
+import SubHeading from '@/Components/SubHeading.vue';
+import SidebarLayout from '@/Components/SidebarLayout.vue';
+import NearbyTowns from '@/Components/PageSpecific/EatingOut/Town/NearbyTowns.vue';
 
 type AlternateArea = {
   borough: string;
@@ -24,6 +32,7 @@ type AlternateArea = {
 };
 
 const props = defineProps<{
+  live_eateries_count: number;
   area: LondonAreaPage;
   alternateAreas?: AlternateArea[];
   eateries: PaginatedCollection<TownEatery>;
@@ -32,75 +41,15 @@ const props = defineProps<{
     current: string;
     options: FormSelectOption[];
   };
+  nearby: NearbyTown[];
+  guides: MagicRouteGuide[];
 }>();
 
 const placeList = ref<HTMLElement | null>(null);
 
 const sortOption = ref(props.sort.current);
 
-const { screenIsGreaterThanOrEqualTo } = useScreensize();
-
-const handleFiltersChanged = ({
-  filters,
-  preserveState = true,
-}: {
-  filters: EateryFilters;
-  preserveState: boolean;
-}) => {
-  const categoryFilter = filters.categories
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const venueFilter = filters.venueTypes
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const featureFilter = filters.features
-    .filter((filter) => filter.checked)
-    .map((filter) => filter.value);
-
-  const params: RequestPayload & {
-    filter?: { [T in 'category' | 'venueType' | 'feature']?: string };
-  } = {};
-
-  if (categoryFilter.length || venueFilter.length || featureFilter.length) {
-    params.filter = {};
-
-    if (categoryFilter.length) {
-      params.filter.category = categoryFilter.join(',');
-    }
-
-    if (venueFilter.length) {
-      params.filter.venueType = venueFilter.join(',');
-    }
-
-    if (featureFilter.length) {
-      params.filter.feature = featureFilter.join(',');
-    }
-  }
-
-  const lastScroll = window.scrollY;
-
-  router.get(useBrowser().currentPath(), params, {
-    preserveState: screenIsGreaterThanOrEqualTo('xmd') ? false : preserveState,
-    preserveScroll: true,
-    onFinish: () => {
-      // This avoids race conditions with hydration
-      requestAnimationFrame(() => {
-        window.scrollTo(0, lastScroll);
-      });
-    },
-  });
-};
-
-const reloadEateries = () => {
-  router.reload({
-    only: ['eateries'],
-    reset: ['eateries'],
-    preserveState: true,
-    preserveScroll: true,
-  });
-};
+const { handleFiltersChanged } = useEateryFilters();
 
 watch(sortOption, () => {
   router.reload({
@@ -109,6 +58,12 @@ watch(sortOption, () => {
     data: { sort: sortOption.value },
   });
 });
+
+useJourneyTracking().logWhenVisible(
+  useTemplateRef('placeList'),
+  'scrolled_into_view',
+  'WhereToEatAreaList',
+);
 </script>
 
 <template>
@@ -119,22 +74,14 @@ watch(sortOption, () => {
     :latlng="area.latlng"
   />
 
-  <Card class="mt-3 flex flex-col space-y-4">
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      In our comprehensive eating out guide, you will find a wide range of
-      gluten-free options available at various locations in the
-      <span class="font-semibold">{{ area.name }}</span> area of
-      <span class="font-semibold">{{ area.borough.name }}, London</span>. From
-      cafes, restaurants, attractions, to hotels, we've got you covered.
-    </p>
-
-    <p class="prose-md prose max-w-none lg:prose-lg">
-      The wealth of information in our guide is a result of the generous
-      contributions from people like you - fellow Coeliacs or individuals with
-      gluten intolerance, who are familiar with their local area. These
-      kind-hearted individuals take the time to share their knowledge and help
-      us build a comprehensive list of places to eat to help others, like you!
-    </p>
+  <Card
+    v-if="live_eateries_count > 0"
+    class="mt-3 flex flex-col space-y-4"
+  >
+    <div
+      class="prose-md prose w-full max-w-none lg:prose-lg"
+      v-html="area.description"
+    />
 
     <Warning>
       <p>
@@ -151,18 +98,58 @@ watch(sortOption, () => {
     </Warning>
   </Card>
 
-  <div class="content_hint" />
+  <div
+    v-if="live_eateries_count > 0"
+    class="content_hint"
+  />
 
-  <div class="relative md:flex xmd:space-x-2">
-    <TownFilterSidebar
-      :filters="filters"
-      @filters-updated="handleFiltersChanged"
-      @sidebar-closed="reloadEateries"
-    />
+  <SidebarLayout interleaved>
+    <template #sidebar>
+      <Card
+        v-if="guides.length > 0"
+        class="flex flex-col space-y-3"
+      >
+        <SubHeading> Specialist guides in {{ area.name }} </SubHeading>
+
+        <p class="prose mt-4 max-w-none">
+          Are you heading to {{ area.name }}? Take a look at these specialist
+          guides I've put together for eating gluten free across
+          {{ area.name }}!
+        </p>
+
+        <ul>
+          <li
+            v-for="guide in guides"
+            :key="guide.link"
+          >
+            <Link
+              :href="guide.link"
+              class="text-lg font-semibold text-primary-dark hover:text-black"
+            >
+              {{ guide.title }}
+            </Link>
+          </li>
+        </ul>
+      </Card>
+
+      <NearbyTowns
+        class="order-1 xmd:order-0"
+        heading="Other areas nearby"
+        :towns="nearby"
+      />
+
+      <TownFilterSidebar
+        v-if="live_eateries_count > 0"
+        :filters="filters"
+        fixed
+        @filters-updated="handleFiltersChanged"
+      />
+    </template>
 
     <div
+      v-if="live_eateries_count > 0"
       ref="placeList"
-      class="flex flex-col xmd:w-3/4 xmd:flex-1"
+      class="flex flex-col"
     >
       <Info
         v-if="alternateAreas && alternateAreas.length"
@@ -185,7 +172,7 @@ watch(sortOption, () => {
             >
               <Link :href="alternateArea.link">
                 {{ alternateArea.borough }} - {{ alternateArea.locations }}
-                {{ pluralise('location', alternateArea.locations) }}
+                {{ pluralise('eatery', alternateArea.locations) }}
               </Link>
             </li>
           </ul>
@@ -238,7 +225,20 @@ watch(sortOption, () => {
         </Card>
       </InfiniteScroll>
     </div>
-  </div>
+
+    <Card
+      v-else
+      class="flex w-full flex-col space-y-4 px-8 py-8 text-center"
+    >
+      <p class="prose prose-xl max-w-none">
+        Sorry, we don't have any places listed in {{ area.name }}.
+      </p>
+
+      <p class="prose prose-xl max-w-none">
+        <Link :href="area.borough.link">Back to {{ area.borough.name }}</Link>
+      </p>
+    </Card>
+  </SidebarLayout>
 
   <JumpToContentButton
     v-if="placeList"

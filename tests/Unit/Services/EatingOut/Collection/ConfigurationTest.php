@@ -135,6 +135,40 @@ class ConfigurationTest extends TestCase
         $this->assertCount(1, $config->getJoins());
     }
 
+    // --- addOrder deduplication ---
+
+    #[Test]
+    public function itDeduplicatesWhenAddingTheSameOrderTwiceViaAddOrder(): void
+    {
+        $order = new Order('foo', 'desc');
+
+        $config = new Configuration();
+        $config->addOrder($order);
+        $config->addOrder($order);
+
+        $this->assertCount(1, $config->getOrderings());
+    }
+
+    #[Test]
+    public function itKeepsDistinctOrdersWhenUsingAddOrder(): void
+    {
+        $config = new Configuration();
+        $config->addOrder(new Order('foo', 'desc'));
+        $config->addOrder(new Order('bar', 'asc'));
+
+        $this->assertCount(2, $config->getOrderings());
+    }
+
+    #[Test]
+    public function itReturnsItselfFromAddOrder(): void
+    {
+        $config = new Configuration();
+
+        $result = $config->addOrder(new Order('foo', 'desc'));
+
+        $this->assertSame($config, $result);
+    }
+
     // --- Distinct items are preserved ---
 
     #[Test]

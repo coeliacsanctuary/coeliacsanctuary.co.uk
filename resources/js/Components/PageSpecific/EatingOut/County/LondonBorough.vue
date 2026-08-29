@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { LondonPageBorough } from '@/types/EateryTypes';
 import { pluralise } from '@/helpers';
-import StaticMap from '@/Components/Maps/StaticMap.vue';
 import { Link } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{ borough: LondonPageBorough }>();
 
@@ -24,59 +24,64 @@ const formattedAreas = (areas: LondonPageBorough['top_areas']): string => {
 
 <template>
   <Card
-    class="group relative overflow-hidden !rounded-lg"
-    no-padding
+    ref="card"
+    class="relative flex flex-col space-y-3 transition hover:bg-linear-to-br hover:from-primary/30 hover:to-primary-light/30"
   >
     <Link
       :href="borough.link"
-      class="absolute top-0 left-0 h-full w-full"
       prefetch="click"
+      class="absolute top-0 left-0 h-full w-full"
+      :on-before="
+        () =>
+          useJourneyTracking().logEvent(
+            'clicked',
+            'CountyTown/LondonBoroughLink',
+            {
+              borough: borough.name,
+            },
+          )
+      "
     />
+    <div
+      class="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4"
+    >
+      <h3 class="text-lg font-semibold md:max-lg:text-xl lg:text-2xl">
+        {{ borough.name }}
+      </h3>
 
-    <div class="flex h-full flex-col justify-between">
-      <div class="flex flex-col justify-between space-y-4 p-4">
-        <h3 class="text-2xl font-semibold md:max-lg:text-2xl lg:text-3xl">
-          Eat gluten free in
-          <span
-            class="text-primary-darkest"
-            v-text="borough.name"
-          />
-        </h3>
+      <ul class="flex flex-wrap gap-2">
+        <li
+          class="rounded-lg bg-primary px-4 py-1 text-sm font-semibold whitespace-nowrap"
+        >
+          {{ borough.area_count }} {{ pluralise('Area', borough.area_count) }}
+        </li>
 
-        <div class="prose max-w-none flex-1 lg:prose-lg">
-          <div
-            class="float-right mb-4 ml-4 hidden aspect-square w-full flex-shrink-0 xs:inline-block xs:max-w-[120px] sm:max-w-[170px]"
-          >
-            <StaticMap
-              :lat="borough.latlng.lat"
-              :lng="borough.latlng.lng"
-              :can-expand="false"
-              map-classes="!bg-cover h-full max-h-[120px] sm:max-h-[170px]"
-              :additional-params="{
-                zoom: '10',
-                size: '200x200',
-              }"
-            />
-          </div>
+        <li
+          v-if="borough.eateries > 0"
+          class="rounded-lg bg-primary/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
+        >
+          {{ borough.eateries }} {{ pluralise('Eatery', borough.eateries) }}
+        </li>
 
-          {{ borough.description }}
-        </div>
-      </div>
+        <li
+          v-if="borough.attractions > 0"
+          class="rounded-lg bg-primary-dark/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
+        >
+          {{ borough.attractions }}
+          {{ pluralise('Attraction', borough.attractions) }}
+        </li>
 
-      <div
-        class="border border-primary-lightest bg-gradient-to-b from-primary-lightest/50 to-primary-light/50 p-4 transition group-hover:from-primary-lightest/70 group-hover:to-primary-light/70"
-      >
-        <p class="prose prose-lg max-w-none font-semibold">
-          Find {{ borough.locations }}
-          {{ pluralise('place', borough.locations) }} to eat in
-          <strong
-            class="text-primary-darkest"
-            v-text="borough.name"
-          />
-          across areas including
-          <span v-html="formattedAreas(borough.top_areas)" />.
-        </p>
-      </div>
+        <li
+          v-if="borough.hotels > 0"
+          class="rounded-lg bg-secondary/50 px-4 py-1 text-sm font-semibold whitespace-nowrap"
+        >
+          {{ borough.hotels }} {{ pluralise('Hotel', borough.hotels) }}
+        </li>
+      </ul>
     </div>
+    <p>
+      Including popular areas such as
+      <span v-html="formattedAreas(borough.top_areas)" />
+    </p>
   </Card>
 </template>

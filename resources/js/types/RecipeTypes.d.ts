@@ -5,12 +5,25 @@ export type RecipeDetailCard = HomeHoverItem & {
   square_image: string;
   description: string;
   date: string;
-  features?: { feature: string }[];
+  features: { feature: string; slug: string }[];
   nutrition: {
     servings: string;
     calories: number;
     portion_size: number;
   };
+};
+
+export type RecipeIngredientGroup = {
+  heading: string | null;
+  items: string[];
+};
+
+export type RelatedRecipeCard = {
+  title: string;
+  link: string;
+  square_image: string;
+  image: string;
+  header_image_alt_text?: string;
 };
 
 export type RecipePage = {
@@ -22,11 +35,12 @@ export type RecipePage = {
   image: string;
   square_image: string;
   published: string;
-  updated: string;
+  updated: string | null;
   author: string;
   description: string;
+  meta_description: string;
   body?: string;
-  ingredients: string;
+  ingredients: RecipeIngredientGroup[];
   method: string;
   features: { feature: string; slug: string }[];
   allergens: { allergen: string; slug: string }[];
@@ -43,12 +57,7 @@ export type RecipePage = {
   };
   featured_in?: FeaturedInCollection[];
   faqs?: ArticleFaq[];
-  related_recipes?: {
-    title: string;
-    square_image: string;
-    image: string;
-    header_image_alt_text?: string;
-  }[];
+  related_recipes?: RelatedRecipeCard[];
 };
 
 export type RecipeFeature = {

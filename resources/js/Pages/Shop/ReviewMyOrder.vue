@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
+import SubHeading from '@/Components/SubHeading.vue';
+import Info from '@/Components/Info.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import FormMultiSelect from '@/Components/Forms/FormMultiSelect.vue';
@@ -10,10 +12,14 @@ import {
 } from '@/Components/Forms/Props';
 import FormStepper from '@/Components/Forms/FormStepper.vue';
 import { StarIcon } from '@heroicons/vue/24/solid';
-import { computed } from 'vue';
+import {
+  CheckIcon,
+  MinusIcon,
+  ShoppingBagIcon,
+} from '@heroicons/vue/24/outline';
+import { computed, ref } from 'vue';
 import FormTextarea from '@/Components/Forms/FormTextarea.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { InertiaForm } from '@/types/Core';
 
 const props = defineProps<{
   id: string;
@@ -22,10 +28,13 @@ const props = defineProps<{
   products: {
     id: number;
     title: string;
-    image: string;
-    link: string;
+    variants: string[];
+    image: string | null;
+    link: string | null;
   }[];
 }>();
+
+const characterLimit = 1000;
 
 const whereHeardOptions: FormMultiSelectOption[] = [
   { value: 'facebook', label: 'Facebook' },
@@ -47,11 +56,19 @@ const stars = computed((): FormSelectOption[] => [
   { value: 5, label: 'Excellent' },
 ]);
 
+type ProductEntry = {
+  id: number;
+  review: string;
+  rating?: 1 | 2 | 3 | 4 | 5;
+};
+
 type FormData = {
   name: string;
   whereHeard: FormMultiSelectOption[];
-  products: { id: number; review: string; rating?: 1 | 2 | 3 | 4 | 5 }[];
+  products: ProductEntry[];
 };
+
+const skipped = ref<boolean[]>(props.products.map(() => false));
 
 const form = useForm<FormData>(
   'post',
@@ -65,13 +82,65 @@ const form = useForm<FormData>(
       rating: undefined,
     })),
   },
-) as InertiaForm<FormData>;
+);
+
+const isRated = (index: number): boolean =>
+  !skipped.value[index] && form.products[index].rating !== undefined;
+
+const ratedCount = computed(
+  (): number =>
+    props.products.filter((product, index) => isRated(index)).length,
+);
+
+const submittedProducts = (): ProductEntry[] =>
+  form.products.filter((product, index) => isRated(index));
+
+const productErrors = computed((): Record<string, Record<string, string>> => {
+  const errors = form.errors as unknown as {
+    products?: Record<string, Record<string, string>>;
+  };
+
+  return errors.products ?? {};
+});
+
+const errorFor = (index: number, field: string): string | undefined => {
+  const submittedIndex = submittedProducts().findIndex(
+    (product) => product.id === props.products[index].id,
+  );
+
+  if (submittedIndex === -1) {
+    return undefined;
+  }
+
+  return productErrors.value[submittedIndex]?.[field];
+};
+
+const stringError = (error: unknown): string | undefined =>
+  typeof error === 'string' ? error : undefined;
+
+const toggleSkipped = (index: number): void => {
+  skipped.value[index] = !skipped.value[index];
+
+  if (skipped.value[index]) {
+    form.products[index].rating = undefined;
+    form.products[index].review = '';
+  }
+};
+
+const markerClasses = (index: number): string => {
+  if (isRated(index)) {
+    return 'border-primary-dark bg-primary-dark text-white';
+  }
+
+  return 'border-grey-off text-grey-off';
+};
 
 const submitForm = () => {
   form
     .transform((data: FormData) => ({
       ...data,
       whereHeard: data.whereHeard.map((whereHeard) => whereHeard.value),
+      products: submittedProducts(),
     }))
     .submit();
 };
@@ -81,106 +150,139 @@ const submitForm = () => {
   <Card class="mt-3 flex flex-col space-y-4">
     <Heading>Review My Order</Heading>
 
-    <p class="prose max-w-none sm:prose-lg">
-      Thank you for your recent order, <strong v-text="id" />, I hope you
-      received your order quickly, and that it met your expectations!
+    <p class="prose max-w-none md:prose-lg">
+      Thank you for your recent order, <strong v-text="id" /> — I'd really
+      appreciate it if you could take a few moments to tell me what you thought.
+      Your feedback goes on the product pages to help other people decide, and
+      it helps me improve what I sell.
     </p>
 
-    <p class="prose max-w-none sm:prose-lg">
-      I'd really appreciate it if you could take a few moments of your time to
-      review any products you ordered, any feedback you provide will be great
-      and will help me maintain the high quality of service I try to provide,
-      and even improve my products and service.
-    </p>
+    <Info>
+      <p class="text-sm font-semibold text-grey-darkest">
+        Haven't received your order yet?
+      </p>
 
-    <p class="prose max-w-none sm:prose-lg">
-      Your reviews will also be displayed on the products page so other
-      potential buyers can see how other people find our products and their
-      experience with them!
-    </p>
-
-    <!-- if prods > 1 -->
-    <p class="prose max-w-none sm:prose-lg">
-      You can leave feedback for as many or as few of the products you ordered,
-      when your finished, just hit the
-      <strong>"Submit My Review"</strong> button at the bottom!
-    </p>
-
-    <p class="prose max-w-none font-semibold sm:prose-lg">
-      If you haven't received your order yet, please get in touch quoting your
-      order number above, and I'll endeavour to rectify this. Our review
-      invitation emails are automatically sent at least 10 days after your order
-      was dropped in the postbox (This will vary for orders outside the UK) and
-      in 99% of cases you should have received it by now, but things can
-      sometimes get delayed with Royal Mail.
-    </p>
-
-    <p class="prose max-w-none sm:prose-lg">
-      Thank you again, Alison - Coeliac Sanctuary Owner.
-    </p>
+      <p class="mt-1 text-sm text-grey-dark">
+        Please get in touch quoting your order number above and I'll do my best
+        to sort it out. My review invitations are sent at least 10 days after
+        your order was dropped in the postbox — longer for orders outside the UK
+        — so in almost every case it will have arrived by now, but things can
+        occasionally get delayed with Royal Mail.
+      </p>
+    </Info>
   </Card>
 
-  <Card class="mt-3 flex flex-col space-y-4">
-    <form
-      class="flex flex-col space-y-4"
-      @submit.prevent="submitForm()"
-    >
-      <div class="flex-1">
-        <FormInput
-          v-model="form.name"
-          name="name"
-          label="Your Name"
-          help-text="You can leave this blank if you'd prefer your feedback to be anonymous"
-          :error="form.errors.name"
-          borders
-        />
+  <form
+    class="flex flex-col space-y-4"
+    @submit.prevent="submitForm()"
+  >
+    <Card class="flex flex-col space-y-4">
+      <div
+        class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"
+      >
+        <SubHeading
+          as="h2"
+          text-size="small"
+        >
+          Your products
+        </SubHeading>
+
+        <p class="text-sm font-semibold text-grey-dark">
+          {{ ratedCount }} of {{ products.length }} reviewed
+        </p>
       </div>
 
-      <div class="flex-1">
-        <FormMultiSelect
-          v-model="form.whereHeard"
-          name="where-heard"
-          label="How did you hear about us?"
-          :options="whereHeardOptions"
-          :error="form.errors.whereHeard"
-          borders
-          allow-other
-        />
-      </div>
+      <div
+        class="mx-auto h-px w-full bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
+      />
 
-      <hr />
-
-      <h3 class="text-2xl font-semibold text-primary-dark">Products</h3>
+      <p class="text-sm text-grey-dark">
+        Review as many or as few as you like — skip anything you'd rather not
+        rate.
+      </p>
 
       <div
         v-for="(product, index) in products"
         :key="product.id"
-        class="flex-1"
+        class="flex flex-col gap-4 rounded-sm border p-4 transition-colors"
+        :class="
+          isRated(index)
+            ? 'border-primary-light/60 bg-primary-lightest/50'
+            : 'border-grey-off-light'
+        "
       >
-        <div
-          class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4"
-        >
-          <div class="shrink-0 sm:w-1/4">
+        <div class="flex gap-3 sm:gap-4">
+          <span
+            class="flex size-8 shrink-0 items-center justify-center rounded-full border-2 font-semibold transition-colors"
+            :class="markerClasses(index)"
+          >
+            <CheckIcon
+              v-if="isRated(index)"
+              class="size-5"
+            />
+
+            <MinusIcon
+              v-else-if="skipped[index]"
+              class="size-5"
+            />
+
+            <template v-else>{{ index + 1 }}</template>
+          </span>
+
+          <div
+            class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-primary-light/60 bg-primary-lightest/60 sm:size-24"
+          >
             <img
+              v-if="product.image"
               :src="product.image"
               :alt="product.title"
+              loading="lazy"
+              class="h-full w-full object-cover object-center"
+            />
+
+            <ShoppingBagIcon
+              v-else
+              class="size-8 text-primary"
             />
           </div>
 
-          <div class="flex flex-col space-y-2">
-            <h2
-              class="text-lg font-semibold text-primary-dark lg:max-xl:text-xl xl:text-2xl"
-            >
+          <div class="flex flex-1 flex-col gap-1">
+            <h3 class="text-lg font-semibold lg:text-xl">
               <a
+                v-if="product.link"
                 :href="product.link"
                 target="_blank"
+                class="hover:text-primary-dark"
                 v-text="product.title"
               />
-            </h2>
 
-            <p class="lg:text-lg">
-              On a scale of 1-5 (1 being poor, 5 being excellent) How would you
-              rate our {{ product.title }}?
+              <span
+                v-else
+                v-text="product.title"
+              />
+            </h3>
+
+            <p
+              v-if="product.variants.length"
+              class="text-sm text-grey-darker"
+              v-text="product.variants.join(', ')"
+            />
+
+            <button
+              type="button"
+              class="mt-auto self-start text-sm font-semibold text-grey-dark underline underline-offset-2 hover:text-primary-dark"
+              @click="toggleSkipped(index)"
+              v-text="
+                skipped[index] ? 'Review this product' : 'Skip this product'
+              "
+            />
+          </div>
+        </div>
+
+        <template v-if="!skipped[index]">
+          <div class="flex flex-col gap-2">
+            <p class="font-semibold text-primary-dark">
+              How would you rate it?
             </p>
 
             <FormStepper
@@ -189,39 +291,80 @@ const submitForm = () => {
               :options="stars"
               :icon="StarIcon"
               :unselected-icon="null"
-              :has-error="
-                form.errors.products
-                  ? !!form.errors.products[index].rating
-                  : false
-              "
-            />
-
-            <FormTextarea
-              v-model="form.products[index].review"
-              label="Please let us know below what you thought about this product, and how useful it was"
-              name="review"
-              :error="
-                form.errors.products
-                  ? form.errors.products[index].review
-                  : undefined
-              "
+              icon-classes="h-10 w-10"
+              :has-error="!!errorFor(index, 'rating')"
             />
           </div>
-        </div>
+
+          <div class="flex flex-col gap-1">
+            <FormTextarea
+              v-model="form.products[index].review"
+              label="Your review — optional"
+              help-text="Let me know what you thought of it, and how useful you found it."
+              name="review"
+              :rows="4"
+              :max="characterLimit"
+              :error="errorFor(index, 'review')"
+              borders
+            />
+
+            <p class="self-end text-xs text-grey-dark">
+              {{ form.products[index].review.length }} / {{ characterLimit }}
+            </p>
+          </div>
+        </template>
       </div>
+    </Card>
 
-      <hr />
+    <Card class="flex flex-col space-y-4">
+      <SubHeading
+        as="h2"
+        text-size="small"
+      >
+        About you
+      </SubHeading>
 
-      <div class="flex justify-center">
+      <div
+        class="mx-auto h-px w-full bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
+      />
+
+      <FormInput
+        v-model="form.name"
+        name="name"
+        label="Your Name"
+        help-text="You can leave this blank if you'd prefer your feedback to be anonymous"
+        :error="stringError(form.errors.name)"
+        borders
+      />
+
+      <FormMultiSelect
+        v-model="form.whereHeard"
+        name="where-heard"
+        label="How did you hear about me?"
+        :options="whereHeardOptions"
+        :error="stringError(form.errors.whereHeard)"
+        borders
+        allow-other
+      />
+
+      <div class="flex flex-col items-center gap-2 pt-2">
         <CoeliacButton
           label="Submit My Review"
           as="button"
           type="submit"
+          theme="secondary"
           size="xxl"
           :loading="form.processing"
-          :disabled="form.processing"
+          :disabled="form.processing || ratedCount === 0"
         />
+
+        <p
+          v-if="ratedCount === 0"
+          class="text-sm text-grey-dark"
+        >
+          Rate at least one product to submit your review.
+        </p>
       </div>
-    </form>
-  </Card>
+    </Card>
+  </form>
 </template>

@@ -27,8 +27,8 @@ class ShowController
 
             $group->items->groupBy('item_type')->each(function (EloquentCollection $items, string $itemType): void {
                 $relations = match ($itemType) {
-                    Eatery::class => ['item.country', 'item.county', 'item.town', 'item.area', 'item.reviews'],
-                    NationwideBranch::class => ['item.country', 'item.county', 'item.town', 'item.area', 'item.reviews', 'item.eatery'],
+                    Eatery::class => ['item.country', 'item.county', 'item.town', 'item.area', 'item.reviews', 'item.restaurants'],
+                    NationwideBranch::class => ['item.country', 'item.county', 'item.town', 'item.area', 'item.reviews', 'item.eatery', 'item.eatery.restaurants'],
                     default => ['item.media'],
                 };
 

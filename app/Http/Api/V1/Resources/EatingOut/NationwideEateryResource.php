@@ -17,7 +17,7 @@ class NationwideEateryResource extends JsonResource
         return [
             'title' => $this->name,
             'id' => $this->id,
-            'info' => $this->type_id === EateryType::ATTRACTION->value ? $this->restaurants->first()?->info : $this->info,
+            'info' => $this->display_snippet,
             'website' => $this->website,
             'facebook_url' => $this->facebook_url,
             'instagram_url' => $this->instagram_url,

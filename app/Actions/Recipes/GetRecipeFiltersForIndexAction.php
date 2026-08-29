@@ -30,6 +30,7 @@ class GetRecipeFiltersForIndexAction
         $query = $relation::query();  /** @phpstan-ignore-line */
 
         return $query
+            ->selectableAsFilter()
             ->when(count($featureFilters) > 0, fn (Builder $query) => $query->hasRecipesWithFeatures($featureFilters))
             ->when(count($mealFilters) > 0, fn (Builder $query) => $query->hasRecipesWithMeals($mealFilters))
             ->when(count($freeFromFilters) > 0, fn (Builder $query) => $query->hasRecipesWithFreeFrom($freeFromFilters))

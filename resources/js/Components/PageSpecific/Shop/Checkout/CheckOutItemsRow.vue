@@ -14,7 +14,6 @@ const props = defineProps<{ item: ShopBasketItem }>();
 const isLoading = ref(false);
 const hasError = ref(false);
 const isDeletingItem = ref(false);
-const isRemovingAddon = ref(false);
 const includeAddOn = ref(props.item.add_on?.in_basket ?? false);
 
 const alterQuantity = (action: 'increase' | 'decrease') => {
@@ -112,9 +111,9 @@ watch(includeAddOn, () => {
       width="border-8"
     />
 
-    <div class="flex space-x-3 py-3">
+    <div class="flex gap-3 py-4 sm:gap-4">
       <div
-        class="h-17 w-17 shrink-0 overflow-hidden rounded-md border border-gray-200 xs:h-20 xs:w-20 sm:h-24 sm:w-24"
+        class="size-20 shrink-0 overflow-hidden rounded-lg border border-primary-light/60 sm:size-24"
       >
         <img
           :src="item.image"
@@ -123,9 +122,9 @@ watch(includeAddOn, () => {
         />
       </div>
 
-      <div class="flex flex-1 flex-col">
+      <div class="flex flex-1 flex-col gap-2">
         <div>
-          <div class="flex justify-between text-base">
+          <div class="flex justify-between gap-3 text-base">
             <h3>
               <Link
                 :href="item.link"
@@ -138,36 +137,33 @@ watch(includeAddOn, () => {
               </Link>
             </h3>
             <p
-              class="ml-4 text-xl font-semibold"
+              class="shrink-0 text-xl font-semibold"
               v-text="item.line_price"
             />
           </div>
 
           <p
             v-if="item.description"
-            class="mt-1 text-sm text-gray-500"
+            class="mt-1 text-sm text-grey-dark"
             v-text="item.description"
           />
         </div>
 
-        <div class="flex flex-1 items-center justify-between">
-          <div class="flex flex-1 items-center space-x-1">
-            <p>Quantity</p>
-
-            <QuantitySwitcher
-              :quantity="item.quantity"
-              @alter="(mode) => alterQuantity(mode)"
-            />
-          </div>
+        <div class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2">
+          <QuantitySwitcher
+            size="lg"
+            :quantity="item.quantity"
+            @alter="(mode) => alterQuantity(mode)"
+          />
 
           <CoeliacButton
             theme="faded"
             icon-only
             :icon="TrashIcon"
-            size="xxl"
             as="button"
             type="button"
-            classes="p-1! hover:text-primary-dark !shadow-none"
+            size="lg"
+            classes="ml-auto p-1! text-grey-dark hover:text-primary-dark shadow-none!"
             :loading="isDeletingItem"
             @click="removeItem()"
           />
@@ -184,39 +180,36 @@ watch(includeAddOn, () => {
 
     <div
       v-if="item.add_on"
-      class="-my-2 flex space-x-3 pb-3"
+      class="mb-4 flex items-center gap-3 rounded-md border border-primary-light/60 bg-white p-3"
     >
-      <div
-        class="flex w-17 shrink-0 items-baseline justify-end xs:w-20 sm:w-24"
-      >
-        <FormCheckbox
-          v-model="includeAddOn"
-          name="include_add_on"
-          class="py-0!"
-          label=""
-          hide-label
-          xl
-        />
-      </div>
+      <FormCheckbox
+        v-model="includeAddOn"
+        name="include_add_on"
+        class="shrink-0 py-0!"
+        label=""
+        hide-label
+        xl
+      />
 
-      <div class="flex flex-1 flex-col">
-        <div>
-          <div class="flex justify-between text-base">
-            <div class="flex flex-col">
-              <h3 v-text="item.add_on.title" />
-              <p
-                class="text-sm"
-                v-text="item.add_on.description"
-              />
-            </div>
-
-            <p
-              class="ml-4 flex-shrink-0"
-              :class="includeAddOn ? 'text-xl font-semibold' : 'text-sm'"
-              v-text="`+${item.add_on.price}`"
-            />
-          </div>
+      <div class="flex flex-1 justify-between gap-3 text-base">
+        <div class="flex flex-col">
+          <h3
+            class="font-semibold"
+            v-text="item.add_on.title"
+          />
+          <p
+            class="text-sm text-grey-dark"
+            v-text="item.add_on.description"
+          />
         </div>
+
+        <p
+          class="shrink-0"
+          :class="
+            includeAddOn ? 'text-xl font-semibold' : 'text-sm text-grey-dark'
+          "
+          v-text="`+${item.add_on.price}`"
+        />
       </div>
     </div>
   </li>

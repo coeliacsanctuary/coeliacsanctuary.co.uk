@@ -4,12 +4,13 @@ import {
   StarRating as StarRatingType,
 } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
-import { computed } from 'vue';
+import { computed, Ref, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import StarRating from '@/Components/StarRating.vue';
-import EateryHeaderLinks from '@/Components/PageSpecific/EatingOut/Details/EateryHeaderLinks.vue';
 import Icon from '@/Components/Icon.vue';
 import Heading from '@/Components/Heading.vue';
+import ReviewImageModal from '@/Components/PageSpecific/EatingOut/Shared/ReviewImageModal.vue';
+import { pluralise } from '@/helpers';
 
 const props = defineProps<{
   eatery: DetailedEatery;
@@ -17,7 +18,9 @@ const props = defineProps<{
   name: string;
 }>();
 
-const iconName = computed((): string => {
+const displayImage: Ref<false | number> = ref(false);
+
+const icon = computed((): string => {
   if (props.eatery.type === 'Hotel / B&B') {
     return 'hotel';
   }
@@ -29,10 +32,7 @@ const iconName = computed((): string => {
   return 'eatery';
 });
 
-const averageRating = (): StarRatingType =>
-  parseFloat(props.eatery.reviews.average) as StarRatingType;
-
-const eateryName = (): string => {
+const eateryName = computed(() => {
   if (
     props.eatery.branch &&
     props.eatery.branch.name &&
@@ -42,104 +42,171 @@ const eateryName = (): string => {
   }
 
   return props.eatery.name;
-};
+});
+
+const averageRating = computed(
+  () => parseFloat(props.eatery.reviews.average) as StarRatingType,
+);
+
+const venueSummary = computed(() =>
+  [
+    props.eatery.county.id === 1 ? 'Nationwide Chain' : null,
+    props.eatery.venue_type,
+    props.eatery.cuisine && props.eatery.cuisine !== 'English'
+      ? props.eatery.cuisine
+      : null,
+  ]
+    .filter(Boolean)
+    .join(' · '),
+);
+
+/** Thumbnails shown before the rest collapse into a +N tile on the last one. */
+const stripSize = 4;
+
+const images = computed(() => props.eatery.reviews.images ?? []);
+
+const strip = computed(() => images.value.slice(0, stripSize));
+
+const remainingImages = computed(
+  () => images.value.length - strip.value.length,
+);
 </script>
 
 <template>
-  <Card class="space-y-2 lg:rounded-b-lg lg:p-8">
+  <Card class="flex flex-col space-y-3">
     <Heading
       :border="false"
+      classes="text-left"
       :back-link="{
-        href: props.previous,
-        label: props.name,
+        href: previous,
+        label: name,
         position: 'top',
         direction: 'left',
       }"
     >
-      <div class="flex items-center">
-        <div class="mr-4 w-10 text-primary">
-          <Icon
-            :name="iconName"
-            class="h-10 w-10"
-          />
-        </div>
-
-        <span
-          class="text-left"
-          v-text="eateryName()"
+      <span class="flex items-center gap-3">
+        <Icon
+          :name="icon"
+          class="size-8 shrink-0 text-primary md:size-10"
         />
-      </div>
+
+        <span v-text="eateryName" />
+      </span>
     </Heading>
 
     <div
-      v-if="eatery.reviews.user_reviews?.length > 0"
-      class="flex items-center justify-between gap-2 sm:flex-row-reverse"
+      v-if="eatery.is_fully_gf || venueSummary"
+      class="flex flex-wrap items-center gap-2"
     >
-      <span class="flex-1">
-        Rated <strong>{{ eatery.reviews.average }} stars</strong> from
-        <strong
-          >{{ eatery.reviews.user_reviews.length }} review{{
-            eatery.reviews.user_reviews.length > 1 ? 's' : ''
-          }}</strong
-        >
+      <span
+        v-if="eatery.is_fully_gf"
+        class="rounded-full border border-secondary bg-secondary/50 px-2 py-1 text-center text-sm font-semibold"
+      >
+        100% Gluten Free
       </span>
 
-      <StarRating
-        :rating="averageRating()"
-        show-all
+      <span
+        v-if="venueSummary"
+        class="text-sm font-semibold text-grey-darker md:text-base"
+        v-text="venueSummary"
       />
     </div>
 
-    <div>
-      <div class="flex flex-col text-sm font-semibold text-grey-darker">
-        <a
-          v-if="eatery.county.id === 1"
-          class="hover:text-black"
-          href="/wheretoeat/nationwide"
-        >
-          Nationwide Chain
-        </a>
-        <div>
-          <span
-            v-if="eatery.venue_type"
-            v-text="eatery.venue_type"
-          />
-          <span
-            v-if="eatery.cuisine"
-            v-text="`, ${eatery.cuisine}`"
-          />
-        </div>
-      </div>
-
-      <div
-        v-if="eatery.town.name !== 'Nationwide'"
-        class="1 flex space-x-1 text-xs font-semibold text-grey-darker"
+    <div
+      v-if="eatery.town.name !== 'Nationwide'"
+      class="flex flex-wrap gap-x-1 text-sm font-semibold text-grey-darker"
+    >
+      <Link
+        v-if="eatery.area"
+        class="transition hover:text-black"
+        :href="eatery.area.link"
       >
-        <Link
-          v-if="eatery.area"
-          :href="eatery.area.link"
-        >
-          {{ eatery.area.name }},
-        </Link>
-        <Link :href="eatery.town.link"> {{ eatery.town.name }}, </Link>
-        <Link :href="eatery.county.link">
-          {{ eatery.county.name }}
-        </Link>
-      </div>
+        {{ eatery.area.name }},
+      </Link>
 
-      <div
-        v-if="eatery.branch"
-        class="2 flex space-x-1 text-xs font-semibold text-grey-darker"
+      <Link
+        class="transition hover:text-black"
+        :href="eatery.town.link"
       >
-        <Link :href="eatery.branch.town.link">
-          {{ eatery.branch.town.name }},
-        </Link>
-        <Link :href="eatery.branch.county.link">
-          {{ eatery.branch.county.name }}
-        </Link>
-      </div>
+        {{ eatery.town.name }},
+      </Link>
+
+      <Link
+        class="transition hover:text-black"
+        :href="eatery.county.link"
+      >
+        {{ eatery.county.name }}
+      </Link>
     </div>
 
-    <EateryHeaderLinks :eatery="eatery" />
+    <div
+      v-if="eatery.branch"
+      class="flex flex-wrap gap-x-1 text-sm font-semibold text-grey-darker"
+    >
+      <Link
+        class="transition hover:text-black"
+        :href="eatery.branch.town.link"
+      >
+        {{ eatery.branch.town.name }},
+      </Link>
+
+      <Link
+        class="transition hover:text-black"
+        :href="eatery.branch.county.link"
+      >
+        {{ eatery.branch.county.name }}
+      </Link>
+    </div>
+
+    <div
+      v-if="eatery.reviews.number > 0"
+      class="flex items-center gap-2 xmd:hidden"
+    >
+      <StarRating
+        :rating="averageRating"
+        show-all
+        size="w-5 h-5"
+      />
+
+      <span class="text-sm text-grey-dark">
+        <strong>{{ eatery.reviews.average }}</strong> from
+        <strong>
+          {{ eatery.reviews.number }}
+          {{ pluralise('review', eatery.reviews.number) }}
+        </strong>
+      </span>
+    </div>
+
+    <ul
+      v-if="strip.length > 0"
+      class="flex flex-wrap gap-2"
+    >
+      <li
+        v-for="(image, index) in strip"
+        :key="image.id"
+        class="group relative size-16 cursor-pointer overflow-hidden rounded-sm md:size-20"
+        @click="displayImage = index"
+      >
+        <img
+          class="h-full w-full object-cover transition group-hover:scale-105"
+          :src="image.thumbnail"
+          :alt="`Photo of ${eateryName}`"
+          loading="lazy"
+        />
+
+        <div
+          v-if="index === strip.length - 1 && remainingImages > 0"
+          class="absolute inset-0 flex items-center justify-center bg-black/50 text-sm font-semibold text-white"
+        >
+          +{{ remainingImages }}
+        </div>
+      </li>
+    </ul>
+
+    <ReviewImageModal
+      v-model="displayImage"
+      :images="images"
+      :eatery-name="eateryName"
+    />
   </Card>
 </template>

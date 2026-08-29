@@ -10,40 +10,13 @@ return [
     'shop' => [
         'abandoned_basket_time_limit' => 2,
 
-        'product_postage_description' => <<<'TEXT'
-            <ul>
-                <li>Orders are only processed on normal UK working days.</li>
-                <li>
-                    <strong>UK</strong>
-                    <ul>
-                        <li>All orders are sent by Royal Mail First Class Post</li>
-                        <li>All orders usually dispatched within 2 working days.</li>
-                        <li>You will receive an email when your order has been dispatched.</li>
-                        <li>Royal Mail state that 90% of orders will be delivered next working day.</li>
-                    </ul>
-                </li>
-                <li>
-                    <strong>Rest of the world</strong>
-                    <ul>
-                        <li>All orders are sent by Royal Mail International Standard Post</li>
-                        <li>All orders usually dispatched within 2 working days.</li>
-                        <li>You will receive an email when your order has been dispatched.</li>
-                        <li>
-                          Please be aware that due to delays at Royal Mail your order might take longer than expected to arrive,
-                          while Royal Mail aim for a delivery timeframe of 7 - 10 days,
-                          <ul>
-                            <li>Orders to the Europe, including Republic of Ireland, could take up to three weeks to be delivered from date of dispatch.</li>
-                            <li>Orders to the USA, Canada, Australia, and New Zealand could up to four weeks to be delivered from date of dispatch.</li>
-                          </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            TEXT,
+        'popular_products_window_days' => (int) env('SHOP_POPULAR_PRODUCTS_WINDOW_DAYS', 7),
+
+        'pending_order_timeout_minutes' => (int) env('SHOP_PENDING_ORDER_TIMEOUT_MINUTES', 60),
     ],
 
     'generate_og_images' => (bool) env('GENERATE_OG_IMAGES', true),
-    'generate_country_ai_descriptions' => (bool) env('GENERATE_COUNTRY_AI_DESCRIPTIONS', true),
+    'generate_eatery_ai_descriptions' => (bool) env('GENERATE_EATERY_AI_DESCRIPTIONS', true),
 
     'cacheable' => [
         'blogs' => [
@@ -63,9 +36,13 @@ return [
             'top-rated' => 'cache.eating-out.top-rated',
             'most-rated' => 'cache.eating-out.most-rated',
             'index-counts' => 'cache.eating-out.index-counts',
+            'recently-added' => 'cache.eating-out.recently-added',
+            'guide-statistics' => 'cache.eating-out.guide-statistics',
             'stats' => 'cache.eating-out.stats',
             'top-rated-in-county' => 'coeliac.eating-out.top-rated-in-county.{county.slug}',
             'most-rated-in-county' => 'coeliac.eating-out.most-rated-in-county.{county.slug}',
+            'top-rated-in-town' => 'coeliac.eating-out.top-rated-in-county.{county.slug}.{town.slug}',
+            'most-rated-in-town' => 'coeliac.eating-out.most-rated-in-county.{county.slug}.{town.slug}',
             'site-map-counties' => 'coeliac.eating-out.site-map.counties',
             'site-map-towns' => 'coeliac.eating-out.site-map.towns',
             'site-map-areas' => 'coeliac.eating-out.site-map.areas',
@@ -77,6 +54,7 @@ return [
             'home' => 'cache.eating-out-reviews.home',
             'top-rated' => 'cache.eating-out.top-rated',
             'most-rated' => 'cache.eating-out.most-rated',
+            'guide-statistics' => 'cache.eating-out.guide-statistics',
             'stats' => 'cache.eating-out.stats',
             'top-rated-in-county' => 'coeliac.eating-out.top-rated-in-county.{eatery.county.slug}',
             'most-rated-in-county' => 'coeliac.eating-out.most-rated-in-county.{eatery.county.slug}',
@@ -86,6 +64,9 @@ return [
         ],
         'products' => [
             'site-map' => 'coeliac.shop.products.site-map',
+        ],
+        'shop-reviews' => [
+            'index' => 'coeliac.shop.reviews.index',
         ],
     ],
 ];

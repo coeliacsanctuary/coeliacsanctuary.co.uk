@@ -32,5 +32,18 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Prettier
+        run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - uses: actions/cache@v3
+        with:
+          path: .eslintcache
+          key: eslint-${{ hashFiles('.eslintrc.cjs', 'package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            eslint-${{ hashFiles('.eslintrc.cjs', 'package-lock.json') }}-
+
       - name: ESLint
         run: npm run lint

@@ -11,13 +11,13 @@ use Illuminate\Support\Stringable;
 /** @mixin Blog */
 class RelatedBlogSimpleCardViewResource extends BlogSimpleCardViewResource
 {
-    /** @return array{title: string|Stringable, link: string, image: string} */
+    /** @return array{type: string, title: string|Stringable, link: string, image: string, header_image_alt_text: string|null, date: string, related_tag: string, related_tag_url: string} */
     public function toArray(Request $request)
     {
         return [
             ...parent::toArray($request),
-            'related_tag' => $this->getAttribute('related_tag'),
-            'related_tag_url' => $this->getAttribute('related_tag_url'),
+            'related_tag' => (string) $this->getAttribute('related_tag'),
+            'related_tag_url' => (string) $this->getAttribute('related_tag_url'),
         ];
     }
 }

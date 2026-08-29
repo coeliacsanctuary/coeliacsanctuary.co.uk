@@ -8,15 +8,15 @@ use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\DataObjects\EatingOut\LatLng;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\Eatery;
-use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EaterySearchTerm;
+use App\Models\EatingOut\NationwideBranch;
 use App\Pipelines\EatingOut\GetEateries\GetSearchResultsPipeline;
 use App\Resources\EatingOut\EateryListResource;
 use App\Services\EatingOut\Filters\GetFiltersForSearchResults;
+use App\Support\Helpers;
 use App\Support\State\EatingOut\Search\LatLngState;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Response;
 
 class ShowController
@@ -44,44 +44,55 @@ class ShowController
         $jsonResource = $eateries->collect()->first();
 
         /** @var Eatery|null $firstResult */
-        $firstResult = $jsonResource?->resource?->load(['town', 'county', 'country']);
+        $firstResult = $jsonResource?->resource;
 
-        $image = match (true) {
-            $firstResult?->town?->image => $firstResult->town->image,
-            $firstResult?->county?->image => $firstResult->county->image,
-            $firstResult?->country?->image => $firstResult->country->image,
-            default => EateryCountry::query()->where('country', 'England')->firstOrFail()->image,
-        };
+        /** @var Eatery|NationwideBranch|null $firstLocation */
+        $firstLocation = $firstResult?->relationLoaded('branch') ? $firstResult->branch : $firstResult;
+
+        $firstLocation?->loadMissing(['town.county']);
+
+        $locationFound = LatLngState::$latLng !== null;
 
         /** @var ?LatLng $latLng */
         $latLng = LatLngState::$latLng;
 
-        if ( ! $latLng && $firstResult) {
-            $latLng = new LatLng($firstResult->lat, $firstResult->lng);
+        if ( ! $latLng && $firstLocation) {
+            $latLng = new LatLng($firstLocation->lat, $firstLocation->lng);
         }
 
-        $countyDetails = null;
+        $formattedTerm = Helpers::formatSearchTerm($eaterySearchTerm->term);
+        $displayTerm = $eaterySearchTerm->from_user_location ? 'your location' : $formattedTerm;
+
+        $relatedPage = null;
         $county = EateryCounty::query()->where('county', $eaterySearchTerm->term)->first();
 
         if ($county) {
-            $countyDetails = [
+            $relatedPage = [
                 'name' => $county->county,
                 'link' => $county->link(),
             ];
         }
 
+        if ( ! $relatedPage && $firstLocation?->town) {
+            $relatedPage = [
+                'name' => $firstLocation->town->town,
+                'link' => $firstLocation->town->link(),
+            ];
+        }
+
         return $inertia
-            ->title("{$eaterySearchTerm->term} - Search Results")
+            ->title("{$displayTerm} - Search Results")
             ->metaImage($getOpenGraphImageForRouteAction->handle('eatery'))
             ->doNotTrack()
             ->render('EatingOut/SearchResults', [
-                'term' => fn () => Str::apa($eaterySearchTerm->term),
+                'term' => fn () => $displayTerm,
+                'prefillTerm' => fn () => $eaterySearchTerm->from_user_location ? '' : $formattedTerm,
                 'range' => fn () => $eaterySearchTerm->range,
-                'image' => fn () => $image,
                 'eateries' => $inertia->scroll(fn () => $eateries),
-                'filters' => fn () => $getFiltersForSearchResults->usingSearchKey($eaterySearchTerm->key)->handle($filters),
+                'filters' => fn () => $getFiltersForSearchResults->handle($filters),
                 'latlng' => fn () => $latLng?->toLatLng(),
-                'county' => fn () => $countyDetails,
+                'locationFound' => fn () => $locationFound,
+                'relatedPage' => fn () => $relatedPage,
                 'sort' => [
                     'current' => $sort,
                     'options' => [

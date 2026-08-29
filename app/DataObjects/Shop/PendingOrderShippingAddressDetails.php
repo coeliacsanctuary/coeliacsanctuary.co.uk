@@ -20,6 +20,20 @@ final readonly class PendingOrderShippingAddressDetails
         //
     }
 
+    /** @return array{line_1: string, line_2: ?string, line_3: ?string, town: string, county: string, postcode: string, country: string} */
+    public function toArray(): array
+    {
+        return [
+            'line_1' => $this->line_1,
+            'line_2' => $this->line_2,
+            'line_3' => $this->line_3,
+            'town' => $this->town,
+            'county' => $this->county,
+            'postcode' => $this->postcode,
+            'country' => $this->country,
+        ];
+    }
+
     public static function createFromRequest(CompleteOrderRequest $request, string $country): static
     {
         return new self(

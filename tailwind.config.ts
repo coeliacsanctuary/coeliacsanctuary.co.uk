@@ -55,22 +55,12 @@ export default {
         rss: '#FF6600',
       },
 
-      containers: {
-        xxs: '25rem',
-        xs: '31.25rem',
-        xmd: '53.75rem',
-      },
-
       fontFamily: {
         sans: ['Raleway', 'ui-sans-serif'],
         coeliac: ['Hangyaboly', 'ui-sans-serif'],
       },
 
       maxWidth: {
-        '1/2': '50%',
-        '1/3': '33%',
-        16: '16rem',
-        18: '18rem',
         '8xl': '88rem',
       },
 
@@ -79,18 +69,10 @@ export default {
         'map-small': '21.5rem',
       },
 
-      minWidth: {
-        '1/4': '25%',
-      },
-
       screens: {
         xxs: '25rem',
         xs: '31.25rem',
         xmd: '53.75rem',
-      },
-
-      spacing: {
-        '1.75': '0.109rem',
       },
 
       typography: ({ theme }: { theme: (prop: string) => string }) => ({

@@ -145,15 +145,15 @@ const icon = computed((): string => {
                 >
                   <span
                     class="text-base"
-                    v-text="
-                      placeDetails.full_location.includes('Nationwide')
-                        ? 'Nationwide Chain'
-                        : placeDetails.full_location
-                    "
+                    v-text="placeDetails.full_location"
                   />
                   <div>
                     <span>
-                      {{ placeDetails.venue_type
+                      {{
+                        placeDetails.isNationwideBranch
+                          ? 'Nationwide Chain, '
+                          : ''
+                      }}{{ placeDetails.venue_type
                       }}{{
                         placeDetails.cuisine ? `, ${placeDetails.cuisine}` : ''
                       }}
@@ -180,31 +180,7 @@ const icon = computed((): string => {
             </div>
           </div>
 
-          <div
-            v-if="placeDetails.restaurants.length"
-            class="flex flex-col space-y-3 p-3"
-          >
-            <div
-              v-for="restaurant in placeDetails.restaurants"
-              :key="restaurant.name"
-            >
-              <h4
-                v-if="restaurant.name"
-                class="font-semibold"
-                v-text="restaurant.name"
-              />
-
-              <p
-                class="prose prose-sm max-w-none sm:max-lg:prose-base lg:prose-lg"
-                v-text="restaurant.info"
-              />
-            </div>
-          </div>
-
-          <div
-            v-else
-            class="px-3"
-          >
+          <div class="px-3">
             <p
               class="prose prose-sm max-w-none sm:max-lg:prose-base lg:prose-lg"
               v-text="placeDetails.info"

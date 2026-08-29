@@ -43,8 +43,8 @@ $hideRelatedGap = true;
                         out guide, but it is already listed in my guide.
                     </mj-text>
                     <mj-text mj-class="inner">
-                        Why don't you checkout <strong>{{ $branch->name }}</strong> on Coeliac Sanctuary and leave a review to
-                        let others know your experience eating out there?
+                        Why don't you checkout the <strong>{{ $branch->town?->town }}</strong> branch of <strong>{{ $eatery->name }}</strong> on Coeliac Sanctuary
+                        and leave a review to let others know your experience eating out there?
                     </mj-text>
                 @endif
             @else
@@ -71,31 +71,5 @@ $hideRelatedGap = true;
         </mj-column>
     </mj-section>
 
-    @if($nearbyEateries->isNotEmpty())
-        <mj-section mj-class="light-section" padding-top="30px">
-            <mj-column>
-                <mj-text mj-class="inner">
-                    <h2>Have you also visited these locations in {{ $branch ? $branch->town->town : $eatery->town->town }}? Why not leave those a review too!</h2>
-                </mj-text>
-            </mj-column>
-        </mj-section>
-
-        <mj-section mj-class="light-section">
-            @foreach($nearbyEateries as $nearbyEatery)
-                <mj-column width="100%" padding-top="20px" vertical-align="middle">
-                </mj-column>
-                <mj-column width="80%" vertical-align="middle">
-                    <mj-text mj-class="inner">
-                        <a href="{{ $nearbyEatery->absoluteLink() }}">{{ $nearbyEatery->name }}</a><br/>
-                        {{ $nearbyEatery->first_line_of_address }}
-                    </mj-text>
-                </mj-column>
-                <mj-column width="20%" vertical-align="middle">
-                    <mj-button mj-class="blue" align="center" href="{{ $nearbyEatery->absoluteLink() }}">
-                        Review?
-                    </mj-button>
-                </mj-column>
-            @endforeach
-        </mj-section>
-    @endif
+    <x-mjml-nearby-eateries :eateries="$nearbyEateries" :town="$branch ? $branch->town : $eatery->town" />
 @endsection

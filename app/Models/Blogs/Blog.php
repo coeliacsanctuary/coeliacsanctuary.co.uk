@@ -9,8 +9,10 @@ use App\Concerns\ClearsCache;
 use App\Concerns\Comments\Commentable;
 use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
+use App\Concerns\Faqs\Faqable;
 use App\Concerns\LinkableModel;
 use App\Contracts\Comments\HasComments;
+use App\Contracts\Faqs\HasFaqs;
 use App\Contracts\Search\IsSearchable;
 use App\Jobs\OpenGraphImages\CreateBlogIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
@@ -20,6 +22,7 @@ use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -31,14 +34,17 @@ use Illuminate\Support\HtmlString;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\SchemaOrg\Blog as BlogSchema;
+use Spatie\SchemaOrg\BlogPosting as BlogPostingSchema;
 use Spatie\SchemaOrg\Schema;
 
 /**
+ * @property int<1, max> $reading_time
+ *
  * @implements Collectable<$this>
  * @implements HasComments<$this>
+ * @implements HasFaqs<$this>
  */
-class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearchable, HasRichContent
+class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable, HasRichContent
 {
     /** @use CanBeCollected<$this> */
     use CanBeCollected;
@@ -50,7 +56,10 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
     use Commentable;
 
     use DisplaysDates;
+
     use DisplaysMedia;
+    /** @use Faqable<$this> */
+    use Faqable;
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
@@ -59,10 +68,6 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
 
     use LinkableModel;
     use Searchable;
-
-    protected $casts = [
-        'faqs' => 'array',
-    ];
 
     protected static function booted(): void
     {
@@ -117,6 +122,12 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
             ->format('webp');
     }
 
+    /** @return Attribute<int<1, max>, never> */
+    public function readingTime(): Attribute
+    {
+        return Attribute::get(fn (): int => Helpers::readingTime($this->body));
+    }
+
     /** @return BelongsToMany<BlogTag, $this> */
     public function tags(): BelongsToMany
     {
@@ -156,19 +167,19 @@ class Blog extends Model implements Collectable, HasComments, HasMedia, IsSearch
         $this->registerRichContent('editable_content');
     }
 
-    public function schema(): BlogSchema
+    public function schema(): BlogPostingSchema
     {
         /** @var string $url */
         $url = config('app.url');
 
-        return Schema::blog()
+        return Schema::blogPosting()
             ->author(Schema::person()->name('Alison Peters'))
             ->dateModified($this->updated_at)
             ->datePublished($this->created_at)
             ->description($this->meta_description)
             ->headline($this->title)
             ->image($this->main_image)
-            ->mainEntityOfPage(Schema::webPage()->identifier($url))
+            ->mainEntityOfPage(Schema::webPage()->identifier($this->absolute_link))
             ->publisher(
                 Schema::organization()
                     ->name('Coeliac Sanctuary')

@@ -9,18 +9,24 @@ use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysDates;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
+use App\Enums\Collections\CollectionDisplayType;
 use App\Jobs\OpenGraphImages\CreateCollectionIndexPageOpenGraphImageJob;
 use App\Models\Media;
 use App\Scopes\LiveScope;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string $description
  * @property string $meta_tags
+ * @property int $recipes_count
+ * @property int $blogs_count
+ * @property int $eateries_count
+ * @property CollectionDisplayType $display_type
  */
 class Collection extends Model implements HasMedia
 {
@@ -39,6 +45,7 @@ class Collection extends Model implements HasMedia
     protected $casts = [
         'display_on_homepage' => 'bool',
         'remove_from_homepage' => 'datetime',
+        'display_type' => CollectionDisplayType::class,
     ];
 
     protected static function booted(): void
@@ -83,6 +90,12 @@ class Collection extends Model implements HasMedia
     public function groups(): HasMany
     {
         return $this->hasMany(CollectionGroup::class)->orderBy('position');
+    }
+
+    /** @return HasManyThrough<CollectionGroupItem, CollectionGroup, $this> */
+    public function items(): HasManyThrough
+    {
+        return $this->hasManyThrough(CollectionGroupItem::class, CollectionGroup::class, 'collection_id', 'collection_group_id');
     }
 
     protected function linkRoot(): string

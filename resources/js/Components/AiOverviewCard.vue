@@ -1,10 +1,15 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { onMounted, ref, useSlots } from 'vue';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { computed, onMounted, ref, useSlots } from 'vue';
 import Loader from '@/Components/Loader.vue';
 import SealiacSeal from '@/Svg/SealiacSeal.vue';
 import axios, { AxiosResponse } from 'axios';
-import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/vue/24/solid';
+import {
+  ChevronDownIcon,
+  HandThumbDownIcon,
+  HandThumbUpIcon,
+} from '@heroicons/vue/24/solid';
 import SubHeading from '@/Components/SubHeading.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import { DataResponse } from '@/types/GenericTypes';
@@ -14,7 +19,15 @@ type OverviewResponse = {
   id: number;
 };
 
-const props = defineProps<{ endpoint: string }>();
+const props = withDefaults(
+  defineProps<{
+    endpoint: string;
+    collapsible?: boolean;
+    /** Sizes the card to sit alongside other content rather than lead the page. */
+    compact?: boolean;
+  }>(),
+  { collapsible: false, compact: false },
+);
 
 const emit = defineEmits(['onError']);
 
@@ -26,6 +39,43 @@ const overview = ref<OverviewResponse | undefined>();
 const showWhatsThisModal = ref(false);
 const isSubmittingRating = ref(false);
 const hasSubmittedRating = ref(false);
+const isExpanded = ref(false);
+
+/**
+ * The overview is only ever populated from the browser, so parsing it here is
+ * safe. Counting the top level blocks tells us whether collapsing to the first
+ * one actually hides anything worth offering a toggle for.
+ */
+const blockCount = computed(() => {
+  if (!overview.value) {
+    return 0;
+  }
+
+  return new DOMParser().parseFromString(overview.value.overview, 'text/html')
+    .body.children.length;
+});
+
+const canExpand = computed(() => props.collapsible && blockCount.value > 1);
+
+const isCollapsed = computed(() => canExpand.value && !isExpanded.value);
+
+const sealClasses = computed(() =>
+  props.compact
+    ? 'mr-3 mb-2 size-10 flex-shrink-0 md:size-12'
+    : 'mr-3 mb-2 size-12 flex-shrink-0 sm:max-xmd:size-14 md:mr-2 xmd:size-16 lg:mr-3',
+);
+
+const titleClasses = computed(() =>
+  props.compact
+    ? 'prose mt-4 max-w-none font-semibold md:prose-lg'
+    : 'prose prose-lg mt-4 max-w-none font-semibold md:prose-xl xl:prose-2xl',
+);
+
+const bodyClasses = computed(() =>
+  props.compact
+    ? 'prose max-w-none md:prose-lg'
+    : 'prose max-w-none md:prose-lg xl:prose-xl',
+);
 
 const getAiOverview = () => {
   axios
@@ -77,25 +127,43 @@ onMounted(() => {
     </template>
     <template v-else>
       <div class="flex w-full items-center border-b border-primary-light">
-        <SealiacSeal
-          class="mr-3 mb-2 size-12 flex-shrink-0 sm:max-xmd:size-14 md:mr-2 xmd:size-16 lg:mr-3"
-        />
+        <SealiacSeal :class="sealClasses" />
 
-        <SubHeading text-size="xl"> Sealiac Says... </SubHeading>
+        <SubHeading :text-size="compact ? 'base' : 'xl'">
+          Sealiac Says...
+        </SubHeading>
       </div>
       <div
         v-if="slots.title"
-        class="prose prose-lg mt-4 max-w-none font-semibold md:prose-xl xl:prose-2xl"
+        :class="titleClasses"
       >
         <slot name="title" />
       </div>
 
       <div class="mt-4 flex overflow-hidden">
         <div
-          class="prose flex max-w-none flex-col md:prose-lg xl:prose-xl"
+          :class="[
+            bodyClasses,
+            { '[&>*:not(:first-child)]:hidden': isCollapsed },
+          ]"
           v-html="overview.overview"
         />
       </div>
+
+      <CoeliacButton
+        v-if="canExpand"
+        as="button"
+        type="button"
+        theme="secondary"
+        size="lg"
+        bold
+        classes="mt-4 mb-4 self-start"
+        :label="isExpanded ? 'Read less' : 'Read more'"
+        :icon="ChevronDownIcon"
+        icon-position="right"
+        :icon-classes="isExpanded ? 'rotate-180 transition' : 'transition'"
+        @click="isExpanded = !isExpanded"
+      />
 
       <div
         class="flex justify-between border-t border-primary-light pt-4 text-sm md:text-base"

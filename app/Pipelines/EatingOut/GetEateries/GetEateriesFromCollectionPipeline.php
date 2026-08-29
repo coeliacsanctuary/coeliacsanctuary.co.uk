@@ -6,8 +6,8 @@ namespace App\Pipelines\EatingOut\GetEateries;
 
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
-use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInCollectionAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInCollectionAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesFromQueryBuilderConfigurationAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesFromQueryBuilderConfigurationAction;
 use App\Services\EatingOut\Collection\Configuration;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
@@ -20,8 +20,8 @@ class GetEateriesFromCollectionPipeline
     public function run(Configuration $configuration): Collection
     {
         $pipes = [
-            GetEateriesInCollectionAction::class,
-            GetNationwideBranchesInCollectionAction::class,
+            GetEateriesFromQueryBuilderConfigurationAction::class,
+            GetNationwideBranchesFromQueryBuilderConfigurationAction::class,
         ];
 
         $pipelineData = new GetEateriesPipelineData(

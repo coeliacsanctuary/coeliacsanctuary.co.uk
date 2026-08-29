@@ -11,7 +11,7 @@ class NovaPreviewResolver
     public function handle(string $previewable): Renderer
     {
         return match ($previewable) {
-            'blog' => new BlogRenderer(),
+            'blog' => app(BlogRenderer::class),
             default => throw new InvalidArgumentException('Unknown previewable.'),
         };
     }

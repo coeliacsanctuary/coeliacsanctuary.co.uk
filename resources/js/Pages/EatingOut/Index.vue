@@ -1,29 +1,33 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { ChevronDownIcon } from '@heroicons/vue/24/solid';
 import {
   CountyEatery as CountyEateryType,
-  EateryCountryListProp,
   EateryCountryPropItem,
+  EaterySimpleHomeResource,
+  EateryStatistics,
 } from '@/types/EateryTypes';
 import CountyEatery from '@/Components/PageSpecific/EatingOut/County/CountyEatery.vue';
 import EateryCountryCard from '@/Components/PageSpecific/EatingOut/Index/EateryCountryCard.vue';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import Heading from '@/Components/Heading.vue';
-import { ref, useTemplateRef } from 'vue';
+import { useTemplateRef } from 'vue';
 import Info from '@/Components/Info.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { Link } from '@inertiajs/vue3';
 import TopPlaces from '@/Components/PageSpecific/EatingOut/Index/TopPlaces.vue';
+import RecentlyAddedEateries from '@/Components/PageSpecific/EatingOut/Index/RecentlyAddedEateries.vue';
+import EateryGuideStatistics from '@/Components/PageSpecific/EatingOut/Index/EateryGuideStatistics.vue';
+import EaterySidebarCta from '@/Components/PageSpecific/EatingOut/Index/EaterySidebarCta.vue';
+import SidebarLayout from '@/Components/SidebarLayout.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
 defineProps<{
   countries: EateryCountryPropItem[];
   topRated: CountyEateryType[];
   mostRated: CountyEateryType[];
+  recentlyAdded: EaterySimpleHomeResource[];
+  statistics: EateryStatistics;
 }>();
-
-const guide = ref<null | { $el: Element }>(null);
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('guide'),
@@ -49,7 +53,7 @@ useJourneyTracking().logWhenVisible(
 
     <Info class="flex">
       <div class="inline-flex flex-col sm:flex-row sm:items-center">
-        <p class="prose prose-lg max-w-none md:prose-xl">
+        <p class="prose max-w-none md:prose-lg">
           Most of the eateries in our Where to Eat guide are recommended by
           people like you—those with coeliac disease or gluten intolerance who
           know great local spots. If you know a place we’ve missed, let us know
@@ -59,7 +63,7 @@ useJourneyTracking().logWhenVisible(
         <div class="flex items-center justify-center">
           <CoeliacButton
             theme="secondary"
-            size="xl"
+            size="md"
             :as="Link"
             href="/wheretoeat/recommend-a-place"
             label="Recommend a Place"
@@ -72,84 +76,102 @@ useJourneyTracking().logWhenVisible(
 
   <LocationSearch />
 
-  <Card class="mt-3 flex flex-col space-y-4">
-    <a
-      class="flex cursor-pointer flex-col items-center justify-center space-y-4 text-center text-xl"
-      @click="guide?.$el.scrollIntoView({ behavior: 'smooth' })"
-    >
-      <p>Or just browse our Eating Out guide...</p>
-      <ChevronDownIcon
-        class="h-16 w-16 animate-bounce stroke-2 md:h-24 md:w-24"
+  <SidebarLayout content-first>
+    <template #sidebar>
+      <TopPlaces
+        v-if="topRated.length"
+        :collapsible="false"
+      >
+        <template #title>
+          Top rated places to eat gluten free around the UK and Ireland
+        </template>
+
+        <template #default>
+          <div class="group grid gap-3">
+            <CountyEatery
+              v-for="eatery in topRated"
+              :key="eatery.name"
+              :eatery="eatery"
+              minimal
+            />
+          </div>
+        </template>
+      </TopPlaces>
+
+      <TopPlaces
+        v-if="mostRated.length"
+        :collapsible="false"
+      >
+        <template #title>
+          Most rated places to eat gluten free around the UK and Ireland
+        </template>
+
+        <template #default>
+          <div class="group grid gap-3">
+            <CountyEatery
+              v-for="eatery in mostRated"
+              :key="eatery.name"
+              :eatery="eatery"
+              minimal
+            />
+          </div>
+        </template>
+      </TopPlaces>
+
+      <RecentlyAddedEateries
+        v-if="recentlyAdded.length"
+        :eateries="recentlyAdded"
       />
-    </a>
-  </Card>
 
-  <template v-if="topRated.length">
-    <TopPlaces>
-      <template #title>
-        Top rated places to eat gluten free around the UK and Ireland
-      </template>
+      <EateryGuideStatistics :statistics="statistics" />
 
-      <template #default>
-        <p class="prose prose-lg mb-2 max-w-none md:prose-xl">
-          These are the top rated places to eat gluten free in our eating out
-          guide, voted by people just like you!
-        </p>
+      <EaterySidebarCta
+        icon="map"
+        title="Browse the map"
+        href="/wheretoeat/browse"
+        label="View the map"
+        identifier="WhereToEatIndexSidebar/Map"
+      >
+        Prefer to explore visually? Our interactive map plots every gluten free
+        place in our guide, so you can see what's around you wherever you are.
+      </EaterySidebarCta>
 
-        <div class="group grid gap-3 md:grid-cols-3">
-          <CountyEatery
-            v-for="eatery in topRated"
-            :key="eatery.name"
-            :eatery="eatery"
-          />
-        </div>
-      </template>
-    </TopPlaces>
-  </template>
+      <EaterySidebarCta
+        icon="dinner"
+        title="Nationwide chains"
+        href="/wheretoeat/nationwide"
+        label="View chains"
+        identifier="WhereToEatIndexSidebar/Nationwide"
+      >
+        Looking for something reliable wherever you travel? Browse the chains
+        with gluten free menus and coeliac procedures across the whole country.
+      </EaterySidebarCta>
 
-  <template v-if="mostRated.length">
-    <TopPlaces>
-      <template #title>
-        Most rated places to eat gluten free around the UK and Ireland
-      </template>
+      <div class="content_hint"></div>
+    </template>
 
-      <template #default>
-        <p class="prose prose-lg mb-2 max-w-none md:prose-xl">
-          These are the top gluten free places in our eating guide gluten that
-          have had the most people leave reviews!
-        </p>
+    <Card
+      ref="guide"
+      class="flex flex-col space-y-4"
+    >
+      <Heading> Gluten Free around the UK and Ireland </Heading>
 
-        <div class="group grid gap-3 md:grid-cols-3">
-          <CountyEatery
-            v-for="eatery in mostRated"
-            :key="eatery.name"
-            :eatery="eatery"
-          />
-        </div>
-      </template>
-    </TopPlaces>
-  </template>
+      <p class="prose prose-lg max-w-none md:prose-xl">
+        Our gluten free eating out guide is organised by country, then broken
+        down into counties and finally towns or cities, helping you easily find
+        safe places to eat wherever you are. Whether you’re planning ahead or
+        searching on the go, you can start by choosing a country below, where
+        you’ll find popular counties highlighted first or the full list
+        available to browse.
+      </p>
+    </Card>
 
-  <Card
-    ref="guide"
-    class="mt-3 flex flex-col space-y-4"
-  >
-    <Heading> Gluten Free around the UK and Ireland </Heading>
-
-    <p class="prose prose-lg max-w-none md:prose-xl">
-      Our gluten free eating out guide is organised by country, then broken down
-      into counties and finally towns or cities, helping you easily find safe
-      places to eat wherever you are. Whether you’re planning ahead or searching
-      on the go, you can start by choosing a country below, where you’ll find
-      popular counties highlighted first or the full list available to browse.
-    </p>
-  </Card>
-
-  <div class="flex flex-col space-y-3">
-    <EateryCountryCard
-      v-for="country in countries"
-      :key="country.name"
-      :country="country"
-    />
-  </div>
+    <div class="mt-3 flex flex-col space-y-3">
+      <EateryCountryCard
+        v-for="country in countries"
+        :key="country.name"
+        :country="country"
+      />
+    </div>
+  </SidebarLayout>
 </template>

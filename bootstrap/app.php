@@ -6,6 +6,7 @@ use App\Console\Commands\ApplyMassDiscountsCommand;
 use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
 use App\Console\Commands\CleanUpNovaPreviewsCommand;
 use App\Console\Commands\CloseBasketsCommand;
+use App\Console\Commands\ClosePendingOrdersCommand;
 use App\Console\Commands\PrepareShopReviewInvitationsCommand;
 use App\Console\Commands\ProcessEateryWebsiteChecksCommand;
 use App\Console\Commands\PublishItemsCommand;
@@ -119,6 +120,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command(CloseBasketsCommand::class)->everyMinute();
+        $schedule->command(ClosePendingOrdersCommand::class)->everyMinute();
         $schedule->command(SendAbandonedBasketEmailCommand::class)->everyMinute();
         $schedule->command(ApplyMassDiscountsCommand::class)->everyMinute();
         $schedule->command(PrepareShopReviewInvitationsCommand::class)->everyMinute();

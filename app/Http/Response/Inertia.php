@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Response;
 
 use App\Actions\GetPopupCtaAction;
+use App\Actions\Shop\GetActiveShopHolidayAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Actions\Shop\ResolveBasketAction;
 use App\DataObjects\BreadcrumbItemData;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Inertia\DeferProp;
 use Inertia\Inertia as BaseInertia;
-use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
+use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
 use Inertia\MergeProp;
 use Inertia\ProvidesScrollMetadata;
 use Inertia\Response;
@@ -33,6 +34,9 @@ class Inertia
 
     protected array $schema = [];
 
+    /** @var string[] */
+    protected array $canonicalParams = [];
+
     public function __construct()
     {
         BaseInertia::share('meta.baseUrl', config('app.url'));
@@ -40,11 +44,7 @@ class Inertia
         BaseInertia::share('meta.description', config('metas.description'));
         BaseInertia::share('meta.tags', config('metas.tags'));
         BaseInertia::share('meta.image', config('metas.image'));
-        BaseInertia::share('meta.currentUrl', request()->url());
-
-        if (Request::routeIs('shop.product')) {
-            BaseInertia::share('productShippingText', config('coeliac.shop.product_postage_description'));
-        }
+        BaseInertia::share('meta.currentUrl', fn (): string => $this->canonicalUrl());
 
         if ( ! Request::routeIs('shop.*')) {
             $this->loadCta();
@@ -58,7 +58,11 @@ class Inertia
             $this->includeBasket();
         }
 
-        BaseInertia::share('journey.token', fn (): ?string => LogPageViewMiddleware::getToken());
+        if (Request::routeIs('shop.*')) {
+            $this->includeShopHoliday();
+        }
+
+        BaseInertia::share('journey.token', fn (): ?string => JourneyTracker::token());
 
         $this->schema = [$this->baseSchema()];
 
@@ -67,7 +71,21 @@ class Inertia
 
     public function title(string $title): self
     {
+        $page = request()->integer('page', 1);
+
+        if ($page > 1) {
+            $title .= " - Page {$page}";
+        }
+
         BaseInertia::share('meta.title', $title);
+
+        return $this;
+    }
+
+    /** @param string[] $params */
+    public function canonicalParams(array $params): self
+    {
+        $this->canonicalParams = $params;
 
         return $this;
     }
@@ -137,9 +155,23 @@ class Inertia
         return $this;
     }
 
+    public function disableAds(): self
+    {
+        BaseInertia::share('meta.hideAds', true);
+
+        return $this;
+    }
+
     public function metaFeed(string $link): self
     {
         BaseInertia::share('meta.feed', $link);
+
+        return $this;
+    }
+
+    public function bodyClass(string $class): self
+    {
+        BaseInertia::share('meta.bodyClass', $class);
 
         return $this;
     }
@@ -157,6 +189,30 @@ class Inertia
     public function getShared(?string $key = null, mixed $default = null): mixed
     {
         return BaseInertia::getShared($key, $default);
+    }
+
+    protected function canonicalUrl(): string
+    {
+        $query = request()->query();
+        $params = [];
+
+        foreach ($this->canonicalParams as $key) {
+            if (array_key_exists($key, $query)) {
+                $params[$key] = $query[$key];
+            }
+        }
+
+        $page = request()->integer('page', 1);
+
+        if ($page > 1) {
+            $params['page'] = $page;
+        }
+
+        if ($params === []) {
+            return request()->url();
+        }
+
+        return request()->url() . '?' . http_build_query($params);
     }
 
     protected function includeBasket(): void
@@ -180,6 +236,20 @@ class Inertia
 
         BaseInertia::share('basket.items', $items);
         BaseInertia::share('basket.subtotal', Helpers::formatMoney(Money::GBP($subtotal)));
+    }
+
+    protected function includeShopHoliday(): void
+    {
+        $holiday = app(GetActiveShopHolidayAction::class)->handle();
+
+        if ( ! $holiday) {
+            return;
+        }
+
+        BaseInertia::share('shopHoliday', [
+            'id' => $holiday->id,
+            'notice' => $holiday->notice,
+        ]);
     }
 
     protected function loadCta(): void
@@ -224,6 +294,11 @@ class Inertia
             ->url($url)
             ->name($name)
             ->author(Schema::person()->name('Alison Peters'))
+            ->potentialAction(
+                Schema::searchAction()
+                    ->target(Schema::entryPoint()->urlTemplate("{$url}/search?q={search_term_string}"))
+                    ->setProperty('query-input', 'required name=search_term_string')
+            )
             ->toScript();
     }
 

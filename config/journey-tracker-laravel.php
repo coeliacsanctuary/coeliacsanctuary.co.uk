@@ -13,13 +13,16 @@ return [
         '/cs-adm/*',
         'fallback',
         '/nova*',
+        '/ads.txt',
+        '/blog/feed',
+        '/feed',
+        '/recipe/feed',
+        '/sitemap.xml',
     ],
 
     'internal-event-endpoint' => 'api/event',
 
     'heartbeat-endpoint' => 'api/heartbeat',
-
-    'host' => env('JOURNEY_TRACKER_HOST', 'https://journey-tracker.cloud'),
 
     'queue' => env('JOURNEY_TRACKER_QUEUE', null),
 ];

@@ -17,6 +17,8 @@ export type MetaProps = {
   schema?: string[];
   doNotTrack?: true;
   feed?: string;
+  hideAds?: boolean;
+  bodyClass?: string;
   alternateMetas?: {
     [T: string]: string;
   };

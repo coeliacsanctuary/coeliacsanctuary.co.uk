@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Api\Shop\TravelCardSearch;
 
-use App\Actions\Shop\TravelCardSearch\SearchTravelCardCountyOrLanguageAction;
-use App\Actions\Shop\TravelCardSearch\TravelCardSearchAiLookupAction;
-use App\Models\Shop\TravelCardSearchTerm;
+use App\Actions\Shop\TravelCardSearch\SuggestTravelCardSearchTermsAction;
 use App\Models\Shop\TravelCardSearchTermHistory;
 use Illuminate\Testing\Fluent\AssertableJson;
 use PHPUnit\Framework\Attributes\Test;
@@ -48,53 +46,39 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
-    public function itCallsTheSearchTravelCardCountryOrLanguageAction(): void
+    public function itTrimsTheSearchTermBeforeUsingIt(): void
     {
-        $this->expectAction(SearchTravelCardCountyOrLanguageAction::class, ['foo'], return: collect(['foo' => 'bar']));
-        $this->dontExpectAction(TravelCardSearchAiLookupAction::class);
+        $this->expectAction(SuggestTravelCardSearchTermsAction::class, ['foo'], return: collect());
 
-        $this->postJson(route('api.shop.travel-card-search.store'), ['term' => 'foo']);
+        $this->postJson(route('api.shop.travel-card-search.store'), ['term' => '  foo  ']);
+
+        $this->assertDatabaseHas(TravelCardSearchTermHistory::class, ['term' => 'foo']);
     }
 
     #[Test]
-    public function itCallsTheTravelCardSearchAiLookupActionIfThereAreNoResults(): void
+    public function itReturnsTheSuggestionsUnderADataKey(): void
     {
-        $this->expectAction(SearchTravelCardCountyOrLanguageAction::class, ['foo'], return: collect([]));
-        $this->expectAction(TravelCardSearchAiLookupAction::class, ['foo'], return: collect(['foo ' => 'bar']));
-
-        $this->postJson(route('api.shop.travel-card-search.store'), ['term' => 'foo']);
-    }
-
-    #[Test]
-    public function itReturnsMatchSearchTerms(): void
-    {
-        $this->build(TravelCardSearchTerm::class)
-            ->count(2)
-            ->sequence(
-                ['term' => 'foobar', 'type' => 'country'],
-                ['term' => 'barfoo', 'type' => 'language'],
-                ['term' => 'baz'],
-            )
-            ->create();
+        $this->expectAction(SuggestTravelCardSearchTermsAction::class, ['foo'], return: collect([
+            ['id' => 1, 'term' => '<strong>Foo</strong>bar', 'value' => 'Foobar', 'type' => 'country'],
+        ]));
 
         $this->postJson(route('api.shop.travel-card-search.store'), ['term' => 'foo'])
-            ->assertJson(
+            ->assertJson(fn (AssertableJson $json) => $json->has('data', 1)->has(
+                'data.0',
                 fn (AssertableJson $json) => $json
-                    ->has('data', 2)
-                    ->has(
-                        'data.0',
-                        fn (AssertableJson $json) => $json
-                            ->where('type', 'country')
-                            ->where('term', '<strong>foo</strong>bar')
-                            ->etc()
-                    )
-                    ->has(
-                        'data.1',
-                        fn (AssertableJson $json) => $json
-                            ->where('type', 'language')
-                            ->where('term', 'bar<strong>foo</strong>')
-                            ->etc()
-                    )
-            );
+                    ->where('id', 1)
+                    ->where('term', '<strong>Foo</strong>bar')
+                    ->where('value', 'Foobar')
+                    ->where('type', 'country'),
+            ));
+    }
+
+    #[Test]
+    public function itReturnsAnEmptyDataArrayWhenNothingIsSuggested(): void
+    {
+        $this->expectAction(SuggestTravelCardSearchTermsAction::class, ['foo'], return: collect());
+
+        $this->postJson(route('api.shop.travel-card-search.store'), ['term' => 'foo'])
+            ->assertJson(fn (AssertableJson $json) => $json->has('data', 0));
     }
 }

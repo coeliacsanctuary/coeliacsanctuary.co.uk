@@ -58,7 +58,7 @@ class CreateEatingOutOpenGraphImageJob implements ShouldQueue
         $base64Image = $renderOpenGraphImage->handle($action->handle($this->model)->render());
 
         /** @var OpenGraphImage $openGraphModel */
-        $openGraphModel = $this->model->openGraphImage()->firstOrCreate(); /** @phpstan-ignore-line */
+        $openGraphModel = $this->model->openGraphImage()->firstOrCreate();
         $openGraphModel->clearMediaCollection();
         $openGraphModel->addMediaFromBase64($base64Image)->usingFileName('og-image.png')->toMediaCollection();
     }

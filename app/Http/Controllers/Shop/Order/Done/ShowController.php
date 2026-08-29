@@ -67,6 +67,7 @@ class ShowController
             return $inertia
                 ->title('Order Complete!')
                 ->doNotTrack()
+                ->disableAds()
                 ->render('Shop/OrderComplete', [
                     'order' => new ShopOrderCompleteResource($pendingOrder, $paymentMethod),
                 ]);

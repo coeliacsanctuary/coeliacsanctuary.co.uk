@@ -13,8 +13,7 @@ class ShopCompleteOrderRequestFactory extends RequestFactory
         return [
             'contact' => [
                 'name' => $this->faker->name,
-                'email' => $email = $this->faker->email,
-                'email_confirmation' => $email,
+                'email' => $this->faker->email,
                 'phone' => $this->faker->phoneNumber,
                 'subscribeToNewsletter' => false,
             ],

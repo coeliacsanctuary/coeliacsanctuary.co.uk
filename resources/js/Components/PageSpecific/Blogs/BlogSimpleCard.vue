@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
-import { BlogDetailCard, BlogSimpleCard } from '@/types/BlogTypes';
+import { BlogSimpleCard } from '@/types/BlogTypes';
 
 withDefaults(defineProps<{ blog: BlogSimpleCard; hover?: boolean }>(), {
   hover: true,

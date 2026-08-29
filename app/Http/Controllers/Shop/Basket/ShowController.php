@@ -8,8 +8,10 @@ use App\Actions\Shop\ApplyDiscountCodeAction;
 use App\Actions\Shop\CalculateOrderTotalsAction;
 use App\Actions\Shop\CheckForPendingOrderAction;
 use App\Actions\Shop\CreatePaymentIntentAction;
+use App\Actions\Shop\GetBestSellingProductsForShopIndexAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Actions\Shop\ResolveBasketAction;
+use App\Exceptions\OrderAlreadyPaidException;
 use App\Http\Response\Inertia;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopPostageCountry;
@@ -17,6 +19,7 @@ use App\Resources\Shop\ShopOrderItemResource;
 use App\Support\Helpers;
 use Exception;
 use Illuminate\Encryption\Encrypter;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Inertia\Response;
@@ -32,17 +35,25 @@ class ShowController
         GetOrderItemsAction $getOrderItemsAction,
         CalculateOrderTotalsAction $calculateOrderTotalsAction,
         ApplyDiscountCodeAction $applyDiscountCodeAction,
-    ): Response {
+    ): Response|RedirectResponse {
         /** @var string $token */
         $token = $request->cookies->get('basket_token');
         $basket = $resolveBasketAction->handle($token, false);
 
         if ( ! $basket) {
-            $basket = $checkForPendingOrderAction->handle($token);
+            try {
+                $basket = $checkForPendingOrderAction->handle($token);
+            } catch (OrderAlreadyPaidException $exception) {
+                return redirect()->route('shop.basket.done', [
+                    'payment_intent' => $exception->order->payment_intent_id,
+                    'payment_intent_client_secret' => $exception->order->payment_intent_secret,
+                ]);
+            }
         }
 
         $props = [
             'has_basket' => false,
+            'popularProducts' => fn () => app(GetBestSellingProductsForShopIndexAction::class)->handle(),
         ];
 
         if ($basket && $basket->items()->count() > 0) {
@@ -109,6 +120,7 @@ class ShowController
 
         return $inertia
             ->title('Checkout')
+            ->disableAds()
             ->doNotTrack()
             ->render('Shop/Checkout', $props);
     }

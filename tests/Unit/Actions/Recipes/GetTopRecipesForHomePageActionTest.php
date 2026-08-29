@@ -54,6 +54,7 @@ class GetTopRecipesForHomePageActionTest extends TestCase
     #[Test]
     public function itReturnsTheRecipesOrderedByPageViews(): void
     {
+        $this->create(RecipeMetric::class, ['recipe_id' => 4, 'page_views' => 50]);
         $this->create(RecipeMetric::class, ['recipe_id' => 5, 'page_views' => 100]);
         $this->create(RecipeMetric::class, ['recipe_id' => 7, 'page_views' => 300]);
         $this->create(RecipeMetric::class, ['recipe_id' => 9, 'page_views' => 200]);
@@ -114,11 +115,11 @@ class GetTopRecipesForHomePageActionTest extends TestCase
 
         $this->callAction(GetTopRecipesForHomepageAction::class);
 
-        // Recipes (with metrics sum subquery) and media relation
-        $this->assertCount(2, DB::getQueryLog());
+        // Recipes (with metrics sum subquery), media and nutrition relations
+        $this->assertCount(3, DB::getQueryLog());
 
         $this->callAction(GetTopRecipesForHomepageAction::class);
 
-        $this->assertCount(2, DB::getQueryLog());
+        $this->assertCount(3, DB::getQueryLog());
     }
 }

@@ -1,19 +1,20 @@
 <script lang="ts" setup>
-import ArticleFaqCard from '@/Components/PageSpecific/Shared/ArticleFaqCard.vue';
+import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
 import Card from '@/Components/Card.vue';
-import Heading from '@/Components/Heading.vue';
-import { Link, router } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import Comments from '@/Components/PageSpecific/Shared/Comments.vue';
-import { computed, onMounted, ref, Ref } from 'vue';
+import { onMounted, ref, Ref } from 'vue';
 import { BlogPage, RelatedBlogSimpleCard } from '@/types/BlogTypes';
 import { PaginatedResponse } from '@/types/GenericTypes';
 import { Comment } from '@/types/Types';
 import RenderedString from '@/Components/RenderedString.vue';
 import { Page } from '@inertiajs/core';
 import { loadScript } from '@/helpers';
-import BlogSimpleCard from '@/Components/PageSpecific/Blogs/BlogSimpleCard.vue';
-import collect, { Collection } from 'collect.js';
 import FeaturedInCollectionCard from '@/Components/PageSpecific/Shared/FeaturedInCollectionCard.vue';
+import AuthorCard from '@/Components/PageSpecific/Shared/AuthorCard.vue';
+import ReadingProgressBar from '@/Components/ReadingProgressBar.vue';
+import BlogArticleHeader from '@/Components/PageSpecific/Blogs/BlogArticleHeader.vue';
+import BlogSidebar from '@/Components/PageSpecific/Blogs/BlogSidebar.vue';
 
 const props = defineProps<{
   blog: BlogPage;
@@ -22,6 +23,8 @@ const props = defineProps<{
 }>();
 
 const header = ref<HTMLElement>();
+
+const articleElem = ref<HTMLElement>();
 
 const allComments: Ref<PaginatedResponse<Comment>> = ref(props.comments);
 const isLoadingComments = ref(false);
@@ -79,74 +82,17 @@ const handleCommentReset = () => {
     },
   );
 };
-
-type GroupedBlogs = {
-  tag: RelatedBlogSimpleCard['related_tag'];
-  blogs: Collection<RelatedBlogSimpleCard>;
-};
-
-const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
-  return collect(props.relatedBlogs)
-    .groupBy('related_tag')
-    .map((blogs, tag: string) => ({ tag, blogs }))
-    .values()
-    .all() as GroupedBlogs[];
-});
 </script>
 
 <template>
-  <Card class="mt-3 flex flex-col space-y-4">
-    <Heading
-      :back-link="{
-        href: '/blog',
-        label: 'Back to all blogs.',
-      }"
-    >
-      {{ blog.title }}
-    </Heading>
+  <ReadingProgressBar
+    v-if="articleElem"
+    :article="articleElem"
+  />
 
-    <p
-      class="prose prose-lg max-w-none font-semibold md:prose-xl"
-      v-html="blog.description"
-    />
+  <BlogArticleHeader :blog="blog" />
 
-    <div
-      class="-m-4 -mb-4! flex flex-col space-y-4 bg-grey-light p-4 text-sm shadow-inner"
-    >
-      <div>
-        <strong>Tagged With</strong>
-        <ul class="flex flex-wrap space-x-1">
-          <li
-            v-for="tag in blog.tags"
-            :key="tag.slug"
-            class="after:content-[','] last:after:content-['']"
-          >
-            <Link
-              :href="`/blog/tags/${tag.slug}`"
-              class="font-semibold text-primary-dark hover:text-grey-dark"
-            >
-              {{ tag.tag }}
-            </Link>
-          </li>
-        </ul>
-      </div>
-
-      <div>
-        <p v-if="blog.updated">Last updated {{ blog.updated }}</p>
-        <p>Published {{ blog.published }}</p>
-      </div>
-    </div>
-  </Card>
-
-  <Card no-padding>
-    <img
-      :alt="blog.header_image_alt_text ?? blog.title"
-      :src="blog.image"
-      loading="lazy"
-    />
-  </Card>
-
-  <ArticleFaqCard
+  <FaqCard
     v-if="blog.faqs && blog.faq_display === 'top'"
     :faqs="blog.faqs"
     :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
@@ -157,38 +103,24 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
   >
     <div class="flex-1">
       <Card>
-        <div class="prose prose-lg max-w-none md:prose-xl">
+        <div
+          ref="articleElem"
+          class="article-body @container prose prose-lg max-w-none md:prose-xl"
+        >
           <RenderedString :content="blog.body" />
         </div>
       </Card>
 
-      <ArticleFaqCard
+      <FaqCard
         v-if="blog.faqs && (!blog.faq_display || blog.faq_display === 'bottom')"
         :faqs="blog.faqs"
         :title="`Frequently asked questions about ${blog.short_title || blog.title}`"
       />
 
-      <Card
+      <AuthorCard
         v-if="blog.show_author"
-        faded
-        theme="primary-light"
-      >
-        <div
-          class="justify-center md:flex md:flex-row md:space-x-2 md:space-x-4"
-        >
-          <img
-            alt="Alison Peters"
-            class="float-left mr-2 mb-2 w-1/4 max-w-[150px] rounded-full"
-            src="/images/misc/alison.png"
-          />
-          <div class="prose max-w-2xl md:prose-xl">
-            <strong>Alison Peters</strong> has been Coeliac since June 2014 and
-            launched Coeliac Sanctuary in August of that year, and since then
-            has aimed to provide a one stop shop for Coeliacs, from blogs, to
-            recipes, eating out guide and online shop.
-          </div>
-        </div>
-      </Card>
+        author="Alison Peters"
+      />
 
       <Comments
         :id="blog.id"
@@ -201,37 +133,12 @@ const groupedRelatedBlogs = computed<GroupedBlogs[]>(() => {
       />
     </div>
 
-    <aside class="flex flex-1 flex-col space-y-3 lg:max-w-[350px]">
-      <template
-        v-for="group in groupedRelatedBlogs"
-        :key="group.tag"
-      >
-        <Card class="flex w-full flex-col space-y-3">
-          <h3 class="text-lg font-semibold">
-            Other blogs tagged with {{ group.tag }}
-          </h3>
-
-          <BlogSimpleCard
-            v-for="groupBlog in group.blogs"
-            :key="groupBlog.title"
-            :blog="groupBlog"
-            :hover="false"
-          />
-
-          <Link
-            :href="group.blogs.first().related_tag_url"
-            class="mt-5 text-lg font-semibold text-primary-dark hover:text-grey-darker"
-          >
-            View more blogs tagged with {{ group.tag }}
-          </Link>
-        </Card>
-      </template>
-
+    <BlogSidebar :related-blogs="relatedBlogs">
       <FeaturedInCollectionCard
         v-if="blog.featured_in?.length"
         :collections="blog.featured_in"
         title="This blog is featured in"
       />
-    </aside>
+    </BlogSidebar>
   </div>
 </template>

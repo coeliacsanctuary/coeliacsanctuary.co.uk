@@ -80,7 +80,7 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
             <img
               :src="product.image"
               :alt="product.title"
-              class="h-17 w-17 flex-none rounded-md object-cover object-center xs:h-20 xs:w-20 sm:h-24 sm:w-24"
+              class="size-16 flex-none rounded-md object-cover object-center xs:size-20 sm:size-24"
             />
             <div class="flex-auto space-y-1">
               <h3
@@ -110,7 +110,7 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
             v-if="product.add_on && product.add_on.in_basket"
             class="-mt-2 flex space-x-2 pb-3 sm:space-x-4 sm:pb-4"
           >
-            <span class="w-17 flex-none xs:w-20 sm:w-24" />
+            <span class="w-16 flex-none xs:w-20 sm:w-24" />
 
             <div class="flex-auto space-y-1">
               <h3

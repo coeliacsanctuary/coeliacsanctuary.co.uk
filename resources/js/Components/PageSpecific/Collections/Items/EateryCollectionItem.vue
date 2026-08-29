@@ -1,46 +1,68 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
-import { EateryCollectionItem } from '@/types/CollectionTypes';
+import {
+  CollectionDisplayType,
+  EateryCollectionItem,
+} from '@/types/CollectionTypes';
 import StaticMap from '@/Components/Maps/StaticMap.vue';
 import { pluralise } from '@/helpers';
 import StarRating from '@/Components/StarRating.vue';
+import { computed } from 'vue';
 
-defineProps<{ item: EateryCollectionItem }>();
+const props = defineProps<{
+  item: EateryCollectionItem;
+  displayType: CollectionDisplayType;
+}>();
+
+const isList = computed(() => props.displayType === 'list');
 </script>
 
 <template>
   <Card
-    ref="card"
-    class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4"
+    class="group flex-1 overflow-hidden"
+    :class="{ 'md:flex-row md:gap-4': isList }"
   >
-    <div class="md:max-w-16 md:min-w-1/4">
-      <StaticMap
-        map-classes="aspect-[1200/630]"
-        :lat="item.location.lat"
-        :lng="item.location.lng"
-      />
+    <div :class="{ 'md:max-w-3xs md:min-w-1/4 md:flex-none': isList }">
+      <Link
+        :href="item.link"
+        class="mb-0 flex flex-col"
+        :class="{ '-m-4': !isList }"
+        prefetch
+      >
+        <StaticMap
+          map-classes="aspect-[1200/630]"
+          :lat="item.location.lat"
+          :lng="item.location.lng"
+          :title="item.name"
+          :can-expand="false"
+          lazy
+        />
+      </Link>
     </div>
 
-    <div class="mt-4 flex flex-1 flex-col space-y-3 md:mt-0">
+    <div
+      class="mt-4 flex flex-1 flex-col gap-3"
+      :class="{ 'md:mt-0': isList }"
+    >
       <div class="flex flex-col space-y-1">
         <Link
           :href="item.link"
           prefetch
         >
-          <h2
-            class="text-xl font-semibold text-primary-dark transition hover:text-grey-dark md:text-2xl"
+          <h3
+            class="text-xl font-semibold transition group-hover:text-primary-dark hover:text-primary-dark md:text-2xl"
             v-text="item.name"
           />
         </Link>
 
-        <h3
+        <p
           class="font-semibold md:text-lg"
           v-text="item.full_location"
         />
 
-        <span
-          class="prose max-w-none text-sm md:text-base"
+        <p
+          class="text-sm text-grey-dark"
           v-text="item.location.address"
         />
       </div>
@@ -52,32 +74,32 @@ defineProps<{ item: EateryCollectionItem }>();
         />
       </div>
 
-      <div class="flex flex-1 items-end justify-between">
+      <div
+        class="flex items-end justify-between gap-3"
+        :class="{ '-mx-4 -mb-4 bg-primary-lightest/60 p-4': !isList }"
+      >
         <div
           v-if="item.reviews.number > 0"
-          class="flex items-center justify-between sm:flex-col-reverse sm:items-start"
+          class="flex flex-col space-y-2"
         >
-          <span class="flex-1 sm:mt-2 md:text-lg">
-            Rated <strong>{{ item.reviews.average }} stars</strong> from
+          <StarRating
+            :rating="item.reviews.average"
+            show-all
+          />
+
+          <span class="text-xs text-grey-dark">
+            <strong>{{ item.reviews.average }} stars</strong> from
             <strong>
               {{ item.reviews.number }}
               {{ pluralise('review', item.reviews.number) }}
             </strong>
           </span>
-
-          <StarRating
-            :rating="item.reviews.average"
-            show-all
-          />
         </div>
 
-        <div v-else />
-
-        <div
-          class="rounded-lg bg-primary-light/50 px-4 py-2 text-sm leading-none font-semibold md:text-base"
-        >
-          <span v-text="'Eatery'" />
-        </div>
+        <span
+          class="ml-auto rounded-lg bg-primary-light/50 px-3 py-1.5 text-sm leading-none font-semibold"
+          v-text="'Eatery'"
+        />
       </div>
     </div>
   </Card>

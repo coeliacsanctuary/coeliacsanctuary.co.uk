@@ -9,7 +9,6 @@ use App\Models\EatingOut\EaterySearchTerm;
 use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToBranches;
 use App\Pipelines\EatingOut\GetEateries\Steps\AppendDistanceToEateries;
 use App\Pipelines\EatingOut\GetEateries\Steps\CheckForMissingEateriesAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\ExposeSearchResultEateryIdsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesInSearchAreaAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesInSearchArea;
 use App\Pipelines\EatingOut\GetEateries\Steps\HydrateBranchesAction;
@@ -43,7 +42,6 @@ class GetSearchResultsPipeline
             AppendDistanceToBranches::class,
             CheckForMissingEateriesAction::class,
             RelateEateriesAndBranchesAction::class,
-            ExposeSearchResultEateryIdsAction::class,
             SerialiseResultsAction::class,
         ];
 

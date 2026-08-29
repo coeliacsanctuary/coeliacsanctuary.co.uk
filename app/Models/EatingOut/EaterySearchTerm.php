@@ -12,6 +12,7 @@ class EaterySearchTerm extends Model
 {
     protected $casts = [
         'range' => 'int',
+        'from_user_location' => 'bool',
     ];
 
     protected $table = 'wheretoeat_search_terms';

@@ -16,13 +16,25 @@ use Tests\TestCase;
 class CloseBasketActionTest extends TestCase
 {
     #[Test]
-    public function itThrowsAnExceptionIfTheOrderIsntInBasketState(): void
+    public function itThrowsAnExceptionIfTheOrderIsntInBasketOrPendingState(): void
     {
         $order = $this->build(ShopOrder::class)->asExpired()->create();
 
         $this->expectException(RuntimeException::class);
 
         $this->callAction(CloseBasketAction::class, $order);
+    }
+
+    #[Test]
+    public function itUpdatesAPendingOrderToExpired(): void
+    {
+        $order = $this->build(ShopOrder::class)->asPending()->create();
+
+        $this->assertEquals(OrderState::PENDING, $order->state_id);
+
+        $this->callAction(CloseBasketAction::class, $order);
+
+        $this->assertEquals(OrderState::EXPIRED, $order->fresh()->state_id);
     }
 
     #[Test]

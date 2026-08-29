@@ -1,16 +1,25 @@
 <script setup lang="ts">
 import Modal from '@/Components/Overlays/Modal.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { CoeliacButtonProps } from '@/types/Types';
 
 type ConfirmationProps = {
   show: boolean;
   confirmButtonText?: string;
   cancelButtonText?: string;
+  confirmTheme?: CoeliacButtonProps['theme'];
+  cancelTheme?: CoeliacButtonProps['theme'];
+  buttonSize?: CoeliacButtonProps['size'];
+  size?: 'small' | 'medium' | 'relaxed' | 'large' | 'full';
 };
 
 withDefaults(defineProps<ConfirmationProps>(), {
   confirmButtonText: 'Confirm',
   cancelButtonText: 'Cancel',
+  confirmTheme: 'negative',
+  cancelTheme: 'primary',
+  buttonSize: 'sm',
+  size: 'small',
 });
 
 defineEmits(['cancel', 'confirm']);
@@ -19,8 +28,8 @@ defineEmits(['cancel', 'confirm']);
 <template>
   <Modal
     :open="show"
-    :closable="false"
-    size="small"
+    :closeable="false"
+    :size="size"
     overlay-classes="!z-[9999999999]"
   >
     <template #default>
@@ -30,16 +39,17 @@ defineEmits(['cancel', 'confirm']);
     <template #footer>
       <div class="flex items-center justify-center space-x-2">
         <CoeliacButton
+          :theme="cancelTheme"
           as="button"
-          size="sm"
+          :size="buttonSize"
           :label="cancelButtonText"
           @click="$emit('cancel')"
         />
 
         <CoeliacButton
-          theme="negative"
+          :theme="confirmTheme"
           as="button"
-          size="sm"
+          :size="buttonSize"
           :label="confirmButtonText"
           @click="$emit('confirm')"
         />

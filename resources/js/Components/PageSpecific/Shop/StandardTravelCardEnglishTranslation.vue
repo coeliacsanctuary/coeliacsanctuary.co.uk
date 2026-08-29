@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { XMarkIcon, CheckIcon } from '@heroicons/vue/24/outline';
 import Card from '@/Components/Card.vue';
+import SubHeading from '@/Components/SubHeading.vue';
 
 withDefaults(defineProps<{ product: string; canNotEat?: string }>(), {
   canNotEat: '',
@@ -8,21 +9,20 @@ withDefaults(defineProps<{ product: string; canNotEat?: string }>(), {
 </script>
 
 <template>
-  <div class="relative -mt-1 flex flex-col space-y-3 px-3">
-    <Card>
-      <p class="prose prose-lg max-w-none">
-        If you’re wondering what exactly our <strong v-text="product" /> card
-        says in English, you’re in the right place. We’ve included the full
-        English translation of the card here so you can see exactly what
-        information it shares. It’s especially useful if you’re giving this to
-        someone else or want to double-check what’s being communicated before
-        you travel.
-      </p>
-    </Card>
-  </div>
+  <Card class="space-y-4">
+    <SubHeading classes="text-primary-dark">
+      What does my travel card say?
+    </SubHeading>
 
-  <div class="px-3">
-    <div class="mx-auto my-3 max-w-2xl shadow">
+    <p class="prose max-w-none md:prose-lg">
+      If you're wondering what exactly my <strong v-text="product" /> card says
+      in English, here's the full translation so you can see precisely what
+      information it shares. It's especially handy if you're giving it to
+      someone else, or you just want to double-check what's being communicated
+      before you travel.
+    </p>
+
+    <div class="mx-auto w-full max-w-2xl shadow">
       <div class="bg-primary py-4 text-center text-2xl">
         Gluten Free Travel Card
       </div>
@@ -85,5 +85,5 @@ withDefaults(defineProps<{ product: string; canNotEat?: string }>(), {
         </p>
       </div>
     </div>
-  </div>
+  </Card>
 </template>

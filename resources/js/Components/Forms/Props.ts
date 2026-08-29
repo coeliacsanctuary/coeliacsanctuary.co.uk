@@ -17,7 +17,7 @@ export type BaseFormProps = {
 
 export type BaseFormInputProps = BaseFormProps;
 
-export const BaseFormInputPropDefaults: Partial<BaseFormInputProps> = {
+export const BaseFormInputPropDefaults = {
   id: undefined,
   required: false,
   borders: false,
@@ -25,7 +25,7 @@ export const BaseFormInputPropDefaults: Partial<BaseFormInputProps> = {
   hideErrorBackground: false,
   hasError: false,
   disabled: false,
-};
+} satisfies Partial<BaseFormInputProps>;
 
 export type InputProps = BaseFormInputProps & {
   type?: 'text' | 'number' | 'search' | 'email' | 'url' | 'phone';
@@ -41,9 +41,8 @@ export type InputProps = BaseFormInputProps & {
   errorClasses?: string;
 };
 
-export const InputPropDefaults: Partial<InputProps> = {
+const InputPropDefaultsWithoutType = {
   ...BaseFormInputPropDefaults,
-  type: 'text',
   helpText: undefined,
   hideLabel: false,
   size: 'default',
@@ -52,7 +51,12 @@ export const InputPropDefaults: Partial<InputProps> = {
   wrapperClasses: '',
   inputClasses: '',
   errorClasses: '',
-};
+} satisfies Partial<Omit<InputProps, 'type'>>;
+
+export const InputPropDefaults = {
+  ...InputPropDefaultsWithoutType,
+  type: 'text',
+} satisfies Partial<InputProps>;
 
 export type TextareaProps = BaseFormInputProps & {
   label: string;
@@ -66,7 +70,7 @@ export type TextareaProps = BaseFormInputProps & {
   shadow?: boolean;
 };
 
-export const TextareaPropsDefaults: Partial<TextareaProps> = {
+export const TextareaPropsDefaults = {
   ...BaseFormInputPropDefaults,
   rows: 5,
   max: undefined,
@@ -75,7 +79,7 @@ export const TextareaPropsDefaults: Partial<TextareaProps> = {
   helpText: undefined,
   resizable: true,
   shadow: true,
-};
+} satisfies Partial<TextareaProps>;
 
 export type CheckboxProps = BaseFormProps & {
   label: string;
@@ -103,6 +107,7 @@ export type FormSelectOption = {
 export type FormMultiSelectOption = {
   label?: string;
   value: string;
+  isOther?: boolean;
 };
 
 export type FormSelectGroup = {
@@ -118,9 +123,10 @@ export type FormSelectProps = BaseFormProps & {
   error?: string;
   size?: 'small' | 'default' | 'large';
   inputClasses?: string;
+  wrapperClasses?: string;
 };
 
-export const FormSelectPropsDefaults: Partial<FormSelectProps> = {
+export const FormSelectPropsDefaults = {
   ...BaseFormInputPropDefaults,
   label: undefined,
   placeholder: 'Select an option',
@@ -128,17 +134,18 @@ export const FormSelectPropsDefaults: Partial<FormSelectProps> = {
   error: undefined,
   size: 'default',
   inputClasses: '',
-};
+  wrapperClasses: '',
+} satisfies Partial<FormSelectProps>;
 
 export type FormMultiSelectProps = FormSelectProps & {
   options: FormMultiSelectOption[];
   allowOther: boolean;
 };
 
-export const FormMultiSelectPropsDefaults: Partial<FormMultiSelectProps> = {
-  ...(FormSelectPropsDefaults as Partial<FormMultiSelectProps>),
+export const FormMultiSelectPropsDefaults = {
+  ...FormSelectPropsDefaults,
   allowOther: false,
-};
+} satisfies Partial<FormMultiSelectProps>;
 
 export type FormStepperProps = BaseFormProps & {
   label?: string;
@@ -153,7 +160,7 @@ export type FormStepperProps = BaseFormProps & {
   defaultText?: string;
 };
 
-export const FormStepperPropsDefaults: Partial<FormStepperProps> = {
+export const FormStepperPropsDefaults = {
   ...BaseFormInputPropDefaults,
   label: undefined,
   selectedClass: 'text-secondary',
@@ -164,13 +171,14 @@ export const FormStepperPropsDefaults: Partial<FormStepperProps> = {
   unselectedIcon: CheckCircleIconOutline,
   hideOptionsText: false,
   defaultText: 'Select an option',
-};
+} satisfies Partial<FormStepperProps>;
 
 export type FormLookupProps = Omit<InputProps, 'type'> & {
   lookupEndpoint: string;
   postParameter?: string;
   resultKey?: string;
   preselectTerm?: string;
+  initialValue?: string;
   lock?: boolean;
   allowAny?: boolean;
   fallbackObject?: object;
@@ -178,20 +186,18 @@ export type FormLookupProps = Omit<InputProps, 'type'> & {
   resultsClasses?: string;
 };
 
-export const FormLookupPropDefaults: Partial<
-  FormLookupProps & { type?: string }
-> = {
-  ...InputPropDefaults,
-  type: undefined,
+export const FormLookupPropDefaults = {
+  ...InputPropDefaultsWithoutType,
   postParameter: 'term',
   resultKey: 'data',
   preselectTerm: undefined,
+  initialValue: undefined,
   lock: false,
   allowAny: false,
-  fallbackObject: {},
+  fallbackObject: () => ({}),
   fallbackKey: undefined,
   resultsClasses: '',
-};
+} satisfies Partial<FormLookupProps>;
 
 export type ProductQuantitySwitcherProps = Omit<
   InputProps,
@@ -206,24 +212,14 @@ export type ProductQuantitySwitcherProps = Omit<
   | 'size'
 >;
 
-const tempProductQuantitySwitcherPropDefaults: Partial<ProductQuantitySwitcherProps> =
-  { ...InputPropDefaults };
-
-const keysToDelete = [
-  'type',
-  'id',
-  'autocomplete',
-  'placeholder',
-  'borders',
-  'background',
-  'helpText',
-  'hideLabel',
-  'size',
-];
-
-keysToDelete.forEach((key) => {
-  delete tempProductQuantitySwitcherPropDefaults[key];
-});
-
-export const ProductQuantitySwitcherPropDefaults: Partial<ProductQuantitySwitcherProps> =
-  tempProductQuantitySwitcherPropDefaults;
+export const ProductQuantitySwitcherPropDefaults = {
+  required: false,
+  hideErrorBackground: false,
+  hasError: false,
+  disabled: false,
+  min: undefined,
+  max: undefined,
+  wrapperClasses: '',
+  inputClasses: '',
+  errorClasses: '',
+} satisfies Partial<ProductQuantitySwitcherProps>;

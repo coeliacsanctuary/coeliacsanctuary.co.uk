@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\FieldOverrides;
 
 use App\Nova\FieldOverrides\Repeaters\HasMany;
+use App\Nova\FieldOverrides\Repeaters\MorphMany;
 use Laravel\Nova\Exceptions\NovaException;
 use Laravel\Nova\Fields\ResourceRelationshipGuesser;
 
@@ -23,5 +24,10 @@ class Repeater extends \Laravel\Nova\Fields\Repeater
         }
 
         throw NovaException::missingResourceForRepeater($this->name);
+    }
+
+    public function asMorphMany(): static
+    {
+        return $this->preset(new MorphMany())->onlyOnForms();
     }
 }
