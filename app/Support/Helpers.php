@@ -7,7 +7,6 @@ namespace App\Support;
 use App\Models\Shop\ShopCategory;
 use App\Models\User;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use League\ISO3166\ISO3166;
@@ -53,11 +52,6 @@ class Helpers
         $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
 
         return (new IntlMoneyFormatter($numberFormatter, new ISOCurrencies()))->format($money);
-    }
-
-    public static function requestIsFromApp(Request $request): bool
-    {
-        return (bool) ($request->userAgent() && Str::of($request->userAgent())->contains(['CoeliacSanctuaryOntheGo', 'okhttp'], true));
     }
 
     public static function isTravelCard(int|ShopCategory|null $category): bool
