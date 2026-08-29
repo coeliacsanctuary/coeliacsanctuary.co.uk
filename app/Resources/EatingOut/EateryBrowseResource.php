@@ -23,8 +23,6 @@ class EateryBrowseResource extends JsonResource
                 'lat' => $this->lat,
                 'lng' => $this->lng,
             ],
-            'lat' => $this->lat,
-            'lng' => $this->lng,
             'color' => $this->getColour(),
             'typeId' => (int) $this->typeId,
             'venueTypeId' => $this->venueTypeId === null ? null : (int) $this->venueTypeId,
