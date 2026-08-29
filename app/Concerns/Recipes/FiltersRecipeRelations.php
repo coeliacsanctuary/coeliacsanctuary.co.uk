@@ -16,6 +16,15 @@ trait FiltersRecipeRelations
      * @param  Builder<$this>  $query
      * @return Builder<$this>
      */
+    public function scopeSelectableAsFilter(Builder $query): Builder
+    {
+        return $query;
+    }
+
+    /**
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
     public function scopeHasRecipesWithFeatures(Builder $query, array $features): Builder
     {
         /** @phpstan-ignore-next-line */

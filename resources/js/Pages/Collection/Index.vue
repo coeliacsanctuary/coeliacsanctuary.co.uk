@@ -24,7 +24,7 @@ const gotoPage = (page: number) => {
       ...(page > 1 ? { page } : undefined),
     },
     {
-      only: ['collections'],
+      only: ['collections', 'meta'],
       preserveState: true,
       onStart: () => (isLoading.value = true),
       onFinish: () => (isLoading.value = false),

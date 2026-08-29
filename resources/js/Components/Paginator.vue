@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/vue/20/solid';
+import { usePage } from '@inertiajs/vue3';
 import useScreensize from '@/composables/useScreensize';
 
 type Page = {
@@ -101,6 +102,21 @@ const pages = (): Page[] => {
     });
 };
 
+const pageUrl = (page: number): string => {
+  const [path, query] = usePage().url.split('?');
+  const params = new URLSearchParams(query ?? '');
+
+  if (page > 1) {
+    params.set('page', String(page));
+  } else {
+    params.delete('page');
+  }
+
+  const queryString = params.toString();
+
+  return queryString ? `${path}?${queryString}` : path;
+};
+
 const emits = defineEmits(['change']);
 
 const gotoPage = (page: number | 'next' | 'prev'): void => {
@@ -150,6 +166,7 @@ const classes = (page: Page): string[] => {
       <a
         v-if="canGoBack()"
         class="inline-flex cursor-pointer items-center border-t-2 border-transparent p-3 pr-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
+        :href="pageUrl(current - 1)"
         @click.prevent="gotoPage('prev')"
       >
         <ArrowLongLeftIcon class="mr-3 h-5 w-5 text-gray-400" />
@@ -162,9 +179,15 @@ const classes = (page: Page): string[] => {
         v-for="page in pages()"
         :key="page.number"
       >
-        <a
-          v-if="page.type === 'page'"
+        <span
+          v-if="page.type === 'page' && page.current"
           :class="classes(page)"
+          v-text="page.number"
+        />
+        <a
+          v-else-if="page.type === 'page'"
+          :class="classes(page)"
+          :href="pageUrl(page.number)"
           @click.prevent="gotoPage(page.number)"
           v-text="page.number"
         />
@@ -180,6 +203,7 @@ const classes = (page: Page): string[] => {
       <a
         v-if="canGoForward()"
         class="inline-flex cursor-pointer items-center border-t-2 border-transparent p-3 pl-1 font-semibold text-gray-500 hover:border-gray-300 hover:text-gray-700"
+        :href="pageUrl(current + 1)"
         @click.prevent="gotoPage('next')"
       >
         <span class="hidden sm:inline">Next</span>

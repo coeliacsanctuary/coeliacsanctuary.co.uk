@@ -34,6 +34,9 @@ class Inertia
 
     protected array $schema = [];
 
+    /** @var string[] */
+    protected array $canonicalParams = [];
+
     public function __construct()
     {
         BaseInertia::share('meta.baseUrl', config('app.url'));
@@ -41,7 +44,7 @@ class Inertia
         BaseInertia::share('meta.description', config('metas.description'));
         BaseInertia::share('meta.tags', config('metas.tags'));
         BaseInertia::share('meta.image', config('metas.image'));
-        BaseInertia::share('meta.currentUrl', request()->url());
+        BaseInertia::share('meta.currentUrl', fn (): string => $this->canonicalUrl());
 
         if ( ! Request::routeIs('shop.*')) {
             $this->loadCta();
@@ -68,7 +71,21 @@ class Inertia
 
     public function title(string $title): self
     {
+        $page = request()->integer('page', 1);
+
+        if ($page > 1) {
+            $title .= " - Page {$page}";
+        }
+
         BaseInertia::share('meta.title', $title);
+
+        return $this;
+    }
+
+    /** @param string[] $params */
+    public function canonicalParams(array $params): self
+    {
+        $this->canonicalParams = $params;
 
         return $this;
     }
@@ -172,6 +189,30 @@ class Inertia
     public function getShared(?string $key = null, mixed $default = null): mixed
     {
         return BaseInertia::getShared($key, $default);
+    }
+
+    protected function canonicalUrl(): string
+    {
+        $query = request()->query();
+        $params = [];
+
+        foreach ($this->canonicalParams as $key) {
+            if (array_key_exists($key, $query)) {
+                $params[$key] = $query[$key];
+            }
+        }
+
+        $page = request()->integer('page', 1);
+
+        if ($page > 1) {
+            $params['page'] = $page;
+        }
+
+        if ($params === []) {
+            return request()->url();
+        }
+
+        return request()->url() . '?' . http_build_query($params);
     }
 
     protected function includeBasket(): void

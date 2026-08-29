@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Recipes;
 
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\Actions\Recipes\BuildRecipeIndexDescriptionAction;
+use App\Actions\Recipes\BuildRecipeIndexTitleAction;
 use App\Actions\Recipes\GetRecipeFiltersForIndexAction;
 use App\Actions\Recipes\GetRecipesForIndexAction;
 use App\DataObjects\BreadcrumbItemData;
@@ -23,6 +25,8 @@ class IndexController
         GetRecipesForIndexAction $getRecipesForIndexAction,
         GetRecipeFiltersForIndexAction $getRecipeFiltersForIndexAction,
         GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction,
+        BuildRecipeIndexTitleAction $buildRecipeIndexTitleAction,
+        BuildRecipeIndexDescriptionAction $buildRecipeIndexDescriptionAction,
     ): Response {
         /** @var string[] $features */
         $features = $request->string('features', '')->explode(',')->filter()->toArray();
@@ -35,9 +39,14 @@ class IndexController
 
         $filters = ['features' => $features, 'meals' => $meals, 'freeFrom' => $freeFrom];
 
+        if (count($features) + count($meals) + count($freeFrom) > 1) {
+            $inertia->doNotTrack();
+        }
+
         return $inertia
-            ->title('Gluten Free Recipes')
-            ->metaDescription('Gluten free recipes from Coeliac Sanctuary — tried and tested coeliac friendly bakes, dinners, breakfasts and puddings, all using simple supermarket ingredients.')
+            ->title($buildRecipeIndexTitleAction->handle($filters))
+            ->metaDescription($buildRecipeIndexDescriptionAction->handle($filters))
+            ->canonicalParams(['features', 'meals', 'freeFrom'])
             ->metaTags(['coeliac sanctuary recipes', 'recipe index', 'recipe list', 'gluten free recipes', 'recipes', 'coeliac recipes'])
             ->metaImage($getOpenGraphImageForRouteAction->handle('recipe'))
             ->metaFeed(route('recipe.feed'))
