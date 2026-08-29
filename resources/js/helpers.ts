@@ -75,7 +75,9 @@ export const distanceInMiles = (from: LatLng, to: LatLng): number => {
 export const getTitle = (title: string | undefined): string => {
   const appName = 'Coeliac Sanctuary';
 
-  return title && title !== '' && title !== appName
-    ? `${title} - ${appName}`
-    : 'Coeliac Sanctuary - Coeliac Blog, Gluten Free Places to Eat, Reviews, and more!';
+  if (!title || title === '' || title === appName) {
+    title = 'Gluten Free Recipes, Blog & UK Places to Eat';
+  }
+
+  return `${title} - ${appName}`;
 };
