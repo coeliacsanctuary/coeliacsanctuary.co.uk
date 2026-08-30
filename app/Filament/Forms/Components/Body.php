@@ -85,6 +85,14 @@ class Body extends Textarea
 
         $attribute = $this->getName();
 
+        $listenerKey = "filament.body.save-listener.{$attribute}.{$collection}";
+
+        if (app()->bound($listenerKey)) {
+            return $this;
+        }
+
+        app()->instance($listenerKey, true);
+
         app(Dispatcher::class)->listen(RecordSaved::class, function ($record) use ($collection, $attribute): void {
             if ( ! $record instanceof HasMedia || blank($record->{$attribute})) {
                 return;

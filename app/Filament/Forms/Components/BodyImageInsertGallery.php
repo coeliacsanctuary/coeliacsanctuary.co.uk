@@ -59,7 +59,7 @@ class BodyImageInsertGallery extends Field
             ->firstWhere('file_name', $fileName)
             ?->delete();
 
-        $this->getLivewire()->fillForm();
+        $this->getLivewire()->refreshFormData(['body_images']);
     }
 
     /**

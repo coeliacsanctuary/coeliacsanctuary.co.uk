@@ -129,6 +129,7 @@ class BlogForm
                 ->schema([
                     Repeater::make('faqs')
                         ->relationship()
+                        ->defaultItems(0)
                         ->orderColumn('position')
                         ->schema([
                             TextInput::make('question')

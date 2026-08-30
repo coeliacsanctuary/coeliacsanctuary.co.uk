@@ -6,10 +6,8 @@ namespace App\Filament\Schemas\Components;
 
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 
 class ImagesSection
 {
@@ -55,28 +53,8 @@ class ImagesSection
                         if ($socialImage) {
                             $schema[] = Section::make('Social Image')
                                 ->schema([
-                                    Toggle::make('social_use_header_image')
-                                        ->visible(fn (string $operation) => $operation === 'create')
-                                        ->dehydrated(false)
-                                        ->live()
-                                        ->columnStart(1)
-                                        ->label('Use Header Image'),
-
                                     SpatieMediaLibraryFileUpload::make('social')
-                                        ->hidden(function (Get $get, string $operation) {
-                                            if ($operation !== 'create') {
-                                                return false;
-                                            }
-
-                                            return (bool) $get('social_use_header_image');
-                                        })
-                                        ->required(function (Get $get, string $operation): bool {
-                                            if ($operation !== 'create') {
-                                                return true;
-                                            }
-
-                                            return ! $get('social_use_header_image');
-                                        })
+                                        ->required()
                                         ->hiddenLabel()
                                         ->collection('social')
                                         ->columnStart(1)
