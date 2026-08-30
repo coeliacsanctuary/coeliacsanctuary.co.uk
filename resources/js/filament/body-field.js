@@ -4,6 +4,38 @@ document.addEventListener('alpine:init', () => {
         src: '',
         title: '',
         position: 'left',
+        width: '33',
+        dirty: false,
+
+        start(src, title) {
+            this.reset();
+            this.src = src;
+            this.title = title;
+            this.open = true;
+        },
+
+        reset() {
+            this.src = '';
+            this.title = '';
+            this.position = 'left';
+            this.width = '33';
+            this.dirty = false;
+        },
+
+        changePosition(position) {
+            this.position = position;
+            this.width = position === 'fullwidth' ? '100' : '33';
+            this.dirty = true;
+        },
+
+        cancel() {
+            if (this.dirty && ! confirm('Are you sure you want to cancel?')) {
+                return;
+            }
+
+            this.reset();
+            this.open = false;
+        },
     });
 
     Alpine.store('bodyImages', {
@@ -122,18 +154,13 @@ document.addEventListener('alpine:init', () => {
                 if (title) Alpine.store('bodyImages').remove(title);
             });
             window.addEventListener('body-image-open-insert', (event) => {
-                Alpine.store('bodyImageInsert').src = event.detail.src;
-                Alpine.store('bodyImageInsert').title = event.detail.title || '';
-                Alpine.store('bodyImageInsert').position = 'left';
-                Alpine.store('bodyImageInsert').open = true;
+                Alpine.store('bodyImageInsert').start(event.detail.src, event.detail.title || '');
             });
             window.addEventListener('body-image-do-insert', () => {
-                const { src, title, position } = Alpine.store('bodyImageInsert');
-                this.insertAtCursor(`<article-image src="${src}" title="${title}" position="${position}"></article-image>`);
+                const { src, title, position, width } = Alpine.store('bodyImageInsert');
+                this.insertAtCursor(`<article-image src="${src}" title="${title}" position="${position}" width="${width}"></article-image>`);
                 Alpine.store('bodyImageInsert').open = false;
-                Alpine.store('bodyImageInsert').src = '';
-                Alpine.store('bodyImageInsert').title = '';
-                Alpine.store('bodyImageInsert').position = 'left';
+                Alpine.store('bodyImageInsert').reset();
                 window.dispatchEvent(new CustomEvent('close-modal', { detail: { id: imagesModalId } }));
             });
             window.addEventListener('body-image-do-delete', (event) => {

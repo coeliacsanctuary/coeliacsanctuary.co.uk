@@ -89,10 +89,31 @@
             <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Position</label>
 
             <x-filament::input.wrapper>
-                <x-filament::input.select x-model="$store.bodyImageInsert.position">
+                <x-filament::input.select
+                    x-bind:value="$store.bodyImageInsert.position"
+                    x-on:change="$store.bodyImageInsert.changePosition($event.target.value)"
+                >
                     <option value="left">Left Align</option>
                     <option value="right">Right Align</option>
                     <option value="fullwidth">Full Width</option>
+                </x-filament::input.select>
+            </x-filament::input.wrapper>
+        </div>
+
+        <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Width</label>
+
+            <x-filament::input.wrapper>
+                <x-filament::input.select
+                    x-model="$store.bodyImageInsert.width"
+                    x-on:change="$store.bodyImageInsert.dirty = true"
+                >
+                    <option value="25">25</option>
+                    <option value="33">33</option>
+                    <option value="50">50</option>
+                    <option value="66">66</option>
+                    <option value="75">75</option>
+                    <option value="100">100</option>
                 </x-filament::input.select>
             </x-filament::input.wrapper>
         </div>
@@ -104,6 +125,7 @@
                 <x-filament::input
                     type="text"
                     x-model="$store.bodyImageInsert.title"
+                    x-on:change="$store.bodyImageInsert.dirty = true"
                     placeholder="Optional caption…"
                 />
             </x-filament::input.wrapper>
@@ -114,7 +136,7 @@
                 type="button"
                 color="gray"
                 size="sm"
-                x-on:click="$store.bodyImageInsert.open = false"
+                x-on:click="$store.bodyImageInsert.cancel()"
             >
                 Back
             </x-filament::button>
