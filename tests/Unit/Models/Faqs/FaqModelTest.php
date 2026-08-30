@@ -19,4 +19,40 @@ class FaqModelTest extends TestCase
 
         $this->assertInstanceOf(MorphTo::class, $faq->faqable());
     }
+
+    #[Test]
+    public function itReturnsFaqsInPositionOrderRatherThanIdOrder(): void
+    {
+        /** @var Blog $blog */
+        $blog = $this->create(Blog::class);
+
+        $this->build(Faq::class)->on($blog)->create(['question' => 'Third', 'position' => 2]);
+        $this->build(Faq::class)->on($blog)->create(['question' => 'First', 'position' => 0]);
+        $this->build(Faq::class)->on($blog)->create(['question' => 'Second', 'position' => 1]);
+
+        $this->assertSame(
+            ['First', 'Second', 'Third'],
+            $blog->faqs()->pluck('question')->all()
+        );
+    }
+
+    /**
+     * Nova's repeater deletes and recreates every FAQ without setting a position, so
+     * they all land on the default. Insertion order has to survive that.
+     */
+    #[Test]
+    public function itFallsBackToIdOrderWhenPositionsAreEqual(): void
+    {
+        /** @var Blog $blog */
+        $blog = $this->create(Blog::class);
+
+        $this->build(Faq::class)->on($blog)->create(['question' => 'First', 'position' => 0]);
+        $this->build(Faq::class)->on($blog)->create(['question' => 'Second', 'position' => 0]);
+        $this->build(Faq::class)->on($blog)->create(['question' => 'Third', 'position' => 0]);
+
+        $this->assertSame(
+            ['First', 'Second', 'Third'],
+            $blog->faqs()->pluck('question')->all()
+        );
+    }
 }

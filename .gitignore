@@ -30,3 +30,5 @@ yarn-error.log
 /boost.json
 /.ai/mcp/
 google-auth.json
+/public/css/filament
+/public/js/filament

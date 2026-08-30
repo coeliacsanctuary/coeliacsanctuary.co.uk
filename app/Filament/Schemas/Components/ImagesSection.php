@@ -29,12 +29,14 @@ class ImagesSection
                                 ->schema([
                                     SpatieMediaLibraryFileUpload::make('header')
                                         ->hiddenLabel()
+                                        ->required()
                                         ->collection('primary')
                                         ->imagePreviewHeight('176px'),
 
                                     ...($headerImageAltText ? [
                                         TextInput::make('header_image_alt_text')
                                             ->label('Alt Text')
+                                            ->helperText('Descriptive alt text for the header image. Defaults to the title if left blank.')
                                             ->nullable(),
                                     ] : []),
                                 ]);
@@ -67,6 +69,13 @@ class ImagesSection
                                             }
 
                                             return (bool) $get('social_use_header_image');
+                                        })
+                                        ->required(function (Get $get, string $operation): bool {
+                                            if ($operation !== 'create') {
+                                                return true;
+                                            }
+
+                                            return ! $get('social_use_header_image');
                                         })
                                         ->hiddenLabel()
                                         ->collection('social')

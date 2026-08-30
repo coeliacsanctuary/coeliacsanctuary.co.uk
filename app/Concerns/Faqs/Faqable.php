@@ -18,6 +18,8 @@ trait Faqable
     /** @return MorphMany<Faq, T> */
     public function faqs(): MorphMany
     {
-        return $this->morphMany(Faq::class, 'faqable');
+        return $this->morphMany(Faq::class, 'faqable')
+            ->orderBy('position')
+            ->orderBy('id');
     }
 }

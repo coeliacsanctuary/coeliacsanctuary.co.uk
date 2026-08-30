@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Schemas\Components;
 
 use App\Filament\Forms\Components\StatusField;
+use Carbon\Carbon;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -18,6 +19,7 @@ class VisibilitySection
                 StatusField::make(),
 
                 DateTimePicker::make('publish_at')
+                    ->default(fn () => Carbon::now()->addDay())
                     ->visible(fn (Get $get): bool => $get('status') === 'scheduled')
                     ->required(fn (Get $get): bool => $get('status') === 'scheduled'),
             ]);
