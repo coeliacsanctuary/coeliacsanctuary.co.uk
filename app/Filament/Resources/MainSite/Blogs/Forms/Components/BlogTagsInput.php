@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Forms\Components;
+namespace App\Filament\Resources\MainSite\Blogs\Forms\Components;
 
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
@@ -44,11 +44,7 @@ class BlogTagsInput extends TagsInput
         }
 
         $tags = collect($state)
-            ->map(
-                fn (string $tagName) => BlogTag::query()
-                    ->where('tag', $tagName)
-                    ->firstOrCreate()
-            )
+            ->map(fn (string $tagName) => BlogTag::query()->firstOrCreate(['tag' => $tagName]))
             ->flatten();
 
         $record->tags()->sync($tags->pluck('id'));

@@ -13,6 +13,10 @@ class StatusTransformer
             default => false,
         };
 
+        if ($data['status'] !== 'Scheduled') {
+            $data['publish_at'] = null;
+        }
+
         unset($data['status']);
 
         return $data;

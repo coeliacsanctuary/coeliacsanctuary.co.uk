@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Actions;
+namespace App\Filament\Resources\MainSite\Blogs\Actions;
 
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;

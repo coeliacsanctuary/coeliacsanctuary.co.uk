@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Blogs\Schemas;
 
-use App\Filament\Actions\BlogPreviewAction;
 use App\Filament\Forms\Components\Body;
-use App\Filament\Forms\Components\BlogTagsInput;
+use App\Filament\Resources\MainSite\Blogs\Actions\BlogPreviewAction;
+use App\Filament\Resources\MainSite\Blogs\Forms\Components\BlogTagsInput;
 use App\Filament\Schemas\Components\ImagesSection;
 use App\Filament\Schemas\Components\MetasSection;
 use App\Filament\Schemas\Components\VisibilitySection;
@@ -45,7 +45,7 @@ class BlogForm
 
                                     $set('slug', Str::slug((string) $state));
                                 })
-                                ->live(),
+                                ->live(onBlur: true),
 
                             TextInput::make('short_title')
                                 ->maxLength(100)
@@ -57,11 +57,18 @@ class BlogForm
                                 ->maxLength(200)
                                 ->regex('/^[a-z0-9-]+$/')
                                 ->disabledOn('edit')
-                                ->unique(ignoreRecord: true),
+                                ->unique(),
 
                             BlogTagsInput::make('tags')
                                 ->required()
                                 ->live()
+                                ->afterStateUpdated(fn (Get $get, Set $set) => $set(
+                                    'primary_tag_id',
+                                    BlogTag::query()
+                                        ->whereIn('tag', $get('tags') ?? [])
+                                        ->whereKey($get('primary_tag_id'))
+                                        ->value('id'),
+                                ))
                                 ->suggestions(
                                     fn () => BlogTag::query()
                                         ->pluck('tag')
@@ -124,9 +131,12 @@ class BlogForm
                         ->relationship()
                         ->orderColumn('position')
                         ->schema([
-                            TextInput::make('question'),
+                            TextInput::make('question')
+                                ->required(),
 
-                            Textarea::make('answer')->rows(3),
+                            Textarea::make('answer')
+                                ->rows(3)
+                                ->required(),
                         ])
                         ->columnSpanFull()
                         ->addActionLabel('Add FAQ')
