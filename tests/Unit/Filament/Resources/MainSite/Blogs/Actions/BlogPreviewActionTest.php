@@ -71,7 +71,7 @@ class BlogPreviewActionTest extends TestCase
         $preview = NovaPreview::query()->firstOrFail();
 
         $this->assertSame('blog', $preview->model);
-        $this->assertSame(36, strlen($preview->token));
+        $this->assertSame(36, mb_strlen($preview->token));
     }
 
     #[Test]

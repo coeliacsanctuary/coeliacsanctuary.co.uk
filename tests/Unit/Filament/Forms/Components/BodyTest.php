@@ -165,7 +165,7 @@ class BodyTest extends TestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertSame(1, substr_count($blog->refresh()->body, $media->getUrl()));
+        $this->assertSame(1, mb_substr_count($blog->refresh()->body, $media->getUrl()));
     }
 
     #[Test]
