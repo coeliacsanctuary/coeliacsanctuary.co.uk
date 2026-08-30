@@ -45,6 +45,7 @@ class BlogResource extends BaseResource
             'index' => Pages\ListBlogs::route('/'),
             'create' => Pages\CreateBlog::route('/create'),
             'edit' => Pages\EditBlog::route('/{record}/edit'),
+            'metrics' => Pages\BlogMetrics::route('/{record}/metrics'),
         ];
     }
 

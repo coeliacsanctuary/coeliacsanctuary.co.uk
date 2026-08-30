@@ -38,6 +38,11 @@ class BlogsTable
                     ->url(fn (Blog $record) => $record->absolute_link)
                     ->openUrlInNewTab(),
 
+                Action::make('metrics')
+                    ->icon(Heroicon::ChartBar)
+                    ->label('Metrics')
+                    ->url(fn (Blog $record) => BlogResource::getUrl('metrics', ['record' => $record])),
+
                 EditAction::make(),
             ]);
     }
