@@ -69,7 +69,7 @@ class RelatedRecipesSearch extends Field
     #[Renderless]
     public function searchRecipes(string $term): array
     {
-        $term = trim($term);
+        $term = mb_trim($term);
 
         if ($term === '') {
             return [];
