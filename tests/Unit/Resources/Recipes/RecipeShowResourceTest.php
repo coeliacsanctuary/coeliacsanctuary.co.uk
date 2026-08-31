@@ -33,6 +33,25 @@ class RecipeShowResourceTest extends TestCase
     }
 
     #[Test]
+    public function itReturnsTheRelatedRecipesInTheirStoredOrder(): void
+    {
+        $first = $this->create(Recipe::class, ['title' => 'Gluten Free Scones']);
+        $second = $this->create(Recipe::class, ['title' => 'Gluten Free Flapjacks']);
+
+        $this->recipe->relatedRecipes()->attach([
+            $second->id => ['position' => 0],
+            $first->id => ['position' => 1],
+        ]);
+
+        $related = (new RecipeShowResource($this->recipe->fresh()))->toArray(new Request())['related_recipes'];
+
+        $this->assertSame(
+            ['Gluten Free Flapjacks', 'Gluten Free Scones'],
+            collect($related)->map(fn ($recipe) => $recipe->resource->title)->all(),
+        );
+    }
+
+    #[Test]
     public function itGroupsUngroupedIngredientsUnderNoHeading(): void
     {
         $ingredients = $this->ingredientsFor("400g white chocolate\n25g butter\n1tsp peppermint extract");

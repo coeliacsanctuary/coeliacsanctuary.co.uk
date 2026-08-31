@@ -45,6 +45,7 @@ class RecipeResource extends BaseResource
             'index' => Pages\ListRecipes::route('/'),
             'create' => Pages\CreateRecipe::route('/create'),
             'edit' => Pages\EditRecipe::route('/{record}/edit'),
+            'metrics' => Pages\RecipeMetrics::route('/{record}/metrics'),
         ];
     }
 

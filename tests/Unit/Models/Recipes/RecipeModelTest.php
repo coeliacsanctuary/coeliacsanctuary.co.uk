@@ -64,6 +64,43 @@ class RecipeModelTest extends TestCase
     }
 
     #[Test]
+    public function itReturnsRelatedRecipesInTheirStoredOrder(): void
+    {
+        $first = $this->create(Recipe::class);
+        $second = $this->create(Recipe::class);
+
+        $this->recipe->relatedRecipes()->attach([
+            $second->id => ['position' => 0],
+            $first->id => ['position' => 1],
+        ]);
+
+        $this->assertSame(
+            [$second->id, $first->id],
+            $this->recipe->relatedRecipes()->pluck('recipes.id')->all(),
+        );
+    }
+
+    #[Test]
+    public function itReordersRelatedRecipesWhenTheirPositionsChange(): void
+    {
+        $first = $this->create(Recipe::class);
+        $second = $this->create(Recipe::class);
+
+        $this->recipe->relatedRecipes()->attach([
+            $first->id => ['position' => 0],
+            $second->id => ['position' => 1],
+        ]);
+
+        $this->recipe->relatedRecipes()->updateExistingPivot($first->id, ['position' => 1]);
+        $this->recipe->relatedRecipes()->updateExistingPivot($second->id, ['position' => 0]);
+
+        $this->assertSame(
+            [$second->id, $first->id],
+            $this->recipe->relatedRecipes()->pluck('recipes.id')->all(),
+        );
+    }
+
+    #[Test]
     public function itDispatchesTheCreateOpenGraphImageJobWhenSaved(): void
     {
         config()->set('coeliac.generate_og_images', true);

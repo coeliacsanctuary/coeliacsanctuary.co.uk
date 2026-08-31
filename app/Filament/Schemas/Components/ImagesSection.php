@@ -45,6 +45,7 @@ class ImagesSection
                                 ->schema([
                                     SpatieMediaLibraryFileUpload::make('square')
                                         ->hiddenLabel()
+                                        ->required()
                                         ->collection('square')
                                         ->imagePreviewHeight('176px'),
                                 ]);

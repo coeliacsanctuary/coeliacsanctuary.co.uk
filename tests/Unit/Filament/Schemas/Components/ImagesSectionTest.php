@@ -56,12 +56,20 @@ class ImagesSectionTest extends TestCase
     }
 
     #[Test]
-    public function itCanAddAnOptionalSquareImage(): void
+    public function itCanAddARequiredSquareImage(): void
     {
         $field = $this->mountedComponent('square', [ImagesSection::make(squareImage: true)]);
 
         $this->assertSame('square', $field->getCollection());
-        $this->assertFalse($field->isRequired());
+        $this->assertTrue($field->isRequired());
+    }
+
+    #[Test]
+    public function theSquareImageIsRequiredWhenEditingTheSameAsWhenCreating(): void
+    {
+        $this->assertTrue(
+            $this->mountedComponent('square', [ImagesSection::make(squareImage: true)], 'edit')->isRequired()
+        );
     }
 
     #[Test]

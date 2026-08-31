@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Filament\Resources\MainSite\Recipes\Schemas;
 
 use App\Filament\Forms\Components\Body;
+use App\Filament\Forms\Components\RelatedRecipesSearch;
+use App\Filament\Schemas\Components\FaqsSection;
 use App\Filament\Schemas\Components\ImagesSection;
 use App\Filament\Schemas\Components\MetasSection;
 use App\Filament\Schemas\Components\VisibilitySection;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -20,7 +20,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class RecipeForm
@@ -45,20 +44,30 @@ class RecipeForm
 
                                     $set('slug', Str::slug((string) $state));
                                 })
-                                ->live(),
+                                ->live(onBlur: true),
 
                             TextInput::make('short_title')
                                 ->maxLength(100)
+                                ->helperText('Optional, used with FAQs')
                                 ->nullable(),
 
                             TextInput::make('slug')
                                 ->required()
                                 ->maxLength(200)
-                                ->regex('/^[a-z0-9-]+$/'),
+                                ->regex('/^[a-z0-9-]+$/')
+                                ->disabledOn('edit')
+                                ->unique(),
 
                             TextInput::make('search_tags')->required(),
 
-                            TextInput::make('author')->default('Alison Peters')->required(),
+                            TextInput::make('author')
+                                ->required()
+                                ->maxLength(255),
+
+                            Textarea::make('description')
+                                ->required()
+                                ->rows(4)
+                                ->columnSpanFull(),
                         ]),
 
                     VisibilitySection::make()->columnSpan(1),
@@ -74,6 +83,7 @@ class RecipeForm
                     Body::make('body')
                         ->nullable()
                         ->validHtml()
+                        ->images()
                         ->columnSpanFull(),
 
                     Grid::make()
@@ -116,6 +126,13 @@ class RecipeForm
                                     ->maxLength(50),
                             ]),
                         ]),
+
+                    TextInput::make('df_to_not_df')
+                        ->label('DF to not DF')
+                        ->nullable()
+                        ->maxLength(255)
+                        ->columnSpanFull()
+                        ->visible(fn (?Recipe $record): bool => filled($record?->df_to_not_df)),
                 ]),
 
             Section::make('Nutritional Information')
@@ -161,6 +178,7 @@ class RecipeForm
                 ]),
 
             Section::make('Allergens')
+                ->description('Tick the allergens that apply to this recipe.')
                 ->columnSpanFull()
                 ->schema([
                     CheckboxList::make('allergens')
@@ -182,16 +200,14 @@ class RecipeForm
                                 ->values()
                                 ->toArray();
                         })
-                        ->mutateDehydratedStateUsing(function (?array $state) {
-                            $all = RecipeAllergen::pluck('id')->toArray();
-
-                            $checked = collect($state ?? []);       // boxes user left checked
-                            $unchecked = collect($all)->diff($checked); // boxes left unchecked
-
-                            return $unchecked->values()->toArray();
-                        })
                         ->saveRelationshipsUsing(function (Recipe $record, array $state): void {
-                            $record->allergens()->syncWithoutDetaching($state);
+                            $record->allergens()->sync(
+                                RecipeAllergen::query()
+                                    ->pluck('id')
+                                    ->diff($state)
+                                    ->values()
+                                    ->all()
+                            );
                         }),
                 ]),
 
@@ -203,8 +219,7 @@ class RecipeForm
                         ->relationship('meals', 'meal')
                         ->label('Meals')
                         ->columns(5)
-                        ->columnSpanFull()
-                        ->bulkToggleable(),
+                        ->columnSpanFull(),
                 ]),
 
             Section::make('Features')
@@ -215,43 +230,18 @@ class RecipeForm
                         ->relationship('features', 'feature')
                         ->label('Features')
                         ->columns(5)
-                        ->columnSpanFull()
-                        ->bulkToggleable(),
+                        ->columnSpanFull(),
                 ]),
 
-            Section::make('FAQs')
-                ->columnSpanFull()
-                ->collapsible()
-                ->collapsed(fn (string $operation): bool => $operation !== 'create')
-                ->schema([
-                    Repeater::make('faqs')
-                        ->schema([
-                            TextInput::make('question')->required(),
-
-                            Textarea::make('answer')->required()->rows(3),
-                        ])
-                        ->columnSpanFull()
-                        ->addActionLabel('Add FAQ')
-                        ->itemLabel(fn (array $state): ?string => $state['question'] ?? null)
-                        ->collapsible(),
-                ]),
+            FaqsSection::make()->columnSpanFull(),
 
             Section::make('Related Recipes')
                 ->columnSpanFull()
                 ->collapsible()
                 ->collapsed(fn (string $operation): bool => $operation !== 'create')
                 ->schema([
-                    Select::make('relatedRecipes')
-                        ->label('Related Recipes')
-                        ->relationship(
-                            name: 'relatedRecipes',
-                            titleAttribute: 'title',
-                            modifyQueryUsing: fn (Builder $query, ?Recipe $record) => $record
-                                ? $query->whereKeyNot($record->id)
-                                : $query,
-                        )
-                        ->multiple()
-                        ->searchable()
+                    RelatedRecipesSearch::make('relatedRecipes')
+                        ->hiddenLabel()
                         ->columnSpanFull(),
                 ]),
         ]);

@@ -7,11 +7,11 @@ namespace App\Filament\Resources\MainSite\Blogs\Schemas;
 use App\Filament\Forms\Components\Body;
 use App\Filament\Resources\MainSite\Blogs\Actions\BlogPreviewAction;
 use App\Filament\Resources\MainSite\Blogs\Forms\Components\BlogTagsInput;
+use App\Filament\Schemas\Components\FaqsSection;
 use App\Filament\Schemas\Components\ImagesSection;
 use App\Filament\Schemas\Components\MetasSection;
 use App\Filament\Schemas\Components\VisibilitySection;
 use App\Models\Blogs\BlogTag;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -122,36 +122,7 @@ class BlogForm
                     BlogPreviewAction::make(),
                 ]),
 
-            Section::make('FAQs')
-                ->columnSpanFull()
-                ->collapsible()
-                ->collapsed(fn (string $operation): bool => $operation !== 'create')
-                ->schema([
-                    Repeater::make('faqs')
-                        ->relationship()
-                        ->defaultItems(0)
-                        ->orderColumn('position')
-                        ->schema([
-                            TextInput::make('question')
-                                ->required(),
-
-                            Textarea::make('answer')
-                                ->rows(3)
-                                ->required(),
-                        ])
-                        ->columnSpanFull()
-                        ->addActionLabel('Add FAQ')
-                        ->itemLabel(fn (array $state): ?string => $state['question'] ?? null)
-                        ->collapsible(),
-
-                    Select::make('faq_display')
-                        ->label('FAQ Position')
-                        ->options([
-                            'top' => 'Above content',
-                            'bottom' => 'Below content',
-                        ])
-                        ->nullable(),
-                ]),
+            FaqsSection::make(display: true)->columnSpanFull(),
         ]);
     }
 }

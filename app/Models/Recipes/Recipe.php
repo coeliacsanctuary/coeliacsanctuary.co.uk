@@ -179,7 +179,7 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
             'recipes_related_recipes',
             'recipe_id',
             'related_recipe_id'
-        )->withTimestamps();
+        )->withPivot('position')->orderByPivot('position')->withTimestamps();
     }
 
     /** @return Attribute<string, never-return> */
