@@ -58,6 +58,14 @@ class MetasSectionTest extends TestCase
     }
 
     #[Test]
+    public function itKeepsTheMetaTagsLabelWhateverTheFieldIsCalled(): void
+    {
+        $field = $this->mountedComponent('meta_keywords', [MetasSection::make(metaTags: 'meta_keywords')]);
+
+        $this->assertSame('Meta Tags', $field->getLabel());
+    }
+
+    #[Test]
     public function itIsCollapsible(): void
     {
         $this->assertTrue($this->mountedRootComponent([MetasSection::make()])->isCollapsible());

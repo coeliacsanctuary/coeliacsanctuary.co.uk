@@ -11,19 +11,22 @@ use App\Models\Collections\CollectionGroupItem;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\Recipes\Recipe;
+use Illuminate\Database\Eloquent\Model;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CollectionGroupItemModelTest extends TestCase
 {
+    protected Collection $collection;
+
     protected CollectionGroup $group;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $collection = $this->create(Collection::class);
-        $this->group = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+        $this->collection = $this->create(Collection::class);
+        $this->group = $this->create(CollectionGroup::class, ['collection_id' => $this->collection->id]);
     }
 
     #[Test]
@@ -96,6 +99,54 @@ class CollectionGroupItemModelTest extends TestCase
 
         $this->assertInstanceOf(NationwideBranch::class, $item->item);
         $this->assertTrue($item->item->is($branch));
+    }
+
+    #[Test]
+    public function itTouchesItsGroupAndCollectionWhenSaved(): void
+    {
+        $item = $this->create(CollectionGroupItem::class, [
+            'collection_group_id' => $this->group->id,
+            'item_id' => 1,
+            'item_type' => Blog::class,
+        ]);
+
+        $groupUpdatedAt = $this->group->refresh()->updated_at;
+        $collectionUpdatedAt = $this->collection->refresh()->updated_at;
+
+        $this->travel(1)->hour();
+
+        $item->update(['item_title' => 'My favourite loaf']);
+
+        $this->assertTrue($this->group->refresh()->updated_at->greaterThan($groupUpdatedAt));
+        $this->assertTrue($this->collection->refresh()->updated_at->greaterThan($collectionUpdatedAt));
+    }
+
+    #[Test]
+    public function itSavesWithLazyLoadingDisabled(): void
+    {
+        $this->create(CollectionGroupItem::class, [
+            'collection_group_id' => $this->group->id,
+            'item_id' => 1,
+            'item_type' => Blog::class,
+        ]);
+
+        $this->create(CollectionGroupItem::class, [
+            'collection_group_id' => $this->group->id,
+            'item_id' => 2,
+            'item_type' => Blog::class,
+        ]);
+
+        Model::preventLazyLoading();
+
+        try {
+            $item = CollectionGroupItem::query()->get()->first();
+
+            $item->update(['item_title' => 'My favourite loaf']);
+        } finally {
+            Model::preventLazyLoading(false);
+        }
+
+        $this->assertSame('My favourite loaf', $item->refresh()->item_title);
     }
 
     #[Test]

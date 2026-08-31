@@ -19,7 +19,7 @@ class MetasSection
                 $schema = [];
 
                 if ($metaTags) {
-                    $schema[] = TextInput::make($metaTags)->required();
+                    $schema[] = TextInput::make($metaTags)->label('Meta Tags')->required();
                 }
 
                 if ($metaDescription) {

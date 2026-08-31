@@ -24,8 +24,20 @@ class CollectionGroupItem extends Model implements Sortable
     protected static function booted(): void
     {
         static::saved(function (self $item): void {
-            $item->group?->touch();
-            $item->group?->collection?->touch();
+            $item->loadMissing('group');
+
+            $group = $item->group;
+
+            if ( ! $group) {
+                return;
+            }
+
+            $group->touch();
+
+            $group->collection()
+                ->without(['groups', 'groups.items'])
+                ->first()
+                ?->touch();
         });
     }
 

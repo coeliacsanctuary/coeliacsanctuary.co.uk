@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\MainSite\Collections;
 
 use App\Filament\Resources\BaseResource;
-use App\Filament\Resources\MainSite\Collections\RelationManagers\GroupsRelationManager;
 use App\Filament\Resources\MainSite\Collections\Schemas\CollectionForm;
 use App\Filament\Resources\MainSite\Collections\Tables\CollectionsTable;
 use App\Filament\Transformers\StatusTransformer;
@@ -48,18 +47,13 @@ class CollectionResource extends BaseResource
         ];
     }
 
-    public static function getGloballySearchableAttributes(): array
-    {
-        return ['title', 'slug'];
-    }
-
     public static function mutateForSave(array $data): array
     {
         return StatusTransformer::transform($data);
     }
 
-    public static function getRelations(): array
+    public static function getGloballySearchableAttributes(): array
     {
-        return [GroupsRelationManager::class];
+        return ['title', 'slug'];
     }
 }
