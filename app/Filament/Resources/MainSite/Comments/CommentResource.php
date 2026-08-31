@@ -10,12 +10,18 @@ use App\Models\Comments\Comment;
 use BackedEnum;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CommentResource extends BaseResource
 {
     protected static ?string $model = Comment::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeft;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['commentable', 'reply'])->reorder('id', 'desc');
+    }
 
     public static function table(Table $table): Table
     {
@@ -29,8 +35,19 @@ class CommentResource extends BaseResource
         ];
     }
 
-    public static function getGloballySearchableAttributes(): array
+    public static function getNavigationBadge(): ?string
     {
-        return ['name', 'email'];
+        $count = Comment::query()->where('approved', false)->count();
+
+        if ($count > 0) {
+            return (string) $count;
+        }
+
+        return null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'danger';
     }
 }
