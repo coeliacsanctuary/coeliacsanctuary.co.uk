@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use App\Filament\Menu;
+use App\Filament\Support\EditRecordPageClassGenerator;
+use Filament\Commands\FileGenerators\Resources\Pages\ResourceEditRecordPageClassGenerator;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -81,6 +83,8 @@ class AdminPanelProvider extends PanelProvider
 
     public function boot(): void
     {
+        $this->app->bind(ResourceEditRecordPageClassGenerator::class, EditRecordPageClassGenerator::class);
+
         FilamentColor::register([
             'primary' => '#80CCFC',
             'info' => '#DBBC25',

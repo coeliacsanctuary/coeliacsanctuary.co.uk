@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Resources\MainSite\Recipes\Pages;
 
 use App\Filament\Resources\MainSite\Recipes\RecipeResource;
-use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\Pages\BaseEditRecord;
 
-class EditRecipe extends EditRecord
+class EditRecipe extends BaseEditRecord
 {
     protected static string $resource = RecipeResource::class;
 

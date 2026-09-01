@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Resources\MainSite\Blogs\Pages;
 
 use App\Filament\Resources\MainSite\Blogs\BlogResource;
-use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\Pages\BaseEditRecord;
 
-class EditBlog extends EditRecord
+class EditBlog extends BaseEditRecord
 {
     protected static string $resource = BlogResource::class;
 

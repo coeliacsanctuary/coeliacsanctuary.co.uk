@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Filament\Resources\EatingOut\EateryAreas\Pages;
 
 use App\Filament\Resources\EatingOut\EateryAreas\EateryAreaResource;
+use App\Filament\Resources\Pages\BaseEditRecord;
 use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
 
-class EditEateryArea extends EditRecord
+class EditEateryArea extends BaseEditRecord
 {
     protected static string $resource = EateryAreaResource::class;
 

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Filament\Resources\EatingOut\NationwideBranches\Pages;
 
 use App\Filament\Resources\EatingOut\NationwideBranches\NationwideBranchResource;
+use App\Filament\Resources\Pages\BaseEditRecord;
 use App\Filament\Support\ProcessEateryLocationData;
-use Filament\Resources\Pages\EditRecord;
 
-class EditNationwideBranch extends EditRecord
+class EditNationwideBranch extends BaseEditRecord
 {
     protected static string $resource = NationwideBranchResource::class;
 

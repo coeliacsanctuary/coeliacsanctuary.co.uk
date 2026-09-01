@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Resources\MainSite\Collections\Pages;
 
 use App\Filament\Resources\MainSite\Collections\CollectionResource;
-use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\Pages\BaseEditRecord;
 
-class EditCollection extends EditRecord
+class EditCollection extends BaseEditRecord
 {
     protected static string $resource = CollectionResource::class;
 
