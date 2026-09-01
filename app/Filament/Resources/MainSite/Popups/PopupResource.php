@@ -22,6 +22,8 @@ class PopupResource extends BaseResource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
+    protected static ?string $modelLabel = 'Site Popup';
+
     public static function form(Schema $schema): Schema
     {
         return PopupForm::configure($schema);

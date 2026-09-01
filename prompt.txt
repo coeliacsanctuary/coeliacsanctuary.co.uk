@@ -2,18 +2,18 @@ We've got some spare time so we're working on our slow progress low priority nov
 
 For history, this branch was started late last year with a fair few resources created, then earlier this summer I picked it up again with updating to filament 5, and a large refactor focusing on the blog resource only, to bring that to spec and an ideal final shape for how I want things to look and work in a filament world.
 
-The past few days we've finished the blogs, and also done recipes and collections.
+The past few days we've finished the blogs, recipes, collections, and most recently, comments.
 
-Next, I want to look at the Comments resource.
+Next, I want to look at the Popups resource.
 
 This was initially created before filament 5, but had minimum updates to make it inline with filament 5.
 
 The task we're going to slowly scope out over our standard discuss, iterate, repeat as neccesary, then plan work flow is multi part.
 
-- Bring the comments resource up to date with the 'language' (Ie conventions, structure, layout) applied in the blogs, recipes and collections resource
-- Audit the nova comments resource for anything that is missing/different from the filament resource
+- Bring the popups resource up to date with the 'language' (Ie conventions, structure, layout) applied to the previously complete resources mentioned above
+- Audit the nova popups resource for anything that is missing/different from the filament resource
 - Add any that I agree need adding.
 
-Visually, I'll give you a bit more a free reign in here of making this 'look good' - treat nova as the source of truth. We only really need an index view, ability to approve a comment quickly, or reply quickly. All of which should be set up, but probably needs a tidy up to make consistent with the approved resources mentioned, look clean, and high quality code.
+Visually, I'll give you a bit more a free reign in here of making this 'look good' - treat nova as the source of truth.
 
 This all includes test coverage.

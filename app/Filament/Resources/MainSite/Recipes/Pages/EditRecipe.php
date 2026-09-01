@@ -11,11 +11,6 @@ class EditRecipe extends EditRecord
 {
     protected static string $resource = RecipeResource::class;
 
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
-
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return RecipeResource::mutateForSave($data);

@@ -11,11 +11,6 @@ class EditCollection extends EditRecord
 {
     protected static string $resource = CollectionResource::class;
 
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
-
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return CollectionResource::mutateForSave($data);

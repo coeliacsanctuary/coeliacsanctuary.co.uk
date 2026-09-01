@@ -18,27 +18,31 @@ class PopupForm
             ->components([
                 Section::make()
                     ->columnSpanFull()
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
-                        TextInput::make('text')->required(),
+                        TextInput::make('text')->required()->columnSpanFull(),
 
-                        TextInput::make('link')->required(),
+                        TextInput::make('link')->required()->maxLength(50),
 
                         TextInput::make('display_every')->numeric()->suffix('Days')->required(),
 
                         Toggle::make('live')->inline(false),
 
                         SpatieMediaLibraryFileUpload::make('primary')
-                            ->label('Primary Image (Horizontal)')
-                            ->hiddenLabel()
+                            ->label('Primary Image')
                             ->collection('primary')
-                            ->imagePreviewHeight('176px'),
+                            ->image()
+                            ->required()
+                            ->imagePreviewHeight('176px')
+                            ->columnSpanFull(),
 
                         SpatieMediaLibraryFileUpload::make('secondary')
-                            ->label('Secondary Image (Vertical)')
-                            ->hiddenLabel()
-                            ->collection('primary')
-                            ->imagePreviewHeight('176px'),
+                            ->label('Secondary Image')
+                            ->helperText('eg Portrait images')
+                            ->collection('secondary')
+                            ->image()
+                            ->imagePreviewHeight('176px')
+                            ->columnSpanFull(),
                     ]),
             ]);
     }

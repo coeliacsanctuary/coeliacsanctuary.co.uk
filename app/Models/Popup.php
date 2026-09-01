@@ -22,6 +22,13 @@ class Popup extends Model implements HasMedia
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
+    protected function casts(): array
+    {
+        return [
+            'live' => 'boolean',
+        ];
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
