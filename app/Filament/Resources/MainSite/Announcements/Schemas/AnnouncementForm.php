@@ -19,14 +19,19 @@ class AnnouncementForm
             ->components([
                 Section::make()
                     ->columnSpanFull()
+                    ->columns(2)
                     ->schema([
-                        TextInput::make('title')->required(),
+                        TextInput::make('title')->required()->columnSpanFull(),
 
-                        Textarea::make('text')->rows(5)->required(),
+                        Textarea::make('text')->rows(5)->required()->columnSpanFull(),
 
-                        Toggle::make('live'),
+                        Toggle::make('live')->inline(false),
 
-                        DateTimePicker::make('expires_at')->required()->default(now()->addWeek()),
+                        DateTimePicker::make('expires_at')
+                            ->required()
+                            ->default(now()->addWeek())
+                            ->minDate(now())
+                            ->rules(['after:today']),
                     ]),
             ]);
     }
