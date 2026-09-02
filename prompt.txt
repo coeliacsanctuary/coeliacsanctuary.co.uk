@@ -2,11 +2,11 @@ We've got some spare time so we're working on our slow progress low priority nov
 
 For history, this branch was started late last year with a fair few resources created, then earlier this summer I picked it up again with updating to filament 5, and a large refactor focusing on the blog resource only, to bring that to spec and an ideal final shape for how I want things to look and work in a filament world.
 
-The past few days we've finished the blogs, recipes, collections, comments, popups and most recently, announcements.
+The past few days we've finished the blogs, recipes, collections, comments, popups, announcements, and most recently, redirects.
 
 Treat any other filament resource not mentioned in that list as noise, unfinished, and out of date.
 
-The resource I want to focus look at the Redirects resource.
+The resource I want to focus look at the Sealiac Overviews resource.
 
 This was initially created before filament 5, but had minimum updates to make it inline with filament 5.
 
@@ -14,12 +14,14 @@ The task we're going to slowly scope out over our standard discuss, iterate, rep
 
 The task itself is multipart,
 
-- Bring the redirects resource up to date with the 'language' (Ie conventions, structure, layout, style) applied to the previously complete resources mentioned above
-- Audit the nova redirects resource for anything that is missing/different from the filament resource
+- Bring the sealiac overviews resource up to date with the 'language' (Ie conventions, structure, layout, style) applied to the previously complete resources mentioned above
+- Audit the nova sealiac overviews resource for anything that is missing/different from the filament resource
 - Add any that I agree need adding.
 
 The nova side is the source of truth for how the resource should function, but we should favour low level conventions from the signed off filament resources, along with standard filament conventions.
 
+The resource is visual only, index page, no creating, updating, deleting, but we do have a 'destructive' action to invalidate the sealiac overview. We should also have a way to view the entire record (or at least the long text) in a modal or something.
+
 Visually, I'll give you a bit more a free reign in here of making this 'look good' - treat nova as the source of truth.
 
-This all includes test coverage, which at the moment is none.
+This all includes test coverage, which at the moment is none. There is no need to tell me no coverage exists, it is expected and part of the task.
