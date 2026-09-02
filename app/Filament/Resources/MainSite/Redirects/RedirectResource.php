@@ -22,6 +22,10 @@ class RedirectResource extends BaseResource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUturnDown;
 
+    protected static ?string $recordTitleAttribute = 'id';
+
+    protected static bool $isGloballySearchable = false;
+
     public static function form(Schema $schema): Schema
     {
         return RedirectForm::configure($schema);

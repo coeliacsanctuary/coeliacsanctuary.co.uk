@@ -11,14 +11,13 @@ class RedirectFactory extends Factory
 {
     protected $model = Redirect::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
-            'from' => $this->faker->slug,
-            'to' => $this->faker->slug,
+            'from' => '/' . $this->faker->unique()->slug(),
+            'to' => '/' . $this->faker->slug(),
             'status' => Response::HTTP_PERMANENTLY_REDIRECT,
             'hits' => 0,
         ];
-
     }
 }

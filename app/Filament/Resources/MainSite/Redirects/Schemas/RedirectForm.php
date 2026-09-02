@@ -18,16 +18,24 @@ class RedirectForm
             ->components([
                 Section::make()
                     ->columnSpanFull()
+                    ->columns(2)
                     ->schema([
-                        TextInput::make('from')->required(),
+                        TextInput::make('from')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->columnSpanFull(),
 
-                        TextInput::make('to')->required(),
+                        TextInput::make('to')->required()->columnSpanFull(),
 
                         Select::make('status')
                             ->options([
                                 Response::HTTP_PERMANENTLY_REDIRECT => 'Permanent',
                                 Response::HTTP_TEMPORARY_REDIRECT => 'Temporary',
                             ])
+                            ->formatStateUsing(fn (mixed $state): int => match ((int) $state) {
+                                Response::HTTP_FOUND, Response::HTTP_TEMPORARY_REDIRECT => Response::HTTP_TEMPORARY_REDIRECT,
+                                default => Response::HTTP_PERMANENTLY_REDIRECT,
+                            })
                             ->default(Response::HTTP_PERMANENTLY_REDIRECT)
                             ->required(),
                     ]),
