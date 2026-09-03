@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament;
 
 use App\Filament\Pages\RefreshAdsTxt;
+use App\Filament\Resources\AskSealiac\AskSealiacChats\AskSealiacChatResource;
 use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\EatingOut\EateryAreas\EateryAreaResource;
 use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
@@ -43,6 +44,11 @@ class Menu
             NavigationGroup::make('Tools')
                 ->items([
                     ...RefreshAdsTxt::getNavigationItems(),
+                ]),
+
+            NavigationGroup::make('Ask Sealiac Chat')
+                ->items([
+                    ...AskSealiacChatResource::getNavigationItems(),
                 ]),
 
             NavigationGroup::make('Eating Out Locations')
