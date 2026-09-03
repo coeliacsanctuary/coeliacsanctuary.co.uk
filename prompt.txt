@@ -2,7 +2,7 @@ We've got some spare time so we're working on our slow progress low priority nov
 
 For history, this branch was started late last year with a fair few resources created, then earlier this summer I picked it up again with updating to filament 5, and a large refactor focusing on the blog resource only, to bring that to spec and an ideal final shape for how I want things to look and work in a filament world.
 
-The past few days we've finished the blogs, recipes, collections, comments, popups, announcements, and most recently, redirects.
+The past few days we've finished the blogs, recipes, collections, comments, popups, announcements, redirects and most recently, sealiac overviews.
 
 Treat any other filament resource not mentioned in that list as noise, unfinished, and out of date.
 
