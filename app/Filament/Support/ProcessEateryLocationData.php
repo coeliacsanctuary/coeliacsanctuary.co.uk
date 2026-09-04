@@ -31,7 +31,7 @@ class ProcessEateryLocationData
             $data['town_id'] = $town->id;
         }
 
-        if ($data['county'] === 'London' && ! isset($data['area_id']) && isset($data['area'])) {
+        if (($data['county'] ?? null) === 'London' && ! isset($data['area_id']) && isset($data['area'])) {
             $area = EateryArea::query()->firstOrCreate(['area' => $data['area'], 'town_id' => $data['town_id']]);
 
             $data['area_id'] = $area->id;

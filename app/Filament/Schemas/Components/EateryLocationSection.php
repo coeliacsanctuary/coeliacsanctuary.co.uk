@@ -41,7 +41,7 @@ class EateryLocationSection
                         ->dehydrated(false)
                         ->formatStateUsing(fn (?Eatery $record): bool => $record?->county_id === 1)
                         ->live()
-                        ->hidden(fn (Eatery $record): bool => $record?->county_id > 1)
+                        ->hidden(fn (?Eatery $record): bool => $record?->county_id > 1)
                         ->afterStateUpdated(function (Set $set): void {
                             $set('country_id', 1);
                             $set('county_id', 1);
@@ -279,7 +279,7 @@ class EateryLocationSection
                             $set('location', null);
                         }),
 
-                    Hidden::make('unlock_location')->default(false),
+                    Hidden::make('unlock_location')->default(false)->dehydrated(false),
 
                     Action::make('unlock_location_action')
                         ->label('Unlock Location Fields')

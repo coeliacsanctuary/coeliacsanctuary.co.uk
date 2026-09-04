@@ -26,7 +26,7 @@ class ListEateries extends ListRecords
                     ->when(
                         request()->missing('sort'),
                         fn (Builder $query) => $query
-                            ->reorder('wheretoeat_id')
+                            ->reorder('wheretoeat.id')
                             ->orderBy('order_country')
                             ->orderBy('order_county')
                             ->orderBy('order_town')
@@ -39,7 +39,7 @@ class ListEateries extends ListRecords
                     ->when(
                         request()->missing('sort'),
                         fn (Builder $query) => $query
-                            ->reorder('wheretoeat_id')
+                            ->reorder('wheretoeat.id')
                             ->orderBy('order_country')
                             ->orderBy('order_county')
                             ->orderBy('order_town')
@@ -52,7 +52,7 @@ class ListEateries extends ListRecords
                     ->when(
                         request()->missing('sort'),
                         fn (Builder $query) => $query
-                            ->reorder('wheretoeat_id')
+                            ->reorder('wheretoeat.id')
                             ->orderBy('order_country')
                             ->orderBy('order_county')
                             ->orderBy('order_town')

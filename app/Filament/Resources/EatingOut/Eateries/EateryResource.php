@@ -69,4 +69,9 @@ class EateryResource extends BaseResource
             BranchesRelationManager::class,
         ];
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'town.town', 'county.county', 'area.area'];
+    }
 }
