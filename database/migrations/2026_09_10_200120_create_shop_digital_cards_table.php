@@ -14,21 +14,21 @@ return new class extends Migration
             $table->id();
             $table->string('type', 10);
             $table->string('title', 100);
-            $table->string('language');
-            $table->string('native_language');
-            $table->unsignedBigInteger('product_id');
-            $table->string('card_title');
+            $table->string('language', 50);
+            $table->string('native_language', 50);
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->string('card_title', 256);
             $table->text('card_intro');
-            $table->string('cant_eat_label');
+            $table->string('cant_eat_label', 50);
             $table->text('cant_eat_items');
             $table->string('cant_eat_colour', 10)->default('red');
             $table->string('cant_eat_icon', 10)->default('cross');
-            $table->string('can_eat_label');
+            $table->string('can_eat_label', 50);
             $table->text('can_eat_items');
             $table->string('can_eat_colour', 10)->default('green');
             $table->string('can_eat_icon', 10)->default('tick');
             $table->text('card_outro');
-            $table->string('card_thank_you');
+            $table->string('card_thank_you', 256);
             $table->timestamps();
         });
     }

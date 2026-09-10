@@ -46,6 +46,7 @@ use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
 use App\Nova\Resources\Shop\CustomsFee;
+use App\Nova\Resources\Shop\DigitalCardResource;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
@@ -130,13 +131,16 @@ class ResourceRegistrar
             PaymentRefund::class,
             OrderItem::class,
 
-            // Shop Inventory
+            // Shop Physical Inventory
             Categories::class,
             Products::class,
             ShippingMethod::class,
             Price::class,
             ProductVariant::class,
             ProductAddOn::class,
+
+            // Shop Digital Products
+            DigitalCardResource::class,
 
             // Shop Customers
             Customer::class,

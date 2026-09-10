@@ -16,4 +16,12 @@ enum DigitalCardType: string
             self::PLUS => 'Coeliac+ Other Allergen Travel Card',
         };
     }
+
+    public function categoryId(): int
+    {
+        return match ($this) {
+            self::STANDARD => 1,
+            self::PLUS => 11,
+        };
+    }
 }

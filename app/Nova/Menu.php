@@ -43,6 +43,7 @@ use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\CustomsFee;
+use App\Nova\Resources\Shop\DigitalCardResource;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
@@ -161,9 +162,13 @@ class Menu
                     MenuItem::resource(OrderReviews::class),
                 ]),
 
-                MenuGroup::make('Inventory', [
+                MenuGroup::make('Physical Inventory', [
                     MenuItem::resource(Categories::class),
                     MenuItem::resource(Products::class),
+                ]),
+
+                MenuGroup::make('Digital Products', [
+                    MenuItem::resource(DigitalCardResource::class),
                 ]),
 
                 MenuGroup::make('Admin', [
