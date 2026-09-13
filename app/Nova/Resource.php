@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Resource as NovaResource;
@@ -54,7 +55,7 @@ abstract class Resource extends NovaResource
 
     public static function fill(NovaRequest $request, $model): array
     {
-        self::$deferrableFields = new Collection();
+        self::$deferrableFields = new Collection;
 
         $model::saved(function ($model) use ($request): void {
             self::$deferrableFields->each(function (Field $field) use ($model, $request): void {
@@ -84,7 +85,19 @@ abstract class Resource extends NovaResource
             });
 
             foreach (self::$createdRelations as $relation) {
-                $relation->save();
+                $shouldSave = false;
+
+                self::$deferrableFields->each(function (Field $field) use ($relation, &$shouldSave): void {
+                    $attribute = Str::afterLast($field->attribute, '.');
+
+                    if ($relation->$attribute) {
+                        $shouldSave = true;
+                    }
+                });
+
+                if ($shouldSave) {
+                    $relation->save();
+                }
             }
 
             self::deferredRelationAfterSave();

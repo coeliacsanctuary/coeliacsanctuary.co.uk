@@ -10,18 +10,26 @@ use App\Enums\Shop\DigitalCardType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class DigitalCards extends Model
+class ShopDigitalCards extends Model
 {
     protected $table = 'shop_digital_cards';
 
     protected $casts = [
+        'live' => 'bool',
         'type' => DigitalCardType::class,
+        'enable_physical_addons' => 'bool',
         'cant_eat_colour' => DigitalCardColor::class,
         'cant_eat_icon' => DigitalCardIcon::class,
         'can_eat_colour' => DigitalCardColor::class,
         'can_eat_icon' => DigitalCardIcon::class,
     ];
+
+    public function price(): HasOne
+    {
+        return $this->hasOne(ShopDigitalCardPrice::class, 'digital_card_id');
+    }
 
     /** @return BelongsTo<ShopProduct, $this> */
     public function product(): BelongsTo

@@ -7,14 +7,21 @@ namespace App\Nova\Resources\Shop;
 use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
 use App\Enums\Shop\DigitalCardType;
-use App\Models\Shop\DigitalCards;
+use App\Models\Shop\ShopDigitalCards;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Line;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Slug;
+use Laravel\Nova\Fields\Stack;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -22,9 +29,11 @@ use Laravel\Nova\Panel;
 
 class DigitalCardResource extends Resource
 {
-    public static $model = DigitalCards::class;
+    public static $model = ShopDigitalCards::class;
 
     public static $title = 'title';
+
+    public static $with = ['price'];
 
     public static $search = [
         'id', 'type', 'title', 'language', 'native_language',
@@ -41,10 +50,18 @@ class DigitalCardResource extends Resource
                     ->fullWidth()
                     ->maxlength(100),
 
+                Slug::make('Slug')
+                    ->from('Title')
+                    ->onlyOnForms()
+                    ->required()
+                    ->fullWidth()
+                    ->immutable(),
+
                 Select::make('Type')
                     ->required()
                     ->fullWidth()
-                    ->options(DigitalCardType::class),
+                    ->options(DigitalCardType::class)
+                    ->displayUsingLabels(),
 
                 Text::make('Language')
                     ->required()
@@ -54,15 +71,42 @@ class DigitalCardResource extends Resource
 
                 Text::make('Native Language')
                     ->required()
+                    ->onlyOnForms()
                     ->fullWidth()
                     ->placeholder('Español')
                     ->maxlength(50),
 
+                Boolean::make('Live')
+                    ->fullWidth(),
+            ]),
+
+            BelongsTo::make('Physical Product', 'product', Products::class)->onlyOnIndex(),
+
+            Stack::make('Price', [
+                Boolean::make('Use Shared Digital Card Price', fn (ShopDigitalCards $model) => $model->price()->doesntExist())->textAlign('left'),
+                Line::make('Price', 'price.price')->displayUsing(fn (?string $price) => $price ? Str::of($price)->pipe(fn (Stringable $price) => number_format($price->toInteger() / 100, 2))->prepend('Individual Price £') : null),
+                Line::make('Physical Bundle Price', 'price.price_with_physical_product')->displayUsing(fn (?string $price) => $price ? Str::of($price)->pipe(fn (Stringable $price) => number_format($price->toInteger() / 100, 2))->prepend('Physical Bundle Price £') : ''),
+            ]),
+
+            Panel::make('Linked Physical Product', [
+                Boolean::make('Has Linked Product', 'enable_physical_addons')
+                    ->onlyOnForms()
+                    ->fullWidth(),
+
                 BelongsTo::make('Physical Product', 'product', Products::class)
+                    ->onlyOnForms()
                     ->searchable()
                     ->nullable()
                     ->fullWidth()
-                    ->dependsOn(['type'], function (BelongsTo $field, NovaRequest $request, FormData $data): void {
+                    ->dependsOn(['type', 'enable_physical_addons'], function (BelongsTo $field, NovaRequest $request, FormData $data): void {
+                        if ( ! $data->boolean('enable_physical_addons')) {
+                            $field->hide();
+
+                            return;
+                        }
+
+                        $field->show();
+
                         if ( ! $data->filled('type')) {
                             $field->readonly();
 
@@ -73,10 +117,56 @@ class DigitalCardResource extends Resource
 
                         $field
                             ->readonly(false)
-                            ->relatableQueryUsing(fn(NovaRequest $request, Builder $query) => $query
+                            ->relatableQueryUsing(fn (NovaRequest $request, Builder $query) => $query
                                 ->whereRelation('categories', fn (Builder $relation) => $relation->where('category_id', $type->categoryId()))
-                                ->whereHas('variants', fn ($query) => $query->where('live', true)),);
+                                ->whereHas('variants', fn ($query) => $query->where('live', true)), );
                     }),
+            ]),
+
+            Panel::make('Pricing', [
+                Boolean::make('Use Shared Digital Card Price', 'shared_price')
+                    ->resolveUsing(fn($request, ShopDigitalCards $card) => $card->price()->doesntExist())
+                    ->onlyOnForms()
+                    ->default(true)
+                    ->fullWidth(),
+
+                Currency::make('Price', 'price.price')
+                    ->onlyOnForms()
+                    ->dependsOn(['shared_price'], function (Currency $field, NovaRequest $request, FormData $data): void {
+                        if ($data->boolean('shared_price')) {
+                            $field->hide();
+
+                            return;
+                        }
+
+                        $field->show();
+                    })
+                    ->deferrable()
+                    ->asMinorUnits()
+                    ->required(),
+
+                Currency::make('Extra price when bought with physical product', 'price.price_with_physical_product')
+                    ->deferrable()
+                    ->onlyOnForms()
+                    ->asMinorUnits()
+                    ->dependsOn(['enable_physical_addons', 'shared_price'], function (Currency $field, NovaRequest $request, FormData $data): void {
+                        if ($data->boolean('shared_price')) {
+                            $field->hide();
+
+                            return;
+                        }
+
+                        $field->show();
+
+                        if ( ! $data->boolean('enable_physical_addons')) {
+                            $field->hide();
+
+                            return;
+                        }
+
+                        $field->show();
+                    })
+                    ->required(),
             ]),
 
             Panel::make('Card Intro', [
@@ -169,5 +259,15 @@ class DigitalCardResource extends Resource
                     ->onlyOnForms(),
             ])->help('In the native language'),
         ];
+    }
+
+    protected static function fillFields(NovaRequest $request, $model, $fields): array
+    {
+        $fillFields = parent::fillFields($request, $model, $fields);
+        $card = $fillFields[0];
+
+        unset($card->shared_price);
+
+        return $fillFields;
     }
 }

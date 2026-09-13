@@ -14,8 +14,11 @@ return new class extends Migration
             $table->id();
             $table->string('type', 10);
             $table->string('title', 100);
+            $table->string('slug', 100)->unique();
             $table->string('language', 50);
             $table->string('native_language', 50);
+            $table->boolean('live')->default(false);
+            $table->boolean('enable_physical_addons')->default(false);
             $table->unsignedBigInteger('product_id')->nullable();
             $table->string('card_title', 256);
             $table->text('card_intro');
