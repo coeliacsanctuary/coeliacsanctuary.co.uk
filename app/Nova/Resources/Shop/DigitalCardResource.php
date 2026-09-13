@@ -125,7 +125,7 @@ class DigitalCardResource extends Resource
 
             Panel::make('Pricing', [
                 Boolean::make('Use Shared Digital Card Price', 'shared_price')
-                    ->resolveUsing(fn($request, ShopDigitalCards $card) => $card->price()->doesntExist())
+                    ->resolveUsing(fn ($request, ShopDigitalCards $card) => $card->price()->doesntExist())
                     ->onlyOnForms()
                     ->default(true)
                     ->fullWidth(),

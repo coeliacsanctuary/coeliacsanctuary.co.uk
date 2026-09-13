@@ -55,7 +55,7 @@ abstract class Resource extends NovaResource
 
     public static function fill(NovaRequest $request, $model): array
     {
-        self::$deferrableFields = new Collection;
+        self::$deferrableFields = new Collection();
 
         $model::saved(function ($model) use ($request): void {
             self::$deferrableFields->each(function (Field $field) use ($model, $request): void {
