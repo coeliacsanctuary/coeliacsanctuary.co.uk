@@ -26,6 +26,7 @@ class ShopDigitalCards extends Model
         'can_eat_icon' => DigitalCardIcon::class,
     ];
 
+    /** @return HasOne<ShopDigitalCardPrice, $this> */
     public function price(): HasOne
     {
         return $this->hasOne(ShopDigitalCardPrice::class, 'digital_card_id');
@@ -41,7 +42,7 @@ class ShopDigitalCards extends Model
     public function countries(): HasManyThrough
     {
         return $this->hasManyThrough(TravelCardSearchTerm::class, ShopProduct::class, 'id', 'product_id', 'product_id', 'id')
-            ->wherePivot('card_show_on_product_page', true)
+            ->wherePivot('card_show_on_product_page', true) /** @phpstan-ignore-line */
             ->whereColumn('shop_product_travel_cards_search_terms.card_language', 'shop_digital_cards.language');
     }
 }
