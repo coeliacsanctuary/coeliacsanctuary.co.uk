@@ -11,6 +11,7 @@ use App\Http\Controllers\Shop\Basket\ShowController as BasketShowController;
 use App\Http\Controllers\Shop\Basket\StoreController as BasketStoreController;
 use App\Http\Controllers\Shop\Basket\UpdateController as BasketUpdateController;
 use App\Http\Controllers\Shop\Category\ShowController as CategoryShowController;
+use App\Http\Controllers\Shop\DigitalCards\IndexController as DigitalCardsIndexController;
 use App\Http\Controllers\Shop\DownloadMyProducts\GetController as DownloadMyProductsController;
 use App\Http\Controllers\Shop\IndexController;
 use App\Http\Controllers\Shop\Order\DestroyController as OrderDestroyController;
@@ -67,6 +68,8 @@ Route::middleware(ShopBasketTokenMiddleware::class)->group(function (): void {
         ->name('shop.review-order.store');
 
     Route::redirect('terms', '/terms-of-use#shop');
+
+    Route::get('digital-coeliac-gluten-free-travel-cards', DigitalCardsIndexController::class)->name('shop.digital-standard-cards');
 
     Route::get('/{category}', CategoryShowController::class)->name('shop.category');
 

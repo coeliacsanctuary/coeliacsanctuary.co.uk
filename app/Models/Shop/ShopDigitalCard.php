@@ -7,15 +7,14 @@ namespace App\Models\Shop;
 use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
 use App\Enums\Shop\DigitalCardType;
+use App\Scopes\LiveScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class ShopDigitalCards extends Model
+class ShopDigitalCard extends Model
 {
-    protected $table = 'shop_digital_cards';
-
     protected $casts = [
         'live' => 'bool',
         'type' => DigitalCardType::class,
@@ -26,23 +25,25 @@ class ShopDigitalCards extends Model
         'can_eat_icon' => DigitalCardIcon::class,
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new LiveScope);
+    }
+
     /** @return HasOne<ShopDigitalCardPrice, $this> */
     public function price(): HasOne
     {
         return $this->hasOne(ShopDigitalCardPrice::class, 'digital_card_id');
     }
 
+    public static function defaultPrice(): ShopDigitalCardPrice
+    {
+        return once(fn () => ShopDigitalCardPrice::query()->where('digital_card_id', 0)->firstOrFail());
+    }
+
     /** @return BelongsTo<ShopProduct, $this> */
     public function product(): BelongsTo
     {
         return $this->belongsTo(ShopProduct::class, 'product_id');
-    }
-
-    /** @return HasManyThrough<TravelCardSearchTerm, ShopProduct, $this> */
-    public function countries(): HasManyThrough
-    {
-        return $this->hasManyThrough(TravelCardSearchTerm::class, ShopProduct::class, 'id', 'product_id', 'product_id', 'id')
-            ->wherePivot('card_show_on_product_page', true) /** @phpstan-ignore-line */
-            ->whereColumn('shop_product_travel_cards_search_terms.card_language', 'shop_digital_cards.language');
     }
 }

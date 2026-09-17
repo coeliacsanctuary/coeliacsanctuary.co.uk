@@ -230,3 +230,22 @@ export type ShopHolidayProps = {
   id: number;
   notice: string;
 };
+
+export type ShopDigitalCard = {
+  type: string;
+  title: string;
+  slug: string;
+  link: string;
+  language: string;
+  native_language: string;
+  product?: {
+    title: string;
+    link: string;
+  };
+  countries?: {
+    country: string;
+    code?: string;
+  }[];
+  price: string;
+  flag?: string;
+};

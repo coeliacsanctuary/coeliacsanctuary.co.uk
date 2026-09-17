@@ -7,7 +7,7 @@ namespace App\Nova\Resources\Shop;
 use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
 use App\Enums\Shop\DigitalCardType;
-use App\Models\Shop\ShopDigitalCards;
+use App\Models\Shop\ShopDigitalCard;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -29,11 +29,9 @@ use Laravel\Nova\Panel;
 
 class DigitalCardResource extends Resource
 {
-    public static $model = ShopDigitalCards::class;
+    public static $model = ShopDigitalCard::class;
 
     public static $title = 'title';
-
-    public static $with = ['price'];
 
     public static $search = [
         'id', 'type', 'title', 'language', 'native_language',
@@ -83,7 +81,7 @@ class DigitalCardResource extends Resource
             BelongsTo::make('Physical Product', 'product', Products::class)->onlyOnIndex(),
 
             Stack::make('Price', [
-                Boolean::make('Use Shared Digital Card Price', fn (ShopDigitalCards $model) => $model->price()->doesntExist())->textAlign('left'),
+                Boolean::make('Use Shared Digital Card Price', fn (ShopDigitalCard $model) => $model->price()->doesntExist())->textAlign('left'),
                 Line::make('Price', 'price.price')->displayUsing(fn (?string $price) => $price ? Str::of($price)->pipe(fn (Stringable $price) => number_format($price->toInteger() / 100, 2))->prepend('Individual Price £') : null),
                 Line::make('Physical Bundle Price', 'price.price_with_physical_product')->displayUsing(fn (?string $price) => $price ? Str::of($price)->pipe(fn (Stringable $price) => number_format($price->toInteger() / 100, 2))->prepend('Physical Bundle Price £') : ''),
             ]),
@@ -125,7 +123,7 @@ class DigitalCardResource extends Resource
 
             Panel::make('Pricing', [
                 Boolean::make('Use Shared Digital Card Price', 'shared_price')
-                    ->resolveUsing(fn ($request, ShopDigitalCards $card) => $card->price()->doesntExist())
+                    ->resolveUsing(fn ($request, ShopDigitalCard $card) => $card->price()->doesntExist())
                     ->onlyOnForms()
                     ->default(true)
                     ->fullWidth(),
@@ -259,6 +257,13 @@ class DigitalCardResource extends Resource
                     ->onlyOnForms(),
             ])->help('In the native language'),
         ];
+    }
+
+    public static function indexQuery(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder $query)
+    {
+        return $query
+            ->withoutGlobalScopes()
+            ->with(['price']);
     }
 
     protected static function fillFields(NovaRequest $request, $model, $fields): array

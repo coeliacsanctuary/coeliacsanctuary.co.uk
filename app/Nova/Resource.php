@@ -55,7 +55,7 @@ abstract class Resource extends NovaResource
 
     public static function fill(NovaRequest $request, $model): array
     {
-        self::$deferrableFields = new Collection();
+        self::$deferrableFields = new Collection;
 
         $model::saved(function ($model) use ($request): void {
             self::$deferrableFields->each(function (Field $field) use ($model, $request): void {
@@ -119,8 +119,20 @@ abstract class Resource extends NovaResource
 
                     foreach ($bits as $index => $bit) {
                         if ($index + 1 === count($bits)) {
-                            $field->fillInto($request, $currentModel, $bit, str_replace('.', '_', $field->attribute));
-                            $currentModel->save();
+                            $shouldSave = false;
+
+                            self::$deferrableFields->each(function (Field $field) use ($currentModel, &$shouldSave): void {
+                                $attribute = Str::afterLast($field->attribute, '.');
+
+                                if ($currentModel && $currentModel->$attribute) {
+                                    $shouldSave = true;
+                                }
+                            });
+
+                            if ($shouldSave) {
+                                $field->fillInto($request, $currentModel, $bit, str_replace('.', '_', $field->attribute));
+                                $currentModel->save();
+                            }
 
                             continue;
                         }

@@ -19,6 +19,11 @@ export default defineConfig(({ command, isSsrBuild }) => {
         },
       }),
     ],
+    server: {
+      watch: {
+        ignored: ['**/storage/inertia-devtools/**'],
+      },
+    },
     optimizeDeps: {
       include: ['tailwind.config.ts'],
     },

@@ -11,9 +11,9 @@ class ShopDigitalCardPrice extends Model
 {
     protected $table = 'shop_digital_card_prices';
 
-    /** @return BelongsTo<ShopDigitalCards, $this> */
+    /** @return BelongsTo<ShopDigitalCard, $this> */
     public function card(): BelongsTo
     {
-        return $this->belongsTo(ShopDigitalCards::class, 'digital_card_id');
+        return $this->belongsTo(ShopDigitalCard::class, 'digital_card_id');
     }
 }
