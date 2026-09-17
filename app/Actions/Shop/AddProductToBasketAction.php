@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Actions\Shop;
 
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
 
 class AddProductToBasketAction
 {
-    public function handle(ShopOrder $order, ShopProduct $product, ShopProductVariant $variant, int $quantity, bool $includeAddOn = false): void
+    public function handle(ShopOrder $order, ShopProduct $product, ShopProductVariant $variant, int $quantity, bool $includeAddOn = false): ShopOrderItem
     {
         $item = $order->items()->firstOrCreate([
             'product_id' => $product->id,
@@ -40,5 +41,7 @@ class AddProductToBasketAction
         $variant->decrement('quantity', $quantity);
 
         $order->touch();
+
+        return $item;
     }
 }

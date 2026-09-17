@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 
 /**
  * @property bool $has_add_ons
+ * @property bool $has_digital_cards
  * @property int | null $add_on_total
  */
 class ShopOrder extends Model
@@ -81,6 +82,12 @@ class ShopOrder extends Model
         return $this->hasMany(ShopOrderItem::class, 'order_id');
     }
 
+    /** @return HasMany<ShopOrderDigitalItem, $this> */
+    public function digitalItems(): HasMany
+    {
+        return $this->hasMany(ShopOrderDigitalItem::class, 'order_id');
+    }
+
     /** @return BelongsTo<ShopPostageCountry, $this> */
     public function postageCountry(): BelongsTo
     {
@@ -127,6 +134,18 @@ class ShopOrder extends Model
     public function downloadLinks(): HasMany
     {
         return $this->hasMany(ShopOrderDownloadLink::class, 'order_id');
+    }
+
+    /** @return Attribute<bool, never> */
+    public function hasDigitalCards(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->relationLoaded('digitalItems')) {
+                return $this->digitalItems->isNotEmpty();
+            }
+
+            return $this->digitalItems()->exists();
+        });
     }
 
     /** @return Attribute<bool, never> */

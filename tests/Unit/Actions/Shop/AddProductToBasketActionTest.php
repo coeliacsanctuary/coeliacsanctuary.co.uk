@@ -92,6 +92,30 @@ class AddProductToBasketActionTest extends TestCase
     }
 
     #[Test]
+    public function itReturnsTheOrderItem(): void
+    {
+        $item = $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1);
+
+        $this->assertInstanceOf(ShopOrderItem::class, $item);
+        $this->assertTrue(ShopOrderItem::query()->first()->is($item));
+    }
+
+    #[Test]
+    public function itReturnsTheExistingOrderItemIfTheProductIsAlreadyInTheBasket(): void
+    {
+        $existingItem = $this->build(ShopOrderItem::class)
+            ->inOrder($this->order)
+            ->inProduct($this->product)
+            ->inVariant($this->variant)
+            ->create();
+
+        $item = $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1);
+
+        $this->assertDatabaseCount(ShopOrderItem::class, 1);
+        $this->assertTrue($existingItem->is($item));
+    }
+
+    #[Test]
     public function itDeductsTheQuantityFromTheVariant(): void
     {
         $this->variant->update(['quantity' => 2]);

@@ -9,6 +9,7 @@ use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopDiscountCodesUsed;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderDigitalItem;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopOrderReview;
 use App\Models\Shop\ShopOrderReviewInvitation;
@@ -20,6 +21,7 @@ use App\Models\Shop\ShopShippingAddress;
 use App\Models\Shop\ShopSource;
 use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -125,6 +127,22 @@ class ShopOrderTest extends TestCase
     }
 
     #[Test]
+    public function itHasDigitalItems(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        $this->build(ShopOrderDigitalItem::class)
+            ->inOrder($order)
+            ->count(3)
+            ->create();
+
+        $order->refresh();
+
+        $this->assertCount(3, $order->digitalItems);
+        $this->assertInstanceOf(ShopOrderDigitalItem::class, $order->digitalItems->first());
+    }
+
+    #[Test]
     public function itHasAPostageCountry(): void
     {
         $order = $this->create(ShopOrder::class, [
@@ -227,5 +245,37 @@ class ShopOrderTest extends TestCase
         $item->update(['product_add_on_id' => 123, 'product_add_on_price' => 50]);
 
         $this->assertEquals(50, $order->add_on_total);
+    }
+
+    #[Test]
+    public function itCanIdentifyWhenAnOrderHasDigitalCards(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        $this->assertFalse($order->has_digital_cards);
+
+        $this->build(ShopOrderDigitalItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $this->assertTrue($order->refresh()->has_digital_cards);
+    }
+
+    #[Test]
+    public function itIdentifiesDigitalCardsFromTheLoadedRelation(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        $this->build(ShopOrderDigitalItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $order->load('digitalItems');
+
+        DB::enableQueryLog();
+
+        $this->assertTrue($order->has_digital_cards);
+
+        $this->assertEmpty(DB::getQueryLog());
     }
 }
