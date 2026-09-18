@@ -10,7 +10,6 @@ use App\Enums\Shop\DigitalCardType;
 use App\Scopes\LiveScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ShopDigitalCard extends Model
@@ -27,7 +26,7 @@ class ShopDigitalCard extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new LiveScope);
+        static::addGlobalScope(new LiveScope());
     }
 
     /** @return HasOne<ShopDigitalCardPrice, $this> */

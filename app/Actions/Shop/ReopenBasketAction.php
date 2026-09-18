@@ -37,10 +37,10 @@ class ReopenBasketAction
         }
 
         /** @var Collection<int, array{class-string, array}> $actions */
-        $actions = new Collection;
+        $actions = new Collection();
 
         /** @var Collection<int, string> $warnings */
-        $warnings = new Collection;
+        $warnings = new Collection();
 
         $items->each(function (ShopOrderItem $item) use ($basket, $actions, $warnings): void {
             /** @var ShopProductVariant $variant */
@@ -66,7 +66,7 @@ class ReopenBasketAction
             /** @var ?ShopDigitalCard $card */
             $card = $item->card;
 
-            if(!$card) {
+            if ( ! $card) {
                 $warnings->add("Sorry, {$item->digital_card_title} is no longer available.");
 
                 return;

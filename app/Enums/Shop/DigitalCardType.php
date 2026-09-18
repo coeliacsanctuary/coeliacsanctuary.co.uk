@@ -13,7 +13,7 @@ enum DigitalCardType: string
     case STANDARD = 'standard';
     case PLUS = 'plus';
 
-    public static function fromRequestPath(string $category)
+    public static function fromRequestPath(string $category): self
     {
         $category = Str::after($category, 'shop/');
 

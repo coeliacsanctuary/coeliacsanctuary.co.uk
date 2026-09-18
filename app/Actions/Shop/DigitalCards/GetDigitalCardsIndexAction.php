@@ -23,7 +23,7 @@ class GetDigitalCardsIndexAction
                     $digitalCard->setRelation('price', ShopDigitalCard::defaultPrice());
                 }
 
-                if($digitalCard->product?->travelCardSearchTerms?->isNotEmpty()) {
+                if ($digitalCard->product?->travelCardSearchTerms?->isNotEmpty()) {
                     $digitalCard->setRelation(
                         'countries',
                         $digitalCard->product

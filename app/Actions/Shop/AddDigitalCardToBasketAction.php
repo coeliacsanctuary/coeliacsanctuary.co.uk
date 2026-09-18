@@ -21,7 +21,7 @@ class AddDigitalCardToBasketAction
             'digital_card_price' => $price->price,
         ]);
 
-        if($shopOrderItem) {
+        if ($shopOrderItem) {
             $item->update([
                 'physical_order_item_id' => $shopOrderItem->id,
                 'digital_card_price' => $price->price_with_physical_product,
