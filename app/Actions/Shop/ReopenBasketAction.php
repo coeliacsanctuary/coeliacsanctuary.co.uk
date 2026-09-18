@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Actions\Shop;
 
 use App\Enums\Shop\OrderState;
+use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderDigitalItem;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
@@ -17,22 +19,28 @@ class ReopenBasketAction
     /** @return Collection<int, string> */
     public function handle(ShopOrder $basket): Collection
     {
-        $basket->load(['items', 'items.product', 'items.variant', 'items.product.prices']);
+        $basket->load([
+            'items', 'items.product', 'items.variant', 'items.product.prices',
+            'digitalItems', 'digitalItems.card', 'digitalItems.card.price', 'digitalItems.orderItem',
+        ]);
 
         $basket->update(['state_id' => OrderState::BASKET]);
 
         /** @var Collection<int, ShopOrderItem> $items */
         $items = $basket->items;
 
-        if ($items->reject(fn (ShopOrderItem $item) => $item->variant?->quantity === 0)->isEmpty()) {
+        /** @var Collection<int, ShopOrderDigitalItem> $digitalItems */
+        $digitalItems = $basket->digitalItems;
+
+        if ($items->reject(fn (ShopOrderItem $item) => $item->variant?->quantity === 0)->isEmpty() && $digitalItems->isEmpty()) {
             return collect(['All of the items in your basket have gone out of stock']);
         }
 
         /** @var Collection<int, array{class-string, array}> $actions */
-        $actions = new Collection();
+        $actions = new Collection;
 
         /** @var Collection<int, string> $warnings */
-        $warnings = new Collection();
+        $warnings = new Collection;
 
         $items->each(function (ShopOrderItem $item) use ($basket, $actions, $warnings): void {
             /** @var ShopProductVariant $variant */
@@ -54,6 +62,19 @@ class ReopenBasketAction
             $actions->add([AddProductToBasketAction::class, [$basket, $product, $variant, min($item->quantity, $variant->quantity)]]);
         });
 
+        $digitalItems->each(function (ShopOrderDigitalItem $item) use ($basket, $actions, $warnings): void {
+            /** @var ?ShopDigitalCard $card */
+            $card = $item->card;
+
+            if(!$card) {
+                $warnings->add("Sorry, {$item->digital_card_title} is no longer available.");
+
+                return;
+            }
+
+            $actions->add([AddDigitalCardToBasketAction::class, [$basket, $card, $item->orderItem]]);
+        });
+
         $actions->each(function (array $callable): void {
             /** @var array{class-string, array} $callable */
             [$action, $params] = $callable;
@@ -67,7 +88,7 @@ class ReopenBasketAction
     protected function getWarningMessage(ShopProductVariant $variant, ShopProduct $product): string
     {
         if ($variant->quantity === 0) {
-            return "{$product->title}" . ($variant->title ? " in {$variant->title}" : '') . " has gone out of stock";
+            return "{$product->title}" . ($variant->title ? " in {$variant->title}" : '') . ' has gone out of stock';
         }
 
         $plural = Str::plural('item', $variant->quantity);
