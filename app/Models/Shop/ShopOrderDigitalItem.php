@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use App\Actions\Shop\ReconcileBasketItemsAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @property ShopProduct $product
- */
 class ShopOrderDigitalItem extends Model
 {
+    protected static function booted(): void
+    {
+        static::saved(fn (self $item) => app(ReconcileBasketItemsAction::class)->handle($item->order));
+        static::deleted(fn (self $item) => app(ReconcileBasketItemsAction::class)->handle($item->order));
+    }
+
     /** @return BelongsTo<ShopOrder, $this> */
     public function order(): BelongsTo
     {

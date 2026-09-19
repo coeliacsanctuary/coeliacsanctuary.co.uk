@@ -2,7 +2,7 @@
 import Card from '@/Components/Card.vue';
 import Heading from '@/Components/Heading.vue';
 import { ShopDigitalCard } from '@/types/Shop';
-import DigitalProductCard from '@/Components/PageSpecific/Shop/DigitalProductCard.vue';
+import DigitalProductCard from '@/Components/PageSpecific/Shop/DigitalCards/DigitalProductCard.vue';
 import SidebarLayout from '@/Components/SidebarLayout.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 

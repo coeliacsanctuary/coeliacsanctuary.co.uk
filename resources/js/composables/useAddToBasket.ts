@@ -7,9 +7,10 @@ import { router, usePage } from '@inertiajs/vue3';
 import { ShopBasketItem, ShopHolidayProps } from '@/types/Shop';
 
 type AddBasketPayload = {
-  product_id: number;
-  variant_id: number;
-  quantity: number;
+  product_id?: number;
+  variant_id?: number;
+  quantity?: number;
+  digital_card_id?: number;
   include_add_on: boolean;
 };
 
@@ -33,7 +34,8 @@ export default () => {
     {
       product_id: undefined,
       variant_id: undefined,
-      quantity: 1,
+      quantity: undefined,
+      digital_card_id: undefined,
       include_add_on: false,
     },
   );
@@ -49,6 +51,10 @@ export default () => {
     addBasketForm.quantity = quantity;
     addBasketForm.include_add_on = includeAddOn;
   };
+
+  const prepareAddBasketDigitalCardForm = (digitalCardId: number) => {
+    addBasketForm.digital_card_id = digitalCardId;
+  }
 
   const holidayStorageKey = (holiday: ShopHolidayProps): string =>
     `shop-holiday-${holiday.id}`;
@@ -80,10 +86,12 @@ export default () => {
 
         useGoogleEvents().googleEvent('event', 'add_to_cart', {
           items: [
-            {
+            addBasketForm.product_id ? {
               productId: addBasketForm.product_id,
               variantId: addBasketForm.variant_id,
               quantity: addBasketForm.quantity,
+            } : {
+              digitalCardId: addBasketForm.digital_card_id,
             },
           ],
         });
@@ -114,5 +122,10 @@ export default () => {
     sendAddBasketForm(params, callback);
   };
 
-  return { addBasketForm, prepareAddBasketForm, submitAddBasketForm };
+  return {
+    addBasketForm,
+    prepareAddBasketForm,
+    prepareAddBasketDigitalCardForm,
+    submitAddBasketForm,
+  };
 };

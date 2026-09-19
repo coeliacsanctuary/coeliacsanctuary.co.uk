@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\Shop\DigitalCards;
 
 use App\Actions\Shop\DigitalCards\GetDigitalCardsIndexAction;
+use App\Actions\Shop\ResolveBasketAction;
 use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardPrice;
+use App\Models\Shop\ShopPrice;
+use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Support\Collection;
@@ -30,6 +33,7 @@ class IndexControllerTest extends TestCase
         /** @var ShopProduct $product */
         $product = $this->build(ShopProduct::class)
             ->has($this->build(ShopProductVariant::class), 'variants')
+            ->has($this->build(ShopPrice::class)->state(fn () => ['price' => 1000]), 'prices')
             ->create();
 
         $this->product = $product;
@@ -48,7 +52,7 @@ class IndexControllerTest extends TestCase
         /** @var ShopDigitalCard $card */
         $card = $this->build(ShopDigitalCard::class)
             ->forProduct($this->product)
-            ->has($this->build(ShopDigitalCardPrice::class)->state(fn () => ['price' => 500]), 'price')
+            ->has($this->build(ShopDigitalCardPrice::class)->state(fn () => ['price' => 500, 'price_with_physical_product' => 300]), 'price')
             ->state($attributes)
             ->create();
 
@@ -102,9 +106,48 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itCallsTheGetDigitalCardsIndexActionWithTheTypeResolvedFromTheRequestPath(): void
     {
-        $this->expectAction(GetDigitalCardsIndexAction::class, [DigitalCardType::STANDARD], return: collect());
+        $this->expectAction(GetDigitalCardsIndexAction::class, [DigitalCardType::STANDARD, null], return: collect());
 
         $this->makeRequest();
+    }
+
+    #[Test]
+    public function itCallsTheResolveBasketActionWithTheBasketTokenCookieWithoutCreatingABasket(): void
+    {
+        $this->expectAction(ResolveBasketAction::class, ['foo-token', false], once: false, then: fn ($mock) => $mock->twice());
+        $this->expectAction(GetDigitalCardsIndexAction::class, return: collect());
+
+        $this->withCookie('basket_token', 'foo-token')->makeRequest();
+    }
+
+    #[Test]
+    public function itCallsTheResolveBasketActionWithNoTokenWhenTheBasketCookieIsntSet(): void
+    {
+        $this->expectAction(ResolveBasketAction::class, [null, false]);
+        $this->expectAction(GetDigitalCardsIndexAction::class, return: collect());
+
+        $this->makeRequest();
+    }
+
+    #[Test]
+    public function itPassesTheResolvedBasketToTheGetDigitalCardsIndexAction(): void
+    {
+        /** @var ShopOrder $basket */
+        $basket = $this->build(ShopOrder::class)->asBasket()->create();
+
+        $this->expectAction(GetDigitalCardsIndexAction::class, [
+            fn (DigitalCardType $type, ?ShopOrder $passedBasket) => $type === DigitalCardType::STANDARD && $passedBasket?->is($basket),
+        ], return: collect());
+
+        $this->withCookie('basket_token', $basket->token)->makeRequest();
+    }
+
+    #[Test]
+    public function itPassesNoBasketToTheGetDigitalCardsIndexActionWhenTheTokenDoesntResolveToABasket(): void
+    {
+        $this->expectAction(GetDigitalCardsIndexAction::class, [DigitalCardType::STANDARD, null], return: collect());
+
+        $this->withCookie('basket_token', 'not-a-basket')->makeRequest();
     }
 
     #[Test]
@@ -121,7 +164,10 @@ class IndexControllerTest extends TestCase
                 ->where('products.0.title', 'French Travel Card')
                 ->where('products.0.language', 'french')
                 ->where('products.0.native_language', 'français')
-                ->where('products.0.price', '£5.00')
+                ->where('products.0.price.default', '£5.00')
+                ->where('products.0.price.extra', '£3.00')
+                ->where('products.0.price.bundle', '£13.00')
+                ->where('products.0.price.saving', '£2.00')
                 ->etc()
         );
     }

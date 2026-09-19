@@ -209,11 +209,12 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itCallsTheAddProductToBasketAction(): void
     {
-        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $includeAddOn) {
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $includeAddOn, $shouldIncreaseQuantity) {
             $this->assertTrue($this->product->is($product));
             $this->assertTrue($this->variant->is($variant));
             $this->assertEquals(1, $quantity);
             $this->assertTrue($includeAddOn);
+            $this->assertTrue($shouldIncreaseQuantity);
 
             return true;
         }]);
@@ -221,6 +222,22 @@ class StoreControllerTest extends TestCase
         $this->build(ShopProductAddOn::class)->forProduct($this->product)->create();
 
         $this->makeRequest(['include_add_on' => true]);
+    }
+
+    #[Test]
+    public function itTellsTheAddProductToBasketActionNotToIncreaseTheQuantityWhenADigitalCardIsInTheSameRequest(): void
+    {
+        $orderItem = $this->create(ShopOrderItem::class);
+
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $includeAddOn, $shouldIncreaseQuantity) {
+            $this->assertFalse($shouldIncreaseQuantity);
+
+            return true;
+        }], return: $orderItem);
+
+        $this->expectAction(AddDigitalCardToBasketAction::class);
+
+        $this->makeRequest(['digital_card_id' => $this->digitalCard->id])->assertSessionHasNoErrors();
     }
 
     #[Test]

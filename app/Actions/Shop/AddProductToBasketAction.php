@@ -12,7 +12,7 @@ use App\Models\Shop\ShopProductVariant;
 
 class AddProductToBasketAction
 {
-    public function handle(ShopOrder $order, ShopProduct $product, ShopProductVariant $variant, int $quantity, bool $includeAddOn = false): ShopOrderItem
+    public function handle(ShopOrder $order, ShopProduct $product, ShopProductVariant $variant, int $quantity, bool $includeAddOn = false, bool $shouldIncreaseQuantity = true): ShopOrderItem
     {
         $item = $order->items()->firstOrCreate([
             'product_id' => $product->id,
@@ -23,7 +23,7 @@ class AddProductToBasketAction
             'quantity' => $quantity,
         ]);
 
-        if ( ! $item->wasRecentlyCreated) {
+        if ( ! $item->wasRecentlyCreated && $shouldIncreaseQuantity) {
             $item->increment('quantity', $quantity);
         }
 

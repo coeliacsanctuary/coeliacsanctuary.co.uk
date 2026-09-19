@@ -3,32 +3,15 @@ import { pluralise } from '@/helpers';
 import Card from '@/Components/Card.vue';
 import { ShopDigitalCard } from '@/types/Shop';
 import { computed, ref, useTemplateRef } from 'vue';
-import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
-import useAddToBasket from '@/composables/useAddToBasket';
 import useJourneyTracking from '@/composables/useJourneyTracking';
-import Sidebar from '@/Components/Overlays/Sidebar.vue';
+import CountryFlag from '@/Components/CountryFlag.vue';
+import DigitalCardCountryList from '@/Components/PageSpecific/Shop/DigitalCards/DigitalCardCountryList.vue';
+import AddDigitalCardToBasket from '@/Components/PageSpecific/Shop/DigitalCards/AddDigitalCardToBasket.vue';
 
 const props = withDefaults(
   defineProps<{ product: ShopDigitalCard; eager?: boolean }>(),
   { eager: false },
 );
-
-// const { addBasketForm, prepareAddBasketForm, submitAddBasketForm } =
-//   useAddToBasket();
-//
-// prepareAddBasketForm(props.product.id, props.product.primary_variant);
-//
-// const addToBasket = () => {
-//   useJourneyTracking().logEvent('clicked', 'ShopProductCard/AddToBasket', {
-//     title: props.product.title,
-//     id: props.product.id,
-//   });
-//
-//   submitAddBasketForm({
-//     only: ['basket'],
-//   });
-// };
 
 const countries = computed((): string => {
   if (!props.product.countries) {
@@ -72,17 +55,9 @@ useJourneyTracking().logWhenVisible(
   >
     <div class="group flex flex-1 flex-col space-y-3">
       <div class="flex items-center">
-        <img
-          :src="
-            product.flag
-              ? `https://flagcdn.com/24x18/${product.flag}.png`
-              : '/images/misc/flag-fallback.png'
-          "
-          :alt="`${product.language} flag`"
-          width="24"
-          height="18"
-          loading="lazy"
-          class="mr-4 h-[18px] w-6 shrink-0 object-cover"
+        <CountryFlag
+          :code="product.flag"
+          :country="product.language"
         />
 
         <h2
@@ -128,63 +103,53 @@ useJourneyTracking().logWhenVisible(
     <div
       class="-mx-4 mt-4 -mb-4 flex items-center justify-between bg-primary-lightest/60 p-4"
     >
-      <div class="flex items-center justify-between gap-3">
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center space-x-4">
+          <p
+            v-if="product.product && product.product.isInBasket"
+            class="font-semibold text-red-dark line-through md:max-xl:text-lg"
+            v-text="product.price.default"
+          />
+
+          <p
+            class="text-2xl font-semibold md:max-xl:text-3xl xl:text-4xl"
+            v-text="
+              product.product?.isInBasket
+                ? product.price.extra
+                : product.price.default
+            "
+          />
+        </div>
+
         <p
-          class="text-2xl font-semibold md:max-xl:text-3xl xl:text-4xl"
-          v-text="product.price"
-        />
+          v-if="product.product && product.product.isInBasket"
+          class="mr-4 text-xs text-grey-darker"
+        >
+          You've already got my
+          <span
+            class="font-semibold"
+            v-text="product.product.title"
+          />
+          in your basket, save
+          <span
+            class="font-semibold"
+            v-text="product.price.saving"
+          />
+          on getting a digital bundle!
+        </p>
       </div>
 
-      <CoeliacButton
-        as="button"
-        type="button"
-        label="Add to Basket"
-        classes="justify-center text-center"
-        theme="secondary"
-        size="lg"
-        :icon="ShoppingBagIcon"
-        icon-position="right"
-        bold
-      />
+      <div class="shrink-0">
+        <AddDigitalCardToBasket :product="product" />
+      </div>
     </div>
   </Card>
 
-  <Sidebar
+  <DigitalCardCountryList
     v-if="product.countries?.length"
-    side="right"
-    :open="showCountryListSidebar"
+    :title="product.title"
+    :countries="product.countries"
+    :show="showCountryListSidebar"
     @close="showCountryListSidebar = false"
-  >
-    <Card class="flex min-h-screen flex-col space-y-3">
-      <h2 class="text-lg font-semibold">
-        Here's some countries where my {{ product.title }} can be used:
-      </h2>
-
-      <ul class="flex flex-col space-y-2">
-        <li
-          v-for="country in product.countries"
-          :key="country.country"
-          class="flex items-center"
-        >
-          <img
-            :src="
-              country.code
-                ? `https://flagcdn.com/24x18/${country.code}.png`
-                : '/images/misc/flag-fallback.png'
-            "
-            :alt="`${country.country} flag`"
-            width="24"
-            height="18"
-            loading="lazy"
-            class="mr-4 h-[18px] w-6 shrink-0 object-cover"
-          />
-
-          <span
-            class="font-semibold"
-            v-text="country.country"
-          />
-        </li>
-      </ul>
-    </Card>
-  </Sidebar>
+  />
 </template>

@@ -46,6 +46,7 @@ class StoreController
                     $variant,
                     $request->integer('quantity'),
                     $request->boolean('include_add_on'),
+                    $request->isDigitalProduct() === false,
                 );
             }
 

@@ -8,6 +8,8 @@ use App\Actions\Shop\DigitalCards\GetDigitalCardsIndexAction;
 use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardPrice;
+use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use App\Models\Shop\TravelCardSearchTerm;
@@ -56,10 +58,22 @@ class GetDigitalCardsIndexActionTest extends TestCase
         return $searchTerm;
     }
 
-    /** @return Collection<int, ShopDigitalCard> */
-    protected function cards(DigitalCardType $type = DigitalCardType::STANDARD): Collection
+    protected function basket(?ShopProduct $withProduct = null): ShopOrder
     {
-        return $this->callAction(GetDigitalCardsIndexAction::class, $type);
+        /** @var ShopOrder $basket */
+        $basket = $this->create(ShopOrder::class);
+
+        if ($withProduct) {
+            $this->build(ShopOrderItem::class)->inOrder($basket)->inProduct($withProduct)->create();
+        }
+
+        return $basket;
+    }
+
+    /** @return Collection<int, ShopDigitalCard> */
+    protected function cards(DigitalCardType $type = DigitalCardType::STANDARD, ?ShopOrder $basket = null): Collection
+    {
+        return $this->callAction(GetDigitalCardsIndexAction::class, $type, $basket);
     }
 
     #[Test]
@@ -190,5 +204,56 @@ class GetDigitalCardsIndexActionTest extends TestCase
         $this->attachTerm('switzerland', score: 50);
 
         $this->assertEquals(['france', 'switzerland', 'belgium'], $this->cards()->first()->countries->pluck('term')->all());
+    }
+
+    #[Test]
+    public function itDoesntFlagWhetherThePhysicalProductIsInTheBasketWhenThereIsntABasket(): void
+    {
+        $this->card();
+
+        $this->assertFalse($this->cards()->first()->hasAttribute('physicalProductInBasket'));
+    }
+
+    #[Test]
+    public function itDoesntFlagWhetherThePhysicalProductIsInTheBasketWhenTheCardDoesntHaveAProduct(): void
+    {
+        $this->build(ShopDigitalCard::class)->create();
+
+        $card = $this->cards(basket: $this->basket())->first();
+
+        $this->assertFalse($card->hasAttribute('physicalProductInBasket'));
+    }
+
+    #[Test]
+    public function itFlagsThePhysicalProductAsInTheBasketWhenTheBasketContainsTheCardsProduct(): void
+    {
+        $this->card();
+
+        $card = $this->cards(basket: $this->basket($this->product))->first();
+
+        $this->assertTrue($card->getAttribute('physicalProductInBasket'));
+    }
+
+    #[Test]
+    public function itFlagsThePhysicalProductAsNotInTheBasketWhenTheBasketIsEmpty(): void
+    {
+        $this->card();
+
+        $card = $this->cards(basket: $this->basket())->first();
+
+        $this->assertFalse($card->getAttribute('physicalProductInBasket'));
+    }
+
+    #[Test]
+    public function itFlagsThePhysicalProductAsNotInTheBasketWhenTheBasketOnlyContainsOtherProducts(): void
+    {
+        $this->card();
+
+        /** @var ShopProduct $otherProduct */
+        $otherProduct = $this->create(ShopProduct::class);
+
+        $card = $this->cards(basket: $this->basket($otherProduct))->first();
+
+        $this->assertFalse($card->getAttribute('physicalProductInBasket'));
     }
 }

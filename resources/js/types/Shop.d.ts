@@ -232,6 +232,7 @@ export type ShopHolidayProps = {
 };
 
 export type ShopDigitalCard = {
+  id: number;
   type: string;
   title: string;
   slug: string;
@@ -239,13 +240,22 @@ export type ShopDigitalCard = {
   language: string;
   native_language: string;
   product?: {
+    id: number;
+    variantId: number;
     title: string;
     link: string;
+    price: string;
+    isInBasket: boolean;
   };
   countries?: {
     country: string;
     code?: string;
   }[];
-  price: string;
+  price: {
+    default: string;
+    extra: string;
+    bundle: string;
+    saving: string;
+  };
   flag?: string;
 };
