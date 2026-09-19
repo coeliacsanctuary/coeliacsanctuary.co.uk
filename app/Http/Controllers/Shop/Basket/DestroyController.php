@@ -24,7 +24,7 @@ class DestroyController
         $item->delete();
         $item->variant?->increment('quantity', $item->quantity);
 
-        $item->order?->touch();
+        $item->order->touch();
 
         return redirect()->back();
     }

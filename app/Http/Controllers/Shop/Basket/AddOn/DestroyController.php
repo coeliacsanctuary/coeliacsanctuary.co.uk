@@ -30,7 +30,7 @@ class DestroyController
             'product_add_on_price' => null,
         ]);
 
-        $item->order?->touch();
+        $item->order->touch();
 
         return redirect()->back();
     }

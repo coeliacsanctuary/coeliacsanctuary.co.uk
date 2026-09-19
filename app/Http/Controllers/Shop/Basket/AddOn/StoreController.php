@@ -27,7 +27,7 @@ class StoreController
             'product_add_on_price' => $item->product->addOns->current_price,
         ]);
 
-        $item->order?->touch();
+        $item->order->touch();
 
         return redirect()->back();
     }

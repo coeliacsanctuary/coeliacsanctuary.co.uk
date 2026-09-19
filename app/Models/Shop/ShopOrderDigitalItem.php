@@ -8,6 +8,9 @@ use App\Actions\Shop\ReconcileBasketItemsAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property ShopOrder $order
+ */
 class ShopOrderDigitalItem extends Model
 {
     protected static function booted(): void

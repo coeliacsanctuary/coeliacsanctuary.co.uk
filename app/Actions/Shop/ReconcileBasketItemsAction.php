@@ -31,7 +31,7 @@ class ReconcileBasketItemsAction
                 }
 
                 if ($item->physical_order_item_id) {
-                    $item->physical_order_item_id = null;
+                    $item->orderItem()->dissociate();
                 }
 
                 $item->saveQuietly();
@@ -48,8 +48,8 @@ class ReconcileBasketItemsAction
             /** @var ShopOrderItem $physicalItem */
             $physicalItem = $basket->items->where('product_id', $item->card->product_id)->first();
 
-            if ( ! $item->physical_order_item_id || $item->physical_order_item_id !== $physicalItem->id) {
-                $item->physical_order_item_id = $physicalItem->id;
+            if ($item->physical_order_item_id !== $physicalItem->id) {
+                $item->orderItem()->associate($physicalItem);
             }
 
             $item->saveQuietly();

@@ -68,7 +68,7 @@ class ShopDigitalCardResource extends JsonResource
         return [
             'default' => Helpers::formatMoney(Money::GBP($cardPrice)),
             'extra' => Helpers::formatMoney(Money::GBP($cardPriceWithBundle)),
-            'physical' => $product ? Helpers::formatMoney(Money::GBP($productPrice)) : null,
+            'physical' => $product && $productPrice ? Helpers::formatMoney(Money::GBP($productPrice)) : null,
             'bundle' => $product ? Helpers::formatMoney(Money::GBP($totalPrice)) : null,
             'saving' => $product ? Helpers::formatMoney(Money::GBP(($productPrice + $cardPrice) - $totalPrice)) : null,
         ];

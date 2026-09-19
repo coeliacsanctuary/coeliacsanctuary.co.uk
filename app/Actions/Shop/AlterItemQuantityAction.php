@@ -20,7 +20,7 @@ class AlterItemQuantityAction
             throw QuantityException::notEnoughAvailable();
         }
 
-        $orderItem->order?->touch();
+        $orderItem->order->touch();
 
         if ($mode === 'increase') {
             $orderItem->increment('quantity');
