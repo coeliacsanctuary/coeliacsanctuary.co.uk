@@ -13,7 +13,7 @@ class ReconcileBasketItemsAction
 {
     public function handle(ShopOrder $basket): void
     {
-        $basket->loadMissing(['items', 'digitalItems', 'digitalItems.card', 'digitalItems.card.price']);
+        $basket->loadMissing(['items', 'digitalItems', 'digitalItems.card', 'digitalItems.card.price', 'digitalItems.card.product']);
 
         $basket->digitalItems->each(function (ShopOrderDigitalItem $item) use ($basket): void {
             // Card isnt linked to a physical product

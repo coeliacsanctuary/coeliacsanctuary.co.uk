@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property ShopOrder $order
+ * @property ShopDigitalCard $card
  */
 class ShopOrderDigitalItem extends Model
 {

@@ -118,6 +118,12 @@ export type ShopProductReview = {
   date_diff: string;
 };
 
+export type BasketProp = {
+  items: ShopBasketItem[];
+  digitalItems: ShopBasketDigitalItem[];
+  subtotal: string;
+};
+
 export type ShopBasketItem = {
   id: number;
   title: string;
@@ -134,6 +140,18 @@ export type ShopBasketItem = {
   line_price: string;
   quantity: number;
   image: string;
+  digitalBundles?: ShopBasketDigitalItem[];
+};
+
+export type ShopBasketDigitalItem = {
+  id: number;
+  title: string;
+  item_price: string;
+  hasBundleInBasket: boolean;
+  country: {
+    label: string;
+    code?: string;
+  };
 };
 
 export type CheckoutContactStep = {

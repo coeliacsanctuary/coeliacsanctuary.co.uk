@@ -39,6 +39,7 @@ class ShopOrderItemResource extends JsonResource
             'line_price' => Helpers::formatMoney(Money::GBP($this->product_price * $this->quantity)),
             'quantity' => $this->quantity,
             'image' => $product->main_image_as_webp ?? $product->main_image,
+            'digitalBundles' => $this->whenLoaded('digitalBundles', fn () => ShopOrderDigitalItemResource::collection($this->digitalBundles)),
         ];
     }
 }

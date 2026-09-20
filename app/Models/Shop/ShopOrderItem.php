@@ -7,10 +7,13 @@ namespace App\Models\Shop;
 use App\Actions\Shop\ReconcileBasketItemsAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * @property ShopOrder $order
  * @property ShopProduct $product
+ * @property Collection<int, ShopOrderDigitalItem> $digitalBundles
  */
 class ShopOrderItem extends Model
 {
@@ -36,6 +39,12 @@ class ShopOrderItem extends Model
     public function variant(): BelongsTo
     {
         return $this->belongsTo(ShopProductVariant::class, 'product_variant_id');
+    }
+
+    /** @return HasMany<ShopOrderDigitalItem, $this> */
+    public function digitalBundles(): HasMany
+    {
+        return $this->hasMany(ShopOrderDigitalItem::class, 'physical_order_item_id');
     }
 
     /** @return BelongsTo<ShopProductAddOn, $this> */

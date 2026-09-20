@@ -31,7 +31,7 @@ const addToBasket = () => {
   showModal.value = false;
 
   submitAddBasketForm({
-    only: ['basket'],
+    only: ['basket', 'products'],
   });
 };
 
