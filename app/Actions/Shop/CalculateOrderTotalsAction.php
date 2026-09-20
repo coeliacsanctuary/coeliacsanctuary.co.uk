@@ -9,6 +9,7 @@ use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopPostagePrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
+use App\Resources\Shop\ShopOrderDigitalItemResource;
 use App\Resources\Shop\ShopOrderItemResource;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -17,36 +18,43 @@ class CalculateOrderTotalsAction
 {
     /**
      * @param  Collection<int, ShopOrderItemResource>  $items
-     * @return array{subtotal: int, postage: int, fees: Collection<int, array{fee: int<0, max>, description: string|null}>, total_fees: int}
+     * @param  Collection<int, ShopOrderDigitalItemResource>  $items
+     * @return array{subtotal: int, postage: int, fees: Collection<int, array{fee: int<0, max>, description:
+     *     string|null}>, total_fees: int}
      */
-    public function handle(Collection $items, ShopPostageCountry $country): array
+    public function handle(Collection $items, Collection $digitalItems, ShopPostageCountry $country): array
     {
-        /** @var int $subtotal */
-        $subtotal = $items->map(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity)->sum();
+        /** @var int $physicalSubtotal */
+        $physicalSubtotal = $items->sum(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity);
 
-        $shippingMethod = $items->max(function (ShopOrderItemResource $resource) {
-            /** @var ShopProduct $product */
-            $product = $resource->product;
+        /** @var int $digitalSubtotal */
+        $digitalSubtotal = $digitalItems->sum(fn (ShopOrderDigitalItemResource $item) => $item->digital_card_price);
 
-            return $product->shipping_method_id;
-        });
+        if($items->isNotEmpty()) {
+            $shippingMethod = $items->max(function (ShopOrderItemResource $resource) {
+                /** @var ShopProduct $product */
+                $product = $resource->product;
 
-        $totalWeight = $items->sum(function (ShopOrderItemResource $resource) {
-            /** @var ShopProductVariant $variant */
-            $variant = $resource->variant;
+                return $product->shipping_method_id;
+            });
 
-            return $variant->weight * $resource->quantity;
-        });
+            $totalWeight = $items->sum(function (ShopOrderItemResource $resource) {
+                /** @var ShopProductVariant $variant */
+                $variant = $resource->variant;
 
-        /** @var ShopPostagePrice $postagePrice */
-        $postagePrice = ShopPostagePrice::query()
-            ->where('postage_country_area_id', $country->postage_area_id)
-            ->where('shipping_method_id', $shippingMethod)
-            ->where('max_weight', '>=', $totalWeight)
-            ->orderBy('max_weight')
-            ->firstOr(fn () => throw new RuntimeException('Can not calculate postage'));
+                return $variant->weight * $resource->quantity;
+            });
 
-        $postage = $postagePrice->price;
+            /** @var ShopPostagePrice $postagePrice */
+            $postagePrice = ShopPostagePrice::query()
+                ->where('postage_country_area_id', $country->postage_area_id)
+                ->where('shipping_method_id', $shippingMethod)
+                ->where('max_weight', '>=', $totalWeight)
+                ->orderBy('max_weight')
+                ->firstOr(fn() => throw new RuntimeException('Can not calculate postage'));
+
+            $postage = $postagePrice->price;
+        }
 
         $fees = ShopCustomsFee::query()
             ->where('postage_country_id', $country->id)
@@ -57,10 +65,10 @@ class CalculateOrderTotalsAction
             ]);
 
         return [
-            'subtotal' => $subtotal,
+            'subtotal' => $physicalSubtotal + $digitalSubtotal,
             'fees' => $fees,
             'total_fees' => (int) $fees->sum('fee'),
-            'postage' => $postage,
+            'postage' => $postage ?? 0,
         ];
     }
 }

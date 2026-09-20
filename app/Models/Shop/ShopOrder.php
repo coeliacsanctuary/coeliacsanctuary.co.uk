@@ -136,6 +136,27 @@ class ShopOrder extends Model
         return $this->hasMany(ShopOrderDownloadLink::class, 'order_id');
     }
 
+    public function hasAnyItems(): bool
+    {
+        if($this->relationLoaded('items') && $this->items->isNotEmpty()) {
+            return true;
+        }
+
+        if($this->relationLoaded('digitalItems') && $this->digitalItems->isNotEmpty()) {
+            return true;
+        }
+
+        if($this->items()->exists()) {
+            return true;
+        }
+
+        if($this->digitalItems()->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
     /** @return Attribute<bool, never> */
     public function hasDigitalCards(): Attribute
     {
