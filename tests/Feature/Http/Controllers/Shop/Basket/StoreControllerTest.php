@@ -11,7 +11,6 @@ use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
 use Exception;
 use Illuminate\Testing\TestResponse;
@@ -118,21 +117,7 @@ class StoreControllerTest extends TestCase
         $this->makeRequest(['quantity' => '123e4'])->assertSessionHasErrors('quantity');
     }
 
-    #[Test]
-    public function itReturnsAValidationErrorIfIncludeAddOnIsNotABoolean(): void
-    {
-        $this->makeRequest(['include_add_on' => 'foo'])->assertSessionHasErrors('include_add_on');
-        $this->makeRequest(['include_add_on' => 123])->assertSessionHasErrors('include_add_on');
-    }
 
-    #[Test]
-    public function itReturnsAValidationErrorIfIncludeAddOnIsTrueButTheProductDoesntHaveAnAddOn(): void
-    {
-        $this->assertNull($this->product->addOns);
-
-        $this->makeRequest(['include_add_on' => true])
-            ->assertSessionHasErrors(['include_add_on' => 'This product does not have an add on.']);
-    }
 
     #[Test]
     public function itReturnsAValidationErrorIfNeitherAProductOrADigitalCardIsGiven(): void
@@ -209,19 +194,16 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itCallsTheAddProductToBasketAction(): void
     {
-        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $includeAddOn, $shouldIncreaseQuantity) {
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $shouldIncreaseQuantity) {
             $this->assertTrue($this->product->is($product));
             $this->assertTrue($this->variant->is($variant));
             $this->assertEquals(1, $quantity);
-            $this->assertTrue($includeAddOn);
             $this->assertTrue($shouldIncreaseQuantity);
 
             return true;
         }]);
 
-        $this->build(ShopProductAddOn::class)->forProduct($this->product)->create();
-
-        $this->makeRequest(['include_add_on' => true]);
+        $this->makeRequest();
     }
 
     #[Test]
@@ -229,7 +211,7 @@ class StoreControllerTest extends TestCase
     {
         $orderItem = $this->create(ShopOrderItem::class);
 
-        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $includeAddOn, $shouldIncreaseQuantity) {
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $shouldIncreaseQuantity) {
             $this->assertFalse($shouldIncreaseQuantity);
 
             return true;

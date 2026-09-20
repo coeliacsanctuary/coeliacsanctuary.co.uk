@@ -15,7 +15,6 @@ const props = defineProps<{ item: ShopBasketItem }>();
 const hasError = ref(false);
 const isLoading = ref(false);
 const isDeletingItem = ref(false);
-const isDeletingAddOn = ref(false);
 
 const removeItem = () => {
   isDeletingItem.value = true;
@@ -31,18 +30,6 @@ const removeItem = () => {
         title: props.item.title,
       });
     },
-  });
-};
-
-const removeAddOn = () => {
-  if (!props.item.add_on) {
-    return;
-  }
-
-  isDeletingAddOn.value = true;
-
-  router.delete(`/shop/basket/${props.item.id}/add-on`, {
-    preserveScroll: true,
   });
 };
 
@@ -89,10 +76,7 @@ const alterQuantity = (action: 'increase' | 'decrease') => {
       width="border-8"
     />
 
-    <div
-      class="relative flex py-3"
-      :class="{ 'border-b-0!': !!item.add_on }"
-    >
+    <div class="relative flex py-3">
       <div
         class="hidden size-24 shrink-0 overflow-hidden rounded-md border border-gray-200 sm:block"
       >

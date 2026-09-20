@@ -25,7 +25,7 @@ class PrepareBasketItemsForDisplayAction
         $digitalItemCollection = $digitalItems->collection;
 
         /** @var int $itemSubtotal */
-        $itemSubtotal = $itemCollection->sum(fn (ShopOrderItemResource $item) => ($item->product_price * $item->quantity) + $item->product_add_on_price);
+        $itemSubtotal = $itemCollection->sum(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity);
         $digitalItemSubtotal = $digitalItemCollection->sum(fn (ShopOrderDigitalItemResource $item) => $item->digital_card_price);
 
         return [

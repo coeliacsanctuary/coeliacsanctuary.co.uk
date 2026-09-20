@@ -23,7 +23,6 @@ class AddToBasketRequest extends FormRequest
             'variant_id' => ['bail', 'required_with_all:product_id,quantity', 'numeric'],
             'digital_card_id' => ['bail', 'required_without_all:product_id,variant_id,quantity', 'numeric', Rule::in($digitalCardIds)],
             'quantity' => ['bail', 'required_with_all:product_id,variant_id', 'int', 'min:1', 'regex:/^[0-9]+$/'],
-            'include_add_on' => ['nullable', 'boolean'],
         ];
     }
 
@@ -88,19 +87,6 @@ class AddToBasketRequest extends FormRequest
                     $validator->errors()->add('quantity', 'The product doesn\'t have the requested quantity available');
                 }
             },
-
-            // product has an add on
-            function (Validator $validator): void {
-                if ( ! $this->boolean('include_add_on')) {
-                    return;
-                }
-
-                $product = ShopProduct::query()->find($this->integer('product_id'));
-
-                if ( ! $product || ! $product->addOns) {
-                    $validator->errors()->add('include_add_on', 'This product does not have an add on.');
-                }
-            }
         ];
     }
 }

@@ -8,14 +8,12 @@ import useScreensize from '@/composables/useScreensize';
 import ProductQuantitySwitcher from '@/Components/PageSpecific/Shop/ProductQuantitySwitcher.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import ProductSelectVariant from '@/Components/PageSpecific/Shop/ProductSelectVariant.vue';
-import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 
 const props = defineProps<{ product: ShopProductDetail }>();
 
 const selectedVariant: Ref<ShopProductVariant | undefined> = ref();
 const quantity: Ref<number> = ref(1);
 const isInStock: Ref<boolean> = ref(true);
-const includeAddOn: Ref<boolean> = ref(false);
 
 const emit = defineEmits(['selected-variant']);
 
@@ -34,11 +32,7 @@ const { addBasketForm, prepareAddBasketForm, submitAddBasketForm } =
   useAddToBasket();
 
 const runningTotal = computed((): number => {
-  let total = props.product.prices.raw_price * quantity.value;
-
-  if (includeAddOn.value && props.product.add_ons) {
-    total += props.product.add_ons.price.raw_price;
-  }
+  const total = props.product.prices.raw_price * quantity.value;
 
   return total / 100;
 });
@@ -72,7 +66,6 @@ watch(selectedVariant, () => {
   );
 
   quantity.value = 1;
-  includeAddOn.value = false;
 
   useJourneyTracking().logEvent(
     'clicked',
@@ -89,7 +82,6 @@ watch(quantity, () => {
     props.product.id,
     (<ShopProductVariant>selectedVariant.value).id,
     quantity.value,
-    includeAddOn.value,
   );
 
   useJourneyTracking().logEvent(
@@ -98,24 +90,6 @@ watch(quantity, () => {
     {
       title: props.product.title,
       quantity: quantity.value,
-    },
-  );
-});
-
-watch(includeAddOn, () => {
-  prepareAddBasketForm(
-    props.product.id,
-    (<ShopProductVariant>selectedVariant.value).id,
-    quantity.value,
-    includeAddOn.value,
-  );
-
-  useJourneyTracking().logEvent(
-    'clicked',
-    'ShopProduct/AddBasketForm/ToggledAddOn',
-    {
-      title: props.product.title,
-      included: includeAddOn.value,
     },
   );
 });
@@ -163,40 +137,6 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
           "
           :error="addBasketForm.errors.quantity"
         />
-      </div>
-
-      <div v-if="availableQuantity && availableQuantity > 0 && product.add_ons">
-        <label
-          class="block text-base leading-6 font-semibold text-primary-dark sm:max-xl:text-lg xl:text-xl"
-        >
-          Add {{ product.add_ons.name }}
-        </label>
-
-        <div
-          class="flex w-full flex-col justify-between space-y-4 rounded-md border border-grey-off bg-white p-2 text-base text-gray-900 shadow-xs xs:flex-row xs:items-start xs:space-y-0 xs:space-x-2 md:text-lg"
-        >
-          <div class="flex-1">
-            Include a digital PDF of your travel card delivered straight to your
-            email once your order is complete.
-          </div>
-
-          <div
-            class="border-gray-off flex w-full items-center justify-end space-x-2 border-t pt-4 xs:w-auto xs:border-t-0 xs:pt-0"
-          >
-            <span
-              :class="includeAddOn ? 'text-lg font-semibold text-green' : ''"
-              v-text="`+${product.add_ons.price.current_price}`"
-            />
-
-            <FormCheckbox
-              v-model="includeAddOn"
-              name="include-add-on"
-              label=""
-              xl
-              hide-label
-            />
-          </div>
-        </div>
       </div>
 
       <div

@@ -66,14 +66,7 @@ export type ShopProductDetail = ShopBaseProduct & {
     link: string;
   };
   rating?: ShopProductRating;
-  add_ons?: ShopProductAddOn;
   faqs: ArticleFaq[] | null;
-};
-
-export type ShopProductAddOn = {
-  name: string;
-  description: string;
-  price: ShopProductPrice;
 };
 
 export type ShopProductPrice = {
@@ -128,12 +121,6 @@ export type ShopBasketItem = {
   id: number;
   title: string;
   description?: string;
-  add_on?: {
-    title: string;
-    description: string;
-    price: string;
-    in_basket: boolean;
-  };
   link: string;
   variant: string;
   item_price: string;

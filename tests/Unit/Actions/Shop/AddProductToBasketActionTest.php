@@ -7,9 +7,7 @@ namespace Tests\Unit\Actions\Shop;
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
-use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -103,27 +101,6 @@ class AddProductToBasketActionTest extends TestCase
         $this->assertEquals(2, $item->quantity);
     }
 
-    #[Test]
-    public function itAssociatesTheAddOnWithTheOrderItemRowIfRequired(): void
-    {
-        $addOn = $this->build(ShopProductAddOn::class)
-            ->forProduct($this->product)
-            ->has($this->build(ShopPrice::class), 'prices')
-            ->create();
-
-        $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1, true);
-
-        /** @var ShopOrderItem $item */
-        $item = ShopOrderItem::query()->first();
-
-        $this->assertNotNull($item->product_add_on_id);
-        $this->assertNotNull($item->product_add_on_title);
-        $this->assertNotNull($item->product_add_on_price);
-
-        $this->assertTrue($item->addOn->is($addOn));
-        $this->assertEquals($addOn->name, $item->product_add_on_title);
-        $this->assertEquals($addOn->currentPrice, $item->product_add_on_price);
-    }
 
     #[Test]
     public function itReturnsTheOrderItem(): void

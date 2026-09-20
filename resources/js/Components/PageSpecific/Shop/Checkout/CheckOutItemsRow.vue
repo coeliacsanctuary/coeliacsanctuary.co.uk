@@ -14,7 +14,6 @@ const props = defineProps<{ item: ShopBasketItem }>();
 const isLoading = ref(false);
 const hasError = ref(false);
 const isDeletingItem = ref(false);
-const includeAddOn = ref(props.item.add_on?.in_basket ?? false);
 
 const alterQuantity = (action: 'increase' | 'decrease') => {
   isLoading.value = true;
@@ -53,50 +52,6 @@ const removeItem = () => {
     },
   });
 };
-
-const removeAddOn = () => {
-  if (!props.item.add_on) {
-    return;
-  }
-
-  isLoading.value = true;
-
-  router.delete(`/shop/basket/${props.item.id}/add-on`, {
-    preserveScroll: true,
-    onFinish: () => {
-      isLoading.value = false;
-    },
-  });
-};
-
-const addAddOn = () => {
-  if (!props.item.add_on) {
-    return;
-  }
-
-  isLoading.value = true;
-
-  router.post(
-    `/shop/basket/${props.item.id}/add-on`,
-    {},
-    {
-      preserveScroll: true,
-      onFinish: () => {
-        isLoading.value = false;
-      },
-    },
-  );
-};
-
-watch(includeAddOn, () => {
-  if (includeAddOn.value) {
-    addAddOn();
-
-    return;
-  }
-
-  removeAddOn();
-});
 </script>
 
 <template>
@@ -175,41 +130,6 @@ watch(includeAddOn, () => {
         >
           Sorry, there isn't enough quantity available...
         </span>
-      </div>
-    </div>
-
-    <div
-      v-if="item.add_on"
-      class="mb-4 flex items-center gap-3 rounded-md border border-primary-light/60 bg-white p-3"
-    >
-      <FormCheckbox
-        v-model="includeAddOn"
-        name="include_add_on"
-        class="shrink-0 py-0!"
-        label=""
-        hide-label
-        xl
-      />
-
-      <div class="flex flex-1 justify-between gap-3 text-base">
-        <div class="flex flex-col">
-          <h3
-            class="font-semibold"
-            v-text="item.add_on.title"
-          />
-          <p
-            class="text-sm text-grey-dark"
-            v-text="item.add_on.description"
-          />
-        </div>
-
-        <p
-          class="shrink-0"
-          :class="
-            includeAddOn ? 'text-xl font-semibold' : 'text-sm text-grey-dark'
-          "
-          v-text="`+${item.add_on.price}`"
-        />
       </div>
     </div>
   </li>

@@ -35,7 +35,7 @@ class ShowController
             return redirect(route('shop.product', $product), LaravelResponse::HTTP_MOVED_PERMANENTLY);
         }
 
-        $product->load(['categories', 'prices', 'variants', 'media', 'reviews', 'addOns', 'addOns.prices', 'faqs']);
+        $product->load(['categories', 'prices', 'variants', 'media', 'reviews', 'faqs']);
 
         if ($product->currentPrices()->isEmpty()) {
             abort(LaravelResponse::HTTP_NOT_FOUND);

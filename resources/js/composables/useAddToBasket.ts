@@ -11,7 +11,6 @@ type AddBasketPayload = {
   variant_id?: number;
   quantity?: number;
   digital_card_id?: number;
-  include_add_on: boolean;
 };
 
 export type ShopHolidayConfirmation = {
@@ -36,7 +35,6 @@ export default () => {
       variant_id: undefined,
       quantity: undefined,
       digital_card_id: undefined,
-      include_add_on: false,
     },
   );
 
@@ -44,17 +42,15 @@ export default () => {
     productId: number,
     variantId: number,
     quantity: number = 1,
-    includeAddOn: boolean = false,
   ) => {
     addBasketForm.product_id = productId;
     addBasketForm.variant_id = variantId;
     addBasketForm.quantity = quantity;
-    addBasketForm.include_add_on = includeAddOn;
   };
 
   const prepareAddBasketDigitalCardForm = (digitalCardId: number) => {
     addBasketForm.digital_card_id = digitalCardId;
-  }
+  };
 
   const holidayStorageKey = (holiday: ShopHolidayProps): string =>
     `shop-holiday-${holiday.id}`;
@@ -86,13 +82,15 @@ export default () => {
 
         useGoogleEvents().googleEvent('event', 'add_to_cart', {
           items: [
-            addBasketForm.product_id ? {
-              productId: addBasketForm.product_id,
-              variantId: addBasketForm.variant_id,
-              quantity: addBasketForm.quantity,
-            } : {
-              digitalCardId: addBasketForm.digital_card_id,
-            },
+            addBasketForm.product_id
+              ? {
+                  productId: addBasketForm.product_id,
+                  variantId: addBasketForm.variant_id,
+                  quantity: addBasketForm.quantity,
+                }
+              : {
+                  digitalCardId: addBasketForm.digital_card_id,
+                },
           ],
         });
 

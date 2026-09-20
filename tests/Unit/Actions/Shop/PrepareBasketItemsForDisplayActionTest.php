@@ -103,13 +103,6 @@ class PrepareBasketItemsForDisplayActionTest extends TestCase
         $this->assertSame('£15.00', $this->prepare($items)['subtotal']);
     }
 
-    #[Test]
-    public function itIncludesTheAddOnPriceInTheSubtotal(): void
-    {
-        $items = [$this->item(['product_price' => 500, 'quantity' => 2, 'product_add_on_price' => 150])];
-
-        $this->assertSame('£11.50', $this->prepare($items)['subtotal']);
-    }
 
     #[Test]
     public function itIncludesTheDigitalItemPricesInTheSubtotal(): void
@@ -125,9 +118,9 @@ class PrepareBasketItemsForDisplayActionTest extends TestCase
     #[Test]
     public function itCombinesTheItemAndDigitalItemPricesIntoTheSubtotal(): void
     {
-        $items = [$this->item(['product_price' => 500, 'quantity' => 2, 'product_add_on_price' => 150])];
+        $items = [$this->item(['product_price' => 500, 'quantity' => 2])];
         $digitalItems = [$this->digitalItem(['digital_card_price' => 300])];
 
-        $this->assertSame('£14.50', $this->prepare($items, $digitalItems)['subtotal']);
+        $this->assertSame('£13.00', $this->prepare($items, $digitalItems)['subtotal']);
     }
 }

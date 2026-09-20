@@ -21,7 +21,7 @@ class GetOrderItemsAction
         $items = $order
             ->items()
             ->with([
-                'product', 'product.media', 'product.addOns', 'variant',
+                'product', 'product.media', 'variant',
                 'digitalBundles' => fn (Relation $relation) => $relation->with(['card', 'card.price', 'card.product', 'card.product.travelCardSearchTerms']),
             ])
             ->get()

@@ -22,7 +22,7 @@ class CalculateOrderTotalsAction
     public function handle(Collection $items, ShopPostageCountry $country): array
     {
         /** @var int $subtotal */
-        $subtotal = $items->map(fn (ShopOrderItemResource $item) => ($item->product_price * $item->quantity) + $item->product_add_on_price)->sum();
+        $subtotal = $items->map(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity)->sum();
 
         $shippingMethod = $items->max(function (ShopOrderItemResource $resource) {
             /** @var ShopProduct $product */
