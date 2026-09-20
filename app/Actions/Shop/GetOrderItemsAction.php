@@ -26,7 +26,7 @@ class GetOrderItemsAction
             ])
             ->get()
             ->map(function (ShopOrderItem $item) use ($order) {
-                if ($item->digitalBundles) {
+                if ($item->digitalBundles->isNotEmpty()) {
                     $item->digitalBundles = $item->digitalBundles->map(function (ShopOrderDigitalItem $digitalBundle) use ($order) {
                         $digitalBundle->card = $this->formatDigitalCard($digitalBundle->card, $order);
 

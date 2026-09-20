@@ -17,7 +17,7 @@ class ReconcileBasketItemsAction
 
         $basket->digitalItems->each(function (ShopOrderDigitalItem $item) use ($basket): void {
             // Card isnt linked to a physical product
-            if ( ! $item->card?->product) {
+            if ( ! $item->card->product) {
                 return;
             }
 

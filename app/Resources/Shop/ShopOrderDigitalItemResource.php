@@ -21,7 +21,7 @@ class ShopOrderDigitalItemResource extends JsonResource
         $card = $this->card;
 
         /** @var ?TravelCardSearchTerm $country */
-        $country = $card->countries?->first();
+        $country = $card->countries?->first(); /** @phpstan-ignore-line */
 
         return [
             'id' => $this->id,
