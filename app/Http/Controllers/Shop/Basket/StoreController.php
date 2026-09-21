@@ -60,7 +60,7 @@ class StoreController
             return redirect()
                 ->back()
                 ->withCookie(new Cookie('basket_token', $order->token, now()->addHour()));
-        } catch (Exception $exception) {
+        } catch (Exception) {
             DB::rollBack();
 
             throw ValidationException::withMessages(['product_id' => 'There was an error adding the item to your basket.']);

@@ -23,6 +23,8 @@ class ShopOrderFactory extends Factory
         return [
             'token' => Str::random(8),
             'sent_abandoned_basket_email' => false,
+            'is_digital_only' => false,
+            'has_digital_items' => false,
         ];
     }
 

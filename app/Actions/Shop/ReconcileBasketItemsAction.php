@@ -54,5 +54,10 @@ class ReconcileBasketItemsAction
 
             $item->saveQuietly();
         });
+
+        $basket->updateQuietly([
+            'has_digital_items' => $basket->digitalItems->isNotEmpty(),
+            'is_digital_only' => $basket->items->isEmpty(),
+        ]);
     }
 }

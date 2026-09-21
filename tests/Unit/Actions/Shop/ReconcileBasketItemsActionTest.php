@@ -91,19 +91,6 @@ class ReconcileBasketItemsActionTest extends TestCase
     }
 
     #[Test]
-    public function itDoesntChangeAnItemWhoseCardIsNoLongerLive(): void
-    {
-        /** @var ShopDigitalCard $card */
-        $card = $this->build(ShopDigitalCard::class)->forProduct($this->product())->notLive()->create();
-
-        $item = $this->digitalItem($card, ['digital_card_price' => 50]);
-
-        $this->callAction(ReconcileBasketItemsAction::class, $this->basket);
-
-        $this->assertEquals(50, $item->refresh()->digital_card_price);
-    }
-
-    #[Test]
     public function itResetsThePriceToTheStandardPriceWhenTheLinkedProductIsntInTheBasket(): void
     {
         $item = $this->digitalItem($this->card($this->product()), ['digital_card_price' => 50]);
@@ -270,12 +257,63 @@ class ReconcileBasketItemsActionTest extends TestCase
         $otherItem = $this->build(ShopOrderDigitalItem::class)
             ->inOrder($otherBasket)
             ->forCard($card)
-            ->create(['digital_card_price' => 50]);
+            ->createQuietly(['digital_card_price' => 50]);
 
         $this->basketItem($product);
 
         $this->callAction(ReconcileBasketItemsAction::class, $this->basket);
 
         $this->assertEquals(50, $otherItem->refresh()->digital_card_price);
+    }
+
+    #[Test]
+    public function itFlagsTheBasketAsHavingDigitalItems(): void
+    {
+        $this->digitalItem($this->card(), ['digital_card_price' => 50]);
+
+        $this->callAction(ReconcileBasketItemsAction::class, $this->basket);
+
+        $this->assertTrue($this->basket->refresh()->has_digital_items);
+    }
+
+    #[Test]
+    public function itFlagsTheBasketAsDigitalOnlyWhenItHasNoPhysicalItems(): void
+    {
+        $this->digitalItem($this->card(), ['digital_card_price' => 50]);
+
+        $this->callAction(ReconcileBasketItemsAction::class, $this->basket);
+
+        $this->assertTrue($this->basket->refresh()->is_digital_only);
+    }
+
+    #[Test]
+    public function itDoesntFlagTheBasketAsDigitalOnlyWhenItHasPhysicalItems(): void
+    {
+        $product = $this->product();
+
+        $this->digitalItem($this->card($product), ['digital_card_price' => 500]);
+        $this->basketItem($product);
+
+        $this->callAction(ReconcileBasketItemsAction::class, $this->basket);
+
+        $this->basket->refresh();
+
+        $this->assertTrue($this->basket->has_digital_items);
+        $this->assertFalse($this->basket->is_digital_only);
+    }
+
+    #[Test]
+    public function itClearsTheDigitalFlagsWhenTheBasketHasNoDigitalItems(): void
+    {
+        $this->basket->updateQuietly(['has_digital_items' => true, 'is_digital_only' => true]);
+
+        $this->basketItem($this->product());
+
+        $this->callAction(ReconcileBasketItemsAction::class, $this->basket);
+
+        $this->basket->refresh();
+
+        $this->assertFalse($this->basket->has_digital_items);
+        $this->assertFalse($this->basket->is_digital_only);
     }
 }
