@@ -3,6 +3,7 @@ import Card from '@/Components/Card.vue';
 import {
   CheckoutForm,
   CheckoutFormErrors,
+  ShopBasketDigitalItem,
   ShopBasketItem,
   ShopPopularProduct,
 } from '@/types/Shop';
@@ -34,6 +35,7 @@ import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDet
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import CheckOutItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsRow.vue';
+import CheckOutDigitalItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutDigitalItemsRow.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
@@ -50,6 +52,7 @@ type SectionComponent = {
   key: SectionKeys;
   next: SectionKeys;
   additionalProps: Record<string, unknown>;
+  required: boolean;
 };
 
 type NoBasketProps = {
@@ -67,6 +70,8 @@ type BasketProps = {
   countries: FormSelectOption[];
   basket: {
     items: ShopBasketItem[];
+    digital_items: ShopBasketDigitalItem[];
+    digital_only: boolean;
     selected_country: number;
     delivery_timescale: string;
     subtotal: string;
@@ -323,17 +328,21 @@ watch(
   { deep: true },
 );
 
-const sectionComponents: SectionComponent[] = [
+const sectionComponents = computed((): SectionComponent[] => [
   {
     component: ContactDetails as Component,
     key: 'details',
-    next: 'shipping',
-    additionalProps: {},
+    next: props.basket?.digital_only ? 'payment' : 'shipping',
+    required: true,
+    additionalProps: {
+      hasDigitalItems: props.basket?.digital_items.length,
+    },
   },
   {
     component: ShippingDetails as Component,
     key: 'shipping',
     next: 'payment',
+    required: props.basket?.digital_only === false,
     additionalProps: {
       canLookupPostcode: props.basket?.selected_country === 1,
     },
@@ -342,21 +351,30 @@ const sectionComponents: SectionComponent[] = [
     component: PaymentDetails as Component,
     key: 'payment',
     next: '_complete',
+    required: true,
     additionalProps: {
       paymentToken: props.payment_intent,
+      requiredShipping: props.basket?.digital_only === false,
     },
   },
-];
+]);
 
 onMounted(() => {
   useGoogleEvents().googleEvent('event', 'begin_checkout', {
-    items: props.basket?.items.map((item: ShopBasketItem) => ({
-      id: item.id,
-      name: item.title,
-      variant: item.variant ?? '',
-      quantity: item.quantity,
-      price: item.line_price,
-    })),
+    items: [
+      ...(props.basket?.items.map((item: ShopBasketItem) => ({
+        id: item.id,
+        name: item.title,
+        variant: item.variant ?? '',
+        quantity: item.quantity,
+        price: item.line_price,
+      })) ?? []),
+      ...(props.basket?.digital_items.map((item: ShopBasketDigitalItem) => ({
+        id: item.id,
+        name: item.title,
+        price: item.item_price,
+      })) ?? []),
+    ],
   });
 });
 </script>
@@ -389,6 +407,7 @@ onMounted(() => {
           >
             <component
               :is="section.component"
+              v-if="section.required"
               :show="sections[section.key].active"
               :completed="sections[section.key].complete"
               :error="sections[section.key].error"
@@ -432,6 +451,7 @@ onMounted(() => {
           </div>
 
           <CheckoutDeliveryCountry
+            v-if="basket.digital_only === false"
             :countries="countries as FormSelectOption[]"
             :selected-country="basket.selected_country"
             :delivery-timescale="basket.delivery_timescale"
@@ -445,6 +465,12 @@ onMounted(() => {
                 :key="item.id"
                 :item="item"
               />
+
+              <CheckOutDigitalItemsRow
+                v-for="item in basket.digital_items"
+                :key="item.id"
+                :item="item"
+              />
             </ul>
           </div>
 
@@ -455,6 +481,7 @@ onMounted(() => {
             :total-fees="basket.total_fees"
             :total="basket.total"
             :subtotal="basket.subtotal"
+            :digital-only="basket.digital_only"
           />
 
           <Link

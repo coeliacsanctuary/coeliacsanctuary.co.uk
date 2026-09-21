@@ -8,6 +8,7 @@ import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySw
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { ref, watch } from 'vue';
 import eventBus from '@/eventBus';
+import CheckOutDigitalItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutDigitalItemsRow.vue';
 
 const props = defineProps<{ item: ShopBasketItem }>();
 
@@ -132,5 +133,22 @@ const removeItem = () => {
         </span>
       </div>
     </div>
+
+    <ul
+      v-if="item.digitalBundles?.length"
+      class="-mt-3 ml-28"
+    >
+      <li class="my-2 border-b border-primary-dark pb-1 font-semibold">
+        Digital Bundles
+      </li>
+
+      <CheckOutDigitalItemsRow
+        v-for="digitalItem in item.digitalBundles"
+        :key="digitalItem.id"
+        :item="digitalItem"
+        :skip-bundle-rows="false"
+        compact
+      />
+    </ul>
   </li>
 </template>

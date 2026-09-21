@@ -15,6 +15,7 @@ defineProps<{
   fees: { fee: string; description?: string }[];
   totalFees: string;
   total: string;
+  digitalOnly: boolean;
 }>();
 
 const shopHoliday = computed(
@@ -40,9 +41,20 @@ const removeDiscountCode = () => {
 </script>
 
 <template>
-  <div class="mt-4 w-full border-t border-primary-light/60 pt-4">
+  <div
+    class="mt-4 w-full border-primary-light/60 pt-4"
+    :class="{
+      'border-t':
+        digitalOnly === false || (digitalOnly === true && subtotal !== total),
+    }"
+  >
     <dl class="space-y-3">
-      <div class="flex justify-between gap-3">
+      <div
+        v-if="
+          digitalOnly === false || (digitalOnly === true && subtotal !== total)
+        "
+        class="flex justify-between gap-3"
+      >
         <dt class="text-grey-dark">Subtotal</dt>
         <dd
           class="font-semibold"
@@ -50,7 +62,10 @@ const removeDiscountCode = () => {
         />
       </div>
 
-      <div class="flex justify-between gap-3">
+      <div
+        v-if="!digitalOnly"
+        class="flex justify-between gap-3"
+      >
         <dt class="text-grey-dark">Postage</dt>
         <dd
           class="font-semibold"
