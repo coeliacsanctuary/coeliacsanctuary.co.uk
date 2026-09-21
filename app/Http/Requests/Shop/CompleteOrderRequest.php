@@ -42,7 +42,7 @@ class CompleteOrderRequest extends FormRequest
             'shipping.address_3' => ['nullable', 'string'],
             'shipping.town' => ['required', 'string'],
             'shipping.county' => ['nullable', 'string'],
-            'shipping.postcode' => ['required', 'string', 'bail', new ValidPostcodeRule],
+            'shipping.postcode' => ['required', 'string', 'bail', new ValidPostcodeRule()],
         ];
     }
 

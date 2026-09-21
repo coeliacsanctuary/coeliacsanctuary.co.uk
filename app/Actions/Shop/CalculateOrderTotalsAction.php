@@ -30,7 +30,7 @@ class CalculateOrderTotalsAction
         /** @var int $digitalSubtotal */
         $digitalSubtotal = $digitalItems->sum(fn (ShopOrderDigitalItemResource $item) => $item->digital_card_price);
 
-        if($items->isNotEmpty()) {
+        if ($items->isNotEmpty()) {
             $shippingMethod = $items->max(function (ShopOrderItemResource $resource) {
                 /** @var ShopProduct $product */
                 $product = $resource->product;
@@ -51,7 +51,7 @@ class CalculateOrderTotalsAction
                 ->where('shipping_method_id', $shippingMethod)
                 ->where('max_weight', '>=', $totalWeight)
                 ->orderBy('max_weight')
-                ->firstOr(fn() => throw new RuntimeException('Can not calculate postage'));
+                ->firstOr(fn () => throw new RuntimeException('Can not calculate postage'));
 
             $postage = $postagePrice->price;
         }
