@@ -18,9 +18,8 @@ class CalculateOrderTotalsAction
 {
     /**
      * @param  Collection<int, ShopOrderItemResource>  $items
-     * @param  Collection<int, ShopOrderDigitalItemResource>  $items
-     * @return array{subtotal: int, postage: int, fees: Collection<int, array{fee: int<0, max>, description:
-     *     string|null}>, total_fees: int}
+     * @param  Collection<int, ShopOrderDigitalItemResource>  $digitalItems
+     * @return array{subtotal: int, postage: int, fees: Collection<int, array{fee: int<0, max>, description: string|null}>, total_fees: int}
      */
     public function handle(Collection $items, Collection $digitalItems, ShopPostageCountry $country): array
     {
