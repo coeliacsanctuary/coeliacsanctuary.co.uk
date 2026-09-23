@@ -16,7 +16,9 @@ use Google\Shopping\Merchant\Products\V1\ProductInput;
 
 class SyncProductToGoogleMerchantAction
 {
-    public function __construct(protected GoogleMerchantProductManager $manager) {}
+    public function __construct(protected GoogleMerchantProductManager $manager)
+    {
+    }
 
     public function handle(ShopProduct $product): void
     {
@@ -86,7 +88,7 @@ class SyncProductToGoogleMerchantAction
     {
         $product->loadMissing(['variants', 'prices']);
 
-        $attrs = new ProductAttributes;
+        $attrs = new ProductAttributes();
         $attrs->setTitle($product->title);
         $attrs->setDescription($product->description);
         $attrs->setLink($product->absolute_link);
@@ -109,7 +111,7 @@ class SyncProductToGoogleMerchantAction
             $attrs->setShippingWeight(Helpers::shippingWeightFromGrams($firstVariant->weight));
         }
 
-        return (new ProductInput)
+        return (new ProductInput())
             ->setOfferId((string) $product->id)
             ->setContentLanguage('en')
             ->setFeedLabel('GB')

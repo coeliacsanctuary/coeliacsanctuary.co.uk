@@ -35,8 +35,8 @@ class EmailDataCastTest extends TestCase
 
         $this->seed(EateryScaffoldingSeeder::class);
 
-        $this->cast = new EmailDataCast;
-        $this->notificationEmail = new NotificationEmail;
+        $this->cast = new EmailDataCast();
+        $this->notificationEmail = new NotificationEmail();
     }
 
     /** @return array<string, mixed> */
