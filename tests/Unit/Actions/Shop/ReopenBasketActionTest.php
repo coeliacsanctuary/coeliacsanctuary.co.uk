@@ -64,7 +64,7 @@ class ReopenBasketActionTest extends TestCase
         $item = $this->build(ShopOrderDigitalItem::class)
             ->inOrder($this->basket)
             ->forCard($card)
-            ->create(['physical_order_item_id' => $orderItem?->id]);
+            ->createQuietly(['physical_order_item_id' => $orderItem?->id]);
 
         return $item;
     }
