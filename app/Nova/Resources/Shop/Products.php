@@ -30,7 +30,6 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Number;
@@ -243,8 +242,6 @@ class Products extends Resource
 
             MorphMany::make('Prices', resource: Price::class),
 
-            HasOne::make('Digital Download Add Ons', 'addOns', resource: ProductAddOn::class),
-
             BelongsToMany::make('Categories', resource: Categories::class),
 
             MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
@@ -361,8 +358,8 @@ class Products extends Resource
     public function filters(NovaRequest $request): array
     {
         return [
-            new ShopLiveProducts(),
-            new ProductQuantity(),
+            new ShopLiveProducts,
+            new ProductQuantity,
         ];
     }
 

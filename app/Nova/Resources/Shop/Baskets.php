@@ -47,6 +47,8 @@ class Baskets extends Resource
 
             Number::make('Items Count'),
 
+            Number::make('Digital Items Count'),
+
             Currency::make('Subtotal')->asMinorUnits(),
 
             Badge::make('Status', 'state_id')
@@ -64,6 +66,8 @@ class Baskets extends Resource
 
             HasMany::make('Items', resource: OrderItem::class),
 
+            HasMany::make('Digital Items', resource: OrderDigitalItem::class),
+
             HasOne::make('Customer', resource: Customer::class),
         ];
     }
@@ -73,9 +77,21 @@ class Baskets extends Resource
         return $query
             ->withoutGlobalScopes()
             ->select('*')
-            ->selectSub('select sum(product_price * quantity) from shop_order_items i where i.order_id = shop_orders.id', 'subtotal')
+            ->selectSub('
+                COALESCE((
+                    SELECT SUM(product_price * quantity)
+                    FROM shop_order_items i
+                    WHERE i.order_id = shop_orders.id
+                ), 0)
+                +
+                COALESCE((
+                    SELECT SUM(digital_card_price)
+                    FROM shop_order_digital_items di
+                    WHERE di.order_id = shop_orders.id
+                ), 0)
+            ','subtotal')
             ->with(['postageCountry'])
-            ->withCount(['items'])
+            ->withCount(['items', 'digitalItems'])
             ->whereIn('state_id', [
                 OrderState::BASKET,
                 OrderState::PENDING,
@@ -85,17 +101,7 @@ class Baskets extends Resource
 
     public static function detailQuery(NovaRequest $request, $query)
     {
-        return $query
-            ->withoutGlobalScopes()
-            ->select('*')
-            ->selectSub('select sum(product_price * quantity) from shop_order_items i where i.order_id = shop_orders.id', 'subtotal')
-            ->with(['postageCountry'])
-            ->withCount(['items'])
-            ->whereIn('state_id', [
-                OrderState::BASKET,
-                OrderState::PENDING,
-                OrderState::EXPIRED,
-            ]);
+        return self::indexQuery($request, $query);
     }
 
     public function actions(NovaRequest $request): array

@@ -50,6 +50,7 @@ use App\Nova\Resources\Shop\DigitalCardResource;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
+use App\Nova\Resources\Shop\OrderDigitalItem;
 use App\Nova\Resources\Shop\OrderItem;
 use App\Nova\Resources\Shop\OrderReviewItem;
 use App\Nova\Resources\Shop\OrderReviews;
@@ -61,7 +62,6 @@ use App\Nova\Resources\Shop\PostageArea;
 use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\Price;
-use App\Nova\Resources\Shop\ProductAddOn;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\ProductVariant;
 use App\Nova\Resources\Shop\ShippingAddress;
@@ -130,6 +130,7 @@ class ResourceRegistrar
             Payment::class,
             PaymentRefund::class,
             OrderItem::class,
+            OrderDigitalItem::class,
 
             // Shop Physical Inventory
             Categories::class,
@@ -137,7 +138,6 @@ class ResourceRegistrar
             ShippingMethod::class,
             Price::class,
             ProductVariant::class,
-            ProductAddOn::class,
 
             // Shop Digital Products
             DigitalCardResource::class,

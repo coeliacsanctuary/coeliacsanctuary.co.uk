@@ -9,7 +9,6 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use App\Nova\Actions\Shop\OpenDispatchSlip;
 use App\Nova\Actions\Shop\RefundOrder;
-use App\Nova\Actions\Shop\ResendDownloadLink;
 use App\Nova\Actions\Shop\ResendOrder;
 use App\Nova\Actions\Shop\ResetPrintStatus;
 use App\Nova\Actions\Shop\ShipOrder;
@@ -25,7 +24,6 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\HasOneThrough;
 use Laravel\Nova\Fields\ID;
@@ -33,7 +31,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/** @extends Resource<ShopProduct> */
+/** @extends resource<ShopProduct> */
 /**
  * @codeCoverageIgnore
  */
@@ -67,7 +65,7 @@ class Orders extends Resource
 
             Currency::make('Total', fn (ShopOrder $order) => $order->payment->total)->asMinorUnits(),
 
-            Boolean::make('Has Digital Add Ons', 'has_add_ons')->exceptOnForms(),
+            Boolean::make('Has Digital Cards', 'has_digital_items'),
 
             Text::make('Payment Method', fn (ShopOrder $order) => $order->payment->payment_type_id),
 
@@ -97,9 +95,7 @@ class Orders extends Resource
 
             DateTime::make('Order Date', fn (ShopOrder $order) => $order->payment->created_at),
 
-            Boolean::make('Has Digital Add Ons', 'has_add_ons')->exceptOnForms(),
-
-            DateTime::make('Add Ons Set At', 'add_ons_sent_at')->exceptOnForms(),
+            Boolean::make('Has Digital Cards', 'has_digital_items'),
 
             CountryIcon::make('Country', fn (ShopOrder $order) => [
                 'name' => $order->postageCountry->country,
@@ -116,7 +112,7 @@ class Orders extends Resource
 
             HasMany::make('Items', resource: OrderItem::class),
 
-            HasManyThrough::make('Add Ons', resource: ProductAddOn::class),
+            HasMany::make('Digital Items', resource: OrderDigitalItem::class),
 
             HasOne::make('Customer', resource: Customer::class),
 
@@ -161,11 +157,6 @@ class Orders extends Resource
                 ->sole()
                 ->confirmButtonText('Resend Order')
                 ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::SHIPPED),
-
-            ResendDownloadLink::make()
-                ->sole()
-                ->confirmButtonText('Send new Download Link')
-                ->canRun(fn ($request, ShopOrder $order) => $order->has_add_ons),
         ];
     }
 
@@ -182,8 +173,9 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items'])
+            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items', 'digitalItems'])
             ->withCount(['items'])
+            ->where('is_digital_only', false)
             ->whereNotIn('state_id', [
                 OrderState::BASKET,
                 OrderState::PENDING,
@@ -195,7 +187,7 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items']);
+            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items', 'digitalItems']);
     }
 
     public function authorizedToView(Request $request): bool
