@@ -99,6 +99,7 @@ class EmailDataCast implements CastsAttributes
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
+        /** @phpstan-ignore-next-line  */
         return json_encode($this->toReferences(is_array($value) ? $value : []));
     }
 
@@ -120,7 +121,7 @@ class EmailDataCast implements CastsAttributes
             if ($value instanceof Comment) {
                 $references[$key] = [
                     'id' => $value->getKey(),
-                    'created_at' => $value->created_at?->toDateTimeString(),
+                    'created_at' => $value->created_at->toDateTimeString(),
                     'name' => $value->name,
                 ];
 

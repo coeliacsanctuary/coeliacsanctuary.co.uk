@@ -69,7 +69,7 @@ class ShowController
             ]);
 
             $pendingOrder->items->map(function (ShopOrderItem $item) use ($pendingOrder) {
-                $item->digitalBundles?->map(function (ShopOrderDigitalItem $digitalItem) use ($pendingOrder) {
+                $item->digitalBundles->map(function (ShopOrderDigitalItem $digitalItem) use ($pendingOrder) {
                     $digitalItem->card = $this->formatDigitalCard($digitalItem->card, $pendingOrder);
 
                     return $digitalItem;
