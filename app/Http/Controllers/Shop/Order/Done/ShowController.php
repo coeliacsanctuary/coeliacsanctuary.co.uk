@@ -7,11 +7,14 @@ namespace App\Http\Controllers\Shop\Order\Done;
 use App\Actions\Shop\GetPaymentIntentAction;
 use App\Actions\Shop\GetStripeChargeAction;
 use App\Actions\Shop\MarkOrderAsPaidAction;
+use App\Concerns\Shop\FormatsDigitalCard;
 use App\Enums\Shop\OrderState;
 use App\Events\Shop\OrderPaidEvent;
 use App\Http\Requests\Shop\StripeOrderCompleteRequest;
 use App\Http\Response\Inertia;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderDigitalItem;
+use App\Models\Shop\ShopOrderItem;
 use App\Resources\Shop\ShopOrderCompleteResource;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -25,6 +28,8 @@ use Stripe\PaymentMethod;
 
 class ShowController
 {
+    use FormatsDigitalCard;
+
     public function __invoke(
         StripeOrderCompleteRequest $request,
         Inertia $inertia,
@@ -57,7 +62,27 @@ class ShowController
 
             OrderPaidEvent::dispatch($pendingOrder);
 
-            $pendingOrder->load(['items', 'items.product', 'items.variant', 'payment', 'address', 'discountCode']);
+            $pendingOrder->load([
+                'items', 'items.product', 'items.variant',  'payment', 'address', 'discountCode',
+                'items.digitalBundles', 'items.digitalBundles.card', 'items.digitalBundles.card.price', 'items.digitalBundles.card.product',
+                'digitalItems', 'digitalItems.card', 'digitalItems.card.price', 'digitalItems.card.product',
+            ]);
+
+            $pendingOrder->items->map(function (ShopOrderItem $item) use ($pendingOrder) {
+                $item->digitalBundles?->map(function (ShopOrderDigitalItem $digitalItem) use ($pendingOrder) {
+                    $digitalItem->card = $this->formatDigitalCard($digitalItem->card, $pendingOrder);
+
+                    return $digitalItem;
+                });
+
+                return $item;
+            });
+
+            $pendingOrder->digitalItems->map(function (ShopOrderDigitalItem $item) use ($pendingOrder) {
+                $item->card = $this->formatDigitalCard($item->card, $pendingOrder);
+
+                return $item;
+            });
 
             Cookie::forget('basket_token');
             $request->session()->remove('discountCode');

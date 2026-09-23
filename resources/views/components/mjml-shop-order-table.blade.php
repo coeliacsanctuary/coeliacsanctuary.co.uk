@@ -10,67 +10,21 @@
 
 <!-- BEGIN PRODUCTS -->
 @foreach($order->items as $item)
-    <mj-section margin-bottom="{{ $loop->last || $item->product_add_on_id ? '0' : '10px' }}">
-        <mj-column width="25%" padding="4px 0">
-            <mj-image
-                src="{{ $item->product->main_image }}"
-                fluid-on-mobile="true"
-                css-class="prod-image"
-            />
-        </mj-column>
+    <x-shop-order-table.product-line
+        :loop="$loop"
+        :item="$item"
+        :resend="$resend"
+        :overrides="$overrides"
+    />
+@endforeach
+<!-- END: PRODUCTS -->
 
-        <mj-column width="60%" padding="4px 0">
-            <mj-text font-size="18px" line-height="1.2">
-                <a
-                    href="{{ $item->product->link }}" @if($overrides->get($item->id, null) === 0)
-                    style="text-decoration: line-through" @endif
-                >
-                    <span @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif>
-                        {{ $item->quantity }}X
-                    </span>
-                    @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity)
-                        <span style="font-weight: bold; color: #29719f">{{ $overrides->get($item->id ) }}X</span>
-                    @endif
-                    <span>
-                        {{ $item->product_title }}
-                        @if($item->variant->title !== '')
-                            - {{ $item->variant->title }}
-                        @endif
-                    </span>
-                </a>
-            </mj-text>
-        </mj-column>
-
-        <mj-column width="15%" padding="4px 0">
-            <mj-text
-                align="right"
-                @if($resend && $overrides->get($item->id, null) === 0) style="text-decoration: line-through" @endif
-                @if($resend && $overrides->get($item->id, 0) > 0 && $overrides->get($item->id, 0) < $item->quantity) style="text-decoration: line-through" @endif
-            >
-                {{ Helpers::formatMoney(Money::GBP($item->product_price * $item->quantity)) }}
-            </mj-text>
-        </mj-column>
-    </mj-section>
-
-    @if($item->product_add_on_id && !$resend)
-        <mj-section margin-bottom="{{ $loop->last ? '0' : '10px' }}" padding-top="0">
-            <mj-column width="25%" padding="0 0 4px" />
-
-            <mj-column width="60%" padding="0 0 4px">
-                <mj-text font-size="18px" line-height="1.2">
-                    <span style="font-weight: 600">
-                        {{ $item->product_add_on_title }}
-                    </span>
-                </mj-text>
-            </mj-column>
-
-            <mj-column width="15%" padding="0 0 4px">
-                <mj-text align="right">
-                    +{{ Helpers::formatMoney(Money::GBP($item->product_add_on_price)) }}
-                </mj-text>
-            </mj-column>
-        </mj-section>
-    @endif
+<!-- BEGIN DIGITAL PRODUCTS -->
+@foreach($order->digitalItems as $item)
+    <x-shop-order-table.digital-line
+        :loop="$loop"
+        :item="$item"
+    />
 @endforeach
 <!-- END: PRODUCTS -->
 

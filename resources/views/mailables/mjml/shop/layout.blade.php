@@ -21,12 +21,12 @@
         </mj-column>
     </mj-section>
 
-    @if($order->has_add_ons && isset($newOrder) && $newOrder === true)
+    @if($order->has_digital_items && isset($newOrder) && $newOrder === true)
         <mj-section>
             <mj-column>
                 <mj-text mj-class="inner">
                         <span style="line-height:1.4; font-weight: bold; text-align: center;">
-                            You will receive a separate email with the download link for your digital cards.
+                            You will receive a separate email with details to access your digital cards.
                         </span>
                 </mj-text>
             </mj-column>
@@ -72,15 +72,17 @@
             </mj-column>
         </mj-section>
 
-        <mj-section>
-            <mj-column>
-                <mj-text><h2>Postage Address</h2></mj-text>
-                <mj-text mj-class="inner">
-                    <span style="line-height:1.4">
-                        {!! Str::markdown($order->address->formattedAddress, ['renderer' => ['soft_break' => "<br/>"]]) !!}
-                    </span>
-                </mj-text>
-            </mj-column>
-        </mj-section>
+        @unless($order->is_digital_only)
+            <mj-section>
+                <mj-column>
+                    <mj-text><h2>Postage Address</h2></mj-text>
+                    <mj-text mj-class="inner">
+                        <span style="line-height:1.4">
+                            {!! Str::markdown($order->address->formattedAddress, ['renderer' => ['soft_break' => "<br/>"]]) !!}
+                        </span>
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+        @endunless
     @endunless
 @endsection

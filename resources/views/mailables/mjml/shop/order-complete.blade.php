@@ -12,7 +12,7 @@ $newOrder = true;
 @endsection
 
 @section('intro')
-    <mj-text mj-class="inner">Hey {{ $order->address->name }}</mj-text>
+    <mj-text mj-class="inner">Hey {{ $order->customer->name }}</mj-text>
     <mj-text mj-class="inner">
         Thanks a bunch for your recent order at the Coeliac Sanctuary shop! Check out the details of your order
         below.

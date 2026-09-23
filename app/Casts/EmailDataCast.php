@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Casts;
 
+use App\Actions\Shop\PrepareOrderForEmailAction;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
 use App\Models\EatingOut\Eatery;
@@ -58,9 +59,10 @@ class EmailDataCast implements CastsAttributes
         }
 
         if (isset($data['order'])) {
-            $return['order'] = ShopOrder::query()
-                ->with(['items.product', 'items.variant', 'payment', 'refunds'])
-                ->findOrFail($data['order']['id']);
+            /** @var ShopOrder $order */
+            $order = ShopOrder::query()->findOrFail($data['order']['id']);
+
+            $return['order'] = app(PrepareOrderForEmailAction::class)->handle($order);
         }
 
         if (isset($data['notifiable'])) {
@@ -97,6 +99,55 @@ class EmailDataCast implements CastsAttributes
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        return json_encode($value);
+        return json_encode($this->toReferences(is_array($value) ? $value : []));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function toReferences(array $data): array
+    {
+        $references = [];
+
+        foreach ($data as $key => $value) {
+            if ($value instanceof Carbon) {
+                $references[$key] = $value->toDateTimeString();
+
+                continue;
+            }
+
+            if ($value instanceof Comment) {
+                $references[$key] = [
+                    'id' => $value->getKey(),
+                    'created_at' => $value->created_at?->toDateTimeString(),
+                    'name' => $value->name,
+                ];
+
+                continue;
+            }
+
+            if ($value instanceof Model) {
+                $references[$key] = ['id' => $value->getKey()];
+
+                continue;
+            }
+
+            if ($value instanceof Collection) {
+                $references[$key] = $value
+                    ->filter(fn (mixed $item) => $item instanceof Model)
+                    ->map(fn (Model $item) => ['id' => $item->getKey()])
+                    ->values()
+                    ->all();
+
+                continue;
+            }
+
+            if (is_scalar($value) || $value === null) {
+                $references[$key] = $value;
+            }
+        }
+
+        return $references;
     }
 }

@@ -8,6 +8,8 @@ import useScreensize from '@/composables/useScreensize';
 import useGoogleEvents from '@/composables/useGoogleEvents';
 import Heading from '@/Components/Heading.vue';
 import SubHeading from '@/Components/SubHeading.vue';
+import PhysicalLineItem from '@/Components/PageSpecific/Shop/OrderComplete/PhysicalLineItem.vue';
+import DigitalLineItem from '@/Components/PageSpecific/Shop/OrderComplete/DigitalLineItem.vue';
 
 const props = defineProps<{ order: OrderCompleteProps }>();
 
@@ -51,11 +53,11 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
           </p>
 
           <p
-            v-if="order.has_add_ons"
+            v-if="order.has_digital_items"
             class="prose prose-lg mt-4 max-w-none text-center text-xl font-semibold"
           >
-            You will receive a separate email with a link to access your digital
-            PDF Downloads.
+            You will receive a separate email with instructions on how to access
+            your digital cards.
           </p>
         </div>
 
@@ -72,58 +74,17 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
         role="list"
         class="divide-y divide-secondary/30 border-t border-secondary"
       >
-        <li
-          v-for="product in order.products"
+        <PhysicalLineItem
+          v-for="product in order.products.items"
           :key="product.id"
-        >
-          <div class="flex space-x-2 py-3 sm:space-x-4 sm:py-4">
-            <img
-              :src="product.image"
-              :alt="product.title"
-              class="size-16 flex-none rounded-md object-cover object-center xs:size-20 sm:size-24"
-            />
-            <div class="flex-auto space-y-1">
-              <h3
-                class="font-semibold text-primary-dark sm:max-lg:text-lg lg:text-xl"
-              >
-                <Link
-                  :href="product.link"
-                  target="_blank"
-                >
-                  {{ product.title }}
-                </Link>
-              </h3>
-              <p
-                v-if="product.variant"
-                class="text-grey-darker"
-                v-text="product.variant"
-              />
-              <p class="text-grey-darker">Quantity: {{ product.quantity }}</p>
-            </div>
-            <p
-              class="flex-none font-semibold"
-              v-text="product.line_price"
-            />
-          </div>
+          :product="product"
+        />
 
-          <div
-            v-if="product.add_on && product.add_on.in_basket"
-            class="-mt-2 flex space-x-2 pb-3 sm:space-x-4 sm:pb-4"
-          >
-            <span class="w-16 flex-none xs:w-20 sm:w-24" />
-
-            <div class="flex-auto space-y-1">
-              <h3
-                class="font-semibold"
-                v-text="product.add_on.title"
-              />
-            </div>
-            <p
-              class="flex-none font-semibold"
-              v-text="`+${product.add_on.price}`"
-            />
-          </div>
-        </li>
+        <DigitalLineItem
+          v-for="product in order.products.digital"
+          :key="product.id"
+          :product="product"
+        />
       </ul>
 
       <dl class="space-y-2 border-t border-secondary pt-3">
@@ -146,7 +107,10 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
           <dd v-text="`-${order.discount.amount}`" />
         </div>
 
-        <div class="flex justify-between">
+        <div
+          v-if="!order.is_digital_only"
+          class="flex justify-between"
+        >
           <dt class="font-semibold">Postage</dt>
           <dd v-text="order.postage" />
         </div>
@@ -181,7 +145,7 @@ useGoogleEvents().googleEvent('event', 'purchase', props.order.event);
       </dl>
 
       <dl class="grid gap-4 border-t border-secondary pt-4 xs:grid-cols-2">
-        <div>
+        <div v-if="!order.is_digital_only">
           <dt class="text-lg font-semibold text-primary-dark">
             Shipping Address
           </dt>

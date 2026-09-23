@@ -16,9 +16,7 @@ use Google\Shopping\Merchant\Products\V1\ProductInput;
 
 class SyncProductToGoogleMerchantAction
 {
-    public function __construct(protected GoogleMerchantProductManager $manager)
-    {
-    }
+    public function __construct(protected GoogleMerchantProductManager $manager) {}
 
     public function handle(ShopProduct $product): void
     {
@@ -40,7 +38,7 @@ class SyncProductToGoogleMerchantAction
 
         $result = $this->syncToMerchant($product);
 
-        $product->update(['google_merchant_product_id' => $result->getName()]);
+        $product->updateQuietly(['google_merchant_product_id' => $result->getName()]);
     }
 
     protected function syncToMerchant(ShopProduct $product): ProductInput
@@ -57,7 +55,7 @@ class SyncProductToGoogleMerchantAction
             }
         }
 
-        $product->update(['google_merchant_product_id' => null]);
+        $product->updateQuietly(['google_merchant_product_id' => null]);
 
         return $this->manager->insert($this->buildProduct($product));
     }
@@ -76,7 +74,7 @@ class SyncProductToGoogleMerchantAction
             }
         }
 
-        $product->update(['google_merchant_product_id' => null]);
+        $product->updateQuietly(['google_merchant_product_id' => null]);
     }
 
     protected function isNotFound(ApiException $exception): bool
@@ -88,7 +86,7 @@ class SyncProductToGoogleMerchantAction
     {
         $product->loadMissing(['variants', 'prices']);
 
-        $attrs = new ProductAttributes();
+        $attrs = new ProductAttributes;
         $attrs->setTitle($product->title);
         $attrs->setDescription($product->description);
         $attrs->setLink($product->absolute_link);
@@ -111,7 +109,7 @@ class SyncProductToGoogleMerchantAction
             $attrs->setShippingWeight(Helpers::shippingWeightFromGrams($firstVariant->weight));
         }
 
-        return (new ProductInput())
+        return (new ProductInput)
             ->setOfferId((string) $product->id)
             ->setContentLanguage('en')
             ->setFeedLabel('GB')

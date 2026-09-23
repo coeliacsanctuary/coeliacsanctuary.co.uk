@@ -181,9 +181,13 @@ export type OrderCompleteProps = {
   fees: { fee: string; description?: string }[];
   total_fees: string;
   discount: null | { amount: string; name: string };
-  products: ShopBasketItem[];
+  products: {
+    items: ShopBasketItem[];
+    digital: ShopBasketDigitalItem[];
+  };
   payment: CardPayment | PaypalPayment;
-  has_add_ons: boolean;
+  has_digital_items: boolean;
+  is_digital_only: boolean;
   event: {
     [T: string]: string | number | [];
   };
