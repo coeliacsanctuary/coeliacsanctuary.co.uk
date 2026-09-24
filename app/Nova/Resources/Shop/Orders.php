@@ -163,8 +163,8 @@ class Orders extends Resource
     public function cards(NovaRequest $request): array
     {
         return [
-            ShopDailySales::make()->refreshWhenActionsRun()->width('1/2'),
-            ShopIncome::make()->refreshWhenActionsRun()->width('1/2')->help('Including Postage'),
+            ShopDailySales::make()->excludeDigital()->refreshWhenActionsRun()->width('1/2'),
+            ShopIncome::make()->excludeDigital()->refreshWhenActionsRun()->width('1/2')->help('Including Postage'),
             PrintAllOrders::make(),
         ];
     }

@@ -23,8 +23,10 @@ Route::get('render/{ids?}', function (NovaRequest $request, Dompdf $pdf, $ids = 
         ->with([
             'items' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
             'items.variant' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
+            'digitalItems' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
             'payment', 'address', 'discountCode', 'refunds'
         ])
+        ->where('is_digital_only', false)
         ->get();
 
     $overrides = [];
@@ -76,6 +78,7 @@ Route::get('/{ids?}', function (NovaRequest $request, $ids = 'all') {
             fn (Builder $builder) => $builder->whereIn('id', explode(',', $ids))
         )
         ->with(['items', 'payment', 'address'])
+        ->where('is_digital_only', false)
         ->get();
 
     return inertia('OrderDispatchSlip', [

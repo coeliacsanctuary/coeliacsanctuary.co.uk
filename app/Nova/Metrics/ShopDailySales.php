@@ -15,13 +15,36 @@ use Laravel\Nova\Nova;
  */
 class ShopDailySales extends Trend
 {
+    protected bool $excludingDigital = false;
+    protected bool $isDigitalOnly = false;
+
+    public function excludeDigital(): self
+    {
+        $this->excludingDigital = true;
+
+        return $this;
+    }
+
+    public function digitalOnly(): self
+    {
+        $this->isDigitalOnly = true;
+
+        return $this;
+    }
+
     public function calculate(NovaRequest $request)
     {
-        return $this->countByDays($request, ShopOrder::query()->whereIn('state_id', [
-            OrderState::PAID,
-            OrderState::READY,
-            OrderState::SHIPPED,
-        ]))
+        return $this->countByDays(
+            $request,
+            ShopOrder::query()
+                ->whereIn('state_id', [
+                    OrderState::PAID,
+                    OrderState::READY,
+                    OrderState::SHIPPED,
+                ])
+                ->when($this->isDigitalOnly, fn($query) => $query->where('is_digital_only', true))
+                ->when($this->excludingDigital, fn($query) => $query->where('is_digital_only', false)),
+            )
             ->format(['average' => false])
             ->showSumValue();
     }

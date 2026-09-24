@@ -47,6 +47,7 @@ use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
 use App\Nova\Resources\Shop\CustomsFee;
 use App\Nova\Resources\Shop\DigitalCardResource;
+use App\Nova\Resources\Shop\DigitalOrders;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
@@ -127,6 +128,7 @@ class ResourceRegistrar
             // Shop Sales
             Baskets::class,
             Orders::class,
+            DigitalOrders::class,
             Payment::class,
             PaymentRefund::class,
             OrderItem::class,
