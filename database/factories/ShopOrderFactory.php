@@ -42,13 +42,6 @@ class ShopOrderFactory extends Factory
         ]);
     }
 
-    public function hasAddOns(): self
-    {
-        return $this->afterCreating(function (ShopOrder $order): void {
-            self::factoryForModel(ShopOrderItem::class)->inOrder($order)->create(['product_add_on_id' => 123]);
-        });
-    }
-
     public function asBasket(): self
     {
         return $this->state(fn () => [

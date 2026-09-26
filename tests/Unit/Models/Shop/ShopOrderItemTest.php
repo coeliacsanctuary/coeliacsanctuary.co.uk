@@ -52,18 +52,6 @@ class ShopOrderItemTest extends TestCase
     }
 
     #[Test]
-    public function itBelongsToAnAddOn(): void
-    {
-        $addOn = $this->create(ShopProductAddOn::class);
-
-        $item = $this->build(ShopOrderItem::class)
-            ->withAddOn($addOn)
-            ->create();
-
-        $this->assertInstanceOf(ShopProductAddOn::class, $item->refresh()->addOn);
-    }
-
-    #[Test]
     public function itReconcilesTheBasketWhenTheItemIsCreated(): void
     {
         $order = $this->create(ShopOrder::class);
