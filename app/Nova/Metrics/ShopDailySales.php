@@ -42,9 +42,9 @@ class ShopDailySales extends Trend
                     OrderState::READY,
                     OrderState::SHIPPED,
                 ])
-                ->when($this->isDigitalOnly, fn($query) => $query->where('is_digital_only', true))
-                ->when($this->excludingDigital, fn($query) => $query->where('is_digital_only', false)),
-            )
+                ->when($this->isDigitalOnly, fn ($query) => $query->where('is_digital_only', true))
+                ->when($this->excludingDigital, fn ($query) => $query->where('is_digital_only', false)),
+        )
             ->format(['average' => false])
             ->showSumValue();
     }

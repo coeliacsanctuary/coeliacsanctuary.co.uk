@@ -39,14 +39,16 @@ class ShopIncome extends Trend
             ->sumByDays(
                 $request,
                 ShopPayment::query()
-                    ->whereHas('order', fn (Builder $builder) => $builder
-                        ->whereIn('state_id', [
-                        OrderState::PAID,
-                        OrderState::READY,
-                        OrderState::SHIPPED,
-                        ])
-                        ->when($this->isDigitalOnly, fn($query) => $query->where('is_digital_only', true))
-                        ->when($this->excludingDigital, fn($query) => $query->where('is_digital_only', false))
+                    ->whereHas(
+                        'order',
+                        fn (Builder $builder) => $builder
+                            ->whereIn('state_id', [
+                                OrderState::PAID,
+                                OrderState::READY,
+                                OrderState::SHIPPED,
+                            ])
+                            ->when($this->isDigitalOnly, fn ($query) => $query->where('is_digital_only', true))
+                            ->when($this->excludingDigital, fn ($query) => $query->where('is_digital_only', false))
                     ),
                 'total',
             )

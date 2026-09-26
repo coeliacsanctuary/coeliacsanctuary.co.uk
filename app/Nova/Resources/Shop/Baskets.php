@@ -89,7 +89,7 @@ class Baskets extends Resource
                     FROM shop_order_digital_items di
                     WHERE di.order_id = shop_orders.id
                 ), 0)
-            ','subtotal')
+            ', 'subtotal')
             ->with(['postageCountry'])
             ->withCount(['items', 'digitalItems'])
             ->whereIn('state_id', [

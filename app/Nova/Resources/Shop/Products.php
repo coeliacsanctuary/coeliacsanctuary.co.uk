@@ -358,8 +358,8 @@ class Products extends Resource
     public function filters(NovaRequest $request): array
     {
         return [
-            new ShopLiveProducts,
-            new ProductQuantity,
+            new ShopLiveProducts(),
+            new ProductQuantity(),
         ];
     }
 
