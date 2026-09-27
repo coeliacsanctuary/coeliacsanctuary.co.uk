@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
-class ShopCustomer extends Model
+class ShopCustomer extends Model implements Authenticatable
 {
+    use \Illuminate\Auth\Authenticatable;
     use Notifiable;
 
     protected $casts = [

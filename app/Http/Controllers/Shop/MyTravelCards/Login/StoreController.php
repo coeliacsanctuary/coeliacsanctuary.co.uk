@@ -27,6 +27,6 @@ class StoreController
 
         return redirect()
             ->to(route('my-travel-cards.login.confirm.show'))
-            ->withCookie('my_travel_cards_email', Crypt::encryptString($request->string('email')->toString()));
+            ->withCookie('my_travel_cards_email', Crypt::encryptString($request->string('email')->toString()), 15);
     }
 }

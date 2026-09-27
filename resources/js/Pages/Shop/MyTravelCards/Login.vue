@@ -7,7 +7,7 @@ import { useForm } from 'laravel-precognition-vue-inertia';
 
 defineOptions({ layout: CoeliacTravelCards });
 
-const form = useForm<{ email: string }>('get', '/login', { email: '' });
+const form = useForm<{ email: string }>('post', '/login', { email: '' });
 </script>
 
 <template>
@@ -15,7 +15,7 @@ const form = useForm<{ email: string }>('get', '/login', { email: '' });
     class="mx-auto mt-12 w-[90%] max-w-md"
     action="/login"
     method="post"
-    @submit.prevent="form.submit()"
+    @submit.prevent="() => form.submit()"
   >
     <Card class="flex flex-col space-y-6">
       <p class="prose prose-lg max-w-none text-center">
@@ -30,6 +30,7 @@ const form = useForm<{ email: string }>('get', '/login', { email: '' });
         hide-label
         type="email"
         placeholder="Your email address..."
+        :error="form.errors.email"
         borders
         size="xl"
         input-classes="text-center"
@@ -44,6 +45,7 @@ const form = useForm<{ email: string }>('get', '/login', { email: '' });
         bold
         theme="secondary"
         classes="justify-center"
+        :loading="form.processing"
       />
 
       <p class="prose prose-sm max-w-none text-center font-semibold">

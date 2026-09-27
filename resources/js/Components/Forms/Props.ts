@@ -58,6 +58,15 @@ export const InputPropDefaults = {
   type: 'text',
 } satisfies Partial<InputProps>;
 
+export type OneTimeInputProps = Omit<InputProps, 'type' | 'size'> & {
+  length: number;
+};
+
+export const OneTimeInputPropDefaults = {
+  ...InputPropDefaults,
+  length: 6,
+};
+
 export type TextareaProps = BaseFormInputProps & {
   label: string;
   rows?: number;

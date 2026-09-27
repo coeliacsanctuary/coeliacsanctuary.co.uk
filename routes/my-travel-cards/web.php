@@ -3,17 +3,25 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Shop\MyTravelCards\Login\Confirm\ShowController as LoginConfirmShowController;
+use App\Http\Controllers\Shop\MyTravelCards\Login\Confirm\StoreController as LoginConfirmStoreController;
 use App\Http\Controllers\Shop\MyTravelCards\Login\ShowController as LoginShowController;
 use App\Http\Controllers\Shop\MyTravelCards\Login\StoreController as LoginStoreController;
+use App\Http\Middleware\MyTravelCards\HasCustomerEmailInCookieMiddleware;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:customer')->group(function (): void {
-    Route::get('/', fn () => 'hello');
+Route::middleware('auth:customers')->group(function (): void {
+    Route::get('/', fn () => 'hello')->name('my-travel-cards.index');
 });
 
-Route::middleware('guest:customer')->prefix('login')->name('my-travel-cards.login.')->group(function (): void {
+Route::middleware('guest:customers')->prefix('login')->name('my-travel-cards.login.')->group(function (): void {
     Route::get('', LoginShowController::class)->name('show');
-    Route::post('', LoginStoreController::class)->name('store');
+    Route::post('', LoginStoreController::class)
+        ->middleware(HandlePrecognitiveRequests::class)
+        ->name('store');
 
-    Route::get('confirm', LoginConfirmShowController::class)->name('confirm.show');
+    Route::middleware(HasCustomerEmailInCookieMiddleware::class)->group(function (): void {
+        Route::get('confirm', LoginConfirmShowController::class)->name('confirm.show');
+        Route::post('confirm', LoginConfirmStoreController::class)->name('confirm.store');
+    });
 });

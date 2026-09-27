@@ -58,7 +58,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->redirectGuestsTo(function (Request $request): string {
             if (Str::contains($request->url(), 'my-travel-cards.')) {
-                return route('my-travel-cards.login');
+                return route('my-travel-cards.login.show');
             }
 
             return route('nova.pages.login');

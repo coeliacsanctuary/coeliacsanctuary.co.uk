@@ -13,7 +13,7 @@ class ShowControllerTest extends TestCase
 {
     protected function makeRequest(): TestResponse
     {
-        return $this->get(route('my-travel-cards.login'));
+        return $this->get(route('my-travel-cards.login.show'));
     }
 
     #[Test]
