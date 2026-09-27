@@ -56,7 +56,13 @@ return Application::configure(basePath: dirname(__DIR__))
             ]
         );
 
-        $middleware->redirectGuestsTo(fn () => route('nova.pages.login'));
+        $middleware->redirectGuestsTo(function (Request $request): string {
+            if (Str::contains($request->url(), 'my-travel-cards.')) {
+                return route('my-travel-cards.login');
+            }
+
+            return route('nova.pages.login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (InvalidSignatureException $exception, Request $request) {
