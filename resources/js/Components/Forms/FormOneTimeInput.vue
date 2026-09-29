@@ -77,9 +77,12 @@ const handleDelete = (index: number): void => {
 const classes = (): string[] => {
   const base = [
     'flex-1',
-    'w-11',
-    'h-11',
-    'text-xl',
+    'w-8',
+    'h-8',
+    'xs:w-11',
+    'xs:h-11',
+    'text-lg',
+    'sm:text-xl',
     'appearance-none',
     'rounded-md',
     'text-gray-900',
@@ -91,6 +94,7 @@ const classes = (): string[] => {
     'disabled:text-gray-300',
     'disabled:cursor-not-allowed',
     '[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+    'p-0',
   ];
 
   if (props.borders) {
@@ -120,7 +124,7 @@ const classes = (): string[] => {
 </script>
 
 <template>
-  <div class="mx-auto flex flex-nowrap space-x-4">
+  <div class="mx-auto flex flex-nowrap space-x-2 sm:space-x-4">
     <div
       v-for="(i, index) in inputs"
       :key="index"

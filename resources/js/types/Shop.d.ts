@@ -240,13 +240,20 @@ export type ShopHolidayProps = {
   notice: string;
 };
 
-export type ShopDigitalCard = {
-  id: number;
+type ShopBaseDigitalCard = {
   type: string;
   title: string;
   slug: string;
-  link: string;
   language: string;
+  countries?: {
+    country: string;
+    code?: string;
+  }[];
+  flag?: string;
+};
+
+export type ShopDigitalCard = ShopBaseDigitalCard & {
+  id: number;
   native_language: string;
   product?: {
     id: number;
@@ -256,15 +263,12 @@ export type ShopDigitalCard = {
     price: string;
     isInBasket: boolean;
   };
-  countries?: {
-    country: string;
-    code?: string;
-  }[];
   price: {
     default: string;
     extra: string;
     bundle: string;
     saving: string;
   };
-  flag?: string;
 };
+
+type PurchasedCardIndex = ShopBaseDigitalCard;

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\Shop\MyTravelCards\Login\Confirm;
 
 use App\Models\Shop\ShopCustomer;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
+use Symfony\Component\HttpFoundation\Cookie;
 use Tests\RequestFactories\MyTravelCardsConfirmOneTimeCodeRequestFactory;
 use Tests\TestCase;
 
@@ -99,6 +101,27 @@ class StoreControllerTest extends TestCase
         $this->makeRequest();
 
         $this->assertAuthenticatedAs($this->customer, 'customers');
+    }
+
+    #[Test]
+    public function itRemembersTheCustomer(): void
+    {
+        $this->makeRequest()->assertCookie(Auth::guard('customers')->getRecallerName());
+
+        $this->customer->refresh();
+
+        $this->assertNotNull($this->customer->getRememberToken());
+    }
+
+    #[Test]
+    public function itRemembersTheCustomerForSevenDays(): void
+    {
+        $response = $this->makeRequest();
+
+        $recaller = collect($response->headers->getCookies())
+            ->first(fn (Cookie $cookie) => $cookie->getName() === Auth::guard('customers')->getRecallerName());
+
+        $this->assertSame(now()->addDays(7)->getTimestamp(), $recaller->getExpiresTime());
     }
 
     #[Test]

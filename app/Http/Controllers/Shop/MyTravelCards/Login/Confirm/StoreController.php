@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Shop\MyTravelCards\Login\Confirm;
 
 use App\Http\Requests\Shop\MyTravelCards\ConfirmOneTimeCodeRequest;
 use App\Models\Shop\ShopCustomer;
+use Carbon\CarbonInterval;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -34,7 +35,9 @@ class StoreController
             ]);
         }
 
-        Auth::guard('customers')->login($customer);
+        Auth::guard('customers')
+            ->setRememberDuration((int) CarbonInterval::days(7)->totalMinutes)
+            ->login($customer, true);
 
         $customer->update([
             'one_time_code' => null,

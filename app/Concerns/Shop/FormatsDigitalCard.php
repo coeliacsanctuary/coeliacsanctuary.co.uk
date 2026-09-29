@@ -9,7 +9,7 @@ use App\Models\Shop\ShopOrder;
 
 trait FormatsDigitalCard
 {
-    protected function formatDigitalCard(ShopDigitalCard $digitalCard, ?ShopOrder $basket): ShopDigitalCard
+    protected function formatDigitalCard(ShopDigitalCard $digitalCard, ?ShopOrder $basket = null): ShopDigitalCard
     {
         if ( ! $digitalCard->price) {
             $digitalCard->setRelation('price', ShopDigitalCard::defaultPrice());

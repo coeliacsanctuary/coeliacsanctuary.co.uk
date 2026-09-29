@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import CoeliacTravelCards from '@/Layouts/CoeliacTravelCards.vue';
 import Card from '@/Components/Card.vue';
-import FormInput from '@/Components/Forms/FormInput.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import FormOneTimeInput from '@/Components/Forms/FormOneTimeInput.vue';
