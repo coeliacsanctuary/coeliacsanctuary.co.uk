@@ -19,7 +19,7 @@ defineProps<{ cards: PurchasedCardIndex[] }>();
     <p class="prose prose-lg max-w-none">Some intro paragraph...</p>
   </Card>
 
-  <div class="grid gap-6 sm:grid-cols-3">
+  <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <PurchasedCard
       v-for="card in cards"
       :key="card.slug"

@@ -271,4 +271,29 @@ export type ShopDigitalCard = ShopBaseDigitalCard & {
   };
 };
 
-type PurchasedCardIndex = ShopBaseDigitalCard;
+type PurchasedCardIndex = ShopBaseDigitalCard & {
+  link: string;
+};
+
+export type PurchasedCard = {
+  id: ShopDigitalCard['id'];
+  type: ShopBaseDigitalCard['type'];
+  title: ShopBaseDigitalCard['title'];
+  language: ShopBaseDigitalCard['language'];
+  native_language: ShopDigitalCard['native_language'];
+  content: {
+    title: string;
+    intro: string;
+    cant_eat: PurchasedCardEatSection;
+    can_eat: PurchasedCardEatSection;
+    outro: string;
+    thank_you: string;
+  };
+};
+
+export type PurchasedCardEatSection = {
+  label: string;
+  items: string;
+  colour: { hex: string };
+  icon: string;
+};

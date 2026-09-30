@@ -3,7 +3,10 @@ import CoeliacCompactFooter from '@/Layouts/Components/CoeliacCompactFooter.vue'
 import { MetaProps } from '@/types/DefaultProps';
 import CoeliacTravelCardsHeader from '@/Layouts/Components/CoeliacTravelCardsHeader.vue';
 
-defineProps<{ meta: MetaProps }>();
+withDefaults(
+  defineProps<{ meta: MetaProps; showBack?: boolean; hideFooter?: boolean }>(),
+  { showBack: false, hideFooter: false },
+);
 </script>
 
 <template>
@@ -11,12 +14,17 @@ defineProps<{ meta: MetaProps }>();
     class="flex h-screen flex-col bg-gray-100"
     style="padding-bottom: var(--sticky-bottom, 0px)"
   >
-    <CoeliacTravelCardsHeader :metas="meta" />
+    <CoeliacTravelCardsHeader
+      :metas="meta"
+      :show-back="showBack"
+    />
 
-    <section class="mx-auto flex w-full flex-1 flex-col space-y-3 p-4">
+    <section
+      class="mx-auto flex w-full max-w-5xl flex-1 flex-col space-y-3 p-4"
+    >
       <slot />
     </section>
 
-    <CoeliacCompactFooter />
+    <CoeliacCompactFooter v-if="!hideFooter" />
   </div>
 </template>

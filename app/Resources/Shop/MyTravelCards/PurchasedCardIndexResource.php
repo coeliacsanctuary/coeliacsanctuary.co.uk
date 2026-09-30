@@ -21,6 +21,7 @@ class PurchasedCardIndexResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'language' => $this->language,
+            'link' => route('my-travel-cards.show', ['card' => $this]),
             'countries' => $this->whenLoaded('countries', fn (Collection $countries) => $countries->map(fn (TravelCardSearchTerm $searchTerm) => [
                 'country' => ucwords($searchTerm->term),
                 'code' => Helpers::countryCode($searchTerm->term),

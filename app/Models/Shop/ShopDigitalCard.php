@@ -26,7 +26,17 @@ class ShopDigitalCard extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new LiveScope());
+        static::addGlobalScope(new LiveScope);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    public function resolveRouteBindingQuery($query, $value, $field = null)
+    {
+        return parent::resolveRouteBindingQuery($query, $value, $field)->withoutGlobalScopes();
     }
 
     /** @return HasOne<ShopDigitalCardPrice, $this> */

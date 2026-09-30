@@ -16,7 +16,8 @@ const showCountryListSidebar = ref(false);
   <Card class="group relative cursor-pointer">
     <Link
       class="absolute top-0 left-0 h-full w-full"
-      :href="card.slug"
+      :href="card.link"
+      prefetch
     />
     <div class="mx-auto flex max-w-3xs flex-1 flex-col space-y-3">
       <div class="p-4 opacity-50 transition group-hover:opacity-100">
@@ -29,9 +30,11 @@ const showCountryListSidebar = ref(false);
       </div>
 
       <h2
-        class="text-center text-2xl font-semibold text-primary-dark transition group-hover:text-black md:text-3xl"
+        class="text-center text-xl font-semibold text-primary-dark transition group-hover:text-black md:text-2xl"
         v-text="card.title"
       />
+
+      <div class="flex-1" />
 
       <CoeliacButton
         v-if="card.countries?.length"

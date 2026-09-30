@@ -6,24 +6,27 @@ import UseGoogleEvents from '@/composables/useGoogleEvents';
 
 const emit = defineEmits(['close']);
 
-const props = defineProps<{ open: boolean }>();
+const props = withDefaults(
+  defineProps<{ open: boolean; urlPrefix?: string }>(),
+  { urlPrefix: '' },
+);
 
 const close = () => emit('close');
 
 const links: { label: string; href: string }[] = [
-  { label: 'Home', href: '/' },
-  { label: 'Shop', href: '/shop' },
+  { label: 'Home', href: `${props.urlPrefix}/` },
+  { label: 'Shop', href: `${props.urlPrefix}/shop` },
   {
     label: 'Gluten Free Travel Cards',
-    href: '/gluten-free-travel-translation-cards',
+    href: `${props.urlPrefix}/gluten-free-travel-translation-cards`,
   },
-  { label: 'Blogs', href: '/blog' },
-  { label: 'Eating Out', href: '/eating-out' },
-  { label: 'Recipes', href: '/recipe' },
-  { label: 'Collections', href: '/collection' },
-  { label: 'About Us', href: '/about' },
-  { label: 'Work With Us', href: '/work-with-us' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Blogs', href: `${props.urlPrefix}/blog` },
+  { label: 'Eating Out', href: `${props.urlPrefix}/eating-out` },
+  { label: 'Recipes', href: `${props.urlPrefix}/recipe` },
+  { label: 'Collections', href: `${props.urlPrefix}/collection` },
+  { label: 'About Us', href: `${props.urlPrefix}/about` },
+  { label: 'Work With Us', href: `${props.urlPrefix}/work-with-us` },
+  { label: 'Contact', href: `${props.urlPrefix}/contact` },
 ];
 
 watch(
@@ -55,14 +58,15 @@ watch(
             v-for="(link, index) in links"
             :key="index"
           >
-            <Link
+            <component
+              :is="urlPrefix ? 'a' : Link"
               :href="link.href"
               class="block w-full px-2"
               prefetch
               @click="close()"
             >
               {{ link.label }}
-            </Link>
+            </component>
           </li>
         </ul>
       </nav>

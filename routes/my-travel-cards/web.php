@@ -7,12 +7,17 @@ use App\Http\Controllers\Shop\MyTravelCards\Login\Confirm\ShowController as Logi
 use App\Http\Controllers\Shop\MyTravelCards\Login\Confirm\StoreController as LoginConfirmStoreController;
 use App\Http\Controllers\Shop\MyTravelCards\Login\ShowController as LoginShowController;
 use App\Http\Controllers\Shop\MyTravelCards\Login\StoreController as LoginStoreController;
+use App\Http\Controllers\Shop\MyTravelCards\ShowController;
+use App\Http\Middleware\MyTravelCards\CustomerOwnsDigitalCardMiddleware;
 use App\Http\Middleware\MyTravelCards\HasCustomerEmailInCookieMiddleware;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:customers')->group(function (): void {
     Route::get('/', IndexController::class)->name('my-travel-cards.index');
+    Route::get('/card/{card}', ShowController::class)
+        ->middleware(CustomerOwnsDigitalCardMiddleware::class)
+        ->name('my-travel-cards.show');
 });
 
 Route::middleware('guest:customers')->prefix('login')->name('my-travel-cards.login.')->group(function (): void {

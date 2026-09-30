@@ -9,6 +9,7 @@ use App\Http\Response\Inertia;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrderDigitalItem;
 use App\Resources\Shop\MyTravelCards\PurchasedCardIndexResource;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as IlluminateResponse;
 use Inertia\Response;
@@ -27,7 +28,12 @@ class IndexController
 
         $cards = $user
             ->ownedDigitalItems
-            ->load(['card', 'card.price', 'card.product', 'card.product.travelCardSearchTerms'])
+            ->load([
+                'card' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
+                'card.price',
+                'card.product' => fn (Relation $relation) => $relation->withoutGlobalScopes(),
+                'card.product.travelCardSearchTerms',
+            ])
             ->unique('digital_card_id')
             ->values()
             ->map(fn (ShopOrderDigitalItem $item) => $this->formatDigitalCard($item->card))
