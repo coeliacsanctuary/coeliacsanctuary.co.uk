@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Shop\Order;
 use App\Actions\Shop\CalculateOrderTotalsAction;
 use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\Checkout\CreateShippingAddressAction;
+use App\Actions\Shop\GenerateOrderKeyAction;
 use App\Actions\Shop\GetOrderDigitalItemsAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Actions\Shop\ResolveDiscountForOrderAction;
@@ -22,7 +23,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
@@ -36,6 +36,7 @@ class StoreController
         CreateCustomerAction $createUserAction,
         CreateShippingAddressAction $createAddressAction,
         ResolveDiscountForOrderAction $resolveDiscountForOrderAction,
+        GenerateOrderKeyAction $generateOrderKeyAction,
     ): Response {
         $basket = $request->basket();
 
@@ -106,7 +107,7 @@ class StoreController
             $basket->update([
                 'customer_id' => $customer->id,
                 'shipping_address_id' => $address->id ?? null,
-                'order_key' => Str::of(Str::password(8, letters: false, symbols: false))->padLeft(8, '0'),
+                'order_key' => $generateOrderKeyAction->handle(),
                 'state_id' => OrderState::PENDING,
                 'newsletter_signup' => $request->boolean('contact.subscribeToNewsletter'),
                 'has_digital_items' => $digitalItemCollection->isNotEmpty(),

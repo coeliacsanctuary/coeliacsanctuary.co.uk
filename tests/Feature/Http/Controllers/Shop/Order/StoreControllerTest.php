@@ -7,6 +7,7 @@ namespace Tests\Feature\Http\Controllers\Shop\Order;
 use App\Actions\Shop\ApplyDiscountCodeAction;
 use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\Checkout\CreateShippingAddressAction;
+use App\Actions\Shop\GenerateOrderKeyAction;
 use App\Actions\Shop\GetOrderDigitalItemsAction;
 use App\Actions\Shop\ResolveBasketAction;
 use App\DataObjects\Shop\PendingOrderCustomerDetails;
@@ -29,7 +30,6 @@ use App\Models\Shop\ShopProductVariant;
 use App\Models\Shop\ShopShippingAddress;
 use App\Resources\Shop\ShopOrderDigitalItemResource;
 use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -162,6 +162,16 @@ class StoreControllerTest extends TestCase
         $this->expectAction(GetOrderDigitalItemsAction::class, [ShopOrder::class], return: ShopOrderDigitalItemResource::collection(collect()));
 
         $this->makeRequest()->assertCreated();
+    }
+
+    #[Test]
+    public function itCallsTheGenerateOrderKeyAction(): void
+    {
+        $this->expectAction(GenerateOrderKeyAction::class, return: '12345678');
+
+        $this->makeRequest()->assertCreated();
+
+        $this->assertSame('12345678', $this->basket->refresh()->order_key);
     }
 
     #[Test]
@@ -372,16 +382,6 @@ class StoreControllerTest extends TestCase
 
         $this->assertFalse($this->basket->has_digital_items);
         $this->assertFalse($this->basket->is_digital_only);
-    }
-
-    #[Test]
-    public function itCreatesAKeyThatIsEightDigitsLong(): void
-    {
-        $this->makeRequest()->assertCreated();
-
-        $this->basket->refresh();
-
-        $this->assertSame(Str::length($this->basket->order_key), 8);
     }
 
     #[Test]
