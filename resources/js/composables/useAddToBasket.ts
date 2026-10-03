@@ -11,6 +11,7 @@ type AddBasketPayload = {
   variant_id?: number;
   quantity?: number;
   digital_card_id?: number;
+  digital_card_ids?: number[];
 };
 
 export type ShopHolidayConfirmation = {
@@ -35,6 +36,7 @@ export default () => {
       variant_id: undefined,
       quantity: undefined,
       digital_card_id: undefined,
+      digital_card_ids: undefined,
     },
   );
 
@@ -50,6 +52,10 @@ export default () => {
 
   const prepareAddBasketDigitalCardForm = (digitalCardId: number) => {
     addBasketForm.digital_card_id = digitalCardId;
+  };
+
+  const withMultipleDigitalCards = (digitalCardIds: number[]) => {
+    addBasketForm.digital_card_ids = digitalCardIds;
   };
 
   const holidayStorageKey = (holiday: ShopHolidayProps): string =>
@@ -124,6 +130,7 @@ export default () => {
     addBasketForm,
     prepareAddBasketForm,
     prepareAddBasketDigitalCardForm,
+    withMultipleDigitalCards,
     submitAddBasketForm,
   };
 };

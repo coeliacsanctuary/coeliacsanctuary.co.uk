@@ -142,10 +142,10 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
             ->whereIn('shop_order_review_items.id', ShopOrderReviewItem::deduplicatedIds());
     }
 
-    /** @return HasOne<ShopProductAddOn, $this> */
-    public function addOns(): HasOne
+    /** @return HasMany<ShopDigitalCard, $this> */
+    public function digitalCards(): HasMany
     {
-        return $this->hasOne(ShopProductAddOn::class, 'product_id');
+        return $this->hasMany(ShopDigitalCard::class, 'product_id');
     }
 
     /** @return BelongsToMany<TravelCardSearchTerm, $this> */

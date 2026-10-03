@@ -81,6 +81,14 @@ export type ShopTravelCardProductDetail = ShopProductDetail & {
     language: string;
     countries: { country: string; code?: string }[];
   }[];
+  digital_card_link: string;
+  digital_cards: {
+    id: number;
+    name: string;
+    slug: string;
+    price: string;
+    raw_price: number;
+  }[];
 };
 
 export type ShopProductVariant = {

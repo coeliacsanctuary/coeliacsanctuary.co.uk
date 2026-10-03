@@ -47,7 +47,10 @@ class ShowController
         if (Helpers::isTravelCard($product->categories->first())) {
             $resource = ShopTravelCardProductResource::class;
 
-            $product->load(['travelCardSearchTerms' => fn (Relation $builder) => $builder->where('type', 'country')]); /** @phpstan-ignore-line  */
+            $product->load([
+                'digitalCards', 'digitalCards.price',
+                'travelCardSearchTerms' => fn (Relation $builder) => $builder->where('type', 'country'), /** @phpstan-ignore-line  */
+            ]);
         }
 
         $reviews = $product->reviews()

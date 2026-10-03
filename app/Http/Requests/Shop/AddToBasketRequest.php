@@ -21,7 +21,9 @@ class AddToBasketRequest extends FormRequest
         return [
             'product_id' => ['bail', 'required_with_all:variant_id,quantity', 'numeric', Rule::in($productIds)],
             'variant_id' => ['bail', 'required_with_all:product_id,quantity', 'numeric'],
-            'digital_card_id' => ['bail', 'required_without_all:product_id,variant_id,quantity', 'numeric', Rule::in($digitalCardIds)],
+            'digital_card_id' => ['bail', 'required_without_all:product_id,variant_id,quantity,digital_card_ids', 'numeric', Rule::in($digitalCardIds)],
+            'digital_card_ids' => ['bail', 'required_without_all:product_id,variant_id,quantity,digital_card_id', 'array'],
+            'digital_card_ids.*' => ['bail', 'numeric', Rule::in($digitalCardIds)],
             'quantity' => ['bail', 'required_with_all:product_id,variant_id', 'int', 'min:1', 'regex:/^[0-9]+$/'],
         ];
     }
@@ -33,7 +35,20 @@ class AddToBasketRequest extends FormRequest
 
     public function isDigitalProduct(): bool
     {
-        return $this->filled('digital_card_id');
+        return $this->filled('digital_card_id') || $this->filled('digital_card_ids');
+    }
+
+    /** @return list<int> */
+    public function digitalCardIds(): array
+    {
+        /** @var array<int, int|string> $ids */
+        $ids = $this->input('digital_card_ids', []);
+
+        if ($this->filled('digital_card_id')) {
+            $ids[] = $this->integer('digital_card_id');
+        }
+
+        return array_values(array_unique(array_map(fn (int|string $id): int => (int) $id, $ids)));
     }
 
     public function after(): array

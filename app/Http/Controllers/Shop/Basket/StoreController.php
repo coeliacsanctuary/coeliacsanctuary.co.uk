@@ -12,6 +12,7 @@ use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -50,9 +51,12 @@ class StoreController
             }
 
             if ($request->isDigitalProduct()) {
-                $digitalCard = ShopDigitalCard::query()->findOrFail($request->integer('digital_card_id'));
+                /** @var Collection<int, ShopDigitalCard> $digitalCards */
+                $digitalCards = ShopDigitalCard::query()->with(['price'])->findOrFail($request->digitalCardIds());
 
-                $addDigitalCardToBasketAction->handle($order, $digitalCard, $item);
+                $digitalCards->each(
+                    fn (ShopDigitalCard $digitalCard) => $addDigitalCardToBasketAction->handle($order, $digitalCard, $item),
+                );
             }
 
             DB::commit();
@@ -60,7 +64,8 @@ class StoreController
             return redirect()
                 ->back()
                 ->withCookie(new Cookie('basket_token', $order->token, now()->addHour()));
-        } catch (Exception) {
+        } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
 
             throw ValidationException::withMessages(['product_id' => 'There was an error adding the item to your basket.']);

@@ -145,7 +145,7 @@ const alterQuantity = (action: 'increase' | 'decrease') => {
 
     <ul
       v-if="item.digitalBundles?.length"
-      class="-mt-3 ml-28"
+      class="-mt-3 ml-10 sm:ml-28"
     >
       <li class="my-2 border-b border-primary-dark pb-1 font-semibold">
         Digital Bundles

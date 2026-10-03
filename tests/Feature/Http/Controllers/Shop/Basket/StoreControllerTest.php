@@ -153,6 +153,47 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
+    public function itDoesntNeedADigitalCardIdWhenDigitalCardIdsIsGiven(): void
+    {
+        $this->makeDigitalCardsRequest()->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorIfTheDigitalCardIdsArentAnArray(): void
+    {
+        $this->makeDigitalCardsRequest(['digital_card_ids' => $this->digitalCard->id])
+            ->assertSessionHasErrors('digital_card_ids');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorWithAnInvalidDigitalCardIdInTheArray(): void
+    {
+        $this->makeDigitalCardsRequest(['digital_card_ids' => ['foo']])->assertSessionHasErrors('digital_card_ids.0');
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [true]])->assertSessionHasErrors('digital_card_ids.0');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorWithADigitalCardInTheArrayThatDoesntExist(): void
+    {
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [123]])->assertSessionHasErrors('digital_card_ids.0');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorWithADigitalCardInTheArrayThatIsntLive(): void
+    {
+        $card = $this->build(ShopDigitalCard::class)->notLive()->create();
+
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [$card->id]])->assertSessionHasErrors('digital_card_ids.0');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorIfOneOfTheGivenDigitalCardsIsInvalid(): void
+    {
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [$this->digitalCard->id, 123]])
+            ->assertSessionHasErrors('digital_card_ids.1');
+    }
+
+    #[Test]
     public function itCallsTheResolveBasketAction(): void
     {
         $this->expectAction(ResolveBasketAction::class);
@@ -270,6 +311,83 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
+    public function itCallsTheAddDigitalCardToBasketActionForEachGivenCard(): void
+    {
+        /** @var ShopDigitalCard $secondCard */
+        $secondCard = $this->create(ShopDigitalCard::class);
+
+        $cards = [];
+
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use (&$cards) {
+            $cards[] = $card->id;
+
+            $this->assertNull($physicalItem);
+
+            return true;
+        }], once: false, then: fn ($mock) => $mock->twice());
+
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [$this->digitalCard->id, $secondCard->id]])
+            ->assertSessionHasNoErrors();
+
+        $this->assertEqualsCanonicalizing([$this->digitalCard->id, $secondCard->id], $cards);
+    }
+
+    #[Test]
+    public function itPassesTheSamePhysicalOrderItemToEveryDigitalCard(): void
+    {
+        /** @var ShopDigitalCard $secondCard */
+        $secondCard = $this->create(ShopDigitalCard::class);
+
+        $orderItem = $this->create(ShopOrderItem::class);
+
+        $this->expectAction(AddProductToBasketAction::class, return: $orderItem);
+
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use ($orderItem) {
+            $this->assertTrue($orderItem->is($physicalItem));
+
+            return true;
+        }], once: false, then: fn ($mock) => $mock->twice());
+
+        $this->makeRequest(['digital_card_ids' => [$this->digitalCard->id, $secondCard->id]])
+            ->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itOnlyAddsADigitalCardOnceIfTheSameIdIsGivenTwice(): void
+    {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card) {
+            $this->assertTrue($this->digitalCard->is($card));
+
+            return true;
+        }]);
+
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [$this->digitalCard->id, $this->digitalCard->id]])
+            ->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itAcceptsBothDigitalCardIdAndDigitalCardIdsInOneRequest(): void
+    {
+        /** @var ShopDigitalCard $secondCard */
+        $secondCard = $this->create(ShopDigitalCard::class);
+
+        $cards = [];
+
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card) use (&$cards) {
+            $cards[] = $card->id;
+
+            return true;
+        }], once: false, then: fn ($mock) => $mock->twice());
+
+        $this->makeDigitalCardsRequest([
+            'digital_card_ids' => [$secondCard->id],
+            'digital_card_id' => $this->digitalCard->id,
+        ])->assertSessionHasNoErrors();
+
+        $this->assertEqualsCanonicalizing([$secondCard->id, $this->digitalCard->id], $cards);
+    }
+
+    #[Test]
     public function itUpdatesTheBasketUpdatedAtTime(): void
     {
         TestTime::freeze();
@@ -322,6 +440,16 @@ class StoreControllerTest extends TestCase
     protected function makeDigitalRequest(array $data = []): TestResponse
     {
         $data = array_merge(['digital_card_id' => $this->digitalCard->id], $data);
+
+        return $this->put(
+            route('shop.basket.add'),
+            ShopAddBasketRequestFactory::new()->without(['product_id', 'variant_id', 'quantity'])->create($data),
+        );
+    }
+
+    protected function makeDigitalCardsRequest(array $data = []): TestResponse
+    {
+        $data = array_merge(['digital_card_ids' => [$this->digitalCard->id]], $data);
 
         return $this->put(
             route('shop.basket.add'),
