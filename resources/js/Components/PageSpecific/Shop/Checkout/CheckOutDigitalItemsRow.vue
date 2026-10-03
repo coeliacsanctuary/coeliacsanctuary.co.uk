@@ -22,7 +22,7 @@ const isDeletingItem = ref(false);
 const removeItem = () => {
   isDeletingItem.value = true;
 
-  router.delete(`/shop/basket/${props.item.id}`, {
+  router.delete(`/shop/basket/digitalItems/${props.item.id}`, {
     preserveScroll: true,
     only: ['basket', 'has_basket', 'payment_intent'],
     onSuccess: () => {

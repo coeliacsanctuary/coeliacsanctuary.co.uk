@@ -141,6 +141,7 @@ export type ShopBasketItem = {
 
 export type ShopBasketDigitalItem = {
   id: number;
+  digital_item_id: number;
   title: string;
   item_price: string;
   hasBundleInBasket: boolean;

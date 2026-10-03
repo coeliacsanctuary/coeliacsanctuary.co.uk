@@ -38,6 +38,7 @@ trait FormatsDigitalCard
             $basket->loadMissing('digitalItems');
 
             $digitalCard->setAttribute('isInBasket', $basket->digitalItems->where('digital_card_id', $digitalCard->id)->isNotEmpty());
+            $digitalCard->setAttribute('digital_item_id', $basket->digitalItems->where('digital_card_id', $digitalCard->id)->first()?->id);
         }
 
         return $digitalCard;

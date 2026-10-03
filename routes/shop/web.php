@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Shop\Basket\DestroyController as BasketDestroyController;
+use App\Http\Controllers\Shop\Basket\DigitalItem\DestroyController as BasketDigitalItemDestroyController;
 use App\Http\Controllers\Shop\Basket\Discount\DestroyController as DiscountDestroyController;
 use App\Http\Controllers\Shop\Basket\Reopen\IndexController as ReopenBasketIndexController;
 use App\Http\Controllers\Shop\Basket\ShowController as BasketShowController;
@@ -44,6 +45,8 @@ Route::middleware(ShopBasketTokenMiddleware::class)->group(function (): void {
         Route::get('/done', OrderDoneShowController::class)->name('shop.basket.done');
 
         Route::delete('/discount', DiscountDestroyController::class)->name('shop.basket.discount.remove');
+
+        Route::delete('digitalItems/{digitalItem}', BasketDigitalItemDestroyController::class)->name('shop.basket.digital.remove');
         Route::delete('/{item}', BasketDestroyController::class)->name('shop.basket.remove');
 
         Route::get('/{basket:token}/reopen', ReopenBasketIndexController::class)

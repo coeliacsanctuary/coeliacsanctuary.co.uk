@@ -23,6 +23,7 @@ class ShopProductDigitalBundleResource extends JsonResource
             'slug' => $this->slug,
             'item_price' => Helpers::formatMoney(Money::GBP($price->price_with_physical_product)),
             'isInBasket' => $this->getAttribute('isInBasket'),
+            'digital_item_id' => $this->getAttribute('digital_item_id'),
         ];
     }
 }

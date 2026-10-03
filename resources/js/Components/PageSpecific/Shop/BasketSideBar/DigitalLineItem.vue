@@ -20,11 +20,10 @@ const props = withDefaults(
 
 const isDeletingItem = ref(false);
 
-// todo - hook this up, this wont work as is as it wants a shop_items id, not shop_digital_items
 const removeItem = () => {
   isDeletingItem.value = true;
 
-  router.delete(`/shop/basket/${props.item.id}`, {
+  router.delete(`/shop/basket/digitalItems/${props.item.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       useGoogleEvents().googleEvent('event', 'remove-item-from-cart', {

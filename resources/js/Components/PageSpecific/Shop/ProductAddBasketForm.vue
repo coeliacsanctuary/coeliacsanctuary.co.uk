@@ -14,8 +14,6 @@ import useJourneyTracking from '@/composables/useJourneyTracking';
 import ProductSelectVariant from '@/Components/PageSpecific/Shop/ProductSelectVariant.vue';
 import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import { Link } from '@inertiajs/vue3';
-import { watchDeep } from '@vueuse/core';
-import digitalCards from '@/Pages/Shop/DigitalCards.vue';
 
 type Product = ShopProductDetail | ShopTravelCardProductDetail;
 

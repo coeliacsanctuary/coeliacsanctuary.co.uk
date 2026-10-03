@@ -23,7 +23,7 @@ const addItem = () => {
 
 // todo - wrong endpoint
 const removeItem = () => {
-  router.delete(`/shop/basket/${props.item.id}`, {
+  router.delete(`/shop/basket/digitalItems/${props.item.digital_item_id}`, {
     preserveScroll: true,
     only: ['basket', 'has_basket', 'payment_intent'],
     onSuccess: () => {
