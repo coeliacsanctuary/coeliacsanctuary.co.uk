@@ -172,7 +172,7 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itCallsTheGetOrderItemsActonIfABasketExists(): void
     {
-        $this->expectAction(GetOrderItemsAction::class);
+        $this->expectAction(GetOrderItemsAction::class, [ShopOrder::class, false, true]);
 
         $this
             ->withCookie('basket_token', $this->order->token)
@@ -200,7 +200,7 @@ class ShowControllerTest extends TestCase
         $this->expectAction(CreatePaymentIntentAction::class);
 
         /** @var AnonymousResourceCollection $items */
-        $items = $this->callAction(GetOrderItemsAction::class, $this->order);
+        $items = $this->callAction(GetOrderItemsAction::class, $this->order, false, true);
 
         $this
             ->withCookie('basket_token', $this->order->token)

@@ -9,6 +9,7 @@ import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { ref, watch } from 'vue';
 import eventBus from '@/eventBus';
 import CheckOutDigitalItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutDigitalItemsRow.vue';
+import CheckOutItemsDigitalUpsellRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsDigitalUpsellRow.vue';
 
 const props = defineProps<{ item: ShopBasketItem }>();
 
@@ -135,19 +136,15 @@ const removeItem = () => {
     </div>
 
     <ul
-      v-if="item.digitalBundles?.length"
-      class="-mt-3 ml-28"
+      v-if="item.digitalCards?.length"
+      class="-mt-3"
     >
-      <li class="my-2 border-b border-primary-dark pb-1 font-semibold">
-        Digital Bundles
-      </li>
+      <li class="my-2 font-semibold text-primary-dark">Digital Card Add Ons</li>
 
-      <CheckOutDigitalItemsRow
-        v-for="digitalItem in item.digitalBundles"
-        :key="digitalItem.id"
-        :item="digitalItem"
-        :skip-bundle-rows="false"
-        compact
+      <CheckOutItemsDigitalUpsellRow
+        v-for="digitalCard in item.digitalCards"
+        :key="digitalCard.id"
+        :item="digitalCard"
       />
     </ul>
   </li>

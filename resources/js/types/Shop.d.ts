@@ -136,6 +136,7 @@ export type ShopBasketItem = {
   quantity: number;
   image: string;
   digitalBundles?: ShopBasketDigitalItem[];
+  digitalCards?: ShopBasketItemDigitalCardUpsell[];
 };
 
 export type ShopBasketDigitalItem = {
@@ -147,6 +148,14 @@ export type ShopBasketDigitalItem = {
     label: string;
     code?: string;
   };
+};
+
+export type ShopBasketItemDigitalCardUpsell = Omit<
+  ShopBasketDigitalItem,
+  'hasBundleInBasket'
+> & {
+  isInBasket: boolean;
+  slug: string;
 };
 
 export type CheckoutContactStep = {

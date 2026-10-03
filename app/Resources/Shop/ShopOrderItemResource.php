@@ -34,6 +34,7 @@ class ShopOrderItemResource extends JsonResource
             'quantity' => $this->quantity,
             'image' => $product->main_image_as_webp ?? $product->main_image,
             'digitalBundles' => $this->whenLoaded('digitalBundles', fn () => ShopOrderDigitalItemResource::collection($this->digitalBundles)),
+            'digitalCards' => $this->product->relationLoaded('digitalCards') ? ShopProductDigitalBundleResource::collection($this->product->digitalCards) : null,
         ];
     }
 }

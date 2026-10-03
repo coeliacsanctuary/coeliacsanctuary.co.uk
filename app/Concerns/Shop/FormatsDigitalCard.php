@@ -34,6 +34,12 @@ trait FormatsDigitalCard
             $digitalCard->setAttribute('physicalProductInBasket', $basket->items->where('product_id', $digitalCard->product_id)->isNotEmpty());
         }
 
+        if ($basket) {
+            $basket->loadMissing('digitalItems');
+
+            $digitalCard->setAttribute('isInBasket', $basket->digitalItems->where('digital_card_id', $digitalCard->id)->isNotEmpty());
+        }
+
         return $digitalCard;
     }
 }

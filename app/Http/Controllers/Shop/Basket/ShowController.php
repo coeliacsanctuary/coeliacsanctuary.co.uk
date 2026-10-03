@@ -65,7 +65,7 @@ class ShowController
             /** @var ShopPostageCountry $country */
             $country = $basket->postageCountry;
 
-            $physicalItems = $getOrderItemsAction->handle($basket);
+            $physicalItems = $getOrderItemsAction->handle($basket, false, true);
             $digitalItems = $getOrderDigitalItemsAction->handle($basket);
 
             /** @var Collection<int, ShopOrderItemResource> $physicalItemCollection */
