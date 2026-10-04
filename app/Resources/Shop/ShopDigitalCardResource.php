@@ -35,6 +35,7 @@ class ShopDigitalCardResource extends JsonResource
                 'variantId' => $product->variants->first()?->id,
                 'price' => $prices['physical'],
                 'isInBasket' => $this->hasAttribute('physicalProductInBasket') && $this->getAttribute('physicalProductInBasket'),
+                'quantity' => $product->variants->first()?->quantity,
             ]),
             'countries' => $this->whenLoaded('countries', fn (Collection $countries) => $countries->map(fn (TravelCardSearchTerm $searchTerm) => [
                 'country' => ucwords($searchTerm->term),

@@ -280,6 +280,7 @@ export type ShopDigitalCard = ShopBaseDigitalCard & {
     link: string;
     price: string;
     isInBasket: boolean;
+    quantity: number;
   };
   price: {
     default: string;

@@ -49,7 +49,11 @@ const includePhysicalProduct = () => {
 };
 
 const prepareAddToBasket = () => {
-  if (!props.product.product || props.product.product.isInBasket) {
+  if (
+    !props.product.product ||
+    props.product.product.isInBasket ||
+    props.product.product.quantity === 0
+  ) {
     addToBasket();
 
     return;
