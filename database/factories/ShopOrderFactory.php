@@ -7,7 +7,6 @@ namespace Database\Factories;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
-use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPayment;
 use App\Models\Shop\ShopPaymentResponse;
 use App\Models\Shop\ShopShippingAddress;

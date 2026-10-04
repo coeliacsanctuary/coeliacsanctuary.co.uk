@@ -6,7 +6,6 @@ namespace App\Mailables\Shop\MyTravelCards;
 
 use App\Infrastructure\MjmlMessage;
 use App\Mailables\BaseMailable;
-use App\Models\Comments\Comment;
 use App\Models\Shop\ShopCustomer;
 
 class OneTimeCodeMailable extends BaseMailable

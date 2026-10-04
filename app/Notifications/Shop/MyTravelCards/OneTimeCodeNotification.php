@@ -6,9 +6,7 @@ namespace App\Notifications\Shop\MyTravelCards;
 
 use App\Infrastructure\MjmlMessage;
 use App\Infrastructure\Notification;
-use App\Mailables\CommentApprovedMailable;
 use App\Mailables\Shop\MyTravelCards\OneTimeCodeMailable;
-use App\Models\Comments\Comment;
 use App\Models\Shop\ShopCustomer;
 use App\Models\User;
 use Illuminate\Notifications\AnonymousNotifiable;

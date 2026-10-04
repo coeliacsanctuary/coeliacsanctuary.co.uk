@@ -11,7 +11,6 @@ use App\Http\Controllers\Shop\Basket\StoreController as BasketStoreController;
 use App\Http\Controllers\Shop\Basket\UpdateController as BasketUpdateController;
 use App\Http\Controllers\Shop\Category\ShowController as CategoryShowController;
 use App\Http\Controllers\Shop\DigitalCards\IndexController as DigitalCardsIndexController;
-use App\Http\Controllers\Shop\DownloadMyProducts\GetController as DownloadMyProductsController;
 use App\Http\Controllers\Shop\IndexController;
 use App\Http\Controllers\Shop\Order\DestroyController as OrderDestroyController;
 use App\Http\Controllers\Shop\Order\Done\ShowController as OrderDoneShowController;
@@ -71,8 +70,4 @@ Route::middleware(ShopBasketTokenMiddleware::class)->group(function (): void {
     Route::get('digital-coeliac-gluten-free-travel-cards', DigitalCardsIndexController::class)->name('shop.digital-standard-cards');
 
     Route::get('/{category}', CategoryShowController::class)->name('shop.category');
-
-    Route::get('/download-my-products/{downloadLink}', DownloadMyProductsController::class)
-        ->name('shop.download-my-products')
-        ->middleware(['signed']);
 });

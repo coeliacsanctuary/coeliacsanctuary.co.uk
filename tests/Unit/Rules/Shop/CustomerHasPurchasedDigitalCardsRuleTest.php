@@ -25,7 +25,7 @@ class CustomerHasPurchasedDigitalCardsRuleTest extends TestCase
     {
         parent::setUp();
 
-        $this->rule = new CustomerHasPurchasedDigitalCardsRule;
+        $this->rule = new CustomerHasPurchasedDigitalCardsRule();
         $this->customer = $this->create(ShopCustomer::class, ['email' => 'foo@bar.com']);
         $this->failures = [];
     }

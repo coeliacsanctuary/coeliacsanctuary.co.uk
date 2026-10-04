@@ -8,7 +8,6 @@ use App\Actions\Shop\ReconcileBasketItemsAction;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

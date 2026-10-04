@@ -10,8 +10,6 @@ use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Resources\Shop\MyTravelCards\PurchasedCardResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Str;
 use Inertia\Response;
 
 class ShowController

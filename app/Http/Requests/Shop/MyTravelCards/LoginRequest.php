@@ -14,7 +14,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['bail', 'required', 'email', Rule::exists(ShopCustomer::class, 'email'), new CustomerHasPurchasedDigitalCardsRule],
+            'email' => ['bail', 'required', 'email', Rule::exists(ShopCustomer::class, 'email'), new CustomerHasPurchasedDigitalCardsRule()],
         ];
     }
 
