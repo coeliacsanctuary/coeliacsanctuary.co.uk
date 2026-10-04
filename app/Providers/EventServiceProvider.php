@@ -9,6 +9,7 @@ use App\Events\Shop\OrderCancelledEvent;
 use App\Events\Shop\OrderPaidEvent;
 use App\Events\Shop\OrderShippedEvent;
 use App\Listeners\SendContactFormListener;
+use App\Listeners\Shop\SendMyTravelCardsInvitationIfRequired;
 use App\Listeners\Shop\SendOrderCancellationNotification;
 use App\Listeners\Shop\SendOrderConfirmationMails;
 use App\Listeners\Shop\SendOrderShippedNotification;
@@ -21,6 +22,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         OrderPaidEvent::class => [
             SendOrderConfirmationMails::class,
+            SendMyTravelCardsInvitationIfRequired::class,
             SubscribeToNewsletterIfRequired::class,
             SyncProductsToGoogleMerchantOnOrderPaid::class,
         ],
