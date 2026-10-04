@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications\Shop;
+namespace App\Notifications\Shop\MyTravelCards;
 
 use App\Infrastructure\MjmlMessage;
 use App\Infrastructure\Notification;
-use App\Mailables\Shop\DownloadYourProductsMailable;
+use App\Mailables\Shop\MyTravelCards\MyTravelCardsInvitationMailable;
 use App\Models\Shop\ShopCustomer;
-use App\Models\Shop\ShopOrderDownloadLink;
+use App\Models\Shop\ShopOrder;
 use App\Models\User;
 use Illuminate\Notifications\AnonymousNotifiable;
 
-class DownloadYourProductsNotification extends Notification
+class MyTravelCardsInvitationNotification extends Notification
 {
-    public function __construct(protected ShopOrderDownloadLink $downloadLink)
+    public function __construct(protected ShopOrder $order)
     {
         //
     }
 
     public function toMail(User|ShopCustomer|AnonymousNotifiable|null $notifiable = null): MjmlMessage
     {
-        return DownloadYourProductsMailable::make($this->downloadLink, $this->key);
+        return MyTravelCardsInvitationMailable::make($this->order, $this->key);
     }
 }
