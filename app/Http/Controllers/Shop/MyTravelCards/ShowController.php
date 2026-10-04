@@ -9,6 +9,7 @@ use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Resources\Shop\MyTravelCards\PurchasedCardResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Response;
 
@@ -22,7 +23,7 @@ class ShowController
         /** @var ShopOrder $order */
         $order = $customer
             ->orders()
-            ->whereHas('digitalItems', fn ($query) => $query->where('digital_card_id', $card->id))
+            ->whereHas('digitalItems', fn (Builder $query) => $query->where('digital_card_id', $card->id)) /** @phpstan-ignore-line */
             ->first();
 
         return $inertia
@@ -32,7 +33,7 @@ class ShowController
             ->title("{$card->title} - My Travel Cards")
             ->render('Shop/MyTravelCards/Show', [
                 'card' => PurchasedCardResource::make($card),
-                'id' => md5($order->order_key),
+                'id' => md5((string) $order->order_key),
             ]);
     }
 }

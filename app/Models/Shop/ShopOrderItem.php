@@ -46,10 +46,4 @@ class ShopOrderItem extends Model
     {
         return $this->hasMany(ShopOrderDigitalItem::class, 'physical_order_item_id');
     }
-
-    /** @return BelongsTo<ShopProductAddOn, $this> */
-    public function addOn(): BelongsTo
-    {
-        return $this->belongsTo(ShopProductAddOn::class, 'product_add_on_id');
-    }
 }

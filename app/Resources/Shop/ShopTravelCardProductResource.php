@@ -30,8 +30,8 @@ class ShopTravelCardProductResource extends ShopProductResource
                 'id' => $digitalCard->id,
                 'name' => $digitalCard->title,
                 'slug' => $digitalCard->slug,
-                'price' => Helpers::formatMoney(Money::GBP($digitalCard->price?->price_with_physical_product ?? $digitalDefaultPrice->price_with_physical_product)),
-                'raw_price' => $digitalCard->price?->price_with_physical_product ?? $digitalDefaultPrice->price_with_physical_product,
+                'price' => Helpers::formatMoney(Money::GBP($digitalCard->price->price_with_physical_product ?? $digitalDefaultPrice->price_with_physical_product)),
+                'raw_price' => $digitalCard->price->price_with_physical_product ?? $digitalDefaultPrice->price_with_physical_product,
             ])),
             'digital_cards_link' => route('shop.digital-standard-cards'),
         ], parent::toArray($request));

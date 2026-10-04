@@ -13,6 +13,7 @@ class ShowController
 {
     public function __invoke(Inertia $inertia, Request $request): Response
     {
+        /** @var string $email */
         $email = $request->cookie('my_travel_cards_email');
 
         return $inertia

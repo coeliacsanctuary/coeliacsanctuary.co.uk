@@ -15,7 +15,7 @@ class StoreController
 {
     public function __invoke(LoginRequest $request): RedirectResponse
     {
-        $customer = ShopCustomer::query()->where('email', $request->string('email')->toString())->first();
+        $customer = ShopCustomer::query()->where('email', $request->string('email')->toString())->firstOrFail();
 
         $password = Str::password(6, letters: false, symbols: false);
         $customer->update([

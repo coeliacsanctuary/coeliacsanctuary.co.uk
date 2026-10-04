@@ -12,7 +12,7 @@ use Illuminate\Http\Response;
 
 class CustomerOwnsDigitalCardMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         /** @var ShopDigitalCard $card */
         $card = $request->route('card');

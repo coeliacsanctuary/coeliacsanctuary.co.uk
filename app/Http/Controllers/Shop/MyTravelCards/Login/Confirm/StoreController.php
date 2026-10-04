@@ -16,13 +16,15 @@ class StoreController
 {
     public function __invoke(ConfirmOneTimeCodeRequest $request, LoginCustomerAction $loginCustomerAction): RedirectResponse
     {
-        $email = Crypt::decryptString($request->cookie('my_travel_cards_email'));
+        /** @var string $rawEmail */
+        $rawEmail = $request->cookie('my_travel_cards_email');
+        $email = Crypt::decryptString($rawEmail);
 
         $customer = ShopCustomer::query()
             ->where('email', $email)
             ->firstOrFail();
 
-        if ($customer->one_time_code_expires_at->isPast()) {
+        if ( ! $customer->one_time_code || ! $customer->one_time_code_expires_at || $customer->one_time_code_expires_at->isPast()) {
             return redirect()
                 ->to(route('my-travel-cards.login.show'))
                 ->withErrors(['email' => 'Sorry, your one time code has expired, please try again.']);

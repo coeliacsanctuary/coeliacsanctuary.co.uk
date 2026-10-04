@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class HasCustomerEmailInCookieMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if ( ! $request->hasCookie('my_travel_cards_email')) {
             return redirect()->route('my-travel-cards.login.show');
