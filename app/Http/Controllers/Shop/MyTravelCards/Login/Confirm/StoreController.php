@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\MyTravelCards\Login\Confirm;
 
+use App\Actions\Shop\MyTravelCards\LoginCustomerAction;
 use App\Http\Requests\Shop\MyTravelCards\ConfirmOneTimeCodeRequest;
 use App\Models\Shop\ShopCustomer;
-use Carbon\CarbonInterval;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class StoreController
 {
-    public function __invoke(ConfirmOneTimeCodeRequest $request): RedirectResponse
+    public function __invoke(ConfirmOneTimeCodeRequest $request, LoginCustomerAction $loginCustomerAction): RedirectResponse
     {
         $email = Crypt::decryptString($request->cookie('my_travel_cards_email'));
 
@@ -35,17 +34,10 @@ class StoreController
             ]);
         }
 
-        Auth::guard('customers')
-            ->setRememberDuration((int) CarbonInterval::days(7)->totalMinutes)
-            ->login($customer, true);
-
-        $customer->update([
-            'one_time_code' => null,
-            'one_time_code_expires_at' => null,
-        ]);
+        $loginCustomerAction->handle($customer);
 
         return redirect()
-            ->to(route('my-travel-cards.index'))
+            ->route('my-travel-cards.index')
             ->withoutCookie('my_travel_cards_email');
     }
 }

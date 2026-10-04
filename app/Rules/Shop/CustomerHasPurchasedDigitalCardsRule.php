@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Rules\Shop;
 
+use App\Actions\Shop\MyTravelCards\CheckIfCustomerCanAccessMyTravelCardsAction;
 use App\Models\Shop\ShopCustomer;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -14,8 +15,8 @@ class CustomerHasPurchasedDigitalCardsRule implements ValidationRule
     {
         $customer = ShopCustomer::query()->where('email', $value)->firstOrFail();
 
-        if ($customer->orders()->where('has_digital_items', true)->doesntExist()) {
-            $fail('Sorry, you must have purchased a digital card to use access My Travel Cards.');
+        if (app(CheckIfCustomerCanAccessMyTravelCardsAction::class)->handle($customer) === false) {
+            $fail('Sorry, you must have purchased a digital card to access My Travel Cards.');
         }
     }
 }

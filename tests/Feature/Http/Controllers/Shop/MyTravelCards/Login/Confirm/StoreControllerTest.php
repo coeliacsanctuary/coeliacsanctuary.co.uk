@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\MyTravelCards\Login\Confirm;
 
+use App\Actions\Shop\MyTravelCards\LoginCustomerAction;
 use App\Models\Shop\ShopCustomer;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
-use Symfony\Component\HttpFoundation\Cookie;
 use Tests\RequestFactories\MyTravelCardsConfirmOneTimeCodeRequestFactory;
 use Tests\TestCase;
 
@@ -18,7 +17,7 @@ class StoreControllerTest extends TestCase
 {
     protected ShopCustomer $customer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -33,10 +32,10 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itRedirectsToTheLoginPageWithoutTheEmailCookie(): void
     {
+        $this->dontExpectAction(LoginCustomerAction::class);
+
         $this->post(route('my-travel-cards.login.confirm.store'), MyTravelCardsConfirmOneTimeCodeRequestFactory::new()->create())
             ->assertRedirect(route('my-travel-cards.login.show'));
-
-        $this->assertGuest('customers');
     }
 
     #[Test]
@@ -66,21 +65,10 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itErrorsWithAnIncorrectCode(): void
     {
+        $this->dontExpectAction(LoginCustomerAction::class);
+
         $this->makeRequest(['code' => '654321'])
             ->assertSessionHasErrors(['code' => 'The one time code you entered is incorrect, please try again.']);
-
-        $this->assertGuest('customers');
-    }
-
-    #[Test]
-    public function itDoesntClearTheOneTimeCodeWithAnIncorrectCode(): void
-    {
-        $this->makeRequest(['code' => '654321']);
-
-        $this->customer->refresh();
-
-        $this->assertNotNull($this->customer->one_time_code);
-        $this->assertNotNull($this->customer->one_time_code_expires_at);
     }
 
     #[Test]
@@ -88,51 +76,19 @@ class StoreControllerTest extends TestCase
     {
         $this->customer->update(['one_time_code_expires_at' => now()->subSecond()]);
 
+        $this->dontExpectAction(LoginCustomerAction::class);
+
         $this->makeRequest()
             ->assertRedirect(route('my-travel-cards.login.show'))
             ->assertSessionHasErrors(['email' => 'Sorry, your one time code has expired, please try again.']);
-
-        $this->assertGuest('customers');
     }
 
     #[Test]
-    public function itLogsTheCustomerInWithTheCorrectCode(): void
+    public function itCallsTheLoginCustomerActionWithTheCorrectCode(): void
     {
+        $this->expectAction(LoginCustomerAction::class, [fn (ShopCustomer $customer) => $customer->is($this->customer)]);
+
         $this->makeRequest();
-
-        $this->assertAuthenticatedAs($this->customer, 'customers');
-    }
-
-    #[Test]
-    public function itRemembersTheCustomer(): void
-    {
-        $this->makeRequest()->assertCookie(Auth::guard('customers')->getRecallerName());
-
-        $this->customer->refresh();
-
-        $this->assertNotNull($this->customer->getRememberToken());
-    }
-
-    #[Test]
-    public function itRemembersTheCustomerForSevenDays(): void
-    {
-        $response = $this->makeRequest();
-
-        $recaller = collect($response->headers->getCookies())
-            ->first(fn (Cookie $cookie) => $cookie->getName() === Auth::guard('customers')->getRecallerName());
-
-        $this->assertSame(now()->addDays(7)->getTimestamp(), $recaller->getExpiresTime());
-    }
-
-    #[Test]
-    public function itClearsTheOneTimeCodeAndItsExpiry(): void
-    {
-        $this->makeRequest();
-
-        $this->customer->refresh();
-
-        $this->assertNull($this->customer->one_time_code);
-        $this->assertNull($this->customer->one_time_code_expires_at);
     }
 
     #[Test]
