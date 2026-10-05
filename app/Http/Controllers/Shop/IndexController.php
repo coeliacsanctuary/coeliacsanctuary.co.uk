@@ -62,7 +62,7 @@ class IndexController
                     'id' => $type->id,
                     'pageTitle' => $type->title,
                     'link' => DigitalCardType::from($type->id)->route(),
-                    'image' => $type->main_image,
+                    'image' => $type->main_image_as_webp ?? $type->main_image,
                 ]),
                 'popularProducts' => fn () => $getBestSellingProductsForShopIndexAction->handle(),
                 'reviews' => fn () => $getRecentReviewsForShopIndexAction->handle(),
