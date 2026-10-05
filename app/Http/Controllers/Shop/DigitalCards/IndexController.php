@@ -31,6 +31,7 @@ class IndexController
         return $inertia
             ->title($cardType->pageTitle())
             ->render('Shop/DigitalCards', [
+                'manageLink' => route('my-travel-cards.index'),
                 'type' => $cardType->pageTitle(),
                 'categoryLink' => route('shop.category', $cardType->category()),
                 'products' => fn () => ShopDigitalCardResource::collection($getDigitalCardsIndexAction->handle($cardType, $basket)),

@@ -24,6 +24,26 @@ enum DigitalCardType: string
         };
     }
 
+    public static function toShopIndexArray(): iterable
+    {
+        return collect(self::cases())
+            ->filter(fn (self $type) => $type->isLive())
+            ->values()
+            ->map(fn (self $type) => [
+                'id' => $type->value,
+                'pageTitle' => $type->pageTitle(),
+                'link' => $type->route(),
+            ]);
+    }
+
+    public function route(): string
+    {
+        return match ($this) {
+            self::STANDARD => route('shop.digital-standard-cards'),
+            default => throw new InvalidArgumentException('Invalid category'),
+        };
+    }
+
     public function label(): string
     {
         return match ($this) {
@@ -53,5 +73,13 @@ enum DigitalCardType: string
     public function category(): ShopCategory
     {
         return ShopCategory::query()->findOrFail($this->categoryId());
+    }
+
+    public function isLive(): bool
+    {
+        return match ($this) {
+            self::STANDARD => true,
+            self::PLUS => false,
+        };
     }
 }
