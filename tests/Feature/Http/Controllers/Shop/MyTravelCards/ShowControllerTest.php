@@ -84,7 +84,6 @@ class ShowControllerTest extends TestCase
         $this->makeRequest()->assertInertia(
             fn (Assert $page) => $page
                 ->where('card.id', $this->card->id)
-                ->where('card.type', 'standard')
                 ->where('card.title', 'French Travel Card')
                 ->where('card.language', 'french')
                 ->where('card.native_language', 'français')
@@ -189,7 +188,7 @@ class ShowControllerTest extends TestCase
     {
         /** @var ShopDigitalCard $card */
         $card = $this->build(ShopDigitalCard::class)->create([
-            'type' => DigitalCardType::STANDARD,
+            'type_id' => DigitalCardType::STANDARD,
             'title' => 'French Travel Card',
             'slug' => 'french-travel-card',
             'language' => 'french',

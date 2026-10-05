@@ -23,7 +23,6 @@ class ShopDigitalCardResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'type' => $this->type->label(),
             'title' => $this->title,
             'slug' => $this->slug,
             'language' => $this->language,

@@ -15,7 +15,6 @@ class PurchasedCardResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'type' => $this->type,
             'title' => $this->title,
             'language' => $this->language,
             'native_language' => $this->native_language,

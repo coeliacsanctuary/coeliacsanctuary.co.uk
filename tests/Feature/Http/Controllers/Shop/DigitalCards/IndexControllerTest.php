@@ -10,8 +10,9 @@ use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardPrice;
-use App\Models\Shop\ShopPrice;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Support\Collection;
@@ -23,6 +24,8 @@ use Tests\TestCase;
 class IndexControllerTest extends TestCase
 {
     protected ShopCategory $category;
+
+    protected ShopDigitalCardType $cardType;
 
     protected ShopProduct $product;
 
@@ -38,8 +41,13 @@ class IndexControllerTest extends TestCase
 
         $this->product = $product;
 
+        /** @var ShopDigitalCardType $cardType */
+        $cardType = ShopDigitalCardType::query()->findOrFail(DigitalCardType::STANDARD->value);
+
+        $this->cardType = $cardType;
+
         /** @var ShopCategory $category */
-        $category = $this->create(ShopCategory::class, ['id' => DigitalCardType::STANDARD->categoryId()]);
+        $category = $this->create(ShopCategory::class, ['id' => $cardType->category_id]);
 
         $category->products()->attach($this->product);
 
@@ -106,7 +114,9 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itCallsTheGetDigitalCardsIndexActionWithTheTypeResolvedFromTheRequestPath(): void
     {
-        $this->expectAction(GetDigitalCardsIndexAction::class, [DigitalCardType::STANDARD, null], return: collect());
+        $this->expectAction(GetDigitalCardsIndexAction::class, [
+            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && $passedBasket === null,
+        ], return: collect());
 
         $this->makeRequest();
     }
@@ -136,7 +146,7 @@ class IndexControllerTest extends TestCase
         $basket = $this->build(ShopOrder::class)->asBasket()->create();
 
         $this->expectAction(GetDigitalCardsIndexAction::class, [
-            fn (DigitalCardType $type, ?ShopOrder $passedBasket) => $type === DigitalCardType::STANDARD && $passedBasket?->is($basket),
+            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && $passedBasket?->is($basket),
         ], return: collect());
 
         $this->withCookie('basket_token', $basket->token)->makeRequest();
@@ -145,7 +155,9 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itPassesNoBasketToTheGetDigitalCardsIndexActionWhenTheTokenDoesntResolveToABasket(): void
     {
-        $this->expectAction(GetDigitalCardsIndexAction::class, [DigitalCardType::STANDARD, null], return: collect());
+        $this->expectAction(GetDigitalCardsIndexAction::class, [
+            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && $passedBasket === null,
+        ], return: collect());
 
         $this->withCookie('basket_token', 'not-a-basket')->makeRequest();
     }

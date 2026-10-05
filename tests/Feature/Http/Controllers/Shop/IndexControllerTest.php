@@ -6,7 +6,9 @@ namespace Tests\Feature\Http\Controllers\Shop;
 
 use PHPUnit\Framework\Attributes\Test;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopCategory;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopOrderReview;
@@ -14,6 +16,7 @@ use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Support\Helpers;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Money\Money;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -21,6 +24,8 @@ use Tests\TestCase;
 
 class IndexControllerTest extends TestCase
 {
+    protected ShopDigitalCardType $cardType;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,6 +33,13 @@ class IndexControllerTest extends TestCase
         Storage::fake('media');
 
         $this->withCategoriesAndProducts();
+
+        /** @var ShopDigitalCardType $cardType */
+        $cardType = ShopDigitalCardType::query()->findOrFail(DigitalCardType::STANDARD->value);
+
+        $cardType->addMedia(UploadedFile::fake()->image('digital-card.jpg'))->toMediaCollection('primary');
+
+        $this->cardType = $cardType;
     }
 
     #[Test]
@@ -45,24 +57,74 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsTheCategories(): void
+    public function itReturnsTheTravelCardCategories(): void
     {
         $this->get(route('shop.index'))
             ->assertInertia(
                 fn (Assert $page) => $page
                     ->component('Shop/Index')
                     ->has(
-                        'categories',
-                        5,
+                        'categories.travelCards',
+                        1,
                         fn (Assert $page) => $page->hasAll([
                             'title', 'description', 'image', 'link', 'travelCardSearch',
                             'products_count', 'price', 'reviews_count',
                         ])
                     )
-                    ->where('categories.0.title', 'Category 0')
-                    ->where('categories.1.title', 'Category 1')
+                    ->where('categories.travelCards.0.title', 'Category 0')
+                    ->where('categories.travelCards.0.travelCardSearch', true)
                     ->etc()
             );
+    }
+
+    #[Test]
+    public function itReturnsEveryOtherCategory(): void
+    {
+        $this->get(route('shop.index'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->component('Shop/Index')
+                    ->has(
+                        'categories.everythingElse',
+                        4,
+                        fn (Assert $page) => $page->hasAll([
+                            'title', 'description', 'image', 'link', 'travelCardSearch',
+                            'products_count', 'price', 'reviews_count',
+                        ])
+                    )
+                    ->where('categories.everythingElse.0.title', 'Category 1')
+                    ->where('categories.everythingElse.1.title', 'Category 2')
+                    ->where('categories.everythingElse.0.travelCardSearch', false)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itReturnsTheLiveDigitalCardTypes(): void
+    {
+        $this->get(route('shop.index'))
+            ->assertInertia(
+                fn (Assert $page) => $page
+                    ->has(
+                        'digitalCards',
+                        1,
+                        fn (Assert $page) => $page->hasAll(['id', 'pageTitle', 'link', 'image'])
+                    )
+                    ->where('digitalCards.0.id', DigitalCardType::STANDARD->value)
+                    ->where('digitalCards.0.pageTitle', $this->cardType->title)
+                    ->where('digitalCards.0.link', route('shop.digital-standard-cards'))
+                    ->where('digitalCards.0.image', $this->cardType->main_image)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itDoesntReturnADigitalCardTypeThatIsntLive(): void
+    {
+        $this->cardType->update(['live' => false]);
+
+        $this->get(route('shop.index'))
+            ->assertInertia(fn (Assert $page) => $page->has('digitalCards', 0)->etc());
     }
 
     #[Test]
@@ -87,9 +149,9 @@ class IndexControllerTest extends TestCase
         $this->get(route('shop.index'))
             ->assertInertia(
                 fn (Assert $page) => $page
-                    ->where('categories.0.products_count', 2)
-                    ->where('categories.0.reviews_count', 1)
-                    ->where('categories.0.price', 'from ' . Helpers::formatMoney(Money::GBP($cheapest)))
+                    ->where('categories.travelCards.0.products_count', 2)
+                    ->where('categories.travelCards.0.reviews_count', 1)
+                    ->where('categories.travelCards.0.price', 'from ' . Helpers::formatMoney(Money::GBP($cheapest)))
                     ->etc()
             );
     }
@@ -100,7 +162,7 @@ class IndexControllerTest extends TestCase
         ShopPrice::query()->update(['price' => 250]);
 
         $this->get(route('shop.index'))
-            ->assertInertia(fn (Assert $page) => $page->where('categories.0.price', 'from £2.50')->etc());
+            ->assertInertia(fn (Assert $page) => $page->where('categories.travelCards.0.price', 'from £2.50')->etc());
     }
 
     #[Test]
@@ -178,12 +240,13 @@ class IndexControllerTest extends TestCase
                 fn (Assert $page) => $page
                     ->component('Shop/Index')
                     ->has(
-                        'categories',
+                        'categories.everythingElse',
                         fn (Assert $page) => $page
                             ->each(fn (Assert $page) => $page
                                 ->whereNot('title', 'No Products')
                                 ->etc())
                     )
+                    ->etc()
             );
     }
 }

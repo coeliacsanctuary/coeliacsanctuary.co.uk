@@ -8,6 +8,7 @@ use App\Actions\Shop\DigitalCards\GetDigitalCardsIndexAction;
 use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardPrice;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
@@ -73,14 +74,18 @@ class GetDigitalCardsIndexActionTest extends TestCase
     /** @return Collection<int, ShopDigitalCard> */
     protected function cards(DigitalCardType $type = DigitalCardType::STANDARD, ?ShopOrder $basket = null): Collection
     {
-        return $this->callAction(GetDigitalCardsIndexAction::class, $type, $basket);
+        return $this->callAction(
+            GetDigitalCardsIndexAction::class,
+            ShopDigitalCardType::query()->withoutGlobalScopes()->findOrFail($type->value),
+            $basket,
+        );
     }
 
     #[Test]
     public function itOnlyReturnsCardsOfTheGivenType(): void
     {
-        $this->card(['title' => 'French', 'type' => DigitalCardType::STANDARD]);
-        $this->card(['title' => 'German', 'type' => DigitalCardType::PLUS]);
+        $this->card(['title' => 'French', 'type_id' => DigitalCardType::STANDARD]);
+        $this->card(['title' => 'German', 'type_id' => DigitalCardType::PLUS]);
 
         $this->assertEquals(['French'], $this->cards()->pluck('title')->all());
         $this->assertEquals(['German'], $this->cards(DigitalCardType::PLUS)->pluck('title')->all());

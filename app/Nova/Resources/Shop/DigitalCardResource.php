@@ -6,8 +6,8 @@ namespace App\Nova\Resources\Shop;
 
 use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
-use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopDigitalCard;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -34,7 +34,7 @@ class DigitalCardResource extends Resource
     public static $title = 'title';
 
     public static $search = [
-        'id', 'type', 'title', 'language', 'native_language',
+        'id', 'title', 'language', 'native_language',
     ];
 
     public function fields(Request $request): array
@@ -55,11 +55,10 @@ class DigitalCardResource extends Resource
                     ->fullWidth()
                     ->immutable(),
 
-                Select::make('Type')
+                BelongsTo::make('Type', 'type', DigitalCardTypeResource::class)
                     ->required()
                     ->fullWidth()
-                    ->options(DigitalCardType::class)
-                    ->displayUsingLabels(),
+                    ->relatableQueryUsing(fn (NovaRequest $request, Builder $query) => $query->withoutGlobalScopes()),
 
                 Text::make('Language')
                     ->required()
@@ -111,12 +110,12 @@ class DigitalCardResource extends Resource
                             return;
                         }
 
-                        $type = DigitalCardType::from($data->string('type')->toString());
+                        $type = ShopDigitalCardType::query()->withoutGlobalScopes()->findOrFail($data->integer('type'));
 
                         $field
                             ->readonly(false)
                             ->relatableQueryUsing(fn (NovaRequest $request, Builder $query) => $query
-                                ->whereRelation('categories', fn (Builder $relation) => $relation->where('category_id', $type->categoryId()))
+                                ->whereRelation('categories', fn (Builder $relation) => $relation->where('category_id', $type->category_id))
                                 ->whereHas('variants', fn ($query) => $query->where('live', true)), );
                     }),
             ]),

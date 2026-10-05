@@ -22,6 +22,7 @@ const props = defineProps<{
     id: string;
     pageTitle: string;
     link: string;
+    image: string;
   }[];
   popularProducts: ShopPopularProduct[];
   reviews: ShopIndexReview[];
@@ -33,7 +34,7 @@ const travelCards = computed((): ShopCategoryIndex[] => [
     title: card.pageTitle,
     description: '',
     link: card.link,
-    image: '',
+    image: card.image,
     travelCardSearch: false,
   })),
 ]);

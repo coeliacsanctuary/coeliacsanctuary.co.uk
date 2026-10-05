@@ -18,7 +18,7 @@ class ShopDigitalCardFactory extends Factory
         $language = $this->faker->unique()->word;
 
         return [
-            'type' => DigitalCardType::STANDARD,
+            'type_id' => DigitalCardType::STANDARD,
             'title' => "{$language} Travel Card",
             'slug' => Str::slug("{$language} travel card"),
             'language' => $language,

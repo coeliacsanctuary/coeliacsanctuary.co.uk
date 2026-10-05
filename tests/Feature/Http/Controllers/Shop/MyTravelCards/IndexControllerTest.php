@@ -95,7 +95,7 @@ class IndexControllerTest extends TestCase
     public function itReturnsTheCustomersPurchasedCards(): void
     {
         $this->purchase($this->card([
-            'type' => DigitalCardType::STANDARD,
+            'type_id' => DigitalCardType::STANDARD,
             'title' => 'French Travel Card',
             'slug' => 'french-travel-card',
             'language' => 'french',
@@ -104,7 +104,6 @@ class IndexControllerTest extends TestCase
         $this->makeRequest()->assertInertia(
             fn (Assert $page) => $page
                 ->has('cards', 1)
-                ->where('cards.0.type', 'standard')
                 ->where('cards.0.title', 'French Travel Card')
                 ->where('cards.0.slug', 'french-travel-card')
                 ->where('cards.0.language', 'french')

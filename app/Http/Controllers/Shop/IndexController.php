@@ -11,6 +11,7 @@ use App\DataObjects\BreadcrumbItemData;
 use App\Enums\Shop\DigitalCardType;
 use App\Http\Response\Inertia;
 use App\Models\Shop\ShopCategory;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Resources\Shop\ShopCategoryIndexResource;
 use App\Schema\ShopCategoryListSchema;
 use App\Support\Helpers;
@@ -31,8 +32,12 @@ class IndexController
             ->orderBy('title')
             ->get();
 
-        $travelCardCategories = $allCategories->filter(fn(ShopCategory $category) => Helpers::isTravelCard($category));
-        $everythingElse = $allCategories->reject(fn(ShopCategory $category) => Helpers::isTravelCard($category));
+        $travelCardCategories = $allCategories->filter(fn (ShopCategory $category) => Helpers::isTravelCard($category));
+        $everythingElse = $allCategories->reject(fn (ShopCategory $category) => Helpers::isTravelCard($category));
+
+        $digitalCardCategories = ShopDigitalCardType::query()
+            ->with(['media'])
+            ->get();
 
         return $inertia
             ->title('Gluten Free Travel Translation Cards & Stickers')
@@ -53,7 +58,12 @@ class IndexController
                     'travelCards' => ShopCategoryIndexResource::collection($travelCardCategories),
                     'everythingElse' => ShopCategoryIndexResource::collection($everythingElse),
                 ],
-                'digitalCards' => DigitalCardType::toShopIndexArray(),
+                'digitalCards' => $digitalCardCategories->map(fn (ShopDigitalCardType $type) => [
+                    'id' => $type->id,
+                    'pageTitle' => $type->title,
+                    'link' => DigitalCardType::from($type->id)->route(),
+                    'image' => $type->main_image,
+                ]),
                 'popularProducts' => fn () => $getBestSellingProductsForShopIndexAction->handle(),
                 'reviews' => fn () => $getRecentReviewsForShopIndexAction->handle(),
             ]);

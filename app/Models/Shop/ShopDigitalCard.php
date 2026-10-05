@@ -16,7 +16,7 @@ class ShopDigitalCard extends Model
 {
     protected $casts = [
         'live' => 'bool',
-        'type' => DigitalCardType::class,
+        'type_id' => DigitalCardType::class,
         'enable_physical_addons' => 'bool',
         'cant_eat_colour' => DigitalCardColor::class,
         'cant_eat_icon' => DigitalCardIcon::class,
@@ -26,7 +26,7 @@ class ShopDigitalCard extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new LiveScope());
+        static::addGlobalScope(new LiveScope);
     }
 
     public function getRouteKeyName()
@@ -54,5 +54,11 @@ class ShopDigitalCard extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(ShopProduct::class, 'product_id');
+    }
+
+    /** @return BelongsTo<ShopDigitalCardType, $this> */
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(ShopDigitalCardType::class, 'type_id');
     }
 }

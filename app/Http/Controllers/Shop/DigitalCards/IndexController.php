@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Shop\DigitalCards;
 
 use App\Actions\Shop\DigitalCards\GetDigitalCardsIndexAction;
 use App\Actions\Shop\ResolveBasketAction;
-use App\Enums\Shop\DigitalCardType;
 use App\Http\Response\Inertia;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Resources\Shop\ShopDigitalCardResource;
 use Illuminate\Http\Request;
 use Inertia\Response;
@@ -26,14 +26,14 @@ class IndexController
         $basket = $resolveBasketAction->handle($token, create: false);
         $basket?->loadMissing('items');
 
-        $cardType = DigitalCardType::fromRequestPath($request->path());
+        $cardType = ShopDigitalCardType::fromRequestPath($request->path());
 
         return $inertia
-            ->title($cardType->pageTitle())
+            ->title($cardType->title)
             ->render('Shop/DigitalCards', [
                 'manageLink' => route('my-travel-cards.index'),
-                'type' => $cardType->pageTitle(),
-                'categoryLink' => route('shop.category', $cardType->category()),
+                'type' => $cardType->title,
+                'categoryLink' => route('shop.category', $cardType->category()->firstOrFail()),
                 'products' => fn () => ShopDigitalCardResource::collection($getDigitalCardsIndexAction->handle($cardType, $basket)),
             ]);
     }

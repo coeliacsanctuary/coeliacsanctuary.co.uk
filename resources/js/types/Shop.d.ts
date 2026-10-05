@@ -259,7 +259,6 @@ export type ShopHolidayProps = {
 };
 
 type ShopBaseDigitalCard = {
-  type: string;
   title: string;
   slug: string;
   language: string;
@@ -296,7 +295,6 @@ type PurchasedCardIndex = ShopBaseDigitalCard & {
 
 export type PurchasedCard = {
   id: ShopDigitalCard['id'];
-  type: ShopBaseDigitalCard['type'];
   title: ShopBaseDigitalCard['title'];
   language: ShopBaseDigitalCard['language'];
   native_language: ShopDigitalCard['native_language'];

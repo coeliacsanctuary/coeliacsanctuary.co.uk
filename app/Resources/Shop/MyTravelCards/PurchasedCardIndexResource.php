@@ -17,7 +17,6 @@ class PurchasedCardIndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type' => $this->type,
             'title' => $this->title,
             'slug' => $this->slug,
             'language' => $this->language,

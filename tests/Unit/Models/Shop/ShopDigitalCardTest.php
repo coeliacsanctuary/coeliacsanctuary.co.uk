@@ -9,6 +9,7 @@ use App\Enums\Shop\DigitalCardIcon;
 use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardPrice;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use PHPUnit\Framework\Attributes\Test;
@@ -43,11 +44,20 @@ class ShopDigitalCardTest extends TestCase
     }
 
     #[Test]
-    public function itCastsTheTypeToAnEnum(): void
+    public function itCastsTheTypeIdToAnEnum(): void
     {
-        $card = $this->create(ShopDigitalCard::class, ['type' => 'plus'])->fresh();
+        $card = $this->create(ShopDigitalCard::class, ['type_id' => DigitalCardType::PLUS])->fresh();
 
-        $this->assertSame(DigitalCardType::PLUS, $card->type);
+        $this->assertSame(DigitalCardType::PLUS, $card->type_id);
+    }
+
+    #[Test]
+    public function itBelongsToAType(): void
+    {
+        $card = $this->create(ShopDigitalCard::class);
+
+        $this->assertInstanceOf(ShopDigitalCardType::class, $card->type);
+        $this->assertSame(DigitalCardType::STANDARD->value, $card->type->id);
     }
 
     #[Test]
