@@ -27,7 +27,7 @@ class ShopDigitalCardType extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new LiveScope);
+        static::addGlobalScope(new LiveScope());
     }
 
     public static function fromRequestPath(string $path): self

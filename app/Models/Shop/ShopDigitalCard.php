@@ -26,7 +26,7 @@ class ShopDigitalCard extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new LiveScope);
+        static::addGlobalScope(new LiveScope());
     }
 
     public function getRouteKeyName()
