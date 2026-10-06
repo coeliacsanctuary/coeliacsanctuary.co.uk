@@ -86,6 +86,16 @@ onMounted(() => {
 });
 
 watch(showAllReviews, (newValue) => {
+  useJourneyTracking().logEvent(
+    'clicked',
+    'EateryDetails/VisitorReviews/ToggledShowAllReviews',
+    {
+      eateryId: props.eatery.id,
+      branchId: props.eatery.branch?.id,
+      showAll: newValue,
+    },
+  );
+
   router.reload({
     data: { 'show-all-reviews': newValue },
     only: ['eatery'],
