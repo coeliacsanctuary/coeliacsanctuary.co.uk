@@ -66,9 +66,9 @@ const travelCards = computed((): ShopCategoryIndex[] => [
   </Card>
 
   <Card>
-    <SubHeading>My Travel Cards</SubHeading>
+    <SubHeading text-size="small">My Travel Cards</SubHeading>
 
-    <div class="grid grid-cols-1 gap-4 py-2 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 py-2 sm:grid-cols-2 lg:grid-cols-3">
       <IndexCategoryCard
         v-for="category in travelCards"
         :key="category.link"
@@ -78,9 +78,9 @@ const travelCards = computed((): ShopCategoryIndex[] => [
   </Card>
 
   <Card>
-    <SubHeading>My Other Products</SubHeading>
+    <SubHeading text-size="small">My Other Products</SubHeading>
 
-    <div class="grid grid-cols-1 gap-4 py-2 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 py-2 sm:grid-cols-2 lg:grid-cols-3">
       <IndexCategoryCard
         v-for="category in categories.everythingElse"
         :key="category.link"
