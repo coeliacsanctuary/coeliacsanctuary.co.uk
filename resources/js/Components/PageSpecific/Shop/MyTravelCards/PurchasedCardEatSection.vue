@@ -19,7 +19,7 @@ const iconStyle = (colour: string) => ({
       >
         <Icon
           :name="details.icon"
-          class="xs:size-8 lg:size-10"
+          class="size-6 xs:size-8 lg:size-10"
         />
       </div>
     </div>
