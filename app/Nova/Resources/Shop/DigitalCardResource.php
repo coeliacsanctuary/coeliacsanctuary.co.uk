@@ -8,6 +8,7 @@ use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardType;
+use App\Nova\Actions\Shop\PushDigitalCardToAppleWalletPasses;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -255,6 +256,15 @@ class DigitalCardResource extends Resource
                     ->placeholder('Thank you for helping me eat safely.')
                     ->onlyOnForms(),
             ])->help('In the native language'),
+        ];
+    }
+
+    public function actions(NovaRequest $request): array
+    {
+        return [
+            PushDigitalCardToAppleWalletPasses::make()
+                ->confirmText('This will push the current card content to every Apple Wallet pass already issued for it, and notify the customers holding them. Are you sure?')
+                ->confirmButtonText('Push to passes'),
         ];
     }
 

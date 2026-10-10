@@ -38,6 +38,7 @@ class IndexControllerTest extends TestCase
         $cardType = ShopDigitalCardType::query()->findOrFail(DigitalCardType::STANDARD->value);
 
         $cardType->addMedia(UploadedFile::fake()->image('digital-card.jpg'))->toMediaCollection('primary');
+        $cardType->addMedia(UploadedFile::fake()->image('digital-card.jpg'))->toMediaCollection('social');
 
         $this->cardType = $cardType;
     }
@@ -113,7 +114,7 @@ class IndexControllerTest extends TestCase
                     ->where('digitalCards.0.id', DigitalCardType::STANDARD->value)
                     ->where('digitalCards.0.pageTitle', $this->cardType->title)
                     ->where('digitalCards.0.link', route('shop.digital-standard-cards'))
-                    ->where('digitalCards.0.image', $this->cardType->main_image)
+                    ->where('digitalCards.0.image', $this->cardType->main_image_as_webp ?? $this->cardType->main_image)
                     ->etc()
             );
     }

@@ -10,6 +10,7 @@ use App\Enums\Shop\DigitalCardType;
 use App\Scopes\LiveScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ShopDigitalCard extends Model
@@ -60,5 +61,11 @@ class ShopDigitalCard extends Model
     public function type(): BelongsTo
     {
         return $this->belongsTo(ShopDigitalCardType::class, 'type_id');
+    }
+
+    /** @return HasMany<ShopOrderDigitalItem, $this> */
+    public function orderDigitalItems(): HasMany
+    {
+        return $this->hasMany(ShopOrderDigitalItem::class, 'digital_card_id');
     }
 }

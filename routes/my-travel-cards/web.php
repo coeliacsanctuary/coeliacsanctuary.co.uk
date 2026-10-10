@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Shop\MyTravelCards\AppleWallet\GetController as AppleWalletGetController;
 use App\Http\Controllers\Shop\MyTravelCards\IndexController;
 use App\Http\Controllers\Shop\MyTravelCards\Login\Confirm\ShowController as LoginConfirmShowController;
 use App\Http\Controllers\Shop\MyTravelCards\Login\Confirm\StoreController as LoginConfirmStoreController;
@@ -32,7 +33,10 @@ Route::middleware('guest:customers')->prefix('login')->name('my-travel-cards.log
 
 Route::middleware('auth:customers')->group(function (): void {
     Route::get('/', IndexController::class)->name('my-travel-cards.index');
-    Route::get('/card/{card}', ShowController::class)
-        ->middleware(CustomerOwnsDigitalCardMiddleware::class)
-        ->name('my-travel-cards.show');
+    Route::middleware(CustomerOwnsDigitalCardMiddleware::class)->group(function (): void {
+        Route::get('/card/{card}', ShowController::class)->name('my-travel-cards.show');
+
+        Route::get('/card/{card}/apple-wallet', AppleWalletGetController::class)
+            ->name('my-travel-cards.wallet.apple');
+    });
 });

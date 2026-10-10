@@ -15,6 +15,7 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -43,7 +44,8 @@ class IndexControllerTest extends TestCase
 
         /** @var ShopDigitalCardType $cardType */
         $cardType = ShopDigitalCardType::query()->findOrFail(DigitalCardType::STANDARD->value);
-
+        $cardType->addMedia(UploadedFile::fake()->image('category.jpg'))->toMediaCollection('social');
+        
         $this->cardType = $cardType;
 
         /** @var ShopCategory $category */

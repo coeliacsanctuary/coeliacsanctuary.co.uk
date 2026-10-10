@@ -2,25 +2,27 @@
 import { PurchasedCardIndex } from '@/types/Shop';
 import Card from '@/Components/Card.vue';
 import CountryFlag from '@/Components/CountryFlag.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import DigitalCardCountryList from '@/Components/PageSpecific/Shop/DigitalCards/DigitalCardCountryList.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { Link } from '@inertiajs/vue3';
+import useBrowser from '@/composables/useBrowser';
+import { DocumentTextIcon } from '@heroicons/vue/24/solid';
 
 defineProps<{ card: PurchasedCardIndex }>();
 
 const showCountryListSidebar = ref(false);
+
+const showAppleWalletButton = ref(false);
+
+onMounted(() => {
+  showAppleWalletButton.value = useBrowser().isAppleDevice();
+});
 </script>
 
 <template>
-  <Card class="group relative cursor-pointer">
-    <Link
-      class="absolute top-0 left-0 h-full w-full"
-      :href="card.link"
-      prefetch
-    />
+  <Card>
     <div class="mx-auto flex max-w-3xs flex-1 flex-col space-y-3">
-      <div class="p-4 opacity-50 transition group-hover:opacity-100">
+      <div class="px-4 pt-2">
         <CountryFlag
           :code="card.flag"
           :country="card.language"
@@ -30,21 +32,46 @@ const showCountryListSidebar = ref(false);
       </div>
 
       <h2
-        class="text-center text-xl font-semibold text-primary-dark transition group-hover:text-black md:text-2xl"
+        class="text-center text-lg font-semibold text-primary-dark md:text-xl"
         v-text="card.title"
       />
 
       <div class="flex-1" />
 
-      <CoeliacButton
+      <div class="flex items-center gap-2">
+        <CoeliacButton
+          :href="card.link"
+          theme="secondary"
+          label="View"
+          bold
+          :icon="DocumentTextIcon"
+          icon-position="left"
+          icon-classes="size-6!"
+          classes="h-10 flex-1 justify-center text-center items-center text-base!"
+          prefetch
+        />
+
+        <a
+          v-if="showAppleWalletButton"
+          :href="card.apple_wallet_link"
+          class="shrink-0"
+        >
+          <img
+            src="/images/svg/add-to-apple-wallet.svg"
+            alt="Add to Apple Wallet"
+            class="h-10 w-auto"
+          />
+        </a>
+      </div>
+
+      <button
         v-if="card.countries?.length"
-        as="a"
-        theme="light"
-        size="sm"
-        label="Where can I use this card?"
-        classes="justify-center text-center items-center opacity-50 transition hover:opacity-100"
+        type="button"
+        class="cursor-pointer text-center text-sm text-primary-dark transition hover:underline"
         @click="showCountryListSidebar = true"
-      />
+      >
+        Where can I use this card?
+      </button>
     </div>
   </Card>
 

@@ -47,6 +47,14 @@ export default () => {
     return window.screen.height;
   };
 
+  const isAppleDevice = (): boolean => {
+    if (!hasWindowObject) {
+      return false;
+    }
+
+    return /iPhone|iPad|iPod|Macintosh/.test(window.navigator.userAgent);
+  };
+
   const replaceHistory = (
     url: string,
     data: null | undefined | object = undefined,
@@ -64,6 +72,7 @@ export default () => {
     absoluteUrl,
     pageWidth,
     pageHeight,
+    isAppleDevice,
     replaceHistory,
   };
 };

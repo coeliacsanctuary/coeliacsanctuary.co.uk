@@ -74,4 +74,6 @@ Route::middleware(['auth'])
     ->get('preview/{token}', PreviewController::class)
     ->name('nova-preview.show');
 
+Route::mobilePass();
+
 Route::fallback(FallbackController::class)->name('fallback');

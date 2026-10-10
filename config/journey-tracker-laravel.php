@@ -13,6 +13,7 @@ return [
         '/cs-adm/*',
         'fallback',
         '/nova*',
+        '/passkit/*',
         '/ads.txt',
         '/blog/feed',
         '/feed',

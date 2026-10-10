@@ -7,6 +7,7 @@ namespace App\Models\Shop;
 use App\Actions\Shop\ReconcileBasketItemsAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\LaravelMobilePass\Models\Concerns\HasMobilePasses;
 
 /**
  * @property ShopOrder $order
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ShopOrderDigitalItem extends Model
 {
+    use HasMobilePasses;
+
     protected static function booted(): void
     {
         static::saved(fn (self $item) => app(ReconcileBasketItemsAction::class)->handle($item->order));
