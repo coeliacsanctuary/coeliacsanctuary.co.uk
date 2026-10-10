@@ -20,7 +20,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card>
+  <Card class="mx-auto w-full max-w-sm">
     <div class="mx-auto flex max-w-3xs flex-1 flex-col space-y-3">
       <div class="px-4 pt-2">
         <CountryFlag
