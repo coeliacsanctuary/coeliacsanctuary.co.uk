@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "968557d7f8f74a3031887cdff06078fd",
+    "content-hash": "02dafcd205f8ad1f5be7f3a8e468943e",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -3285,16 +3285,16 @@
         },
         {
             "name": "jpeters8889/journey-tracker-laravel",
-            "version": "v0.8.0",
+            "version": "v0.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jpeters8889/journey-tracker-laravel.git",
-                "reference": "18b5592b64b0c53fa83b4194c3435e4a0cda3681"
+                "reference": "bb3ca3d117af9dd9f1e73b575a970b655d0a5da1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/18b5592b64b0c53fa83b4194c3435e4a0cda3681",
-                "reference": "18b5592b64b0c53fa83b4194c3435e4a0cda3681",
+                "url": "https://api.github.com/repos/jpeters8889/journey-tracker-laravel/zipball/bb3ca3d117af9dd9f1e73b575a970b655d0a5da1",
+                "reference": "bb3ca3d117af9dd9f1e73b575a970b655d0a5da1",
                 "shasum": ""
             },
             "require": {
@@ -3393,7 +3393,7 @@
                 "issues": "https://github.com/jpeters8889/journey-tracker-laravel/issues",
                 "source": "https://github.com/jpeters8889/journey-tracker-laravel"
             },
-            "time": "2026-09-02T13:37:08+00:00"
+            "time": "2026-10-09T09:04:39+00:00"
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
