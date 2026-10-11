@@ -45,7 +45,7 @@ class IndexControllerTest extends TestCase
         /** @var ShopDigitalCardType $cardType */
         $cardType = ShopDigitalCardType::query()->findOrFail(DigitalCardType::STANDARD->value);
         $cardType->addMedia(UploadedFile::fake()->image('category.jpg'))->toMediaCollection('social');
-        
+
         $this->cardType = $cardType;
 
         /** @var ShopCategory $category */
