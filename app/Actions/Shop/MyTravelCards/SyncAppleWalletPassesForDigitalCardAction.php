@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop\MyTravelCards;
 
+use App\DataObjects\Shop\WalletCardSection;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrderDigitalItem;
 use Illuminate\Support\Collection;
@@ -11,22 +12,26 @@ use Spatie\LaravelMobilePass\Models\MobilePass;
 
 class SyncAppleWalletPassesForDigitalCardAction
 {
-    public function __construct(protected GetAppleWalletCardFieldsAction $getCardFields)
+    public function __construct(protected GetWalletCardSectionsAction $getCardSections)
     {
     }
 
     public function handle(ShopDigitalCard $card): int
     {
-        $fields = $this->getCardFields->handle($card);
+        $sections = $this->getCardSections->handle($card);
+
+        $sections['outro'] = $sections['outro']->appendedWith($sections['thank_you']);
+
+        $sections = $sections->forget('thank_you');
 
         $passes = $this->passesFor($card);
 
-        $passes->each(function (MobilePass $pass) use ($fields): void {
+        $passes->each(function (MobilePass $pass) use ($sections): void {
             $builder = $pass->builder();
 
-            foreach ($fields as $key => $field) {
-                $builder->updateField($key, $field['value'], label: $field['label']);
-            }
+            $sections->each(
+                fn (WalletCardSection $section) => $builder->updateField($section->key, $section->value, label: $section->label),
+            );
 
             $builder->save();
         });

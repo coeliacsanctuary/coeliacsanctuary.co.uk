@@ -8,7 +8,7 @@ use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardType;
-use App\Nova\Actions\Shop\PushDigitalCardToAppleWalletPasses;
+use App\Nova\Actions\Shop\PushDigitalCardToWalletPasses;
 use App\Nova\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -262,8 +262,8 @@ class DigitalCardResource extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            PushDigitalCardToAppleWalletPasses::make()
-                ->confirmText('This will push the current card content to every Apple Wallet pass already issued for it, and notify the customers holding them. Are you sure?')
+            PushDigitalCardToWalletPasses::make()
+                ->confirmText('This will push the current card content to every Apple Wallet pass already issued for it, and update the Google Wallet class. Are you sure?')
                 ->confirmButtonText('Push to passes'),
         ];
     }

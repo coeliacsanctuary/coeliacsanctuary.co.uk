@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use App\Actions\Shop\MyTravelCards\SyncGoogleWalletClassAction;
 use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
 use App\Enums\Shop\DigitalCardType;
@@ -28,6 +29,16 @@ class ShopDigitalCard extends Model
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
+
+        static::saved(function (self $card): void {
+            if ( ! config()->boolean('coeliac.google_wallet_enabled')) {
+                return;
+            }
+
+            if ($card->live && $card->google_wallet_class_id === null) {
+                dispatch(fn () => app(SyncGoogleWalletClassAction::class)->handle($card));
+            }
+        });
     }
 
     public function getRouteKeyName()

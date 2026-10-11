@@ -22,6 +22,7 @@ class PurchasedCardIndexResource extends JsonResource
             'language' => $this->language,
             'link' => route('my-travel-cards.show', ['card' => $this]),
             'apple_wallet_link' => route('my-travel-cards.wallet.apple', ['card' => $this]),
+            'google_wallet_link' => route('my-travel-cards.wallet.google', ['card' => $this]),
             'countries' => $this->whenLoaded('countries', fn (Collection $countries) => $countries->map(fn (TravelCardSearchTerm $searchTerm) => [
                 'country' => ucwords($searchTerm->term),
                 'code' => Helpers::countryCode($searchTerm->term),

@@ -292,6 +292,7 @@ export type ShopDigitalCard = ShopBaseDigitalCard & {
 type PurchasedCardIndex = ShopBaseDigitalCard & {
   link: string;
   apple_wallet_link: string;
+  google_wallet_link: string;
 };
 
 export type PurchasedCard = {

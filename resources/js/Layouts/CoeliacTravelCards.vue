@@ -10,10 +10,7 @@ withDefaults(
 </script>
 
 <template>
-  <div
-    class="flex h-screen flex-col bg-gray-100"
-    style="padding-bottom: var(--sticky-bottom, 0px)"
-  >
+  <div class="flex h-screen flex-col bg-gray-100">
     <CoeliacTravelCardsHeader
       :metas="meta"
       :show-back="showBack"

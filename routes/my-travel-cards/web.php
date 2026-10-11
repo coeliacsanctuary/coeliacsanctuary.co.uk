@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Shop\MyTravelCards\AppleWallet\GetController as AppleWalletGetController;
+use App\Http\Controllers\Shop\MyTravelCards\GoogleWallet\GetController as GoogleWalletGetController;
 use App\Http\Controllers\Shop\MyTravelCards\IndexController;
 use App\Http\Controllers\Shop\MyTravelCards\Login\Confirm\ShowController as LoginConfirmShowController;
 use App\Http\Controllers\Shop\MyTravelCards\Login\Confirm\StoreController as LoginConfirmStoreController;
@@ -38,5 +39,8 @@ Route::middleware('auth:customers')->group(function (): void {
 
         Route::get('/card/{card}/apple-wallet', AppleWalletGetController::class)
             ->name('my-travel-cards.wallet.apple');
+
+        Route::get('/card/{card}/google-wallet', GoogleWalletGetController::class)
+            ->name('my-travel-cards.wallet.google');
     });
 });

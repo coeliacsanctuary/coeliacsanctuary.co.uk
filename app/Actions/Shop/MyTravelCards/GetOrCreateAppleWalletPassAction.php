@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop\MyTravelCards;
 
+use App\DataObjects\Shop\WalletCardSection;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrderDigitalItem;
@@ -13,7 +14,7 @@ use Spatie\LaravelMobilePass\Models\MobilePass;
 
 class GetOrCreateAppleWalletPassAction
 {
-    public function __construct(protected GetAppleWalletCardFieldsAction $getCardFields)
+    public function __construct(protected GetWalletCardSectionsAction $getCardSections)
     {
     }
 
@@ -53,9 +54,13 @@ class GetOrCreateAppleWalletPassAction
             ->addField('card_type', 'Gluten Free Travel Card')
             ->addSecondaryField('instruction', 'Tap ••• then ⓘ Pass Details', label: 'To show restaurant staff');
 
-        foreach ($this->getCardFields->handle($card) as $key => $field) {
-            $builder->addBackField($key, $field['value'], $field['label']);
-        }
+        $sections = $this->getCardSections->handle($card);
+
+        $sections['outro'] = $sections['outro']->appendedWith($sections['thank_you']);
+
+        $sections->forget('thank_you')->each(
+            fn (WalletCardSection $section) => $builder->addBackField($section->key, $section->value, $section->label),
+        );
 
         $pass = $builder->save();
 

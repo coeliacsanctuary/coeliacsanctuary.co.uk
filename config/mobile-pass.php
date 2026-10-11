@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Support\Shop\Wallet\GenericPassBuilder;
 use Spatie\LaravelMobilePass\Actions\Apple\NotifyAppleOfPassUpdateAction;
 use Spatie\LaravelMobilePass\Actions\Apple\PersonalizeAction;
 use Spatie\LaravelMobilePass\Actions\Apple\RegisterDeviceAction;
@@ -59,7 +60,7 @@ return [
         * Exactly one of the two needs to be set.
         */
         'service_account_key' => env('MOBILE_PASS_GOOGLE_KEY'),
-        'service_account_key_path' => env('MOBILE_PASS_GOOGLE_KEY_PATH'),
+        'service_account_key_path' => base_path(env('MOBILE_PASS_GOOGLE_KEY_PATH', '')),
 
         'origins' => [env('APP_URL')],
 
@@ -104,7 +105,7 @@ return [
             // 'my_custom_apple_pass' => MyCustomApplePassBuilder::class,
         ],
         'google' => [
-            // 'my_custom_google_pass' => MyCustomGooglePassBuilder::class,
+            'generic' => GenericPassBuilder::class,
         ],
     ],
 

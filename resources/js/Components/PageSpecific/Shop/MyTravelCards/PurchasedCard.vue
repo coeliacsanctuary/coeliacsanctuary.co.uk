@@ -15,10 +15,13 @@ const showCountryListSidebar = ref(false);
 
 const showAppleWalletButton = ref(false);
 
+const showGoogleWalletButton = ref(false);
+
 const showAppleWalletModal = ref(false);
 
 onMounted(() => {
   showAppleWalletButton.value = useBrowser().isAppleDevice();
+  showGoogleWalletButton.value = useBrowser().isGoogleWalletDevice();
 });
 </script>
 
@@ -66,6 +69,19 @@ onMounted(() => {
             class="h-10 w-auto"
           />
         </button>
+
+        <a
+          v-if="showGoogleWalletButton"
+          :href="card.google_wallet_link"
+          target="_blank"
+          class="shrink-0"
+        >
+          <img
+            src="/images/svg/add-to-google-wallet.svg"
+            alt="Add to Google Wallet"
+            class="h-10 w-auto"
+          />
+        </a>
       </div>
 
       <button

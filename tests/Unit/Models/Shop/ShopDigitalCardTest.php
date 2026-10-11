@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\Shop;
 
+use App\Actions\Shop\MyTravelCards\SyncGoogleWalletClassAction;
 use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
 use App\Enums\Shop\DigitalCardType;
@@ -17,6 +18,46 @@ use Tests\TestCase;
 
 class ShopDigitalCardTest extends TestCase
 {
+    #[Test]
+    public function itSyncsTheGoogleWalletClassWhenALiveCardHasntGotOne(): void
+    {
+        config()->set('coeliac.google_wallet_enabled', true);
+
+        $this->expectAction(SyncGoogleWalletClassAction::class);
+
+        $this->create(ShopDigitalCard::class, ['google_wallet_class_id' => null]);
+    }
+
+    #[Test]
+    public function itDoesntSyncTheGoogleWalletClassWhenTheCardAlreadyHasOne(): void
+    {
+        config()->set('coeliac.google_wallet_enabled', true);
+
+        $this->dontExpectAction(SyncGoogleWalletClassAction::class);
+
+        $this->create(ShopDigitalCard::class, ['google_wallet_class_id' => 'issuer.spanish']);
+    }
+
+    #[Test]
+    public function itDoesntSyncTheGoogleWalletClassWhenTheCardIsntLive(): void
+    {
+        config()->set('coeliac.google_wallet_enabled', true);
+
+        $this->dontExpectAction(SyncGoogleWalletClassAction::class);
+
+        $this->build(ShopDigitalCard::class)->notLive()->create(['google_wallet_class_id' => null]);
+    }
+
+    #[Test]
+    public function itDoesntSyncTheGoogleWalletClassWhenItIsDisabled(): void
+    {
+        config()->set('coeliac.google_wallet_enabled', false);
+
+        $this->dontExpectAction(SyncGoogleWalletClassAction::class);
+
+        $this->create(ShopDigitalCard::class, ['google_wallet_class_id' => null]);
+    }
+
     #[Test]
     public function itHasALiveScope(): void
     {

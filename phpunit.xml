@@ -32,6 +32,7 @@
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="GENERATE_OG_IMAGES" value="false"/>
         <env name="GENERATE_EATERY_AI_DESCRIPTIONS" value="false"/>
+        <env name="GOOGLE_WALLET_ENABLED" value="false"/>
         <env name="ENABLE_EATERY_COLLECTIONS" value="true"/>
     </php>
     <source>

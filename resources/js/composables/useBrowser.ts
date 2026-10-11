@@ -52,7 +52,21 @@ export default () => {
       return false;
     }
 
-    return /iPhone|iPad|iPod|Macintosh/.test(window.navigator.userAgent);
+    const agent = window.navigator.userAgent;
+
+    if (/iPhone|iPod/.test(agent)) {
+      return true;
+    }
+
+    return /iPad|Macintosh/.test(agent) && window.navigator.maxTouchPoints > 1;
+  };
+
+  const isGoogleWalletDevice = (): boolean => {
+    if (!hasWindowObject) {
+      return false;
+    }
+
+    return !isAppleDevice();
   };
 
   const replaceHistory = (
@@ -73,6 +87,7 @@ export default () => {
     pageWidth,
     pageHeight,
     isAppleDevice,
+    isGoogleWalletDevice,
     replaceHistory,
   };
 };
