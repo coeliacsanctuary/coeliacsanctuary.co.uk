@@ -29,11 +29,11 @@ class GetOrCreateGoogleWalletPassAction
         $pass = GenericPassBuilder::make()
             ->setClass($card->slug)
             ->setObjectSuffix("{$card->slug}-{$item->id}")
+            ->setBackgroundColor('#80CCFC')
+            ->setLogoUrl($this->logoUrl())
             ->setCardTitle($card->title)
             ->setHeader($card->card_title)
             ->setSubheader(config()->string('app.name'))
-            ->setLogoUrl($this->logoUrl())
-            ->setBackgroundColor('#80CCFC')
             ->save();
 
         $item->addMobilePass($pass);

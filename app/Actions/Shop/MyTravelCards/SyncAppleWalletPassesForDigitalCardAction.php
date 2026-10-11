@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop\MyTravelCards;
 
-use App\DataObjects\Shop\WalletCardSection;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrderDigitalItem;
 use Illuminate\Support\Collection;
@@ -20,18 +19,21 @@ class SyncAppleWalletPassesForDigitalCardAction
     {
         $sections = $this->getCardSections->handle($card);
 
-        $sections['outro'] = $sections['outro']->appendedWith($sections['thank_you']);
-
-        $sections = $sections->forget('thank_you');
+        $backFields = [
+            $sections['card'],
+            $sections['cant_eat'],
+            $sections['can_eat'],
+            $sections['outro']->appendedWith($sections['thank_you']),
+        ];
 
         $passes = $this->passesFor($card);
 
-        $passes->each(function (MobilePass $pass) use ($sections): void {
+        $passes->each(function (MobilePass $pass) use ($backFields): void {
             $builder = $pass->builder();
 
-            $sections->each(
-                fn (WalletCardSection $section) => $builder->updateField($section->key, $section->value, label: $section->label),
-            );
+            foreach ($backFields as $section) {
+                $builder->updateField($section->key, $section->value, label: $section->label);
+            }
 
             $builder->save();
         });

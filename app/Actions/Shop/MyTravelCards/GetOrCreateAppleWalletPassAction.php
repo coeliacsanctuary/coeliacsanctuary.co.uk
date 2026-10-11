@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop\MyTravelCards;
 
-use App\DataObjects\Shop\WalletCardSection;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrderDigitalItem;
@@ -56,11 +55,16 @@ class GetOrCreateAppleWalletPassAction
 
         $sections = $this->getCardSections->handle($card);
 
-        $sections['outro'] = $sections['outro']->appendedWith($sections['thank_you']);
+        $backFields = [
+            $sections['card'],
+            $sections['cant_eat'],
+            $sections['can_eat'],
+            $sections['outro']->appendedWith($sections['thank_you']),
+        ];
 
-        $sections->forget('thank_you')->each(
-            fn (WalletCardSection $section) => $builder->addBackField($section->key, $section->value, $section->label),
-        );
+        foreach ($backFields as $section) {
+            $builder->addBackField($section->key, $section->value, $section->label);
+        }
 
         $pass = $builder->save();
 

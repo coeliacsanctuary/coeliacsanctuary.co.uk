@@ -7,7 +7,6 @@ namespace Tests\Unit\Actions\Shop\MyTravelCards;
 use App\Actions\Shop\MyTravelCards\GetWalletCardSectionsAction;
 use App\DataObjects\Shop\WalletCardSection;
 use App\Models\Shop\ShopDigitalCard;
-use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -36,7 +35,7 @@ class GetWalletCardSectionsActionTest extends TestCase
     {
         $this->assertSame(
             ['card', 'cant_eat', 'can_eat', 'outro', 'thank_you'],
-            $this->sections()->keys()->all(),
+            array_keys($this->sections()),
         );
     }
 
@@ -93,8 +92,8 @@ class GetWalletCardSectionsActionTest extends TestCase
         $this->assertSame('Cross contamination paragraph', $relabelled->value);
     }
 
-    /** @return Collection<string, WalletCardSection> */
-    protected function sections(): Collection
+    /** @return array<string, WalletCardSection> */
+    protected function sections(): array
     {
         return $this->callAction(GetWalletCardSectionsAction::class, $this->card);
     }

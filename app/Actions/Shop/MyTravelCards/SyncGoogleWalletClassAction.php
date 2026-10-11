@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop\MyTravelCards;
 
-use App\DataObjects\Shop\WalletCardSection;
 use App\Models\Shop\ShopDigitalCard;
 use Spatie\LaravelMobilePass\Builders\Google\GenericPassClass;
 
@@ -25,11 +24,17 @@ class SyncGoogleWalletClassAction
 
         $sections = $this->getCardSections->handle($card);
 
-        $sections['outro'] = $sections['outro']->withLabel(' ');
+        $modules = [
+            $sections['card'],
+            $sections['cant_eat'],
+            $sections['can_eat'],
+            $sections['outro']->withLabel(' '),
+            $sections['thank_you'],
+        ];
 
-        $sections->each(
-            fn (WalletCardSection $section) => $class->addTextModule($section->label, $section->value, $section->key),
-        );
+        foreach ($modules as $section) {
+            $class->addTextModule($section->label, $section->value, $section->key);
+        }
 
         $class->save();
 
