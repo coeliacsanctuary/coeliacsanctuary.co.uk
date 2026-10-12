@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { InformationCircleIcon } from '@heroicons/vue/20/solid';
 
-withDefaults(defineProps<{ border?: boolean; textClasses?: string }>(), {
-  border: true,
-  textClasses: 'text-xs',
-});
+withDefaults(
+  defineProps<{
+    border?: boolean;
+    heading?: boolean;
+    textClasses?: string;
+  }>(),
+  {
+    border: true,
+    heading: true,
+    textClasses: 'text-xs',
+  },
+);
 </script>
 
 <template>
@@ -13,6 +21,7 @@ withDefaults(defineProps<{ border?: boolean; textClasses?: string }>(), {
     :class="{ 'border-t border-primary-light/60 pt-4': border }"
   >
     <p
+      v-if="heading"
       class="flex items-center gap-1.5 font-semibold text-grey-darkest"
       :class="textClasses"
     >

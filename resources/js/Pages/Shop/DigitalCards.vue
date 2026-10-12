@@ -7,6 +7,8 @@ import SidebarLayout from '@/Components/SidebarLayout.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import TravelCardImportantInformation from '@/Components/PageSpecific/Shop/TravelCardImportantInformation.vue';
+import CollapsibleCard from '@/Components/CollapsibleCard.vue';
+import { InformationCircleIcon } from '@heroicons/vue/20/solid';
 
 defineProps<{
   manageLink: string;
@@ -74,31 +76,39 @@ defineProps<{
         />
       </Card>
 
-      <Card class="flex flex-col space-y-3">
-        <SubHeading text-size="small">
-          How do your Digital Travel Cards work?
-        </SubHeading>
+      <CollapsibleCard show-breakpoint="xmd">
+        <template #title> How do your Digital Travel Cards work? </template>
 
-        <p class="prose mt-4 max-w-none">
-          When you purchase a digital travel card, you will be emailed a link to
-          view your cards.
-        </p>
-        <p class="prose mt-4 max-w-none">
-          You can then access your travel cards at any time, on any device, to
-          show staff when eating out.
-        </p>
-        <p class="prose mt-4 max-w-none">
-          My Digital Cards can be used in your web browser, or added to your
-          Google Wallet or Apple Wallet app on your phone.
-        </p>
-      </Card>
+        <div class="flex flex-col space-y-4">
+          <p class="prose max-w-none">
+            When you purchase a digital travel card, you will be emailed a link
+            to view your cards.
+          </p>
+          <p class="prose max-w-none">
+            You can then access your travel cards at any time, on any device, to
+            show staff when eating out.
+          </p>
+          <p class="prose max-w-none">
+            My Digital Cards can be used in your web browser, or added to your
+            Google Wallet or Apple Wallet app on your phone.
+          </p>
+        </div>
+      </CollapsibleCard>
 
-      <Card class="flex flex-col space-y-3">
+      <CollapsibleCard show-breakpoint="xmd">
+        <template #title>
+          <span class="flex items-center gap-1.5">
+            <InformationCircleIcon class="size-5 shrink-0 text-primary-dark" />
+            Before you buy
+          </span>
+        </template>
+
         <TravelCardImportantInformation
           :border="false"
+          :heading="false"
           text-classes="prose max-w-none"
         />
-      </Card>
+      </CollapsibleCard>
     </template>
   </SidebarLayout>
 </template>
