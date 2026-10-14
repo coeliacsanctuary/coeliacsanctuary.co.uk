@@ -232,6 +232,7 @@ export type TravelCardDestination = {
   type: string;
   flag: string | null;
   products: ShopProductIndex[];
+  digital_cards: ShopDigitalCard[];
 };
 
 export type TravelCardSearchResult = {

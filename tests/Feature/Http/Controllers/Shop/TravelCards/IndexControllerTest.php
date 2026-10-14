@@ -20,7 +20,13 @@ class IndexControllerTest extends TestCase
     {
         return [
             'term' => $term,
-            'destinations' => [['term' => $term, 'type' => 'country', 'flag' => 'es', 'products' => []]],
+            'destinations' => [[
+                'term' => $term,
+                'type' => 'country',
+                'flag' => 'es',
+                'products' => [],
+                'digital_cards' => [],
+            ]],
             'covers_all' => [],
         ];
     }
@@ -75,7 +81,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itResolvesTheSearchTermFromTheQueryString(): void
     {
-        $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain'], return: $this->resolved());
+        $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain', null], return: $this->resolved());
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Spain']))
             ->assertInertia(fn (Assert $page) => $page
@@ -86,7 +92,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itTrimsTheSearchTermBeforeResolvingIt(): void
     {
-        $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain'], return: $this->resolved());
+        $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain', null], return: $this->resolved());
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => '  Spain  ']))
             ->assertInertia(fn (Assert $page) => $page->where('searchTerm', 'Spain'));
@@ -104,7 +110,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itKeepsTheSearchTermWhenNothingResolves(): void
     {
-        $this->expectAction(ResolveTravelCardSearchAction::class, ['Narnia'], return: null);
+        $this->expectAction(ResolveTravelCardSearchAction::class, ['Narnia', null], return: null);
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Narnia']))
             ->assertInertia(fn (Assert $page) => $page
@@ -115,11 +121,24 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itNamesThePageAfterTheResolvedDestinations(): void
     {
-        $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain'], return: $this->resolved());
+        $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain', null], return: $this->resolved());
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Spain']))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('meta.title', 'Gluten Free Travel and Translation Cards for Spain'));
+    }
+
+    #[Test]
+    public function itPassesTheResolvedDigitalCardsToThePage(): void
+    {
+        $resolved = $this->resolved();
+        $resolved['destinations'][0]['digital_cards'] = [['id' => 1, 'title' => 'Spanish Digital Card']];
+
+        $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain', null], return: $resolved);
+
+        $this->get(route('shop.travel-cards.landing-page', ['term' => 'Spain']))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('search.destinations.0.digital_cards.0.title', 'Spanish Digital Card'));
     }
 
     #[Test]
