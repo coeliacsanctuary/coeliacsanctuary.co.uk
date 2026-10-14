@@ -2,6 +2,7 @@
 import {
   ShopCategoryIndex,
   TravelCardDestinationChip,
+  TravelCardDigitalType,
   TravelCardReviewSummary,
   TravelCardSearchResult,
 } from '@/types/Shop';
@@ -22,6 +23,7 @@ defineProps<{
   search: TravelCardSearchResult | null;
   destinations: TravelCardDestinationChip[];
   categories: ShopCategoryIndex[];
+  digitalCardTypes: TravelCardDigitalType[];
   reviews: TravelCardReviewSummary;
 }>();
 
@@ -78,7 +80,10 @@ const faqs: ArticleFaq[] = [
 
   <TravelCardTrustFacts :reviews="reviews" />
 
-  <TravelCardComparison :categories="categories" />
+  <TravelCardComparison
+    :categories="categories"
+    :digital-card-types="digitalCardTypes"
+  />
 
   <FaqCard
     :faqs="faqs"

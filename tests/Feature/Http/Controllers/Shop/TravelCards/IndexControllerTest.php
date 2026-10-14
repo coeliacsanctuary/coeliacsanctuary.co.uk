@@ -7,14 +7,31 @@ namespace Tests\Feature\Http\Controllers\Shop\TravelCards;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Shop\GetTravelCardReviewsAction;
 use App\Actions\Shop\TravelCardSearch\GetPopularTravelCardDestinationsAction;
+use App\Actions\Shop\TravelCardSearch\GetTravelCardDigitalTypesAction;
 use App\Actions\Shop\TravelCardSearch\ResolveTravelCardSearchAction;
+use App\Models\Shop\ShopDigitalCardType;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class IndexControllerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake('media');
+
+        ShopDigitalCardType::query()
+            ->get()
+            ->each(fn (ShopDigitalCardType $type) => $type
+                ->addMedia(UploadedFile::fake()->image('type.jpg'))
+                ->toMediaCollection('primary'));
+    }
+
     /** @return array{term: string, destinations: array<int, array{term: string}>, covers_all: array<int, mixed>} */
     protected function resolved(string $term = 'Spain'): array
     {
@@ -139,6 +156,22 @@ class IndexControllerTest extends TestCase
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Spain']))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('search.destinations.0.digital_cards.0.title', 'Spanish Digital Card'));
+    }
+
+    #[Test]
+    public function itLoadsTheDigitalCardTypes(): void
+    {
+        $this->expectAction(
+            GetTravelCardDigitalTypesAction::class,
+            return: collect([['title' => 'Digital Coeliac Gluten Free Travel Cards']]),
+        );
+
+        $this->get(route('shop.travel-cards.landing-page'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where(
+                    'digitalCardTypes.0.title',
+                    'Digital Coeliac Gluten Free Travel Cards',
+                ));
     }
 
     #[Test]

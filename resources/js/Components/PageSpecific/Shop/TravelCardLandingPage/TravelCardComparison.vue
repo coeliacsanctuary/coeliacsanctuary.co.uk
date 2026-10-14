@@ -2,19 +2,20 @@
 import Card from '@/Components/Card.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ShopCategoryIndex } from '@/types/Shop';
+import { ShopCategoryIndex, TravelCardDigitalType } from '@/types/Shop';
 import { Link } from '@inertiajs/vue3';
 import { ArrowRightIcon } from '@heroicons/vue/24/solid';
 import { computed } from 'vue';
 
 const props = defineProps<{
   categories: ShopCategoryIndex[];
+  digitalCardTypes: TravelCardDigitalType[];
 }>();
 
 type Panel = {
   slug: string;
   summary: string;
-  rows: { label: string; value: string }[];
+  rows: (products: number) => { label: string; value: string }[];
 };
 
 const panels: Panel[] = [
@@ -22,9 +23,9 @@ const panels: Panel[] = [
     slug: 'standard-coeliac-travel-cards',
     summary:
       'For anyone who is coeliac or gluten free with no other allergies to explain.',
-    rows: [
+    rows: (products) => [
       { label: 'Languages per card', value: 'Two, one on each side' },
-      { label: 'Available in', value: 'Over 50 languages' },
+      { label: 'Available in', value: `${(products - 1) * 2} languages` },
       { label: 'Best for', value: 'Coeliac and gluten free only' },
       { label: 'The reverse', value: 'Your second language' },
     ],
@@ -33,20 +34,59 @@ const panels: Panel[] = [
     slug: 'coeliac-plus-other-allergen-cards',
     summary:
       'For anyone who is gluten free and needs to flag other allergens or dietary needs too.',
-    rows: [
+    rows: (products) => [
       { label: 'Languages per card', value: 'One' },
-      { label: 'Available in', value: 'My 10 most popular languages' },
+      {
+        label: 'Available in',
+        value: `My ${products} most popular languages`,
+      },
       { label: 'Best for', value: 'Gluten free plus other allergens' },
       { label: 'The reverse', value: 'Tick box list of other allergens' },
     ],
   },
+  {
+    slug: 'digital-coeliac-gluten-free-travel-cards',
+    summary:
+      'For anyone who needs a card today, or would rather carry it on their phone than in their bag.',
+    rows: (products) => [
+      { label: 'Languages per card', value: 'One' },
+      { label: 'Available in', value: `${products} languages` },
+      {
+        label: 'Best for',
+        value: 'Coeliac and gluten free, when you need it today',
+      },
+      {
+        label: 'On your phone',
+        value: 'Any browser, or Apple and Google Wallet',
+      },
+    ],
+  },
 ];
+
+type PanelCategory = {
+  title: string;
+  link: string;
+  image: string;
+  price?: string | null;
+  products_count?: number;
+};
+
+const allCategories = computed((): PanelCategory[] => [
+  ...props.categories,
+  ...props.digitalCardTypes.map((type) => ({
+    title: type.title,
+    link: type.link,
+    image: type.image,
+    products_count: type.products_count,
+    price: type.price,
+  })),
+]);
 
 const cards = computed(() =>
   panels
     .map((panel) => ({
       ...panel,
-      category: props.categories.find((category) =>
+      category: allCategories.value.find((category) =>
         category.link.endsWith(panel.slug),
       ),
     }))
@@ -70,7 +110,7 @@ const cards = computed(() =>
       class="mx-auto h-px w-full bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
     />
 
-    <div class="grid gap-4 lg:grid-cols-2">
+    <div class="grid gap-4 lg:grid-cols-3">
       <div
         v-for="card in cards"
         :key="card.slug"
@@ -110,7 +150,7 @@ const cards = computed(() =>
 
           <dl class="flex flex-1 flex-col divide-y divide-primary-light/60">
             <div
-              v-for="row in card.rows"
+              v-for="row in card.rows(card.category!.products_count ?? 0)"
               :key="row.label"
               class="flex flex-wrap justify-between gap-x-4 py-2 text-sm"
             >

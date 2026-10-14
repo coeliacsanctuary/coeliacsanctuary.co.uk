@@ -241,6 +241,14 @@ export type TravelCardSearchResult = {
   covers_all: ShopProductIndex[];
 };
 
+export type TravelCardDigitalType = {
+  title: string;
+  link: string;
+  image: string;
+  products_count: number;
+  price: string | null;
+};
+
 export type TravelCardReviewSummary = {
   reviews: ShopIndexReview[];
   count: number;

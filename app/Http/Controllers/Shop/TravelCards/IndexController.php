@@ -9,6 +9,7 @@ use App\Actions\Shop\GetTravelCardReviewsAction;
 use App\Actions\Shop\ResolveBasketAction;
 use App\Actions\Shop\TravelCardSearch\GetPopularTravelCardDestinationsAction;
 use App\Actions\Shop\TravelCardSearch\GetTravelCardCategoriesAction;
+use App\Actions\Shop\TravelCardSearch\GetTravelCardDigitalTypesAction;
 use App\Actions\Shop\TravelCardSearch\ResolveTravelCardSearchAction;
 use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
@@ -25,6 +26,7 @@ class IndexController
         ResolveTravelCardSearchAction $resolveTravelCardSearchAction,
         GetPopularTravelCardDestinationsAction $getPopularTravelCardDestinationsAction,
         GetTravelCardCategoriesAction $getTravelCardCategoriesAction,
+        GetTravelCardDigitalTypesAction $getTravelCardDigitalTypesAction,
         GetTravelCardReviewsAction $getTravelCardReviewsAction,
     ): Response {
         $searchTerm = mb_trim($request->string('term')->toString());
@@ -56,6 +58,7 @@ class IndexController
                 'search' => $search,
                 'destinations' => fn () => $getPopularTravelCardDestinationsAction->handle(),
                 'categories' => fn () => $getTravelCardCategoriesAction->handle(),
+                'digitalCardTypes' => fn () => $getTravelCardDigitalTypesAction->handle(),
                 'reviews' => fn () => $getTravelCardReviewsAction->handle(),
             ]);
     }
