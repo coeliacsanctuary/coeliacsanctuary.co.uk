@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
-import {
-  ClockIcon,
-  EnvelopeIcon,
-  GlobeEuropeAfricaIcon,
-} from '@heroicons/vue/24/outline';
+import { BoltIcon, ClockIcon, EnvelopeIcon } from '@heroicons/vue/24/outline';
 </script>
 
 <template>
@@ -14,7 +10,9 @@ import {
         <ClockIcon class="mt-1 size-8 shrink-0 text-primary-dark" />
 
         <div class="flex flex-col">
-          <h2 class="font-semibold">Dispatched within 2 working days</h2>
+          <h2 class="font-semibold">
+            Physical orders dispatched within 2 working days
+          </h2>
 
           <p class="text-sm text-grey-dark">
             Orders are processed on normal UK working days, and you'll get an
@@ -30,21 +28,21 @@ import {
           <h2 class="font-semibold">Royal Mail First Class</h2>
 
           <p class="text-sm text-grey-dark">
-            All UK orders are sent First Class, and Royal Mail aim to deliver
-            90% of them the next working day.
+            All UK physical orders are sent First Class, and Royal Mail aim to
+            deliver 90% of them the next working day.
           </p>
         </div>
       </div>
 
       <div class="flex items-start space-x-3">
-        <GlobeEuropeAfricaIcon class="mt-1 size-8 shrink-0 text-primary-dark" />
+        <BoltIcon class="mt-1 size-8 shrink-0 text-primary-dark" />
 
         <div class="flex flex-col">
-          <h2 class="font-semibold">Worldwide delivery</h2>
+          <h2 class="font-semibold">Digital cards are instant</h2>
 
           <p class="text-sm text-grey-dark">
-            I post internationally by Royal Mail International Standard, which
-            can take up to three or four weeks depending on the country.
+            Nothing to post. Buy a digital card and you'll get a link to view it
+            as soon as you've paid.
           </p>
         </div>
       </div>

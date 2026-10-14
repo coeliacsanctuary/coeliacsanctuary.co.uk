@@ -41,6 +41,11 @@ const faqs: ArticleFaq[] = [
       "Search by country rather than language and I'll show you everything that would work there, including cards in a language that's widely understood locally even if it isn't the official one. If there's genuinely nothing, do get in touch — new languages usually get added because somebody asked.",
   },
   {
+    question: 'Physical or digital, which one do I need?',
+    answer:
+      "The text is identical — the same professional translation either way, just presented differently. A physical card is thick printed card with a language on each side, so there's nothing to go flat at the table. A digital card is the same thing on your phone, in your browser or in Apple or Google Wallet, and it's yours the moment you've paid. Pick digital if you're travelling soon or you'd rather not carry anything, and if you're buying a physical card anyway you can add the digital version for a lot less than buying it on its own.",
+  },
+  {
     question:
       'I have other allergies as well as coeliac, which card do I need?',
     answer:
@@ -54,7 +59,7 @@ const faqs: ArticleFaq[] = [
   {
     question: 'How long does delivery take?',
     answer:
-      'Orders are dispatched within two working days and UK orders go First Class, with Royal Mail aiming to deliver most of them the next working day. International orders go by Royal Mail International Standard, which can take up to three or four weeks depending on the country.',
+      "Physical cards are dispatched within two working days and go First Class, with Royal Mail aiming to deliver most of them the next working day. Digital cards aren't posted at all — you'll get a link to view them as soon as you've paid, so they're the answer if you're flying sooner than the post will manage.",
   },
 ];
 </script>
