@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ShopDigitalCard extends Model
 {
@@ -78,5 +79,13 @@ class ShopDigitalCard extends Model
     public function orderDigitalItems(): HasMany
     {
         return $this->hasMany(ShopOrderDigitalItem::class, 'digital_card_id');
+    }
+
+    /** @return MorphMany<ShopOrderReviewItem, $this> */
+    public function reviews(): MorphMany
+    {
+        return $this
+            ->morphMany(ShopOrderReviewItem::class, 'product')
+            ->whereIn('shop_order_review_items.id', ShopOrderReviewItem::deduplicatedIds());
     }
 }

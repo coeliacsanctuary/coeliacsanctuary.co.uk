@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Request;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
@@ -133,11 +134,11 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
         return $this->hasMany(ShopFeedback::class, 'product_id');
     }
 
-    /** @return HasMany<ShopOrderReviewItem, $this> */
-    public function reviews(): HasMany
+    /** @return MorphMany<ShopOrderReviewItem, $this> */
+    public function reviews(): MorphMany
     {
         return $this
-            ->hasMany(ShopOrderReviewItem::class, 'product_id')
+            ->morphMany(ShopOrderReviewItem::class, 'product')
             ->whereIn('shop_order_review_items.id', ShopOrderReviewItem::deduplicatedIds());
     }
 

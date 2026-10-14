@@ -9,6 +9,7 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderReview;
 use App\Models\Shop\ShopOrderReviewInvitation;
 use App\Models\Shop\ShopOrderReviewItem;
+use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopSource;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
@@ -39,6 +40,7 @@ class StoreController
         $products = $request->collect('products');
 
         $products->each(fn (array $product) => $review->products()->create([
+            'product_type' => ShopProduct::class,
             'product_id' => $product['id'],
             'order_id' => $invitation->order_id,
             'rating' => $product['rating'],

@@ -246,7 +246,7 @@ class Products extends Resource
 
             MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
 
-            HasMany::make('Reviews', resource: OrderReviewItem::class),
+            MorphMany::make('Reviews', resource: OrderReviewItem::class),
 
             BelongsToMany::make('Search Terms', 'travelCardSearchTerms', resource: TravelCardSearchTerms::class)->fields(fn () => [
                 Boolean::make('Show on Product Page Country List', 'card_show_on_product_page'),

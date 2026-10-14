@@ -11,6 +11,7 @@ use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardPrice;
 use App\Models\Shop\ShopDigitalCardType;
+use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use PHPUnit\Framework\Attributes\Test;
@@ -155,6 +156,19 @@ class ShopDigitalCardTest extends TestCase
         $card = $this->create(ShopDigitalCard::class);
 
         $this->assertNull($card->product);
+    }
+
+    #[Test]
+    public function itHasReviews(): void
+    {
+        $card = $this->create(ShopDigitalCard::class);
+
+        $this->build(ShopOrderReviewItem::class)
+            ->count(5)
+            ->forDigitalCard($card)
+            ->create();
+
+        $this->assertCount(5, $card->refresh()->reviews);
     }
 
     #[Test]
