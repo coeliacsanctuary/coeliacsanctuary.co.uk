@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 /**
  * @property bool $has_add_ons
  * @property bool $has_digital_items
+ * @property bool $is_digital_only
  * @property int | null $add_on_total
  */
 class ShopOrder extends Model

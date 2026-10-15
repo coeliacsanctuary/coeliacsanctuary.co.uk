@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Listeners\Shop;
 
+use App\Enums\Shop\OrderState;
 use App\Listeners\Shop\SendMyTravelCardsInvitationIfRequired;
 use App\Notifications\Shop\MyTravelCards\MyTravelCardsInvitationNotification;
 use PHPUnit\Framework\Attributes\Test;
@@ -60,5 +61,27 @@ class SendMyTravelCardsInvitationIfRequiredTest extends TestCase
         app(SendMyTravelCardsInvitationIfRequired::class)->handle($event);
 
         Notification::assertNotSentTo($this->customer, MyTravelCardsInvitationNotification::class);
+    }
+
+    #[Test]
+    public function itMarksADigitalOnlyOrderAsShipped(): void
+    {
+        $this->order->update(['is_digital_only' => true]);
+
+        $event = new OrderPaidEvent($this->order);
+
+        app(SendMyTravelCardsInvitationIfRequired::class)->handle($event);
+
+        $this->assertEquals(OrderState::SHIPPED, $this->order->refresh()->state_id);
+    }
+
+    #[Test]
+    public function itDoesntMarkAnOrderWithPhysicalItemsAsShipped(): void
+    {
+        $event = new OrderPaidEvent($this->order);
+
+        app(SendMyTravelCardsInvitationIfRequired::class)->handle($event);
+
+        $this->assertEquals(OrderState::PAID, $this->order->refresh()->state_id);
     }
 }
