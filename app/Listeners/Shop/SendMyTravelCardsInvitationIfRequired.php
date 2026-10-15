@@ -27,7 +27,10 @@ class SendMyTravelCardsInvitationIfRequired
         $customer->notify(new MyTravelCardsInvitationNotification($order));
 
         if ($order->is_digital_only === true) {
-            $order->update(['state_id' => OrderState::SHIPPED]);
+            $order->update([
+                'state_id' => OrderState::SHIPPED,
+                'shipped_at' => now(),
+            ]);
         }
     }
 }
