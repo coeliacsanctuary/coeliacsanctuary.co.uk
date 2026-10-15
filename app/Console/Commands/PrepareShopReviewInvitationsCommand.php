@@ -20,12 +20,12 @@ class PrepareShopReviewInvitationsCommand extends Command
     {
         SendingRules::get()->each(fn (ReviewInvitationRule $rule) => ShopOrder::query()
             ->where('state_id', OrderState::SHIPPED)
-            ->where('shipped_at', '<=', $rule->date)
-            ->where('shipped_at', '>=', $rule->date->startOfDay())
-            ->whereRelation('postageCountry', fn (Builder $relation) => $relation->whereIn('postage_area_id', $rule->areas))
+            ->where('shipped_at', '<=', $rule->minimumDate)
+            ->where('shipped_at', '>=', $rule->minimumDate->startOfDay())
+            ->pipe(fn (Builder $query) => call_user_func($rule->pipe, $query))
             ->whereDoesntHave('reviewInvitation')
             ->whereDoesntHave('refunds')
             ->get()
-            ->each(fn (ShopOrder $order) => SendReviewInvitationJob::dispatch($order, $rule->text)));
+            ->each(fn (ShopOrder $order) => SendReviewInvitationJob::dispatch($order, $rule->notificationDelayText)));
     }
 }

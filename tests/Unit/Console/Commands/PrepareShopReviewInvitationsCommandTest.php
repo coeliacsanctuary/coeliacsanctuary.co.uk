@@ -87,6 +87,26 @@ class PrepareShopReviewInvitationsCommandTest extends TestCase
     }
 
     #[Test]
+    public function itDispatchesDigitalOnlyOrdersAfterTheRelevantPeriod(): void
+    {
+        $this->build(ShopOrder::class)->asShipped(shippedAt: Carbon::now()->subDays(4))->create([
+            'is_digital_only' => true,
+        ]);
+
+        $this->artisan(PrepareShopReviewInvitationsCommand::class);
+
+        Bus::assertNothingDispatched();
+
+        $this->build(ShopOrder::class)->asShipped(shippedAt: Carbon::now()->subDays(5))->create([
+            'is_digital_only' => true,
+        ]);
+
+        $this->artisan(PrepareShopReviewInvitationsCommand::class);
+
+        Bus::assertDispatched(SendReviewInvitationJob::class);
+    }
+
+    #[Test]
     public function itDispatchesUKOrdersAfterTheRelevantPeriod(): void
     {
         $this->build(ShopOrder::class)->asShipped(shippedAt: Carbon::now()->subDays(9))->create([
