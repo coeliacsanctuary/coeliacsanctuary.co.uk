@@ -18,7 +18,7 @@ class ReviewMyOrderRequest extends FormRequest
             'whereHeard' => ['array'],
             'whereHeard.*' => ['string', 'max:255'],
             'products' => ['required', 'array'],
-            'products.*.id' => ['required', 'int', 'bail', new ReviewProductIsDistinctRule, new ReviewProductIsInOrderRule],
+            'products.*.id' => ['required', 'int', 'bail', new ReviewProductIsDistinctRule(), new ReviewProductIsInOrderRule()],
             'products.*.rating' => ['required', 'numeric', Rule::in(range(1, 5))],
             'products.*.review' => ['nullable', 'string', 'max:1000'],
             'products.*.type' => ['required', Rule::in(['physical', 'digital'])],

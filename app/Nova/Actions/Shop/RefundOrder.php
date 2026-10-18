@@ -83,7 +83,7 @@ class RefundOrder extends DestructiveAction
                 ->fullWidth(),
         ];
 
-        if($digitalTotal) {
+        if ($digitalTotal) {
             $baseFields[] = Heading::make('Please note, this order contains digital items, access to digital items can not be revoked if you refund the full amount.');
         }
 

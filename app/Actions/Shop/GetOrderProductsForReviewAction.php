@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
-use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDigitalItem;
