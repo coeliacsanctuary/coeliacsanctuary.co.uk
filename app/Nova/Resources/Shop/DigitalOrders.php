@@ -7,7 +7,6 @@ namespace App\Nova\Resources\Shop;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
-use App\Nova\Actions\Shop\RefundOrder;
 use App\Nova\Metrics\ShopDailySales;
 use App\Nova\Metrics\ShopIncome;
 use App\Nova\Resource;
@@ -83,13 +82,7 @@ class DigitalOrders extends Resource
 
     public function actions(NovaRequest $request): array
     {
-        return [
-            RefundOrder::make()
-                ->sole()
-                ->showInline()
-                ->confirmText('Are you sure you want to refund this order?')
-                ->confirmButtonText('Refund Order'),
-        ];
+        return [];
     }
 
     public function cards(NovaRequest $request): array
