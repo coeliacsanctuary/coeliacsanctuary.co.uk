@@ -21,7 +21,10 @@ class ReviewProductIsDistinctRule implements DataAwareRule, ValidationRule
         $index = (int) $row->afterLast('.')->toString();
         $type = Arr::get($this->data, $row->append('.type')->toString());
 
-        $alreadyReviewed = collect(Arr::get($this->data, 'products', []))
+        /** @var array<int, mixed> $products */
+        $products = Arr::get($this->data, 'products', []);
+
+        $alreadyReviewed = collect($products)
             ->take($index)
             ->map(fn (mixed $product) => Arr::get($product, 'type') . ':' . Arr::get($product, 'id'))
             ->contains("{$type}:{$value}");

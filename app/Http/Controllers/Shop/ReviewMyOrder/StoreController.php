@@ -53,7 +53,10 @@ class StoreController
             ->reject(fn (ShopOrderReviewItem $reviewItem) => $reviewItem->product_type === ShopDigitalCard::class)
             ->load(['product', 'product.sealiacOverview'])
             ->each(function (ShopOrderReviewItem $orderReviewItem): void {
-                $orderReviewItem->product?->sealiacOverview?->update([
+                /** @var ShopProduct|null $product */
+                $product = $orderReviewItem->product;
+
+                $product?->sealiacOverview?->update([
                     'invalidated' => true,
                 ]);
             });

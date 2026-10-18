@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Actions\Shop;
 
 use App\Models\Shop\ShopDigitalCard;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDigitalItem;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
-use InvalidArgumentException;
 
 class GetOrderProductsForReviewAction
 {
@@ -33,28 +33,20 @@ class GetOrderProductsForReviewAction
 
         return $physicalItems
             ->groupBy('product_id')
-            ->concat($digitalItems->map(fn (ShopOrderDigitalItem $item) => collect([$item])))
-            ->map($this->buildProduct(...))
-            ->values();
+            ->values()
+            ->map($this->formatPhysicalProduct(...))
+            ->concat($digitalItems->map($this->formatDigitalProduct(...)));
     }
 
     /**
-     * @param  Collection<int, ShopOrderItem | ShopOrderDigitalItem>  $lines
+     * @param  Collection<int, ShopOrderItem>  $lines
      * @return array{id: int, title: string, variants: array<int, string>, image: string|null, link: string|null, type: string}
      */
-    protected function buildProduct(Collection $lines): array
+    protected function formatPhysicalProduct(Collection $lines): array
     {
+        /** @var ShopOrderItem $item */
         $item = $lines->first();
 
-        return match($item::class) {
-            ShopOrderItem::class => $this->formatPhysicalProduct($item, $lines),
-            ShopOrderDigitalItem::class => $this->formatDigitalProduct($item),
-            default => throw new InvalidArgumentException('Invalid item type'),
-        };
-    }
-
-    protected function formatPhysicalProduct(ShopOrderItem $item, Collection $lines): array
-    {
         /** @var ShopProduct $product */
         $product = $item->product;
 
@@ -75,16 +67,20 @@ class GetOrderProductsForReviewAction
         ];
     }
 
+    /** @return array{id: int, title: string, variants: array<int, string>, image: string|null, link: string|null, type: string} */
     protected function formatDigitalProduct(ShopOrderDigitalItem $item): array
     {
         /** @var ShopDigitalCard $card */
         $card = $item->card;
 
+        /** @var ShopDigitalCardType $type */
+        $type = $card->type;
+
         return [
             'id' => $card->id,
             'title' => $card->title,
             'variants' => [],
-            'image' => $card->type->main_image_as_webp ?? $card->type->main_image,
+            'image' => $type->main_image_as_webp ?? $type->main_image,
             'link' => $card->live ? $card->type_id->route() : null,
             'type' => 'digital',
         ];

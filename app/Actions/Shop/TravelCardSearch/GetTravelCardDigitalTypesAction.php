@@ -13,7 +13,7 @@ use Money\Money;
 
 class GetTravelCardDigitalTypesAction
 {
-    /** @return Collection<int, array{title: string, link: string, image: string, products_count: int, price: string|null}> */
+    /** @return Collection<int, array{title: string, link: string, image: string, products_count: int<0, max>, price: string|null}> */
     public function handle(): Collection
     {
         return ShopDigitalCardType::query()

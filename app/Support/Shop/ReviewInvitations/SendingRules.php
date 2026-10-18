@@ -23,12 +23,12 @@ class SendingRules
             ),
             new ReviewInvitationRule(
                 Carbon::now()->subDays(10)->toImmutable(),
-                fn (Builder $builder) => $builder->whereRelation('postageCountry', fn (Builder $relation) => $relation->where('postage_area_id', PostageArea::UK)),
+                fn (Builder $builder) => $builder->whereRelation('postageCountry', 'postage_area_id', PostageArea::UK->value),
                 '10 days',
             ),
             new ReviewInvitationRule(
                 Carbon::now()->subWeeks(2)->toImmutable(),
-                fn (Builder $builder) => $builder->whereRelation('postageCountry', fn (Builder $relation) => $relation->where('postage_area_id', PostageArea::EUROPE->value)),
+                fn (Builder $builder) => $builder->whereRelation('postageCountry', 'postage_area_id', PostageArea::EUROPE->value),
                 '2 weeks',
             ),
             new ReviewInvitationRule(
