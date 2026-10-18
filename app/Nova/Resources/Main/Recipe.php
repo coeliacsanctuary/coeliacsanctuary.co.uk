@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Recipes\Recipe as RecipeModel;
+use App\Models\Collections\Collection as CollectionModel;
 use App\Nova\Chartables\Metrics\Recipes\CollectionCardViews;
 use App\Nova\Chartables\Metrics\Recipes\CommentViews;
 use App\Nova\Chartables\Metrics\Recipes\DetailCardViews;
@@ -26,6 +27,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use App\Nova\FieldOverrides\Repeater;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -81,6 +83,31 @@ class Recipe extends Resource
             ]),
 
             VisibilityPanel::make(),
+
+            new Panel('Collection', [
+                Select::make('Add to Collection', '_collection')
+                    ->options(fn () => CollectionModel::query()->orderBy('title')->pluck('title', 'id'))
+                    ->displayUsingLabels()
+                    ->fullWidth()
+                    ->nullable()
+                    ->onlyOnForms()
+                    ->hideWhenUpdating()
+                    ->deferrable()
+                    ->help('Optional, adds this recipe to the end of the chosen collection, it will appear there once published.')
+                    ->fillUsing(function (NovaRequest $request, RecipeModel $recipe, string $attribute, string $requestAttribute): void {
+                        if ( ! $request->filled($requestAttribute)) {
+                            return;
+                        }
+
+                        $group = CollectionModel::query()->find($request->get($requestAttribute))?->groups->last();
+
+                        if ( ! $group) {
+                            return;
+                        }
+
+                        $recipe->associatedCollectionGroups()->create(['collection_group_id' => $group->id]);
+                    }),
+            ]),
 
             new Panel('Metas', [
                 Text::make('Meta Tags')->onlyOnForms()->fullWidth()->rules(['required']),

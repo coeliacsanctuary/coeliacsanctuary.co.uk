@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Blogs\Blog as BlogModel;
+use App\Models\Collections\Collection as CollectionModel;
 use App\Nova\Chartables\Metrics\Blogs\CollectionCardViews;
 use App\Nova\Repeaters\Faq as FaqRepeatable;
 use App\Nova\Chartables\Metrics\Blogs\CommentViews;
@@ -113,6 +114,31 @@ class Blog extends Resource
             ]),
 
             VisibilityPanel::make(),
+
+            new Panel('Collection', [
+                Select::make('Add to Collection', '_collection')
+                    ->options(fn () => CollectionModel::query()->orderBy('title')->pluck('title', 'id'))
+                    ->displayUsingLabels()
+                    ->fullWidth()
+                    ->nullable()
+                    ->onlyOnForms()
+                    ->hideWhenUpdating()
+                    ->deferrable()
+                    ->help('Optional, adds this blog to the end of the chosen collection, it will appear there once published.')
+                    ->fillUsing(function (NovaRequest $request, BlogModel $blog, string $attribute, string $requestAttribute): void {
+                        if ( ! $request->filled($requestAttribute)) {
+                            return;
+                        }
+
+                        $group = CollectionModel::query()->find($request->get($requestAttribute))?->groups->last();
+
+                        if ( ! $group) {
+                            return;
+                        }
+
+                        $blog->associatedCollectionGroups()->create(['collection_group_id' => $group->id]);
+                    }),
+            ]),
 
             new Panel('Metas', [
                 Text::make('Meta Tags')->onlyOnForms()->fullWidth()->rules(['required']),
