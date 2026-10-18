@@ -1,5 +1,6 @@
 import { StarRating } from '@/types/EateryTypes';
 import { ArticleFaq } from '@/types/Types';
+import { PaginatedResponse } from '@/types/GenericTypes';
 
 export type ShopCategoryIndex = {
   title: string;
@@ -296,6 +297,10 @@ export type ShopDigitalCard = ShopBaseDigitalCard & {
     bundle: string;
     saving: string;
   };
+  rating?: {
+    average: StarRating;
+    count: number;
+  };
 };
 
 type PurchasedCardIndex = ShopBaseDigitalCard & {
@@ -324,4 +329,9 @@ export type PurchasedCardEatSection = {
   items: string;
   colour: { hex: string };
   icon: string;
+};
+
+export type DigitalCardReviewResponse = {
+  rating: ShopProductRating;
+  reviews: PaginatedResponse<ShopProductReview>;
 };

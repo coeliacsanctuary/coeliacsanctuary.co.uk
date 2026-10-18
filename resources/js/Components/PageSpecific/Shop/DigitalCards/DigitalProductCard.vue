@@ -7,6 +7,8 @@ import useJourneyTracking from '@/composables/useJourneyTracking';
 import CountryFlag from '@/Components/CountryFlag.vue';
 import DigitalCardCountryList from '@/Components/PageSpecific/Shop/DigitalCards/DigitalCardCountryList.vue';
 import AddDigitalCardToBasket from '@/Components/PageSpecific/Shop/DigitalCards/AddDigitalCardToBasket.vue';
+import StarRating from '@/Components/StarRating.vue';
+import DigitalCardReviewModal from '@/Components/PageSpecific/Shop/DigitalCards/DigitalCardReviewModal.vue';
 
 const props = withDefaults(
   defineProps<{ product: ShopDigitalCard; eager?: boolean }>(),
@@ -36,7 +38,19 @@ const hasMoreCountries = computed((): false | number => {
   return props.product.countries.length - 5;
 });
 
+const ratingText = computed((): string | null => {
+  if (!props.product.rating) {
+    return null;
+  }
+
+  const label = pluralise('rating', props.product.rating.count);
+
+  return `${props.product.rating.count} ${label}`;
+});
+
 const showCountryListSidebar = ref(false);
+
+const viewReviews = ref<boolean>(false);
 
 useJourneyTracking().logWhenVisible(
   useTemplateRef('card'),
@@ -54,16 +68,36 @@ useJourneyTracking().logWhenVisible(
     class="w-full overflow-hidden"
   >
     <div class="group flex flex-1 flex-col space-y-3">
-      <div class="flex items-center">
-        <CountryFlag
-          :code="product.flag"
-          :country="product.language"
-        />
+      <div class="flex flex-col items-start justify-between sm:flex-row">
+        <div class="flex items-center">
+          <CountryFlag
+            :code="product.flag"
+            :country="product.language"
+          />
 
-        <h2
-          class="line-clamp-2 text-xl font-semibold text-primary-dark transition md:text-2xl"
-          v-text="product.title"
-        />
+          <h2
+            class="line-clamp-2 text-xl font-semibold text-primary-dark transition md:text-2xl"
+            v-text="product.title"
+          />
+        </div>
+
+        <div
+          v-if="product.rating && product.rating.count > 0"
+          class="group/stars mt-2 ml-10 flex cursor-pointer items-center space-x-2 sm:mt-0 sm:ml-0 sm:flex-col sm:items-end sm:space-y-1 sm:space-x-0"
+          @click="viewReviews = true"
+        >
+          <StarRating
+            :rating="product.rating.average"
+            size="transition transition-all w-4 h-4 xl:w-5 xl:h-5 group-hover/stars:w-5 group-hover/stars:h-5 group-hover/stars:xl:w-6 group-hover/stars:xl:h-6"
+            show-all
+            class="h-5 xl:h-6"
+          />
+
+          <span
+            class="text-right text-sm font-semibold group-hover/stars:text-primary-dark xl:text-base"
+            v-text="ratingText"
+          />
+        </div>
       </div>
 
       <p
@@ -151,5 +185,12 @@ useJourneyTracking().logWhenVisible(
     :countries="product.countries"
     :show="showCountryListSidebar"
     @close="showCountryListSidebar = false"
+  />
+
+  <DigitalCardReviewModal
+    :product-name="product.title"
+    :product-id="product.id"
+    :show="viewReviews"
+    @close="() => (viewReviews = false)"
   />
 </template>

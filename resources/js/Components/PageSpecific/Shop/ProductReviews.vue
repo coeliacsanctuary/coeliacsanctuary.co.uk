@@ -14,6 +14,7 @@ const props = defineProps<{
   reviews: PaginatedResponse<ShopProductReview>;
   rating: ShopProductRating;
   filteredOn?: StarRatingType;
+  digitalOnly?: boolean;
 }>();
 
 const loading = ref(false);
@@ -49,12 +50,21 @@ const setRatingFilter = (filter: StarRatingType | undefined) => {
 
     <div class="mt-8 md:mt-0 md:max-xl:col-span-2 xl:col-span-3">
       <Info class="mb-4">
-        <p class="text-sm">
-          All reviews are from verified purchases — customers are invited to
-          leave a review 10 days* after their order has been shipped.
-        </p>
+        <template v-if="!digitalOnly">
+          <p class="text-sm">
+            All reviews are from verified purchases — customers are invited to
+            leave a review 10 days* after their order has been shipped.
+          </p>
 
-        <small class="mt-4 text-xs">* 10 days is for UK orders only.</small>
+          <small class="mt-4 text-xs">* 10 days is for UK orders only.</small>
+        </template>
+        <p
+          v-else
+          class="text-sm"
+        >
+          All reviews are from verified purchases — customers are invited to
+          leave a review 5 days after their order has been completed.
+        </p>
       </Info>
 
       <div class="flow-root">

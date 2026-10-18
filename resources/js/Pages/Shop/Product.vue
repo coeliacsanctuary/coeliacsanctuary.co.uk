@@ -395,8 +395,8 @@ useJourneyTracking().logWhenVisible(
         :filtered-on="reviewFilter"
         @load-more="loadMoreReviews()"
         @set-rating="
-          (rating: StarRatingType | undefined) =>
-            (reviewFilter = reviewFilter === rating ? undefined : rating)
+          (r: StarRatingType | undefined) =>
+            (reviewFilter = reviewFilter === r ? undefined : r)
         "
       />
 

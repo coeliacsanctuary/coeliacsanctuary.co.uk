@@ -9,12 +9,17 @@ use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
 use App\Enums\Shop\DigitalCardType;
 use App\Scopes\LiveScope;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @property DigitalCardType $type_id
+ * @property float $averageRating
+ */
 class ShopDigitalCard extends Model
 {
     protected $casts = [
@@ -29,7 +34,7 @@ class ShopDigitalCard extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new LiveScope());
+        static::addGlobalScope(new LiveScope);
 
         static::saved(function (self $card): void {
             if ( ! config()->boolean('coeliac.google_wallet_enabled')) {
@@ -87,5 +92,15 @@ class ShopDigitalCard extends Model
         return $this
             ->morphMany(ShopOrderReviewItem::class, 'product')
             ->whereIn('shop_order_review_items.id', ShopOrderReviewItem::deduplicatedIds());
+    }
+
+    /** @return Attribute<float, never> */
+    public function averageRating(): Attribute
+    {
+        return Attribute::get(function () {
+            $this->loadMissing('reviews');
+
+            return round($this->reviews->average('rating') * 2) / 2;
+        });
     }
 }

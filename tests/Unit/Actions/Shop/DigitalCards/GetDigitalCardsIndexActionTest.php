@@ -11,6 +11,7 @@ use App\Models\Shop\ShopDigitalCardPrice;
 use App\Models\Shop\ShopDigitalCardType;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
+use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use App\Models\Shop\TravelCardSearchTerm;
@@ -71,6 +72,16 @@ class GetDigitalCardsIndexActionTest extends TestCase
         return $basket;
     }
 
+    protected function review(ShopDigitalCard $card, float $rating = 5): ShopOrderReviewItem
+    {
+        /** @var ShopOrderReviewItem $review */
+        $review = $this->build(ShopOrderReviewItem::class)
+            ->forDigitalCard($card)
+            ->create(['rating' => $rating]);
+
+        return $review;
+    }
+
     /** @return Collection<int, ShopDigitalCard> */
     protected function cards(DigitalCardType $type = DigitalCardType::STANDARD, ?ShopOrder $basket = null): Collection
     {
@@ -120,6 +131,34 @@ class GetDigitalCardsIndexActionTest extends TestCase
         $this->assertTrue($card->relationLoaded('product'));
         $this->assertTrue($card->product->relationLoaded('variants'));
         $this->assertTrue($card->product->relationLoaded('travelCardSearchTerms'));
+    }
+
+    #[Test]
+    public function itEagerLoadsTheCardsReviews(): void
+    {
+        $card = $this->card();
+
+        $this->review($card, 4);
+        $this->review($card, 5);
+
+        $returnedCard = $this->cards()->first();
+
+        $this->assertTrue($returnedCard->relationLoaded('reviews'));
+        $this->assertEqualsCanonicalizing([4.0, 5.0], $returnedCard->reviews->pluck('rating')->all());
+    }
+
+    #[Test]
+    public function itOnlySelectsTheReviewColumnsNeededToRateTheCard(): void
+    {
+        $card = $this->card();
+
+        $this->review($card);
+
+        $review = $this->cards()->first()->reviews->first();
+
+        $this->assertArrayHasKey('rating', $review->getAttributes());
+        $this->assertArrayNotHasKey('id', $review->getAttributes());
+        $this->assertArrayNotHasKey('review', $review->getAttributes());
     }
 
     #[Test]

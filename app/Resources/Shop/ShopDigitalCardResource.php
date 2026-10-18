@@ -46,6 +46,10 @@ class ShopDigitalCardResource extends JsonResource
                 'bundle' => $prices['bundle'],
                 'saving' => $prices['saving'],
             ],
+            'rating' => $this->whenLoaded('reviews', fn () => [
+                'average' => $this->averageRating,
+                'count' => $this->reviews->count(),
+            ]),
             'flag' => $this->whenLoaded('countries', fn (Collection $countries) => Helpers::countryCode($countries->first()->term)),
         ];
     }
