@@ -23,6 +23,7 @@
         "jpeters8889/address-field": "@dev",
         "jpeters8889/apex-charts": "@dev",
         "jpeters8889/body": "@dev",
+        "jpeters8889/collection-builder": "@dev",
         "jpeters8889/collection-item-search": "@dev",
         "jpeters8889/country-icon": "@dev",
         "jpeters8889/custom-styles": "@dev",
@@ -233,6 +234,10 @@
         {
             "type": "path",
             "url": "./nova-components/CollectionItemSearch"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/CollectionBuilder"
         },
         {
             "type": "path",

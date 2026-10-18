@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08e4a79c7ec9d6aee1dd103869ddacd5",
+    "content-hash": "1a0e861bb5196e3a273431a96daf9ffd",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -3027,6 +3027,47 @@
             "autoload": {
                 "psr-4": {
                     "Jpeters8889\\Body\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "jpeters8889/collection-builder",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/CollectionBuilder",
+                "reference": "ed5e314412f0a6e9bc51b3e999a5424092f3f997"
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/nova": "^5.0",
+                "laravel/nova-devtool": "^1.7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jpeters8889\\CollectionBuilder\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jpeters8889\\CollectionBuilder\\": "src/"
                 }
             },
             "license": [
@@ -18516,6 +18557,7 @@
         "jpeters8889/address-field": 20,
         "jpeters8889/apex-charts": 20,
         "jpeters8889/body": 20,
+        "jpeters8889/collection-builder": 20,
         "jpeters8889/collection-item-search": 20,
         "jpeters8889/country-icon": 20,
         "jpeters8889/custom-styles": 20,

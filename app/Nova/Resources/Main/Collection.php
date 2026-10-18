@@ -17,7 +17,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\ID;
-use App\Nova\FieldOverrides\Repeater;
+use App\Nova\FieldOverrides\CollectionGroupsRepeater;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
@@ -146,7 +146,7 @@ class Collection extends Resource
                     ->help('Grid lays the items out as cards, best for recipe and blog collections. List stacks them vertically as rows under each group heading, best for eateries broken down by county.'),
             ]),
 
-            Repeater::make('Groups', 'groups')
+            CollectionGroupsRepeater::make('Groups', 'groups')
                 ->repeatables([
                     \App\Nova\Repeaters\CollectionGroup::make(),
                 ])
