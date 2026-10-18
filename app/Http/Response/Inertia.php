@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Inertia\DeferProp;
 use Inertia\Inertia as BaseInertia;
-use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
+use JourneyTracker\JourneyTrackerLaravel\Facades\JourneyTracker;
 use Inertia\MergeProp;
 use Inertia\ProvidesScrollMetadata;
 use Inertia\Response;

@@ -26,7 +26,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Illuminate\Support\Facades\Route;
-use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
+use JourneyTracker\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
