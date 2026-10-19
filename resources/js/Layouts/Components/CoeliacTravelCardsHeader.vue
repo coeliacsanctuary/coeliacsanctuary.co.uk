@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import MobileNav from '@/Layouts/Components/Nav/MobileNav.vue';
 import CoeliacMetas from '@/Layouts/Components/CoeliacMetas.vue';
 import Sealiac from '@/Svg/Sealiac.vue';
-import { Link, router } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { MetaProps } from '@/types/DefaultProps';
 
 defineProps<{ metas: MetaProps; showBack: boolean }>();

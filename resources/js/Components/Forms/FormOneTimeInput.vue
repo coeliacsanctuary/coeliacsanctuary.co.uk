@@ -3,8 +3,7 @@ import {
   OneTimeInputPropDefaults,
   OneTimeInputProps,
 } from '@/Components/Forms/Props';
-import { ExclamationCircleIcon } from '@heroicons/vue/20/solid';
-import { ComponentPublicInstance, Ref, ref } from 'vue';
+import { ComponentPublicInstance, ref } from 'vue';
 import { watchDeep } from '@vueuse/core';
 
 const props = withDefaults(

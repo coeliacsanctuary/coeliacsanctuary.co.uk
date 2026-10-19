@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { TrashIcon } from '@heroicons/vue/24/outline';
 import { router } from '@inertiajs/vue3';
-import Loader from '@/Components/Loader.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { ShopBasketDigitalItem } from '@/types/Shop';
 import { ref } from 'vue';

@@ -104,8 +104,9 @@ const factGroups = computed((): FactGroup[] => {
       <SubHeading
         as="h2"
         text-size="xs"
-        v-text="group.title"
-      />
+      >
+        {{ group.title }}
+      </SubHeading>
 
       <div class="grid gap-6 sm:grid-cols-2">
         <div

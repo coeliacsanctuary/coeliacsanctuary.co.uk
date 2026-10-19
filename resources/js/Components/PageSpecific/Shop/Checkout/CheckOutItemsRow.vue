@@ -2,13 +2,11 @@
 import { ShopBasketItem } from '@/types/Shop';
 import { TrashIcon } from '@heroicons/vue/24/outline';
 import Loader from '@/Components/Loader.vue';
-import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import { Link, router } from '@inertiajs/vue3';
 import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySwitcher.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import eventBus from '@/eventBus';
-import CheckOutDigitalItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutDigitalItemsRow.vue';
 import CheckOutItemsDigitalUpsellRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsDigitalUpsellRow.vue';
 
 const props = defineProps<{ item: ShopBasketItem }>();
