@@ -15,11 +15,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
-use Jpeters8889\JourneyTrackerLaravel\Enums\EventType;
-use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
-use Jpeters8889\JourneyTrackerLaravel\Query\EventFilter;
-use Jpeters8889\JourneyTrackerLaravel\Query\PageFilter;
-use Jpeters8889\JourneyTrackerLaravel\Query\QueryDescriptor;
+use JourneyTracker\JourneyTrackerLaravel\Enums\EventType;
+use JourneyTracker\JourneyTrackerLaravel\Facades\JourneyTracker;
+use JourneyTracker\JourneyTrackerLaravel\Query\EventFilter;
+use JourneyTracker\JourneyTrackerLaravel\Query\PageFilter;
+use JourneyTracker\JourneyTrackerLaravel\Query\QueryDescriptor;
 use Throwable;
 
 class GetRecipeMetricsJob implements ShouldQueue

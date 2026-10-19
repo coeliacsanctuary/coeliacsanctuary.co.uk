@@ -22,7 +22,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
-use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
+use JourneyTracker\JourneyTrackerLaravel\Facades\JourneyTracker;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
 

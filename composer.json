@@ -19,9 +19,11 @@
         "hammerstone/sidecar": "^0.8.0",
         "inertiajs/inertia-laravel": "^3.3.3",
         "intervention/image": "^4.3.2",
+        "journey-tracker/journey-tracker-laravel": "^0.13.0",
         "jpeters8889/address-field": "@dev",
         "jpeters8889/apex-charts": "@dev",
         "jpeters8889/body": "@dev",
+        "jpeters8889/collection-builder": "@dev",
         "jpeters8889/collection-item-search": "@dev",
         "jpeters8889/country-icon": "@dev",
         "jpeters8889/custom-styles": "@dev",
@@ -31,7 +33,6 @@
         "jpeters8889/eatery-recommendation-ai-status": "@dev",
         "jpeters8889/eatery-recommendation-eligibility": "@dev",
         "jpeters8889/hidden-writable-field": "@dev",
-        "jpeters8889/journey-tracker-laravel": "^0.12.2",
         "jpeters8889/order-dispatch-slip": "@dev",
         "jpeters8889/polymorphic-panel": "@dev",
         "jpeters8889/preview-button": "@dev",
@@ -129,7 +130,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://github.com/jpeters8889/journey-tracker-laravel.git"
+            "url": "https://github.com/journey-tracker-cloud/journey-tracker-laravel.git"
         },
         {
             "type": "composer",
@@ -234,6 +235,10 @@
         {
             "type": "path",
             "url": "./nova-components/CollectionItemSearch"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/CollectionBuilder"
         },
         {
             "type": "path",
