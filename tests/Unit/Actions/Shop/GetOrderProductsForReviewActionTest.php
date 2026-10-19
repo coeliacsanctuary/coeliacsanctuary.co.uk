@@ -15,6 +15,7 @@ use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -31,6 +32,8 @@ class GetOrderProductsForReviewActionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Storage::fake('media');
 
         /** @var ShopOrder $order */
         $order = $this->create(ShopOrder::class);

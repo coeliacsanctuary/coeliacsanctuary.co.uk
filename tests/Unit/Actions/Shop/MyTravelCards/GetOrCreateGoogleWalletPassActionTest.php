@@ -89,7 +89,7 @@ class GetOrCreateGoogleWalletPassActionTest extends TestCase
 
         $this->assertSame('Spanish Travel Card', $payload['cardTitle']['defaultValue']['value']);
         $this->assertSame('Card title in the native language', $payload['header']['defaultValue']['value']);
-        $this->assertSame('Coeliac Sanctuary', $payload['subheader']['defaultValue']['value']);
+        $this->assertSame(config('app.name'), $payload['subheader']['defaultValue']['value']);
         $this->assertSame(asset('images/wallet/seal-icon.png'), $payload['logo']['sourceUri']['uri']);
     }
 

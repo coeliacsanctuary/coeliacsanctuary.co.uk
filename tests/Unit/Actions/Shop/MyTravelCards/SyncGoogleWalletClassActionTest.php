@@ -78,7 +78,7 @@ class SyncGoogleWalletClassActionTest extends TestCase
             $link = $request['linksModuleData']['uris'][0] ?? null;
 
             return $link['uri'] === config()->string('app.url')
-                && $link['description'] === 'Coeliac Sanctuary';
+                && $link['description'] === config('app.name');
         });
     }
 

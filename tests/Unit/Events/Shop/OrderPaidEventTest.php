@@ -11,6 +11,7 @@ use App\Listeners\Shop\SubscribeToNewsletterIfRequired;
 use App\Listeners\Shop\SyncProductsToGoogleMerchantOnOrderPaid;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
+use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -21,6 +22,8 @@ class OrderPaidEventTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Notification::fake();
 
         $this->withAdminUser();
 
