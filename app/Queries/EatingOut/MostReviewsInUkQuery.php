@@ -16,6 +16,7 @@ class MostReviewsInUkQuery
     public function __invoke(string $rating): Collection
     {
         return Eatery::query()
+            ->notNationwide()
             ->whereHas('reviews')
             ->where('closed_down', false)
             ->leftJoin('wheretoeat_reviews', fn (JoinClause $join) => $join->on('wheretoeat_reviews.wheretoeat_id', 'wheretoeat.id')->where('approved', true))
