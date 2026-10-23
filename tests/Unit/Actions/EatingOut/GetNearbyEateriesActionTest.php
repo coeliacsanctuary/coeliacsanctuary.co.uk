@@ -385,7 +385,7 @@ class GetNearbyEateriesActionTest extends TestCase
 
         $results = app(GetNearbyEateriesAction::class)->handle($eatery);
 
-        $expectedKeys = ['id', 'name', 'address', 'info', 'link', 'distance', 'ratings_count', 'average_rating'];
+        $expectedKeys = ['id', 'eatery_id', 'branch_id', 'name', 'address', 'info', 'link', 'distance', 'ratings_count', 'average_rating'];
 
         foreach ($results as $result) {
             $this->assertArrayHasKeys($expectedKeys, $result);

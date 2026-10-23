@@ -7,6 +7,7 @@ use App\Http\Api\V1\Controllers\EatingOut\Browse\IndexController as EatingOutBro
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\Branches\IndexController as EatingOutListBranchIndexController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\Branches\Summary\IndexController as EatingOutListBranchSummaryController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\GetController as EatingOutGetController;
+use App\Http\Api\V1\Controllers\EatingOut\Eatery\Nearby\ShowController as EatingOutDetailsNearbyController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\OpeningTimes\GetController as EatingOutOpeningTimesController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\Report\StoreController as EatingOutReportStoreController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\Reviews\Admin\GetController as EatingOutAdminReviewController;
@@ -80,6 +81,8 @@ Route::prefix('/eating-out')->name('eating-out.')->group(function (): void {
         Route::post('report', EatingOutReportStoreController::class)->name('report');
 
         Route::get('/summary', EatingOutSummaryController::class)->name('summary');
+
+        Route::get('/nearby', EatingOutDetailsNearbyController::class)->name('nearby');
 
         Route::get('/{nationwideBranch}', EatingOutGetController::class)->name('get.branch');
         Route::get('/', EatingOutGetController::class)->name('get');
