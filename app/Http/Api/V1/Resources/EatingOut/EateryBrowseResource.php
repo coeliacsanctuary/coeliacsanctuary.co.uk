@@ -20,7 +20,7 @@ class EateryBrowseResource extends JsonResource
             'id' => $this->id,
             'branchId' => $this->branchId,
             'typeId' => $this->typeId,
-            'venueType_id' => $this->venueTypeId,
+            'venueTypeId' => $this->venueTypeId,
             'isNationwideBranch' => $this->branchId !== null,
             'location' => [
                 'lat' => $this->lat,
