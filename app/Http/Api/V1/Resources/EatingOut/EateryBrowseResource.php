@@ -19,6 +19,8 @@ class EateryBrowseResource extends JsonResource
             'key' => $this->id . ($this->branchId ? '-' . $this->branchId : null),
             'id' => $this->id,
             'branchId' => $this->branchId,
+            'typeId' => $this->typeId,
+            'venueType_id' => $this->venueTypeId,
             'isNationwideBranch' => $this->branchId !== null,
             'location' => [
                 'lat' => $this->lat,
