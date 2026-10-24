@@ -65,7 +65,7 @@ const {
 const runningTotal = computed((): number => {
   let total = props.product.prices.raw_price * quantity.value;
 
-  if (travelCardProduct.value?.digital_cards.length) {
+  if (travelCardProduct.value?.digital_cards?.length) {
     travelCardProduct.value.digital_cards.forEach((card) => {
       if (addDigitalCards.value[card.slug]) {
         total += card.raw_price;

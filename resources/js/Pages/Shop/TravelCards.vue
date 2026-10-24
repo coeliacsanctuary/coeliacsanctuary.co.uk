@@ -18,9 +18,10 @@ import FaqCard from '@/Components/PageSpecific/Shared/FaqCard.vue';
 import { ArticleFaq } from '@/types/Types';
 import { ref } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   searchTerm: string | null;
   search: TravelCardSearchResult | null;
+  digitalCardsEnabled: boolean;
   destinations: TravelCardDestinationChip[];
   categories: ShopCategoryIndex[];
   digitalCardTypes: TravelCardDigitalType[];
@@ -40,11 +41,13 @@ const faqs: ArticleFaq[] = [
     answer:
       "Search by country rather than language and I'll show you everything that would work there, including cards in a language that's widely understood locally even if it isn't the official one. If there's genuinely nothing, do get in touch — new languages usually get added because somebody asked.",
   },
-  {
-    question: 'Physical or digital, which one do I need?',
-    answer:
-      "The text is identical — the same professional translation either way, just presented differently. A physical card is thick printed card with a language on each side, so there's nothing to go flat at the table. A digital card is the same thing on your phone, in your browser or in Apple or Google Wallet, and it's yours the moment you've paid. Pick digital if you're travelling soon or you'd rather not carry anything, and if you're buying a physical card anyway you can add the digital version for a lot less than buying it on its own.",
-  },
+  props.digitalCardsEnabled
+    ? {
+        question: 'Physical or digital, which one do I need?',
+        answer:
+          "The text is identical — the same professional translation either way, just presented differently. A physical card is thick printed card with a language on each side, so there's nothing to go flat at the table. A digital card is the same thing on your phone, in your browser or in Apple or Google Wallet, and it's yours the moment you've paid. Pick digital if you're travelling soon or you'd rather not carry anything, and if you're buying a physical card anyway you can add the digital version for a lot less than buying it on its own.",
+      }
+    : undefined,
   {
     question:
       'I have other allergies as well as coeliac, which card do I need?',
@@ -61,7 +64,7 @@ const faqs: ArticleFaq[] = [
     answer:
       "Physical cards are dispatched within two working days and go First Class, with Royal Mail aiming to deliver most of them the next working day. Digital cards aren't posted at all — you'll get a link to view them as soon as you've paid, so they're the answer if you're flying sooner than the post will manage.",
   },
-];
+].filter((card) => card !== undefined);
 </script>
 
 <template>
@@ -83,11 +86,15 @@ const faqs: ArticleFaq[] = [
     :search-term="searchTerm"
   />
 
-  <TravelCardTrustFacts :reviews="reviews" />
+  <TravelCardTrustFacts
+    :digital-cards-enabled="digitalCardsEnabled"
+    :reviews="reviews"
+  />
 
   <TravelCardComparison
     :categories="categories"
     :digital-card-types="digitalCardTypes"
+    :digital-cards-enabled="digitalCardsEnabled"
   />
 
   <FaqCard

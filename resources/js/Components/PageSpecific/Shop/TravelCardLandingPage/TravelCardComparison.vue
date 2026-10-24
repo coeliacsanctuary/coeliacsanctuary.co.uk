@@ -10,6 +10,7 @@ import { computed } from 'vue';
 const props = defineProps<{
   categories: ShopCategoryIndex[];
   digitalCardTypes: TravelCardDigitalType[];
+  digitalCardsEnabled: boolean;
 }>();
 
 type Panel = {
@@ -23,7 +24,7 @@ const panels: Panel[] = [
     slug: 'standard-coeliac-travel-cards',
     summary:
       'For anyone who is coeliac or gluten free with no other allergies to explain.',
-    rows: (products) => [
+    rows: (products: number) => [
       { label: 'Languages per card', value: 'Two, one on each side' },
       { label: 'Available in', value: `${(products - 1) * 2} languages` },
       { label: 'Best for', value: 'Coeliac and gluten free only' },
@@ -34,7 +35,7 @@ const panels: Panel[] = [
     slug: 'coeliac-plus-other-allergen-cards',
     summary:
       'For anyone who is gluten free and needs to flag other allergens or dietary needs too.',
-    rows: (products) => [
+    rows: (products: number) => [
       { label: 'Languages per card', value: 'One' },
       {
         label: 'Available in',
@@ -44,24 +45,26 @@ const panels: Panel[] = [
       { label: 'The reverse', value: 'Tick box list of other allergens' },
     ],
   },
-  {
-    slug: 'digital-coeliac-gluten-free-travel-cards',
-    summary:
-      'For anyone who needs a card today, or would rather carry it on their phone than in their bag.',
-    rows: (products) => [
-      { label: 'Languages per card', value: 'One' },
-      { label: 'Available in', value: `${products} languages` },
-      {
-        label: 'Best for',
-        value: 'Coeliac and gluten free, when you need it today',
-      },
-      {
-        label: 'On your phone',
-        value: 'Any browser, or Apple and Google Wallet',
-      },
-    ],
-  },
-];
+  props.digitalCardsEnabled
+    ? {
+        slug: 'digital-coeliac-gluten-free-travel-cards',
+        summary:
+          'For anyone who needs a card today, or would rather carry it on their phone than in their bag.',
+        rows: (products: number) => [
+          { label: 'Languages per card', value: 'One' },
+          { label: 'Available in', value: `${products} languages` },
+          {
+            label: 'Best for',
+            value: 'Coeliac and gluten free, when you need it today',
+          },
+          {
+            label: 'On your phone',
+            value: 'Any browser, or Apple and Google Wallet',
+          },
+        ],
+      }
+    : undefined,
+].filter((panel) => panel !== undefined);
 
 type PanelCategory = {
   title: string;
@@ -110,7 +113,10 @@ const cards = computed(() =>
       class="mx-auto h-px w-full bg-linear-to-r from-secondary/40 via-secondary/60 to-secondary/40"
     />
 
-    <div class="grid gap-4 lg:grid-cols-3">
+    <div
+      class="grid gap-4"
+      :class="digitalCardsEnabled ? 'lg:grid-cols-3' : 'lg:grid-cols-2'"
+    >
       <div
         v-for="card in cards"
         :key="card.slug"

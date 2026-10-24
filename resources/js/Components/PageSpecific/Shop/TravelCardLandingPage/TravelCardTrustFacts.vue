@@ -16,6 +16,7 @@ import { FunctionalComponent } from 'vue';
 
 const props = defineProps<{
   reviews: TravelCardReviewSummary;
+  digitalCardsEnabled: boolean;
 }>();
 
 type Fact = {
@@ -43,6 +44,35 @@ const factGroups = computed((): FactGroup[] => {
           "I've sent these all over the world, and every customer is invited to review their order once it's on its way.",
       };
 
+  if (!props.digitalCardsEnabled) {
+    return [
+      {
+        title: '',
+        facts: [
+          {
+            icon: LanguageIcon,
+            title: 'Professionally translated',
+            description:
+              'Every card, is translated by a native speaker, never by Google Translate or AI, so what it says is accurate and easy to follow.',
+          },
+          rated,
+          {
+            icon: ShieldCheckIcon,
+            title: 'Built to last',
+            description:
+              "Printed on ultra thick 3mm card, so it'll survive being pulled out of your bag at every restaurant on your trip.",
+          },
+          {
+            icon: DocumentDuplicateIcon,
+            title: 'Both sides used',
+            description:
+              'My standard cards carry two languages, one per side. My Coeliac+ cards use the reverse for allergen checkboxes.',
+          },
+        ],
+      },
+    ];
+  }
+
   return [
     {
       title: 'Every card',
@@ -51,7 +81,7 @@ const factGroups = computed((): FactGroup[] => {
           icon: LanguageIcon,
           title: 'Professionally translated',
           description:
-            'Every card, physical or digital, is translated by a native speaker, never by Google Translate, so what it says is accurate and easy to follow.',
+            'Every card, physical or digital, is translated by a native speaker, never by Google Translate or AI, so what it says is accurate and easy to follow.',
         },
         rated,
       ],

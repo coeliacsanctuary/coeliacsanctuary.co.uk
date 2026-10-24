@@ -56,6 +56,7 @@ class IndexController
             ->render('Shop/TravelCards', [
                 'searchTerm' => $searchTerm === '' ? null : $searchTerm,
                 'search' => $search,
+                'digitalCardsEnabled' => config('coeliac.digital_cards_enabled'),
                 'destinations' => fn () => $getPopularTravelCardDestinationsAction->handle(),
                 'categories' => fn () => $getTravelCardCategoriesAction->handle(),
                 'digitalCardTypes' => fn () => $getTravelCardDigitalTypesAction->handle(),

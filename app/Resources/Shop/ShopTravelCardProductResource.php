@@ -26,13 +26,13 @@ class ShopTravelCardProductResource extends ShopProductResource
                 'travelCardSearchTerms',
                 fn () => $this->getCountries(),
             ),
-            'digital_cards' => $this->whenLoaded('digitalCards', $this->digitalCards->map(fn (ShopDigitalCard $digitalCard) => [
+            'digital_cards' => config('coeliac.digital_cards_enabled') ? $this->whenLoaded('digitalCards', $this->digitalCards->map(fn (ShopDigitalCard $digitalCard) => [
                 'id' => $digitalCard->id,
                 'name' => $digitalCard->title,
                 'slug' => $digitalCard->slug,
                 'price' => Helpers::formatMoney(Money::GBP($digitalCard->price->price_with_physical_product ?? $digitalDefaultPrice->price_with_physical_product)),
                 'raw_price' => $digitalCard->price->price_with_physical_product ?? $digitalDefaultPrice->price_with_physical_product,
-            ])),
+            ])) : [],
             'digital_cards_link' => route('shop.digital-standard-cards'),
         ], parent::toArray($request));
     }
