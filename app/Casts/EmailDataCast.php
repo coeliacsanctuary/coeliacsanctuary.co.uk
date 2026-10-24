@@ -88,7 +88,7 @@ class EmailDataCast implements CastsAttributes
         $modelKeys = ['date', 'comment', 'reply', 'rating', 'order', 'notifiable', 'recommendation', 'eatery', 'branch', 'nearbyEateries'];
 
         foreach ($data as $key => $value) {
-            if ( ! in_array($key, $modelKeys) && is_scalar($value)) {
+            if ( ! in_array($key, $modelKeys) && (is_scalar($value) || $value === null)) {
                 $return[$key] = $value;
             }
         }
