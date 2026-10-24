@@ -40,7 +40,7 @@ class SyncProductToGoogleMerchantAction
 
         $result = $this->syncToMerchant($product);
 
-        $product->update(['google_merchant_product_id' => $result->getName()]);
+        $product->updateQuietly(['google_merchant_product_id' => $result->getName()]);
     }
 
     protected function syncToMerchant(ShopProduct $product): ProductInput
@@ -57,7 +57,7 @@ class SyncProductToGoogleMerchantAction
             }
         }
 
-        $product->update(['google_merchant_product_id' => null]);
+        $product->updateQuietly(['google_merchant_product_id' => null]);
 
         return $this->manager->insert($this->buildProduct($product));
     }
@@ -76,7 +76,7 @@ class SyncProductToGoogleMerchantAction
             }
         }
 
-        $product->update(['google_merchant_product_id' => null]);
+        $product->updateQuietly(['google_merchant_product_id' => null]);
     }
 
     protected function isNotFound(ApiException $exception): bool

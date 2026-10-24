@@ -14,7 +14,10 @@ class EnsureNovaTwoFactorAuthMiddleware
 
     public function handle(Request $request, Closure $next): mixed
     {
-        if ($this->shouldRedirect($request->user(), $request->path())) {
+        /** @var User $user */
+        $user = $request->user();
+
+        if ($this->shouldRedirect($user, $request->path())) {
             return redirect()
                 ->to($this->settingsPath)
                 ->with('nova_flash', 'Please setup two factor authentication.');

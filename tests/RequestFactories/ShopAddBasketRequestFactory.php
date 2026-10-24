@@ -14,7 +14,6 @@ class ShopAddBasketRequestFactory extends RequestFactory
             'product_id' => 1,
             'variant_id' => 1,
             'quantity' => 1,
-            'include_add_on' => false,
         ];
     }
 }

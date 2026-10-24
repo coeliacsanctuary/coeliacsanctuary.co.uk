@@ -6,13 +6,11 @@ namespace App\Http\Response;
 
 use App\Actions\GetPopupCtaAction;
 use App\Actions\Shop\GetActiveShopHolidayAction;
-use App\Actions\Shop\GetOrderItemsAction;
+use App\Actions\Shop\PrepareBasketItemsForDisplayAction;
 use App\Actions\Shop\ResolveBasketAction;
 use App\DataObjects\BreadcrumbItemData;
 use App\Models\Announcement;
-use App\Resources\Shop\ShopOrderItemResource;
 use App\Schema\BreadcrumbSchema;
-use App\Support\Helpers;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -25,7 +23,6 @@ use Inertia\MergeProp;
 use Inertia\ProvidesScrollMetadata;
 use Inertia\Response;
 use Inertia\ScrollProp;
-use Money\Money;
 use Spatie\SchemaOrg\Schema;
 
 class Inertia
@@ -226,16 +223,7 @@ class Inertia
             return;
         }
 
-        $items = app(GetOrderItemsAction::class)->handle($basket);
-
-        /** @var Collection<int, ShopOrderItemResource> $collection */
-        $collection = $items->collection;
-
-        /** @var int $subtotal */
-        $subtotal = $collection->map(fn (ShopOrderItemResource $item) => ($item->product_price * $item->quantity) + $item->product_add_on_price)->sum();
-
-        BaseInertia::share('basket.items', $items);
-        BaseInertia::share('basket.subtotal', Helpers::formatMoney(Money::GBP($subtotal)));
+        BaseInertia::share('basket', app(PrepareBasketItemsForDisplayAction::class)->handle($basket));
     }
 
     protected function includeShopHoliday(): void

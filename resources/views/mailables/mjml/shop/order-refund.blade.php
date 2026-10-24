@@ -14,7 +14,7 @@
 @endsection
 
 @section('intro')
-    <mj-text mj-class="inner">Hi {{ $order->address->name }}</mj-text>
+    <mj-text mj-class="inner">Hi {{ $order->customer->name }}</mj-text>
     <mj-text mj-class="inner">
         Your Coeliac Sanctuary order #{{ $order->order_key }} has received a refund of {{ Helpers::formatMoney(Money::GBP($refund->amount))  }}
     </mj-text>

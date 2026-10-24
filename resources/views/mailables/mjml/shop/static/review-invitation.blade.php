@@ -20,7 +20,11 @@
         <mj-column>
             <mj-text mj-class="inner">Hey {{ $order->address->name }}</mj-text>
             <mj-text mj-class="inner">
+                @unless($order->is_digital_only)
                 Thanks again for your recent order, I hope it arrived with you quickly!
+                @else
+                Thanks again for your recent order!
+                @endif
             </mj-text>
             <mj-text mj-class="inner">
                 If you have a couple of minutes, I'd love to read your feedback about my products, and to share your feedback on our website to help other potential buyers.
@@ -32,7 +36,7 @@
                 Leave A Review!
             </mj-button>
             <mj-text mj-class="inner">
-                If you cant see the button above, copy the link below into your browser
+                If you can't see the button above, copy the link below into your browser
             </mj-text>
             <mj-text mj-class="inner" font-size="14">
                 {{ $reviewLink }}
@@ -41,7 +45,11 @@
                 Thanks again, Alison - Coeliac Sanctuary
             </mj-text>
             <mj-text mj-class="inner">
-                <strong>This email was automatically sent {{ $delayText }} after your order was dropped in the postbox, if you haven't received your order yet, please let me know and I'll try my best to sort it out for you, hopefully its not got lost in the post somewhere!</strong>
+                @unless($order->is_digital_only)
+                    <strong>
+                        This email was automatically sent {{ $delayText }} after your order was dropped in the postbox, if you haven't received your order yet, please let me know and I'll try my best to sort it out for you, hopefully its not got lost in the post somewhere!
+                    </strong>
+                @endif
             </mj-text>
         </mj-column>
     </mj-section>

@@ -22,12 +22,17 @@
         <env name="CACHE_STORE" value="array"/>
         <env name="DB_DATABASE" value="coeliac_tests"/>
         <env name="MAIL_MAILER" value="array"/>
+        <env name="MOBILE_PASS_APPLE_ORGANIZATION_NAME" value="Coeliac Sanctuary"/>
+        <env name="MOBILE_PASS_APPLE_TEAM_IDENTIFIER" value="TESTTEAM"/>
+        <env name="MOBILE_PASS_APPLE_TYPE_IDENTIFIER" value="pass.test.coeliac"/>
+        <env name="MOBILE_PASS_QUEUE_CONNECTION" value="sync"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SCOUT_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="GENERATE_OG_IMAGES" value="false"/>
         <env name="GENERATE_EATERY_AI_DESCRIPTIONS" value="false"/>
+        <env name="GOOGLE_WALLET_ENABLED" value="false"/>
         <env name="ENABLE_EATERY_COLLECTIONS" value="true"/>
     </php>
     <source>

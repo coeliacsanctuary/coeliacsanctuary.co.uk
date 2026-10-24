@@ -1,0 +1,303 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit\Actions\Shop\DigitalCards;
+
+use App\Actions\Shop\DigitalCards\GetDigitalCardsIndexAction;
+use App\Enums\Shop\DigitalCardType;
+use App\Models\Shop\ShopDigitalCard;
+use App\Models\Shop\ShopDigitalCardPrice;
+use App\Models\Shop\ShopDigitalCardType;
+use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderItem;
+use App\Models\Shop\ShopOrderReviewItem;
+use App\Models\Shop\ShopProduct;
+use App\Models\Shop\ShopProductVariant;
+use App\Models\Shop\TravelCardSearchTerm;
+use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
+
+class GetDigitalCardsIndexActionTest extends TestCase
+{
+    protected ShopProduct $product;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        /** @var ShopProduct $product */
+        $product = $this->build(ShopProduct::class)
+            ->has($this->build(ShopProductVariant::class), 'variants')
+            ->create();
+
+        $this->product = $product;
+    }
+
+    protected function card(array $attributes = []): ShopDigitalCard
+    {
+        /** @var ShopDigitalCard $card */
+        $card = $this->build(ShopDigitalCard::class)
+            ->forProduct($this->product)
+            ->state($attributes)
+            ->create();
+
+        return $card;
+    }
+
+    protected function attachTerm(string $term, string $type = 'country', string $language = 'french', int $score = 10, bool $showOnProductPage = true): TravelCardSearchTerm
+    {
+        /** @var TravelCardSearchTerm $searchTerm */
+        $searchTerm = $this->create(TravelCardSearchTerm::class, ['term' => $term, 'type' => $type]);
+
+        $this->product->travelCardSearchTerms()->attach($searchTerm, [
+            'card_language' => $language,
+            'card_score' => $score,
+            'card_show_on_product_page' => $showOnProductPage,
+        ]);
+
+        return $searchTerm;
+    }
+
+    protected function basket(?ShopProduct $withProduct = null): ShopOrder
+    {
+        /** @var ShopOrder $basket */
+        $basket = $this->create(ShopOrder::class);
+
+        if ($withProduct) {
+            $this->build(ShopOrderItem::class)->inOrder($basket)->inProduct($withProduct)->create();
+        }
+
+        return $basket;
+    }
+
+    protected function review(ShopDigitalCard $card, float $rating = 5): ShopOrderReviewItem
+    {
+        /** @var ShopOrderReviewItem $review */
+        $review = $this->build(ShopOrderReviewItem::class)
+            ->forDigitalCard($card)
+            ->create(['rating' => $rating]);
+
+        return $review;
+    }
+
+    /** @return Collection<int, ShopDigitalCard> */
+    protected function cards(DigitalCardType $type = DigitalCardType::STANDARD, ?ShopOrder $basket = null): Collection
+    {
+        return $this->callAction(
+            GetDigitalCardsIndexAction::class,
+            ShopDigitalCardType::query()->withoutGlobalScopes()->findOrFail($type->value),
+            $basket,
+        );
+    }
+
+    #[Test]
+    public function itOnlyReturnsCardsOfTheGivenType(): void
+    {
+        $this->card(['title' => 'French', 'type_id' => DigitalCardType::STANDARD]);
+        $this->card(['title' => 'German', 'type_id' => DigitalCardType::PLUS]);
+
+        $this->assertEquals(['French'], $this->cards()->pluck('title')->all());
+        $this->assertEquals(['German'], $this->cards(DigitalCardType::PLUS)->pluck('title')->all());
+    }
+
+    #[Test]
+    public function itOnlyReturnsLiveCards(): void
+    {
+        $this->card(['title' => 'French']);
+        $this->card(['title' => 'German', 'live' => false]);
+
+        $this->assertEquals(['French'], $this->cards()->pluck('title')->all());
+    }
+
+    #[Test]
+    public function itReturnsTheCardsOrderedByTitle(): void
+    {
+        $this->card(['title' => 'Spanish']);
+        $this->card(['title' => 'French']);
+        $this->card(['title' => 'German']);
+
+        $this->assertEquals(['French', 'German', 'Spanish'], $this->cards()->pluck('title')->all());
+    }
+
+    #[Test]
+    public function itEagerLoadsTheProductAndItsRelations(): void
+    {
+        $this->card();
+
+        $card = $this->cards()->first();
+
+        $this->assertTrue($card->relationLoaded('product'));
+        $this->assertTrue($card->product->relationLoaded('variants'));
+        $this->assertTrue($card->product->relationLoaded('travelCardSearchTerms'));
+    }
+
+    #[Test]
+    public function itEagerLoadsTheCardsReviews(): void
+    {
+        $card = $this->card();
+
+        $this->review($card, 4);
+        $this->review($card, 5);
+
+        $returnedCard = $this->cards()->first();
+
+        $this->assertTrue($returnedCard->relationLoaded('reviews'));
+        $this->assertEqualsCanonicalizing([4.0, 5.0], $returnedCard->reviews->pluck('rating')->all());
+    }
+
+    #[Test]
+    public function itOnlySelectsTheReviewColumnsNeededToRateTheCard(): void
+    {
+        $card = $this->card();
+
+        $this->review($card);
+
+        $review = $this->cards()->first()->reviews->first();
+
+        $this->assertArrayHasKey('rating', $review->getAttributes());
+        $this->assertArrayNotHasKey('id', $review->getAttributes());
+        $this->assertArrayNotHasKey('review', $review->getAttributes());
+    }
+
+    #[Test]
+    public function itReturnsThePriceAssignedToTheCard(): void
+    {
+        $card = $this->card();
+
+        $this->build(ShopDigitalCardPrice::class)->forCard($card)->create(['price' => 500]);
+
+        $this->assertSame(500, $this->cards()->first()->price->price);
+    }
+
+    #[Test]
+    public function itFallsBackToTheDefaultPriceWhenTheCardDoesntHaveOne(): void
+    {
+        $this->card();
+
+        $this->assertTrue($this->cards()->first()->price->is(ShopDigitalCard::defaultPrice()));
+    }
+
+    #[Test]
+    public function itAssignsTheProductsCountriesToTheCard(): void
+    {
+        $this->card(['language' => 'french']);
+
+        $this->attachTerm('france');
+
+        $this->assertEquals(['france'], $this->cards()->first()->countries->pluck('term')->all());
+    }
+
+    #[Test]
+    public function itDoesntAssignAnyCountriesWhenTheCardDoesntHaveAProduct(): void
+    {
+        $this->build(ShopDigitalCard::class)->create();
+
+        $this->assertFalse($this->cards()->first()->relationLoaded('countries'));
+    }
+
+    #[Test]
+    public function itDoesntAssignAnyCountriesWhenTheProductDoesntHaveAnySearchTerms(): void
+    {
+        $this->card(['language' => 'french']);
+
+        $this->assertFalse($this->cards()->first()->relationLoaded('countries'));
+    }
+
+    #[Test]
+    public function itDoesntAssignTermsThatArentCountries(): void
+    {
+        $this->card(['language' => 'french']);
+
+        $this->attachTerm('france');
+        $this->attachTerm('french', type: 'language');
+
+        $this->assertEquals(['france'], $this->cards()->first()->countries->pluck('term')->all());
+    }
+
+    #[Test]
+    public function itDoesntAssignTermsForAnotherLanguage(): void
+    {
+        $this->card(['language' => 'french']);
+
+        $this->attachTerm('france');
+        $this->attachTerm('germany', language: 'german');
+
+        $this->assertEquals(['france'], $this->cards()->first()->countries->pluck('term')->all());
+    }
+
+    #[Test]
+    public function itDoesntAssignTermsThatArentFlaggedToShowOnTheProductPage(): void
+    {
+        $this->card(['language' => 'french']);
+
+        $this->attachTerm('france');
+        $this->attachTerm('belgium', showOnProductPage: false);
+
+        $this->assertEquals(['france'], $this->cards()->first()->countries->pluck('term')->all());
+    }
+
+    #[Test]
+    public function itAssignsTheCountriesWithTheHighestScoreFirst(): void
+    {
+        $this->card(['language' => 'french']);
+
+        $this->attachTerm('belgium', score: 20);
+        $this->attachTerm('france', score: 100);
+        $this->attachTerm('switzerland', score: 50);
+
+        $this->assertEquals(['france', 'switzerland', 'belgium'], $this->cards()->first()->countries->pluck('term')->all());
+    }
+
+    #[Test]
+    public function itDoesntFlagWhetherThePhysicalProductIsInTheBasketWhenThereIsntABasket(): void
+    {
+        $this->card();
+
+        $this->assertFalse($this->cards()->first()->hasAttribute('physicalProductInBasket'));
+    }
+
+    #[Test]
+    public function itDoesntFlagWhetherThePhysicalProductIsInTheBasketWhenTheCardDoesntHaveAProduct(): void
+    {
+        $this->build(ShopDigitalCard::class)->create();
+
+        $card = $this->cards(basket: $this->basket())->first();
+
+        $this->assertFalse($card->hasAttribute('physicalProductInBasket'));
+    }
+
+    #[Test]
+    public function itFlagsThePhysicalProductAsInTheBasketWhenTheBasketContainsTheCardsProduct(): void
+    {
+        $this->card();
+
+        $card = $this->cards(basket: $this->basket($this->product))->first();
+
+        $this->assertTrue($card->getAttribute('physicalProductInBasket'));
+    }
+
+    #[Test]
+    public function itFlagsThePhysicalProductAsNotInTheBasketWhenTheBasketIsEmpty(): void
+    {
+        $this->card();
+
+        $card = $this->cards(basket: $this->basket())->first();
+
+        $this->assertFalse($card->getAttribute('physicalProductInBasket'));
+    }
+
+    #[Test]
+    public function itFlagsThePhysicalProductAsNotInTheBasketWhenTheBasketOnlyContainsOtherProducts(): void
+    {
+        $this->card();
+
+        /** @var ShopProduct $otherProduct */
+        $otherProduct = $this->create(ShopProduct::class);
+
+        $card = $this->cards(basket: $this->basket($otherProduct))->first();
+
+        $this->assertFalse($card->getAttribute('physicalProductInBasket'));
+    }
+}

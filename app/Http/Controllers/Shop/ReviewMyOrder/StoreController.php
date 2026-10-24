@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Shop\ReviewMyOrder;
 
 use App\Http\Requests\Shop\ReviewMyOrderRequest;
+use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderReview;
 use App\Models\Shop\ShopOrderReviewInvitation;
 use App\Models\Shop\ShopOrderReviewItem;
+use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopSource;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
@@ -35,11 +37,12 @@ class StoreController
             'name' => $request->string('name')->toString(),
         ]);
 
-        /** @var Collection<int, array{id: int, rating: int, review: string}> $products */
+        /** @var Collection<int, array{id: int, rating: int, review: string, type: string}> $products */
         $products = $request->collect('products');
 
         $products->each(fn (array $product) => $review->products()->create([
             'product_id' => $product['id'],
+            'product_type' => $product['type'] === 'physical' ? ShopProduct::class : ShopDigitalCard::class,
             'order_id' => $invitation->order_id,
             'rating' => $product['rating'],
             'review' => $product['review'],
@@ -47,9 +50,13 @@ class StoreController
 
         $review
             ->products
+            ->reject(fn (ShopOrderReviewItem $reviewItem) => $reviewItem->product_type === ShopDigitalCard::class)
             ->load(['product', 'product.sealiacOverview'])
             ->each(function (ShopOrderReviewItem $orderReviewItem): void {
-                $orderReviewItem->product?->sealiacOverview?->update([
+                /** @var ShopProduct|null $product */
+                $product = $orderReviewItem->product;
+
+                $product?->sealiacOverview?->update([
                     'invalidated' => true,
                 ]);
             });

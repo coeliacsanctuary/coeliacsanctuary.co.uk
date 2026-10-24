@@ -10,7 +10,12 @@ import axios, { AxiosError } from 'axios';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 
-defineProps<{ show: boolean; completed: boolean; error: boolean }>();
+defineProps<{
+  show: boolean;
+  completed: boolean;
+  error: boolean;
+  hasDigitalItems: boolean;
+}>();
 const emits = defineEmits(['continue', 'toggle']);
 
 const store = useShopStore();
@@ -107,6 +112,14 @@ const track = (label: string, value?: string) => {
         To get started I just need a few basic details - your name, the email
         address I'll send your order confirmation to, and optionally, a
         telephone number.
+      </p>
+
+      <p
+        v-if="hasDigitalItems"
+        class="prose mt-2! max-w-none xl:prose-lg"
+      >
+        Please ensure your email address is correct, as you will need this to
+        access your digital travel cards.
       </p>
 
       <FormInput

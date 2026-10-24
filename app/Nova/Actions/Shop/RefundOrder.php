@@ -8,6 +8,8 @@ use App\Actions\Shop\RefundOrderAction;
 use App\DataObjects\Shop\RefundOrderDto;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderDigitalItem;
+use App\Models\Shop\ShopOrderItem;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\DestructiveAction;
 use Laravel\Nova\Fields\ActionFields;
@@ -23,10 +25,11 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class RefundOrder extends DestructiveAction
 {
     /**
-     * @var Collection<int, ShopOrder>
+     * @var Collection<int, ShopOrder> $models
      */
     public function handle(ActionFields $fields, Collection $models): void
     {
+        /** @var ShopOrder $order */
         $order = $models->first();
 
         $dto = new RefundOrderDto(
@@ -61,23 +64,52 @@ class RefundOrder extends DestructiveAction
 
         $total = number_format($order->payment->total / 100, 2);
         $subtotal = number_format($order->payment->subtotal / 100, 2);
+        $physicalTotal = number_format($order->items?->sum(fn (ShopOrderItem $item) => $item->quantity * $item->product_price) / 100, 2);
+        $digitalTotal = number_format($order->digitalItems?->sum(fn (ShopOrderDigitalItem $item) => $item->digital_card_price) / 100, 2);
         $postage = number_format($order->payment->postage / 100, 2);
         $fee = number_format($order->payment->fee / 100, 2);
 
         $baseFields = [
             Select::make('Amount', 'refund_type')
                 ->displayUsingLabels()
-                ->options(['full' => 'Full Amount', 'partial' => 'Partial'])
+                ->options(fn () => array_filter([
+                    'full' => 'Full Amount',
+                    'no_postage' => 'Subtotal excluding postage',
+                    $digitalTotal > 0 ? 'physical' : null => 'Physical Items Only',
+                    $digitalTotal > 0 ? 'physical_plus_postage' : null => 'Physical Plus Postage',
+                    'custom' => 'Custom',
+                ]))
                 ->default('full')
                 ->fullWidth(),
+        ];
 
+        if ($digitalTotal) {
+            $baseFields[] = Heading::make('Please note, this order contains digital items, access to digital items can not be revoked if you refund the full amount.');
+        }
+
+        $baseFields = [
+            ...$baseFields,
             Currency::make('', 'amount')
                 ->asMinorUnits()
-                ->dependsOn(['refund_type'], fn (Currency $field, NovaRequest $request, FormData $data) => $field->readonly($data->get('refund_type') === 'full'))
+                ->dependsOn(['refund_type'], function (Currency $field, NovaRequest $request, FormData $data) use ($total, $subtotal, $physicalTotal, $postage) {
+                    $field->readonly($data->get('refund_type') !== 'custom');
+
+                    $value = match ($data->get('refund_type')) {
+                        'full' => $total,
+                        'no_postage' => $subtotal,
+                        'physical' => $physicalTotal,
+                        'physical_plus_postage' => (float) $physicalTotal + (float) $postage,
+                        'custom' => 0,
+                    };
+
+                    $field->setValue($value);
+
+                    return $field;
+                })
                 ->default($total)
                 ->max($total)
                 ->fullWidth()
-                ->help("Subtotal: £{$subtotal} / Postage: £{$postage} / Fee: £{$fee}"),
+                ->help("Subtotal: £{$subtotal} / Physical Total: £{$physicalTotal} / Digital Total: £{$digitalTotal} / Postage: £{$postage} / Fee: £{$fee}"),
 
             Textarea::make('Internal Note', 'note')
                 ->rows(2)

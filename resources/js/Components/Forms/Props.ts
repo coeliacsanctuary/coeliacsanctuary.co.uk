@@ -33,7 +33,7 @@ export type InputProps = BaseFormInputProps & {
   helpText?: string;
   error?: string;
   hideLabel?: boolean;
-  size?: 'sm' | 'default' | 'large';
+  size?: 'sm' | 'default' | 'large' | 'xl';
   min?: number;
   max?: number;
   wrapperClasses?: string;
@@ -57,6 +57,15 @@ export const InputPropDefaults = {
   ...InputPropDefaultsWithoutType,
   type: 'text',
 } satisfies Partial<InputProps>;
+
+export type OneTimeInputProps = Omit<InputProps, 'type' | 'size'> & {
+  length: number;
+};
+
+export const OneTimeInputPropDefaults = {
+  ...InputPropDefaults,
+  length: 6,
+};
 
 export type TextareaProps = BaseFormInputProps & {
   label: string;

@@ -86,7 +86,7 @@ class ShowControllerTest extends TestCase
                     ->where('id', (string) $this->order->order_key)
                     ->where('invitation', $this->invitation->id)
                     ->where('name', $this->order->customer->name)
-                    ->has('products', 1, fn (Assert $page) => $page->hasAll(['id', 'title', 'variants', 'image', 'link']))
+                    ->has('products', 1, fn (Assert $page) => $page->hasAll(['id', 'title', 'variants', 'image', 'link', 'type']))
             );
     }
 

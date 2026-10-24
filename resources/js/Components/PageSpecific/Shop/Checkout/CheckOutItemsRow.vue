@@ -2,19 +2,18 @@
 import { ShopBasketItem } from '@/types/Shop';
 import { TrashIcon } from '@heroicons/vue/24/outline';
 import Loader from '@/Components/Loader.vue';
-import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import { Link, router } from '@inertiajs/vue3';
 import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySwitcher.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import eventBus from '@/eventBus';
+import CheckOutItemsDigitalUpsellRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsDigitalUpsellRow.vue';
 
 const props = defineProps<{ item: ShopBasketItem }>();
 
 const isLoading = ref(false);
 const hasError = ref(false);
 const isDeletingItem = ref(false);
-const includeAddOn = ref(props.item.add_on?.in_basket ?? false);
 
 const alterQuantity = (action: 'increase' | 'decrease') => {
   isLoading.value = true;
@@ -53,50 +52,6 @@ const removeItem = () => {
     },
   });
 };
-
-const removeAddOn = () => {
-  if (!props.item.add_on) {
-    return;
-  }
-
-  isLoading.value = true;
-
-  router.delete(`/shop/basket/${props.item.id}/add-on`, {
-    preserveScroll: true,
-    onFinish: () => {
-      isLoading.value = false;
-    },
-  });
-};
-
-const addAddOn = () => {
-  if (!props.item.add_on) {
-    return;
-  }
-
-  isLoading.value = true;
-
-  router.post(
-    `/shop/basket/${props.item.id}/add-on`,
-    {},
-    {
-      preserveScroll: true,
-      onFinish: () => {
-        isLoading.value = false;
-      },
-    },
-  );
-};
-
-watch(includeAddOn, () => {
-  if (includeAddOn.value) {
-    addAddOn();
-
-    return;
-  }
-
-  removeAddOn();
-});
 </script>
 
 <template>
@@ -178,39 +133,17 @@ watch(includeAddOn, () => {
       </div>
     </div>
 
-    <div
-      v-if="item.add_on"
-      class="mb-4 flex items-center gap-3 rounded-md border border-primary-light/60 bg-white p-3"
+    <ul
+      v-if="item.digitalCards?.length"
+      class="-mt-3"
     >
-      <FormCheckbox
-        v-model="includeAddOn"
-        name="include_add_on"
-        class="shrink-0 py-0!"
-        label=""
-        hide-label
-        xl
+      <li class="my-2 font-semibold text-primary-dark">Digital Card Add Ons</li>
+
+      <CheckOutItemsDigitalUpsellRow
+        v-for="digitalCard in item.digitalCards"
+        :key="digitalCard.id"
+        :item="digitalCard"
       />
-
-      <div class="flex flex-1 justify-between gap-3 text-base">
-        <div class="flex flex-col">
-          <h3
-            class="font-semibold"
-            v-text="item.add_on.title"
-          />
-          <p
-            class="text-sm text-grey-dark"
-            v-text="item.add_on.description"
-          />
-        </div>
-
-        <p
-          class="shrink-0"
-          :class="
-            includeAddOn ? 'text-xl font-semibold' : 'text-sm text-grey-dark'
-          "
-          v-text="`+${item.add_on.price}`"
-        />
-      </div>
-    </div>
+    </ul>
   </li>
 </template>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mailables\Shop;
 
+use App\Actions\Shop\PrepareOrderForEmailAction;
 use App\DataObjects\NotificationRelatedObject;
 use App\Mailables\BaseMailable;
 use App\Models\Shop\ShopOrder;
@@ -21,7 +22,7 @@ abstract class BaseShopMailable extends BaseMailable
 
     protected function baseData(array $data = []): array
     {
-        $this->order->loadMissing(['address', 'customer', 'items', 'items.product', 'items.variant', 'items.product.media', 'payment']);
+        app(PrepareOrderForEmailAction::class)->handle($this->order);
 
         return array_merge([
             'date' => Carbon::now(),

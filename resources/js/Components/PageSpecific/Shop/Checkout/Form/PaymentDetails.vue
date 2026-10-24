@@ -12,18 +12,21 @@ import FormInput from '@/Components/Forms/FormInput.vue';
 import eventBus from '@/eventBus';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 
-defineProps<{
+const props = defineProps<{
   show: boolean;
   completed: boolean;
   error: boolean;
   paymentToken: string;
+  requiredShipping: boolean;
 }>();
 
 const emits = defineEmits(['continue', 'toggle']);
 
 const store = useShopStore();
 
-const billingAddressSelect = ref<'same' | 'other'>('same');
+const billingAddressSelect = ref<'same' | 'other'>(
+  props.requiredShipping ? 'same' : 'other',
+);
 
 const fields = reactive<CheckoutBillingStep>({
   name: '',
@@ -145,7 +148,7 @@ const track = (label: string, value?: string) => {
 <template>
   <div class="flex flex-col space-y-6 pt-4">
     <CheckoutStepHeader
-      :step="3"
+      :step="requiredShipping ? 3 : 2"
       title="Payment"
       :show="show"
       :completed="completed"
@@ -154,12 +157,24 @@ const track = (label: string, value?: string) => {
     />
 
     <template v-if="show">
-      <p class="prose mt-2! max-w-none xl:prose-lg">
+      <p
+        v-if="requiredShipping"
+        class="prose mt-2! max-w-none xl:prose-lg"
+      >
         Thanks for letting me know where you want your order shipped, finally I
         need to know how you'd like to pay.
       </p>
 
+      <p
+        v-else
+        class="prose mt-2! max-w-none xl:prose-lg"
+      >
+        Thanks {{ store.customerName }}, finally I need to know how you'd like
+        to pay.
+      </p>
+
       <FormSelect
+        v-if="requiredShipping"
         v-model="billingAddressSelect"
         label="Billing Address"
         name="billing_address"

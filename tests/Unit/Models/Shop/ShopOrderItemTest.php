@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\Shop;
 
-use PHPUnit\Framework\Attributes\Test;
+use App\Actions\Shop\ReconcileBasketItemsAction;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
-use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ShopOrderItemTest extends TestCase
@@ -51,14 +51,56 @@ class ShopOrderItemTest extends TestCase
     }
 
     #[Test]
-    public function itBelongsToAnAddOn(): void
+    public function itReconcilesTheBasketWhenTheItemIsCreated(): void
     {
-        $addOn = $this->create(ShopProductAddOn::class);
+        $order = $this->create(ShopOrder::class);
 
+        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order) {
+            $this->assertTrue($basket->is($order));
+
+            return true;
+        }]);
+
+        $this->build(ShopOrderItem::class)
+            ->inOrder($order)
+            ->create();
+    }
+
+    #[Test]
+    public function itReconcilesTheBasketWhenTheItemIsUpdated(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        /** @var ShopOrderItem $item */
         $item = $this->build(ShopOrderItem::class)
-            ->withAddOn($addOn)
+            ->inOrder($order)
             ->create();
 
-        $this->assertInstanceOf(ShopProductAddOn::class, $item->refresh()->addOn);
+        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order) {
+            $this->assertTrue($basket->is($order));
+
+            return true;
+        }]);
+
+        $item->update(['quantity' => 5]);
+    }
+
+    #[Test]
+    public function itReconcilesTheBasketWhenTheItemIsDeleted(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        /** @var ShopOrderItem $item */
+        $item = $this->build(ShopOrderItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order) {
+            $this->assertTrue($basket->is($order));
+
+            return true;
+        }]);
+
+        $item->delete();
     }
 }

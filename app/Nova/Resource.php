@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Resource as NovaResource;
@@ -84,7 +85,19 @@ abstract class Resource extends NovaResource
             });
 
             foreach (self::$createdRelations as $relation) {
-                $relation->save();
+                $shouldSave = false;
+
+                self::$deferrableFields->each(function (Field $field) use ($relation, &$shouldSave): void {
+                    $attribute = Str::afterLast($field->attribute, '.');
+
+                    if ($relation->$attribute) {
+                        $shouldSave = true;
+                    }
+                });
+
+                if ($shouldSave) {
+                    $relation->save();
+                }
             }
 
             self::deferredRelationAfterSave();
@@ -106,8 +119,20 @@ abstract class Resource extends NovaResource
 
                     foreach ($bits as $index => $bit) {
                         if ($index + 1 === count($bits)) {
-                            $field->fillInto($request, $currentModel, $bit, str_replace('.', '_', $field->attribute));
-                            $currentModel->save();
+                            $shouldSave = false;
+
+                            self::$deferrableFields->each(function (Field $field) use ($currentModel, &$shouldSave): void {
+                                $attribute = Str::afterLast($field->attribute, '.');
+
+                                if ($currentModel && $currentModel->$attribute) {
+                                    $shouldSave = true;
+                                }
+                            });
+
+                            if ($shouldSave) {
+                                $field->fillInto($request, $currentModel, $bit, str_replace('.', '_', $field->attribute));
+                                $currentModel->save();
+                            }
 
                             continue;
                         }

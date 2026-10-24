@@ -25,12 +25,14 @@ const props = defineProps<{
   id: string;
   invitation: string;
   name: string;
+  digitalOnly: boolean;
   products: {
     id: number;
     title: string;
     variants: string[];
     image: string | null;
     link: string | null;
+    type: 'physical' | 'digital';
   }[];
 }>();
 
@@ -80,6 +82,7 @@ const form = useForm<FormData>(
       id: product.id,
       review: '',
       rating: undefined,
+      type: product.type,
     })),
   },
 );
@@ -157,7 +160,7 @@ const submitForm = () => {
       it helps me improve what I sell.
     </p>
 
-    <Info>
+    <Info v-if="!digitalOnly">
       <p class="text-sm font-semibold text-grey-darkest">
         Haven't received your order yet?
       </p>

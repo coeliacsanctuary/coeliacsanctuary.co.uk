@@ -6,6 +6,7 @@ namespace App\Resources\Shop;
 
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderDigitalItem;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPayment;
 use App\Models\Shop\ShopShippingAddress;
@@ -39,20 +40,25 @@ class ShopOrderCompleteResource extends JsonResource
 
         return [
             'id' => $this->order_key,
-            'products' => ShopOrderItemResource::collection($this->items),
+            'products' => [
+                'items' => ShopOrderItemResource::collection($this->items),
+                'digital' => ShopOrderDigitalItemResource::collection($this->digitalItems),
+            ],
             'subtotal' => Helpers::formatMoney(Money::GBP($payment->subtotal)),
             'fees' => Arr::map($payment->fees_breakdown ?? [], fn (array $fee) => [
-                ... $fee,
-                'fee' => Helpers::formatMoney(Money::GBP($fee['fee']))
+                ...$fee,
+                'fee' => Helpers::formatMoney(Money::GBP($fee['fee'])),
             ]),
             'total_fees' => Helpers::formatMoney(Money::GBP($payment->custom_fees)),
             'discount' => $payment->discount && $discount ? [
                 'amount' => Helpers::formatMoney(Money::GBP($payment->discount)),
                 'name' => $discount->name,
             ] : null,
-            'postage' => Helpers::formatMoney(Money::GBP($payment->postage)),
+            'postage' => $payment->postage > 0 ? Helpers::formatMoney(Money::GBP($payment->postage)) : 0,
             'total' => Helpers::formatMoney(Money::GBP($payment->total)),
-            'shipping' => array_filter([
+            'has_digital_items' => $this->has_digital_items,
+            'is_digital_only' => $this->is_digital_only,
+            'shipping' => ! $this->is_digital_only ? array_filter([
                 $shipping->name,
                 $shipping->line_1,
                 $shipping->line_2,
@@ -61,9 +67,8 @@ class ShopOrderCompleteResource extends JsonResource
                 $shipping->county,
                 $shipping->postcode,
                 $shipping->country,
-            ]),
+            ]) : [],
             'payment' => $this->getPaymentDetails((string) $payment->payment_type_id),
-            'has_add_ons' => $this->has_add_ons,
             'event' => [
                 'transaction_id' => $this->order_key,
                 'value' => $payment->subtotal / 100,
@@ -71,14 +76,22 @@ class ShopOrderCompleteResource extends JsonResource
                 'shipping' => $payment->postage / 100,
                 'tax' => 0,
                 'affiliation' => 'Coeliac Sanctuary',
-                'items' => $this->items->map(fn (ShopOrderItem $item) => [
-                    'id' => $item->product_id,
-                    'sku' => "{$item->product_id} - {$item->product_variant_id}",
-                    'name' => $item->product_title,
-                    'variant' => $item->product_variant_id,
-                    'quantity' => $item->quantity,
-                    'price' => $item->product_price / 100,
-                ]),
+                'items' => [
+                    ...$this->items->map(fn (ShopOrderItem $item) => [
+                        'id' => $item->product_id,
+                        'sku' => "{$item->product_id} - {$item->product_variant_id}",
+                        'name' => $item->product_title,
+                        'variant' => $item->product_variant_id,
+                        'quantity' => $item->quantity,
+                        'price' => $item->product_price / 100,
+                    ]),
+                    ...$this->digitalItems->map(fn (ShopOrderDigitalItem $item) => [
+                        'id' => $item->digital_card_id,
+                        'sku' => "digital - {$item->digital_card_id}",
+                        'name' => $item->digital_card_title,
+                        'price' => $item->digital_card_price / 100,
+                    ]),
+                ],
             ],
         ];
     }

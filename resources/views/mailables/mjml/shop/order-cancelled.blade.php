@@ -10,7 +10,7 @@
 @endsection
 
 @section('intro')
-    <mj-text mj-class="inner">Hi {{ $order->address->name }}</mj-text>
+    <mj-text mj-class="inner">Hi {{ $order->customer->name }}</mj-text>
     <mj-text mj-class="inner">
         Your recent order at Coeliac Sanctuary has been cancelled.
     </mj-text>

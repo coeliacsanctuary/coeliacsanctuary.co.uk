@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrderReviewItem;
+use App\Models\Shop\ShopProduct;
 use App\Resources\Shop\ShopIndexReviewResource;
 use Carbon\CarbonInterval;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -45,10 +47,18 @@ class GetTravelCardReviewsAction
     protected function travelCardReviews(): EloquentBuilder
     {
         return ShopOrderReviewItem::query()
-            ->whereHas('product', fn (Builder $query) => $query->whereHas(
-                'categories',
-                fn (Builder $query) => $query->whereIn('shop_categories.id', [1, 11]),
-            ));
+            ->whereHasMorph(
+                'product',
+                [ShopProduct::class, ShopDigitalCard::class],
+                function (Builder $query, string $type): void {
+                    if ($type === ShopProduct::class) {
+                        $query->whereHas(
+                            'categories',
+                            fn (Builder $query) => $query->whereIn('shop_categories.id', [1, 11]),
+                        );
+                    }
+                },
+            );
     }
 
     protected function averageRating(): ?float

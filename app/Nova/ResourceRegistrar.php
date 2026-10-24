@@ -46,9 +46,13 @@ use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
 use App\Nova\Resources\Shop\CustomsFee;
+use App\Nova\Resources\Shop\DigitalCardResource;
+use App\Nova\Resources\Shop\DigitalCardTypeResource;
+use App\Nova\Resources\Shop\DigitalOrders;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
+use App\Nova\Resources\Shop\OrderDigitalItem;
 use App\Nova\Resources\Shop\OrderItem;
 use App\Nova\Resources\Shop\OrderReviewItem;
 use App\Nova\Resources\Shop\OrderReviews;
@@ -60,7 +64,6 @@ use App\Nova\Resources\Shop\PostageArea;
 use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\Price;
-use App\Nova\Resources\Shop\ProductAddOn;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\ProductVariant;
 use App\Nova\Resources\Shop\ShippingAddress;
@@ -126,17 +129,22 @@ class ResourceRegistrar
             // Shop Sales
             Baskets::class,
             Orders::class,
+            DigitalOrders::class,
             Payment::class,
             PaymentRefund::class,
             OrderItem::class,
+            OrderDigitalItem::class,
 
-            // Shop Inventory
+            // Shop Physical Inventory
             Categories::class,
             Products::class,
             ShippingMethod::class,
             Price::class,
             ProductVariant::class,
-            ProductAddOn::class,
+
+            // Shop Digital Products
+            DigitalCardResource::class,
+            DigitalCardTypeResource::class,
 
             // Shop Customers
             Customer::class,

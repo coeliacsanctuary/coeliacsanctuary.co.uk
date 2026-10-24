@@ -2,13 +2,17 @@
 import { computed } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { Page } from '@inertiajs/core';
-import { ShopBasketItem } from '@/types/Shop';
+import { BasketProp } from '@/types/Shop';
 import { pluralise } from '@/helpers';
 import EventBus from '@/eventBus';
 
-const page: Page<{ basket?: { items: ShopBasketItem[] } }> = usePage();
+const page: Page<{ basket?: BasketProp }> = usePage();
 const items = computed(() => page.props.basket?.items || []);
-const label = pluralise('item', items.value.length);
+const digitalItems = computed(() => page.props.basket?.digitalItems || []);
+const numberOfItems = computed(
+  () => items.value.length + digitalItems.value.length,
+);
+const label = pluralise('item', numberOfItems.value);
 
 const openBasket = () => {
   EventBus.$emit('open-basket');
@@ -20,6 +24,8 @@ const totalItems = computed(() => {
   page.props.basket?.items.forEach((item) => {
     total += item.quantity;
   });
+
+  total += digitalItems.value.length;
 
   return total;
 });

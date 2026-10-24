@@ -17,6 +17,7 @@ Route::post('/print', function (NovaRequest $request): void {
             fn (Builder $query) => $query->where('state_id', OrderState::PAID),
             fn (Builder $query) => $query->whereIn('id', $ids->explode(',')),
         )
+        ->where('is_digital_only', false)
         ->where('state_id', '!=', OrderState::SHIPPED)
         ->each(fn (ShopOrder $order) => $order->update(['state_id' => OrderState::READY]));
 });

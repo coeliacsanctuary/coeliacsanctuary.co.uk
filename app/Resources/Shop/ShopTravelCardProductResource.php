@@ -4,24 +4,36 @@ declare(strict_types=1);
 
 namespace App\Resources\Shop;
 
+use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\TravelCardSearchTerm;
 use App\Support\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Money\Money;
 
 /** @mixin ShopProduct */
 class ShopTravelCardProductResource extends ShopProductResource
 {
     public function toArray(Request $request): array
     {
+        $digitalDefaultPrice = ShopDigitalCard::defaultPrice();
+
         return array_merge([
             'is_travel_card' => true,
             'countries' => $this->whenLoaded(
                 'travelCardSearchTerms',
                 fn () => $this->getCountries(),
             ),
+            'digital_cards' => config('coeliac.digital_cards_enabled') ? $this->whenLoaded('digitalCards', $this->digitalCards->map(fn (ShopDigitalCard $digitalCard) => [
+                'id' => $digitalCard->id,
+                'name' => $digitalCard->title,
+                'slug' => $digitalCard->slug,
+                'price' => Helpers::formatMoney(Money::GBP($digitalCard->price->price_with_physical_product ?? $digitalDefaultPrice->price_with_physical_product)),
+                'raw_price' => $digitalCard->price->price_with_physical_product ?? $digitalDefaultPrice->price_with_physical_product,
+            ])) : [],
+            'digital_cards_link' => route('shop.digital-standard-cards'),
         ], parent::toArray($request));
     }
 

@@ -8,9 +8,9 @@ defineProps<{ sections: { id: string; label: string }[] }>();
   <nav
     v-if="sections.length > 1"
     aria-label="Jump to a section of this page"
-    class="-mx-3 overflow-x-auto px-3 sm:mx-0 sm:px-0"
+    class="-mx-3 px-3 sm:mx-0 sm:px-0"
   >
-    <ul class="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+    <ul class="flex flex-wrap justify-center gap-2 sm:w-auto sm:justify-start">
       <li
         v-for="section in sections"
         :key="section.id"

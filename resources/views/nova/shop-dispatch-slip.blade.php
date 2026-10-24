@@ -147,10 +147,10 @@ use Money\Money;
                     </td>
                 </tr>
             @endforeach
-            @if($order->add_on_total)
+            @if($order->has_digital_items)
                 <tr>
-                    <td colspan="2"><em>Plus digital products delivered over email</em></td>
-                    <td><em>{{ Helpers::formatMoney(Money::GBP($order->add_on_total)) }}</em></td>
+                    <td colspan="2"><em>Plus digital cards delivered over email</em></td>
+                    <td><em>{{ Helpers::formatMoney(Money::GBP($order->digitalItems->sum('digital_card_price'))) }}</em></td>
                 </tr>
             @endif
             <tr>

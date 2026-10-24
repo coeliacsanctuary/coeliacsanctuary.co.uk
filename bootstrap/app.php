@@ -18,7 +18,6 @@ use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Response\Inertia;
 use App\Jobs\Metrics\Orchestrators\BaseOrchestratorJob;
-use App\Models\Shop\ShopOrderDownloadLink;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -56,23 +55,20 @@ return Application::configure(basePath: dirname(__DIR__))
             ]
         );
 
-        $middleware->redirectGuestsTo(fn () => route('nova.pages.login'));
+        $middleware->redirectGuestsTo(function (Request $request): string {
+            if (Str::contains($request->url(), 'my-travel-cards.')) {
+                return route('my-travel-cards.login.show');
+            }
+
+            return route('nova.pages.login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (InvalidSignatureException $exception, Request $request) {
-            if ($request->routeIs('shop.download-my-products')) {
-                /** @var ?ShopOrderDownloadLink $downloadLink */
-                $downloadLink = $request->route('downloadLink');
-
-                if ($downloadLink?->expires_at->isPast()) {
-                    return app(Inertia::class)
-                        ->title('Link expired')
-                        ->metaTags([], false)
-                        ->doNotTrack()
-                        ->render('Shop/DownloadMyProducts/Error')
-                        ->toResponse($request)
-                        ->setStatusCode(Response::HTTP_FORBIDDEN);
-                }
+            if ($request->routeIs('my-travel-cards.login.order.get')) {
+                return redirect()
+                    ->route('my-travel-cards.login.show')
+                    ->withErrors(['email' => 'Your link has expired, please enter your email to access your travel cards']);
             }
 
             return null;

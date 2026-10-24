@@ -46,4 +46,17 @@ class TravelCardSearchTerm extends Model
             'product_id',
         )->withTimestamps()->withPivot(['card_language', 'card_score', 'card_show_on_product_page']);
     }
+
+    /** @return BelongsToMany<ShopDigitalCard, $this> */
+    public function digitalCards(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ShopDigitalCard::class,
+            'shop_product_assigned_travel_card_search_terms',
+            'search_term_id',
+            'product_id',
+            'id',
+            'product_id',
+        )->withPivot(['card_language']);
+    }
 }

@@ -43,6 +43,9 @@ use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\CustomsFee;
+use App\Nova\Resources\Shop\DigitalCardResource;
+use App\Nova\Resources\Shop\DigitalCardTypeResource;
+use App\Nova\Resources\Shop\DigitalOrders;
 use App\Nova\Resources\Shop\DiscountCode;
 use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
@@ -157,13 +160,19 @@ class Menu
                 MenuGroup::make('Sales', [
                     MenuItem::resource(Baskets::class)->withBadgeIf(fn () => (string) $basketsCount, 'danger', fn () => $basketsCount > 0),
                     MenuItem::resource(Orders::class)->withBadgeIf(fn () => (string) $ordersCount, 'danger', fn () => $ordersCount > 0),
+                    MenuItem::resource(DigitalOrders::class),
                     MenuItem::make('Daily Stock')->path('/shop-daily-stock'),
                     MenuItem::resource(OrderReviews::class),
                 ]),
 
-                MenuGroup::make('Inventory', [
+                MenuGroup::make('Physical Inventory', [
                     MenuItem::resource(Categories::class),
                     MenuItem::resource(Products::class),
+                ]),
+
+                MenuGroup::make('Digital Products', [
+                    MenuItem::resource(DigitalCardResource::class),
+                    MenuItem::resource(DigitalCardTypeResource::class),
                 ]),
 
                 MenuGroup::make('Admin', [

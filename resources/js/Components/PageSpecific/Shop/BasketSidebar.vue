@@ -1,213 +1,31 @@
 <script setup lang="ts">
-import { CreditCardIcon, TrashIcon } from '@heroicons/vue/24/outline';
-import { Link, router } from '@inertiajs/vue3';
-import { ShopBasketItem } from '@/types/Shop';
-import { ref } from 'vue';
+import { CreditCardIcon } from '@heroicons/vue/24/outline';
+import { Link } from '@inertiajs/vue3';
+import { BasketProp } from '@/types/Shop';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import useGoogleEvents from '@/composables/useGoogleEvents';
-import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySwitcher.vue';
-import Loader from '@/Components/Loader.vue';
-import useJourneyTracking from '@/composables/useJourneyTracking';
+import ProductLineItem from '@/Components/PageSpecific/Shop/BasketSideBar/ProductLineItem.vue';
+import DigitalLineItem from '@/Components/PageSpecific/Shop/BasketSideBar/DigitalLineItem.vue';
 
-defineProps<{ items: ShopBasketItem[]; subtotal: string }>();
+defineProps<BasketProp>();
 
 defineEmits(['close']);
-
-const deletingItem = ref<null | number>(null);
-const deletingAddOn = ref<null | number>(null);
-
-const removeItem = (item: ShopBasketItem) => {
-  deletingItem.value = item.id;
-
-  router.delete(`/shop/basket/${item.id}`, {
-    preserveScroll: true,
-    onSuccess: () => {
-      useGoogleEvents().googleEvent('event', 'remove-item-from-cart', {
-        itemId: item.id,
-      });
-
-      useJourneyTracking().logEvent('clicked', 'ShopBasketSideBar/DeleteItem', {
-        title: item.title,
-      });
-    },
-  });
-};
-
-const removeAddOn = (item: ShopBasketItem) => {
-  if (!item.add_on) {
-    return;
-  }
-
-  deletingAddOn.value = item.id;
-
-  router.delete(`/shop/basket/${item.id}/add-on`, {
-    preserveScroll: true,
-  });
-};
-
-const loadingItem = ref<null | number>(null);
-const hasError = ref<false | number>(false);
-
-const alterQuantity = (
-  item: ShopBasketItem,
-  action: 'increase' | 'decrease',
-) => {
-  hasError.value = false;
-  loadingItem.value = item.id;
-
-  useJourneyTracking().logEvent('clicked', 'ShopBasketSideBar/AlterQuantity', {
-    title: item.title,
-    action,
-  });
-
-  router.patch(
-    '/shop/basket',
-    {
-      action,
-      item_id: item.id,
-    },
-    {
-      preserveScroll: true,
-      only: ['basket', 'has_basket', 'payment_intent'],
-      onFinish: () => {
-        loadingItem.value = null;
-      },
-      onError: (e) => {
-        if (e?.quantity) {
-          hasError.value = item.id;
-        }
-      },
-    },
-  );
-};
 </script>
 
 <template>
   <div class="flex-1 p-4">
     <div class="flow-root">
       <ul class="-my-3 divide-y divide-gray-200">
-        <li
+        <ProductLineItem
           v-for="item in items"
           :key="item.id"
-          class="relative"
-        >
-          <Loader
-            :display="loadingItem === item.id"
-            absolute
-            on-top
-            blur
-            color="dark"
-            size="size-12"
-            width="border-8"
-          />
+          :item="item"
+        />
 
-          <div
-            class="relative flex py-3"
-            :class="{ '!border-b-0': !!item.add_on }"
-          >
-            <div
-              class="hidden size-24 shrink-0 overflow-hidden rounded-md border border-gray-200 sm:block"
-            >
-              <img
-                :src="item.image"
-                :alt="item.title"
-                class="aspect-square object-cover"
-              />
-            </div>
-
-            <div class="flex flex-1 flex-col sm:ml-4">
-              <div>
-                <div
-                  class="flex justify-between text-base font-medium text-gray-900"
-                >
-                  <h3>
-                    <Link
-                      :href="item.link"
-                      class="font-semibold hover:text-primary-dark"
-                    >
-                      {{ item.title }}
-                    </Link>
-                  </h3>
-                  <p
-                    class="ml-4"
-                    v-text="item.line_price"
-                  />
-                </div>
-
-                <p
-                  v-if="item.variant !== ''"
-                  class="mt-1 text-sm text-gray-500"
-                  v-text="item.variant"
-                />
-              </div>
-
-              <div class="flex flex-1 items-center justify-between">
-                <div class="flex flex-1 items-center space-x-2">
-                  <p>Quantity</p>
-
-                  <QuantitySwitcher
-                    :quantity="item.quantity"
-                    @alter="(mode) => alterQuantity(item, mode)"
-                  />
-                </div>
-
-                <CoeliacButton
-                  theme="faded"
-                  icon-only
-                  :icon="TrashIcon"
-                  size="xxl"
-                  as="button"
-                  type="button"
-                  classes="p-1! hover:text-primary-dark !shadow-none"
-                  :loading="deletingItem === item.id"
-                  @click="removeItem(item)"
-                />
-              </div>
-
-              <span
-                v-if="hasError === item.id"
-                class="text-sm font-semibold text-red"
-              >
-                Sorry, there isn't enough quantity available...
-              </span>
-            </div>
-          </div>
-          <div
-            v-if="item.add_on && item.add_on.in_basket"
-            class="relative -mt-1 flex pb-3"
-          >
-            <div class="hidden w-24 shrink-0 sm:block" />
-
-            <div class="flex flex-1 flex-col sm:ml-4">
-              <div>
-                <div
-                  class="flex items-center justify-between text-base font-medium text-gray-900"
-                >
-                  <h3 v-text="item.add_on.title" />
-
-                  <div class="flex items-center space-x-4">
-                    <p
-                      class="ml-4"
-                      v-text="`+${item.add_on.price}`"
-                    />
-
-                    <CoeliacButton
-                      theme="faded"
-                      icon-only
-                      :icon="TrashIcon"
-                      size="xxl"
-                      as="button"
-                      type="button"
-                      classes="p-1! hover:text-primary-dark !shadow-none"
-                      :loading="deletingAddOn === item.id"
-                      @click="removeAddOn(item)"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
+        <DigitalLineItem
+          v-for="item in digitalItems"
+          :key="item.id"
+          :item="item"
+        />
       </ul>
     </div>
   </div>

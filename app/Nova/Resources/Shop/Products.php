@@ -30,7 +30,6 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Number;
@@ -243,13 +242,11 @@ class Products extends Resource
 
             MorphMany::make('Prices', resource: Price::class),
 
-            HasOne::make('Digital Download Add Ons', 'addOns', resource: ProductAddOn::class),
-
             BelongsToMany::make('Categories', resource: Categories::class),
 
             MorphMany::make('Sealiac Overviews', resource: SealiacOverviews::class),
 
-            HasMany::make('Reviews', resource: OrderReviewItem::class),
+            MorphMany::make('Reviews', resource: OrderReviewItem::class),
 
             BelongsToMany::make('Search Terms', 'travelCardSearchTerms', resource: TravelCardSearchTerms::class)->fields(fn () => [
                 Boolean::make('Show on Product Page Country List', 'card_show_on_product_page'),

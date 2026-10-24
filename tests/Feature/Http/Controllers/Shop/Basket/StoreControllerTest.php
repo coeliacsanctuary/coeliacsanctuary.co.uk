@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\Basket;
 
-use App\Models\Shop\ShopProductAddOn;
-use PHPUnit\Framework\Attributes\Test;
+use App\Actions\Shop\AddDigitalCardToBasketAction;
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Actions\Shop\ResolveBasketAction;
+use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
+use Exception;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\TestTime\TestTime;
 use Tests\RequestFactories\ShopAddBasketRequestFactory;
 use Tests\TestCase;
@@ -22,6 +25,8 @@ class StoreControllerTest extends TestCase
 
     protected ShopProductVariant $variant;
 
+    protected ShopDigitalCard $digitalCard;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,6 +35,11 @@ class StoreControllerTest extends TestCase
 
         $this->product = ShopProduct::query()->first();
         $this->variant = $this->product->variants->first();
+
+        /** @var ShopDigitalCard $digitalCard */
+        $digitalCard = $this->create(ShopDigitalCard::class);
+
+        $this->digitalCard = $digitalCard;
     }
 
     #[Test]
@@ -107,20 +117,80 @@ class StoreControllerTest extends TestCase
         $this->makeRequest(['quantity' => '123e4'])->assertSessionHasErrors('quantity');
     }
 
+
+
     #[Test]
-    public function itReturnsAValidationErrorIfIncludeAddOnIsNotABoolean(): void
+    public function itReturnsAValidationErrorIfNeitherAProductOrADigitalCardIsGiven(): void
     {
-        $this->makeRequest(['include_add_on' => 'foo'])->assertSessionHasErrors('include_add_on');
-        $this->makeRequest(['include_add_on' => 123])->assertSessionHasErrors('include_add_on');
+        $this->makeDigitalRequest(['digital_card_id' => null])->assertSessionHasErrors('digital_card_id');
     }
 
     #[Test]
-    public function itReturnsAValidationErrorIfIncludeAddOnIsTrueButTheProductDoesntHaveAnAddOn(): void
+    public function itReturnsAValidationErrorWithAnInvalidDigitalCardId(): void
     {
-        $this->assertNull($this->product->addOns);
+        $this->makeDigitalRequest(['digital_card_id' => 'foo'])->assertSessionHasErrors('digital_card_id');
+        $this->makeDigitalRequest(['digital_card_id' => true])->assertSessionHasErrors('digital_card_id');
+    }
 
-        $this->makeRequest(['include_add_on' => true])
-            ->assertSessionHasErrors(['include_add_on' => 'This product does not have an add on.']);
+    #[Test]
+    public function itReturnsAValidationErrorWithADigitalCardThatDoesntExist(): void
+    {
+        $this->makeDigitalRequest(['digital_card_id' => 123])->assertSessionHasErrors('digital_card_id');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorWithADigitalCardThatIsntLive(): void
+    {
+        $card = $this->build(ShopDigitalCard::class)->notLive()->create();
+
+        $this->makeDigitalRequest(['digital_card_id' => $card->id])->assertSessionHasErrors('digital_card_id');
+    }
+
+    #[Test]
+    public function itDoesntNeedAVariantOrQuantityToAddADigitalCard(): void
+    {
+        $this->makeDigitalRequest()->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itDoesntNeedADigitalCardIdWhenDigitalCardIdsIsGiven(): void
+    {
+        $this->makeDigitalCardsRequest()->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorIfTheDigitalCardIdsArentAnArray(): void
+    {
+        $this->makeDigitalCardsRequest(['digital_card_ids' => $this->digitalCard->id])
+            ->assertSessionHasErrors('digital_card_ids');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorWithAnInvalidDigitalCardIdInTheArray(): void
+    {
+        $this->makeDigitalCardsRequest(['digital_card_ids' => ['foo']])->assertSessionHasErrors('digital_card_ids.0');
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [true]])->assertSessionHasErrors('digital_card_ids.0');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorWithADigitalCardInTheArrayThatDoesntExist(): void
+    {
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [123]])->assertSessionHasErrors('digital_card_ids.0');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorWithADigitalCardInTheArrayThatIsntLive(): void
+    {
+        $card = $this->build(ShopDigitalCard::class)->notLive()->create();
+
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [$card->id]])->assertSessionHasErrors('digital_card_ids.0');
+    }
+
+    #[Test]
+    public function itReturnsAValidationErrorIfOneOfTheGivenDigitalCardsIsInvalid(): void
+    {
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [$this->digitalCard->id, 123]])
+            ->assertSessionHasErrors('digital_card_ids.1');
     }
 
     #[Test]
@@ -153,20 +223,168 @@ class StoreControllerTest extends TestCase
     }
 
     #[Test]
+    public function itReturnsTheBasketTokenInACookieWhenAddingADigitalCard(): void
+    {
+        $request = $this->makeDigitalRequest();
+
+        $order = ShopOrder::query()->first();
+
+        $request->assertCookie('basket_token', $order->token);
+    }
+
+    #[Test]
     public function itCallsTheAddProductToBasketAction(): void
     {
-        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $includeAddOn) {
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $shouldIncreaseQuantity) {
             $this->assertTrue($this->product->is($product));
             $this->assertTrue($this->variant->is($variant));
             $this->assertEquals(1, $quantity);
-            $this->assertTrue($includeAddOn);
+            $this->assertTrue($shouldIncreaseQuantity);
 
             return true;
         }]);
 
-        $this->build(ShopProductAddOn::class)->forProduct($this->product)->create();
+        $this->makeRequest();
+    }
 
-        $this->makeRequest(['include_add_on' => true]);
+    #[Test]
+    public function itTellsTheAddProductToBasketActionNotToIncreaseTheQuantityWhenADigitalCardIsInTheSameRequest(): void
+    {
+        $orderItem = $this->create(ShopOrderItem::class);
+
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $shouldIncreaseQuantity) {
+            $this->assertFalse($shouldIncreaseQuantity);
+
+            return true;
+        }], return: $orderItem);
+
+        $this->expectAction(AddDigitalCardToBasketAction::class);
+
+        $this->makeRequest(['digital_card_id' => $this->digitalCard->id])->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itDoesntCallTheAddDigitalCardToBasketActionForAProduct(): void
+    {
+        $this->dontExpectAction(AddDigitalCardToBasketAction::class);
+
+        $this->makeRequest();
+    }
+
+    #[Test]
+    public function itCallsTheAddDigitalCardToBasketAction(): void
+    {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) {
+            $this->assertTrue(ShopOrder::query()->first()->is($order));
+            $this->assertTrue($this->digitalCard->is($card));
+            $this->assertNull($physicalItem);
+
+            return true;
+        }]);
+
+        $this->makeDigitalRequest();
+    }
+
+    #[Test]
+    public function itDoesntCallTheAddProductToBasketActionForADigitalCard(): void
+    {
+        $this->dontExpectAction(AddProductToBasketAction::class);
+
+        $this->makeDigitalRequest();
+    }
+
+    #[Test]
+    public function itPassesTheCreatedOrderItemToTheAddDigitalCardToBasketActionWhenAProductIsAddedInTheSameRequest(): void
+    {
+        $orderItem = $this->create(ShopOrderItem::class);
+
+        $this->expectAction(AddProductToBasketAction::class, return: $orderItem);
+
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use ($orderItem) {
+            $this->assertTrue($this->digitalCard->is($card));
+            $this->assertTrue($orderItem->is($physicalItem));
+
+            return true;
+        }]);
+
+        $this->makeRequest(['digital_card_id' => $this->digitalCard->id])->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itCallsTheAddDigitalCardToBasketActionForEachGivenCard(): void
+    {
+        /** @var ShopDigitalCard $secondCard */
+        $secondCard = $this->create(ShopDigitalCard::class);
+
+        $cards = [];
+
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use (&$cards) {
+            $cards[] = $card->id;
+
+            $this->assertNull($physicalItem);
+
+            return true;
+        }], once: false, then: fn ($mock) => $mock->twice());
+
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [$this->digitalCard->id, $secondCard->id]])
+            ->assertSessionHasNoErrors();
+
+        $this->assertEqualsCanonicalizing([$this->digitalCard->id, $secondCard->id], $cards);
+    }
+
+    #[Test]
+    public function itPassesTheSamePhysicalOrderItemToEveryDigitalCard(): void
+    {
+        /** @var ShopDigitalCard $secondCard */
+        $secondCard = $this->create(ShopDigitalCard::class);
+
+        $orderItem = $this->create(ShopOrderItem::class);
+
+        $this->expectAction(AddProductToBasketAction::class, return: $orderItem);
+
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use ($orderItem) {
+            $this->assertTrue($orderItem->is($physicalItem));
+
+            return true;
+        }], once: false, then: fn ($mock) => $mock->twice());
+
+        $this->makeRequest(['digital_card_ids' => [$this->digitalCard->id, $secondCard->id]])
+            ->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itOnlyAddsADigitalCardOnceIfTheSameIdIsGivenTwice(): void
+    {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card) {
+            $this->assertTrue($this->digitalCard->is($card));
+
+            return true;
+        }]);
+
+        $this->makeDigitalCardsRequest(['digital_card_ids' => [$this->digitalCard->id, $this->digitalCard->id]])
+            ->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function itAcceptsBothDigitalCardIdAndDigitalCardIdsInOneRequest(): void
+    {
+        /** @var ShopDigitalCard $secondCard */
+        $secondCard = $this->create(ShopDigitalCard::class);
+
+        $cards = [];
+
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card) use (&$cards) {
+            $cards[] = $card->id;
+
+            return true;
+        }], once: false, then: fn ($mock) => $mock->twice());
+
+        $this->makeDigitalCardsRequest([
+            'digital_card_ids' => [$secondCard->id],
+            'digital_card_id' => $this->digitalCard->id,
+        ])->assertSessionHasNoErrors();
+
+        $this->assertEqualsCanonicalizing([$secondCard->id, $this->digitalCard->id], $cards);
     }
 
     #[Test]
@@ -189,6 +407,26 @@ class StoreControllerTest extends TestCase
             ->assertRedirectToRoute('shop.category', ['category' => $this->product->categories()->first()->slug]);
     }
 
+    #[Test]
+    public function itRollsBackAndReturnsAValidationErrorIfTheProductCantBeAddedToTheBasket(): void
+    {
+        $this->expectAction(AddProductToBasketAction::class, then: fn ($mock) => $mock->andThrow(new Exception('Something went wrong')));
+
+        $this->makeRequest()->assertSessionHasErrors(['product_id' => 'There was an error adding the item to your basket.']);
+
+        $this->assertDatabaseEmpty(ShopOrder::class);
+    }
+
+    #[Test]
+    public function itRollsBackAndReturnsAValidationErrorIfTheDigitalCardCantBeAddedToTheBasket(): void
+    {
+        $this->expectAction(AddDigitalCardToBasketAction::class, then: fn ($mock) => $mock->andThrow(new Exception('Something went wrong')));
+
+        $this->makeDigitalRequest()->assertSessionHasErrors(['product_id' => 'There was an error adding the item to your basket.']);
+
+        $this->assertDatabaseEmpty(ShopOrder::class);
+    }
+
     protected function makeRequest(array $data = []): TestResponse
     {
         $data = array_merge([
@@ -197,5 +435,25 @@ class StoreControllerTest extends TestCase
         ], $data);
 
         return $this->put(route('shop.basket.add'), ShopAddBasketRequestFactory::new()->create($data));
+    }
+
+    protected function makeDigitalRequest(array $data = []): TestResponse
+    {
+        $data = array_merge(['digital_card_id' => $this->digitalCard->id], $data);
+
+        return $this->put(
+            route('shop.basket.add'),
+            ShopAddBasketRequestFactory::new()->without(['product_id', 'variant_id', 'quantity'])->create($data),
+        );
+    }
+
+    protected function makeDigitalCardsRequest(array $data = []): TestResponse
+    {
+        $data = array_merge(['digital_card_ids' => [$this->digitalCard->id]], $data);
+
+        return $this->put(
+            route('shop.basket.add'),
+            ShopAddBasketRequestFactory::new()->without(['product_id', 'variant_id', 'quantity'])->create($data),
+        );
     }
 }

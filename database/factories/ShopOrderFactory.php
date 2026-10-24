@@ -7,7 +7,6 @@ namespace Database\Factories;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
-use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPayment;
 use App\Models\Shop\ShopPaymentResponse;
 use App\Models\Shop\ShopShippingAddress;
@@ -23,6 +22,8 @@ class ShopOrderFactory extends Factory
         return [
             'token' => Str::random(8),
             'sent_abandoned_basket_email' => false,
+            'is_digital_only' => false,
+            'has_digital_items' => false,
         ];
     }
 
@@ -38,13 +39,6 @@ class ShopOrderFactory extends Factory
         return $this->state(fn () => [
             'shipping_address_id' => $address->id ?? static::factoryForModel(ShopShippingAddress::class),
         ]);
-    }
-
-    public function hasAddOns(): self
-    {
-        return $this->afterCreating(function (ShopOrder $order): void {
-            self::factoryForModel(ShopOrderItem::class)->inOrder($order)->create(['product_add_on_id' => 123]);
-        });
     }
 
     public function asBasket(): self

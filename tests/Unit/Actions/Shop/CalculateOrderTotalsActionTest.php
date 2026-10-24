@@ -6,11 +6,13 @@ namespace Tests\Unit\Actions\Shop;
 
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Actions\Shop\CalculateOrderTotalsAction;
+use App\Actions\Shop\GetOrderDigitalItemsAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Enums\Shop\PostageArea;
 use App\Enums\Shop\ShippingMethod;
 use App\Models\Shop\ShopCustomsFee;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderDigitalItem;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopPostagePrice;
@@ -26,6 +28,8 @@ use Tests\TestCase;
 class CalculateOrderTotalsActionTest extends TestCase
 {
     protected Collection $itemsCollection;
+
+    protected Collection $digitalItemsCollection;
 
     protected ShopOrder $order;
 
@@ -59,6 +63,7 @@ class CalculateOrderTotalsActionTest extends TestCase
         ]);
 
         $this->itemsCollection = $this->callAction(GetOrderItemsAction::class, $this->order)->collection;
+        $this->digitalItemsCollection = $this->callAction(GetOrderDigitalItemsAction::class, $this->order)->collection;
 
         $this->create(ShopPostagePrice::class, [
             'postage_country_area_id' => PostageArea::UK->value,
@@ -68,12 +73,29 @@ class CalculateOrderTotalsActionTest extends TestCase
         ]);
     }
 
+    protected function addDigitalItemToBasket(int $price): void
+    {
+        $this->create(ShopOrderDigitalItem::class, [
+            'order_id' => $this->order->id,
+            'digital_card_price' => $price,
+        ]);
+
+        $this->digitalItemsCollection = $this->callAction(GetOrderDigitalItemsAction::class, $this->order)->collection;
+    }
+
+    protected function removeThePhysicalItemsFromTheBasket(): void
+    {
+        $this->item->delete();
+
+        $this->itemsCollection = $this->callAction(GetOrderItemsAction::class, $this->order)->collection;
+    }
+
     #[Test]
     public function itReturnsAnArrayWithTheCorrectKeys(): void
     {
         $keys = ['subtotal', 'postage', 'fees', 'total_fees'];
 
-        $result = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        $result = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKeys($keys, $result);
@@ -83,26 +105,16 @@ class CalculateOrderTotalsActionTest extends TestCase
     public function itCalculatesTheSubtotal(): void
     {
 
-        ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertEquals(600, $subtotal);
     }
 
-    #[Test]
-    public function itIncludesProductAddOnsInTheSubtotalCalculation(): void
-    {
-        $this->item->update(['product_add_on_price' => 50]);
-        $this->itemsCollection = $this->callAction(GetOrderItemsAction::class, $this->order)->collection;
-
-        ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
-
-        $this->assertEquals(650, $subtotal);
-    }
 
     #[Test]
     public function itCalculatesThePostagePrice(): void
     {
-        ['postage' => $postage] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        ['postage' => $postage] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertEquals(150, $postage);
     }
@@ -123,7 +135,7 @@ class CalculateOrderTotalsActionTest extends TestCase
 
         $this->order->update(['postage_country_id' => $country->id]);
 
-        ['postage' => $price] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        ['postage' => $price] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertEquals(300, $price);
     }
@@ -138,7 +150,7 @@ class CalculateOrderTotalsActionTest extends TestCase
             'price' => 100,
         ]);
 
-        ['postage' => $price] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        ['postage' => $price] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertEquals(100, $price);
     }
@@ -165,7 +177,7 @@ class CalculateOrderTotalsActionTest extends TestCase
 
         $this->itemsCollection = $this->callAction(GetOrderItemsAction::class, $this->order)->collection;
 
-        ['postage' => $price] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        ['postage' => $price] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertEquals(300, $price);
     }
@@ -179,13 +191,13 @@ class CalculateOrderTotalsActionTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Can not calculate postage');
 
-        $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
     }
 
     #[Test]
     public function itReturnsAnEmptyCollectionOfCustomsFeesIfNoneAreApplicable(): void
     {
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertInstanceOf(Collection::class, $totals['fees']);
         $this->assertEmpty($totals['fees']);
@@ -197,7 +209,7 @@ class CalculateOrderTotalsActionTest extends TestCase
     {
         $this->create(ShopCustomsFee::class);
 
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertInstanceOf(Collection::class, $totals['fees']);
         $this->assertEmpty($totals['fees']);
@@ -212,7 +224,7 @@ class CalculateOrderTotalsActionTest extends TestCase
             'fee' => 123,
         ]);
 
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertInstanceOf(Collection::class, $totals['fees']);
         $this->assertCount(1, $totals['fees']);
@@ -234,11 +246,83 @@ class CalculateOrderTotalsActionTest extends TestCase
             'fee' => 75,
         ]);
 
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->order->postageCountry);
+        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertInstanceOf(Collection::class, $totals['fees']);
         $this->assertCount(2, $totals['fees']);
 
         $this->assertEquals(125, $totals['total_fees']);
+    }
+
+    #[Test]
+    public function itAddsTheDigitalItemPricesToTheSubtotal(): void
+    {
+        $this->addDigitalItemToBasket(250);
+
+        ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
+
+        $this->assertEquals(850, $subtotal);
+    }
+
+    #[Test]
+    public function itAddsEveryDigitalItemToTheSubtotal(): void
+    {
+        $this->addDigitalItemToBasket(250);
+        $this->addDigitalItemToBasket(175);
+
+        ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
+
+        $this->assertEquals(1025, $subtotal);
+    }
+
+    #[Test]
+    public function itDoesntChangeThePostagePriceWhenDigitalItemsAreInTheBasket(): void
+    {
+        $this->addDigitalItemToBasket(250);
+
+        ['postage' => $postage] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
+
+        $this->assertEquals(150, $postage);
+    }
+
+    #[Test]
+    public function itCalculatesTheSubtotalForABasketOfOnlyDigitalItems(): void
+    {
+        $this->addDigitalItemToBasket(250);
+        $this->removeThePhysicalItemsFromTheBasket();
+
+        ['subtotal' => $subtotal] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
+
+        $this->assertEquals(250, $subtotal);
+    }
+
+    #[Test]
+    public function itDoesntChargePostageForABasketOfOnlyDigitalItems(): void
+    {
+        $this->addDigitalItemToBasket(250);
+        $this->removeThePhysicalItemsFromTheBasket();
+
+        ShopPostagePrice::query()->delete();
+
+        ['postage' => $postage] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
+
+        $this->assertEquals(0, $postage);
+    }
+
+    #[Test]
+    public function itStillReturnsCustomsFeesForABasketOfOnlyDigitalItems(): void
+    {
+        $this->create(ShopCustomsFee::class, [
+            'postage_country_id' => $this->order->postageCountry->id,
+            'fee' => 123,
+        ]);
+
+        $this->addDigitalItemToBasket(250);
+        $this->removeThePhysicalItemsFromTheBasket();
+
+        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
+
+        $this->assertCount(1, $totals['fees']);
+        $this->assertEquals(123, $totals['total_fees']);
     }
 }

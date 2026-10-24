@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\Shop\ShopCustomer;
+
 return [
 
     /*
@@ -42,6 +44,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'customers' => [
+            'driver' => 'session',
+            'provider' => 'customers',
+        ],
     ],
 
     /*
@@ -65,6 +72,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => ShopCustomer::class,
         ],
 
         // 'users' => [

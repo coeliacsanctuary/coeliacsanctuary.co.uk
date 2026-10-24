@@ -8,10 +8,13 @@ use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Shop\GetBestSellingProductsForShopIndexAction;
 use App\Actions\Shop\GetRecentReviewsForShopIndexAction;
 use App\DataObjects\BreadcrumbItemData;
+use App\Enums\Shop\DigitalCardType;
 use App\Http\Response\Inertia;
 use App\Models\Shop\ShopCategory;
+use App\Models\Shop\ShopDigitalCardType;
 use App\Resources\Shop\ShopCategoryIndexResource;
 use App\Schema\ShopCategoryListSchema;
+use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Inertia\Response;
 
@@ -23,11 +26,18 @@ class IndexController
         GetBestSellingProductsForShopIndexAction $getBestSellingProductsForShopIndexAction,
         GetRecentReviewsForShopIndexAction $getRecentReviewsForShopIndexAction,
     ): Response {
-        $categories = ShopCategory::query()
+        $allCategories = ShopCategory::query()
             ->with(['media', 'products' => fn (Relation $query) => $query->withCount('reviews')->with('prices')])
             ->withCount('products')
             ->orderBy('title')
             ->get();
+
+        $travelCardCategories = $allCategories->filter(fn (ShopCategory $category) => Helpers::isTravelCard($category));
+        $everythingElse = $allCategories->reject(fn (ShopCategory $category) => Helpers::isTravelCard($category));
+
+        $digitalCardCategories = config('coeliac.digital_cards_enabled')
+            ? ShopDigitalCardType::query()->with(['media'])->get()
+            : collect();
 
         return $inertia
             ->title('Gluten Free Travel Translation Cards & Stickers')
@@ -38,13 +48,22 @@ class IndexController
                 'gluten free stickers', 'gluten free waterproof stickers', 'coeliac shop',
             ])
             ->metaImage($getOpenGraphImageForRouteAction->handle('shop'))
-            ->schema(ShopCategoryListSchema::make($categories)->toScript())
+            ->schema(ShopCategoryListSchema::make($allCategories)->toScript())
             ->breadcrumbs(collect([
                 new BreadcrumbItemData('Coeliac Sanctuary', route('home')),
                 new BreadcrumbItemData('Shop'),
             ]))
             ->render('Shop/Index', [
-                'categories' => ShopCategoryIndexResource::collection($categories),
+                'categories' => [
+                    'travelCards' => ShopCategoryIndexResource::collection($travelCardCategories),
+                    'everythingElse' => ShopCategoryIndexResource::collection($everythingElse),
+                ],
+                'digitalCards' => $digitalCardCategories->map(fn (ShopDigitalCardType $type) => [
+                    'id' => $type->id,
+                    'pageTitle' => $type->title,
+                    'link' => DigitalCardType::from($type->id)->route(),
+                    'image' => $type->main_image_as_webp ?? $type->main_image,
+                ]),
                 'popularProducts' => fn () => $getBestSellingProductsForShopIndexAction->handle(),
                 'reviews' => fn () => $getRecentReviewsForShopIndexAction->handle(),
             ]);

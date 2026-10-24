@@ -22,9 +22,6 @@ class ShopOrderItemFactory extends Factory
             'product_variant_id' => Factory::factoryForModel(ShopProductVariant::class),
             'product_title' => $this->faker->words(3, true),
             'product_price' => $this->faker->numberBetween(100, 500),
-            'product_add_on_id' => null,
-            'product_add_on_title' => null,
-            'product_add_on_price' => null,
             'quantity' => 1,
         ];
     }
