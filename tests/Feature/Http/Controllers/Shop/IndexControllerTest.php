@@ -103,6 +103,8 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itReturnsTheLiveDigitalCardTypes(): void
     {
+        config(['coeliac.digital_cards_enabled' => true]);
+
         $this->get(route('shop.index'))
             ->assertInertia(
                 fn (Assert $page) => $page
@@ -122,7 +124,18 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itDoesntReturnADigitalCardTypeThatIsntLive(): void
     {
+        config(['coeliac.digital_cards_enabled' => true]);
+
         $this->cardType->update(['live' => false]);
+
+        $this->get(route('shop.index'))
+            ->assertInertia(fn (Assert $page) => $page->has('digitalCards', 0)->etc());
+    }
+
+    #[Test]
+    public function itDoesntReturnAnyDigitalCardTypesWhenDigitalCardsAreDisabled(): void
+    {
+        config(['coeliac.digital_cards_enabled' => false]);
 
         $this->get(route('shop.index'))
             ->assertInertia(fn (Assert $page) => $page->has('digitalCards', 0)->etc());

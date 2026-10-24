@@ -33,7 +33,7 @@ class ShopOrderItemResource extends JsonResource
             'line_price' => Helpers::formatMoney(Money::GBP($this->product_price * $this->quantity)),
             'quantity' => $this->quantity,
             'image' => $product->main_image_as_webp ?? $product->main_image,
-            'digitalBundles' => config('coeliac.digital_cards_enabled') && $this->whenLoaded('digitalBundles', fn () => ShopOrderDigitalItemResource::collection($this->digitalBundles)),
+            'digitalBundles' => config('coeliac.digital_cards_enabled') ? $this->whenLoaded('digitalBundles', fn () => ShopOrderDigitalItemResource::collection($this->digitalBundles)) : null,
             'digitalCards' => config('coeliac.digital_cards_enabled') && $this->product->relationLoaded('digitalCards') ? ShopProductDigitalBundleResource::collection($this->product->digitalCards) : null,
         ];
     }

@@ -61,8 +61,11 @@ const faqs: ArticleFaq[] = [
   },
   {
     question: 'How long does delivery take?',
-    answer:
-      "Physical cards are dispatched within two working days and go First Class, with Royal Mail aiming to deliver most of them the next working day. Digital cards aren't posted at all — you'll get a link to view them as soon as you've paid, so they're the answer if you're flying sooner than the post will manage.",
+    answer: `Physical cards are dispatched within two working days and go First Class, with Royal Mail aiming to deliver most of them the next working day.${
+      props.digitalCardsEnabled
+        ? " Digital cards aren't posted at all — you'll get a link to view them as soon as you've paid, so they're the answer if you're flying sooner than the post will manage."
+        : ''
+    }`,
   },
 ].filter((card) => card !== undefined);
 </script>

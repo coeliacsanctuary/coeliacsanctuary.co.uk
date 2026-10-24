@@ -35,9 +35,9 @@ class IndexController
         $travelCardCategories = $allCategories->filter(fn (ShopCategory $category) => Helpers::isTravelCard($category));
         $everythingElse = $allCategories->reject(fn (ShopCategory $category) => Helpers::isTravelCard($category));
 
-        $digitalCardCategories = ShopDigitalCardType::query()
-            ->with(['media'])
-            ->get();
+        $digitalCardCategories = config('coeliac.digital_cards_enabled')
+            ? ShopDigitalCardType::query()->with(['media'])->get()
+            : collect();
 
         return $inertia
             ->title('Gluten Free Travel Translation Cards & Stickers')
