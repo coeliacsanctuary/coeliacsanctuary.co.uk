@@ -31,7 +31,7 @@ return [
         * of the two needs to be set.
         */
         'certificate' => env('MOBILE_PASS_APPLE_CERTIFICATE'),
-        'certificate_path' => base_path(env('MOBILE_PASS_APPLE_CERTIFICATE_PATH', '')),
+        'certificate_path' => env('MOBILE_PASS_APPLE_CERTIFICATE_PATH', ''),
         'certificate_password' => env('MOBILE_PASS_APPLE_CERTIFICATE_PASSWORD'),
 
         'apple_push_base_url' => 'https://api.push.apple.com/3/device',
@@ -60,7 +60,7 @@ return [
         * Exactly one of the two needs to be set.
         */
         'service_account_key' => env('MOBILE_PASS_GOOGLE_KEY'),
-        'service_account_key_path' => base_path(env('MOBILE_PASS_GOOGLE_KEY_PATH', '')),
+        'service_account_key_path' => env('MOBILE_PASS_GOOGLE_KEY_PATH', ''),
 
         'origins' => [env('APP_URL')],
 
