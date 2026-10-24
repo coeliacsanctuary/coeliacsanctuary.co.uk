@@ -23,8 +23,9 @@ use App\Http\Controllers\TermsOfUse\IndexController as TermsOfUseIndexController
 use App\Http\Controllers\WorkWithUs\IndexController as WorkWithUsIndexController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
-$root = config('app.url');
+$root = Str::after(config()->string('app.url'), 'www.');
 
 Route::prefix('blog')->group(base_path('routes/blogs/web.php'));
 Route::prefix('collection')->group(base_path('routes/collections/web.php'));
