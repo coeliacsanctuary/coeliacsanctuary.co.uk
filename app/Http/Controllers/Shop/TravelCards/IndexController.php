@@ -59,7 +59,7 @@ class IndexController
                 'digitalCardsEnabled' => config('coeliac.digital_cards_enabled'),
                 'destinations' => fn () => $getPopularTravelCardDestinationsAction->handle(),
                 'categories' => fn () => $getTravelCardCategoriesAction->handle(),
-                'digitalCardTypes' => fn () => $getTravelCardDigitalTypesAction->handle(),
+                'digitalCardTypes' => fn () => config('coeliac.digital_cards_enabled') ? $getTravelCardDigitalTypesAction->handle() : collect(),
                 'reviews' => fn () => $getTravelCardReviewsAction->handle(),
             ]);
     }
