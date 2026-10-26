@@ -13,6 +13,12 @@ class HttpClientServiceProvider extends ServiceProvider
     {
         $this->registerGetAddress();
         $this->registerIdealPostcodes();
+        $this->registerFinanceService();
+    }
+
+    protected function registerFinanceService(): void
+    {
+        Http::macro('financeService', fn () => Http::baseUrl(config()->string('services.finance.url'))->withToken(config()->string('services.finance.key')));
     }
 
     protected function registerIdealPostcodes(): void

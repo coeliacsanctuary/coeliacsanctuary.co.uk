@@ -43,4 +43,8 @@ return [
         'secret' => env('STRIPE_SECRET_KEY'),
     ],
 
+    'finance' => [
+        'url' => env('FINANCE_SERVICE_URL'),
+        'key' => env('FINANCE_SERVICE_KEY'),
+    ],
 ];

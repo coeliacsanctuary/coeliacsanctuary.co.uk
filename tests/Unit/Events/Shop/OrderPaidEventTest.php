@@ -7,10 +7,12 @@ namespace Tests\Unit\Events\Shop;
 use App\Events\Shop\OrderPaidEvent;
 use App\Listeners\Shop\SendMyTravelCardsInvitationIfRequired;
 use App\Listeners\Shop\SendOrderConfirmationMails;
+use App\Listeners\Shop\SendOrderToFinanceService;
 use App\Listeners\Shop\SubscribeToNewsletterIfRequired;
 use App\Listeners\Shop\SyncProductsToGoogleMerchantOnOrderPaid;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -24,6 +26,7 @@ class OrderPaidEventTest extends TestCase
         parent::setUp();
 
         Notification::fake();
+        Http::fake();
 
         $this->withAdminUser();
 
@@ -68,6 +71,16 @@ class OrderPaidEventTest extends TestCase
     public function itIsHandledByTheSyncProductsToGoogleMerchantOnOrderPaidListener(): void
     {
         $this->mock(SyncProductsToGoogleMerchantOnOrderPaid::class)
+            ->shouldReceive('handle')
+            ->once();
+
+        OrderPaidEvent::dispatch($this->order);
+    }
+
+    #[Test]
+    public function itIsHandledByTheSendOrderToFinanceServiceListener(): void
+    {
+        $this->mock(SendOrderToFinanceService::class)
             ->shouldReceive('handle')
             ->once();
 
