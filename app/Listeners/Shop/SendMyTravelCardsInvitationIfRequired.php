@@ -9,8 +9,9 @@ use App\Events\Shop\OrderPaidEvent;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
 use App\Notifications\Shop\MyTravelCards\MyTravelCardsInvitationNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendMyTravelCardsInvitationIfRequired
+class SendMyTravelCardsInvitationIfRequired implements ShouldQueue
 {
     public function handle(OrderPaidEvent $event): void
     {

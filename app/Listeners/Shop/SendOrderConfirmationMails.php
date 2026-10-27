@@ -10,8 +10,9 @@ use App\Models\Shop\ShopOrder;
 use App\Notifications\Shop\NewOrderAlertNotification;
 use App\Notifications\Shop\OrderConfirmedNotification;
 use App\Support\Helpers;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendOrderConfirmationMails
+class SendOrderConfirmationMails implements ShouldQueue
 {
     public function handle(OrderPaidEvent $event): void
     {

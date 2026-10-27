@@ -7,9 +7,10 @@ namespace App\Listeners\Shop;
 use App\Actions\Shop\FinanceService\SendOrderToFinanceServiceAction;
 use App\Events\Shop\OrderPaidEvent;
 use Exception;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
-class SendOrderToFinanceService
+class SendOrderToFinanceService implements ShouldQueue
 {
     public function handle(OrderPaidEvent $event): void
     {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Actions\Shop\FinanceService\SendOrderToFinanceServiceAction;
 use App\Events\ContactFormSubmittedEvent;
 use App\Events\Shop\OrderCancelledEvent;
 use App\Events\Shop\OrderPaidEvent;
@@ -14,6 +13,7 @@ use App\Listeners\Shop\SendMyTravelCardsInvitationIfRequired;
 use App\Listeners\Shop\SendOrderCancellationNotification;
 use App\Listeners\Shop\SendOrderConfirmationMails;
 use App\Listeners\Shop\SendOrderShippedNotification;
+use App\Listeners\Shop\SendOrderToFinanceService;
 use App\Listeners\Shop\SubscribeToNewsletterIfRequired;
 use App\Listeners\Shop\SyncProductsToGoogleMerchantOnOrderPaid;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -26,7 +26,7 @@ class EventServiceProvider extends ServiceProvider
             SendMyTravelCardsInvitationIfRequired::class,
             SubscribeToNewsletterIfRequired::class,
             SyncProductsToGoogleMerchantOnOrderPaid::class,
-            SendOrderToFinanceServiceAction::class,
+            SendOrderToFinanceService::class,
         ],
         OrderShippedEvent::class => [SendOrderShippedNotification::class],
         OrderCancelledEvent::class => [SendOrderCancellationNotification::class],
