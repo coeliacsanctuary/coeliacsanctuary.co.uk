@@ -53,7 +53,7 @@ class SendOrderToFinanceServiceAction
         }
 
         $payload = [
-            'order_id' => $order->token,
+            'order_id' => $order->order_key,
             'ordered_at' => $paymentResponse->created_at->toIso8601String(),
             'stripe_charge_id' => $paymentResponse->charge_id,
             'customer' => [
