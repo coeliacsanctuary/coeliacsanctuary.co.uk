@@ -16,6 +16,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Attributes\Provider;
 use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasProviderOptions;
 use Laravel\Ai\Contracts\HasStructuredOutput;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Contracts\Tool;
@@ -27,7 +28,7 @@ use Stringable;
 
 #[Provider(Lab::Anthropic)]
 #[Model('claude-opus-4-6')]
-class PrepareRecommendedEatery implements Agent, HasStructuredOutput, HasTools
+class PrepareRecommendedEatery implements Agent, HasProviderOptions, HasStructuredOutput, HasTools
 {
     use Promptable;
 
@@ -91,5 +92,15 @@ class PrepareRecommendedEatery implements Agent, HasStructuredOutput, HasTools
             'explanation' => $schema->string()->required()->description('Please include your reasoning, sources, etc that lead you to build the data out.'),
             'is_eligible' => $schema->boolean()->required()->description('Whether the recommendation is eligible for adding to the website, if you found no proof that it does gluten free, then this would be a false.'),
         ];
+    }
+
+    public function providerOptions(Lab|string $provider): array
+    {
+        return match ($provider) {
+            Lab::Anthropic => [
+                'cache_control' => ['type' => 'ephemeral'],
+            ],
+            default => [],
+        };
     }
 }
