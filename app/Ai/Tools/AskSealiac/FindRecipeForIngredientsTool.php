@@ -36,7 +36,7 @@ class FindRecipeForIngredientsTool extends BaseTool
     {
         return Recipe::query()
             ->where(
-                fn (Builder $builder) => $request /** @phpstan-ignore-line */
+                fn (Builder $builder) => $request
                     ->collect('ingredients')
                     ->each(fn (string $ingredient) => $builder->orWhereLike('ingredients', "%{$ingredient}%"))
             )

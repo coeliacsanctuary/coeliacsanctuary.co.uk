@@ -46,6 +46,10 @@ class MigrateEateriesSocialUrlsCommand extends Command
     {
         $website = $eatery->website;
 
+        if ( ! $website) {
+            return;
+        }
+
         if ($this->isFacebookUrl($website)) {
             $eatery->updateQuietly(['facebook_url' => $website, 'website' => null]);
 

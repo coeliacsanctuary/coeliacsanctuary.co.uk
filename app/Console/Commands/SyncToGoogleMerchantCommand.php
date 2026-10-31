@@ -38,7 +38,6 @@ class SyncToGoogleMerchantCommand extends Command
 
         if ($selection === 'all' || $selection === 'products') {
             ShopProduct::query()
-                /** @phpstan-ignore-next-line */
                 ->whereHas('variants', fn (Builder $q) => $q->where('live', true))
                 ->lazy()
                 ->each(function (ShopProduct $product): void {

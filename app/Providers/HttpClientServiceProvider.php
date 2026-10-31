@@ -18,9 +18,11 @@ class HttpClientServiceProvider extends ServiceProvider
 
     protected function registerFinanceService(): void
     {
-        Http::macro('financeService', fn () => Http::baseUrl(config()->string('services.finance.url'))
-            ->withToken(config()->string('services.finance.key'))
-            ->throw()
+        Http::macro(
+            'financeService',
+            fn () => Http::baseUrl(config()->string('services.finance.url'))
+                ->withToken(config()->string('services.finance.key'))
+                ->throw()
         );
     }
 

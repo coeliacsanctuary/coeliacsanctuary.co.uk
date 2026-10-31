@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Contracts\Recipes;
 
+use App\Models\Recipes\Recipe;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @template TModel of Model
@@ -15,6 +17,9 @@ interface FilterableRecipeRelation
 {
     /** @return Builder<TModel>  */
     public static function query();
+
+    /** @return BelongsToMany<Recipe, TModel> */
+    public function recipes(): BelongsToMany;
 
     /**
      * @param Builder<TModel> $query

@@ -13,8 +13,10 @@ use App\Ai\Tools\PrepareRecommendedEatery\GeoLookup;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchArea;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchCounty;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchTown;
+use Laravel\Ai\Contracts\HasProviderOptions;
 use Laravel\Ai\Contracts\HasStructuredOutput;
 use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Providers\Tools\WebFetch;
 use Laravel\Ai\Providers\Tools\WebSearch;
 use PHPUnit\Framework\Attributes\Test;
@@ -75,6 +77,27 @@ class PrepareRecommendedEateryTest extends TestCase
     public function itImplementsHasStructuredOutput(): void
     {
         $this->assertInstanceOf(HasStructuredOutput::class, $this->agent);
+    }
+
+    #[Test]
+    public function itImplementsHasProviderOptions(): void
+    {
+        $this->assertInstanceOf(HasProviderOptions::class, $this->agent);
+    }
+
+    #[Test]
+    public function itEnablesPromptCachingForAnthropic(): void
+    {
+        $this->assertSame(
+            ['cache_control' => ['type' => 'ephemeral']],
+            $this->agent->providerOptions(Lab::Anthropic),
+        );
+    }
+
+    #[Test]
+    public function itHasNoProviderOptionsForOtherProviders(): void
+    {
+        $this->assertSame([], $this->agent->providerOptions(Lab::OpenAI));
     }
 
     #[Test]

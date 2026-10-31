@@ -8,21 +8,27 @@ use App\Ai\State\ChatContext;
 use App\Models\AskSealiacChat;
 use Closure;
 use Illuminate\Http\Request;
-use Laravel\Ai\Prompts\AgentPrompt;
-use Laravel\Ai\Responses\AgentResponse;
+use Laravel\Ai\Gateway\StepResponse;
+use Laravel\Ai\Messages\Message;
+use Laravel\Ai\Messages\UserMessage;
+use Laravel\Ai\PendingStep;
 
 class LogChatMiddleware
 {
-    public function handle(AgentPrompt $prompt, Closure $next): mixed
+    public function handle(PendingStep $step, Closure $next): mixed
     {
-        $chat = AskSealiacChat::query()->firstOrCreate([
-            'session_id' => app(Request::class)->session()->getId(),
-            'chat_id' => ChatContext::getChatId(),
-        ]);
+        return $next($step)->then(function (StepResponse $response) use ($step): void {
+            if ( ! $this->isFinalResponse($step, $response)) {
+                return;
+            }
 
-        return $next($prompt)->then(function (AgentResponse $response) use ($prompt, $chat): void {
+            $chat = AskSealiacChat::query()->firstOrCreate([
+                'session_id' => app(Request::class)->session()->getId(),
+                'chat_id' => ChatContext::getChatId(),
+            ]);
+
             $chat->messages()->create([
-                'prompt' => $prompt->prompt,
+                'prompt' => collect($step->messages)->last(fn (Message $message) => $message instanceof UserMessage)?->content,
                 'response' => $response->text,
                 'tool_uses' => ChatContext::getToolUses(),
             ]);
@@ -31,5 +37,10 @@ class LogChatMiddleware
 
             ChatContext::clear();
         });
+    }
+
+    protected function isFinalResponse(PendingStep $step, StepResponse $response): bool
+    {
+        return $response->toolCalls === [] || $step->isFinalStep;
     }
 }

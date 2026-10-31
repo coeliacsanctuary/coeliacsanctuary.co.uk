@@ -11,6 +11,7 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPaymentRefund;
 use App\Notifications\Shop\OrderRefundNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
@@ -34,6 +35,7 @@ class RefundOrderActionTest extends TestCase
 
         Notification::fake();
         Mail::fake();
+        Http::fake();
     }
 
     #[Test]

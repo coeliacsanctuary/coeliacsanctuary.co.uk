@@ -451,13 +451,6 @@
  */
 
 /*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <http://feross.org>
- * @license  MIT
- */
-
-/*!
  * vuex v4.1.0
  * (c) 2022 Evan You
  * @license MIT
@@ -475,7 +468,7 @@
 
 /*! @license DOMPurify 3.4.2 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.2/LICENSE */
 
-/*! Axios v1.18.1 Copyright (c) 2026 Matt Zabriskie and contributors */
+/*! Axios v1.20.0 Copyright (c) 2026 Matt Zabriskie and contributors */
 
 /*! Hammer.JS - v2.0.7 - 2016-04-22
  * http://hammerjs.github.io/
@@ -483,34 +476,32 @@
  * Copyright (c) 2016 Jorik Tangelder;
  * Licensed under the MIT license */
 
-/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
-
 /**
-* @vue/compiler-core v3.5.39
+* @vue/compiler-core v3.5.43
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
 
 /**
-* @vue/compiler-dom v3.5.39
+* @vue/compiler-dom v3.5.43
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
 
 /**
-* @vue/runtime-core v3.5.39
+* @vue/runtime-core v3.5.43
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
 
 /**
-* @vue/runtime-dom v3.5.39
+* @vue/runtime-dom v3.5.43
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
 
 /**
-* @vue/shared v3.5.39
+* @vue/shared v3.5.43
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
