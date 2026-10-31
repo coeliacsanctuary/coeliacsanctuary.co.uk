@@ -53,7 +53,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
         Http::assertSent(function (Request $request) {
-            $this->assertEquals($this->order->token, $request['order_id']);
+            $this->assertEquals($this->order->order_key, $request['order_id']);
             $this->assertEquals($this->order->created_at->toIso8601String(), $request['ordered_at']);
             $this->assertEquals($this->order->payment->response->charge_id, $request['stripe_charge_id']);
             $this->assertEquals(1500, $request['subtotal']);

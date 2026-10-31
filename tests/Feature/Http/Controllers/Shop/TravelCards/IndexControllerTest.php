@@ -166,6 +166,8 @@ class IndexControllerTest extends TestCase
             return: collect([['title' => 'Digital Coeliac Gluten Free Travel Cards']]),
         );
 
+        config()->set('coeliac.digital_cards_enabled', true);
+
         $this->get(route('shop.travel-cards.landing-page'))
             ->assertInertia(fn (Assert $page) => $page
                 ->where(
