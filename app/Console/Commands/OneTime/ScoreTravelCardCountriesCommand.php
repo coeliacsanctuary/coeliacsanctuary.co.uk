@@ -131,7 +131,7 @@ class ScoreTravelCardCountriesCommand extends Command
     {
         $product->load([
             'travelCardSearchTerms' => fn (Relation $query) => $query
-                ->where('type', 'country') /** @phpstan-ignore-line */
+                ->where('type', 'country')
                 ->where('shop_product_assigned_travel_card_search_terms.card_show_on_product_page', true),
         ]);
 

@@ -49,7 +49,7 @@ class ShowController
 
             $product->load([
                 'digitalCards', 'digitalCards.price',
-                'travelCardSearchTerms' => fn (Relation $builder) => $builder->where('type', 'country'), /** @phpstan-ignore-line  */
+                'travelCardSearchTerms' => fn (Relation $builder) => $builder->where('type', 'country'),
             ]);
         }
 

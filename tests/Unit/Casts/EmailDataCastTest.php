@@ -234,10 +234,18 @@ class EmailDataCastTest extends TestCase
     #[Test]
     public function itDropsValuesThatArentScalarsOrKnownModelKeys(): void
     {
-        $data = $this->castGet(['meta' => ['foo' => 'bar'], 'reason' => null]);
+        $data = $this->castGet(['meta' => ['foo' => 'bar']]);
 
         $this->assertArrayNotHasKey('meta', $data);
-        $this->assertArrayNotHasKey('reason', $data);
+    }
+
+    #[Test]
+    public function itPassesThroughNullValues(): void
+    {
+        $data = $this->castGet(['reason' => null]);
+
+        $this->assertArrayHasKey('reason', $data);
+        $this->assertNull($data['reason']);
     }
 
     #[Test]

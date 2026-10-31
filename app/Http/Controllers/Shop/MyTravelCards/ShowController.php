@@ -23,7 +23,7 @@ class ShowController
         /** @var ShopOrder $order */
         $order = $customer
             ->orders()
-            ->whereHas('digitalItems', fn (Builder $query) => $query->where('digital_card_id', $card->id)) /** @phpstan-ignore-line */
+            ->whereHas('digitalItems', fn (Builder $query) => $query->where('digital_card_id', $card->id))
             ->first();
 
         return $inertia

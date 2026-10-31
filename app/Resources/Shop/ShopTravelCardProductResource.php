@@ -59,12 +59,12 @@ class ShopTravelCardProductResource extends ShopProductResource
 
                     $both->each(function (TravelCardSearchTerm $term) use ($keys, $collection): void {
                         foreach ($keys as $key) {
-                            $collection->has($key) ?: $collection->put($key, collect()); /** @phpstan-ignore-line */
+                            $collection->has($key) ?: $collection->put($key, collect());
 
                             /** @var Collection<int, TravelCardSearchTerm> $currentItems */
                             $currentItems = $collection->get($key);
 
-                            $collection->put($key, $currentItems->push($term)); /** @phpstan-ignore-line */
+                            $collection->put($key, $currentItems->push($term));
                         }
                     });
                 }

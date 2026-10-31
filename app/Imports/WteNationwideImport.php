@@ -22,7 +22,7 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
     use Importable;
 
     /**
-     * @param  Collection<int, Collection<int, array>>  $collection
+     * @param  Collection<int, Collection<string, mixed>>  $collection
      * @return Collection<int, Collection<int|string, mixed>>
      */
     public function collection(Collection $collection): Collection
@@ -181,7 +181,7 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
     }
 
     /**
-     * @param  Collection<int, array>  $item
+     * @param  Collection<string, mixed>  $item
      * @return array<string, mixed>
      */
     protected function buildBaseObject(Collection $item): array
@@ -210,7 +210,6 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
             'address' => [
                 'raw' => $item->get('address'),
                 'formatted' => str_replace(', ', "\n", $item->get('address', '')),
-                /** @phpstan-ignore-next-line  */
                 'bits' => explode(', ', $item->get('address', '')),
             ],
             'lat' => '',
