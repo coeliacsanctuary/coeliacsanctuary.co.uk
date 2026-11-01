@@ -21,10 +21,6 @@ class ShopDigitalCardType extends Model implements HasMedia
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
-    protected $casts = [
-        'live' => 'bool',
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
@@ -65,5 +61,11 @@ class ShopDigitalCardType extends Model implements HasMedia
             ->performOnCollections('primary')
             ->nonQueued()
             ->format('webp');
+    }
+    protected function casts(): array
+    {
+        return [
+            'live' => 'bool',
+        ];
     }
 }

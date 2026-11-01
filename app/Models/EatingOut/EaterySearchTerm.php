@@ -17,11 +17,6 @@ use Illuminate\Support\Str;
 #[Table(name: 'wheretoeat_search_terms')]
 class EaterySearchTerm extends Model
 {
-    protected $casts = [
-        'range' => 'int',
-        'from_user_location' => 'bool',
-    ];
-
     protected static function boot(): void
     {
         parent::boot();
@@ -54,5 +49,12 @@ class EaterySearchTerm extends Model
     public function searches(): HasMany
     {
         return $this->hasMany(EaterySearch::class, 'search_term_id');
+    }
+    protected function casts(): array
+    {
+        return [
+            'range' => 'int',
+            'from_user_location' => 'bool',
+        ];
     }
 }

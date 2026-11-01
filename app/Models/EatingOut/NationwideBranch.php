@@ -66,12 +66,6 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
     use HasSealiacOverview;
     use Searchable;
 
-    protected $casts = [
-        'lat' => 'float',
-        'lng' => 'float',
-        'live' => 'bool',
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope('wheretoeat_nationwide_branches.live'));
@@ -310,5 +304,13 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
     protected function cacheKey(): string
     {
         return 'eating-out';
+    }
+    protected function casts(): array
+    {
+        return [
+            'lat' => 'float',
+            'lng' => 'float',
+            'live' => 'bool',
+        ];
     }
 }

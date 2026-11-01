@@ -12,12 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class ShopDiscountCode extends Model
 {
-    protected $casts = [
-        'type_id' => DiscountCodeType::class,
-        'start_at' => 'datetime',
-        'end_at' => 'datetime',
-    ];
-
     /** @return BelongsTo<ShopDiscountCodeType, $this> */
     public function type(): BelongsTo
     {
@@ -41,5 +35,13 @@ class ShopDiscountCode extends Model
     public function used(): HasMany
     {
         return $this->hasMany(ShopDiscountCodesUsed::class, 'discount_id');
+    }
+    protected function casts(): array
+    {
+        return [
+            'type_id' => DiscountCodeType::class,
+            'start_at' => 'datetime',
+            'end_at' => 'datetime',
+        ];
     }
 }

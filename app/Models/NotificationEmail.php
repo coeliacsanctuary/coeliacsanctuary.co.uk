@@ -12,10 +12,6 @@ use Illuminate\Support\Str;
 
 class NotificationEmail extends Model
 {
-    protected $casts = [
-        'data' => EmailDataCast::class,
-    ];
-
     protected static function booted(): void
     {
         self::creating(function (self $notificationEmail): NotificationEmail {
@@ -31,5 +27,11 @@ class NotificationEmail extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(ShopCustomer::class, 'user_id');
+    }
+    protected function casts(): array
+    {
+        return [
+            'data' => EmailDataCast::class,
+        ];
     }
 }

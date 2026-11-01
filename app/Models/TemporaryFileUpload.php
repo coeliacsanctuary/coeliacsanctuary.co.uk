@@ -11,8 +11,6 @@ use Illuminate\Support\Str;
 #[WithoutIncrementing]
 class TemporaryFileUpload extends Model
 {
-    protected $casts = ['delete_at' => 'datetime'];
-
     protected $keyType = 'string';
 
     protected static function booted(): void
@@ -22,5 +20,9 @@ class TemporaryFileUpload extends Model
 
             return $model;
         });
+    }
+    protected function casts(): array
+    {
+        return ['delete_at' => 'datetime'];
     }
 }

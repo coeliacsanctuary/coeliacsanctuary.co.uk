@@ -44,12 +44,6 @@ class Collection extends Model implements HasMedia
 
     protected $with = ['groups', 'groups.items'];
 
-    protected $casts = [
-        'display_on_homepage' => 'bool',
-        'remove_from_homepage' => 'datetime',
-        'display_type' => CollectionDisplayType::class,
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
@@ -115,5 +109,13 @@ class Collection extends Model implements HasMedia
     protected function cacheKey(): string
     {
         return 'collections';
+    }
+    protected function casts(): array
+    {
+        return [
+            'display_on_homepage' => 'bool',
+            'remove_from_homepage' => 'datetime',
+            'display_type' => CollectionDisplayType::class,
+        ];
     }
 }

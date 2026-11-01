@@ -9,12 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ShopMassDiscount extends Model
 {
-    protected $casts = [
-        'created' => 'bool',
-        'start_at' => 'datetime',
-        'end_at' => 'datetime',
-    ];
-
     /** @return BelongsToMany<ShopCategory, $this> */
     public function assignedCategories(): BelongsToMany
     {
@@ -24,5 +18,13 @@ class ShopMassDiscount extends Model
             'mass_discount_id',
             'category_id',
         );
+    }
+    protected function casts(): array
+    {
+        return [
+            'created' => 'bool',
+            'start_at' => 'datetime',
+            'end_at' => 'datetime',
+        ];
     }
 }

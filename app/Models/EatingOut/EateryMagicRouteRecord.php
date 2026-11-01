@@ -24,12 +24,6 @@ use RuntimeException;
 #[Table(name: 'wheretoeat_magic_route_records')]
 class EateryMagicRouteRecord extends Model
 {
-    protected $casts = [
-        'body' => 'array',
-        'resolver_type' => EateryMagicRouteType::class,
-        'builder_config' => Configuration::class,
-    ];
-
     /** @return MorphTo<EateryCounty|EateryTown|EateryArea, $this> */
     public function location(): MorphTo
     {
@@ -67,5 +61,13 @@ class EateryMagicRouteRecord extends Model
         }
 
         return null;
+    }
+    protected function casts(): array
+    {
+        return [
+            'body' => 'array',
+            'resolver_type' => EateryMagicRouteType::class,
+            'builder_config' => Configuration::class,
+        ];
     }
 }

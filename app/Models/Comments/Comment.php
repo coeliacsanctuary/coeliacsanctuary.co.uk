@@ -24,10 +24,6 @@ class Comment extends Model
         'approved' => false,
     ];
 
-    protected $casts = [
-        'approved' => 'bool',
-    ];
-
     /** @return HasOne<CommentReply, $this> */
     public function reply(): HasOne
     {
@@ -44,5 +40,11 @@ class Comment extends Model
     protected function what(): Attribute
     {
         return Attribute::make(get: fn (): string => class_basename($this->commentable_type));
+    }
+    protected function casts(): array
+    {
+        return [
+            'approved' => 'bool',
+        ];
     }
 }

@@ -22,11 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Table(name: 'wheretoeat_suggested_edits')]
 class EaterySuggestedEdit extends Model
 {
-    protected $casts = [
-        'accepted' => 'bool',
-        'rejected' => 'bool',
-    ];
-
     /** @return BelongsTo<Eatery, $this> */
     public function eatery(): BelongsTo
     {
@@ -63,5 +58,12 @@ class EaterySuggestedEdit extends Model
 
             return 'New';
         });
+    }
+    protected function casts(): array
+    {
+        return [
+            'accepted' => 'bool',
+            'rejected' => 'bool',
+        ];
     }
 }

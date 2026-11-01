@@ -24,16 +24,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 #[RouteKey('slug')]
 class ShopDigitalCard extends Model
 {
-    protected $casts = [
-        'live' => 'bool',
-        'type_id' => DigitalCardType::class,
-        'enable_physical_addons' => 'bool',
-        'cant_eat_colour' => DigitalCardColor::class,
-        'cant_eat_icon' => DigitalCardIcon::class,
-        'can_eat_colour' => DigitalCardColor::class,
-        'can_eat_icon' => DigitalCardIcon::class,
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
@@ -99,5 +89,17 @@ class ShopDigitalCard extends Model
 
             return round($this->reviews->average('rating') * 2) / 2;
         });
+    }
+    protected function casts(): array
+    {
+        return [
+            'live' => 'bool',
+            'type_id' => DigitalCardType::class,
+            'enable_physical_addons' => 'bool',
+            'cant_eat_colour' => DigitalCardColor::class,
+            'cant_eat_icon' => DigitalCardIcon::class,
+            'can_eat_colour' => DigitalCardColor::class,
+            'can_eat_icon' => DigitalCardIcon::class,
+        ];
     }
 }

@@ -33,12 +33,6 @@ class EateryReview extends Model
         5 => 'Expensive',
     ];
 
-    protected $casts = [
-        'admin_review' => 'bool',
-        'approved' => 'bool',
-        'how_expensive' => 'int',
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope(function (Builder $builder) {
@@ -117,5 +111,13 @@ class EateryReview extends Model
     protected function cacheKey(): string
     {
         return 'eating-out-reviews';
+    }
+    protected function casts(): array
+    {
+        return [
+            'admin_review' => 'bool',
+            'approved' => 'bool',
+            'how_expensive' => 'int',
+        ];
     }
 }

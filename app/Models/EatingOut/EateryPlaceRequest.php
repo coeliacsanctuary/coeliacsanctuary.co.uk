@@ -10,7 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 #[Table(name: 'place_requests')]
 class EateryPlaceRequest extends Model
 {
-    protected $casts = [
-        'completed' => 'bool',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'completed' => 'bool',
+        ];
+    }
 }

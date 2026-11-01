@@ -33,7 +33,6 @@ return static function (RectorConfig $rectorConfig): void {
         ReplaceFakerInstanceWithHelperRector::class,
         ReplaceFakerPropertyFetchWithMethodCallRector::class, // do seperate
         AddExtendsAnnotationToModelFactoriesRector::class, // also do on its onw
-        ModelCastsPropertyToCastsMethodRector::class, // do again
     ]);
 
     $rectorConfig->importNames(importDocBlockNames: false);

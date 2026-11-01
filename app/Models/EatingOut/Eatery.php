@@ -72,13 +72,6 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
     use HasSealiacOverview;
     use Searchable;
 
-    protected $casts = [
-        'lat' => 'float',
-        'lng' => 'float',
-        'live' => 'bool',
-        'closed_down' => 'bool',
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
@@ -492,5 +485,14 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
     public function schema(): Restaurant
     {
         return EaterySchema::make($this);
+    }
+    protected function casts(): array
+    {
+        return [
+            'lat' => 'float',
+            'lng' => 'float',
+            'live' => 'bool',
+            'closed_down' => 'bool',
+        ];
     }
 }

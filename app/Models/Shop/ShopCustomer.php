@@ -16,11 +16,6 @@ class ShopCustomer extends Model implements Authenticatable
     use \Illuminate\Auth\Authenticatable;
     use Notifiable;
 
-    protected $casts = [
-        'one_time_code' => 'hashed',
-        'one_time_code_expires_at' => 'datetime',
-    ];
-
     /** @return HasMany<ShopShippingAddress, $this> */
     public function addresses(): HasMany
     {
@@ -49,5 +44,12 @@ class ShopCustomer extends Model implements Authenticatable
     public function getAuthPassword(): string
     {
         return (string) $this->id;
+    }
+    protected function casts(): array
+    {
+        return [
+            'one_time_code' => 'hashed',
+            'one_time_code_expires_at' => 'datetime',
+        ];
     }
 }

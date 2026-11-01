@@ -9,14 +9,16 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ShopPrice extends Model
 {
-    protected $casts = [
-        'start_at' => 'datetime',
-        'end_at' => 'datetime',
-    ];
-
     /** @return MorphTo<Model, $this> */
     public function purchasable(): MorphTo
     {
         return $this->morphTo();
+    }
+    protected function casts(): array
+    {
+        return [
+            'start_at' => 'datetime',
+            'end_at' => 'datetime',
+        ];
     }
 }

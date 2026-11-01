@@ -18,8 +18,6 @@ use Illuminate\Support\Str;
 #[Table(name: 'wheretoeat_opening_times')]
 class EateryOpeningTimes extends Model
 {
-    protected $casts = ['is_open_now' => 'bool'];
-
     /** @return BelongsTo<Eatery, $this> */
     public function eatery(): BelongsTo
     {
@@ -127,5 +125,9 @@ class EateryOpeningTimes extends Model
     protected function currentDay(): string
     {
         return Str::lower(Carbon::now()->dayName);
+    }
+    protected function casts(): array
+    {
+        return ['is_open_now' => 'bool'];
     }
 }

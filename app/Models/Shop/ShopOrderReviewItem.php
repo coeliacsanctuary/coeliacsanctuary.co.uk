@@ -15,10 +15,6 @@ class ShopOrderReviewItem extends Model
 {
     use ClearsCache;
 
-    protected $casts = [
-        'rating' => 'float',
-    ];
-
     public static function deduplicatedIds(): QueryBuilder
     {
         return DB::query()
@@ -53,5 +49,11 @@ class ShopOrderReviewItem extends Model
     protected function cacheKey(): string
     {
         return 'shop-reviews';
+    }
+    protected function casts(): array
+    {
+        return [
+            'rating' => 'float',
+        ];
     }
 }
