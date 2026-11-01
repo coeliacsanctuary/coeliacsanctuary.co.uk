@@ -78,7 +78,7 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
         $params = array_merge($defaults, $options);
 
         $eateryOptions = $eateries
-            ->mapWithKeys(fn (Eatery $e) => [$e->id => "{$e->name} — {$e->town?->town}, {$e->county?->county}"])
+            ->mapWithKeys(fn (Eatery $e): array => [$e->id => "{$e->name} — {$e->town?->town}, {$e->county?->county}"])
             ->toArray();
 
         $venueTypes = EateryVenueType::all()->pluck('venue_type', 'id')->toArray();
@@ -224,7 +224,7 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
         $this->assertCount(2, $branches);
 
         $this->assertTrue($branches->contains('slug', $this->town->slug));
-        $this->assertTrue($branches->filter(fn ($b) => str_starts_with($b->slug, $this->town->slug . '-'))->isNotEmpty());
+        $this->assertTrue($branches->filter(fn ($b): bool => str_starts_with($b->slug, $this->town->slug . '-'))->isNotEmpty());
     }
 
     #[Test]

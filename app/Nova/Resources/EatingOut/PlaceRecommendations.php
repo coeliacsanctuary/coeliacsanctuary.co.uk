@@ -92,13 +92,13 @@ class PlaceRecommendations extends Resource
 
             Panel::make('Eatery', [
                 Text::make('Name', 'place_name')->showOnPreview(),
-                Text::make('Location', 'place_location')->displayUsing(fn ($address) => str_replace(',', '<br />', $address))->showOnPreview()->asHtml(),
+                Text::make('Location', 'place_location')->displayUsing(fn ($address): string|array => str_replace(',', '<br />', $address))->showOnPreview()->asHtml(),
                 URL::make('URL', 'place_web_address')->showOnPreview()->hideFromIndex(),
                 Select::make('Venue Type', 'place_venue_type_id')->displayUsingLabels()->options($this->getVenueTypes(1))->showOnPreview()->hideFromIndex(),
                 Textarea::make('Details', 'place_details')->alwaysShow()->showOnPreview(),
                 Text::make('Details')
                     ->onlyOnIndex()
-                    ->displayUsing(fn () => "<div style=\"width: 300px; text-wrap:auto;\">{$this->resource->place_details}</div>")
+                    ->displayUsing(fn (): string => "<div style=\"width: 300px; text-wrap:auto;\">{$this->resource->place_details}</div>")
                     ->asHtml(),
             ]),
 
@@ -106,7 +106,7 @@ class PlaceRecommendations extends Resource
 
             SelectPlus::make('eatery_id')
                 ->onlyOnForms()
-                ->options(fn (Request $request) => $this->searchLocations($request->get('search')))
+                ->options(fn (Request $request): Collection => $this->searchLocations($request->get('search')))
                 ->ajaxSearchable($this->searchLocations(...)),
         ];
     }
@@ -132,7 +132,7 @@ class PlaceRecommendations extends Resource
             ->merge($branches)
             ->sortBy(fn (Eatery|NationwideBranch $location) => $location->full_name)
             ->values()
-            ->map(fn (Eatery|NationwideBranch $location) => [
+            ->map(fn (Eatery|NationwideBranch $location): array => [
                 'value' => $location->wheretoeat_id ? "{$location->wheretoeat_id}:{$location->id}" : "{$location->id}:",
                 'label' => $location->full_name,
             ]);
@@ -144,37 +144,37 @@ class PlaceRecommendations extends Resource
             CheckEateryRecommendationWithAi::make()
                 ->showInline()
                 ->sole()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->aiData()->exists() === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation): bool => $recommendation->aiData()->exists() === false),
 
             ViewAiRecommendationData::make()
                 ->showInline()
                 ->withoutConfirmation()
                 ->sole()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->aiData()->exists() === true),
+                ->canRun(fn ($request, EateryRecommendation $recommendation): bool => $recommendation->aiData()->exists() === true),
 
             ConvertRecommendationToEatery::make()
                 ->showInline()
                 ->withoutConfirmation()
                 ->sole()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation): bool => $recommendation->completed === false && $recommendation->ignored === false),
 
             CompleteReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation): bool => $recommendation->completed === false && $recommendation->ignored === false),
 
             IgnoreAndSendPlaceAlreadyExists::make()
                 ->showInline()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation): bool => $recommendation->completed === false),
 
             IgnoreAndSendAddedToSmallBusinessBlog::make()
                 ->showInline()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation): bool => $recommendation->completed === false),
 
             IgnoreReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false && $recommendation->ignored === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation): bool => $recommendation->completed === false && $recommendation->ignored === false),
         ];
     }
 
@@ -192,7 +192,7 @@ class PlaceRecommendations extends Resource
         return EateryVenueType::query()
             ->when($typeId, fn (Builder $query) => $query->where('type_id', $typeId))
             ->get()
-            ->mapWithKeys(fn (EateryVenueType $venueType) => [$venueType->id => $venueType->venue_type])
+            ->mapWithKeys(fn (EateryVenueType $venueType): array => [$venueType->id => $venueType->venue_type])
             ->toArray();
     }
 }

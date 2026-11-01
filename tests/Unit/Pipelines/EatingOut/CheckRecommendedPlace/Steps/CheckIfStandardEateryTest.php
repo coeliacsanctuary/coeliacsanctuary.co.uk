@@ -29,7 +29,7 @@ class CheckIfStandardEateryTest extends StepTestCase
 
         $data = $this->makeData('Cafe');
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertFalse($data->found);
     }
@@ -39,7 +39,7 @@ class CheckIfStandardEateryTest extends StepTestCase
     {
         $data = $this->makeData('Doesnt Exist', 'Anywhere');
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertFalse($data->found);
     }
@@ -51,7 +51,7 @@ class CheckIfStandardEateryTest extends StepTestCase
 
         $data = $this->makeData('Foo', 'Bar');
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertFalse($data->found);
     }
@@ -74,7 +74,7 @@ class CheckIfStandardEateryTest extends StepTestCase
 
         $data = $this->makeData($search, $searchAddress);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$eatery->name}, {$eatery->short_location}, did you know they're already listed in our eating out guide?", $data->reason);
@@ -99,7 +99,7 @@ class CheckIfStandardEateryTest extends StepTestCase
             ])
             ->load(['country', 'county', 'town']);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$eatery->name}, {$eatery->short_location}, did you know they're already listed in our eating out guide?", $data->reason);

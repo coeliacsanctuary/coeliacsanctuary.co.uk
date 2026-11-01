@@ -39,7 +39,7 @@ class CheckIfNationwideEatery extends AbstractStepAction
             $locations = Str::explode($data->location);
 
             /** @var Collection<int, string> $locations */
-            $locations = $locations->map(fn (string $line) => mb_trim($line, ',.-'))
+            $locations = $locations->map(fn (string $line): string => mb_trim($line, ',.-'))
                 ->filter()
                 ->values();
 

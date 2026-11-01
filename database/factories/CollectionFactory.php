@@ -29,12 +29,12 @@ class CollectionFactory extends Factory
 
     public function notOnHomepage()
     {
-        return $this->state(fn () => ['display_on_homepage' => false]);
+        return $this->state(fn (): array => ['display_on_homepage' => false]);
     }
 
     public function displayedOnHomepage(?Carbon $until = null)
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'display_on_homepage' => true,
             'remove_from_homepage' => $until ?? Carbon::now()->addDays(14),
         ]);

@@ -27,7 +27,7 @@ class GetEateryTownsTool extends BaseTool
         return EateryTown::query()
             ->where('county_id', $request->integer('county_id'))
             ->get()
-            ->map(fn (EateryTown $town) => [
+            ->map(fn (EateryTown $town): array => [
                 'id' => $town->id,
                 'name' => $town->town,
                 'link' => $town->absoluteLink(),

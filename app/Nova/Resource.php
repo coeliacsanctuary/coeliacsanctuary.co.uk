@@ -155,10 +155,10 @@ abstract class Resource extends NovaResource
     protected static function fillFields(NovaRequest $request, $model, $fields): array
     {
         if ( ! self::$deferrableFields instanceof Collection || self::$deferrableFields->isEmpty()) {
-            self::$deferrableFields = $fields->filter(fn ($field) => property_exists($field, 'deferrable') && $field->deferrable);
+            self::$deferrableFields = $fields->filter(fn ($field): bool => property_exists($field, 'deferrable') && $field->deferrable);
         }
 
-        $fields = $fields->reject(fn ($field) => property_exists($field, 'deferrable') && $field->deferrable);
+        $fields = $fields->reject(fn ($field): bool => property_exists($field, 'deferrable') && $field->deferrable);
 
         return parent::fillFields($request, $model, $fields);
     }

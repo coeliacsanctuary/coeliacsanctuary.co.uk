@@ -46,7 +46,7 @@ class SendingRulesTest extends TestCase
     {
         $minimumDates = SendingRules::get()
             ->pluck('minimumDate')
-            ->map(fn (CarbonInterface $date) => $date->toDateTimeString())
+            ->map(fn (CarbonInterface $date): string => $date->toDateTimeString())
             ->all();
 
         $this->assertSame([
@@ -111,7 +111,7 @@ class SendingRulesTest extends TestCase
         $rule = $this->rule($notificationDelayText);
 
         return ShopOrder::query()
-            ->pipe(fn (Builder $query) => call_user_func($rule->pipe, $query))
+            ->pipe(fn (Builder $query): Builder => call_user_func($rule->pipe, $query))
             ->toRawSql();
     }
 }

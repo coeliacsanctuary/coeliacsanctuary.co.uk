@@ -73,7 +73,7 @@ class NationwideBranches extends Resource
             Boolean::make('Live')->filterable(),
 
             Panel::make('Location', [
-                EateryLocationSearch::make('Location Search', 'location', fn () => null)
+                EateryLocationSearch::make('Location Search', 'location', fn (): null => null)
                     ->fullWidth()
                     ->onlyOnForms(),
 
@@ -234,7 +234,7 @@ class NationwideBranches extends Resource
         return EateryVenueType::query()
             ->when($typeId, fn (Builder $query) => $query->where('type_id', $typeId))
             ->get()
-            ->mapWithKeys(fn (EateryVenueType $venueType) => [$venueType->id => $venueType->venue_type])
+            ->mapWithKeys(fn (EateryVenueType $venueType): array => [$venueType->id => $venueType->venue_type])
             ->toArray();
     }
 
@@ -242,7 +242,7 @@ class NationwideBranches extends Resource
     {
         return EateryCuisine::query()
             ->get()
-            ->mapWithKeys(fn (EateryCuisine $cuisine) => [$cuisine->id => $cuisine->cuisine])
+            ->mapWithKeys(fn (EateryCuisine $cuisine): array => [$cuisine->id => $cuisine->cuisine])
             ->toArray();
     }
 

@@ -38,7 +38,7 @@ class Counties extends Resource
     {
         $countries = EateryCountry::query()
             ->get()
-            ->mapWithKeys(fn (EateryCountry $country) => [$country->id => $country->country]);
+            ->mapWithKeys(fn (EateryCountry $country): array => [$country->id => $country->country]);
 
         return [
             ID::make('id')->hide(),
@@ -64,7 +64,7 @@ class Counties extends Resource
                 ->addButtonLabel('Select Image')
                 ->nullable(),
 
-            Boolean::make('Live', fn () => $this->eateries_count > 0)->onlyOnIndex(),
+            Boolean::make('Live', fn (): bool => $this->eateries_count > 0)->onlyOnIndex(),
 
             Number::make('Towns', 'towns_count')->onlyOnIndex()->sortable(),
 

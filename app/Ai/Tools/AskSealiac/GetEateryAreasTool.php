@@ -27,7 +27,7 @@ class GetEateryAreasTool extends BaseTool
         return EateryArea::query()
             ->where('town_id', $request->integer('town_id'))
             ->get()
-            ->map(fn (EateryArea $area) => [
+            ->map(fn (EateryArea $area): array => [
                 'id' => $area->id,
                 'name' => $area->area,
                 'link' => $area->absoluteLink(),

@@ -20,7 +20,7 @@ class GeoLookupTest extends TestCase
         $this->mock(LocationSearchService::class)
             ->shouldReceive('getLatLng')
             ->once()
-            ->withArgs(fn ($term) => (string) $term === '1 Test Street, London')
+            ->withArgs(fn ($term): bool => (string) $term === '1 Test Street, London')
             ->andReturn(new LatLng(51.5, -0.1));
 
         new GeoLookup()->handle(new Request(['address' => '1 Test Street, London']));

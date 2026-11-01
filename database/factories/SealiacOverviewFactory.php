@@ -27,7 +27,7 @@ class SealiacOverviewFactory extends Factory
 
     public function forEatery(Eatery $eatery)
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'model_id' => $eatery->id,
             'model_type' => Eatery::class,
         ]);
@@ -35,7 +35,7 @@ class SealiacOverviewFactory extends Factory
 
     public function forNationwideBranch(NationwideBranch $branch)
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'model_type' => NationwideBranch::class,
             'model_id' => $branch->id,
         ]);
@@ -43,7 +43,7 @@ class SealiacOverviewFactory extends Factory
 
     public function forProduct(ShopProduct $product)
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'model_type' => ShopProduct::class,
             'model_id' => $product->id,
         ]);
@@ -51,7 +51,7 @@ class SealiacOverviewFactory extends Factory
 
     public function invalidated()
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'invalidated' => true,
         ]);
     }

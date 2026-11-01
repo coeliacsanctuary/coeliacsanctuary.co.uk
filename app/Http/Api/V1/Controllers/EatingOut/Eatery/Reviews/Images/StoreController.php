@@ -16,14 +16,14 @@ class StoreController
         /** @var array<UploadedFile> $images */
         $images = $request->file('images');
 
-        $images = collect($images)->map(fn (UploadedFile $file) => $pipeline->run(
+        $images = collect($images)->map(fn (UploadedFile $file): array => $pipeline->run(
             $file,
             'wte-review-image',
             Carbon::now()->addMinutes(15),
         ));
 
         return [
-            'data' => $images->map(fn (array $image) => [
+            'data' => $images->map(fn (array $image): array => [
                 'id' => $image['id'],
                 'url' => $image['path'],
             ]),

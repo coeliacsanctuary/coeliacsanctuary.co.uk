@@ -82,8 +82,8 @@ class DigitalCardResource extends Resource
 
             Stack::make('Price', [
                 Boolean::make('Use Shared Digital Card Price', fn (ShopDigitalCard $model) => $model->price()->doesntExist())->textAlign('left'),
-                Line::make('Price', 'price.price')->displayUsing(fn (?string $price) => $price ? Str::of($price)->pipe(fn (Stringable $price) => number_format($price->toInteger() / 100, 2))->prepend('Individual Price £') : null),
-                Line::make('Physical Bundle Price', 'price.price_with_physical_product')->displayUsing(fn (?string $price) => $price ? Str::of($price)->pipe(fn (Stringable $price) => number_format($price->toInteger() / 100, 2))->prepend('Physical Bundle Price £') : ''),
+                Line::make('Price', 'price.price')->displayUsing(fn (?string $price) => $price ? Str::of($price)->pipe(fn (Stringable $price): string => number_format($price->toInteger() / 100, 2))->prepend('Individual Price £') : null),
+                Line::make('Physical Bundle Price', 'price.price_with_physical_product')->displayUsing(fn (?string $price) => $price ? Str::of($price)->pipe(fn (Stringable $price): string => number_format($price->toInteger() / 100, 2))->prepend('Physical Bundle Price £') : ''),
             ]),
 
             Panel::make('Linked Physical Product', [

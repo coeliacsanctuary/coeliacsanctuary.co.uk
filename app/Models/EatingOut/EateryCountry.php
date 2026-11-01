@@ -33,6 +33,6 @@ class EateryCountry extends Model
     {
         $filename = Str::slug($this->country);
 
-        return Attribute::get(fn () => asset("images/eating-out/{$filename}.jpg"));
+        return Attribute::get(fn (): string => asset("images/eating-out/{$filename}.jpg"));
     }
 }

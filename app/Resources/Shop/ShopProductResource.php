@@ -27,14 +27,14 @@ class ShopProductResource extends JsonResource
                 ],
             ]),
             'image' => $this->main_image_as_webp ?? $this->main_image,
-            'additional_images' => $this->getMedia('additional')->map(fn (Media $media) => $media->getUrl('webp')),
+            'additional_images' => $this->getMedia('additional')->map(fn (Media $media): string => $media->getUrl('webp')),
             'prices' => $this->price,
-            'rating' => $this->whenLoaded('reviews', fn () => [
+            'rating' => $this->whenLoaded('reviews', fn (): array => [
                 'average' => $this->averageRating,
                 'count' => $this->reviews->count(),
-                'breakdown' => collect(range(5, 1))->map(fn ($rating) => [
+                'breakdown' => collect(range(5, 1))->map(fn ($rating): array => [
                     'rating' => $rating,
-                    'count' => $this->reviews->filter(fn (ShopOrderReviewItem $reviewItem) => (int) $reviewItem->rating === $rating)->count(),
+                    'count' => $this->reviews->filter(fn (ShopOrderReviewItem $reviewItem): bool => (int) $reviewItem->rating === $rating)->count(),
                 ]),
             ]),
             'category' => $this->whenLoaded('categories', [

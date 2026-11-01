@@ -37,7 +37,7 @@ class ProductSales extends Chartable
             ->with(['categories' => fn (Relation $builder) => $builder->withoutGlobalScopes()])
             ->orderBy('title')
             ->get()
-            ->map(fn (ShopProduct $product) => ['id' => $product->id, 'title' => $product->title, 'category_id' => $product->categories[0]->id ?? null]));
+            ->map(fn (ShopProduct $product): array => ['id' => $product->id, 'title' => $product->title, 'category_id' => $product->categories[0]->id ?? null]));
     }
 
     protected function getLabels(DateRange $dateRange): array

@@ -101,7 +101,7 @@ class CheckSingleEateryWebsiteJobTest extends TestCase
             '*' => Http::response('OK', 200),
         ]);
 
-        $existingCheck = $this->build(EateryCheck::class)->create([
+        $this->build(EateryCheck::class)->create([
             'wheretoeat_id' => $this->eatery->id,
             'website_checked_at' => now()->subDays(60),
             'google_checked_at' => now()->subDays(30),

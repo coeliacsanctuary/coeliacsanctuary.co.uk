@@ -60,7 +60,7 @@ class DiscountCode extends Resource
                 }),
 
             Select::make('Type', 'type_id')
-                ->default(fn () => 1)
+                ->default(fn (): int => 1)
                 ->rules(['required'])
                 ->displayUsingLabels()
                 ->options([
@@ -111,16 +111,16 @@ class DiscountCode extends Resource
             Currency::make('Min Spend')
                 ->asMinorUnits()
                 ->rules(['required'])
-                ->displayUsing(fn ($value) => $value === 0 ? 'None' : '£' . number_format($value / 100, 2))
+                ->displayUsing(fn ($value): string => $value === 0 ? 'None' : '£' . number_format($value / 100, 2))
                 ->help('Enter 0 for no min spend')
-                ->default(fn () => 0),
+                ->default(fn (): int => 0),
 
             ...$request->query('viaResource') !== 'orders'
                 ? [
                     Number::make('Max Claims')
                         ->displayUsing(fn ($value) => $value === 0 ? 'None' : $value)
                         ->rules(['required'])
-                        ->default(fn () => 0)
+                        ->default(fn (): int => 0)
                         ->help('Enter 0 for no limit'),
 
                     Number::make('Claims', 'used_count')->onlyOnIndex(),

@@ -25,28 +25,28 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itRendersTheLoginPage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/MyTravelCards/Login'));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->component('Shop/MyTravelCards/Login'));
     }
 
     #[Test]
     public function itSetsThePageTitle(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page->where('meta.title', 'Login - My Travel Cards')->etc()
+            fn (Assert $page): Assert => $page->where('meta.title', 'Login - My Travel Cards')->etc()
         );
     }
 
     #[Test]
     public function itDoesntTrackThePage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->where('meta.doNotTrack', true)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->where('meta.doNotTrack', true)->etc());
     }
 
     #[Test]
     public function itDoesntRenderAnyMetaTagsOrDescription(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('meta.tags', [])
                 ->where('meta.description', '')
                 ->etc()

@@ -32,7 +32,7 @@ class ReopenBasketAction
         /** @var Collection<int, ShopOrderDigitalItem> $digitalItems */
         $digitalItems = $basket->digitalItems;
 
-        if ($items->reject(fn (ShopOrderItem $item) => $item->variant?->quantity === 0)->isEmpty() && $digitalItems->isEmpty()) {
+        if ($items->reject(fn (ShopOrderItem $item): bool => $item->variant?->quantity === 0)->isEmpty() && $digitalItems->isEmpty()) {
             return collect(['All of the items in your basket have gone out of stock']);
         }
 

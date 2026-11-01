@@ -22,7 +22,7 @@ class PrepareShopReviewInvitationsCommand extends Command
             ->where('state_id', OrderState::SHIPPED)
             ->where('shipped_at', '<=', $rule->minimumDate)
             ->where('shipped_at', '>=', $rule->minimumDate->startOfDay())
-            ->pipe(fn (Builder $query) => call_user_func($rule->pipe, $query))
+            ->pipe(fn (Builder $query): Builder => call_user_func($rule->pipe, $query))
             ->whereDoesntHave('reviewInvitation')
             ->whereDoesntHave('refunds')
             ->get()

@@ -28,6 +28,6 @@ class GetDigitalCardsIndexAction
             ])
             ->orderBy('title')
             ->get()
-            ->map(fn (ShopDigitalCard $digitalCard) => $this->formatDigitalCard($digitalCard, $basket));
+            ->map(fn (ShopDigitalCard $digitalCard): ShopDigitalCard => $this->formatDigitalCard($digitalCard, $basket));
     }
 }

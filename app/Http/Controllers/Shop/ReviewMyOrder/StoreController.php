@@ -50,7 +50,7 @@ class StoreController
 
         $review
             ->products
-            ->reject(fn (ShopOrderReviewItem $reviewItem) => $reviewItem->product_type === ShopDigitalCard::class)
+            ->reject(fn (ShopOrderReviewItem $reviewItem): bool => $reviewItem->product_type === ShopDigitalCard::class)
             ->load(['product', 'product.sealiacOverview'])
             ->each(function (ShopOrderReviewItem $orderReviewItem): void {
                 /** @var ShopProduct|null $product */

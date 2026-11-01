@@ -26,6 +26,6 @@ class ShopShippingAddressFactory extends Factory
 
     public function to(ShopCustomer $customer): self
     {
-        return $this->state(fn () => ['customer_id' => $customer->id]);
+        return $this->state(fn (): array => ['customer_id' => $customer->id]);
     }
 }

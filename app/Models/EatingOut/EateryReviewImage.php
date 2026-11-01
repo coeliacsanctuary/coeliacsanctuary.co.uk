@@ -42,25 +42,25 @@ class EateryReviewImage extends Model
     /** @return Attribute<string, never> */
     public function thumb(): Attribute
     {
-        return Attribute::get(fn () => $this->imageUrl($this->attributes['thumb']));
+        return Attribute::get(fn (): string => $this->imageUrl($this->attributes['thumb']));
     }
 
     /** @return Attribute<string, never> */
     public function path(): Attribute
     {
-        return Attribute::get(fn () => $this->imageUrl($this->attributes['path']));
+        return Attribute::get(fn (): string => $this->imageUrl($this->attributes['path']));
     }
 
     /** @return Attribute<string, never> */
     public function rawThumb(): Attribute
     {
-        return Attribute::get(fn () => $this->attributes['thumb']);
+        return Attribute::get(fn (): mixed => $this->attributes['thumb']);
     }
 
     /** @return Attribute<string, never> */
     public function rawPath(): Attribute
     {
-        return Attribute::get(fn () => $this->attributes['path']);
+        return Attribute::get(fn (): mixed => $this->attributes['path']);
     }
 
     protected function imageUrl(string $file): string

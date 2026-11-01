@@ -87,7 +87,7 @@ class ViewRecipeToolTest extends TestCase
         $this->create(RecipeNutrition::class, ['recipe_id' => $recipe->id]);
 
         $allergenA = $this->create(RecipeAllergen::class, ['allergen' => 'Dairy']);
-        $allergenB = $this->create(RecipeAllergen::class, ['allergen' => 'Eggs']);
+        $this->create(RecipeAllergen::class, ['allergen' => 'Eggs']);
 
         // Attach only one allergen as "free from" - the other should show as "contains"
         $recipe->allergens()->attach($allergenA);

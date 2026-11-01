@@ -98,7 +98,7 @@ class CountyReviewsQueryTest extends TestCase
 
         $eateries = app(CountyReviewsQuery::class)($this->county, 'rating_count desc');
 
-        $this->assertTrue($eateries->every(fn (CountyEateryResource $resource) => $resource->resource->id !== $eatery->id));
+        $this->assertTrue($eateries->every(fn (CountyEateryResource $resource): bool => $resource->resource->id !== $eatery->id));
     }
 
     #[Test]
@@ -108,7 +108,7 @@ class CountyReviewsQueryTest extends TestCase
 
         $eateries = app(CountyReviewsQuery::class)($this->county, 'rating_count desc');
 
-        $this->assertTrue($eateries->every(fn (CountyEateryResource $resource) => $resource->resource->id !== $eatery->id));
+        $this->assertTrue($eateries->every(fn (CountyEateryResource $resource): bool => $resource->resource->id !== $eatery->id));
     }
 
     #[Test]
@@ -127,7 +127,7 @@ class CountyReviewsQueryTest extends TestCase
 
         $eateries = app(CountyReviewsQuery::class)($this->county, 'rating_count desc');
 
-        $this->assertTrue($eateries->every(fn (CountyEateryResource $resource) => $resource->resource->id !== $eatery->id));
+        $this->assertTrue($eateries->every(fn (CountyEateryResource $resource): bool => $resource->resource->id !== $eatery->id));
     }
 
     #[Test]

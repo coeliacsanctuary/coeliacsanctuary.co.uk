@@ -115,7 +115,7 @@ class EaterySchema
             return;
         }
 
-        $this->schema->reviews($validReviews->map(fn (EateryReview $review) => $this->makeReview($review))->toArray());
+        $this->schema->reviews($validReviews->map(fn (EateryReview $review): Review => $this->makeReview($review))->toArray());
     }
 
     protected function makeReview(EateryReview $review, bool $isAdmin = false): Review

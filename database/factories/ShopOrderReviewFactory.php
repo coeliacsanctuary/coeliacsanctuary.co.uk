@@ -23,14 +23,14 @@ class ShopOrderReviewFactory extends Factory
 
     public function forOrder(ShopOrder $order): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'order_id' => $order->id,
         ]);
     }
 
     public function fromInvitation(ShopOrderReviewInvitation $invitation): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'invitation_id' => $invitation->id,
         ]);
     }

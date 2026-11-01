@@ -44,7 +44,7 @@ class GetEateriesInLatLngRadiusAction implements GetEateriesPipelineActionContra
         /** @var EloquentCollection<int, Eatery> $eateries */
         $eateries = $idQuery->get();
 
-        $pendingEateries = $eateries->map(fn (Eatery $eatery) => new PendingEatery(
+        $pendingEateries = $eateries->map(fn (Eatery $eatery): PendingEatery => new PendingEatery(
             id: $eatery->id,
             branchId: null,
             ordering: (float)$eatery->distance,

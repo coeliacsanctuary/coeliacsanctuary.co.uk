@@ -26,8 +26,8 @@ class HydrateBranchesAction implements GetEateriesPipelineActionContract
             throw new RuntimeException('No eateries');
         }
 
-        $branchIds = $items->reject(fn (PendingEatery $eatery) => $eatery->branchId === null)
-            ->map(fn (PendingEatery $eatery) => $eatery->branchId)
+        $branchIds = $items->reject(fn (PendingEatery $eatery): bool => $eatery->branchId === null)
+            ->map(fn (PendingEatery $eatery): ?int => $eatery->branchId)
             ->values()
             ->toArray();
 

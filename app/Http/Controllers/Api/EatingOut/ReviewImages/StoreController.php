@@ -18,7 +18,7 @@ class StoreController
 
         return [
             'images' => collect($images)
-                ->map(fn (UploadedFile $file) => $pipeline->run(
+                ->map(fn (UploadedFile $file): array => $pipeline->run(
                     $file,
                     'wte-review-image',
                     Carbon::now()->addMinutes(15),

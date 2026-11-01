@@ -77,7 +77,7 @@ class GenerateTownDescriptionJobTest extends TestCase
         new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Town: Crewe')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Town: Crewe')
         );
     }
 
@@ -89,7 +89,7 @@ class GenerateTownDescriptionJobTest extends TestCase
         new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -107,7 +107,7 @@ class GenerateTownDescriptionJobTest extends TestCase
         new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -127,7 +127,7 @@ class GenerateTownDescriptionJobTest extends TestCase
         new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 8')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 8')
         );
     }
 
@@ -146,7 +146,7 @@ class GenerateTownDescriptionJobTest extends TestCase
         new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
         );
     }
 

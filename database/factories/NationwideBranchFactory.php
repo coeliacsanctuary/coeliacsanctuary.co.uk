@@ -29,18 +29,18 @@ class NationwideBranchFactory extends Factory
 
     public function forEatery(Eatery $eatery): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'wheretoeat_id' => $eatery->id,
         ]);
     }
 
     public function notLive(): self
     {
-        return $this->state(fn () => ['live' => false]);
+        return $this->state(fn (): array => ['live' => false]);
     }
 
     public function withOutSlug(): self
     {
-        return $this->state(fn () => ['slug' => null]);
+        return $this->state(fn (): array => ['slug' => null]);
     }
 }

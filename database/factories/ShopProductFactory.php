@@ -35,11 +35,11 @@ class ShopProductFactory extends Factory
 
     public function pinned(): self
     {
-        return $this->state(fn () => ['pinned' => true]);
+        return $this->state(fn (): array => ['pinned' => true]);
     }
 
     public function googleMerchantDisabled(): self
     {
-        return $this->state(fn () => ['google_merchant_enabled' => false]);
+        return $this->state(fn (): array => ['google_merchant_enabled' => false]);
     }
 }

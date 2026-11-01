@@ -72,8 +72,8 @@ class ScoreTravelCardCountriesCommand extends Command
     {
         TravelCardSearchTerm::query()
             ->get()
-            ->groupBy(fn (TravelCardSearchTerm $term) => Str::lower($term->term) . '|' . $term->type)
-            ->filter(fn (Collection $group) => $group->count() > 1)
+            ->groupBy(fn (TravelCardSearchTerm $term): string => Str::lower($term->term) . '|' . $term->type)
+            ->filter(fn (Collection $group): bool => $group->count() > 1)
             ->each($this->mergeDuplicateGroup(...));
     }
 
@@ -82,8 +82,8 @@ class ScoreTravelCardCountriesCommand extends Command
     {
         /** @var TravelCardSearchTerm $survivor */
         $survivor = $group->sortBy([
-            fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b) => $b->hits <=> $a->hits,
-            fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b) => $a->id <=> $b->id,
+            fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b): int => $b->hits <=> $a->hits,
+            fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b): int => $a->id <=> $b->id,
         ])->first();
 
         $group
@@ -225,9 +225,9 @@ class ScoreTravelCardCountriesCommand extends Command
         }
 
         return collect($agent->languages())
-            ->mapWithKeys(fn (string $language) => [
+            ->mapWithKeys(fn (string $language): array => [
                 $language => $kept
-                    ->filter(fn (array $score) => $this->belongsToLanguage($score, $language))
+                    ->filter(fn (array $score): bool => $this->belongsToLanguage($score, $language))
                     ->sortByDesc('score')
                     ->values(),
             ])

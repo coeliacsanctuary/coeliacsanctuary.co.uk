@@ -80,7 +80,7 @@ class LocationSearchService
         }
 
         return collect($response)
-            ->filter(fn (array $result) => $force || $this->isValidResult($result, $term, $checkResult))
+            ->filter(fn (array $result): bool => $force || $this->isValidResult($result, $term, $checkResult))
             ->values();
     }
 

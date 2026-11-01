@@ -22,7 +22,7 @@ class ShopFeedbackFactory extends Factory
 
     public function forProduct(ShopProduct $product): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'product_id' => $product->id,
         ]);
     }

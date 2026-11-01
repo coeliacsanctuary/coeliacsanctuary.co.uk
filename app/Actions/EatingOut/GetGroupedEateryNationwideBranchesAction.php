@@ -25,7 +25,7 @@ class GetGroupedEateryNationwideBranchesAction
         return $branches
             ->groupBy(fn (NationwideBranch $branch) => $branch->country->country) /** @phpstan-ignore-line */
             ->sortKeys()
-            ->map(fn (Collection $branches) => $this->groupByCounty($branches, $formatter))
+            ->map(fn (Collection $branches): Collection => $this->groupByCounty($branches, $formatter))
             ->toArray();
     }
 
@@ -58,7 +58,7 @@ class GetGroupedEateryNationwideBranchesAction
         return $branches
             ->groupBy(fn (NationwideBranch $branch) => $branch->county->county) /** @phpstan-ignore-line */
             ->sortKeys()
-            ->map(fn (Collection $branches) => $this->groupByTown($branches, $formatter));
+            ->map(fn (Collection $branches): Collection => $this->groupByTown($branches, $formatter));
     }
 
     /**
@@ -71,7 +71,7 @@ class GetGroupedEateryNationwideBranchesAction
         return $branches
             ->groupBy(fn (NationwideBranch $branch) => $branch->town->town) /** @phpstan-ignore-line */
             ->sortKeys()
-            ->map(fn (Collection $branches) => $this->groupByArea($branches, $formatter));
+            ->map(fn (Collection $branches): Collection => $this->groupByArea($branches, $formatter));
     }
 
     /**

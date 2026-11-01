@@ -30,7 +30,7 @@ class OrderReviewItem extends Resource
             Text::make('Product', 'product.title')->readonly(),
 
             Number::make('Rating')
-                ->displayUsing(fn ($value) => $value . " Stars")
+                ->displayUsing(fn ($value): string => $value . " Stars")
                 ->min(1)
                 ->max(5)
                 ->required(),

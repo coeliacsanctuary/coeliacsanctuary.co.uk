@@ -72,7 +72,7 @@ class OpeningTimesFieldTest extends TestCase
     #[Test]
     public function itCanCommitTheSuggestedValue(): void
     {
-        $payload = collect(OpeningTimesField::$days)->map(fn (string $day) => [
+        $payload = collect(OpeningTimesField::$days)->map(fn (string $day): array => [
             'key' => $day,
             'label' => ucfirst($day),
             'start' => [fake()->numberBetween(7, 11), fake()->randomElement([0,15,30,45])],
@@ -91,7 +91,7 @@ class OpeningTimesFieldTest extends TestCase
 
         $this->assertNotNull($this->eatery->openingTimes);
 
-        $makeTime = fn (array $time) => Str::padLeft((string) $time[0], 2, '0') . ':' . Str::padLeft((string) $time[1], 2, '0') . ':00';
+        $makeTime = fn (array $time): string => Str::padLeft((string) $time[0], 2, '0') . ':' . Str::padLeft((string) $time[1], 2, '0') . ':00';
 
         foreach ($payload as $data) {
             $this->assertEquals($makeTime($data['start']), $this->eatery->openingTimes->{"{$data['key']}_start"});
@@ -102,7 +102,7 @@ class OpeningTimesFieldTest extends TestCase
     #[Test]
     public function itCanCommitTheSuggestedValueAccountingForNullValues(): void
     {
-        $payload = collect(OpeningTimesField::$days)->map(fn (string $day) => [
+        $payload = collect(OpeningTimesField::$days)->map(fn (string $day): array => [
             'key' => $day,
             'label' => ucfirst($day),
             'start' => [fake()->numberBetween(7, 11), fake()->randomElement([0,15,30,45])],

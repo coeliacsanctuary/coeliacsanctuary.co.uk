@@ -136,8 +136,8 @@ class EmailDataCast implements CastsAttributes
 
             if ($value instanceof Collection) {
                 $references[$key] = $value
-                    ->filter(fn (mixed $item) => $item instanceof Model)
-                    ->map(fn (Model $item) => ['id' => $item->getKey()])
+                    ->filter(fn (mixed $item): bool => $item instanceof Model)
+                    ->map(fn (Model $item): array => ['id' => $item->getKey()])
                     ->values()
                     ->all();
 

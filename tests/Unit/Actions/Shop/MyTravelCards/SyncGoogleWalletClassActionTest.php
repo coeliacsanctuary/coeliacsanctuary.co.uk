@@ -87,7 +87,7 @@ class SyncGoogleWalletClassActionTest extends TestCase
     {
         $this->callAction(SyncGoogleWalletClassAction::class, $this->card);
 
-        Http::assertSent(fn ($request) => ! isset($request['cardTitle'], $request['header'], $request['hexBackgroundColor'], $request['issuerName']));
+        Http::assertSent(fn ($request): bool => ! isset($request['cardTitle'], $request['header'], $request['hexBackgroundColor'], $request['issuerName']));
     }
 
     #[Test]

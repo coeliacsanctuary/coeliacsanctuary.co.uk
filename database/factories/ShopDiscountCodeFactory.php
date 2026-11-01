@@ -29,28 +29,28 @@ class ShopDiscountCodeFactory extends Factory
 
     public function percentageDiscount(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'type_id' => DiscountCodeType::PERCENTAGE,
         ]);
     }
 
     public function moneyDiscount(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'type_id' => DiscountCodeType::MONEY,
         ]);
     }
 
     public function startsTomorrow()
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'start_at' => Carbon::tomorrow(),
         ]);
     }
 
     public function expired()
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'end_at' => Carbon::yesterday(),
         ]);
     }

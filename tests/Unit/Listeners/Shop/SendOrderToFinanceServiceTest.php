@@ -44,7 +44,7 @@ class SendOrderToFinanceServiceTest extends TestCase
 
         Log::shouldReceive('error')
             ->once()
-            ->withArgs(fn (string $message, array $context) => $message === 'Unable to send order to finance service' && $context['message'] === 'Finance service is down');
+            ->withArgs(fn (string $message, array $context): bool => $message === 'Unable to send order to finance service' && $context['message'] === 'Finance service is down');
 
         app(SendOrderToFinanceService::class)->handle(new OrderPaidEvent($this->order));
     }

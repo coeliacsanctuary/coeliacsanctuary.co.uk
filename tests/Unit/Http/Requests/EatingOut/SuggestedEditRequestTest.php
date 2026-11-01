@@ -21,10 +21,10 @@ class SuggestedEditRequestTest extends TestCase
         $this->assertArrayHasInstanceOf(In::class, $rules['field']);
 
         /** @var In $inRule */
-        $inRule = Arr::first($rules['field'], fn ($value) => $value instanceof In);
+        $inRule = Arr::first($rules['field'], fn ($value): bool => $value instanceof In);
 
         $expectedKeys = collect(array_keys(EaterySuggestedEdit::processorMaps()))
-            ->map(fn ($key) => '"' . $key . '"')
+            ->map(fn ($key): string => '"' . $key . '"')
             ->join(',');
 
         $this->assertEquals("in:{$expectedKeys}", $inRule->__toString());

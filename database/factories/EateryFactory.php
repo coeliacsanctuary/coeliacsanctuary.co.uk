@@ -35,26 +35,26 @@ class EateryFactory extends Factory
 
     public function notLive(): self
     {
-        return $this->state(fn () => ['live' => false]);
+        return $this->state(fn (): array => ['live' => false]);
     }
 
     public function closedDown(): self
     {
-        return $this->state(fn () => ['closed_down' => true]);
+        return $this->state(fn (): array => ['closed_down' => true]);
     }
 
     public function withOutSlug(): self
     {
-        return $this->state(fn () => ['slug' => null]);
+        return $this->state(fn (): array => ['slug' => null]);
     }
 
     public function attraction(): self
     {
-        return $this->state(fn () => ['type_id' => EateryType::ATTRACTION]);
+        return $this->state(fn (): array => ['type_id' => EateryType::ATTRACTION]);
     }
 
     public function hotel(): self
     {
-        return $this->state(fn () => ['type_id' => EateryType::HOTEL]);
+        return $this->state(fn (): array => ['type_id' => EateryType::HOTEL]);
     }
 }

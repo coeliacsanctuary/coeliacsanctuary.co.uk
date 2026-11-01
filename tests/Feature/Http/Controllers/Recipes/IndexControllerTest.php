@@ -102,13 +102,13 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('recipe.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Recipe/Index')
                     ->has('recipes')
                     ->has(
                         'recipes.data',
                         12,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'square_image', 'link', 'description', 'features', 'nutrition'])
                     )
                     ->where('recipes.data.0.title', 'Recipe 0')
@@ -127,13 +127,13 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('recipe.index', ['page' => 2]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Recipe/Index')
                     ->has('recipes')
                     ->has(
                         'recipes.data',
                         12,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'square_image', 'link', 'description', 'features', 'nutrition'])
                     )
                     ->where('recipes.data.0.title', 'Recipe 12')
@@ -160,7 +160,7 @@ class IndexControllerTest extends TestCase
 
         $this->get(route('recipe.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('recipes.data.0.features', [['feature' => 'Vegan', 'slug' => 'vegan']])
                     ->etc()
             );
@@ -171,7 +171,7 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('recipe.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('meta.description', 'Gluten free recipes from Coeliac Sanctuary — tried and tested coeliac friendly bakes, dinners, breakfasts and puddings, all using simple supermarket ingredients.')
                     ->etc()
             );
@@ -187,7 +187,7 @@ class IndexControllerTest extends TestCase
         }], return: 'Gluten Free Vegan Recipes');
 
         $this->get(route('recipe.index', ['features' => 'vegan']))
-            ->assertInertia(fn (Assert $page) => $page->where('meta.title', 'Gluten Free Vegan Recipes')->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('meta.title', 'Gluten Free Vegan Recipes')->etc());
     }
 
     #[Test]
@@ -200,28 +200,28 @@ class IndexControllerTest extends TestCase
         }], return: 'A description of vegan recipes');
 
         $this->get(route('recipe.index', ['features' => 'vegan']))
-            ->assertInertia(fn (Assert $page) => $page->where('meta.description', 'A description of vegan recipes')->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('meta.description', 'A description of vegan recipes')->etc());
     }
 
     #[Test]
     public function itDoesntIndexThePageWhenMoreThanOneFilterIsSelected(): void
     {
         $this->get(route('recipe.index', ['features' => 'vegan', 'meals' => 'breakfast']))
-            ->assertInertia(fn (Assert $page) => $page->where('meta.doNotTrack', true)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('meta.doNotTrack', true)->etc());
     }
 
     #[Test]
     public function itIndexesThePageWhenASingleFilterIsSelected(): void
     {
         $this->get(route('recipe.index', ['features' => 'vegan']))
-            ->assertInertia(fn (Assert $page) => $page->missing('meta.doNotTrack')->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->missing('meta.doNotTrack')->etc());
     }
 
     #[Test]
     public function itKeepsTheFilterAndPageInTheCanonicalUrl(): void
     {
         $this->get(route('recipe.index', ['features' => 'vegan', 'page' => 2]))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('meta.currentUrl', route('recipe.index') . '?features=vegan&page=2')
                 ->etc());
     }

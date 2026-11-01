@@ -103,11 +103,11 @@ class ShowController
                 'countries' => fn () => ShopPostageCountry::query()
                     ->orderBy('country')
                     ->get()
-                    ->map(fn (ShopPostageCountry $postageCountry) => [
+                    ->map(fn (ShopPostageCountry $postageCountry): array => [
                         'value' => $postageCountry->id,
                         'label' => $postageCountry->country,
                     ]),
-                'basket' => fn () => [
+                'basket' => fn (): array => [
                     'items' => $physicalItems,
                     'digital_items' => $digitalItems,
                     'digital_only' => $physicalItemCollection->isEmpty(),
@@ -116,7 +116,7 @@ class ShowController
                     'subtotal' => Helpers::formatMoney(Money::GBP($subtotal)),
                     'postage' => Helpers::formatMoney(Money::GBP($postage)),
                     'discount' => $discount ? Helpers::formatMoney(Money::GBP($discount)) : null,
-                    'fees' => $fees->map(fn (array $fee) => [
+                    'fees' => $fees->map(fn (array $fee): array => [
                         ...$fee,
                         'fee' => Helpers::formatMoney(Money::GBP($fee['fee'])),
                     ]),

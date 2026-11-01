@@ -51,6 +51,6 @@ class MostReviewsInUkQueryTest extends TestCase
         $eateries = app(MostReviewsInUkQuery::class)('rating_count desc, rating desc');
 
         $this->assertCount(1, $eateries);
-        $this->assertTrue($eateries->every(fn (CountyEateryResource $resource) => $resource->resource->id !== $chain->id));
+        $this->assertTrue($eateries->every(fn (CountyEateryResource $resource): bool => $resource->resource->id !== $chain->id));
     }
 }

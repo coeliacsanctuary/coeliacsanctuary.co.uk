@@ -26,14 +26,14 @@ class GetBranchThatMatchesTown extends BaseStep
                     ->orWhere(function (Builder $builder) use ($data): void {
                         Str::of((string) $data->branchName)
                             ->explode(' ')
-                            ->map(fn (string $term) => mb_trim($term, " \n\r\t\v\0,"))
+                            ->map(fn (string $term): string => mb_trim($term, " \n\r\t\v\0,"))
                             ->each(fn (string $term) => $builder->orWhere('town', $term));
                     })
             )
             ->first();
 
         if ($town) {
-            $matchingBranches = $data->branches->filter(fn (NationwideBranch $branch) => $branch->town_id === $town->id);
+            $matchingBranches = $data->branches->filter(fn (NationwideBranch $branch): bool => $branch->town_id === $town->id);
 
             if ($matchingBranches->count() === 1) {
                 $data->branch = $matchingBranches->first();

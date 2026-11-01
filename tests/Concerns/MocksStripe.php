@@ -103,7 +103,7 @@ trait MocksStripe
         $charges = $this->partialMock(ChargeService::class);
 
         $charges->shouldReceive('retrieve')
-            ->withArgs(fn ($id) => $chargeId === $id)
+            ->withArgs(fn ($id): bool => $chargeId === $id)
             ->andReturn($this->createCharge($chargeId))
             ->once();
 
@@ -113,7 +113,7 @@ trait MocksStripe
     protected function mockCreateRefund(string $chargeId, int $amount): Refund
     {
         $id = Str::password(12);
-        $token = Str::uuid()->toString();
+        Str::uuid()->toString();
 
         $refunds = $this->partialMock(RefundService::class);
 

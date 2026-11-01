@@ -124,7 +124,7 @@ class GetOrCreateGoogleWalletPassActionTest extends TestCase
     #[Test]
     public function itFallsBackToTheLiveLogoLocally(): void
     {
-        app()->detectEnvironment(fn () => 'local');
+        app()->detectEnvironment(fn (): string => 'local');
 
         $this->assertSame(
             'https://www.coeliacsanctuary.co.uk/images/seal-icon.png',

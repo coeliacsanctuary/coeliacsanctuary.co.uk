@@ -22,7 +22,7 @@ class ShopPaymentResponseFactory extends Factory
 
     public function forPayment(ShopPayment $payment): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'payment_id' => $payment->id,
         ]);
     }

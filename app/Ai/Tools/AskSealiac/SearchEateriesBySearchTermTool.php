@@ -93,7 +93,7 @@ class SearchEateriesBySearchTermTool extends BaseTool
                         'name' => $branch->name,
                         'location' => [
                             'address' => collect(explode("\n", $branch->address))
-                                ->map(fn (string $line) => mb_trim($line))
+                                ->map(fn (string $line): string => mb_trim($line))
                                 ->join(', '),
                         ],
                         'link' => $branch->link(),
@@ -110,7 +110,7 @@ class SearchEateriesBySearchTermTool extends BaseTool
                     'is_fully_gf' => $eatery->features->where('feature', '100% Gluten Free')->isNotEmpty(),
                     'location' => [
                         'address' => collect(explode("\n", $eatery->address))
-                            ->map(fn (string $line) => mb_trim($line))
+                            ->map(fn (string $line): string => mb_trim($line))
                             ->join(', '),
                     ],
                     'phone' => $eatery->phone,

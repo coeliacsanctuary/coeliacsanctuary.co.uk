@@ -62,7 +62,7 @@ class SendOrderToFinanceServiceAction
                 ...$addressArray
             ],
             'items' => [
-                ...$items->map(fn (ShopOrderItem $item) => [
+                ...$items->map(fn (ShopOrderItem $item): array => [
                     'id' => $item->product_id,
                     'variant_id' => $item->product_variant_id,
                     'name' => $item->product_title,
@@ -70,7 +70,7 @@ class SendOrderToFinanceServiceAction
                     'line_price' => $item->product_price,
                     'total_price' => $item->product_price * $item->quantity,
                 ])->toArray(),
-                ...$digitalItems->map(fn (ShopOrderDigitalItem $item) => [
+                ...$digitalItems->map(fn (ShopOrderDigitalItem $item): array => [
                     'id' => $item->digital_card_id,
                     'variant_id' => null,
                     'name' => $item->digital_card_title,
@@ -81,7 +81,7 @@ class SendOrderToFinanceServiceAction
             ],
             'subtotal' => $payment->subtotal,
             'postage' => $payment->postage,
-            'fees' => collect($payment->fees_breakdown)->map(fn (array $fee) => [
+            'fees' => collect($payment->fees_breakdown)->map(fn (array $fee): array => [
                 'name' => $fee['description'],
                 'amount' => $fee['fee'],
             ])->toArray(),

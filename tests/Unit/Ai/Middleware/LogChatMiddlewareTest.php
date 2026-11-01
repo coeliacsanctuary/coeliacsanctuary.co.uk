@@ -139,7 +139,7 @@ class LogChatMiddlewareTest extends TestCase
     protected function runStep(PendingStep $step, StepResponse $response): void
     {
         new LogChatMiddleware()
-            ->handle($step, fn (PendingStep $step) => new StepResult($response, $step))
+            ->handle($step, fn (PendingStep $step): StepResult => new StepResult($response, $step))
             ->response();
     }
 

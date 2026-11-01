@@ -24,9 +24,9 @@ class ShopTravelCardProductResource extends ShopProductResource
             'is_travel_card' => true,
             'countries' => $this->whenLoaded(
                 'travelCardSearchTerms',
-                fn () => $this->getCountries(),
+                fn (): Collection => $this->getCountries(),
             ),
-            'digital_cards' => config('coeliac.digital_cards_enabled') ? $this->whenLoaded('digitalCards', $this->digitalCards->map(fn (ShopDigitalCard $digitalCard) => [
+            'digital_cards' => config('coeliac.digital_cards_enabled') ? $this->whenLoaded('digitalCards', $this->digitalCards->map(fn (ShopDigitalCard $digitalCard): array => [
                 'id' => $digitalCard->id,
                 'name' => $digitalCard->title,
                 'slug' => $digitalCard->slug,
@@ -73,15 +73,15 @@ class ShopTravelCardProductResource extends ShopProductResource
 
         /** @var Collection<int, array{languages: string, countries: array{country: string, code: string}}> $sortedCountries */
         /** @phpstan-ignore-next-line  */
-        $sortedCountries = $countries->map(fn (Collection $countries, string $language) => [
+        $sortedCountries = $countries->map(fn (Collection $countries, string $language): array => [
             'language' => $language,
             'countries' => $countries
                 ->sortBy([
                     /** @phpstan-ignore-next-line */
-                    fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b) => $b->pivot->card_score <=> $a->pivot->card_score,
-                    fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b) => Str::lower($a->term) <=> Str::lower($b->term),
+                    fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b): int => $b->pivot->card_score <=> $a->pivot->card_score,
+                    fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b): int => Str::lower($a->term) <=> Str::lower($b->term),
                 ])
-                ->map(fn (TravelCardSearchTerm $term) => [
+                ->map(fn (TravelCardSearchTerm $term): array => [
                     'country' => Str::title($term->term),
                     'code' => Helpers::countryCode($term->term),
                 ])

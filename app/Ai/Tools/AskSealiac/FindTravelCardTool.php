@@ -37,7 +37,7 @@ class FindTravelCardTool extends BaseTool
             ->where('term', 'like', "%{$request->string('country_or_language')->toString()}%")
             ->with(['products', 'products.categories', 'products.reviews', 'products.prices', 'products.variants'])
             ->get()
-            ->map(fn (TravelCardSearchTerm $searchTerm) => [
+            ->map(fn (TravelCardSearchTerm $searchTerm): array => [
                 'id' => $searchTerm->id,
                 'term' => $searchTerm->term,
                 'type' => $searchTerm->type,

@@ -42,7 +42,7 @@ class OpeningTimesField extends EditableField
         }
 
         return collect(self::$days)
-            ->map(fn ($day) => [
+            ->map(fn ($day): array => [
                 'key' => $day,
                 'label' => Str::title($day),
                 'closed' => $openingTimes->{$day . '_start'} === null,
@@ -60,10 +60,10 @@ class OpeningTimesField extends EditableField
             $value = json_decode($value, true);
         }
 
-        $makeTime = fn (array $time) => $time[0] === null ? null : Str::padLeft((string) $time[0], 2, '0') . ':' . Str::padLeft((string) $time[1], 2, '0') . ':00';
+        $makeTime = fn (array $time): ?string => $time[0] === null ? null : Str::padLeft((string) $time[0], 2, '0') . ':' . Str::padLeft((string) $time[1], 2, '0') . ':00';
 
         /** @var array{key: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday', start: array{int<0,23>, 0|15|30|45}, end: array{int<0,23>, 0|15|30|45}}[] $value */
-        $data = collect($value)->mapWithKeys(fn (array $times) => [
+        $data = collect($value)->mapWithKeys(fn (array $times): array => [
             "{$times['key']}_start" => $makeTime($times['start']),
             "{$times['key']}_end" => $makeTime($times['end']),
         ])->toArray();

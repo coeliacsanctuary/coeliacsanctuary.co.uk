@@ -53,7 +53,7 @@ class ConvertRecommendationToEatery extends Action
             'features' => $aiData?->features,
             'isEligible' => $aiData?->is_eligible,
             'explanation' => $aiData?->explanation,
-        ], fn ($value) => $value !== null), now()->addMinute());
+        ], fn ($value): bool => $value !== null), now()->addMinute());
 
         return Action::openInNewTab('/cs-adm/resources/eateries/new');
     }

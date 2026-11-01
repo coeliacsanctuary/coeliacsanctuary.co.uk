@@ -120,7 +120,7 @@ class OrderItem extends Resource
 
             Currency::make('Line Price', 'product_price')->asMinorUnits()->readonly(),
 
-            Currency::make('Subtotal', fn (ShopOrderItem $item) => $item->product_price * $item->quantity)->asMinorUnits(),
+            Currency::make('Subtotal', fn (ShopOrderItem $item): int|float => $item->product_price * $item->quantity)->asMinorUnits(),
         ];
     }
 

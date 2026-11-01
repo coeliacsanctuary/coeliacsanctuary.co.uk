@@ -62,12 +62,12 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('shop.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Index')
                     ->has(
                         'categories.travelCards',
                         1,
-                        fn (Assert $page) => $page->hasAll([
+                        fn (Assert $page): Assert => $page->hasAll([
                             'title', 'description', 'image', 'link', 'travelCardSearch',
                             'products_count', 'price', 'reviews_count',
                         ])
@@ -83,12 +83,12 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('shop.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Index')
                     ->has(
                         'categories.everythingElse',
                         4,
-                        fn (Assert $page) => $page->hasAll([
+                        fn (Assert $page): Assert => $page->hasAll([
                             'title', 'description', 'image', 'link', 'travelCardSearch',
                             'products_count', 'price', 'reviews_count',
                         ])
@@ -107,11 +107,11 @@ class IndexControllerTest extends TestCase
 
         $this->get(route('shop.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'digitalCards',
                         1,
-                        fn (Assert $page) => $page->hasAll(['id', 'pageTitle', 'link', 'image'])
+                        fn (Assert $page): Assert => $page->hasAll(['id', 'pageTitle', 'link', 'image'])
                     )
                     ->where('digitalCards.0.id', DigitalCardType::STANDARD->value)
                     ->where('digitalCards.0.pageTitle', $this->cardType->title)
@@ -129,7 +129,7 @@ class IndexControllerTest extends TestCase
         $this->cardType->update(['live' => false]);
 
         $this->get(route('shop.index'))
-            ->assertInertia(fn (Assert $page) => $page->has('digitalCards', 0)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->has('digitalCards', 0)->etc());
     }
 
     #[Test]
@@ -138,7 +138,7 @@ class IndexControllerTest extends TestCase
         config(['coeliac.digital_cards_enabled' => false]);
 
         $this->get(route('shop.index'))
-            ->assertInertia(fn (Assert $page) => $page->has('digitalCards', 0)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->has('digitalCards', 0)->etc());
     }
 
     #[Test]
@@ -162,7 +162,7 @@ class IndexControllerTest extends TestCase
 
         $this->get(route('shop.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('categories.travelCards.0.products_count', 2)
                     ->where('categories.travelCards.0.reviews_count', 1)
                     ->where('categories.travelCards.0.price', 'from ' . Helpers::formatMoney(Money::GBP($cheapest)))
@@ -176,7 +176,7 @@ class IndexControllerTest extends TestCase
         ShopPrice::query()->update(['price' => 250]);
 
         $this->get(route('shop.index'))
-            ->assertInertia(fn (Assert $page) => $page->where('categories.travelCards.0.price', 'from £2.50')->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('categories.travelCards.0.price', 'from £2.50')->etc());
     }
 
     #[Test]
@@ -192,11 +192,11 @@ class IndexControllerTest extends TestCase
 
         $this->get(route('shop.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'popularProducts',
                         1,
-                        fn (Assert $page) => $page->hasAll(['title', 'link', 'image', 'price'])->etc()
+                        fn (Assert $page): Assert => $page->hasAll(['title', 'link', 'image', 'price'])->etc()
                     )
                     ->where('popularProducts.0.title', $product->title)
                     ->etc()
@@ -216,11 +216,11 @@ class IndexControllerTest extends TestCase
 
         $this->get(route('shop.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'reviews',
                         1,
-                        fn (Assert $page) => $page->hasAll(['name', 'review', 'rating', 'product'])
+                        fn (Assert $page): Assert => $page->hasAll(['name', 'review', 'rating', 'product'])
                     )
                     ->where('reviews.0.name', 'Jane Doe')
                     ->where('reviews.0.review', 'Brilliant cards')
@@ -235,7 +235,7 @@ class IndexControllerTest extends TestCase
             /** @var string[] $schema */
             $schema = $page->toArray()['props']['meta']['schema'];
 
-            $itemList = collect($schema)->first(fn (string $item) => str_contains($item, 'ItemList'));
+            $itemList = collect($schema)->first(fn (string $item): bool => str_contains($item, 'ItemList'));
 
             $this->assertNotNull($itemList);
             $this->assertStringContainsString('Category 0', $itemList);
@@ -251,12 +251,12 @@ class IndexControllerTest extends TestCase
 
         $this->get(route('shop.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Index')
                     ->has(
                         'categories.everythingElse',
-                        fn (Assert $page) => $page
-                            ->each(fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
+                            ->each(fn (Assert $page): Assert => $page
                                 ->whereNot('title', 'No Products')
                                 ->etc())
                     )

@@ -140,7 +140,7 @@ class Collection extends Resource
 
             new Panel('Layout', [
                 Select::make('Display Type', 'display_type')
-                    ->options(collect(CollectionDisplayType::cases())->mapWithKeys(fn (CollectionDisplayType $type) => [$type->value => $type->name()]))
+                    ->options(collect(CollectionDisplayType::cases())->mapWithKeys(fn (CollectionDisplayType $type): array => [$type->value => $type->name()]))
                     ->default(CollectionDisplayType::GRID->value)
                     ->displayUsingLabels()
                     ->help('Grid lays the items out as cards, best for recipe and blog collections. List stacks them vertically as rows under each group heading, best for eateries broken down by county.'),

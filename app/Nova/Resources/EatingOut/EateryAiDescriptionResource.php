@@ -30,12 +30,12 @@ class EateryAiDescriptionResource extends Resource
 
             Text::make('Description')
                 ->onlyOnIndex()
-                ->displayUsing(fn () => "<div style=\"width: 500px; text-wrap:auto;\">{$this->resource->description}</div>")
+                ->displayUsing(fn (): string => "<div style=\"width: 500px; text-wrap:auto;\">{$this->resource->description}</div>")
                 ->asHtml(),
 
             Text::make('Old Description')
                 ->onlyOnIndex()
-                ->displayUsing(fn () => "<div style=\"width: 500px; text-wrap:auto;\">{$this->resource->eatery->info}</div>")
+                ->displayUsing(fn (): string => "<div style=\"width: 500px; text-wrap:auto;\">{$this->resource->eatery->info}</div>")
                 ->asHtml(),
 
             BelongsTo::make('Eatery', resource: Eateries::class)->hideFromIndex()->readonly(),

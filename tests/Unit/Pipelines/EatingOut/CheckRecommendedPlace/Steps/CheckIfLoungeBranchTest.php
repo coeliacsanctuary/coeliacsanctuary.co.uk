@@ -34,7 +34,7 @@ class CheckIfLoungeBranchTest extends StepTestCase
     {
         $data = $this->makeData($name);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending The Lounges, did you know we've already got those listed on our Nationwide page?", $data->reason);
@@ -47,7 +47,7 @@ class CheckIfLoungeBranchTest extends StepTestCase
     {
         $data = $this->makeData('Capello Lounge');
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertFalse($data->found);
     }
@@ -57,7 +57,7 @@ class CheckIfLoungeBranchTest extends StepTestCase
     {
         $data = $this->makeData('navio lounge');
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$this->branch->name}, {$this->branch->full_location}, part of The Lounge's chain, but we've already got them listed!", $data->reason);

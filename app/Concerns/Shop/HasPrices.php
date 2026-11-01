@@ -34,7 +34,7 @@ trait HasPrices
     {
         return $this->prices
             ->filter(fn (ShopPrice $price) => $price->start_at->lessThan(Carbon::now()))
-            ->filter(fn (ShopPrice $price) => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
+            ->filter(fn (ShopPrice $price): bool => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
             ->sortByDesc('start_at');
     }
 

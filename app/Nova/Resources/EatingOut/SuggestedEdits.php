@@ -80,7 +80,7 @@ class SuggestedEdits extends Resource
                 ->displayUsingLabels()
                 ->options(Arr::mapWithKeys(
                     array_keys(EaterySuggestedEdit::processorMaps()),
-                    fn ($key) => [$key => Str::headline($key)]
+                    fn ($key): array => [$key => Str::headline($key)]
                 )),
         ];
     }
@@ -95,11 +95,9 @@ class SuggestedEdits extends Resource
         return [
             ...$this->defaultFields(),
 
-            Text::make('Value', function (EaterySuggestedEdit $edit) {
-                return match ($edit->field) {
-                    'opening_times', 'features' => '',
-                    default => Str::limit($edit->value, 75),
-                };
+            Text::make('Value', fn (EaterySuggestedEdit $edit) => match ($edit->field) {
+                'opening_times', 'features' => '',
+                default => Str::limit($edit->value, 75),
             })
                 ->onlyOnIndex(),
         ];
@@ -120,24 +118,20 @@ class SuggestedEdits extends Resource
             ->with(['eatery' => fn ($query) => $query->withoutGlobalScopes()->with(['features'])])
             ->findOrFail($request->resourceId);
 
-        $currentValue = Text::make('Current Value', function (EaterySuggestedEdit $edit) {
-            return match ($edit->field) {
-                'opening_times', 'features', 'info' => '',
-                'venue_type' => $edit->eatery->venueType->venue_type,
-                'cuisine' => $edit->eatery->cuisine?->cuisine,
-                'address' => Str::replace("\n", '<br />', $edit->eatery->address),
-                default => $edit->eatery->{$edit->field},
-            };
+        $currentValue = Text::make('Current Value', fn (EaterySuggestedEdit $edit) => match ($edit->field) {
+            'opening_times', 'features', 'info' => '',
+            'venue_type' => $edit->eatery->venueType->venue_type,
+            'cuisine' => $edit->eatery->cuisine?->cuisine,
+            'address' => Str::replace("\n", '<br />', $edit->eatery->address),
+            default => $edit->eatery->{$edit->field},
         })->asHtml();
 
-        $suggestedValue = Text::make('Suggested Value', function (EaterySuggestedEdit $edit) {
-            return match ($edit->field) {
-                'opening_times', 'features' => '',
-                'venue_type' => EateryVenueType::query()->where('venue_type', $edit->value)->orWhere('id', $edit->value)->firstOrFail()->venue_type,
-                'cuisine' => EateryCuisine::query()->where('cuisine', $edit->value)->orWhere('id', $edit->value)->firstOrFail()->cuisine,
-                'address' => Str::replace("\n", '<br />', $edit->value),
-                default => $edit->value,
-            };
+        $suggestedValue = Text::make('Suggested Value', fn (EaterySuggestedEdit $edit) => match ($edit->field) {
+            'opening_times', 'features' => '',
+            'venue_type' => EateryVenueType::query()->where('venue_type', $edit->value)->orWhere('id', $edit->value)->firstOrFail()->venue_type,
+            'cuisine' => EateryCuisine::query()->where('cuisine', $edit->value)->orWhere('id', $edit->value)->firstOrFail()->cuisine,
+            'address' => Str::replace("\n", '<br />', $edit->value),
+            default => $edit->value,
         })->asHtml();
 
         if ($suggestedEdit->field === 'features') {
@@ -146,7 +140,7 @@ class SuggestedEdits extends Resource
                 ->values()
                 ->map(fn (array $feature) => $feature['label']);
 
-            $features = EateryFeature::query()->get()->mapWithKeys(fn (EateryFeature $feature) => [
+            $features = EateryFeature::query()->get()->mapWithKeys(fn (EateryFeature $feature): array => [
                 $feature->feature => false,
             ]);
 
@@ -154,19 +148,19 @@ class SuggestedEdits extends Resource
             $suggestedFeatures = $features->map(fn (string $v, string $feature) => $value->contains($feature));
 
             $currentValue = BooleanGroup::make('Current Value', fn () => $existingFeatures)
-                ->options($features->keys()->mapWithKeys(fn ($feature) => [$feature => $feature]));
+                ->options($features->keys()->mapWithKeys(fn ($feature): array => [$feature => $feature]));
 
             $suggestedValue = BooleanGroup::make('Suggested Value', fn () => $suggestedFeatures)
-                ->options($features->keys()->mapWithKeys(fn ($feature) => [$feature => $feature]));
+                ->options($features->keys()->mapWithKeys(fn ($feature): array => [$feature => $feature]));
         }
 
         if ($suggestedEdit->field === 'opening_times') {
             $value = collect(json_decode($suggestedEdit->value, true))
-                ->mapWithKeys(fn (array $times) => [
+                ->mapWithKeys(fn (array $times): array => [
                     $times['label'] => $times['closed'] ? 'Closed' : "{$times['start'][0]}:{$times['start'][1]} - {$times['end'][0]}:{$times['end'][1]}",
                 ]);
 
-            $existingTimes = Arr::mapWithKeys($suggestedEdit->eatery->openingTimes?->openingTimesArray ?? [], fn ($times, $day) => [
+            $existingTimes = Arr::mapWithKeys($suggestedEdit->eatery->openingTimes?->openingTimesArray ?? [], fn ($times, $day): array => [
                 Str::headline($day) => "{$times['opens']} - {$times['closes']}",
             ]);
 
@@ -189,16 +183,16 @@ class SuggestedEdits extends Resource
             AcceptEdit::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EaterySuggestedEdit $edit) => $edit->accepted === false && $edit->rejected === false),
+                ->canRun(fn ($request, EaterySuggestedEdit $edit): bool => $edit->accepted === false && $edit->rejected === false),
 
             AcceptAndImplementEdit::make()
                 ->showInline()
-                ->canRun(fn ($request, EaterySuggestedEdit $edit) => $edit->accepted === false && $edit->rejected === false && $edit->field !== 'info'),
+                ->canRun(fn ($request, EaterySuggestedEdit $edit): bool => $edit->accepted === false && $edit->rejected === false && $edit->field !== 'info'),
 
             RejectEdit::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EaterySuggestedEdit $edit) => $edit->accepted === false && $edit->rejected === false),
+                ->canRun(fn ($request, EaterySuggestedEdit $edit): bool => $edit->accepted === false && $edit->rejected === false),
         ];
     }
 

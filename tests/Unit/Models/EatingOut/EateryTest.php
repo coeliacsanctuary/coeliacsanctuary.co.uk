@@ -593,7 +593,7 @@ class EateryTest extends TestCase
 
         $this->build(SealiacOverview::class)
             ->count(5)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'created_at' => now()->subDays($sequence->index + 1),
             ])
             ->forEatery($eatery)
@@ -613,7 +613,7 @@ class EateryTest extends TestCase
 
         $this->build(SealiacOverview::class)
             ->count(5)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'created_at' => now()->subDays($sequence->index + 1),
             ])
             ->forEatery($eatery)

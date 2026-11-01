@@ -28,7 +28,7 @@ class ShopOrderItemFactory extends Factory
 
     public function inOrder(ShopOrder $order): self
     {
-        return $this->state(fn () => ['order_id' => $order->id]);
+        return $this->state(fn (): array => ['order_id' => $order->id]);
     }
 
     public function toBasket(ShopOrder $basket): self
@@ -38,17 +38,17 @@ class ShopOrderItemFactory extends Factory
 
     public function inProduct(ShopProduct $product): self
     {
-        return $this->state(fn () => ['product_id' => $product->id]);
+        return $this->state(fn (): array => ['product_id' => $product->id]);
     }
 
     public function inVariant(ShopProductVariant $variant): self
     {
-        return $this->state(fn () => ['product_variant_id' => $variant->id]);
+        return $this->state(fn (): array => ['product_variant_id' => $variant->id]);
     }
 
     public function withAddOn(ShopProductAddOn $addOn): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'product_add_on_id' => $addOn->id,
             'product_add_on_title' => $addOn->name,
             'product_add_on_price' => $addOn->currentPrice,
@@ -57,7 +57,7 @@ class ShopOrderItemFactory extends Factory
 
     public function add(ShopProductVariant $productVariant, int $quantity = 1): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'product_id' => $productVariant->product->id,
             'product_variant_id' => $productVariant->id,
             'product_title' => $productVariant->product->title,

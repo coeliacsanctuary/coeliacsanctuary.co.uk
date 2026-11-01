@@ -55,7 +55,7 @@ class GetBestSellingProductsForShopIndexAction
             ->whereRelation('variants', 'quantity', '>', 0)
             ->with(['media', 'prices', 'reviews'])
             ->get()
-            ->sortBy(fn (ShopProduct $product) => array_search($product->id, $productIds, true))
+            ->sortBy(fn (ShopProduct $product): int|false => array_search($product->id, $productIds, true))
             ->values();
 
         return $products->take($this->fullRowCount(min($products->count(), 6)));

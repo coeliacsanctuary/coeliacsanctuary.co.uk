@@ -155,7 +155,7 @@ class GetCountyListActionTest extends TestCase
         $collection = app(GetCountyListAction::class)->handle();
 
         $collection->each(function (array $item): void {
-            $listedCounties = collect($item['list'])->map(fn ($county) => (array) $county)->pluck('name');
+            $listedCounties = collect($item['list'])->map(fn ($county): array => (array) $county)->pluck('name');
 
             EateryCountry::query()
                 ->firstWhere('country', $item['name'])

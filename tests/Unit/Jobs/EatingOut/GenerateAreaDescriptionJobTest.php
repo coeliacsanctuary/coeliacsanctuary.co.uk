@@ -58,7 +58,7 @@ class GenerateAreaDescriptionJobTest extends TestCase
         new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Area: Camden Lock')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Area: Camden Lock')
         );
     }
 
@@ -70,7 +70,7 @@ class GenerateAreaDescriptionJobTest extends TestCase
         new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Borough: Camden')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Borough: Camden')
         );
     }
 
@@ -82,7 +82,7 @@ class GenerateAreaDescriptionJobTest extends TestCase
         new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -101,7 +101,7 @@ class GenerateAreaDescriptionJobTest extends TestCase
         new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -122,7 +122,7 @@ class GenerateAreaDescriptionJobTest extends TestCase
         new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 8')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 8')
         );
     }
 
@@ -141,7 +141,7 @@ class GenerateAreaDescriptionJobTest extends TestCase
         new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
         );
     }
 

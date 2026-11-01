@@ -35,7 +35,7 @@ class SearchEateries
                 $searchPipelineData->parameters->locationSearch ?: $searchPipelineData->parameters->term,
                 raw: true,
                 nullIfEmpty: true,
-                checkResult: fn ($result) => $this->geocoderIsValid($result, $searchPipelineData),
+                checkResult: fn ($result): bool => $this->geocoderIsValid($result, $searchPipelineData),
             );
 
             if ($geocoder) {
@@ -64,8 +64,8 @@ class SearchEateries
             });
 
             $results = collect([...$geoResults->all(), ...$baseResults->all()])
-                ->map(fn (Eatery|NationwideBranch $eatery) => SearchResultItem::fromSearchableResult($eatery))
-                ->unique(fn (SearchResultItem $item) => "{$item->model}#{$item->id}");
+                ->map(fn (Eatery|NationwideBranch $eatery): SearchResultItem => SearchResultItem::fromSearchableResult($eatery))
+                ->unique(fn (SearchResultItem $item): string => "{$item->model}#{$item->id}");
 
             $searchPipelineData
                 ->results

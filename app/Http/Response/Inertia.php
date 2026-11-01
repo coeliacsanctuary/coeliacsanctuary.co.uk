@@ -123,7 +123,7 @@ class Inertia
 
         $this->schema = array_merge($this->schema, $schema);
 
-        BaseInertia::share('meta.schema', fn () => $this->schema);
+        BaseInertia::share('meta.schema', fn (): array => $this->schema);
 
         return $this;
     }

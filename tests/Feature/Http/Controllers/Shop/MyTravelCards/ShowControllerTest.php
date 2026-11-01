@@ -50,28 +50,28 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itRendersTheMyTravelCardsShowPage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/MyTravelCards/Show'));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->component('Shop/MyTravelCards/Show'));
     }
 
     #[Test]
     public function itSetsThePageTitle(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page->where('meta.title', "{$this->card->title} - My Travel Cards")->etc()
+            fn (Assert $page): Assert => $page->where('meta.title', "{$this->card->title} - My Travel Cards")->etc()
         );
     }
 
     #[Test]
     public function itDoesntTrackThePage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->where('meta.doNotTrack', true)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->where('meta.doNotTrack', true)->etc());
     }
 
     #[Test]
     public function itDoesntRenderAnyMetaTagsOrDescription(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('meta.tags', [])
                 ->where('meta.description', '')
                 ->etc()
@@ -82,7 +82,7 @@ class ShowControllerTest extends TestCase
     public function itReturnsTheCardDetails(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('card.id', $this->card->id)
                 ->where('card.title', 'French Travel Card')
                 ->where('card.language', 'french')
@@ -95,7 +95,7 @@ class ShowControllerTest extends TestCase
     public function itReturnsTheCardContent(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('card.content.title', 'I am coeliac')
                 ->where('card.content.intro', 'I cannot eat gluten')
                 ->where('card.content.cant_eat.label', 'I cant eat')
@@ -117,7 +117,7 @@ class ShowControllerTest extends TestCase
     {
         $this->order->update(['order_key' => '12345678']);
 
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->where('id', md5('12345678'))->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->where('id', md5('12345678'))->etc());
     }
 
     #[Test]

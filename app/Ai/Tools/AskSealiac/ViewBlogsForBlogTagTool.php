@@ -30,7 +30,7 @@ class ViewBlogsForBlogTagTool extends BaseTool
             ->orderByDesc('created_at')
             ->with(['tags'])
             ->get()
-            ->map(fn (Blog $blog) => [
+            ->map(fn (Blog $blog): array => [
                 'id' => $blog->id,
                 'title' => $blog->title,
                 'slug' => $blog->slug,

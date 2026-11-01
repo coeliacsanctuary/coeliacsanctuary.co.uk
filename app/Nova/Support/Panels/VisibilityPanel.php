@@ -22,7 +22,7 @@ class VisibilityPanel
     {
         return new Panel('Visibility', [
             Select::make('Status', '_status')
-                ->resolveUsing(fn ($foo, ?Model $resource) => match (true) {
+                ->resolveUsing(fn ($foo, ?Model $resource): string => match (true) {
                     $resource?->live => 'live',
                     (bool) $resource?->publish_at => 'future',
                     default => 'draft',
@@ -48,7 +48,7 @@ class VisibilityPanel
                 ->onlyOnForms()
                 ->default(fn () => Carbon::now()->addDay())
                 ->fillUsing(
-                    fn ($request, $model, $attribute, $requestAttribute) =>
+                    fn ($request, $model, $attribute, $requestAttribute): ?Carbon =>
                     $model->{$attribute} = $request->get($requestAttribute)
                         ? Carbon::parse($request->get($requestAttribute))
                         : null

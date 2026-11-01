@@ -22,7 +22,7 @@ class OpenGraphImageFactory extends Factory
 
     public function on(HasComments $commentable)
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'commentable_type' => $commentable::class,
             'commentable_id' => $commentable->id,
         ]);

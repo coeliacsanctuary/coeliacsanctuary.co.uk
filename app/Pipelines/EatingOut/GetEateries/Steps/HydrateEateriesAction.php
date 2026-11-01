@@ -24,9 +24,9 @@ class HydrateEateriesAction implements GetEateriesPipelineActionContract
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
         if ($pipelineData->paginator instanceof LengthAwarePaginator) {
-            $eateryIds = Arr::map($pipelineData->paginator->items(), fn (PendingEatery $eatery) => $eatery->id);
+            $eateryIds = Arr::map($pipelineData->paginator->items(), fn (PendingEatery $eatery): int => $eatery->id);
         } elseif ($pipelineData->eateries instanceof Collection) {
-            $eateryIds = $pipelineData->eateries->map(fn (PendingEatery $eatery) => $eatery->id)->toArray();
+            $eateryIds = $pipelineData->eateries->map(fn (PendingEatery $eatery): int => $eatery->id)->toArray();
         } else {
             throw new RuntimeException('No eateries');
         }

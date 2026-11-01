@@ -52,11 +52,11 @@ class HasMany extends NovaRepeater\Presets\HasMany
                 [$regularFields, $nestedFields] = $fields
                     ->withoutUnfillable()
                     ->withoutMissingValues()
-                    ->partition(fn ($field) => ! ($field instanceof NovaRepeater));
+                    ->partition(fn ($field): bool => ! ($field instanceof NovaRepeater));
 
                 $callbacks = $regularFields
                     ->map(static fn (Field $field) => $field->fillInto($request, $data, $field->attribute, "{$requestAttribute}.{$blockKey}.fields.{$field->attribute}"))
-                    ->filter(static fn ($callback) => is_callable($callback))
+                    ->filter(static fn ($callback): bool => is_callable($callback))
                     ->toBase();
 
                 return [$data, $callbacks, $nestedFields, $blockKey];

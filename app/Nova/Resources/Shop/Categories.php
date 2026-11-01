@@ -72,7 +72,7 @@ class Categories extends Resource
                 ->hideFromIndex()
                 ->nullable(),
 
-            Boolean::make('Is Live', fn ($resource) => $resource->live_products > 0)->onlyOnIndex(),
+            Boolean::make('Is Live', fn ($resource): bool => $resource->live_products > 0)->onlyOnIndex(),
 
             Number::make('Products', 'products_count')->onlyOnIndex(),
 

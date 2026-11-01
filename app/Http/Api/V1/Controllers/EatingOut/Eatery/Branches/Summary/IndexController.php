@@ -19,7 +19,7 @@ class IndexController
             ->with(['eatery', 'area', 'area.town', 'town', 'county'])
             ->where('live', true)
             ->get()
-            ->map(fn (NationwideBranch $branch) => [
+            ->map(fn (NationwideBranch $branch): array => [
                 'name' => "{$branch->short_name} - {$branch->eateryPostcode()}",
             ]);
 

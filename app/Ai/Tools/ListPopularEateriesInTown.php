@@ -38,7 +38,7 @@ class ListPopularEateriesInTown implements Tool
             ->orderBy('reviews_count', 'desc')
             ->take(5)
             ->get()
-            ->map(fn (Eatery $eatery) => [
+            ->map(fn (Eatery $eatery): array => [
                 'name' => $eatery->name,
                 'london_area' => $eatery->area?->area,
                 'address' => $eatery->address,

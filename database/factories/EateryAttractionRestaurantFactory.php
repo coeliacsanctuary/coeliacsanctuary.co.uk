@@ -22,7 +22,7 @@ class EateryAttractionRestaurantFactory extends Factory
 
     public function on(Eatery|int $eatery)
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'wheretoeat_id' => $eatery instanceof Eatery ? $eatery->id : $eatery,
         ]);
     }

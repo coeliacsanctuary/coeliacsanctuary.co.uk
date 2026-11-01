@@ -70,7 +70,7 @@ class ShowControllerTest extends TestCase
     public function itLoadsTheInertiaPage(): void
     {
         $this->makeRequest()
-            ->assertInertia(fn (Assert $page) => $page->component('Shop/ReviewMyOrderThanks'));
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Shop/ReviewMyOrderThanks'));
     }
 
     #[Test]

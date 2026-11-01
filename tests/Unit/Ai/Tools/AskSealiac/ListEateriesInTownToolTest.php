@@ -50,7 +50,7 @@ class ListEateriesInTownToolTest extends TestCase
         $pipeline = Mockery::mock(GetEateriesInTownForAskSealiacPipeline::class);
         $pipeline->shouldReceive('run')
             ->once()
-            ->withArgs(fn (EateryTown $argTown, array $filters, string $sort) => $argTown->id === $town->id && $sort === 'alphabetical')
+            ->withArgs(fn (EateryTown $argTown, array $filters, string $sort): bool => $argTown->id === $town->id && $sort === 'alphabetical')
             ->andReturn(collect());
 
         $this->app->instance(GetEateriesInTownForAskSealiacPipeline::class, $pipeline);
@@ -115,7 +115,7 @@ class ListEateriesInTownToolTest extends TestCase
         $pipeline = Mockery::mock(GetEateriesInTownForAskSealiacPipeline::class);
         $pipeline->shouldReceive('run')
             ->once()
-            ->withArgs(fn (EateryTown $argTown, array $filters, string $sort) => $filters['categories'] === ['eatery']
+            ->withArgs(fn (EateryTown $argTown, array $filters, string $sort): bool => $filters['categories'] === ['eatery']
                     && $filters['venueTypes'] === ['pub']
                     && $filters['features'] === ['gluten-free-menu']
                     && $sort === 'rating')
@@ -141,7 +141,7 @@ class ListEateriesInTownToolTest extends TestCase
         $pipeline = Mockery::mock(GetEateriesInTownForAskSealiacPipeline::class);
         $pipeline->shouldReceive('run')
             ->once()
-            ->withArgs(fn (EateryTown $argTown, array $filters) => $filters['categories'] === null
+            ->withArgs(fn (EateryTown $argTown, array $filters): bool => $filters['categories'] === null
                     && $filters['venueTypes'] === null
                     && $filters['features'] === null)
             ->andReturn(collect());

@@ -28,7 +28,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
     {
         $data = $this->makeData('Bella Italia');
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertFalse($data->found);
     }
@@ -46,7 +46,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
 
         $data = $this->makeData($search);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$name}, did you know they're already listed on our Nationwide Eateries page?", $data->reason);
@@ -73,7 +73,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
             'name' => $branchName,
         ]);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$name}, {$branch->short_location}, but we've already got it listed!", $data->reason);
@@ -101,7 +101,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
             'name' => $branchName,
         ]);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$name}, {$branch->short_location}, but we've already got it listed!", $data->reason);

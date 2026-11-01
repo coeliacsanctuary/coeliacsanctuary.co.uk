@@ -27,9 +27,9 @@ class IndexController
                 'rating' => [
                     'average' => $digitalCard->averageRating,
                     'count' => $digitalCard->reviews->count(),
-                    'breakdown' => collect(range(5, 1))->map(fn ($rating) => [
+                    'breakdown' => collect(range(5, 1))->map(fn ($rating): array => [
                         'rating' => $rating,
-                        'count' => $digitalCard->reviews->filter(fn (ShopOrderReviewItem $reviewItem) => (int) $reviewItem->rating === $rating)->count(),
+                        'count' => $digitalCard->reviews->filter(fn (ShopOrderReviewItem $reviewItem): bool => (int) $reviewItem->rating === $rating)->count(),
                     ]),
                 ],
                 'reviews' => $reviews,

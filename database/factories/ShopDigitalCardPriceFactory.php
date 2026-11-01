@@ -21,6 +21,6 @@ class ShopDigitalCardPriceFactory extends Factory
 
     public function forCard(ShopDigitalCard $card): self
     {
-        return $this->state(fn () => ['digital_card_id' => $card->id]);
+        return $this->state(fn (): array => ['digital_card_id' => $card->id]);
     }
 }

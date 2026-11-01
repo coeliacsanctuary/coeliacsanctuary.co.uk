@@ -65,7 +65,7 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     #[Test]
     public function itWillNotReturnTheOverviewForTheEateryWhenGettingTheBranchOverview(): void
     {
-        $eateryModel = $this->build(SealiacOverview::class)->forEatery($this->eatery)->create([
+        $this->build(SealiacOverview::class)->forEatery($this->eatery)->create([
             'overview' => 'This is the eatery overview',
         ]);
 

@@ -78,8 +78,8 @@ class PaymentProviders extends Chartable
         }
 
         return collect($results)
-            ->reject(fn (array $items) => empty(array_filter($items)))
-            ->map(fn (array $items, string $provider) => [
+            ->reject(fn (array $items): bool => empty(array_filter($items)))
+            ->map(fn (array $items, string $provider): array => [
                 'name' => $provider,
                 'data' => $items,
                 'color' => $colours[$provider],

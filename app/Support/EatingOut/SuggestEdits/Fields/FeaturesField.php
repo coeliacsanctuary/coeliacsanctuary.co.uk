@@ -31,7 +31,7 @@ class FeaturesField extends EditableField
         return EateryFeature::query()
             ->orderBy('feature')
             ->get()
-            ->mapWithKeys(fn (EateryFeature $feature) => [
+            ->mapWithKeys(fn (EateryFeature $feature): array => [
                 $feature->feature => collect($eatery->features->pluck('id'))->contains($feature->id),
             ])
             ->toJson();
@@ -49,7 +49,7 @@ class FeaturesField extends EditableField
 
         /** @var array{label: string, selected: bool}[] $values */
         collect($values)
-            ->filter(fn (array $value) => $value['selected'])
+            ->filter(fn (array $value): bool => $value['selected'])
             ->map(fn (array $value) => EateryFeature::query()->where('feature', Str::headline($value['label']))->firstOrFail()->id)
             ->each(fn ($id) => $eatery->features()->attach($id));
 

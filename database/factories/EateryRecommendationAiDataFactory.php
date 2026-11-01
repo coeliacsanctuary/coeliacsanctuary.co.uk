@@ -39,14 +39,14 @@ class EateryRecommendationAiDataFactory extends Factory
 
     public function ineligible(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'is_eligible' => false,
         ]);
     }
 
     public function on(EateryRecommendation|int $recommendation): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'wheretoeat_place_recommendation_id' => $recommendation instanceof EateryRecommendation ? $recommendation->id : $recommendation,
         ]);
     }

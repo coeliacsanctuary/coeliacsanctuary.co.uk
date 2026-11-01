@@ -85,7 +85,7 @@ class SealiacEateryOverviewAgent implements Agent
     {
         return once(fn () => $this->eatery
             ->reviews
-            ->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)
-            ->when($this->branch, fn (Collection $reviews) => $reviews->filter(fn (EateryReview $review) => $review->nationwide_branch_id === $this->branch?->id)));
+            ->filter(fn (EateryReview $review): bool => $review->admin_review === false && $review->review)
+            ->when($this->branch, fn (Collection $reviews) => $reviews->filter(fn (EateryReview $review): bool => $review->nationwide_branch_id === $this->branch?->id)));
     }
 }

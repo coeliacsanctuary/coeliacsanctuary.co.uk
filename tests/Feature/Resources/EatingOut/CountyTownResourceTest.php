@@ -71,7 +71,7 @@ class CountyTownResourceTest extends TestCase
 
         $this->build(NationwideBranch::class)
             ->count(5)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'wheretoeat_id' => $eateries[$sequence->index]->id ?? $this->eatery->id,
             ])
             ->create();

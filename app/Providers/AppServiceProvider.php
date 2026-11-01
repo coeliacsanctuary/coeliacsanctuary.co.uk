@@ -30,14 +30,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(Mjml::class, fn () => Mjml::new());
+        $this->app->bind(Mjml::class, fn (): Mjml => Mjml::new());
         $this->app->register(MacroServiceProvider::class);
         $this->app->alias(MailChannel::class, IlluminateMailChannel::class);
 
         $this->app->singleton(GoogleMerchantProductManager::class);
         $this->app->singleton(GoogleMerchantShippingManager::class);
 
-        $this->app->singleton(GoogleMerchantClient::class, fn () => new GoogleMerchantClient(
+        $this->app->singleton(GoogleMerchantClient::class, fn (): GoogleMerchantClient => new GoogleMerchantClient(
             enabled: config()->boolean('google-merchant.enabled', false),
             merchantId: config()->string('google-merchant.merchant_id', ''),
             serviceAccountKeyPath: config()->string('google-merchant.service_account_key_path', ''),
@@ -59,11 +59,11 @@ class AppServiceProvider extends ServiceProvider
 
         Vite::prefetch(concurrency: 3);
 
-        Blade::directive('preloadImage', fn () => '<?php echo app(' . PreloadHeaderImageAction::class . '::class)->handle(); ?>');
+        Blade::directive('preloadImage', fn (): string => '<?php echo app(' . PreloadHeaderImageAction::class . '::class)->handle(); ?>');
 
-        Nightwatch::rejectCacheEvents(fn (CacheEvent $event) => ! str_contains($event->key, '.'));
+        Nightwatch::rejectCacheEvents(fn (CacheEvent $event): bool => ! str_contains($event->key, '.'));
 
-        Nightwatch::rejectOutgoingRequests(fn (OutgoingRequest $request) => $request->url === '127.0.0.1');
+        Nightwatch::rejectOutgoingRequests(fn (OutgoingRequest $request): bool => $request->url === '127.0.0.1');
 
         RateLimiter::for('metrics', fn () => Limit::perSecond(5));
     }

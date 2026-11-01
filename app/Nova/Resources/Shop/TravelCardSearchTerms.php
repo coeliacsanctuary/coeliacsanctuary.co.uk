@@ -61,7 +61,7 @@ class TravelCardSearchTerms extends Resource
 
                     return "{$category->title} - {$product->title}";
                 })
-                ->fields(fn () => [
+                ->fields(fn (): array => [
                     Boolean::make('Show on Product Page Country List', 'card_show_on_product_page'),
 
                     Select::make('Language', 'card_language')
@@ -83,8 +83,8 @@ class TravelCardSearchTerms extends Resource
                                         Str::of($product->title)
                                             ->before(' Coeliac')
                                             ->explode(' and ')
-                                            ->map(fn (string $language) => mb_trim($language))
-                                            ->mapWithKeys(fn (string $language) => [Str::headline($language) => Str::headline($language)])
+                                            ->map(fn (string $language): string => mb_trim($language))
+                                            ->mapWithKeys(fn (string $language): array => [Str::headline($language) => Str::headline($language)])
                                             ->put('both', 'Both Languages')
                                             ->toArray()
                                     )

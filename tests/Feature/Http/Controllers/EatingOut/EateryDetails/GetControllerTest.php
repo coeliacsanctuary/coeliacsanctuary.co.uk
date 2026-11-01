@@ -86,7 +86,7 @@ class GetControllerTest extends TestCase
     {
         $this->visitEatery()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->has('eatery')
                     ->where('eatery.name', $this->eatery->name)
@@ -109,7 +109,7 @@ class GetControllerTest extends TestCase
 
         $this->visitEatery()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->has('nearbyEateries')
                     ->etc()
@@ -174,7 +174,7 @@ class GetControllerTest extends TestCase
             ->convertToNationwideEatery()
             ->visitNationwideEatery()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->has('eatery')
                     ->where('eatery.name', $this->eatery->name)
@@ -199,7 +199,7 @@ class GetControllerTest extends TestCase
             ->convertToNationwideEatery()
             ->visitNationwideEatery()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->has('nearbyEateries')
                     ->etc()
@@ -227,7 +227,7 @@ class GetControllerTest extends TestCase
             ->convertToNationwideEatery()
             ->visitNationwideEatery()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->where('eatery.branch_count', 3)
                     ->etc()
@@ -242,7 +242,7 @@ class GetControllerTest extends TestCase
         $this
             ->visitEatery()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->where('eatery.branch_count', 0)
                     ->etc()
@@ -300,7 +300,7 @@ class GetControllerTest extends TestCase
             ->convertToNationwideEatery()
             ->visitBranch()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->has('eatery')
                     ->where('eatery.name', $this->eatery->name)
@@ -325,7 +325,7 @@ class GetControllerTest extends TestCase
             ->convertToNationwideEatery()
             ->visitBranch()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->has('nearbyEateries')
                     ->etc()
@@ -382,7 +382,7 @@ class GetControllerTest extends TestCase
             ->convertToLondonEatery()
             ->visitLondonEatery()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->has('eatery')
                     ->where('eatery.name', $this->eatery->name)
@@ -407,7 +407,7 @@ class GetControllerTest extends TestCase
             ->convertToLondonEatery()
             ->visitLondonEatery()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Details')
                     ->has('nearbyEateries')
                     ->etc()

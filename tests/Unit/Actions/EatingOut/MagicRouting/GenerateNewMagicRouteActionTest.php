@@ -113,7 +113,7 @@ class GenerateNewMagicRouteActionTest extends TestCase
 
         $this->assertTrue(
             $record->builder_config->getWheres()->contains(
-                fn (Where $where) => $where->jsonSerialize() === ['[parent].county_id', '=', $this->county->id, 'and']
+                fn (Where $where): bool => $where->jsonSerialize() === ['[parent].county_id', '=', $this->county->id, 'and']
             )
         );
     }
@@ -127,7 +127,7 @@ class GenerateNewMagicRouteActionTest extends TestCase
 
         $this->assertTrue(
             $record->builder_config->getWheres()->contains(
-                fn (Where $where) => $where->jsonSerialize() === ['[parent].town_id', '=', $this->town->id, 'and']
+                fn (Where $where): bool => $where->jsonSerialize() === ['[parent].town_id', '=', $this->town->id, 'and']
             )
         );
     }
@@ -144,7 +144,7 @@ class GenerateNewMagicRouteActionTest extends TestCase
 
         $this->assertTrue(
             $config->getWheres()->contains(
-                fn (Where $where) => $where->jsonSerialize()[0] === 'wheretoeat_assigned_features.feature_id'
+                fn (Where $where): bool => $where->jsonSerialize()[0] === 'wheretoeat_assigned_features.feature_id'
             )
         );
     }
@@ -158,7 +158,7 @@ class GenerateNewMagicRouteActionTest extends TestCase
 
         $this->assertTrue(
             $record->builder_config->getOrderings()->contains(
-                fn (Order $order) => $order->jsonSerialize() === ['[parent].name', 'asc', null, null, null]
+                fn (Order $order): bool => $order->jsonSerialize() === ['[parent].name', 'asc', null, null, null]
             )
         );
     }
@@ -172,7 +172,7 @@ class GenerateNewMagicRouteActionTest extends TestCase
 
         $this->assertTrue(
             $record->builder_config->getJoins()->contains(
-                fn (Join $join) => $join->jsonSerialize() === ['wheretoeat_towns', 'wheretoeat_towns.id', '[parent].town_id', null]
+                fn (Join $join): bool => $join->jsonSerialize() === ['wheretoeat_towns', 'wheretoeat_towns.id', '[parent].town_id', null]
             )
         );
     }
@@ -186,7 +186,7 @@ class GenerateNewMagicRouteActionTest extends TestCase
 
         $this->assertTrue(
             $record->builder_config->getOrderings()->contains(
-                fn (Order $order) => $order->jsonSerialize() === ['wheretoeat_towns.town', 'asc', null, null, null]
+                fn (Order $order): bool => $order->jsonSerialize() === ['wheretoeat_towns.town', 'asc', null, null, null]
             )
         );
     }
@@ -200,7 +200,7 @@ class GenerateNewMagicRouteActionTest extends TestCase
 
         $this->assertFalse(
             $record->builder_config->getJoins()->contains(
-                fn (Join $join) => $join->jsonSerialize()[0] === 'wheretoeat_towns'
+                fn (Join $join): bool => $join->jsonSerialize()[0] === 'wheretoeat_towns'
             )
         );
     }

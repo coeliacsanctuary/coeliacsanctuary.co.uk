@@ -145,11 +145,11 @@ class IndexControllerTest extends TestCase
                 'shop' => 'false',
             ]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Search/Index')
                     ->has(
                         'parameters',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('q', 'foo')
                             ->where('blogs', true)
                             ->where('recipes', false)

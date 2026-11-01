@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Blogs;
 
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Collection;
 use App\Actions\Blogs\GetBlogsForBlogIndexAction;
 use App\Actions\Blogs\GetBlogTagsAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
@@ -35,8 +37,8 @@ class IndexController
                 new BreadcrumbItemData('Blogs'),
             ]))
             ->render('Blog/Index', [
-                'blogs' => fn () => $getBlogsForBlogIndexAction->handle($tag),
-                'tags' => Inertia::defer(fn () => $getBlogTagsAction->handle()),
+                'blogs' => fn (): ResourceCollection => $getBlogsForBlogIndexAction->handle($tag),
+                'tags' => Inertia::defer(fn (): Collection => $getBlogTagsAction->handle()),
                 'activeTag' => $tag->exists ? Str::title($tag->tag) : null,
             ]);
     }

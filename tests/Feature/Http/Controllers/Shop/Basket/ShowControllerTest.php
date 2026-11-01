@@ -98,7 +98,7 @@ class ShowControllerTest extends TestCase
     public function itReturnsTheInertiaCheckoutView(): void
     {
         $this->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->component('Shop/Checkout'));
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Shop/Checkout'));
     }
 
     #[Test]
@@ -155,7 +155,7 @@ class ShowControllerTest extends TestCase
     public function itPassesHasBasketFalseAsAPropIfNoBasket(): void
     {
         $this->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->where('has_basket', false));
+            ->assertInertia(fn (Assert $page): Assert => $page->where('has_basket', false));
     }
 
     #[Test]
@@ -166,7 +166,7 @@ class ShowControllerTest extends TestCase
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->where('has_basket', true)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('has_basket', true)->etc());
     }
 
     #[Test]
@@ -206,10 +206,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->has('items', $items->count())
                             ->where('items', $items->response()->getData(true))
                             ->etc()
@@ -226,16 +226,16 @@ class ShowControllerTest extends TestCase
         /** @var AnonymousResourceCollection $items */
         $items = $this->callAction(GetOrderItemsAction::class, $this->order);
 
-        $subtotal = $items->collection->map(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity)->sum();
+        $subtotal = $items->collection->map(fn (ShopOrderItemResource $item): int|float => $item->product_price * $item->quantity)->sum();
 
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('subtotal', Helpers::formatMoney(Money::GBP($subtotal)))
                             ->etc()
                     )
@@ -262,10 +262,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('postage', '£1.00')
                             ->etc()
                     )
@@ -282,10 +282,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('total', '£3.00')
                             ->etc()
                     )
@@ -302,10 +302,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->has('fees')
                             ->has('total_fees')
                             ->etc()
@@ -336,7 +336,7 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('countries')
                     ->etc()
             );
@@ -351,10 +351,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('selected_country', 1)
                             ->etc()
                     )
@@ -371,10 +371,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('delivery_timescale', '1 - 2')
                             ->etc()
                     )
@@ -413,10 +413,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->has('digital_items', 1)
                             ->where('digital_items.0.id', $item->id)
                             ->where('digital_items.0.title', $item->digital_card_title)
@@ -435,10 +435,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->has('digital_items', 0)
                             ->etc()
                     )
@@ -457,10 +457,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('digital_only', false)
                             ->etc()
                     )
@@ -480,10 +480,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('digital_only', true)
                             ->etc()
                     )
@@ -502,7 +502,7 @@ class ShowControllerTest extends TestCase
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->where('has_basket', true)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('has_basket', true)->etc());
     }
 
     #[Test]
@@ -515,7 +515,7 @@ class ShowControllerTest extends TestCase
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->where('has_basket', false)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('has_basket', false)->etc());
     }
 
     #[Test]
@@ -529,10 +529,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('subtotal', '£4.50')
                             ->where('postage', '£1.00')
                             ->where('total', '£5.50')
@@ -554,10 +554,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('subtotal', '£2.50')
                             ->where('postage', '£0.00')
                             ->where('total', '£2.50')
@@ -577,6 +577,6 @@ class ShowControllerTest extends TestCase
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->where('payment_intent', $token)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('payment_intent', $token)->etc());
     }
 }

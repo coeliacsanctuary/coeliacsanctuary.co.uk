@@ -22,7 +22,7 @@ class CommentFactory extends Factory
 
     public function on(HasComments $commentable)
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'commentable_type' => $commentable::class,
             'commentable_id' => $commentable->id,
         ]);
@@ -30,6 +30,6 @@ class CommentFactory extends Factory
 
     public function approved(): self
     {
-        return $this->state(fn () => ['approved' => true]);
+        return $this->state(fn (): array => ['approved' => true]);
     }
 }

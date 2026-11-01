@@ -28,7 +28,7 @@ class GetEateryCountiesTool extends BaseTool
             ->where('country_id', $request->integer('country_id'))
             ->where('county', '!=', 'Nationwide')
             ->get()
-            ->map(fn (EateryCounty $county) => [
+            ->map(fn (EateryCounty $county): array => [
                 'id' => $county->id,
                 'county' => $county->county,
                 'link' => $county->absoluteLink(),

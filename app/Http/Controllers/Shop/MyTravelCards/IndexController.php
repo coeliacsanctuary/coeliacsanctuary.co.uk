@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\MyTravelCards;
 
+use App\Models\Shop\ShopDigitalCard;
 use App\Concerns\Shop\FormatsDigitalCard;
 use App\Http\Response\Inertia;
 use App\Models\Shop\ShopCustomer;
@@ -36,7 +37,7 @@ class IndexController
             ])
             ->unique('digital_card_id')
             ->values()
-            ->map(fn (ShopOrderDigitalItem $item) => $this->formatDigitalCard($item->card))
+            ->map(fn (ShopOrderDigitalItem $item): ShopDigitalCard => $this->formatDigitalCard($item->card))
             ->sortBy('title')
             ->values()
             ->mapInto(PurchasedCardIndexResource::class);

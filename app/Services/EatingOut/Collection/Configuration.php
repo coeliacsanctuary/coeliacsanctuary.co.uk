@@ -44,10 +44,10 @@ class Configuration implements Castable, Jsonable
         protected mixed $novaLimit = null,
     ) {
         $this->wheres = $this->deduplicateItems($this->processWheres($wheres));
-        $this->joins = $this->deduplicateItems(array_map(fn ($join) => $join instanceof Join ? $join : new Join(...$join), $joins));
-        $this->counts = $this->deduplicateItems(array_map(fn ($count) => $count instanceof Count ? $count : new Count(...$count), $counts));
-        $this->averages = $this->deduplicateItems(array_map(fn ($average) => $average instanceof Average ? $average : new Average(...$average), $averages));
-        $this->orderBy = $this->deduplicateItems(array_map(fn ($order) => $order instanceof Order ? $order : new Order(...$order), $orderBy));
+        $this->joins = $this->deduplicateItems(array_map(fn ($join): Join => $join instanceof Join ? $join : new Join(...$join), $joins));
+        $this->counts = $this->deduplicateItems(array_map(fn ($count): Count => $count instanceof Count ? $count : new Count(...$count), $counts));
+        $this->averages = $this->deduplicateItems(array_map(fn ($average): Average => $average instanceof Average ? $average : new Average(...$average), $averages));
+        $this->orderBy = $this->deduplicateItems(array_map(fn ($order): Order => $order instanceof Order ? $order : new Order(...$order), $orderBy));
     }
 
     protected function processWheres(array $wheres): array
@@ -110,7 +110,7 @@ class Configuration implements Castable, Jsonable
 
         $key = $this->itemKey($where);
 
-        $isDuplicate = collect($this->wheres)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+        $isDuplicate = collect($this->wheres)->contains(fn ($existing): bool => $this->itemKey($existing) === $key);
 
         if ( ! $isDuplicate) {
             /** @phpstan-ignore-next-line  */
@@ -124,7 +124,7 @@ class Configuration implements Castable, Jsonable
     {
         $key = $this->itemKey($join);
 
-        $isDuplicate = collect($this->joins)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+        $isDuplicate = collect($this->joins)->contains(fn ($existing): bool => $this->itemKey($existing) === $key);
 
         if ( ! $isDuplicate) {
             $this->joins[] = $join;
@@ -137,7 +137,7 @@ class Configuration implements Castable, Jsonable
     {
         $key = $this->itemKey($order);
 
-        $isDuplicate = collect($this->orderBy)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+        $isDuplicate = collect($this->orderBy)->contains(fn ($existing): bool => $this->itemKey($existing) === $key);
 
         if ( ! $isDuplicate) {
             $this->orderBy[] = $order;

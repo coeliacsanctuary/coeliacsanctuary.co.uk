@@ -108,7 +108,7 @@ class FindRelatedBlogsActionTest extends TestCase
             ->hasAttached($this->build(BlogTag::class), relationship: 'tags')
             ->create();
 
-        $otherBlog = $this->build(Blog::class)
+        $this->build(Blog::class)
             ->hasAttached($this->build(BlogTag::class), relationship: 'tags')
             ->create();
 
@@ -193,7 +193,7 @@ class FindRelatedBlogsActionTest extends TestCase
             ->create();
 
         // Create blogs with a different tag
-        $otherTagBlogs = $this->build(Blog::class)
+        $this->build(Blog::class)
             ->count(3)
             ->hasAttached($otherTag, relationship: 'tags')
             ->create();

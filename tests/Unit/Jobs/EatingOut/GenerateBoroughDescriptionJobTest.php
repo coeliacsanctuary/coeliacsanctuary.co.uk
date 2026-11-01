@@ -72,7 +72,7 @@ class GenerateBoroughDescriptionJobTest extends TestCase
         new GenerateBoroughDescriptionJob($this->borough)->handle();
 
         EateryBoroughDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Borough: Camden')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Borough: Camden')
         );
     }
 
@@ -84,7 +84,7 @@ class GenerateBoroughDescriptionJobTest extends TestCase
         new GenerateBoroughDescriptionJob($this->borough)->handle();
 
         EateryBoroughDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Areas: 3')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Areas: 3')
         );
     }
 
@@ -96,7 +96,7 @@ class GenerateBoroughDescriptionJobTest extends TestCase
         new GenerateBoroughDescriptionJob($this->borough)->handle();
 
         EateryBoroughDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -114,7 +114,7 @@ class GenerateBoroughDescriptionJobTest extends TestCase
         new GenerateBoroughDescriptionJob($this->borough)->handle();
 
         EateryBoroughDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -134,7 +134,7 @@ class GenerateBoroughDescriptionJobTest extends TestCase
         new GenerateBoroughDescriptionJob($this->borough)->handle();
 
         EateryBoroughDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 8')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 8')
         );
     }
 
@@ -153,7 +153,7 @@ class GenerateBoroughDescriptionJobTest extends TestCase
         new GenerateBoroughDescriptionJob($this->borough)->handle();
 
         EateryBoroughDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
         );
     }
 

@@ -36,14 +36,14 @@ class BackFillBlogMetricsCommand extends Command
                         ->daily()
                         ->count(
                             'views',
-                            fn (QueryDescriptor $query) => $query
-                                ->withPage(fn (PageFilter $page) => $page->path(mb_trim($blog->link, '/')))
+                            fn (QueryDescriptor $query): QueryDescriptor => $query
+                                ->withPage(fn (PageFilter $page): PageFilter => $page->path(mb_trim($blog->link, '/')))
                         )
                         ->count(
                             'comment_views',
-                            fn (QueryDescriptor $query) => $query
+                            fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
-                                    fn (EventFilter $event) => $event
+                                    fn (EventFilter $event): EventFilter => $event
                                         ->type(EventType::SCROLLED_INTO_VIEW)
                                         ->identifier('CommentsCard')
                                         ->withParameters([
@@ -54,9 +54,9 @@ class BackFillBlogMetricsCommand extends Command
                         )
                         ->count(
                             'detail_card_views',
-                            fn (QueryDescriptor $query) => $query
+                            fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
-                                    fn (EventFilter $event) => $event
+                                    fn (EventFilter $event): EventFilter => $event
                                         ->type(EventType::SCROLLED_INTO_VIEW)
                                         ->identifier('BlogDetailCard')
                                         ->withParameters([
@@ -66,9 +66,9 @@ class BackFillBlogMetricsCommand extends Command
                         )
                         ->count(
                             'collection_card_views',
-                            fn (QueryDescriptor $query) => $query
+                            fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
-                                    fn (EventFilter $event) => $event
+                                    fn (EventFilter $event): EventFilter => $event
                                         ->type(EventType::SCROLLED_INTO_VIEW)
                                         ->identifier('CollectionItemCard')
                                         ->withParameters([
@@ -81,7 +81,7 @@ class BackFillBlogMetricsCommand extends Command
 
                     BlogMetric::query()->upsert(
                         /** @phpstan-ignore-next-line */
-                        collect($metrics->all())->map(fn (array $metric) => [
+                        collect($metrics->all())->map(fn (array $metric): array => [
                             'blog_id' => $blog->id,
                             'date' => data_get($metric, 'date'),
                             'page_views' => data_get($metric, 'views'),

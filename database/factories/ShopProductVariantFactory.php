@@ -24,18 +24,18 @@ class ShopProductVariantFactory extends Factory
 
     public function belongsToProduct(ShopProduct $product): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'product_id' => $product->id,
         ]);
     }
 
     public function notLive(): self
     {
-        return $this->state(fn () => ['live' => false]);
+        return $this->state(fn (): array => ['live' => false]);
     }
 
     public function outOfStock(): self
     {
-        return $this->state(fn () => ['quantity' => 0]);
+        return $this->state(fn (): array => ['quantity' => 0]);
     }
 }

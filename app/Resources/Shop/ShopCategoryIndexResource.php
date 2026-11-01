@@ -23,7 +23,7 @@ class ShopCategoryIndexResource extends JsonResource
             'image' => $this->main_image_as_webp ?? $this->main_image,
             'travelCardSearch' => Helpers::isTravelCard($this->id),
             'products_count' => $this->whenCounted('products'),
-            'price' => $this->whenLoaded('products', fn () => $this->categoryPrice()),
+            'price' => $this->whenLoaded('products', fn (): ?string => $this->categoryPrice()),
             'reviews_count' => $this->whenLoaded('products', fn () => $this->products->sum('reviews_count')),
         ];
     }

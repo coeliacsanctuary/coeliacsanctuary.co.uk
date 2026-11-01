@@ -60,7 +60,7 @@ class Comments extends Resource
 
             Text::make('Comment')
                 ->onlyOnIndex()
-                ->displayUsing(fn () => "<div style=\"width: 300px; text-wrap:auto;\">{$this->resource->comment}</div>")
+                ->displayUsing(fn (): string => "<div style=\"width: 300px; text-wrap:auto;\">{$this->resource->comment}</div>")
                 ->asHtml(),
 
             Textarea::make('Comment')->alwaysShow(),
@@ -78,8 +78,8 @@ class Comments extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            ApproveComment::make()->showInline()->canRun(fn ($request, Comment $review) => $review->approved === false),
-            ReplyToComment::make()->sole()->showInline()->canRun(fn ($request, Comment $review) => $review->approved === false),
+            ApproveComment::make()->showInline()->canRun(fn ($request, Comment $review): bool => $review->approved === false),
+            ReplyToComment::make()->sole()->showInline()->canRun(fn ($request, Comment $review): bool => $review->approved === false),
         ];
     }
 

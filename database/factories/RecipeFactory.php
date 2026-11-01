@@ -38,11 +38,11 @@ class RecipeFactory extends Factory
 
     public function notLive()
     {
-        return $this->state(fn () => ['live' => false]);
+        return $this->state(fn (): array => ['live' => false]);
     }
 
     public function draft()
     {
-        return $this->state(fn () => ['draft' => true]);
+        return $this->state(fn (): array => ['draft' => true]);
     }
 }

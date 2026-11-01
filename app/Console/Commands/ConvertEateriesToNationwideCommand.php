@@ -42,7 +42,7 @@ class ConvertEateriesToNationwideCommand extends Command
                         ->orWhereHas('town', fn (Builder $query) => $query->whereLike('town', "%{$value}%"))
                 )
                 ->get()
-                ->mapWithKeys(fn (Eatery $eatery) => [$eatery->id => "{$eatery->name} — {$eatery->town?->town}, {$eatery->county?->county}"])
+                ->mapWithKeys(fn (Eatery $eatery): array => [$eatery->id => "{$eatery->name} — {$eatery->town?->town}, {$eatery->county?->county}"])
                 ->toArray(),
             required: true,
         );

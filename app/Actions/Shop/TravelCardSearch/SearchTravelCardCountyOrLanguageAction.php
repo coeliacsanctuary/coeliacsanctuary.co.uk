@@ -21,7 +21,7 @@ class SearchTravelCardCountyOrLanguageAction
         return TravelCardSearchTerm::query()
             ->matching($searchString)
             ->get()
-            ->map(fn (TravelCardSearchTerm $searchTerm) => [
+            ->map(fn (TravelCardSearchTerm $searchTerm): array => [
                 'id' => $searchTerm->id,
                 'term' => $this->highlight($searchTerm->display_term, $searchString),
                 'value' => $searchTerm->display_term,

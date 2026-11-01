@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\Shop;
 
+use Carbon\CarbonInterface;
 use App\Models\Shop\ShopPrice;
 use App\Nova\Resource;
 use Illuminate\Http\Request;
@@ -31,11 +32,11 @@ class Price extends Resource
                 ->asMinorUnits()
                 ->fullWidth(),
 
-            Boolean::make('Current Price', fn (ShopPrice $price) => now()->between($price->start_at, $price->end_at ?? now())),
+            Boolean::make('Current Price', fn (ShopPrice $price): bool => now()->between($price->start_at, $price->end_at ?? now())),
 
             Boolean::make('Is a Sale Price', 'sale_price')->fullWidth(),
 
-            Date::make('Start At')->fullWidth()->default(fn () => now()),
+            Date::make('Start At')->fullWidth()->default(fn (): CarbonInterface => now()),
 
             Date::make('End At')->fullWidth()->nullable(),
         ];

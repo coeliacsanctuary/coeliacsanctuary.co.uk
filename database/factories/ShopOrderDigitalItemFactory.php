@@ -24,12 +24,12 @@ class ShopOrderDigitalItemFactory extends Factory
 
     public function inOrder(ShopOrder $order): self
     {
-        return $this->state(fn () => ['order_id' => $order->id]);
+        return $this->state(fn (): array => ['order_id' => $order->id]);
     }
 
     public function forCard(ShopDigitalCard $card): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'digital_card_id' => $card->id,
             'digital_card_title' => $card->title,
         ]);

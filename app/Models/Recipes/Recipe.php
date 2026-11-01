@@ -141,7 +141,7 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
     {
         return RecipeAllergen::query()
             ->get()
-            ->reject(fn (RecipeAllergen $allergen) => $this->allergens->where('allergen', $allergen->allergen)->count() > 0);
+            ->reject(fn (RecipeAllergen $allergen): bool => $this->allergens->where('allergen', $allergen->allergen)->count() > 0);
     }
 
     /** @return BelongsToMany<RecipeFeature, $this> */

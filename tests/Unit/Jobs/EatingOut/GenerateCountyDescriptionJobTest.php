@@ -56,7 +56,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
         new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'County: Cheshire')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'County: Cheshire')
         );
     }
 
@@ -68,7 +68,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
         new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Towns: 3')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Towns: 3')
         );
     }
 
@@ -80,7 +80,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
         new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -102,7 +102,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
         new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 8')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 8')
         );
     }
 
@@ -121,7 +121,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
         new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
         );
     }
 

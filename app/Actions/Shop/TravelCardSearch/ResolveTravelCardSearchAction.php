@@ -48,7 +48,7 @@ class ResolveTravelCardSearchAction
 
         return [
             'term' => $searchString,
-            'destinations' => $terms->map(fn (TravelCardSearchTerm $term) => [
+            'destinations' => $terms->map(fn (TravelCardSearchTerm $term): array => [
                 'term' => $term->display_term,
                 'type' => $term->type,
                 'flag' => Helpers::countryCode($term->term),
@@ -79,7 +79,7 @@ class ResolveTravelCardSearchAction
         /** @var EloquentCollection<int, ShopProduct> $products */
         $products = $term->products
             /** @phpstan-ignore-next-line */
-            ->filter(fn (ShopProduct $product) => $product->currentPrice !== null)
+            ->filter(fn (ShopProduct $product): bool => $product->currentPrice !== null)
             ->values();
 
         return $products;
@@ -91,8 +91,8 @@ class ResolveTravelCardSearchAction
         /** @var EloquentCollection<int, ShopDigitalCard> $digitalCards */
         $digitalCards = $term->digitalCards
             /** @phpstan-ignore-next-line */
-            ->filter(fn (ShopDigitalCard $digitalCard) => $digitalCard->pivot->card_language === $digitalCard->language)
-            ->map(fn (ShopDigitalCard $digitalCard) => $this->formatDigitalCard($digitalCard, $basket))
+            ->filter(fn (ShopDigitalCard $digitalCard): bool => $digitalCard->pivot->card_language === $digitalCard->language)
+            ->map(fn (ShopDigitalCard $digitalCard): ShopDigitalCard => $this->formatDigitalCard($digitalCard, $basket))
             ->values();
 
         return $digitalCards;
@@ -114,7 +114,7 @@ class ResolveTravelCardSearchAction
         $shared = $terms
             ->map(fn (TravelCardSearchTerm $term) => $this->products($term)->pluck('id')->all())
             ->reduce(
-                fn (?array $carry, array $ids) => $carry === null ? $ids : array_intersect($carry, $ids),
+                fn (?array $carry, array $ids): array => $carry === null ? $ids : array_intersect($carry, $ids),
             ) ?? [];
 
         /** @var EloquentCollection<int, ShopProduct> $products */

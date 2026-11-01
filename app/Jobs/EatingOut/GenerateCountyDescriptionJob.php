@@ -53,7 +53,7 @@ class GenerateCountyDescriptionJob implements ShouldBeUnique, ShouldQueue
     {
         $towns = $this->getTowns();
 
-        $eateries = number_format($towns->sum(fn (EateryTown $town) => $town->live_eateries_count + $town->live_branches_count));
+        $eateries = number_format($towns->sum(fn (EateryTown $town): float|int|array => $town->live_eateries_count + $town->live_branches_count));
         $averageRating = number_format($towns->avg('avg_rating') ?? 0, 1);
 
         return <<<PROMPT

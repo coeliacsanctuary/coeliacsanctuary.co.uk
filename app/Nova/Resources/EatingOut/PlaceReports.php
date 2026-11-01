@@ -58,13 +58,13 @@ class PlaceReports extends Resource
             ID::make()->hide(),
 
             BelongsTo::make('Eatery', resource: Eateries::class)
-                ->hideFromIndex(fn ($foo, EateryReport $report) => $report->eatery->county_id === 1)
-                ->hideFromDetail(fn ($foo, EateryReport $report) => $report->eatery->county_id === 1)
+                ->hideFromIndex(fn ($foo, EateryReport $report): bool => $report->eatery->county_id === 1)
+                ->hideFromDetail(fn ($foo, EateryReport $report): bool => $report->eatery->county_id === 1)
                 ->displayUsing(fn (Eateries $eatery) => $eatery->resource->load(['area', 'town' => fn (Relation $builder) => $builder->withoutGlobalScopes(), 'county', 'country'])->full_name),
 
             BelongsTo::make('Eatery', resource: NationwideEateries::class)
-                ->hideFromIndex(fn ($foo, EateryReport $report) => $report->eatery->county_id !== 1)
-                ->hideFromDetail(fn ($foo, EateryReport $report) => $report->eatery->county_id !== 1)
+                ->hideFromIndex(fn ($foo, EateryReport $report): bool => $report->eatery->county_id !== 1)
+                ->hideFromDetail(fn ($foo, EateryReport $report): bool => $report->eatery->county_id !== 1)
                 ->displayUsing(fn (NationwideEateries $eatery) => $eatery->resource->load(['area', 'town' => fn (Relation $builder) => $builder->withoutGlobalScopes(), 'county', 'country'])->full_name),
 
             Select::make('Branch', 'branch_id')
@@ -78,7 +78,7 @@ class PlaceReports extends Resource
                         ->with(['area', 'town', 'county', 'country'])
                         ->chaperone('eatery')
                         ->get()
-                        ->mapWithKeys(fn (NationwideBranch $nationwideBranch) => [$nationwideBranch->id => $nationwideBranch->full_name])
+                        ->mapWithKeys(fn (NationwideBranch $nationwideBranch): array => [$nationwideBranch->id => $nationwideBranch->full_name])
                         ->sort() ?? []
                 ),
 
@@ -90,15 +90,15 @@ class PlaceReports extends Resource
                 ->asHtml(),
 
             HasOne::make('Eatery', resource: Eateries::class)
-                ->hideFromIndex(fn ($foo, EateryReport $report) => $report->eatery->county_id === 1)
-                ->hideFromDetail(fn ($foo, EateryReport $report) => $report->eatery->county_id === 1),
+                ->hideFromIndex(fn ($foo, EateryReport $report): bool => $report->eatery->county_id === 1)
+                ->hideFromDetail(fn ($foo, EateryReport $report): bool => $report->eatery->county_id === 1),
 
             HasOne::make('Eatery', 'eatery', resource: NationwideEateries::class)
-                ->hideFromIndex(fn ($foo, EateryReport $report) => $report->eatery->county_id !== 1)
-                ->hideFromDetail(fn ($foo, EateryReport $report) => $report->eatery->county_id !== 1),
+                ->hideFromIndex(fn ($foo, EateryReport $report): bool => $report->eatery->county_id !== 1)
+                ->hideFromDetail(fn ($foo, EateryReport $report): bool => $report->eatery->county_id !== 1),
 
             HasOne::make('Branch', 'branch', resource: NationwideBranches::class)
-                ->showOnDetail(fn ($foo, EateryReport $report) => $report->branch_id !== null),
+                ->showOnDetail(fn ($foo, EateryReport $report): bool => $report->branch_id !== null),
 
             Boolean::make('Completed')
                 ->filterable()
@@ -118,12 +118,12 @@ class PlaceReports extends Resource
             CompleteReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryReport $report) => $report->completed === false && $report->ignored === false),
+                ->canRun(fn ($request, EateryReport $report): bool => $report->completed === false && $report->ignored === false),
 
             IgnoreReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryReport $report) => $report->completed === false && $report->ignored === false),
+                ->canRun(fn ($request, EateryReport $report): bool => $report->completed === false && $report->ignored === false),
         ];
     }
 

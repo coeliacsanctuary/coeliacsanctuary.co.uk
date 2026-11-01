@@ -15,7 +15,7 @@ class IndexControllerTest extends TestCase
     public function itLoadsThePageAndRendersTheInertiaView(): void
     {
         $this->get(route('contact.index'))
-            ->assertInertia(fn (Assert $page) => $page->component('Contact'))
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Contact'))
             ->assertOk();
     }
 

@@ -104,7 +104,7 @@ class Blog extends Resource
                         }
 
                         $field->readonly(false)
-                            ->options($tags->mapWithKeys(fn ($tag) => [$tag => $tag])->toArray())
+                            ->options($tags->mapWithKeys(fn ($tag): array => [$tag => $tag])->toArray())
                             ->displayUsingLabels()
                             ->help('If set, the primary tag will be used for related blogs in the sidebar');
                     })

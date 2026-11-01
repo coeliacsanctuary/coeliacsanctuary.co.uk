@@ -71,7 +71,7 @@ class AskSealiac implements Agent, Conversational, HasMiddleware, HasTools
     public function messages(): iterable
     {
         return collect($this->messages)
-            ->map(fn (array $message) => new Message($message['role'], $message['message']))
+            ->map(fn (array $message): Message => new Message($message['role'], $message['message']))
             ->all();
     }
 

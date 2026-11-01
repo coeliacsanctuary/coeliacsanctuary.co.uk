@@ -201,7 +201,7 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
     {
         $this->loadMissing('variants');
 
-        return $this->variants->contains(fn (ShopProductVariant $variant) => $variant->quantity > 0);
+        return $this->variants->contains(fn (ShopProductVariant $variant): bool => $variant->quantity > 0);
     }
 
     protected function baseShippingRate(): int

@@ -84,7 +84,7 @@ class GenerateCountyDescriptionsCommandTest extends TestCase
 
         Bus::assertNotDispatched(
             GenerateCountyDescriptionJob::class,
-            fn (GenerateCountyDescriptionJob $job) => $job->uniqueId() === $county->id
+            fn (GenerateCountyDescriptionJob $job): bool => $job->uniqueId() === $county->id
         );
     }
 

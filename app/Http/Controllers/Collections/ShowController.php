@@ -23,7 +23,7 @@ class ShowController
         $collection->loadMissing(['groups', 'groups.items', 'groups.items.item' => fn (Relation $builder) => $builder->where('live', true)]);
 
         $collection->groups->each(function (CollectionGroup $group): void {
-            $group->setRelation('items', $group->items->filter(fn (CollectionGroupItem $item) => $item->item !== null));
+            $group->setRelation('items', $group->items->filter(fn (CollectionGroupItem $item): bool => $item->item !== null));
 
             $group->items->groupBy('item_type')->each(function (EloquentCollection $items, string $itemType): void {
                 $relations = match ($itemType) {

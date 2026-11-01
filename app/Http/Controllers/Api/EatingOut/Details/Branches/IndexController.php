@@ -27,7 +27,7 @@ class IndexController
                 )
                 ->where('live', true)
                 ->get()
-                ->map(fn (NationwideBranch $branch) => [
+                ->map(fn (NationwideBranch $branch): array => [
                     'name' => $branch->short_name,
                 ]),
         ];

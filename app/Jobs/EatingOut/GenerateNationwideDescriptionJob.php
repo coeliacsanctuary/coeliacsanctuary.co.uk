@@ -62,7 +62,7 @@ class GenerateNationwideDescriptionJob implements ShouldBeUnique, ShouldQueue
 
         return view('prompts.nationwide-description-prompt', [
             'chains' => $chains,
-            'chainsWithBranches' => $chains->filter(fn (Eatery $chain) => $chain->getAttribute('nationwide_branches_count') > 0),
+            'chainsWithBranches' => $chains->filter(fn (Eatery $chain): bool => $chain->getAttribute('nationwide_branches_count') > 0),
             'branches' => $chains->sum(fn (Eatery $chain) => $chain->getAttribute('nationwide_branches_count')),
             'venueTypes' => $this->summarise($chains->map(fn (Eatery $chain) => $chain->venueType?->venue_type)),
             'cuisines' => $this->summarise($chains->map(fn (Eatery $chain) => $chain->cuisine?->cuisine)),
@@ -77,7 +77,7 @@ class GenerateNationwideDescriptionJob implements ShouldBeUnique, ShouldQueue
             ->filter()
             ->countBy()
             ->sortDesc()
-            ->map(fn (int $count, string $value) => "{$value} ({$count})")
+            ->map(fn (int $count, string $value): string => "{$value} ({$count})")
             ->implode(', ');
     }
 

@@ -30,24 +30,24 @@ class EateryReviewFactory extends Factory
 
     public function approved()
     {
-        return $this->state(fn (array $attributes) => ['approved' => true]);
+        return $this->state(fn (array $attributes): array => ['approved' => true]);
     }
 
     public function adminReview()
     {
-        return $this->approved()->state(fn (array $attributes) => ['admin_review' => true]);
+        return $this->approved()->state(fn (array $attributes): array => ['admin_review' => true]);
     }
 
     public function on(Eatery|int $eatery)
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'wheretoeat_id' => $eatery instanceof Eatery ? $eatery->id : $eatery,
         ]);
     }
 
     public function branch(NationwideBranch|int $branch)
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'nationwide_branch_id' => $branch instanceof NationwideBranch ? $branch->id : $branch,
         ]);
     }

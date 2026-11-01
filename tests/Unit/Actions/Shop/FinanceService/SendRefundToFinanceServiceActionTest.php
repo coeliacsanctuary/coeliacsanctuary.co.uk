@@ -42,7 +42,7 @@ class SendRefundToFinanceServiceActionTest extends TestCase
     {
         $this->callAction(SendRefundToFinanceServiceAction::class, $this->refund);
 
-        Http::assertSent(fn (Request $request) => $request->method() === 'POST'
+        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
             && $request->url() === "https://finance.test/api/v1/orders/{$this->order->order_key}/refunds"
             && $request->hasHeader('Authorization', 'Bearer secret-key'));
     }

@@ -124,7 +124,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
 
     protected function countySchema(JsonSchema $schema): iterable
     {
-        return $this->eateriesGroupedByTown()->mapWithKeys(fn (Collection $eateries) => [
+        return $this->eateriesGroupedByTown()->mapWithKeys(fn (Collection $eateries): array => [
             $eateries->first()?->town?->slug => $schema->string()->required(),
         ]);
     }

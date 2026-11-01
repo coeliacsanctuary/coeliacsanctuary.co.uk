@@ -27,7 +27,7 @@ class SearchBlogTagsTool extends BaseTool
         return BlogTag::query()
             ->whereLike('tag', "%{$request->string('term')->toString()}%")
             ->get()
-            ->map(fn (BlogTag $tag) => [
+            ->map(fn (BlogTag $tag): array => [
                 'id' => $tag->id,
                 'tag' => $tag->tag,
                 'slug' => $tag->slug,

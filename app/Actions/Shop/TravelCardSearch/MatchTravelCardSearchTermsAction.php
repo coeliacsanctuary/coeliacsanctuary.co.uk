@@ -33,8 +33,8 @@ class MatchTravelCardSearchTermsAction
         }
 
         $matched = $parts
-            ->map(fn (string $part) => $this->matchTerm($part))
-            ->filter(fn (?TravelCardSearchTerm $term) => $term instanceof TravelCardSearchTerm);
+            ->map(fn (string $part): ?TravelCardSearchTerm => $this->matchTerm($part))
+            ->filter(fn (?TravelCardSearchTerm $term): bool => $term instanceof TravelCardSearchTerm);
 
         if ($matched->count() !== $parts->count()) {
             return new EloquentCollection();
@@ -49,8 +49,8 @@ class MatchTravelCardSearchTermsAction
         return Str::of($searchString)
             ->replaceMatches('/\s+(?:and|&|\+)\s+|\s*[\/,]\s*/i', '|')
             ->explode('|')
-            ->map(fn (string $part) => mb_trim($part))
-            ->filter(fn (string $part) => mb_strlen($part) > 0)
+            ->map(fn (string $part): string => mb_trim($part))
+            ->filter(fn (string $part): bool => mb_strlen($part) > 0)
             ->values();
     }
 

@@ -71,8 +71,8 @@ class GenerateCollectionFromPendingEateriesAction
     {
         $fieldIdMap = [];
 
-        $eateryIds = $pendingEateries->filter(fn (PendingEatery $pending) => $pending->branchId === null)->pluck('id');
-        $branchIds = $pendingEateries->filter(fn (PendingEatery $pending) => $pending->branchId !== null)->pluck('branchId');
+        $eateryIds = $pendingEateries->filter(fn (PendingEatery $pending): bool => $pending->branchId === null)->pluck('id');
+        $branchIds = $pendingEateries->filter(fn (PendingEatery $pending): bool => $pending->branchId !== null)->pluck('branchId');
 
         if ($eateryIds->isNotEmpty()) {
             Eatery::query()
@@ -109,7 +109,7 @@ class GenerateCollectionFromPendingEateriesAction
             'country' => EateryCountry::query()
                 ->whereIn('id', $uniqueFieldIds)
                 ->get()
-                ->mapWithKeys(fn (EateryCountry $country) => [$country->id => $country->country])
+                ->mapWithKeys(fn (EateryCountry $country): array => [$country->id => $country->country])
                 ->all(),
 
             'county' => EateryCounty::query()

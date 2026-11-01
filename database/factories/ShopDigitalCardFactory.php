@@ -38,11 +38,11 @@ class ShopDigitalCardFactory extends Factory
 
     public function forProduct(ShopProduct $product): self
     {
-        return $this->state(fn () => ['product_id' => $product->id]);
+        return $this->state(fn (): array => ['product_id' => $product->id]);
     }
 
     public function notLive(): self
     {
-        return $this->state(fn () => ['live' => false]);
+        return $this->state(fn (): array => ['live' => false]);
     }
 }

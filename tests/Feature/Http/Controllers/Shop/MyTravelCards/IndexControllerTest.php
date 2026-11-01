@@ -57,28 +57,28 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itRendersTheMyTravelCardsPage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/MyTravelCards/Index'));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->component('Shop/MyTravelCards/Index'));
     }
 
     #[Test]
     public function itSetsThePageTitle(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page->where('meta.title', 'My Travel Cards')->etc()
+            fn (Assert $page): Assert => $page->where('meta.title', 'My Travel Cards')->etc()
         );
     }
 
     #[Test]
     public function itDoesntTrackThePage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->where('meta.doNotTrack', true)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->where('meta.doNotTrack', true)->etc());
     }
 
     #[Test]
     public function itDoesntRenderAnyMetaTagsOrDescription(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('meta.tags', [])
                 ->where('meta.description', '')
                 ->etc()
@@ -88,7 +88,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itReturnsNoCardsWhenTheCustomerHasntBoughtAny(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->has('cards', 0)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->has('cards', 0)->etc());
     }
 
     #[Test]
@@ -102,7 +102,7 @@ class IndexControllerTest extends TestCase
         ]));
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->has('cards', 1)
                 ->where('cards.0.title', 'French Travel Card')
                 ->where('cards.0.slug', 'french-travel-card')
@@ -119,7 +119,7 @@ class IndexControllerTest extends TestCase
 
         $this->purchase($this->card(), $this->orderFor($otherCustomer));
 
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->has('cards', 0)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->has('cards', 0)->etc());
     }
 
     public static function unfulfilledOrderStateDataProvider(): array
@@ -139,7 +139,7 @@ class IndexControllerTest extends TestCase
     {
         $this->purchase($this->card(), $this->orderFor($this->customer, $state));
 
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->has('cards', 0)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->has('cards', 0)->etc());
     }
 
     public static function fulfilledOrderStateDataProvider(): array
@@ -157,7 +157,7 @@ class IndexControllerTest extends TestCase
     {
         $this->purchase($this->card(), $this->orderFor($this->customer, $state));
 
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->has('cards', 1)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->has('cards', 1)->etc());
     }
 
     #[Test]
@@ -169,7 +169,7 @@ class IndexControllerTest extends TestCase
         $this->purchase($card, $this->orderFor($this->customer));
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->has('cards', 1)
                 ->where('cards.0.title', 'French Travel Card')
                 ->etc()
@@ -184,7 +184,7 @@ class IndexControllerTest extends TestCase
         $this->purchase($this->card(['title' => 'German Travel Card', 'language' => 'german']));
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('cards.0.title', 'French Travel Card')
                 ->where('cards.1.title', 'German Travel Card')
                 ->where('cards.2.title', 'Spanish Travel Card')
@@ -201,7 +201,7 @@ class IndexControllerTest extends TestCase
         $this->attachTerm('france', score: 10);
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->has('cards.0.countries', 2)
                 ->where('cards.0.countries.0.country', 'France')
                 ->where('cards.0.countries.0.code', 'fr')
@@ -221,7 +221,7 @@ class IndexControllerTest extends TestCase
         $this->attachTerm('spain', language: 'spanish');
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->has('cards.0.countries', 1)
                 ->where('cards.0.countries.0.country', 'France')
                 ->etc()
@@ -237,7 +237,7 @@ class IndexControllerTest extends TestCase
         $this->attachTerm('french', type: 'language');
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->has('cards.0.countries', 1)
                 ->where('cards.0.countries.0.country', 'France')
                 ->etc()
@@ -253,7 +253,7 @@ class IndexControllerTest extends TestCase
         $this->attachTerm('belgium', showOnProductPage: false);
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->has('cards.0.countries', 1)
                 ->where('cards.0.countries.0.country', 'France')
                 ->etc()
@@ -266,7 +266,7 @@ class IndexControllerTest extends TestCase
         $this->purchase($this->card());
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->has('cards', 1)
                 ->missing('cards.0.countries')
                 ->missing('cards.0.flag')

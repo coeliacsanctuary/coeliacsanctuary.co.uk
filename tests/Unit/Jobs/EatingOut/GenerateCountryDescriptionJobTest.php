@@ -64,7 +64,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
         new GenerateCountryDescriptionJob($this->country)->handle();
 
         EateryCountryDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Country: Wales')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Country: Wales')
         );
     }
 
@@ -76,7 +76,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
         new GenerateCountryDescriptionJob($this->country)->handle();
 
         EateryCountryDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Counties: 3')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Counties: 3')
         );
     }
 
@@ -88,7 +88,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
         new GenerateCountryDescriptionJob($this->country)->handle();
 
         EateryCountryDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -107,7 +107,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
         new GenerateCountryDescriptionJob($this->country)->handle();
 
         EateryCountryDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
         );
     }
 

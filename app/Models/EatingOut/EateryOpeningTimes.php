@@ -115,7 +115,7 @@ class EateryOpeningTimes extends Model
     public function openingTimesArray(): Attribute
     {
         return Attribute::get(fn () => collect(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
-            ->mapWithKeys(fn (string $day) => [
+            ->mapWithKeys(fn (string $day): array => [
                 $day => [
                     'opens' => $this->opensAt($day),
                     'closes' => $this->closesAt($day),

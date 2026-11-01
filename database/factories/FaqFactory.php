@@ -21,7 +21,7 @@ class FaqFactory extends Factory
 
     public function on(HasFaqs $faqable): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'faqable_type' => $faqable::class,
             'faqable_id' => $faqable->id,
         ]);

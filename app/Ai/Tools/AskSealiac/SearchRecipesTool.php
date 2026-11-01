@@ -39,9 +39,9 @@ class SearchRecipesTool extends BaseTool
         return Recipe::query()
             ->whereIn('id', $recipes->pluck('id'))
             ->with(['media', 'nutrition'])
-            ->when($request->filled('allergens'), fn (RecipeBuilder $builder) => $builder->hasFreeFrom($request->array('allergens')))
-            ->when($request->filled('meals'), fn (RecipeBuilder $builder) => $builder->hasMeals($request->array('meals')))
-            ->when($request->filled('features'), fn (RecipeBuilder $builder) => $builder->hasFeatures($request->array('features')))
+            ->when($request->filled('allergens'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasFreeFrom($request->array('allergens')))
+            ->when($request->filled('meals'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasMeals($request->array('meals')))
+            ->when($request->filled('features'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasFeatures($request->array('features')))
             ->get()
             ->map($this->formatRecipe(...))
             ->toJson();

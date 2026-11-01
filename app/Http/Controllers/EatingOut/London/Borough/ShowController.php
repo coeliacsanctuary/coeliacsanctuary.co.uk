@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\London\Borough;
 
+use Illuminate\Support\Collection;
 use App\Actions\EatingOut\GetMostRatedPlacesInTownAction;
 use App\Actions\EatingOut\GetTopRatedPlacesInTownAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
@@ -49,9 +50,9 @@ class ShowController
                 new BreadcrumbItemData($borough->town),
             ]))
             ->render('EatingOut/LondonBorough', [
-                'borough' => fn () => new LondonBoroughPageResource($borough),
-                'topRated' => fn () => $getTopRatedPlacesInTown->handle($borough),
-                'mostRated' => fn () => $getMostRatedPlacesInTown->handle($borough),
+                'borough' => fn (): LondonBoroughPageResource => new LondonBoroughPageResource($borough),
+                'topRated' => fn (): Collection => $getTopRatedPlacesInTown->handle($borough),
+                'mostRated' => fn (): Collection => $getMostRatedPlacesInTown->handle($borough),
                 'nearby' => fn () => NearbyBoroughResource::collection($borough->nearbyTowns()),
                 'guides' => fn () => MagicRouteGuideResource::collection($borough->magicRoutes),
             ]);

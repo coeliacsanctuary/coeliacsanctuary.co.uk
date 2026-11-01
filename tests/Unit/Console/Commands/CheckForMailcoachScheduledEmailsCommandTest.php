@@ -54,7 +54,7 @@ class CheckForMailcoachScheduledEmailsCommandTest extends TestCase
 
         $this->artisan(CheckForMailcoachScheduledEmailsCommand::class);
 
-        Http::assertSent(fn (Request $request) => $request->url() === config('mailcoach-sdk.endpoint'));
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('mailcoach-sdk.endpoint'));
 
         $this->assertDatabaseEmpty(MailcoachSchedule::class);
     }

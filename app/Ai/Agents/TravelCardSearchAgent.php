@@ -41,8 +41,8 @@ class TravelCardSearchAgent implements Agent, HasStructuredOutput
         $results = $response['results'];
 
         return collect($results)
-            ->map(fn (string $result) => mb_trim($result))
-            ->filter(fn (string $result) => mb_strlen($result) > 0)
+            ->map(fn (string $result): string => mb_trim($result))
+            ->filter(fn (string $result): bool => mb_strlen($result) > 0)
             ->values();
     }
 }

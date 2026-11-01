@@ -55,7 +55,7 @@ class ShopIncome extends Trend
             )
             ->format(['average' => false])
             ->prefix('£')
-            ->transform(fn ($value) => $value / 100)
+            ->transform(fn ($value): int|float => $value / 100)
             ->showSumValue();
     }
 

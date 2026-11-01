@@ -18,7 +18,7 @@ class GetController
         $products = $travelCardSearchTerm->products
             ->load(['reviews', 'prices', 'variants', 'media'])
             /** @phpstan-ignore-next-line */
-            ->filter(fn (ShopProduct $product) => $product->currentPrice !== null)
+            ->filter(fn (ShopProduct $product): bool => $product->currentPrice !== null)
             ->values();
 
         return [

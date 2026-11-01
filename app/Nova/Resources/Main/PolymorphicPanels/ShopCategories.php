@@ -45,8 +45,8 @@ class ShopCategories implements PolymorphicResource
 
         $model->assignedCategories()->each($callback);
 
-        $values->map(fn ($value) => filter_var($value, FILTER_VALIDATE_BOOL))
-            ->filter(fn ($value) => $value === true)
+        $values->map(fn ($value): false => filter_var($value, FILTER_VALIDATE_BOOL))
+            ->filter(fn ($value): bool => $value === true)
             ->map(fn ($value, $key) => ShopCategory::query()->where('title', Str::headline($key))->firstOrFail()->id)
             ->each(fn ($id) => $model->allergens()->attach($id));
     }

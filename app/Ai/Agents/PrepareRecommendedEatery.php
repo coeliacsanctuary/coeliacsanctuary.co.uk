@@ -70,7 +70,7 @@ class PrepareRecommendedEatery implements Agent, HasProviderOptions, HasStructur
     public function schema(JsonSchema $schema): array
     {
         return [
-            'data' => $schema->object(fn (JsonSchema $schema) => [
+            'data' => $schema->object(fn (JsonSchema $schema): array => [
                 'place_name' => $schema->string()->required()->nullable(),
                 'place_address' => $schema->string()->required()->nullable(),
                 'place_country' => $schema->string()->enum(['England', 'Scotland', 'Wales', 'Northern Ireland', 'Republic of Ireland', 'Isle of Man', 'Chanel Islands'])->required()->nullable(),

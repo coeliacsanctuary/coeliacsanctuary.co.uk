@@ -41,7 +41,7 @@ class CheckMyPlacesDuplicatesCommand extends Command
             }
 
             $locationWords = $this->parseLocationWords($recommendation->place_location ?? '');
-            $locationMatch = $matches->first(fn (Eatery $eatery) => $this->locationMatches($eatery, $locationWords));
+            $locationMatch = $matches->first(fn (Eatery $eatery): bool => $this->locationMatches($eatery, $locationWords));
 
             if ($locationMatch) {
                 $confirmed->push(['recommendation' => $recommendation, 'eatery' => $locationMatch]);
@@ -58,7 +58,7 @@ class CheckMyPlacesDuplicatesCommand extends Command
 
             $this->table(
                 ['Recommendation', 'Place Location', 'Matched Eatery', 'Eatery Town'],
-                $confirmed->map(fn (array $item) => [
+                $confirmed->map(fn (array $item): array => [
                     $item['recommendation']->place_name,
                     $item['recommendation']->place_location,
                     $item['eatery']->name,
@@ -131,8 +131,8 @@ class CheckMyPlacesDuplicatesCommand extends Command
 
         /** @phpstan-ignore-next-line */
         return collect($parts)
-            ->map(fn (string $word) => (string) mb_strtolower(mb_trim($word)))
-            ->filter(fn (string $word) => mb_strlen($word) >= 3)
+            ->map(fn (string $word): string => (string) mb_strtolower(mb_trim($word)))
+            ->filter(fn (string $word): bool => mb_strlen($word) >= 3)
             ->unique()
             ->values();
     }
@@ -144,7 +144,7 @@ class CheckMyPlacesDuplicatesCommand extends Command
         $county = mb_strtolower($eatery->county?->county ?? ''); // @phpstan-ignore nullsafe.neverNull
 
         return $locationWords->contains(
-            fn (string $word) => (mb_strlen($town) >= 3 && (str_contains($town, $word) || str_contains($word, $town)))
+            fn (string $word): bool => (mb_strlen($town) >= 3 && (str_contains($town, $word) || str_contains($word, $town)))
                 || (mb_strlen($county) >= 3 && (str_contains($county, $word) || str_contains($word, $county)))
         );
     }

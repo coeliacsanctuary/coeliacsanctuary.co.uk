@@ -49,14 +49,14 @@ class GetRecipeMetricsJob implements ShouldQueue
                 ->today($this->date)
                 ->count(
                     'views',
-                    fn (QueryDescriptor $query) => $query
-                        ->withPage(fn (PageFilter $page) => $page->path(mb_trim($this->recipe->link, '/')))
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
+                        ->withPage(fn (PageFilter $page): PageFilter => $page->path(mb_trim($this->recipe->link, '/')))
                 )
                 ->count(
                     'comment_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
+                            fn (EventFilter $event): EventFilter => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('CommentsCard')
                                 ->withParameters([
@@ -67,9 +67,9 @@ class GetRecipeMetricsJob implements ShouldQueue
                 )
                 ->count(
                     'detail_card_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
+                            fn (EventFilter $event): EventFilter => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('RecipeDetailCard')
                                 ->withParameters([
@@ -79,9 +79,9 @@ class GetRecipeMetricsJob implements ShouldQueue
                 )
                 ->count(
                     'collection_card_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
+                            fn (EventFilter $event): EventFilter => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('CollectionItemCard')
                                 ->withParameters([

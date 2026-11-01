@@ -25,7 +25,7 @@ class CheckIfStandardEatery extends AbstractStepAction
         $locations = Str::explode($data->location);
 
         /** @var Collection<int, string> $locations */
-        $locations = $locations->map(fn (string $line) => mb_trim($line, ',.-'))
+        $locations = $locations->map(fn (string $line): string => mb_trim($line, ',.-'))
             ->filter()
             ->values();
 
@@ -43,16 +43,14 @@ class CheckIfStandardEatery extends AbstractStepAction
         $eatery = Eatery::query()
             ->notNationwide()
             ->where(DB::raw('replace(name, "\'", "")'), 'like', "%{$name}%")
-            ->where(function (EateryBuilder $builder) use ($towns, $locations) {
-                return $builder
-                    ->whereIn('town_id', $towns)
-                    ->orWhere(function (Builder $query) use ($locations): void {
-                        $locations->each(
-                            fn (string $location) => $query
-                                ->orWhere('address', 'like', "%{$location}%")
-                        );
-                    });
-            })
+            ->where(fn (EateryBuilder $builder) => $builder
+                ->whereIn('town_id', $towns)
+                ->orWhere(function (Builder $query) use ($locations): void {
+                    $locations->each(
+                        fn (string $location) => $query
+                            ->orWhere('address', 'like', "%{$location}%")
+                    );
+                }))
             ->with(['town', 'county'])
             ->first();
 

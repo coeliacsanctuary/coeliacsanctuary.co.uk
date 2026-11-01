@@ -63,9 +63,9 @@ class StoreControllerTest extends TestCase
         ]));
 
         $this->postJson(route('api.shop.travel-card-search.store'), ['term' => 'foo'])
-            ->assertJson(fn (AssertableJson $json) => $json->has('data', 1)->has(
+            ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', 1)->has(
                 'data.0',
-                fn (AssertableJson $json) => $json
+                fn (AssertableJson $json): AssertableJson => $json
                     ->where('id', 1)
                     ->where('term', '<strong>Foo</strong>bar')
                     ->where('value', 'Foobar')
@@ -79,6 +79,6 @@ class StoreControllerTest extends TestCase
         $this->expectAction(SuggestTravelCardSearchTermsAction::class, ['foo'], return: collect());
 
         $this->postJson(route('api.shop.travel-card-search.store'), ['term' => 'foo'])
-            ->assertJson(fn (AssertableJson $json) => $json->has('data', 0));
+            ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', 0));
     }
 }

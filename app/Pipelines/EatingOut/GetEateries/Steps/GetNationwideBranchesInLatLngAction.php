@@ -53,7 +53,7 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
         /** @var EloquentCollection<int, NationwideBranch> $eateries */
         $eateries = $idQuery->get();
 
-        $pendingEateries = $eateries->map(fn (NationwideBranch $eatery) => new PendingEatery(
+        $pendingEateries = $eateries->map(fn (NationwideBranch $eatery): PendingEatery => new PendingEatery(
             id: $eatery->wheretoeat_id,
             branchId: $eatery->id,
             ordering: (float)$eatery->distance,

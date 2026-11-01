@@ -29,9 +29,9 @@ class GetRecipeFiltersForIndexAction
 
         return $relation::query()
             ->selectableAsFilter()
-            ->when(count($featureFilters) > 0, fn (RecipeFilterBuilder $query) => $query->hasRecipesWithFeatures($featureFilters))
-            ->when(count($mealFilters) > 0, fn (RecipeFilterBuilder $query) => $query->hasRecipesWithMeals($mealFilters))
-            ->when(count($freeFromFilters) > 0, fn (RecipeFilterBuilder $query) => $query->hasRecipesWithFreeFrom($freeFromFilters))
+            ->when(count($featureFilters) > 0, fn (RecipeFilterBuilder $query): RecipeFilterBuilder => $query->hasRecipesWithFeatures($featureFilters))
+            ->when(count($mealFilters) > 0, fn (RecipeFilterBuilder $query): RecipeFilterBuilder => $query->hasRecipesWithMeals($mealFilters))
+            ->when(count($freeFromFilters) > 0, fn (RecipeFilterBuilder $query): RecipeFilterBuilder => $query->hasRecipesWithFreeFrom($freeFromFilters))
             ->withCount([
                 'recipes' => fn (RecipeBuilder $builder): RecipeBuilder => $builder
                     ->when(count($featureFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasFeatures($featureFilters))

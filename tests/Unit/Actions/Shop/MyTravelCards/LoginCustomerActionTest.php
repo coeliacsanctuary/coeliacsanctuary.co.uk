@@ -69,6 +69,6 @@ class LoginCustomerActionTest extends TestCase
     protected function getRecallerCookie(): ?SymfonyCookie
     {
         return collect(Cookie::getQueuedCookies())
-            ->first(fn (SymfonyCookie $cookie) => $cookie->getName() === Auth::guard('customers')->getRecallerName());
+            ->first(fn (SymfonyCookie $cookie): bool => $cookie->getName() === Auth::guard('customers')->getRecallerName());
     }
 }

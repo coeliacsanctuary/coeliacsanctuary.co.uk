@@ -86,7 +86,7 @@ abstract class GetEateriesTestCase extends TestCase
 
         $this->build(Eatery::class)
             ->count($this->eateriesToCreate)
-            ->sequence(fn (Sequence $sequence) => ['id' => $sequence->index + 1])
+            ->sequence(fn (Sequence $sequence): array => ['id' => $sequence->index + 1])
             ->create([
                 'county_id' => $this->county->id,
                 'town_id' => $this->town->id,

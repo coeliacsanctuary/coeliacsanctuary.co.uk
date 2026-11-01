@@ -44,9 +44,9 @@ class OrderReviews extends Resource
                     ->products()
                     ->with(['product' => fn (Relation $relation) => $relation->withoutGlobalScopes()])
                     ->get()
-                    ->map(fn (ShopOrderReviewItem $item) => [
+                    ->map(fn (ShopOrderReviewItem $item): array => [
                         Line::make('Product', fn () => $item?->product->title)->extraClasses('font-bold'),
-                        Line::make('Rating', fn () => "{$item->rating} stars")->extraClasses(match ((string) $item->rating) {
+                        Line::make('Rating', fn (): string => "{$item->rating} stars")->extraClasses(match ((string) $item->rating) {
                             '5' => 'text-green-700',
                             '4' => 'text-yellow-500',
                             '3' => 'text-blue-700',
@@ -56,7 +56,7 @@ class OrderReviews extends Resource
                         Line::make('Review', fn () => Str::limit($item->review, 150)),
                     ]),
             )
-                ->processUsing(fn (Collection $collection) => $collection->when(fn (Collection $items) => $items->count() > 1, fn (Collection $items) => $items->map(fn (array $lines, $index) => [
+                ->processUsing(fn (Collection $collection) => $collection->when(fn (Collection $items): bool => $items->count() > 1, fn (Collection $items) => $items->map(fn (array $lines, $index): array => [
                     $lines[0],
                     $lines[1],
                     $lines[2]->extraClasses($index < $items->count() - 1 ? 'inline-block border-b border-gray-300 pb-2 mb-2' : ''),

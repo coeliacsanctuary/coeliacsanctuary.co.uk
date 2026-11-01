@@ -84,7 +84,7 @@ class GetEateriesFromQueryBuilderConfigurationAction implements GetEateriesPipel
         /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string}> $pendingEateries */
         $pendingEateries = collect(DB::select(new EateryQueryBuilder($pipelineData->configuration)->toSql()));
 
-        $pendingEateries = $pendingEateries->map(fn (object $eatery) => new PendingEatery(
+        $pendingEateries = $pendingEateries->map(fn (object $eatery): PendingEatery => new PendingEatery(
             id: $eatery->id,
             branchId: $eatery->branch_id,
             ordering: $eatery->ordering,

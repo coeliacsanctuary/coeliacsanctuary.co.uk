@@ -34,6 +34,6 @@ class TownReviewsQuery
 
                 return $eatery;
             })
-            ->map(fn (Eatery $eatery) => new CountyEateryResource($eatery));
+            ->map(fn (Eatery $eatery): CountyEateryResource => new CountyEateryResource($eatery));
     }
 }

@@ -25,7 +25,7 @@ class ShopPaymentFactory extends Factory
 
     public function forOrder(ShopOrder $order): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'order_id' => $order->id,
         ]);
     }

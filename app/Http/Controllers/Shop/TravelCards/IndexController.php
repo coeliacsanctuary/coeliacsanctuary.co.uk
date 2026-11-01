@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\TravelCards;
 
+use Illuminate\Support\Collection;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Shop\GetTravelCardReviewsAction;
 use App\Actions\Shop\ResolveBasketAction;
@@ -59,7 +60,7 @@ class IndexController
                 'digitalCardsEnabled' => config('coeliac.digital_cards_enabled'),
                 'destinations' => $getPopularTravelCardDestinationsAction->handle(...),
                 'categories' => $getTravelCardCategoriesAction->handle(...),
-                'digitalCardTypes' => fn () => config('coeliac.digital_cards_enabled') ? $getTravelCardDigitalTypesAction->handle() : collect(),
+                'digitalCardTypes' => fn (): Collection => config('coeliac.digital_cards_enabled') ? $getTravelCardDigitalTypesAction->handle() : collect(),
                 'reviews' => $getTravelCardReviewsAction->handle(...),
             ]);
     }

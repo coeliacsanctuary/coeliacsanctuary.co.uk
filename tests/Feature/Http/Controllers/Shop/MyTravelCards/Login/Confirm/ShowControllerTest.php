@@ -37,34 +37,34 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itRendersTheConfirmLoginPage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/MyTravelCards/ConfirmLogin'));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->component('Shop/MyTravelCards/ConfirmLogin'));
     }
 
     #[Test]
     public function itPassesTheDecryptedEmailFromTheCookieToThePage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->where('email', $this->email)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->where('email', $this->email)->etc());
     }
 
     #[Test]
     public function itSetsThePageTitle(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page->where('meta.title', 'Confirm - My Travel Cards')->etc()
+            fn (Assert $page): Assert => $page->where('meta.title', 'Confirm - My Travel Cards')->etc()
         );
     }
 
     #[Test]
     public function itDoesntTrackThePage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->where('meta.doNotTrack', true)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->where('meta.doNotTrack', true)->etc());
     }
 
     #[Test]
     public function itDoesntRenderAnyMetaTagsOrDescription(): void
     {
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('meta.tags', [])
                 ->where('meta.description', '')
                 ->etc()

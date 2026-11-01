@@ -33,7 +33,7 @@ abstract class Feed
             'link' => $this->linkRoot(),
             'description' => $this->feedDescription(),
             'date' => $lastUpdated->toRfc822String(),
-            'items' => $this->items->map(fn (Model $item) => $this->formatItem($item)),
+            'items' => $this->items->map(fn (Model $item): array => $this->formatItem($item)),
         ];
     }
 

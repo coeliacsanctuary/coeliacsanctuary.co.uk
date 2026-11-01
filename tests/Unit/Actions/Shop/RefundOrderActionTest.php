@@ -119,7 +119,7 @@ class RefundOrderActionTest extends TestCase
     #[Test]
     public function itWillCreateTheRefundRecordUsingTheGivenDateIfOneIsSpecified(): void
     {
-        $createdAt = Carbon::setTestNow('2025-06-01');
+        Carbon::setTestNow('2025-06-01');
 
         $dto = new RefundOrderDto(100, 'foo', false, false, null, now());
 

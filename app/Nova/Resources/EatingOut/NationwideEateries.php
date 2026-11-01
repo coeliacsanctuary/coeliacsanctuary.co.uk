@@ -95,11 +95,9 @@ class NationwideEateries extends Resource
                 Select::make('Cuisine', 'cuisine_id')
                     ->hideFromIndex()
                     ->fullWidth()
-                    ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
-                        return match ($request->type_id) {
-                            1 => $field->options($this->getCuisines())->rules(['required']),
-                            default => $field->hide()->setValue(29),
-                        };
+                    ->dependsOn(['type_id'], fn (Select $field, NovaRequest $request) => match ($request->type_id) {
+                        1 => $field->options($this->getCuisines())->rules(['required']),
+                        default => $field->hide()->setValue(29),
                     }),
 
                 Textarea::make('Info')
@@ -143,7 +141,7 @@ class NationwideEateries extends Resource
             ->when($typeId, fn (Builder $query) => $query->where('type_id', $typeId))
             ->orderBy('venue_type')
             ->get()
-            ->mapWithKeys(fn (EateryVenueType $venueType) => [$venueType->id => $venueType->venue_type])
+            ->mapWithKeys(fn (EateryVenueType $venueType): array => [$venueType->id => $venueType->venue_type])
             ->toArray();
     }
 
@@ -151,7 +149,7 @@ class NationwideEateries extends Resource
     {
         return EateryCuisine::query()
             ->get()
-            ->mapWithKeys(fn (EateryCuisine $cuisine) => [$cuisine->id => $cuisine->cuisine])
+            ->mapWithKeys(fn (EateryCuisine $cuisine): array => [$cuisine->id => $cuisine->cuisine])
             ->toArray();
     }
 
@@ -160,7 +158,7 @@ class NationwideEateries extends Resource
         return [
             GenerateSealiacOverview::make()
                 ->showInline()
-                ->canRun(fn (NovaRequest $request, Eatery $model) => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
+                ->canRun(fn (NovaRequest $request, Eatery $model): bool => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
         ];
     }
 

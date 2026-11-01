@@ -62,7 +62,7 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
                     $fluent->set($attribute, $request->get($requestAttribute));
                 })
                 ->options([])
-                ->ajaxSearchable(fn ($search) => []),
+                ->ajaxSearchable(fn ($search): array => []),
         ];
     }
 }

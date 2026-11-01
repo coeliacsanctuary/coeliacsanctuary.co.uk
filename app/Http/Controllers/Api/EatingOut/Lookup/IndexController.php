@@ -30,7 +30,7 @@ class IndexController
         $collection = collect($suggestions);
 
         return response()->json([
-            'data' => $collection->map(fn (array $location) => [
+            'data' => $collection->map(fn (array $location): array => [
                 'id' => $location['id'],
                 'label' => $location['location'],
             ]),

@@ -21,13 +21,13 @@ class IndexController
                     ->withCount('blogs')
                     ->orderBy('tag')
                     ->get()
-                    ->map(fn (BlogTag $tag) => [
+                    ->map(fn (BlogTag $tag): array => [
                         'tag' => $tag->tag,
                         'blogs' => $tag->blogs_count,
                         'link' => route('blog.index.tags', $tag->slug),
                     ])
                     ->groupBy(fn (array $tag) => $tag['tag'][0])
-                    ->map(fn (Collection $tags, string $letter) => [
+                    ->map(fn (Collection $tags, string $letter): array => [
                         'group' => $letter,
                         'tags' => $tags,
                     ])

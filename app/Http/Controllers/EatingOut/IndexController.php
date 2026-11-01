@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut;
 
+use Illuminate\Support\Collection;
 use App\Actions\EatingOut\GetCountyListAction;
 use App\Actions\EatingOut\GetEateryGuideStatisticsAction;
 use App\Actions\EatingOut\GetMostRatedPlacesAction;
@@ -43,7 +44,7 @@ class IndexController
             ])
             ->metaImage($ogImage)
             ->render('EatingOut/Index', [
-                'countries' => fn () => $getCountyListAction->handle(),
+                'countries' => fn (): Collection => $getCountyListAction->handle(),
                 'topRated' => $getTopRatedPlacesAction->handle(...),
                 'mostRated' => $getMostRatedPlacesAction->handle(...),
                 'recentlyAdded' => $getRecentlyAddedEateriesAction->handle(...),
