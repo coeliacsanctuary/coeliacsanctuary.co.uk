@@ -10,7 +10,6 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryFeature;
 use App\ResourceCollections\EatingOut\NationwideListCollection;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
@@ -38,15 +37,9 @@ class NationwidePageResource extends JsonResource
     {
         $this->load([
             'eateries' => fn (HasMany $builder) => $builder
-                ->when($this->filters['categories'], function (EateryBuilder $builder, array $categories) {
-                    return $builder->hasCategories($categories);
-                })
-                ->when($this->filters['venueTypes'], function (EateryBuilder $builder, array $venueTypes) {
-                    return $builder->hasVenueTypes($venueTypes);
-                })
-                ->when($this->filters['features'], function (EateryBuilder $builder, array $features) {
-                    return $builder->hasFeatures($features);
-                })
+                ->when($this->filters['categories'], fn (EateryBuilder $builder, array $categories) => $builder->hasCategories($categories))
+                ->when($this->filters['venueTypes'], fn (EateryBuilder $builder, array $venueTypes) => $builder->hasVenueTypes($venueTypes))
+                ->when($this->filters['features'], fn (EateryBuilder $builder, array $features) => $builder->hasFeatures($features))
                 ->orderBy('name'),
             'eateries.features' => function (BelongsToMany $builder) {
                 /** @var BelongsToMany<EateryFeature, Eatery> $builder */
