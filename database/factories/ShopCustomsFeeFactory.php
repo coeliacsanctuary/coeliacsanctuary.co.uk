@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopCustomsFee;
 use App\Models\Shop\ShopPostageCountry;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopCustomsFee>
+ */
 class ShopCustomsFeeFactory extends Factory
 {
     protected $model = ShopCustomsFee::class;

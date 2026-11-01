@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopFeedback;
 use App\Models\Shop\ShopProduct;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopFeedback>
+ */
 class ShopFeedbackFactory extends Factory
 {
     protected $model = ShopFeedback::class;

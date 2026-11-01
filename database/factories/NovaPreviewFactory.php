@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\NovaPreview;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\NovaPreview>
+ */
 class NovaPreviewFactory extends Factory
 {
     protected $model = NovaPreview::class;

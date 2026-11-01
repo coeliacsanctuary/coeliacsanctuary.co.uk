@@ -10,6 +10,9 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\Recipes\Recipe;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Collections\CollectionGroupItem>
+ */
 class CollectionGroupItemFactory extends Factory
 {
     protected $model = CollectionGroupItem::class;

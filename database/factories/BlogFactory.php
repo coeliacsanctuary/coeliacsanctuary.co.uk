@@ -8,6 +8,9 @@ use App\Models\Blogs\Blog;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Blogs\Blog>
+ */
 class BlogFactory extends Factory
 {
     protected $model = Blog::class;

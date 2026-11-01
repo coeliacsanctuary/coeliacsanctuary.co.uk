@@ -8,6 +8,9 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderReview;
 use App\Models\Shop\ShopOrderReviewInvitation;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopOrderReview>
+ */
 class ShopOrderReviewFactory extends Factory
 {
     protected $model = ShopOrderReview::class;

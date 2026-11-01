@@ -8,6 +8,9 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\NationwideBranch;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryReview>
+ */
 class EateryReviewFactory extends Factory
 {
     protected $model = EateryReview::class;

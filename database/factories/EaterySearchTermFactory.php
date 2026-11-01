@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\EatingOut\EaterySearchTerm;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EaterySearchTerm>
+ */
 class EaterySearchTermFactory extends Factory
 {
     protected $model = EaterySearchTerm::class;

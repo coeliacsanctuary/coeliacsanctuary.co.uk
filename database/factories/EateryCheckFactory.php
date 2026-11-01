@@ -8,6 +8,9 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCheck;
 use Carbon\CarbonInterface;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryCheck>
+ */
 class EateryCheckFactory extends Factory
 {
     protected $model = EateryCheck::class;

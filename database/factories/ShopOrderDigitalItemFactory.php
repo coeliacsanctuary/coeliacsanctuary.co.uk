@@ -8,6 +8,9 @@ use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDigitalItem;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopOrderDigitalItem>
+ */
 class ShopOrderDigitalItemFactory extends Factory
 {
     protected $model = ShopOrderDigitalItem::class;

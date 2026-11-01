@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\User;
 use Carbon\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ */
 class UserFactory extends Factory
 {
     protected $model = User::class;

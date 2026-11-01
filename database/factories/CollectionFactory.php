@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Collections\Collection;
 use Carbon\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Collections\Collection>
+ */
 class CollectionFactory extends Factory
 {
     protected $model = Collection::class;

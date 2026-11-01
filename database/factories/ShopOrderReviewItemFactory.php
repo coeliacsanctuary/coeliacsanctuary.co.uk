@@ -10,6 +10,9 @@ use App\Models\Shop\ShopOrderReview;
 use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopOrderReviewItem>
+ */
 class ShopOrderReviewItemFactory extends Factory
 {
     protected $model = ShopOrderReviewItem::class;

@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopShippingAddress;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopShippingAddress>
+ */
 class ShopShippingAddressFactory extends Factory
 {
     protected $model = ShopShippingAddress::class;

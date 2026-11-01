@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\EatingOut\EateryFeature;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryFeature>
+ */
 class EateryFeatureFactory extends Factory
 {
     protected $model = EateryFeature::class;

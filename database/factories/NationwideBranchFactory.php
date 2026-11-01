@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\NationwideBranch>
+ */
 class NationwideBranchFactory extends Factory
 {
     protected $model = NationwideBranch::class;

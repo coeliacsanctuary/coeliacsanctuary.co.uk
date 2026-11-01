@@ -10,6 +10,9 @@ use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductAddOn;
 use App\Models\Shop\ShopProductVariant;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopOrderItem>
+ */
 class ShopOrderItemFactory extends Factory
 {
     protected $model = ShopOrderItem::class;

@@ -31,7 +31,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->skip([
         ReplaceFakerInstanceWithHelperRector::class,
         ReplaceFakerPropertyFetchWithMethodCallRector::class, // do seperate
-        AddExtendsAnnotationToModelFactoriesRector::class, // also do on its onw
     ]);
 
     $rectorConfig->importNames(importDocBlockNames: false);

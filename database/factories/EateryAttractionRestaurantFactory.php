@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAttractionRestaurant;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryAttractionRestaurant>
+ */
 class EateryAttractionRestaurantFactory extends Factory
 {
     protected $model = EateryAttractionRestaurant::class;

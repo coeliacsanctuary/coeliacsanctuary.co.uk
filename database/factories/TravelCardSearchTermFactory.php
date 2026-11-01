@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\Shop\TravelCardSearchTerm;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\TravelCardSearchTerm>
+ */
 class TravelCardSearchTermFactory extends Factory
 {
     protected $model = TravelCardSearchTerm::class;

@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\GoogleStaticMap;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\GoogleStaticMap>
+ */
 class GoogleStaticMapFactory extends Factory
 {
     protected $model = GoogleStaticMap::class;

@@ -8,6 +8,9 @@ use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopPrice;
 use Carbon\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopPrice>
+ */
 class ShopPriceFactory extends Factory
 {
     protected $model = ShopPrice::class;

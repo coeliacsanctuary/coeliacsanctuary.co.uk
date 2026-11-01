@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Contracts\Comments\HasComments;
 use App\Models\OpenGraphImage;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OpenGraphImage>
+ */
 class OpenGraphImageFactory extends Factory
 {
     protected $model = OpenGraphImage::class;

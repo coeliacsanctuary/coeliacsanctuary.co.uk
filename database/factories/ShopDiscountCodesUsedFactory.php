@@ -9,6 +9,9 @@ use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopDiscountCodesUsed;
 use App\Models\Shop\ShopOrder;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopDiscountCodesUsed>
+ */
 class ShopDiscountCodesUsedFactory extends Factory
 {
     protected $model = ShopDiscountCodesUsed::class;

@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\Collections\CollectionGroup;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Collections\CollectionGroup>
+ */
 class CollectionGroupFactory extends Factory
 {
     protected $model = CollectionGroup::class;

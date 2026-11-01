@@ -9,6 +9,9 @@ use App\Models\Shop\ShopDiscountCode;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopDiscountCode>
+ */
 class ShopDiscountCodeFactory extends Factory
 {
     protected $model = ShopDiscountCode::class;

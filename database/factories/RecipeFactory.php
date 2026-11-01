@@ -8,6 +8,9 @@ use App\Models\Recipes\Recipe;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Recipes\Recipe>
+ */
 class RecipeFactory extends Factory
 {
     protected $model = Recipe::class;

@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\Shop\ShopSource;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopSource>
+ */
 class ShopSourceFactory extends Factory
 {
     protected $model = ShopSource::class;

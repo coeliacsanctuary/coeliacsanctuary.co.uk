@@ -9,6 +9,9 @@ use App\Models\EatingOut\NationwideBranch;
 use App\Models\SealiacOverview;
 use App\Models\Shop\ShopProduct;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SealiacOverview>
+ */
 class SealiacOverviewFactory extends Factory
 {
     protected $model = SealiacOverview::class;

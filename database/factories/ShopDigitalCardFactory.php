@@ -9,6 +9,9 @@ use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopDigitalCard>
+ */
 class ShopDigitalCardFactory extends Factory
 {
     protected $model = ShopDigitalCard::class;

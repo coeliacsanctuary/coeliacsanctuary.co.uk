@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Contracts\Comments\HasComments;
 use App\Models\Comments\Comment;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Comments\Comment>
+ */
 class CommentFactory extends Factory
 {
     protected $model = Comment::class;

@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\EatingOut\EateryCounty;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryCounty>
+ */
 class EateryCountyFactory extends Factory
 {
     protected $model = EateryCounty::class;

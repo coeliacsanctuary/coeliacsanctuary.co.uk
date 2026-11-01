@@ -9,6 +9,9 @@ use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryReviewImage;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryReviewImage>
+ */
 class EateryReviewImageFactory extends Factory
 {
     protected $model = EateryReviewImage::class;

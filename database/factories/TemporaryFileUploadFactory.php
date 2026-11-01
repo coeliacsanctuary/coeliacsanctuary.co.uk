@@ -8,6 +8,9 @@ use App\Models\TemporaryFileUpload;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TemporaryFileUpload>
+ */
 class TemporaryFileUploadFactory extends Factory
 {
     protected $model = TemporaryFileUpload::class;

@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Contracts\Faqs\HasFaqs;
 use App\Models\Faqs\Faq;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Faqs\Faq>
+ */
 class FaqFactory extends Factory
 {
     protected $model = Faq::class;

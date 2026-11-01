@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\Recipes\RecipeNutrition;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Recipes\RecipeNutrition>
+ */
 class RecipeNutritionFactory extends Factory
 {
     protected $model = RecipeNutrition::class;
