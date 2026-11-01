@@ -109,8 +109,11 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
             if ($return->count() === 0) {
                 $eateryCheck = $borough->liveEateries()->where('slug', $value)->first();
 
-                /** @phpstan-ignore-next-line  */
-                abort_if($eateryCheck instanceof Eatery, redirect($eateryCheck->absoluteLink()));
+                if ( ! $eateryCheck) {
+                    return $query->where('slug', $value);
+                }
+
+                redirect($eateryCheck->absoluteLink());
             }
 
             return $return;

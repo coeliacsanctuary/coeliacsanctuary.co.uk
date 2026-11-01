@@ -6,6 +6,7 @@ namespace Tests\Unit\Actions\Shop\MyTravelCards;
 
 use App\Actions\Shop\MyTravelCards\SyncGoogleWalletClassAction;
 use App\Models\Shop\ShopDigitalCard;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -56,7 +57,7 @@ class SyncGoogleWalletClassActionTest extends TestCase
     {
         $this->callAction(SyncGoogleWalletClassAction::class, $this->card);
 
-        Http::assertSent(function (array $request): bool {
+        Http::assertSent(function (Request $request): bool {
             $modules = collect($request['textModulesData'] ?? [])->keyBy('id');
 
             return $modules->count() === 5
@@ -74,7 +75,7 @@ class SyncGoogleWalletClassActionTest extends TestCase
     {
         $this->callAction(SyncGoogleWalletClassAction::class, $this->card);
 
-        Http::assertSent(function (array $request): bool {
+        Http::assertSent(function (Request $request): bool {
             $link = $request['linksModuleData']['uris'][0] ?? null;
 
             return $link['uri'] === config()->string('app.url')
