@@ -40,6 +40,7 @@ class Comment extends Model
         return $this->morphTo();
     }
 
+    /** @return Attribute<string, never> */
     protected function what(): Attribute
     {
         return Attribute::make(get: fn (): string => class_basename($this->commentable_type));
