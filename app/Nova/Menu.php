@@ -70,8 +70,8 @@ class Menu
 {
     public static function build(): void
     {
-        $commentsCount = Comment::withoutGlobalScopes()->where('approved', false)->count();
-        $reviewCount = EateryReview::withoutGlobalScopes()->where('approved', false)->count();
+        $commentsCount = Comment::query()->withoutGlobalScopes()->where('approved', false)->count();
+        $reviewCount = EateryReview::query()->withoutGlobalScopes()->where('approved', false)->count();
         $alertsCount = EateryAlert::query()->where('completed', false)->where('ignored', false)->count();
         $reportsCount = EateryReport::query()->where('completed', false)->where('ignored', false)->count();
         $myPlacesCount = EateryRecommendation::query()->where('email', 'alisondwheatley@gmail.com')->where('completed', false)->where('ignored', false)->count();

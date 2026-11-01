@@ -11,9 +11,7 @@ class IndexController
 {
     public function __invoke(Eatery $eatery): array
     {
-        if ($eatery->county_id !== 1) {
-            abort(404);
-        }
+        abort_if($eatery->county_id !== 1, 404);
 
         $branches = $eatery->nationwideBranches()
             ->with(['eatery', 'area', 'area.town', 'town', 'county'])

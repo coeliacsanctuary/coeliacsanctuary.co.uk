@@ -32,7 +32,7 @@ class CheckIfLoungeBranch extends AbstractStepAction
                 $data->label = 'Check out The Lounges';
             }
 
-            $branch = $eatery->nationwideBranches()->where('name', 'like', "%{$data->name}%")->first();
+            $branch = $eatery->nationwideBranches()->whereLike('name', "%{$data->name}%")->first();
 
             if ($branch) {
                 $branch->load(['country', 'county', 'town']);

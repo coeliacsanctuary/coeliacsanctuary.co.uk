@@ -21,9 +21,7 @@ class GetEateriesFromQueryBuilderConfigurationAction implements GetEateriesPipel
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->configuration instanceof Configuration) {
-            throw new RuntimeException('No configuration');
-        }
+        throw_unless($pipelineData->configuration instanceof Configuration, new RuntimeException('No configuration'));
 
         if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
             $wheres = [];

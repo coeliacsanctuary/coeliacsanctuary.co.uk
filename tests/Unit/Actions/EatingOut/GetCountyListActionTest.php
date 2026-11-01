@@ -236,7 +236,7 @@ class GetCountyListActionTest extends TestCase
     #[Test]
     public function topCountiesIsLimitedToThree(): void
     {
-        $country = EateryCountry::find(2);
+        $country = EateryCountry::query()->find(2);
 
         $country->counties->each(function (EateryCounty $county): void {
             $this->build(EateryReview::class)
@@ -257,7 +257,7 @@ class GetCountyListActionTest extends TestCase
     #[Test]
     public function topCountiesWithNoReviewsAreExcluded(): void
     {
-        $country = EateryCountry::find(2);
+        $country = EateryCountry::query()->find(2);
 
         $country->counties->take(2)->each(function (EateryCounty $county): void {
             $this->build(EateryReview::class)
@@ -277,7 +277,7 @@ class GetCountyListActionTest extends TestCase
     #[Test]
     public function topCountiesAreRankedByBayesianScore(): void
     {
-        $country = EateryCountry::find(2);
+        $country = EateryCountry::query()->find(2);
         $counties = $country->counties->take(3)->values();
 
         // 1 review @ 5 stars → Bayesian ≈ 4.17
@@ -317,7 +317,7 @@ class GetCountyListActionTest extends TestCase
     #[Test]
     public function topCountiesUseTheSameFormatAsList(): void
     {
-        $country = EateryCountry::find(2);
+        $country = EateryCountry::query()->find(2);
 
         $this->build(EateryReview::class)
             ->approved()

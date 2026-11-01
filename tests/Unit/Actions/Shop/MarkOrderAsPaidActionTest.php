@@ -29,7 +29,7 @@ class MarkOrderAsPaidActionTest extends TestCase
             ->has($this->build(ShopPayment::class), 'payment')
             ->create();
 
-        ShopPaymentResponse::truncate();
+        ShopPaymentResponse::query()->truncate();
     }
 
     #[Test]

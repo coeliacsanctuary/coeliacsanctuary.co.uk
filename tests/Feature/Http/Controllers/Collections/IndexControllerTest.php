@@ -20,7 +20,7 @@ class IndexControllerTest extends TestCase
 
         Storage::fake('media');
 
-        Collection::truncate();
+        Collection::query()->truncate();
         $this->withCollections(30);
     }
 

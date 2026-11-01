@@ -23,7 +23,7 @@ class ResolveBasketAction
         }
 
         if ($create) {
-            return ShopOrder::create();
+            return ShopOrder::query()->create();
         }
 
         return null;

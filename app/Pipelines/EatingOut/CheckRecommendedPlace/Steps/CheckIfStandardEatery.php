@@ -33,7 +33,7 @@ class CheckIfStandardEatery extends AbstractStepAction
             ->where(function (Builder $query) use ($locations): void {
                 $locations->each(
                     fn (string $location) => $query
-                        ->orWhere('town', 'like', "%{$location}%")
+                        ->orWhereLike('town', "%{$location}%")
                 );
             })
             ->pluck('id');
@@ -48,7 +48,7 @@ class CheckIfStandardEatery extends AbstractStepAction
                 ->orWhere(function (Builder $query) use ($locations): void {
                     $locations->each(
                         fn (string $location) => $query
-                            ->orWhere('address', 'like', "%{$location}%")
+                            ->orWhereLike('address', "%{$location}%")
                     );
                 }))
             ->with(['town', 'county'])

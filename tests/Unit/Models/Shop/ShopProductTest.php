@@ -61,9 +61,9 @@ class ShopProductTest extends TestCase
     #[Test]
     public function itHasManyCategories(): void
     {
-        ShopCategory::withoutGlobalScopes();
-        ShopProduct::withoutGlobalScopes();
-        ShopProductVariant::withoutGlobalScopes();
+        ShopCategory::query()->withoutGlobalScopes();
+        ShopProduct::query()->withoutGlobalScopes();
+        ShopProductVariant::query()->withoutGlobalScopes();
 
         $categories = $this->build(ShopCategory::class)
             ->count(5)

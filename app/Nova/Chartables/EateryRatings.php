@@ -17,7 +17,7 @@ class EateryRatings extends Chartable
 
     protected function getData(Carbon $startDate, Carbon $endDate): int|float
     {
-        return EateryReview::withoutGlobalScopes()
+        return EateryReview::query()->withoutGlobalScopes()
             ->where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $endDate)
             ->count();

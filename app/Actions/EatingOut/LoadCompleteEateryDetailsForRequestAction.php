@@ -26,10 +26,10 @@ class LoadCompleteEateryDetailsForRequestAction
     ): void {
         if (in_array($pageType, ['nationwide', 'branch'], true)) {
             /** @var EateryCounty $county */
-            $county = EateryCounty::withoutGlobalScopes()->firstWhere('county', 'Nationwide');
+            $county = EateryCounty::query()->withoutGlobalScopes()->firstWhere('county', 'Nationwide');
 
             /** @var EateryTown $town */
-            $town = EateryTown::withoutGlobalScopes()->firstWhere('town', 'nationwide');
+            $town = EateryTown::query()->withoutGlobalScopes()->firstWhere('town', 'nationwide');
         }
 
         $county->load(['country']);

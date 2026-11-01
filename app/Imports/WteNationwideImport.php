@@ -60,11 +60,9 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
         $countryName = $item['country']['name'];
 
         /** @var EateryCountry | null $country */
-        $country = EateryCountry::withoutGlobalScopes()->where('country', $countryName)->first();
+        $country = EateryCountry::query()->withoutGlobalScopes()->where('country', $countryName)->first();
 
-        if ( ! $country) {
-            throw new Exception("Can't find country - {$countryName})");
-        }
+        throw_unless($country, new Exception("Can't find country - {$countryName})"));
 
         $item['country'] = [
             'id' => $country->id,
@@ -77,26 +75,24 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
         $countyName = $item['county']['name'];
 
         /** @var EateryCounty | null $county */
-        $county = EateryCounty::withoutGlobalScopes()->where('county', $countyName)->first();
+        $county = EateryCounty::query()->withoutGlobalScopes()->where('county', $countyName)->first();
 
         if ( ! $county && Str::contains($countyName, '-')) {
             $countyName = str_replace('-', ' ', $countyName);
 
-            $county = EateryCounty::withoutGlobalScopes()->where('county', $countyName)->first();
+            $county = EateryCounty::query()->withoutGlobalScopes()->where('county', $countyName)->first();
         }
 
         if ( ! $county) {
             /** @var EateryCountry | null $country */
-            $country = EateryCountry::withoutGlobalScopes()->where('country', $item['country']['name'])->first();
+            $country = EateryCountry::query()->withoutGlobalScopes()->where('country', $item['country']['name'])->first();
 
             if ($country) {
                 $county = $country->counties()->make(['county' => $countyName]);
             }
         }
 
-        if ( ! $county) {
-            throw new Exception("Can't find county - {$countyName})");
-        }
+        throw_unless($county, new Exception("Can't find county - {$countyName})"));
 
         $item['county'] = [
             'id' => $county->exists ? $county->id : 'NEW',
@@ -109,17 +105,17 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
         $townName = $item['town']['name'];
 
         /** @var EateryTown | null $town */
-        $town = EateryTown::withoutGlobalScopes()->where('town', $townName)->first();
+        $town = EateryTown::query()->withoutGlobalScopes()->where('town', $townName)->first();
 
         if ( ! $town && Str::contains($townName, '-')) {
             $townName = str_replace('-', ' ', $townName);
 
-            $town = EateryTown::withoutGlobalScopes()->where('town', $townName)->first();
+            $town = EateryTown::query()->withoutGlobalScopes()->where('town', $townName)->first();
         }
 
         if ( ! $town) {
             /** @var EateryCounty | null $county */
-            $county = EateryCounty::withoutGlobalScopes()->where('county', $item['county']['name'])->first();
+            $county = EateryCounty::query()->withoutGlobalScopes()->where('county', $item['county']['name'])->first();
 
             if ($county) {
                 $town = $county->towns()->make(['town' => $townName]);
@@ -130,9 +126,7 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
             $town = EateryTown::query()->make(['town' => $townName]);
         }
 
-        if ( ! $town) {
-            throw new Exception("Can't find town - {$townName})");
-        }
+        throw_unless($town, new Exception("Can't find town - {$townName})"));
 
         $item['town'] = [
             'id' => $town->exists ? $town->id : 'NEW',
@@ -149,17 +143,17 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
         }
 
         /** @var EateryArea | null $area */
-        $area = EateryArea::withoutGlobalScopes()->where('area', $areaName)->first();
+        $area = EateryArea::query()->withoutGlobalScopes()->where('area', $areaName)->first();
 
         if ( ! $area && Str::contains($areaName, '-')) {
             $areaName = str_replace('-', ' ', $areaName);
 
-            $area = EateryArea::withoutGlobalScopes()->where('area', $areaName)->first();
+            $area = EateryArea::query()->withoutGlobalScopes()->where('area', $areaName)->first();
         }
 
         if ( ! $area) {
             /** @var EateryTown | null $borough */
-            $borough = EateryTown::withoutGlobalScopes()->where('town', $item['town']['name'])->first();
+            $borough = EateryTown::query()->withoutGlobalScopes()->where('town', $item['town']['name'])->first();
 
             if ($borough) {
                 $area = $borough->areas()->make(['area' => $areaName]);
@@ -170,9 +164,7 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
             $area = EateryArea::query()->make(['area' => $areaName]);
         }
 
-        if ( ! $area) {
-            throw new Exception("Can't find area - {$areaName})");
-        }
+        throw_unless($area, new Exception("Can't find area - {$areaName})"));
 
         $item['area'] = [
             'id' => $area->exists ? $area->id : 'NEW',

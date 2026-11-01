@@ -19,7 +19,7 @@ class MigrateEateriesSocialUrlsCommand extends Command
 
     public function handle(): void
     {
-        $eateries = Eatery::withoutGlobalScopes()
+        $eateries = Eatery::query()->withoutGlobalScopes()
             ->whereNotNull('website')
             ->where('website', '!=', '')
             ->get();

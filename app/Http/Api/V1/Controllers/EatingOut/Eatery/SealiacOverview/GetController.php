@@ -17,9 +17,7 @@ class GetController
     {
         $branch = null;
 
-        if ($eatery->closed_down) {
-            abort(404);
-        }
+        abort_if($eatery->closed_down, 404);
 
         $eatery->load(['area', 'town', 'county', 'country']);
 

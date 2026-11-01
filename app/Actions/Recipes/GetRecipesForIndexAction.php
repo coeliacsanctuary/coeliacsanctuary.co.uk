@@ -31,7 +31,7 @@ class GetRecipesForIndexAction
                 ->when($search, fn (Builder $builder) => $builder->where(
                     fn (Builder $builder) => $builder
                         ->where('id', $search)
-                        ->orWhere('title', 'LIKE', "%{$search}%")
+                        ->orWhereLike('title', "%{$search}%")
                 ))
                 ->when(count($featureFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasFeatures($featureFilters))
                 ->when(count($mealFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasMeals($mealFilters))

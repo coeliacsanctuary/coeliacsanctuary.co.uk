@@ -21,7 +21,7 @@ class ClosePendingOrdersCommandTest extends TestCase
     {
         parent::setUp();
 
-        Carbon::setTestNow('2024-04-01 12:00:00');
+        $this->travelTo('2024-04-01 12:00:00');
     }
 
     #[Test]

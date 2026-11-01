@@ -13,9 +13,7 @@ class GetController
     {
         $content = Storage::disk('system')->get('ads.txt');
 
-        if ($content === null) {
-            abort(404);
-        }
+        abort_if($content === null, 404);
 
         return response($content, 200, [
             'Content-Type' => 'text/plain; charset=utf-8',

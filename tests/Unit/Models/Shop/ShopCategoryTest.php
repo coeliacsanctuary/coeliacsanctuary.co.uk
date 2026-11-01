@@ -57,9 +57,9 @@ class ShopCategoryTest extends TestCase
     #[Test]
     public function itHasManyProducts(): void
     {
-        ShopCategory::withoutGlobalScopes();
-        ShopProduct::withoutGlobalScopes();
-        ShopProductVariant::withoutGlobalScopes();
+        ShopCategory::query()->withoutGlobalScopes();
+        ShopProduct::query()->withoutGlobalScopes();
+        ShopProductVariant::query()->withoutGlobalScopes();
 
         $category = $this->create(ShopCategory::class);
 

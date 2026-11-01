@@ -30,9 +30,7 @@ class ShowController
         /** @var EateryCounty $county */
         $county = EateryCounty::query()->where('slug', 'london')->first();
 
-        if ($borough->county_id !== $county->id) {
-            abort(404);
-        }
+        abort_if($borough->county_id !== $county->id, 404);
 
         $borough
             ->load(['areas' => fn (Relation $relation) => $relation->chaperone()->with(['liveEateries', 'liveBranches'])->orderBy('area')])

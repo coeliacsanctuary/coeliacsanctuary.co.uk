@@ -102,7 +102,7 @@ class Eateries extends Resource
                         $field->show();
 
                         /** @var EateryCounty | null $county */
-                        $county = EateryCounty::withoutGlobalScopes()->find($request->county);
+                        $county = EateryCounty::query()->withoutGlobalScopes()->find($request->county);
 
                         if ($county) {
                             $field->setValue($county->country_id);
@@ -142,7 +142,7 @@ class Eateries extends Resource
                         $field->show();
 
                         /** @var EateryTown $town */
-                        $town = EateryTown::withoutGlobalScopes()->find($request->town);
+                        $town = EateryTown::query()->withoutGlobalScopes()->find($request->town);
 
                         if ($town) {
                             $field->setValue($town->county_id);
@@ -216,7 +216,7 @@ class Eateries extends Resource
                     })
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $countyId = $request->input('county');
-                        $county = EateryCounty::withoutGlobalScopes()->where('id', $countyId)->first();
+                        $county = EateryCounty::query()->withoutGlobalScopes()->where('id', $countyId)->first();
 
                         if ($county?->slug === 'london') {
                             $field->show();

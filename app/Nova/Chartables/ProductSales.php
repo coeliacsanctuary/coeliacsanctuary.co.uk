@@ -33,7 +33,7 @@ class ProductSales extends Chartable
 
     protected function products(): Collection
     {
-        return once(fn () => ShopProduct::withoutGlobalScopes()
+        return once(fn () => ShopProduct::query()->withoutGlobalScopes()
             ->with(['categories' => fn (Relation $builder) => $builder->withoutGlobalScopes()])
             ->orderBy('title')
             ->get()

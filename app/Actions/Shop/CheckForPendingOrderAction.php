@@ -34,9 +34,7 @@ class CheckForPendingOrderAction
             return null;
         }
 
-        if ($this->hasBeenPaidFor($order)) {
-            throw new OrderAlreadyPaidException($order);
-        }
+        throw_if($this->hasBeenPaidFor($order), new OrderAlreadyPaidException($order));
 
         $order->update(['state_id' => OrderState::BASKET]);
 

@@ -21,7 +21,7 @@ class MigrateCollectionItemsToGroupsCommand extends Command
 
     public function handle(): void
     {
-        $collections = Collection::withoutGlobalScopes()->get();
+        $collections = Collection::query()->withoutGlobalScopes()->get();
 
         progress(
             label: 'Migrating collection items to groups',
@@ -35,7 +35,7 @@ class MigrateCollectionItemsToGroupsCommand extends Command
 
     protected function processCollection(Collection $collection): void
     {
-        $group = CollectionGroup::create([
+        $group = CollectionGroup::query()->create([
             'collection_id' => $collection->id,
             'title' => null,
             'body' => null,

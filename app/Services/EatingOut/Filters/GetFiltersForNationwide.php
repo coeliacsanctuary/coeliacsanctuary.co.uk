@@ -32,9 +32,7 @@ class GetFiltersForNationwide extends GetFilters
 
     protected function withWhereClause(Builder $builder): Builder
     {
-        if ( ! $this->county instanceof EateryCounty) {
-            throw new RuntimeException('County not set');
-        }
+        throw_unless($this->county instanceof EateryCounty, new RuntimeException('County not set'));
 
         return $builder
             ->select('*')

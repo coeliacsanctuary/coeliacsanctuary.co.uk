@@ -17,9 +17,7 @@ class GetSealiacProductOverviewAction
             return $product->sealiacOverview;
         }
 
-        if ($product->reviews()->count() === 0) {
-            throw new Exception('No reviews found to generate overview');
-        }
+        throw_if($product->reviews()->count() === 0, new Exception('No reviews found to generate overview'));
 
         $response = new SealiacProductOverviewAgent($product)->prompt('Generate your overview.');
 

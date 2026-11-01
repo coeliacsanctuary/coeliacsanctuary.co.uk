@@ -56,7 +56,7 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
 
         $eateryIds = $eateries->pluck('id')->toArray();
 
-        $eateries = Eatery::withoutGlobalScopes()
+        $eateries = Eatery::query()->withoutGlobalScopes()
             ->with(['town', 'county'])
             ->whereIn('id', $eateryIds)
             ->get();
@@ -148,7 +148,7 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
 
         $this->runCommand($eatery, ['featureIds' => $featureIds])->run();
 
-        $baseEatery = Eatery::withoutGlobalScopes()->where('town_id', 529)->first();
+        $baseEatery = Eatery::query()->withoutGlobalScopes()->where('town_id', 529)->first();
 
         $this->assertNotNull($baseEatery);
         $this->assertEqualsCanonicalizing($featureIds, $baseEatery->features->pluck('id')->toArray());
@@ -219,7 +219,7 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
 
         $this->runCommand(collect([$eatery1, $eatery2]), ['name' => $sharedName])->run();
 
-        $branches = NationwideBranch::withoutGlobalScopes()->get();
+        $branches = NationwideBranch::query()->withoutGlobalScopes()->get();
 
         $this->assertCount(2, $branches);
 
@@ -256,8 +256,8 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
 
         $this->runCommand($eatery)->run();
 
-        $baseEatery = Eatery::withoutGlobalScopes()->where('town_id', 529)->first();
-        $branch = NationwideBranch::withoutGlobalScopes()->where('wheretoeat_id', $baseEatery->id)->first();
+        $baseEatery = Eatery::query()->withoutGlobalScopes()->where('town_id', 529)->first();
+        $branch = NationwideBranch::query()->withoutGlobalScopes()->where('wheretoeat_id', $baseEatery->id)->first();
 
         $this->assertDatabaseHas('wheretoeat_reviews', [
             'wheretoeat_id' => $baseEatery->id,
@@ -298,7 +298,7 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
 
         $this->runCommand(collect([$eatery1, $eatery2]))->run();
 
-        $baseEatery = Eatery::withoutGlobalScopes()->where('town_id', 529)->first();
+        $baseEatery = Eatery::query()->withoutGlobalScopes()->where('town_id', 529)->first();
 
         $this->assertNotNull($baseEatery);
         $this->assertDatabaseCount('wheretoeat_nationwide_branches', 2);
@@ -333,7 +333,7 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
 
         $this->assertSame(
             1,
-            Eatery::withoutGlobalScopes()
+            Eatery::query()->withoutGlobalScopes()
                 ->where(['name' => 'Chain Eatery', 'county_id' => 1, 'town_id' => 529])
                 ->count(),
         );

@@ -24,7 +24,7 @@ class SummariseAskSealiacChatsCommandTest extends TestCase
     #[Test]
     public function itSummarisesChatsWithNullSummaryOlderThan15Minutes(): void
     {
-        Carbon::setTestNow('2026-02-12 12:00:00');
+        $this->travelTo('2026-02-12 12:00:00');
 
         $chat = $this->create(AskSealiacChat::class, [
             'updated_at' => '2026-02-12 11:40:00',
@@ -47,7 +47,7 @@ class SummariseAskSealiacChatsCommandTest extends TestCase
     #[Test]
     public function itDoesNotSummariseChatsUpdatedWithinTheLast15Minutes(): void
     {
-        Carbon::setTestNow('2026-02-12 12:00:00');
+        $this->travelTo('2026-02-12 12:00:00');
 
         $chat = $this->create(AskSealiacChat::class, [
             'updated_at' => '2026-02-12 11:50:00',
@@ -67,7 +67,7 @@ class SummariseAskSealiacChatsCommandTest extends TestCase
     #[Test]
     public function itDoesNotSummariseChatsWithAnExistingSummary(): void
     {
-        Carbon::setTestNow('2026-02-12 12:00:00');
+        $this->travelTo('2026-02-12 12:00:00');
 
         $chat = $this->build(AskSealiacChat::class)->withSummary()->create([
             'updated_at' => '2026-02-12 11:40:00',
@@ -85,7 +85,7 @@ class SummariseAskSealiacChatsCommandTest extends TestCase
     #[Test]
     public function itPromptsTheAgentForEachEligibleChat(): void
     {
-        Carbon::setTestNow('2026-02-12 12:00:00');
+        $this->travelTo('2026-02-12 12:00:00');
 
         $chatOne = $this->create(AskSealiacChat::class, ['updated_at' => '2026-02-12 11:40:00']);
         $this->create(AskSealiacChatMessage::class, ['ask_sealiac_chat_id' => $chatOne->id]);

@@ -52,9 +52,7 @@ class SyncProductToGoogleMerchantAction
         try {
             return $this->manager->update($product->google_merchant_product_id, $this->buildProduct($product));
         } catch (ApiException $apiException) {
-            if ( ! $this->isNotFound($apiException)) {
-                throw $apiException;
-            }
+            throw_unless($this->isNotFound($apiException), $apiException);
         }
 
         $product->updateQuietly(['google_merchant_product_id' => null]);
@@ -71,9 +69,7 @@ class SyncProductToGoogleMerchantAction
         try {
             $this->manager->delete($product->google_merchant_product_id);
         } catch (ApiException $apiException) {
-            if ( ! $this->isNotFound($apiException)) {
-                throw $apiException;
-            }
+            throw_unless($this->isNotFound($apiException), $apiException);
         }
 
         $product->updateQuietly(['google_merchant_product_id' => null]);

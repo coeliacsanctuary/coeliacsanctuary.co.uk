@@ -20,9 +20,7 @@ class GetNationwideBranchesInLondonAreaAction implements GetEateriesPipelineActi
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->area instanceof EateryArea) {
-            throw new RuntimeException('No Area');
-        }
+        throw_unless($pipelineData->area instanceof EateryArea, new RuntimeException('No Area'));
 
         $query = NationwideBranch::query()
             ->when(

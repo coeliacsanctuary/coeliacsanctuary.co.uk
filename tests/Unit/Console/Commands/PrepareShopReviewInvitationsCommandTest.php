@@ -22,7 +22,7 @@ class PrepareShopReviewInvitationsCommandTest extends TestCase
 
         $this->seed(ShopScaffoldingSeeder::class);
 
-        Carbon::setTestNow('2024-04-15');
+        $this->travelTo('2024-04-15');
 
         Bus::fake();
     }

@@ -16,9 +16,7 @@ class IndexController
 {
     public function __invoke(Eatery $eatery, Request $request): array
     {
-        if ($eatery->county_id !== 1) {
-            abort(404);
-        }
+        abort_if($eatery->county_id !== 1, 404);
 
         $relations = ['country', 'county', 'town', 'town.county', 'area', 'area.town'];
 

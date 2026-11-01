@@ -23,9 +23,7 @@ class IndexController
     {
         $user = $request->user();
 
-        if ( ! $user instanceof ShopCustomer) {
-            abort(IlluminateResponse::HTTP_FORBIDDEN, 'You must be logged in to view this page.');
-        }
+        abort_unless($user instanceof ShopCustomer, IlluminateResponse::HTTP_FORBIDDEN, 'You must be logged in to view this page.');
 
         $cards = $user
             ->ownedDigitalItems

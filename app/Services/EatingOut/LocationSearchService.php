@@ -75,9 +75,7 @@ class LocationSearchService
         /** @var array{lat: float, lng: float}[] $response */
         $response = $this->geocoder->getAllCoordinatesForAddress($term);
 
-        if ((int) $response[0]['lat'] === 0) {
-            throw new RuntimeException('Http request failed');
-        }
+        throw_if((int) $response[0]['lat'] === 0, new RuntimeException('Http request failed'));
 
         return collect($response)
             ->filter(fn (array $result): bool => $force || $this->isValidResult($result, $term, $checkResult))

@@ -83,7 +83,7 @@ class GetSealiacEateryOverviewActionTest extends TestCase
     #[Test]
     public function itWillThrowAnErrorIfNoReviewsExistWhenThereIsNoExistingRecordInTheDatabase(): void
     {
-        EateryReview::truncate();
+        EateryReview::query()->truncate();
 
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('No reviews found to generate overview');

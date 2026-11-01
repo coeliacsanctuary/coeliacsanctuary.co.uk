@@ -25,32 +25,28 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itReturnsAValidationErrorIfNoImagesAreSent(): void
     {
-        $this->makeRequest()
-            ->assertStatus(422)
+        $this->makeRequest()->assertUnprocessable()
             ->assertJsonValidationErrorFor('images');
     }
 
     #[Test]
     public function itErrorIfImagesIsNotAnArray(): void
     {
-        $this->makeRequest('foo')
-            ->assertStatus(422)
+        $this->makeRequest('foo')->assertUnprocessable()
             ->assertJsonValidationErrorFor('images');
     }
 
     #[Test]
     public function itErrorsIfTheArrayHasMoreThanSixItems(): void
     {
-        $this->makeRequest([1, 2, 3, 4, 5, 6, 7])
-            ->assertStatus(422)
+        $this->makeRequest([1, 2, 3, 4, 5, 6, 7])->assertUnprocessable()
             ->assertJsonValidationErrorFor('images');
     }
 
     #[Test]
     public function itErrorsIfTheImageItemsArentFiles(): void
     {
-        $this->makeRequest(['foo'])
-            ->assertStatus(422)
+        $this->makeRequest(['foo'])->assertUnprocessable()
             ->assertJsonValidationErrorFor('images.0');
     }
 
@@ -59,14 +55,13 @@ class StoreControllerTest extends TestCase
     {
         $this->makeRequest([
             UploadedFile::fake()->create('foo.txt', 1, 'text/plain'),
-        ])->assertStatus(422)->assertJsonValidationErrorFor('images.0');
+        ])->assertUnprocessable()->assertJsonValidationErrorFor('images.0');
     }
 
     #[Test]
     public function itErrorsIfTheImagesArentAValidMimeType(): void
     {
-        $this->makeRequest([UploadedFile::fake()->image('foo.svg')])
-            ->assertStatus(422)
+        $this->makeRequest([UploadedFile::fake()->image('foo.svg')])->assertUnprocessable()
             ->assertJsonValidationErrorFor('images.0');
     }
 
@@ -75,7 +70,7 @@ class StoreControllerTest extends TestCase
     {
         $this->makeRequest([
             UploadedFile::fake()->create('foo.jpg', 5121),
-        ])->assertStatus(422)->assertJsonValidationErrorFor('images.0');
+        ])->assertUnprocessable()->assertJsonValidationErrorFor('images.0');
     }
 
     #[Test]

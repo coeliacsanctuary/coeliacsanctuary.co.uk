@@ -36,7 +36,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
 
         $this->assertDatabaseCount(CollectionGroup::class, 1);
 
-        $group = CollectionGroup::first();
+        $group = CollectionGroup::query()->first();
 
         $this->assertEquals($collection->id, $group->collection_id);
         $this->assertNull($group->title);
@@ -50,7 +50,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)->run();
 
-        $group = CollectionGroup::first();
+        $group = CollectionGroup::query()->first();
 
         $this->assertNull($group->title);
         $this->assertNull($group->body);
@@ -66,7 +66,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)->run();
 
-        $group = CollectionGroup::first();
+        $group = CollectionGroup::query()->first();
 
         $this->assertEquals($collection->created_at, $group->created_at);
         $this->assertEquals($collection->updated_at, $group->updated_at);
@@ -89,11 +89,11 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)->run();
 
-        $group = CollectionGroup::first();
+        $group = CollectionGroup::query()->first();
 
         $this->assertDatabaseCount(CollectionGroupItem::class, 1);
 
-        $item = CollectionGroupItem::first();
+        $item = CollectionGroupItem::query()->first();
 
         $this->assertEquals($group->id, $item->collection_group_id);
     }
@@ -115,7 +115,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)->run();
 
-        $item = CollectionGroupItem::first();
+        $item = CollectionGroupItem::query()->first();
 
         $this->assertEquals(42, $item->item_id);
         $this->assertEquals(Recipe::class, $item->item_type);
@@ -139,7 +139,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)->run();
 
-        $item = CollectionGroupItem::first();
+        $item = CollectionGroupItem::query()->first();
 
         $this->assertNull($item->item_title);
         $this->assertNull($item->item_description);
@@ -162,7 +162,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)->run();
 
-        $item = CollectionGroupItem::first();
+        $item = CollectionGroupItem::query()->first();
 
         $this->assertEquals('2023-03-15 09:00:00', $item->created_at);
         $this->assertEquals('2023-09-20 14:30:00', $item->updated_at);
@@ -181,12 +181,12 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)->run();
 
-        $groupA = CollectionGroup::where('collection_id', $collectionA->id)->first();
-        $groupB = CollectionGroup::where('collection_id', $collectionB->id)->first();
+        $groupA = CollectionGroup::query()->where('collection_id', $collectionA->id)->first();
+        $groupB = CollectionGroup::query()->where('collection_id', $collectionB->id)->first();
 
         $this->assertDatabaseCount(CollectionGroupItem::class, 2);
-        $this->assertEquals($groupA->id, CollectionGroupItem::where('item_id', 1)->value('collection_group_id'));
-        $this->assertEquals($groupB->id, CollectionGroupItem::where('item_id', 2)->value('collection_group_id'));
+        $this->assertEquals($groupA->id, CollectionGroupItem::query()->where('item_id', 1)->value('collection_group_id'));
+        $this->assertEquals($groupB->id, CollectionGroupItem::query()->where('item_id', 2)->value('collection_group_id'));
     }
 
     #[Test]

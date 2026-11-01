@@ -19,7 +19,7 @@ class SendingRulesTest extends TestCase
     {
         parent::setUp();
 
-        Carbon::setTestNow('2024-04-15');
+        $this->travelTo('2024-04-15');
     }
 
     #[Test]

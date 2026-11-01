@@ -30,16 +30,12 @@ class ShowController
         GetEateriesInLondonAreaPipeline $getEateriesPipeline,
         GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
     ): Response {
-        if ($area->town_id !== $borough->id) {
-            abort(404);
-        }
+        abort_if($area->town_id !== $borough->id, 404);
 
         /** @var EateryCounty $county */
         $county = EateryCounty::query()->where('slug', 'london')->first();
 
-        if ($borough->county_id !== $county->id) {
-            abort(404);
-        }
+        abort_if($borough->county_id !== $county->id, 404);
 
         $borough->setRelation('county', $county);
         $sort = $request->string('sort', 'alphabetical')->toString();

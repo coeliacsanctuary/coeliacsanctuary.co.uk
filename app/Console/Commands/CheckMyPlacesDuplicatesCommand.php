@@ -31,7 +31,7 @@ class CheckMyPlacesDuplicatesCommand extends Command
         $possible = collect();
 
         foreach ($recommendations as $recommendation) {
-            $matches = Eatery::withoutGlobalScopes()
+            $matches = Eatery::query()->withoutGlobalScopes()
                 ->whereRaw('LOWER(name) = ?', [mb_strtolower($recommendation->place_name)])
                 ->with(['town', 'county'])
                 ->get();

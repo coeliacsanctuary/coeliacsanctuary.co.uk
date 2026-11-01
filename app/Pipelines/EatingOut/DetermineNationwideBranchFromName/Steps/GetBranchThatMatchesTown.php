@@ -18,7 +18,7 @@ class GetBranchThatMatchesTown extends BaseStep
             return $next($data);
         }
 
-        $town = EateryTown::withoutGlobalScopes()
+        $town = EateryTown::query()->withoutGlobalScopes()
             ->whereIn('id', $data->branches->pluck('town_id')->unique()->toArray())
             ->where(
                 fn (Builder $builder) => $builder

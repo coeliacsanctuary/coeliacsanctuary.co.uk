@@ -13,7 +13,7 @@ class TravelCardSearchTermBuilder extends Builder
     public function matching(string $term): static
     {
         return $this
-            ->where('term', 'like', '%' . addcslashes($term, '%_\\') . '%')
+            ->whereLike('term', '%' . addcslashes($term, '%_\\') . '%')
             ->orderByRaw('term = ? desc', [$term])
             ->orderByRaw('locate(?, term) asc', [$term])
             ->orderByRaw('char_length(term) asc');

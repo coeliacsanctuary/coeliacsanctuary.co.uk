@@ -19,9 +19,7 @@ class GetEateriesInTownAction implements GetEateriesPipelineActionContract
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->town instanceof EateryTown) {
-            throw new RuntimeException('No Town');
-        }
+        throw_unless($pipelineData->town instanceof EateryTown, new RuntimeException('No Town'));
 
         $query = Eatery::query()
             ->when(

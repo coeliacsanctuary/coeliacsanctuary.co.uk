@@ -47,7 +47,7 @@ class ConvertEateriesToNationwideCommand extends Command
             required: true,
         );
 
-        $eateries = Eatery::withoutGlobalScopes()
+        $eateries = Eatery::query()->withoutGlobalScopes()
             ->with(['town', 'county', 'country', 'area', 'features', 'reviews'])
             ->whereIn('id', $selectedIds)
             ->get();
@@ -129,7 +129,7 @@ class ConvertEateriesToNationwideCommand extends Command
 
                 $usedSlugs[] = $slug;
 
-                $branch = NationwideBranch::create([
+                $branch = NationwideBranch::query()->create([
                     'wheretoeat_id' => $baseEatery->id,
                     'name' => $branchName,
                     'slug' => $slug,
@@ -147,7 +147,7 @@ class ConvertEateriesToNationwideCommand extends Command
 
                 $branchCount++;
 
-                $reviewCount += EateryReview::withoutGlobalScopes()
+                $reviewCount += EateryReview::query()->withoutGlobalScopes()
                     ->where('wheretoeat_id', $eatery->id)
                     ->update([
                         'wheretoeat_id' => $baseEatery->id,
