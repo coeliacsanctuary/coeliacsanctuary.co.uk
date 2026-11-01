@@ -21,7 +21,7 @@ class GetController
             ->latest()
             ->first();
 
-        abort_unless($adminReview, 404);
+        abort_if($adminReview === null, 404);
 
         return [
             'data' => EateryReviewResource::make($adminReview),
