@@ -37,7 +37,7 @@ class GetRecipeMetricsJobTest extends TestCase
 
     protected function runJob(?Carbon $date = null): void
     {
-        (new GetRecipeMetricsJob($this->recipe, $date ?? today()))->handle();
+        new GetRecipeMetricsJob($this->recipe, $date ?? today())->handle();
     }
 
     #[Test]
@@ -119,7 +119,7 @@ class GetRecipeMetricsJobTest extends TestCase
     {
         $this->runJob();
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): bool {
             $data = $request->data();
             $pageDescriptor = collect($data['data'])->firstWhere('as', 'views');
 
@@ -132,7 +132,7 @@ class GetRecipeMetricsJobTest extends TestCase
     {
         $this->runJob();
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): bool {
             $data = $request->data();
             $descriptor = collect($data['data'])->firstWhere('as', 'comment_views');
             $event = $descriptor['has']['events'][0];
@@ -149,7 +149,7 @@ class GetRecipeMetricsJobTest extends TestCase
     {
         $this->runJob();
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): bool {
             $data = $request->data();
             $descriptor = collect($data['data'])->firstWhere('as', 'detail_card_views');
             $event = $descriptor['has']['events'][0];
@@ -165,7 +165,7 @@ class GetRecipeMetricsJobTest extends TestCase
     {
         $this->runJob();
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): bool {
             $data = $request->data();
             $descriptor = collect($data['data'])->firstWhere('as', 'collection_card_views');
             $event = $descriptor['has']['events'][0];

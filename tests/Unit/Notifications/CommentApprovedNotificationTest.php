@@ -19,7 +19,7 @@ class CommentApprovedNotificationTest extends TestCase
 {
     protected Comment $comment;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -40,7 +40,7 @@ class CommentApprovedNotificationTest extends TestCase
     #[DataProvider('mailDataProvider')]
     public function itHasTheEmailData(callable $closure): void
     {
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $this->comment->email)
             ->notify(new CommentApprovedNotification($this->comment));
 

@@ -56,7 +56,7 @@ class SyncGoogleWalletClassActionTest extends TestCase
     {
         $this->callAction(SyncGoogleWalletClassAction::class, $this->card);
 
-        Http::assertSent(function ($request) {
+        Http::assertSent(function (array $request): bool {
             $modules = collect($request['textModulesData'] ?? [])->keyBy('id');
 
             return $modules->count() === 5
@@ -74,7 +74,7 @@ class SyncGoogleWalletClassActionTest extends TestCase
     {
         $this->callAction(SyncGoogleWalletClassAction::class, $this->card);
 
-        Http::assertSent(function ($request) {
+        Http::assertSent(function (array $request): bool {
             $link = $request['linksModuleData']['uris'][0] ?? null;
 
             return $link['uri'] === config()->string('app.url')

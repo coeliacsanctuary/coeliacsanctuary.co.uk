@@ -350,7 +350,7 @@ class Products extends Resource
             );
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -395,12 +395,12 @@ class Products extends Resource
         SyncProductToGoogleMerchantJob::dispatch($model);
     }
 
-    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    public static function redirectAfterCreate(NovaRequest $request, $resource): string
     {
         return '/resources/' . self::uriKey() . '/' . $resource->getKey();
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return '/resources/' . self::uriKey() . '/' . $resource->getKey();
     }

@@ -97,7 +97,7 @@ class Counties extends Resource
         return $title;
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

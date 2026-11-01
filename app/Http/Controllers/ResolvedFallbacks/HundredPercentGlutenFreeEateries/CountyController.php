@@ -55,7 +55,7 @@ class CountyController
                     'image' => $county->image,
                 ],
                 'towns' => $eateries->groupBy(fn (Eatery $eatery) => $eatery->town_id)
-                    ->map(function (Collection $townEateries) use ($routeRecord) {
+                    ->map(function (Collection $townEateries) use ($routeRecord): array {
                         /** @var Eatery $firstEatery */
                         $firstEatery = $townEateries->first();
 

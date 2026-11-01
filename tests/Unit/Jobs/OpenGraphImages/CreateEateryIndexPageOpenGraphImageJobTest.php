@@ -32,7 +32,7 @@ class CreateEateryIndexPageOpenGraphImageJobTest extends TestCase
             ->andReturn('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAb0lEQVR4nGK567aCAQZOXAuEs/cf3QZnO3xaDGczMZAIaK+BJVjTFs5RLAyBs1UuS8DZaj8m0tFJJGtgzORshHMELtfA2TMC58LZ7i3MdHQS6fHw6VkPnKMWcRHOlq/JgbOPFO+ko5NI1gAIAAD//3qSF5xOx6hcAAAAAElFTkSuQmCC')
             ->once();
 
-        (new CreateEateryIndexPageOpenGraphImageJob())->handle(app(RenderOpenGraphImage::class));
+        new CreateEateryIndexPageOpenGraphImageJob()->handle(app(RenderOpenGraphImage::class));
     }
 
     #[Test]
@@ -46,7 +46,7 @@ class CreateEateryIndexPageOpenGraphImageJobTest extends TestCase
             ->andReturn('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAb0lEQVR4nGK567aCAQZOXAuEs/cf3QZnO3xaDGczMZAIaK+BJVjTFs5RLAyBs1UuS8DZaj8m0tFJJGtgzORshHMELtfA2TMC58LZ7i3MdHQS6fHw6VkPnKMWcRHOlq/JgbOPFO+ko5NI1gAIAAD//3qSF5xOx6hcAAAAAElFTkSuQmCC')
             ->once();
 
-        (new CreateEateryIndexPageOpenGraphImageJob())->handle(app(RenderOpenGraphImage::class));
+        new CreateEateryIndexPageOpenGraphImageJob()->handle(app(RenderOpenGraphImage::class));
 
         $this->assertDatabaseCount(OpenGraphImage::class, 1);
         $model = OpenGraphImage::query()->first();
@@ -70,7 +70,7 @@ class CreateEateryIndexPageOpenGraphImageJobTest extends TestCase
 
         $this->mock(RenderOpenGraphImage::class)
             ->shouldReceive('handle')
-            ->withArgs(function (string $html) use (&$captured) {
+            ->withArgs(function (string $html) use (&$captured): true {
                 $captured = $html;
 
                 return true;
@@ -78,7 +78,7 @@ class CreateEateryIndexPageOpenGraphImageJobTest extends TestCase
             ->andReturn('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAb0lEQVR4nGK567aCAQZOXAuEs/cf3QZnO3xaDGczMZAIaK+BJVjTFs5RLAyBs1UuS8DZaj8m0tFJJGtgzORshHMELtfA2TMC58LZ7i3MdHQS6fHw6VkPnKMWcRHOlq/JgbOPFO+ko5NI1gAIAAD//3qSF5xOx6hcAAAAAElFTkSuQmCC')
             ->once();
 
-        (new CreateEateryIndexPageOpenGraphImageJob())->handle(app(RenderOpenGraphImage::class));
+        new CreateEateryIndexPageOpenGraphImageJob()->handle(app(RenderOpenGraphImage::class));
 
         $this->assertNotNull($captured);
         $this->assertMatchesRegularExpression('/>\s*27\s*</', $captured);  // total

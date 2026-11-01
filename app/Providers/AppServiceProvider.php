@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Actions\PreloadHeaderImageAction;
 use App\Infrastructure\MailChannel;
 use App\Search\Eateries;
 use App\Services\GoogleMerchant\GoogleMerchantClient;
@@ -58,7 +59,7 @@ class AppServiceProvider extends ServiceProvider
 
         Vite::prefetch(concurrency: 3);
 
-        Blade::directive('preloadImage', fn () => "<?php echo app(App\Actions\PreloadHeaderImageAction::class)->handle(); ?>");
+        Blade::directive('preloadImage', fn () => '<?php echo app(' . PreloadHeaderImageAction::class . '::class)->handle(); ?>');
 
         Nightwatch::rejectCacheEvents(fn (CacheEvent $event) => ! str_contains($event->key, '.'));
 

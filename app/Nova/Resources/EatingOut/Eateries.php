@@ -58,12 +58,12 @@ class Eateries extends Resource
 
     public static $search = ['id', 'name', 'area.area', 'town.town', 'county.county'];
 
-    public function authorizedToReplicate(Request $request)
+    public function authorizedToReplicate(Request $request): bool
     {
         return true;
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -342,7 +342,7 @@ class Eateries extends Resource
                     ]),
 
                 EateryOpeningTimes::make('Opening Times', 'openingTimes')
-                    ->dependsOn(['type_id'], function (EateryOpeningTimes $field, NovaRequest $request) {
+                    ->dependsOn(['type_id'], function (EateryOpeningTimes $field, NovaRequest $request): EateryOpeningTimes {
                         if ($request->type_id !== 1) {
                             $field->hide();
                         }
@@ -482,7 +482,7 @@ class Eateries extends Resource
 
         $placeRecommendation->update(['completed' => true]);
 
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $placeRecommendation->email)
             ->notify(new EateryRecommendationAddedNotification($placeRecommendation, $model));
     }

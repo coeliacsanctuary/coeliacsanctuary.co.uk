@@ -27,10 +27,8 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
 
     /**
      * Perform the action on the given models.
-     *
-     * @return mixed
      */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (EateryRecommendation $model) use ($fields): void {
             $eateryInfo = json_decode($fields->get('eatery_id'), true);
@@ -43,7 +41,7 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
                 $branch = $eatery->nationwideBranches()->find($branchId);
             }
 
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $model->email)
                 ->notify(new EateryRecommendationAlreadyExistsNotification($model, $eatery, $branch));
 

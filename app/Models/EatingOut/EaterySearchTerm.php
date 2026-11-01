@@ -24,7 +24,7 @@ class EaterySearchTerm extends Model
     {
         parent::boot();
 
-        static::creating(static function (EaterySearchTerm $searchTerm) {
+        static::creating(static function (EaterySearchTerm $searchTerm): EaterySearchTerm {
             $pass = false;
 
             while ($pass === false) {

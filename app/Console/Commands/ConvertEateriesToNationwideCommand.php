@@ -163,10 +163,10 @@ class ConvertEateriesToNationwideCommand extends Command
             $this->components->info("Created {$branchCount} " . str('branch')->plural($branchCount));
             $this->components->info("Migrated {$reviewCount} " . str('review')->plural($reviewCount));
             $this->components->info("Deactivated {$eateries->count()} original " . str('eatery')->plural($eateries->count()));
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             DB::rollBack();
 
-            throw $e;
+            throw $throwable;
         }
     }
 }

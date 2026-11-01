@@ -74,7 +74,7 @@ class GenerateTownDescriptionJobTest extends TestCase
     {
         EateryTownDescriptionAgent::fake();
 
-        (new GenerateTownDescriptionJob($this->town))->handle();
+        new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Town: Crewe')
@@ -86,7 +86,7 @@ class GenerateTownDescriptionJobTest extends TestCase
     {
         EateryTownDescriptionAgent::fake();
 
-        (new GenerateTownDescriptionJob($this->town))->handle();
+        new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
@@ -104,7 +104,7 @@ class GenerateTownDescriptionJobTest extends TestCase
             'live' => false,
         ]);
 
-        (new GenerateTownDescriptionJob($this->town))->handle();
+        new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
@@ -124,7 +124,7 @@ class GenerateTownDescriptionJobTest extends TestCase
             ->count(2)
             ->create();
 
-        (new GenerateTownDescriptionJob($this->town))->handle();
+        new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 8')
@@ -143,7 +143,7 @@ class GenerateTownDescriptionJobTest extends TestCase
                 ->create(['rating' => 4]);
         });
 
-        (new GenerateTownDescriptionJob($this->town))->handle();
+        new GenerateTownDescriptionJob($this->town)->handle();
 
         EateryTownDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
@@ -155,7 +155,7 @@ class GenerateTownDescriptionJobTest extends TestCase
     {
         EateryTownDescriptionAgent::fake(['AI generated description']);
 
-        (new GenerateTownDescriptionJob($this->town))->handle();
+        new GenerateTownDescriptionJob($this->town)->handle();
 
         $this->assertEquals('AI generated description', $this->town->refresh()->description);
     }
@@ -165,7 +165,7 @@ class GenerateTownDescriptionJobTest extends TestCase
     {
         EateryTownDescriptionAgent::fake();
 
-        (new GenerateTownDescriptionJob($this->createLondonBorough()))->handle();
+        new GenerateTownDescriptionJob($this->createLondonBorough())->handle();
 
         EateryTownDescriptionAgent::assertNeverPrompted();
     }
@@ -177,7 +177,7 @@ class GenerateTownDescriptionJobTest extends TestCase
 
         $town = $this->createLondonBorough();
 
-        (new GenerateTownDescriptionJob($town))->handle();
+        new GenerateTownDescriptionJob($town)->handle();
 
         $this->assertNull($town->refresh()->description);
     }
@@ -187,7 +187,7 @@ class GenerateTownDescriptionJobTest extends TestCase
     {
         EateryTownDescriptionAgent::fake();
 
-        (new GenerateTownDescriptionJob($this->createNationwideTown()))->handle();
+        new GenerateTownDescriptionJob($this->createNationwideTown())->handle();
 
         EateryTownDescriptionAgent::assertNeverPrompted();
     }
@@ -199,7 +199,7 @@ class GenerateTownDescriptionJobTest extends TestCase
 
         $town = $this->createNationwideTown();
 
-        (new GenerateTownDescriptionJob($town))->handle();
+        new GenerateTownDescriptionJob($town)->handle();
 
         $this->assertNull($town->refresh()->description);
     }
@@ -209,7 +209,7 @@ class GenerateTownDescriptionJobTest extends TestCase
     {
         $this->assertEquals(
             $this->town->id,
-            (new GenerateTownDescriptionJob($this->town))->uniqueId()
+            new GenerateTownDescriptionJob($this->town)->uniqueId()
         );
     }
 

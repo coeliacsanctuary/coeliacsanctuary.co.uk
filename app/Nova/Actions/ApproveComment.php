@@ -23,10 +23,8 @@ class ApproveComment extends Action
 
     /**
      * Perform the action on the given models.
-     *
-     * @return mixed
      */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (Comment $comment): void {
             if ($comment->approved) {
@@ -35,7 +33,7 @@ class ApproveComment extends Action
 
             $comment->update(['approved' => true]);
 
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $comment->email)
                 ->notify(new CommentApprovedNotification($comment));
         });

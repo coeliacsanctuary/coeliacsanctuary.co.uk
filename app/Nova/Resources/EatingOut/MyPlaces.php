@@ -32,7 +32,7 @@ class MyPlaces extends Resource
 
     public static $search = ['place_name', 'place_location', 'place_details'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

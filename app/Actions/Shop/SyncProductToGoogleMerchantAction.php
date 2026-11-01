@@ -51,9 +51,9 @@ class SyncProductToGoogleMerchantAction
 
         try {
             return $this->manager->update($product->google_merchant_product_id, $this->buildProduct($product));
-        } catch (ApiException $exception) {
-            if ( ! $this->isNotFound($exception)) {
-                throw $exception;
+        } catch (ApiException $apiException) {
+            if ( ! $this->isNotFound($apiException)) {
+                throw $apiException;
             }
         }
 
@@ -70,9 +70,9 @@ class SyncProductToGoogleMerchantAction
 
         try {
             $this->manager->delete($product->google_merchant_product_id);
-        } catch (ApiException $exception) {
-            if ( ! $this->isNotFound($exception)) {
-                throw $exception;
+        } catch (ApiException $apiException) {
+            if ( ! $this->isNotFound($apiException)) {
+                throw $apiException;
             }
         }
 
@@ -111,7 +111,7 @@ class SyncProductToGoogleMerchantAction
             $attrs->setShippingWeight(Helpers::shippingWeightFromGrams($firstVariant->weight));
         }
 
-        return (new ProductInput())
+        return new ProductInput()
             ->setOfferId((string) $product->id)
             ->setContentLanguage('en')
             ->setFeedLabel('GB')

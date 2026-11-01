@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Search;
 
+use App\DataObjects\Search\SearchAiResponse;
 use App\Actions\Search\IdentifySearchAreasWithAiAction;
 use App\DataObjects\Search\SearchParameters;
 use App\Http\Requests\Search\SearchRequest;
@@ -43,7 +44,7 @@ class IndexController
         if ( ! Str::contains(URL::previousPath(), '/search') && ! Str::contains(URL::previousPath(), 'wheretoeat/search')) {
             $searchAiResponse = $identifySearchAreasWithAiAction->handle($search);
 
-            if ($searchAiResponse) {
+            if ($searchAiResponse instanceof SearchAiResponse) {
                 $parameters->blogs = $searchAiResponse->blogs >= 10;
                 $parameters->recipes = $searchAiResponse->recipes >= 10;
                 $parameters->eateries = $searchAiResponse->eatingOut >= 10;

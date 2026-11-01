@@ -35,7 +35,7 @@ class SuggestedEdits extends Resource
 
     public static $clickAction = 'preview';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -58,7 +58,7 @@ class SuggestedEdits extends Resource
             BelongsTo::make('Eatery', resource: Eateries::class)
                 ->displayUsing(fn (Eateries $eatery) => $eatery->resource->load(['town' => fn (Relation $builder) => $builder->withoutGlobalScopes(), 'county', 'country'])->full_name),
 
-            Badge::make('Status', function (EaterySuggestedEdit $edit) {
+            Badge::make('Status', function (EaterySuggestedEdit $edit): string {
                 if ($edit->rejected) {
                     return 'Rejected';
                 }

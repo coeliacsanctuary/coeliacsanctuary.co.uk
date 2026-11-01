@@ -34,7 +34,7 @@ enum EateryMagicRouteType: string
         };
     }
 
-    public function agent(array $params = []): MagicRouteAgent
+    public function agent(array $params = []): HundredPercentGlutenFreeMagicRouteContentAgent
     {
         return match ($this) {
             self::HundredPercentGlutenFree => HundredPercentGlutenFreeMagicRouteContentAgent::make(...$params),

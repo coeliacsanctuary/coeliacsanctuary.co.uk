@@ -53,7 +53,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
     {
         EateryCountyDescriptionAgent::fake();
 
-        (new GenerateCountyDescriptionJob($this->county))->handle();
+        new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'County: Cheshire')
@@ -65,7 +65,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
     {
         EateryCountyDescriptionAgent::fake();
 
-        (new GenerateCountyDescriptionJob($this->county))->handle();
+        new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Towns: 3')
@@ -77,7 +77,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
     {
         EateryCountyDescriptionAgent::fake();
 
-        (new GenerateCountyDescriptionJob($this->county))->handle();
+        new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
@@ -99,7 +99,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
             ->count(2)
             ->create();
 
-        (new GenerateCountyDescriptionJob($this->county))->handle();
+        new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 8')
@@ -118,7 +118,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
                 ->create(['rating' => 4]);
         });
 
-        (new GenerateCountyDescriptionJob($this->county))->handle();
+        new GenerateCountyDescriptionJob($this->county)->handle();
 
         EateryCountyDescriptionAgent::assertPrompted(
             fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
@@ -130,7 +130,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
     {
         EateryCountyDescriptionAgent::fake(['AI generated description']);
 
-        (new GenerateCountyDescriptionJob($this->county))->handle();
+        new GenerateCountyDescriptionJob($this->county)->handle();
 
         $this->assertEquals('AI generated description', $this->county->refresh()->description);
     }
@@ -142,7 +142,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
 
         $nationwide = $this->create(EateryCounty::class, ['county' => 'Nationwide']);
 
-        (new GenerateCountyDescriptionJob($nationwide))->handle();
+        new GenerateCountyDescriptionJob($nationwide)->handle();
 
         EateryCountyDescriptionAgent::assertNeverPrompted();
     }
@@ -154,7 +154,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
 
         $nationwide = $this->create(EateryCounty::class, ['county' => 'Nationwide', 'description' => null]);
 
-        (new GenerateCountyDescriptionJob($nationwide))->handle();
+        new GenerateCountyDescriptionJob($nationwide)->handle();
 
         $this->assertNull($nationwide->refresh()->description);
     }
@@ -164,7 +164,7 @@ class GenerateCountyDescriptionJobTest extends TestCase
     {
         $this->assertEquals(
             $this->county->id,
-            (new GenerateCountyDescriptionJob($this->county))->uniqueId()
+            new GenerateCountyDescriptionJob($this->county)->uniqueId()
         );
     }
 

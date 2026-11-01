@@ -42,7 +42,7 @@ trait MocksStripe
         $this->getStripeClient()->paymentIntents = $paymentIntent;
 
         $paymentIntent->shouldReceive('create')
-            ->withArgs(function (array $args) use ($amount) {
+            ->withArgs(function (array $args) use ($amount): true {
                 $this->assertArrayHasKey('amount', $args);
                 $this->assertEquals($amount, $args['amount']);
 
@@ -90,7 +90,7 @@ trait MocksStripe
         $this->getStripeClient()->paymentIntents = $paymentIntent;
 
         $paymentIntent->shouldReceive('update')
-            ->withArgs(function ($argId) use ($id) {
+            ->withArgs(function ($argId) use ($id): true {
                 $this->assertEquals($id, $argId);
 
                 return true;
@@ -125,7 +125,7 @@ trait MocksStripe
         ]);
 
         $refunds->shouldReceive('create')
-            ->withArgs(function (array $args) use ($chargeId, $amount) {
+            ->withArgs(function (array $args) use ($chargeId, $amount): true {
                 $this->assertArrayHasKeys(['charge', 'amount'], $args);
                 $this->assertEquals($chargeId, $args['charge']);
                 $this->assertEquals($amount, $args['amount']);

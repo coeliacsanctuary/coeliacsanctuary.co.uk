@@ -55,7 +55,7 @@ class ShopOrderItemTest extends TestCase
     {
         $order = $this->create(ShopOrder::class);
 
-        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order) {
+        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order): true {
             $this->assertTrue($basket->is($order));
 
             return true;
@@ -76,7 +76,7 @@ class ShopOrderItemTest extends TestCase
             ->inOrder($order)
             ->create();
 
-        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order) {
+        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order): true {
             $this->assertTrue($basket->is($order));
 
             return true;
@@ -95,7 +95,7 @@ class ShopOrderItemTest extends TestCase
             ->inOrder($order)
             ->create();
 
-        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order) {
+        $this->expectAction(ReconcileBasketItemsAction::class, [function (ShopOrder $basket) use ($order): true {
             $this->assertTrue($basket->is($order));
 
             return true;

@@ -99,7 +99,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($eatery) {
+            ->withArgs(function ($eatery): true {
                 $this->assertTrue($this->eatery->is($eatery));
 
                 return true;
@@ -187,7 +187,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($eatery) {
+            ->withArgs(function ($eatery): true {
                 $this->assertTrue($this->eatery->is($eatery));
 
                 return true;
@@ -313,7 +313,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($branch) {
+            ->withArgs(function ($branch): true {
                 $this->assertTrue($this->nationwideBranch->is($branch));
 
                 return true;
@@ -395,7 +395,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($eatery) {
+            ->withArgs(function ($eatery): true {
                 $this->assertTrue($this->eatery->is($eatery));
 
                 return true;

@@ -50,7 +50,7 @@ class SearchEateries
                 $geoResults = $this->performGeoSearch(implode(',', $searchPipelineData->parameters->userLocation), $searchPipelineData->parameters->term);
             }
 
-            $baseResults = $baseResults->map(function (Eatery|NationwideBranch $eatery) use ($geoResults) {
+            $baseResults = $baseResults->map(function (Eatery|NationwideBranch $eatery) use ($geoResults): Eatery|NationwideBranch {
                 /** @var Eatery|NationwideBranch|null $geoResult */
                 $geoResult = $geoResults->where('id', $eatery->id)
                     ->where('slug', $eatery->slug)

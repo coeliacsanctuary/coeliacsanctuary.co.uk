@@ -32,7 +32,7 @@ class Comments extends Resource
 
     public static $clickAction = 'view';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -92,7 +92,7 @@ class Comments extends Resource
     {
         /** @var Comment $model */
         if ($model->approved && (bool) $model->getPrevious()['approved'] === false) {
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $model->email)
                 ->notify(new CommentApprovedNotification($model));
         }

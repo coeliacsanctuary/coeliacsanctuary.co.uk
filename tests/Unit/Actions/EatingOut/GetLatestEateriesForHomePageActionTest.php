@@ -75,7 +75,7 @@ class GetLatestEateriesForHomePageActionTest extends TestCase
         $this->build(Eatery::class)
             ->count(10)
             ->sequence(fn (Sequence $sequence) => [
-                'live' => $sequence->index === 0 ? false : true,
+                'live' => $sequence->index !== 0,
                 'id' => $sequence->index + 1,
                 'name' => "Eatery {$sequence->index}",
                 'created_at' => Carbon::now()->subDays($sequence->index),

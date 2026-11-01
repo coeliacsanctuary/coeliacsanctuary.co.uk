@@ -42,7 +42,7 @@ class EateryMagicRouteRecord extends Model
     /** @return Attribute<non-falsy-string, never> */
     public function title(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): string {
             $location = match($this->location::class) {
                 EateryCounty::class => $this->location->county,
                 EateryTown::class => $this->location->town,

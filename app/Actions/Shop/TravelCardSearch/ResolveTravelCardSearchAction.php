@@ -115,7 +115,6 @@ class ResolveTravelCardSearchAction
             ->map(fn (TravelCardSearchTerm $term) => $this->products($term)->pluck('id')->all())
             ->reduce(
                 fn (?array $carry, array $ids) => $carry === null ? $ids : array_intersect($carry, $ids),
-                null,
             ) ?? [];
 
         /** @var EloquentCollection<int, ShopProduct> $products */

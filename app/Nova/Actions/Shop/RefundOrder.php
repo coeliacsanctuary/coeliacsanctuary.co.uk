@@ -91,7 +91,7 @@ class RefundOrder extends DestructiveAction
             ...$baseFields,
             Currency::make('', 'amount')
                 ->asMinorUnits()
-                ->dependsOn(['refund_type'], function (Currency $field, NovaRequest $request, FormData $data) use ($total, $subtotal, $physicalTotal, $postage) {
+                ->dependsOn(['refund_type'], function (Currency $field, NovaRequest $request, FormData $data) use ($total, $subtotal, $physicalTotal, $postage): Currency {
                     $field->readonly($data->get('refund_type') !== 'custom');
 
                     $value = match ($data->get('refund_type')) {

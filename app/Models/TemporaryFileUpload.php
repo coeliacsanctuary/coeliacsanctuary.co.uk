@@ -17,7 +17,7 @@ class TemporaryFileUpload extends Model
 
     protected static function booted(): void
     {
-        self::creating(function (self $model) {
+        self::creating(function (self $model): TemporaryFileUpload {
             $model->id ??= Str::uuid()->toString();
 
             return $model;

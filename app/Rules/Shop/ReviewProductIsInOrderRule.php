@@ -33,7 +33,7 @@ class ReviewProductIsInOrderRule implements DataAwareRule, ValidationRule
             $products = $order->items->pluck('product_id')->values()->toArray();
 
             if ( ! in_array($value, $products, true)) {
-                $fail('This product isn\'t in your order');
+                $fail("This product isn't in your order");
 
                 return;
             }
@@ -43,7 +43,7 @@ class ReviewProductIsInOrderRule implements DataAwareRule, ValidationRule
             $digitalCards = $order->digitalItems->pluck('digital_card_id')->values()->toArray();
 
             if ( ! in_array($value, $digitalCards, true)) {
-                $fail('This product isn\'t in your order');
+                $fail("This product isn't in your order");
 
                 return;
             }

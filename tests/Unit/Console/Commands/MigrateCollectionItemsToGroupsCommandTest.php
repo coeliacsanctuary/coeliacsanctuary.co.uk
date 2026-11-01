@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Console\Commands;
 
+use App\Models\Blogs\Blog;
+use App\Models\Recipes\Recipe;
 use App\Console\Commands\OneTime\MigrateCollectionItemsToGroupsCommand;
 use App\Models\Collections\Collection;
 use App\Models\Collections\CollectionGroup;
@@ -78,7 +80,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
         DB::table('collection_items')->insert([
             'collection_id' => $collection->id,
             'item_id' => 1,
-            'item_type' => 'App\Models\Blogs\Blog',
+            'item_type' => Blog::class,
             'position' => 1,
             'description' => 'Some description',
             'created_at' => now(),
@@ -104,7 +106,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
         DB::table('collection_items')->insert([
             'collection_id' => $collection->id,
             'item_id' => 42,
-            'item_type' => 'App\Models\Recipes\Recipe',
+            'item_type' => Recipe::class,
             'position' => 3,
             'description' => 'desc',
             'created_at' => now(),
@@ -116,7 +118,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
         $item = CollectionGroupItem::first();
 
         $this->assertEquals(42, $item->item_id);
-        $this->assertEquals('App\Models\Recipes\Recipe', $item->item_type);
+        $this->assertEquals(Recipe::class, $item->item_type);
         $this->assertEquals(3, $item->position);
     }
 
@@ -128,7 +130,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
         DB::table('collection_items')->insert([
             'collection_id' => $collection->id,
             'item_id' => 1,
-            'item_type' => 'App\Models\Blogs\Blog',
+            'item_type' => Blog::class,
             'position' => 1,
             'description' => 'desc',
             'created_at' => now(),
@@ -151,7 +153,7 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
         DB::table('collection_items')->insert([
             'collection_id' => $collection->id,
             'item_id' => 1,
-            'item_type' => 'App\Models\Blogs\Blog',
+            'item_type' => Blog::class,
             'position' => 1,
             'description' => 'desc',
             'created_at' => '2023-03-15 09:00:00',
@@ -173,8 +175,8 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
         $collectionB = $this->create(Collection::class);
 
         DB::table('collection_items')->insert([
-            ['collection_id' => $collectionA->id, 'item_id' => 1, 'item_type' => 'App\Models\Blogs\Blog', 'position' => 1, 'description' => '', 'created_at' => now(), 'updated_at' => now()],
-            ['collection_id' => $collectionB->id, 'item_id' => 2, 'item_type' => 'App\Models\Blogs\Blog', 'position' => 1, 'description' => '', 'created_at' => now(), 'updated_at' => now()],
+            ['collection_id' => $collectionA->id, 'item_id' => 1, 'item_type' => Blog::class, 'position' => 1, 'description' => '', 'created_at' => now(), 'updated_at' => now()],
+            ['collection_id' => $collectionB->id, 'item_id' => 2, 'item_type' => Blog::class, 'position' => 1, 'description' => '', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)->run();
@@ -194,8 +196,8 @@ class MigrateCollectionItemsToGroupsCommandTest extends TestCase
         $collectionB = $this->create(Collection::class);
 
         DB::table('collection_items')->insert([
-            ['collection_id' => $collectionB->id, 'item_id' => 1, 'item_type' => 'App\Models\Blogs\Blog', 'position' => 1, 'description' => '', 'created_at' => now(), 'updated_at' => now()],
-            ['collection_id' => $collectionB->id, 'item_id' => 2, 'item_type' => 'App\Models\Blogs\Blog', 'position' => 2, 'description' => '', 'created_at' => now(), 'updated_at' => now()],
+            ['collection_id' => $collectionB->id, 'item_id' => 1, 'item_type' => Blog::class, 'position' => 1, 'description' => '', 'created_at' => now(), 'updated_at' => now()],
+            ['collection_id' => $collectionB->id, 'item_id' => 2, 'item_type' => Blog::class, 'position' => 2, 'description' => '', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         $this->artisan(MigrateCollectionItemsToGroupsCommand::class)

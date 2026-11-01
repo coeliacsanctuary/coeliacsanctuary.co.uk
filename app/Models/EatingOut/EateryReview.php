@@ -62,7 +62,7 @@ class EateryReview extends Model
     /** @return Attribute<string | null, never> */
     public function averageRating(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?string {
             if ( ! $this->relationLoaded('eatery')) {
                 return null;
             }
@@ -95,7 +95,7 @@ class EateryReview extends Model
     /** @return Attribute<array{value: int, label: string} | null, never> */
     public function price(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?array {
             if ( ! $this->how_expensive) {
                 return null;
             }

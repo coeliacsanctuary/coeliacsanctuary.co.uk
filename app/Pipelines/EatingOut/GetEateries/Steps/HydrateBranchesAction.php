@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
@@ -16,9 +18,9 @@ class HydrateBranchesAction implements GetEateriesPipelineActionContract
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ($pipelineData->paginator) {
+        if ($pipelineData->paginator instanceof LengthAwarePaginator) {
             $items = collect($pipelineData->paginator->items());
-        } elseif ($pipelineData->eateries) {
+        } elseif ($pipelineData->eateries instanceof Collection) {
             $items = $pipelineData->eateries;
         } else {
             throw new RuntimeException('No eateries');

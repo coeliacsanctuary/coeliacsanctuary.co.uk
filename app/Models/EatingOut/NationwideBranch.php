@@ -73,11 +73,11 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
         'live' => 'bool',
     ];
 
-    public static function booted(): void
+    protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope('wheretoeat_nationwide_branches.live'));
 
-        static::saving(function (self $eatery) {
+        static::saving(function (self $eatery): NationwideBranch {
             if ( ! $eatery->slug) {
                 $eatery->slug = $eatery->generateSlug();
             }
@@ -281,7 +281,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
     /** @return Attribute<non-falsy-string, never> */
     public function fullName(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): string {
             if ($this->name) {
                 return "{$this->name} ({$this->eatery->name}) - {$this->full_location}";
             }

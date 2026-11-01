@@ -45,7 +45,7 @@ class NationwideBranches extends Resource
 
     public static $search = ['id', 'name', 'address', 'area.area', 'town.town', 'county.county'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -261,7 +261,7 @@ class NationwideBranches extends Resource
         return [
             GenerateSealiacOverview::make()
                 ->showInline()
-                ->canRun(function (NovaRequest $request, NationwideBranch $model) {
+                ->canRun(function (NovaRequest $request, NationwideBranch $model): bool {
                     $model->reviews_count ?: $model->loadCount('reviews');
 
                     return $model->live === true && $model->reviews_count > 0;
@@ -284,12 +284,12 @@ class NationwideBranches extends Resource
         return false;
     }
 
-    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    public static function redirectAfterCreate(NovaRequest $request, $resource): string
     {
         return '/resources/' . NationwideEateries::uriKey() . '/' . $resource->resource->wheretoeat_id;
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return '/resources/' . NationwideEateries::uriKey() . '/' . $resource->resource->wheretoeat_id;
     }

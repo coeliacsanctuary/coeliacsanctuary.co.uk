@@ -41,12 +41,12 @@ class Price extends Resource
         ];
     }
 
-    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    public static function redirectAfterCreate(NovaRequest $request, $resource): string
     {
         return '/resources/' . Products::uriKey() . '/' . $resource->resource->product_id;
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return '/resources/' . Products::uriKey() . '/' . $resource->resource->product_id;
     }

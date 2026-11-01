@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Jobs\Metrics\Orchestrators;
 
+use Illuminate\Support\Carbon;
 use App\Jobs\Metrics\Blogs\GetBlogMetricsJob;
 use App\Jobs\Metrics\Orchestrators\DailyOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\HourlyOrchestratorJob;
@@ -88,13 +89,13 @@ class IntervalOrchestratorTest extends TestCase
     #[DataProvider('orchestratorProvider')]
     public function itDispatchesForBlogsInItsAgeRange(
         string $orchestratorClass,
-        \Illuminate\Support\Carbon $blogAgeA,
-        \Illuminate\Support\Carbon $blogAgeB,
+        Carbon $blogAgeA,
+        Carbon $blogAgeB,
     ): void {
         $this->create(Blog::class, ['created_at' => $blogAgeA]);
         $this->create(Blog::class, ['created_at' => $blogAgeB]);
 
-        (new $orchestratorClass())->handle();
+        new $orchestratorClass()->handle();
 
         Bus::assertDispatched(GetBlogMetricsJob::class, 2);
     }
@@ -145,11 +146,11 @@ class IntervalOrchestratorTest extends TestCase
     #[DataProvider('outOfRangeProvider')]
     public function itDoesNotDispatchForBlogsOutsideItsAgeRange(
         string $orchestratorClass,
-        \Illuminate\Support\Carbon $blogAge,
+        Carbon $blogAge,
     ): void {
         $this->create(Blog::class, ['created_at' => $blogAge]);
 
-        (new $orchestratorClass())->handle();
+        new $orchestratorClass()->handle();
 
         Bus::assertNotDispatched(GetBlogMetricsJob::class);
     }

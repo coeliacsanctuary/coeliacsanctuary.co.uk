@@ -106,7 +106,7 @@ trait HasEateryDetails
     /** @return Attribute<string | null, never> */
     public function fullLocation(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?string {
             if ( ! $this->relationLoaded('town') || ! $this->relationLoaded('county') || ! $this->relationLoaded('country') || ! $this->town || ! $this->county || ! $this->country) {
                 return null;
             }
@@ -127,7 +127,7 @@ trait HasEateryDetails
     /** @return Attribute<string | null, never> */
     public function shortLocation(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?string {
             if ( ! $this->relationLoaded('town') || ! $this->relationLoaded('county') || ! $this->town || ! $this->county) {
                 return null;
             }
@@ -147,7 +147,7 @@ trait HasEateryDetails
     /** @return Attribute<array{value: string, label: string} | null, never> */
     public function averageExpense(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?array {
             if ( ! $this->relationLoaded('reviews')) {
                 return null;
             }
@@ -170,7 +170,7 @@ trait HasEateryDetails
     /** @return Attribute<string | null, never> */
     public function averageRating(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?string {
             if ( ! $this->relationLoaded('reviews')) {
                 return null;
             }

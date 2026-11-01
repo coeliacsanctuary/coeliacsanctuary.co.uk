@@ -86,7 +86,7 @@ class PrepareRecommendedEateryTest extends TestCase
     public function theSchemaStaysWithinAnthropicsUnionTypeLimit(): void
     {
         $schema = AnthropicSchemaSanitizer::sanitize(
-            (new ObjectSchema($this->agent->schema(new JsonSchemaTypeFactory())))->toSchema()
+            new ObjectSchema($this->agent->schema(new JsonSchemaTypeFactory()))->toSchema()
         );
 
         $this->assertLessThanOrEqual(16, mb_substr_count(json_encode($schema), '{"type":"null"}'));

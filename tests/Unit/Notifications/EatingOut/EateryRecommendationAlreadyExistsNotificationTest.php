@@ -40,7 +40,7 @@ class EateryRecommendationAlreadyExistsNotificationTest extends TestCase
     #[DataProvider('mailDataProvider')]
     public function itHasTheEmailData(callable $closure): void
     {
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $this->recommendation->email)
             ->notify(new EateryRecommendationAlreadyExistsNotification($this->recommendation, $this->eatery));
 
@@ -82,7 +82,7 @@ class EateryRecommendationAlreadyExistsNotificationTest extends TestCase
         /** @var NationwideBranch $branch */
         $branch = $this->build(NationwideBranch::class)->forEatery($eatery)->create(['town_id' => $branchTown->id]);
 
-        $content = (new EateryRecommendationAlreadyExistsNotification($this->recommendation, $eatery, $branch))
+        $content = new EateryRecommendationAlreadyExistsNotification($this->recommendation, $eatery, $branch)
             ->toMail(new AnonymousNotifiable())
             ->render();
 
@@ -112,7 +112,7 @@ class EateryRecommendationAlreadyExistsNotificationTest extends TestCase
             ->forEatery($eatery)
             ->create(['town_id' => $branchTown->id, 'name' => null]);
 
-        $content = (new EateryRecommendationAlreadyExistsNotification($this->recommendation, $eatery, $branch))
+        $content = new EateryRecommendationAlreadyExistsNotification($this->recommendation, $eatery, $branch)
             ->toMail(new AnonymousNotifiable())
             ->render();
 

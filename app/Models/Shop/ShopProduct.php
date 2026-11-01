@@ -99,7 +99,7 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -167,7 +167,7 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
     /** @return Attribute<float, never> */
     public function averageRating(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): float {
             $this->loadMissing('reviews');
 
             return round($this->reviews->average('rating') * 2) / 2;

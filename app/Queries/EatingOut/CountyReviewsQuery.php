@@ -29,7 +29,7 @@ class CountyReviewsQuery
             ->orderByRaw($rating)
             ->take(3)
             ->get()
-            ->map(function (Eatery $eatery) use ($county) {
+            ->map(function (Eatery $eatery) use ($county): Eatery {
                 $eatery->setRelation('county', $county);
                 $eatery->town?->setRelation('county', $county);
 

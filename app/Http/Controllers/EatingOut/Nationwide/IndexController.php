@@ -49,7 +49,7 @@ class IndexController
                 new BreadcrumbItemData('Nationwide Chains'),
             ]))
             ->render('EatingOut/Nationwide', [
-                'county' => fn () => (new NationwidePageResource($county))->withFilters($filters),
+                'county' => fn () => new NationwidePageResource($county)->withFilters($filters),
                 'filters' => fn () => $getFiltersForNationwide->setCounty($county)->handle($filters),
                 'topRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
                 'mostRated' => fn () => $getMostRatedPlacesInCounty->handle($county),

@@ -52,7 +52,7 @@ class EaterySuggestedEdit extends Model
     /** @return Attribute<string, never> */
     public function status(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): string {
             if ($this->accepted) {
                 return 'Accepted';
             }

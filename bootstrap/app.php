@@ -30,8 +30,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        api: __DIR__ . '/../routes/api.php',
         web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
         health: '/up',
         then: function (): void {
             Route::middleware(['api', ExternalApiSourceMiddleware::class])
@@ -48,11 +48,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(
-            prepend: AddRouteModelBindingFallbacksMiddleware::class,
             append: [
                 HandleInertiaRequests::class,
                 LogPageViewMiddleware::class,
-            ]
+            ],
+            prepend: AddRouteModelBindingFallbacksMiddleware::class
         );
 
         $middleware->redirectGuestsTo(function (Request $request): string {
@@ -82,7 +82,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 Response::HTTP_FORBIDDEN,
             ];
 
-            if ( ! app()->environment(['local', 'testing']) && in_array($response->getStatusCode(), $errorStatusCodes)) {
+            if ( ! app()->environment(['local', 'testing']) && in_array($response->getStatusCode(), $errorStatusCodes, true)) {
                 $title = match ($response->getStatusCode()) {
                     Response::HTTP_NOT_FOUND, Response::HTTP_FORBIDDEN => 'Page not found',
                     default => 'Something went wrong',
@@ -90,7 +90,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 $description = match ($response->getStatusCode()) {
                     Response::HTTP_NOT_FOUND => 'Sorry, the page you are looking for could not be found.',
-                    default => 'Sorry, something has gone wrong and this page has been contaminated with gluten! We\'re doing our best to fix it!',
+                    default => "Sorry, something has gone wrong and this page has been contaminated with gluten! We're doing our best to fix it!",
                 };
 
                 return app(Inertia::class)

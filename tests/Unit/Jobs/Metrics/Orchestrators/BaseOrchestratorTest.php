@@ -32,8 +32,8 @@ class BaseOrchestratorTest extends TestCase
 
         return new class ($intervalMinutes, $source) extends BaseOrchestratorJob {
             public function __construct(
-                private int $minutes,
-                private MetricSource $testSource,
+                private readonly int $minutes,
+                private readonly MetricSource $testSource,
             ) {
                 parent::__construct();
             }
@@ -150,8 +150,8 @@ class BaseOrchestratorTest extends TestCase
 
         $orchestrator = new class (10, [$sourceA, $sourceB]) extends BaseOrchestratorJob {
             public function __construct(
-                private int $minutes,
-                private array $testSources,
+                private readonly int $minutes,
+                private readonly array $testSources,
             ) {
                 parent::__construct();
             }

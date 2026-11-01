@@ -51,9 +51,8 @@ class ShowController
 
         $firstLocation?->loadMissing(['town.county']);
 
-        $locationFound = LatLngState::$latLng !== null;
+        $locationFound = LatLngState::$latLng instanceof LatLng;
 
-        /** @var ?LatLng $latLng */
         $latLng = LatLngState::$latLng;
 
         if ( ! $latLng && $firstLocation) {

@@ -25,7 +25,7 @@ class GenerateAiEateryDescriptionsCommand extends Command
             ->lazy()
             ->each(function (Eatery $eatery): void {
                 try {
-                    $response = (new EateryDescriptionAgent($eatery))->prompt('Generate the description');
+                    $response = new EateryDescriptionAgent($eatery)->prompt('Generate the description');
 
                     EateryAiDescription::query()->create([
                         'wheretoeat_id' => $eatery->id,
@@ -39,7 +39,7 @@ class GenerateAiEateryDescriptionsCommand extends Command
 
                     /** @phpstan-ignore-next-line  */
                     $this->info("Generated description for {$eatery->name} in {$eatery->town->town}");
-                } catch (Exception $e) {
+                } catch (Exception) {
                     //
                 }
             });

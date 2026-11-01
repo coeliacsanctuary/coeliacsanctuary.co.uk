@@ -15,7 +15,7 @@ use Database\Seeders\EateryScaffoldingSeeder;
 
 class CheckIfStandardEateryTest extends StepTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -58,7 +58,7 @@ class CheckIfStandardEateryTest extends StepTestCase
 
     #[Test]
     #[DataProvider('searchScenarios')]
-    public function itReturnsAsFoundForAEateryByTheNameAndAddress($name, $search, $address, $searchAddress, $town): void
+    public function itReturnsAsFoundForAEateryByTheNameAndAddress(string $name, string $search, string $address, string $searchAddress, string $town): void
     {
         $county = $this->create(EateryCounty::class);
         $town = $this->create(EateryTown::class, ['county_id' => $county->id]);
@@ -84,7 +84,7 @@ class CheckIfStandardEateryTest extends StepTestCase
 
     #[Test]
     #[DataProvider('searchScenarios')]
-    public function itReturnsAsFoundForAnEaterySearchWithANameAndLocationByTheTownName($name, $search, $address, $searchAddress, $town): void
+    public function itReturnsAsFoundForAnEaterySearchWithANameAndLocationByTheTownName(string $name, string $search, string $address, string $searchAddress, string $town): void
     {
         $county = $this->create(EateryCounty::class);
         $town = $this->create(EateryTown::class, ['county_id' => $county->id, 'town' => $town]);

@@ -114,7 +114,7 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -254,7 +254,7 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
         if (count($bits) === 2) {
             $unit = 'M';
 
-            if (in_array($bits[1], ['Hour', 'Hours'])) {
+            if (in_array($bits[1], ['Hour', 'Hours'], true)) {
                 $unit = 'H';
             }
 

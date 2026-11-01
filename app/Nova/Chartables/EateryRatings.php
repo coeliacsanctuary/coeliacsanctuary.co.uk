@@ -10,12 +10,12 @@ use Jpeters8889\ApexCharts\Chartable;
 
 class EateryRatings extends Chartable
 {
-    public function type(): string
+    protected function type(): string
     {
         return static::LINE_CHART;
     }
 
-    public function getData(Carbon $startDate, Carbon $endDate): int|float
+    protected function getData(Carbon $startDate, Carbon $endDate): int|float
     {
         return EateryReview::withoutGlobalScopes()
             ->where('created_at', '>=', $startDate)

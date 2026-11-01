@@ -21,7 +21,7 @@ class AppendDistanceToEateries implements GetEateriesPipelineActionContract
         /** @var Collection<int, Eatery> $hydratedEateries */
         $hydratedEateries = $pipelineData->hydrated;
 
-        $pipelineData->hydrated = $hydratedEateries->map(function (Eatery $eatery) use ($results) {
+        $pipelineData->hydrated = $hydratedEateries->map(function (Eatery $eatery) use ($results): Eatery {
             $rawData = $results->firstWhere('id', $eatery->id);
 
             if ($rawData && $rawData->distance) {

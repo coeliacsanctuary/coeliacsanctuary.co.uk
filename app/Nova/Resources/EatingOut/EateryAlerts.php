@@ -31,7 +31,7 @@ class EateryAlerts extends Resource
 
     public static $tableStyle = 'tight';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

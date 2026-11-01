@@ -21,7 +21,7 @@ class SearchHistoryResource extends Resource
 
     public static $perPageViaRelationship = 10;
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

@@ -39,9 +39,9 @@ class GetOrderItemsAction
             ->items()
             ->with($relations)
             ->get()
-            ->map(function (ShopOrderItem $item) use ($order, $includeDigitalBundles, $includeDigitalUpsell) {
+            ->map(function (ShopOrderItem $item) use ($order, $includeDigitalBundles, $includeDigitalUpsell): ShopOrderItem {
                 if ($includeDigitalBundles && $item->digitalBundles->isNotEmpty()) {
-                    $item->digitalBundles = $item->digitalBundles->map(function (ShopOrderDigitalItem $digitalBundle) use ($order) {
+                    $item->digitalBundles = $item->digitalBundles->map(function (ShopOrderDigitalItem $digitalBundle) use ($order): ShopOrderDigitalItem {
                         $digitalBundle->card = $this->formatDigitalCard($digitalBundle->card, $order);
 
                         return $digitalBundle;
@@ -49,7 +49,7 @@ class GetOrderItemsAction
                 }
 
                 if ($includeDigitalUpsell && $item->product->digitalCards->isNotEmpty()) {
-                    $item->product->digitalCards->map(function (ShopDigitalCard $card) use ($item, $order) {
+                    $item->product->digitalCards->map(function (ShopDigitalCard $card) use ($item, $order): ShopDigitalCard {
                         $card->setRelation('product', $item->product);
 
                         return $this->formatDigitalCard($card, $order);

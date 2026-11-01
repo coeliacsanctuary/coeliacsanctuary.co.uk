@@ -108,7 +108,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itInsertsWhenProductIsInStockAndHasNoExistingId(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -125,7 +125,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
         $existingId = 'accounts/12345/productInputs/ZW4~GB~' . $this->product->id;
         $this->product->update(['google_merchant_product_id' => $existingId]);
 
-        $returned = (new ProductInput())->setName($existingId);
+        $returned = new ProductInput()->setName($existingId);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -142,7 +142,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
         $existingId = 'accounts/12345/productInputs/ZW4~GB~' . $this->product->id;
         $this->product->update(['google_merchant_product_id' => $existingId]);
 
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~new');
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~new');
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -218,7 +218,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itUsesTheProductTitleAsTheMerchantTitle(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -234,7 +234,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     public function itSetsTheShippingWeightFromTheFirstVariantInKg(): void
     {
         $variant = ShopProductVariant::query()->first();
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -250,7 +250,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsTheDescriptionFromTheProductDescription(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -265,7 +265,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsTheBrandToCoeliacSanctuary(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -280,7 +280,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsTheMpnFromTheProductSlug(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -295,7 +295,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsTheConditionToNew(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -310,7 +310,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsThePriceWhenNotOnSale(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -335,7 +335,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
 
         $this->product->unsetRelation('prices');
 
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)

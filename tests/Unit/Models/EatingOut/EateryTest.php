@@ -84,7 +84,7 @@ class EateryTest extends TestCase
 
         $dispatchedModels = [];
 
-        Bus::assertDispatched(CreateEatingOutOpenGraphImageJob::class, function (CreateEatingOutOpenGraphImageJob $job) use (&$dispatchedModels) {
+        Bus::assertDispatched(CreateEatingOutOpenGraphImageJob::class, function (CreateEatingOutOpenGraphImageJob $job) use (&$dispatchedModels): true {
             $dispatchedModels[] = $job->model;
 
             return true;

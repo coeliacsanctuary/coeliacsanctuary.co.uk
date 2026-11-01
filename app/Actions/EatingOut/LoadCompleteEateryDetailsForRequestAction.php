@@ -24,7 +24,7 @@ class LoadCompleteEateryDetailsForRequestAction
         string $pageType = 'eatery',
         bool $showAllReviews = false,
     ): void {
-        if (in_array($pageType, ['nationwide', 'branch'])) {
+        if (in_array($pageType, ['nationwide', 'branch'], true)) {
             /** @var EateryCounty $county */
             $county = EateryCounty::withoutGlobalScopes()->firstWhere('county', 'Nationwide');
 
@@ -47,7 +47,7 @@ class LoadCompleteEateryDetailsForRequestAction
                         /** @var Builder<EateryReview> $builder */
                         return $builder
                             ->when(
-                                $pageType === 'branch' && $showAllReviews !== true,
+                                $pageType === 'branch' && !$showAllReviews,
                                 fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
                             );
                     });
@@ -60,7 +60,7 @@ class LoadCompleteEateryDetailsForRequestAction
                     ->reorder('admin_review', 'desc')
                     ->orderByDesc('created_at')
                     ->when(
-                        $pageType === 'branch' && $showAllReviews !== true,
+                        $pageType === 'branch' && !$showAllReviews,
                         fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
                     );
             },

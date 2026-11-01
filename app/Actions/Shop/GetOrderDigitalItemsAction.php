@@ -20,7 +20,7 @@ class GetOrderDigitalItemsAction
             ->digitalItems()
             ->with(['card', 'card.price', 'card.product', 'card.product.travelCardSearchTerms'])
             ->get()
-            ->map(function (ShopOrderDigitalItem $item) use ($order) {
+            ->map(function (ShopOrderDigitalItem $item) use ($order): ShopOrderDigitalItem {
                 $item->card = $this->formatDigitalCard($item->card, $order);
 
                 return $item;

@@ -40,7 +40,7 @@ class NationwideEateries extends Resource
 
     public static $search = ['id', 'name'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

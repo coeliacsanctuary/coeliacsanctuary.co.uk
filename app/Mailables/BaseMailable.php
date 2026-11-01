@@ -25,7 +25,7 @@ abstract class BaseMailable
     public static function make(mixed ...$args): MjmlMessage
     {
         /** @phpstan-ignore-next-line  */
-        return (new static(...$args))->toMail();
+        return new static(...$args)->toMail();
     }
 
     protected function baseData(array $data = []): array

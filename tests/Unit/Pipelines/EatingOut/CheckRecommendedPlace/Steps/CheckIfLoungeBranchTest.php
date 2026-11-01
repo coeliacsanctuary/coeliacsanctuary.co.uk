@@ -17,7 +17,7 @@ class CheckIfLoungeBranchTest extends StepTestCase
 
     protected NationwideBranch $branch;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -37,7 +37,7 @@ class CheckIfLoungeBranchTest extends StepTestCase
         $this->getStep()->handle($data, fn () => null);
 
         $this->assertTrue($data->found);
-        $this->assertEquals('It looks like you\'re recommending The Lounges, did you know we\'ve already got those listed on our Nationwide page?', $data->reason);
+        $this->assertEquals("It looks like you're recommending The Lounges, did you know we've already got those listed on our Nationwide page?", $data->reason);
         $this->assertEquals(route('eating-out.nationwide.show', ['eatery' => $this->eatery->slug]), $data->url);
         $this->assertEquals('Check out The Lounges', $data->label);
     }

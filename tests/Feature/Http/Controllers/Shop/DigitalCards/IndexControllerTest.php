@@ -120,7 +120,7 @@ class IndexControllerTest extends TestCase
     public function itCallsTheGetDigitalCardsIndexActionWithTheTypeResolvedFromTheRequestPath(): void
     {
         $this->expectAction(GetDigitalCardsIndexAction::class, [
-            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && $passedBasket === null,
+            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && !$passedBasket instanceof ShopOrder,
         ], return: collect());
 
         $this->makeRequest();
@@ -161,7 +161,7 @@ class IndexControllerTest extends TestCase
     public function itPassesNoBasketToTheGetDigitalCardsIndexActionWhenTheTokenDoesntResolveToABasket(): void
     {
         $this->expectAction(GetDigitalCardsIndexAction::class, [
-            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && $passedBasket === null,
+            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && !$passedBasket instanceof ShopOrder,
         ], return: collect());
 
         $this->withCookie('basket_token', 'not-a-basket')->makeRequest();

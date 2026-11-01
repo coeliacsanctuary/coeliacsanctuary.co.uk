@@ -145,7 +145,7 @@ class ScoreTravelCardCountriesCommand extends Command
 
         $scores = $this->askAgent($agent) ?? $this->askAgent($agent);
 
-        if ($scores === null) {
+        if (!$scores instanceof Collection) {
             $this->skipped[] = $product->title;
 
             warning('No valid ordering returned');
@@ -171,8 +171,8 @@ class ScoreTravelCardCountriesCommand extends Command
             $scores = collect($terms);
 
             return $this->isValid($agent, $scores) ? $scores : null;
-        } catch (Throwable $e) {
-            warning($e->getMessage());
+        } catch (Throwable $throwable) {
+            warning($throwable->getMessage());
 
             return null;
         }
@@ -187,7 +187,7 @@ class ScoreTravelCardCountriesCommand extends Command
             return false;
         }
 
-        return $lists->every(function (Collection $list) {
+        return $lists->every(function (Collection $list): bool {
             $values = $list->pluck('score');
 
             if ($values->contains(null)) {
@@ -265,7 +265,7 @@ class ScoreTravelCardCountriesCommand extends Command
 
             table(
                 ['Country', 'Score', 'Flag', 'Reason'],
-                $list->map(function (array $score) use ($terms) {
+                $list->map(function (array $score) use ($terms): array {
                     $term = $this->termName($terms, $score);
 
                     return [

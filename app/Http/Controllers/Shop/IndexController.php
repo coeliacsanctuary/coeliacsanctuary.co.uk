@@ -64,8 +64,8 @@ class IndexController
                     'link' => DigitalCardType::from($type->id)->route(),
                     'image' => $type->main_image_as_webp ?? $type->main_image,
                 ]),
-                'popularProducts' => fn () => $getBestSellingProductsForShopIndexAction->handle(),
-                'reviews' => fn () => $getRecentReviewsForShopIndexAction->handle(),
+                'popularProducts' => $getBestSellingProductsForShopIndexAction->handle(...),
+                'reviews' => $getRecentReviewsForShopIndexAction->handle(...),
             ]);
     }
 }

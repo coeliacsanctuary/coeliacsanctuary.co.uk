@@ -22,15 +22,15 @@ class SummariseAskSealiacChatsCommand extends Command
             ->lazy()
             ->each(function (AskSealiacChat $chat): void {
                 try {
-                    $response = (new SummariseAskSealiacChatAgent($chat))->prompt('Please summarise the above conversation.');
+                    $response = new SummariseAskSealiacChatAgent($chat)->prompt('Please summarise the above conversation.');
 
                     $chat->updateQuietly([
                         'summary' => $response->text,
                     ]);
 
                     $this->info("Summarised chat {$chat->id}");
-                } catch (Exception $e) {
-                    $this->error("Failed to summarise chat {$chat->id}: {$e->getMessage()}");
+                } catch (Exception $exception) {
+                    $this->error("Failed to summarise chat {$chat->id}: {$exception->getMessage()}");
                 }
             });
     }

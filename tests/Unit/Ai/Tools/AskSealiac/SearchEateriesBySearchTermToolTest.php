@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Ai\Tools\AskSealiac;
 
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use App\Ai\State\ChatContext;
 use App\Ai\Tools\AskSealiac\SearchEateriesBySearchTermTool;
 use App\Models\EatingOut\Eatery;
@@ -167,7 +168,7 @@ class SearchEateriesBySearchTermToolTest extends TestCase
     public function itHasTheCorrectSchema(): void
     {
         $tool = new SearchEateriesBySearchTermTool();
-        $schema = new \Illuminate\JsonSchema\JsonSchemaTypeFactory();
+        $schema = new JsonSchemaTypeFactory();
 
         $result = $tool->schema($schema);
 

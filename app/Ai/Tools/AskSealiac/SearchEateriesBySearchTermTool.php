@@ -59,7 +59,7 @@ class SearchEateriesBySearchTermTool extends BaseTool
 
         return app(GetEateriesForAskSealiacSearchPipeline::class)
             ->run($request->string('term')->toString(), $request->integer('radius', 5), $filters, $request->string('sort', 'distance')->toString())
-            ->map(function (Eatery $eatery) {
+            ->map(function (Eatery $eatery): array {
                 /** @var NationwideBranch | null $branch */
                 $branch = $eatery->relationLoaded('branch') ? $eatery->branch : null;
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Metrics;
 
+use SaintSystems\Nova\LinkableMetrics\LinkableValueResult;
 use App\Models\Comments\Comment;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
@@ -17,10 +18,8 @@ class Comments extends Value
 
     /**
      * Calculate the value of the metric.
-     *
-     * @return mixed
      */
-    public function calculate(NovaRequest $request)
+    public function calculate(NovaRequest $request): LinkableValueResult
     {
         return $this->result(Comment::query()->withoutGlobalScopes()->where('approved', false)->count());
     }

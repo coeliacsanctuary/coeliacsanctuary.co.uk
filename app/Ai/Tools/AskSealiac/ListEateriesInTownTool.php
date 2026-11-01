@@ -60,7 +60,7 @@ class ListEateriesInTownTool extends BaseTool
 
         return app(GetEateriesInTownForAskSealiacPipeline::class)
             ->run($town, $filters, $request->string('sort', 'alphabetical')->toString())
-            ->map(function (Eatery $eatery) {
+            ->map(function (Eatery $eatery): array {
                 /** @var NationwideBranch | null $branch */
                 $branch = $eatery->relationLoaded('branch') ? $eatery->branch : null;
 

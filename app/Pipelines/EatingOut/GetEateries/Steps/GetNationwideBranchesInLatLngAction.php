@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\DataObjects\EatingOut\LatLng;
 use App\Builders\EatingOut\EateryBuilder;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
@@ -22,7 +23,7 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->latLng || ! $pipelineData->latLng->radius) {
+        if ( ! $pipelineData->latLng instanceof LatLng || ! $pipelineData->latLng->radius) {
             throw_if($pipelineData->throwSearchException, new RuntimeException('No Lat/Lng'));
 
             return $next($pipelineData);
@@ -32,7 +33,7 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
         $venueType = DB::raw('(select venue_type_id from wheretoeat where wheretoeat.id = wheretoeat_nationwide_branches.wheretoeat_id) as venue_type_id');
 
         $idQuery = NationwideBranch::databaseSearchAroundLatLng($pipelineData->latLng, $pipelineData->isMeters ? $pipelineData->latLng->radius : Helpers::milesToMeters($pipelineData->latLng->radius), [$venueType])
-            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData) {
+            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData): EateryBuilder {
                 $query->where('closed_down', false);
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
@@ -58,10 +59,10 @@ class GetNationwideBranchesInLatLngAction implements GetEateriesPipelineActionCo
             ordering: (float)$eatery->distance,
             lat: $eatery->lat,
             lng: $eatery->lng,
+            distance: (float)$eatery->distance,
             typeId: EateryType::EATERY,
             /** @phpstan-ignore property.notFound */
             venueTypeId: $eatery->venue_type_id,
-            distance: (float)$eatery->distance,
         ));
 
         if ( ! $pipelineData->eateries instanceof Collection) {

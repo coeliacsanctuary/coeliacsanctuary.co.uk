@@ -27,7 +27,7 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->searchTerm || $pipelineData->searchTerm->term === '') {
+        if ( ! $pipelineData->searchTerm instanceof EaterySearchTerm || $pipelineData->searchTerm->term === '') {
             throw_if($pipelineData->throwSearchException, new RuntimeException('No Search Term'));
 
             return $next($pipelineData);
@@ -35,7 +35,7 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
 
         try {
             $latLng = $this->getLatLng($pipelineData);
-        } catch (Exception $e) {
+        } catch (Exception) {
             $pipelineData->eateries = new Collection();
 
             return $next($pipelineData);
@@ -82,7 +82,7 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
         /** @var Collection<int, object{id: int, name: string, distance: null | float, rating: float}> $pendingEateries */
         $pendingEateries = $query->get(['id', 'name', 'distance']);
 
-        $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids, $pipelineData) {
+        $pendingEateries = $pendingEateries->map(function (object $eatery) use ($ids, $pipelineData): PendingEatery {
             $distance = Helpers::metersToMiles($eatery->distance ?? 0);
 
             if ( ! $distance) {
@@ -118,7 +118,7 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
 
     protected function getLatLng(GetEateriesPipelineData $pipelineData): LatLng
     {
-        if (LatLngState::$latLng) {
+        if (LatLngState::$latLng instanceof LatLng) {
             return LatLngState::$latLng;
         }
 

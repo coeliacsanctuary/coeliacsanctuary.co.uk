@@ -126,8 +126,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: $filters,
+            town: $this->town,
             eateries: $eateries,
         );
 
@@ -145,8 +145,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            configuration: $configuration,
             filters: $filters,
+            configuration: $configuration,
             eateries: $eateries,
         );
 
@@ -164,8 +164,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            area: $this->area,
             filters: $filters,
+            area: $this->area,
             eateries: $eateries,
         );
 
@@ -183,8 +183,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: $filters,
+            town: $this->town,
             eateries: $eateries,
         );
 
@@ -207,9 +207,9 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            searchTerm: $this->eaterySearchTerm,
-            sort: $sort,
             filters: $filters,
+            sort: $sort,
+            searchTerm: $this->eaterySearchTerm,
             eateries: $eateries,
         );
 
@@ -232,8 +232,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            latLng: $this->latLng,
             filters: $filters,
+            latLng: $this->latLng,
             eateries: $eateries,
         );
 
@@ -251,8 +251,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: $filters,
+            town: $this->town,
             eateries: $eateries,
         );
 
@@ -270,8 +270,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            configuration: $configuration,
             filters: $filters,
+            configuration: $configuration,
             eateries: $eateries,
         );
 
@@ -289,8 +289,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            area: $this->area,
             filters: $filters,
+            area: $this->area,
             eateries: $eateries,
         );
 
@@ -308,8 +308,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: $filters,
+            town: $this->town,
             eateries: $eateries,
         );
 
@@ -332,8 +332,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            latLng: $this->latLng,
             filters: $filters,
+            latLng: $this->latLng,
             eateries: $eateries,
         );
 
@@ -351,8 +351,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: [],
+            town: $this->town,
             eateries: $eateries,
         );
 
@@ -363,7 +363,7 @@ abstract class GetEateriesTestCase extends TestCase
 
     protected function callPaginateEateriesAction(?Collection $eateries = null): ?GetEateriesPipelineData
     {
-        if ( ! $eateries) {
+        if ( !$eateries instanceof Collection) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
             $eateries = $this->callGetBranchesAction($eateries)?->eateries;
         }
@@ -375,8 +375,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: [],
+            town: $this->town,
             eateries: $eateries,
         );
 
@@ -387,7 +387,7 @@ abstract class GetEateriesTestCase extends TestCase
 
     protected function callHydrateEateriesAction(?Collection $eateries = null, bool $hydrateFullReviews = false): ?GetEateriesPipelineData
     {
-        if ( ! $eateries) {
+        if ( !$eateries instanceof Collection) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
             $eateries = $this->callGetBranchesAction($eateries)?->eateries;
         }
@@ -399,8 +399,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: [],
+            town: $this->town,
             eateries: $eateries,
             paginator: $this->callPaginateEateriesAction($eateries)?->paginator,
             hydrateFullReviews: $hydrateFullReviews,
@@ -413,7 +413,7 @@ abstract class GetEateriesTestCase extends TestCase
 
     protected function callAppendDistanceToEateriesMethod(Collection $eateries, Collection $hydrated): ?GetEateriesPipelineData
     {
-        $eateries = $eateries->map(function (PendingEatery $eatery) {
+        $eateries = $eateries->map(function (PendingEatery $eatery): PendingEatery {
             $eatery->distance = $this->faker->randomFloat();
 
             return $eatery;
@@ -426,8 +426,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: [],
+            town: $this->town,
             eateries: $eateries,
             paginator: $this->callPaginateEateriesAction($eateries)?->paginator,
             hydrated: $hydrated,
@@ -440,7 +440,7 @@ abstract class GetEateriesTestCase extends TestCase
 
     protected function callHydrateBranchesAction(?Collection $eateries = null, bool $hydrateFullReviews = false): ?GetEateriesPipelineData
     {
-        if ( ! $eateries) {
+        if ( !$eateries instanceof Collection) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
             $eateries = $this->callGetBranchesAction($eateries)?->eateries;
         }
@@ -452,8 +452,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: [],
+            town: $this->town,
             eateries: $eateries,
             paginator: $this->callPaginateEateriesAction($eateries)?->paginator,
             hydrateFullReviews: $hydrateFullReviews,
@@ -466,7 +466,7 @@ abstract class GetEateriesTestCase extends TestCase
 
     protected function callAppendDistanceToBranchesMethod(Collection $eateries, Collection $hydrated): ?GetEateriesPipelineData
     {
-        $hydrated = $hydrated->map(function (NationwideBranch $eatery, $index) {
+        $hydrated = $hydrated->map(function (NationwideBranch $eatery, $index): NationwideBranch {
             //            $eatery->branchId = $index + 1;
             $eatery->distance = $this->faker->randomFloat();
 
@@ -480,8 +480,8 @@ abstract class GetEateriesTestCase extends TestCase
         };
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: [],
+            town: $this->town,
             eateries: $eateries,
             paginator: $this->callPaginateEateriesAction($eateries)?->paginator,
             hydratedBranches: $hydrated,
@@ -526,8 +526,8 @@ abstract class GetEateriesTestCase extends TestCase
         $eateries = collect([new PendingEatery(id: $eatery->id, branchId: $branch->id, ordering: 'abc')]);
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: [],
+            town: $this->town,
             eateries: $eateries,
             paginator: $eateries->paginate(5),
             hydrated: $this->callHydrateEateriesAction($eateries)->hydrated,
@@ -552,11 +552,11 @@ abstract class GetEateriesTestCase extends TestCase
         $eatery = Eatery::query()->first();
         $branch = NationwideBranch::query()->first();
 
-        $eateries = collect([new PendingEatery(id: $eatery->id, branchId: $branch->id, lat: $eatery->lat, lng: $eatery->lng, ordering: 'abc')]);
+        $eateries = collect([new PendingEatery(id: $eatery->id, branchId: $branch->id, ordering: 'abc', lat: $eatery->lat, lng: $eatery->lng)]);
 
         $pipelineData = new GetEateriesPipelineData(
-            latLng: $this->latLng,
             filters: [],
+            latLng: $this->latLng,
             eateries: $eateries,
         );
 

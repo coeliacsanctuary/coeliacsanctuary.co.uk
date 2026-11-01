@@ -87,12 +87,12 @@ class OrderItem extends Resource
                 }),
 
             BelongsTo::make('Variant', resource: ProductVariant::class)
-                ->canSee(function (NovaRequest $request) {
+                ->canSee(function (NovaRequest $request): bool {
                     $item = ShopOrderItem::query()->find($request->resourceId);
 
                     return $item?->product?->variants()->first()->title !== '';
                 })
-                ->readonly(function (NovaRequest $request) {
+                ->readonly(function (NovaRequest $request): bool {
                     if ($request instanceof ResourceIndexRequest) {
                         return true;
                     }
@@ -142,7 +142,7 @@ class OrderItem extends Resource
         }
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return "resources/orders/{$resource->order_id}";
     }

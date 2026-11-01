@@ -44,7 +44,7 @@ class IndexControllerTest extends TestCase
 
         $this->get(route('recipe.index'));
 
-        $this->expectAction(GetRecipesForIndexAction::class, [function ($filters): bool {
+        $this->expectAction(GetRecipesForIndexAction::class, [function (array $filters): bool {
             $this->assertArrayHasKey('features', $filters);
             $this->assertArrayHasKey('meals', $filters);
             $this->assertArrayHasKey('freeFrom', $filters);
@@ -81,7 +81,7 @@ class IndexControllerTest extends TestCase
     {
         $this->expectAction(
             GetRecipeFiltersForIndexAction::class,
-            [function ($class, $filters) use ($name): bool {
+            [function ($class, array $filters) use ($name): bool {
                 $this->assertContains($class, [RecipeFeature::class, RecipeMeal::class, RecipeAllergen::class]);
                 $this->assertArrayHasKey('features', $filters);
                 $this->assertArrayHasKey('meals', $filters);
@@ -180,7 +180,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itCallsTheBuildRecipeIndexTitleAction(): void
     {
-        $this->expectAction(BuildRecipeIndexTitleAction::class, [function ($filters): bool {
+        $this->expectAction(BuildRecipeIndexTitleAction::class, [function (array $filters): bool {
             $this->assertSame(['vegan'], $filters['features']);
 
             return true;
@@ -193,7 +193,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itCallsTheBuildRecipeIndexDescriptionAction(): void
     {
-        $this->expectAction(BuildRecipeIndexDescriptionAction::class, [function ($filters): bool {
+        $this->expectAction(BuildRecipeIndexDescriptionAction::class, [function (array $filters): bool {
             $this->assertSame(['vegan'], $filters['features']);
 
             return true;

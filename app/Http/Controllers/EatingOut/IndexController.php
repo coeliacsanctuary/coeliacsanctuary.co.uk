@@ -44,10 +44,10 @@ class IndexController
             ->metaImage($ogImage)
             ->render('EatingOut/Index', [
                 'countries' => fn () => $getCountyListAction->handle(),
-                'topRated' => fn () => $getTopRatedPlacesAction->handle(),
-                'mostRated' => fn () => $getMostRatedPlacesAction->handle(),
-                'recentlyAdded' => fn () => $getRecentlyAddedEateriesAction->handle(),
-                'statistics' => fn () => $getEateryGuideStatisticsAction->handle(),
+                'topRated' => $getTopRatedPlacesAction->handle(...),
+                'mostRated' => $getMostRatedPlacesAction->handle(...),
+                'recentlyAdded' => $getRecentlyAddedEateriesAction->handle(...),
+                'statistics' => $getEateryGuideStatisticsAction->handle(...),
             ]);
     }
 }

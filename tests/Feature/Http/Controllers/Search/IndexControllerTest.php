@@ -76,7 +76,7 @@ class IndexControllerTest extends TestCase
 
         $this->mock(PerformSearchPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function (SearchParameters $searchParameters) {
+            ->withArgs(function (SearchParameters $searchParameters): true {
                 $this->assertFalse($searchParameters->shop);
                 $this->assertTrue($searchParameters->eateries);
                 $this->assertTrue($searchParameters->blogs);
@@ -113,7 +113,7 @@ class IndexControllerTest extends TestCase
 
         $this->mock(PerformSearchPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function (SearchParameters $searchParameters) {
+            ->withArgs(function (SearchParameters $searchParameters): true {
                 $this->assertEquals('bar', $searchParameters->locationSearch);
 
                 return true;

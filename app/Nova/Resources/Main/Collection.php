@@ -40,7 +40,7 @@ class Collection extends Resource
 
     public static $search = ['id', 'title'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -167,12 +167,12 @@ class Collection extends Resource
         ];
     }
 
-    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    public static function redirectAfterCreate(NovaRequest $request, $resource): string
     {
         return '/resources/' . static::uriKey() . '/' . $resource->getKey();
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return '/resources/' . static::uriKey() . '/' . $resource->getKey();
     }

@@ -68,8 +68,8 @@ class ShowController
                 'digitalItems', 'digitalItems.card', 'digitalItems.card.price', 'digitalItems.card.product',
             ]);
 
-            $pendingOrder->items->map(function (ShopOrderItem $item) use ($pendingOrder) {
-                $item->digitalBundles->map(function (ShopOrderDigitalItem $digitalItem) use ($pendingOrder) {
+            $pendingOrder->items->map(function (ShopOrderItem $item) use ($pendingOrder): ShopOrderItem {
+                $item->digitalBundles->map(function (ShopOrderDigitalItem $digitalItem) use ($pendingOrder): ShopOrderDigitalItem {
                     $digitalItem->card = $this->formatDigitalCard($digitalItem->card, $pendingOrder);
 
                     return $digitalItem;
@@ -78,7 +78,7 @@ class ShowController
                 return $item;
             });
 
-            $pendingOrder->digitalItems->map(function (ShopOrderDigitalItem $item) use ($pendingOrder) {
+            $pendingOrder->digitalItems->map(function (ShopOrderDigitalItem $item) use ($pendingOrder): ShopOrderDigitalItem {
                 $item->card = $this->formatDigitalCard($item->card, $pendingOrder);
 
                 return $item;

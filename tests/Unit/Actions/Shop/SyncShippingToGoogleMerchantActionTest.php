@@ -72,7 +72,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -100,7 +100,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -129,7 +129,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -159,7 +159,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -192,7 +192,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -234,7 +234,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;

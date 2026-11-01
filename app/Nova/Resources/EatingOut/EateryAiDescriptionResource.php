@@ -66,7 +66,7 @@ class EateryAiDescriptionResource extends Resource
         return false;
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

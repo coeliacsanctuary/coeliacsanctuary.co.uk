@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Actions\EatingOut;
 
+use Laravel\Nova\Actions\ActionResponse;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
@@ -23,7 +24,7 @@ use Laravel\Nova\Fields\ActionFields;
  */
 class ConvertRecommendationToEatery extends Action
 {
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): Action|ActionResponse
     {
         /** @var EateryRecommendation $recommendation */
         $recommendation = $models->first();

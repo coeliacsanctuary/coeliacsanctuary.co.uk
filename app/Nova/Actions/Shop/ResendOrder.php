@@ -26,8 +26,6 @@ class ResendOrder extends Action
 
     /**
      * Perform the action on the given models.
-     *
-     * @return mixed
      */
     public function handle(ActionFields $fields, Collection $models): void
     {

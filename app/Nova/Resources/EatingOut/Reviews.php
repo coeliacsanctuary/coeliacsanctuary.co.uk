@@ -43,7 +43,7 @@ class Reviews extends Resource
 
     public static $clickAction = 'detail';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -199,7 +199,7 @@ class Reviews extends Resource
     {
         /** @var EateryReview $model */
         if ($model->approved && (bool) $model->getPrevious()['approved'] === false) {
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $model->email)
                 ->notify(new EateryReviewApprovedNotification($model));
         }

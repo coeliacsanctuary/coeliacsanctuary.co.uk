@@ -37,7 +37,7 @@ class CheckSingleEateryWebsiteJobTest extends TestCase
 
         $this->assertNull($this->eatery->check);
 
-        (new CheckSingleEateryWebsiteJob($this->eatery))->handle();
+        new CheckSingleEateryWebsiteJob($this->eatery)->handle();
 
         $this->eatery->refresh();
 
@@ -52,7 +52,7 @@ class CheckSingleEateryWebsiteJobTest extends TestCase
             '*' => Http::response('Not Found', 404),
         ]);
 
-        (new CheckSingleEateryWebsiteJob($this->eatery))->handle();
+        new CheckSingleEateryWebsiteJob($this->eatery)->handle();
 
         $this->eatery->refresh();
 
@@ -69,7 +69,7 @@ class CheckSingleEateryWebsiteJobTest extends TestCase
 
         $this->assertCount(0, $this->eatery->alerts);
 
-        (new CheckSingleEateryWebsiteJob($this->eatery))->handle();
+        new CheckSingleEateryWebsiteJob($this->eatery)->handle();
 
         $this->eatery->refresh();
 
@@ -87,7 +87,7 @@ class CheckSingleEateryWebsiteJobTest extends TestCase
             '*' => Http::response('OK', 200),
         ]);
 
-        (new CheckSingleEateryWebsiteJob($this->eatery))->handle();
+        new CheckSingleEateryWebsiteJob($this->eatery)->handle();
 
         $this->eatery->refresh();
 
@@ -107,7 +107,7 @@ class CheckSingleEateryWebsiteJobTest extends TestCase
             'google_checked_at' => now()->subDays(30),
         ]);
 
-        (new CheckSingleEateryWebsiteJob($this->eatery))->handle();
+        new CheckSingleEateryWebsiteJob($this->eatery)->handle();
 
         $this->eatery->refresh();
 

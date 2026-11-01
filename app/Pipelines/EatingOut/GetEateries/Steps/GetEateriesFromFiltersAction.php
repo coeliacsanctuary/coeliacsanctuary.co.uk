@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Models\EatingOut\EaterySearchTerm;
+use App\DataObjects\EatingOut\LatLng;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
@@ -16,7 +18,7 @@ class GetEateriesFromFiltersAction implements GetEateriesPipelineActionContract
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ($pipelineData->searchTerm || $pipelineData->latLng) {
+        if ($pipelineData->searchTerm instanceof EaterySearchTerm || $pipelineData->latLng instanceof LatLng) {
             return $next($pipelineData);
         }
 

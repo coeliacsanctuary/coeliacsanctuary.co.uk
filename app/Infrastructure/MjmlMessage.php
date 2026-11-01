@@ -24,7 +24,8 @@ class MjmlMessage extends MailMessage
 
     public function mjml(string $view, array|EmailDataCast $data = []): static
     {
-        $this->mjml = $this->view = $view;
+        $this->mjml = $view;
+        $this->view = $view;
         $this->markdown = null;
         $this->viewData = (array) $data;
 

@@ -16,7 +16,6 @@ class SendOrderConfirmationMails implements ShouldQueue
 {
     public function handle(OrderPaidEvent $event): void
     {
-        /** @var ShopOrder $order */
         $order = $event->order;
 
         /** @var ShopCustomer $customer */

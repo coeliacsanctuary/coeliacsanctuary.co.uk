@@ -65,7 +65,7 @@ class GetDigitalCardsIndexActionTest extends TestCase
         /** @var ShopOrder $basket */
         $basket = $this->create(ShopOrder::class);
 
-        if ($withProduct) {
+        if ($withProduct instanceof ShopProduct) {
             $this->build(ShopOrderItem::class)->inOrder($basket)->inProduct($withProduct)->create();
         }
 

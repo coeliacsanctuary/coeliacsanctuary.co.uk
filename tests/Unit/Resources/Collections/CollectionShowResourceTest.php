@@ -28,7 +28,7 @@ class CollectionShowResourceTest extends TestCase
     /** @return array<string, mixed> */
     protected function resource(): array
     {
-        return (new CollectionShowResource($this->collection->fresh()))->toArray(new Request());
+        return new CollectionShowResource($this->collection->fresh())->toArray(new Request());
     }
 
     #[Test]

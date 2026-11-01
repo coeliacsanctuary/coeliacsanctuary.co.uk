@@ -18,15 +18,11 @@ class Stack extends \Laravel\Nova\Fields\Stack
 {
     protected ?Closure $loadClasses = null;
 
-    protected ?Closure $unpreparedLines = null;
-
     protected ?Closure $processUsingCallback = null;
 
-    public function __construct($name, Closure $lines)
+    public function __construct($name, protected Closure $unpreparedLines)
     {
         parent::__construct($name);
-
-        $this->unpreparedLines = $lines;
     }
 
     public function prepareLines($resource, $attribute = null): void
@@ -37,7 +33,7 @@ class Stack extends \Laravel\Nova\Fields\Stack
 
         $this->lines = $this->lines
             ->map(fn (string | Line $line) => $line instanceof Line ? $line : Line::make('', fn () => $line))
-            ->filter(function (Line $field) use ($request, $resource) {
+            ->filter(function (Line $field) use ($request, $resource): bool {
                 if ($request->isResourceIndexRequest()) {
                     return $field->isShownOnIndex($request, $resource);
                 }

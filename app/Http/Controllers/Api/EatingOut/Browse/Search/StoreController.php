@@ -20,7 +20,7 @@ class StoreController
                 'lat' => $response->lat,
                 'lng' => $response->lng,
             ]);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return new JsonResponse(status: JsonResponse::HTTP_NOT_FOUND);
         }
     }

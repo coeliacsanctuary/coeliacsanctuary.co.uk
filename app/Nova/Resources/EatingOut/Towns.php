@@ -52,7 +52,7 @@ class Towns extends Resource
             BelongsTo::make('County', resource: Counties::class)
                 ->filterable()
                 ->fullWidth()
-                ->displayUsing(function ($county) {
+                ->displayUsing(function ($county): string {
                     if ( ! $county->relationLoaded('country')) {
                         $county->load('country');
                     }

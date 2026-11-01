@@ -57,10 +57,10 @@ class IndexController
                 'searchTerm' => $searchTerm === '' ? null : $searchTerm,
                 'search' => $search,
                 'digitalCardsEnabled' => config('coeliac.digital_cards_enabled'),
-                'destinations' => fn () => $getPopularTravelCardDestinationsAction->handle(),
-                'categories' => fn () => $getTravelCardCategoriesAction->handle(),
+                'destinations' => $getPopularTravelCardDestinationsAction->handle(...),
+                'categories' => $getTravelCardCategoriesAction->handle(...),
                 'digitalCardTypes' => fn () => config('coeliac.digital_cards_enabled') ? $getTravelCardDigitalTypesAction->handle() : collect(),
-                'reviews' => fn () => $getTravelCardReviewsAction->handle(),
+                'reviews' => $getTravelCardReviewsAction->handle(...),
             ]);
     }
 }

@@ -89,7 +89,7 @@ class GetLatestReviewsForHomePageActionTest extends TestCase
             ->sequence(fn (Sequence $sequence) => [
                 'id' => $sequence->index + 1,
                 'name' => "Review {$sequence->index}",
-                'approved' => $sequence->index === 0 ? false : true,
+                'approved' => $sequence->index !== 0,
                 'created_at' => Carbon::now()->subDays($sequence->index),
             ])
             ->create();

@@ -44,7 +44,7 @@ class HasMany extends NovaRepeater\Presets\HasMany
 
             $model->{$attribute}()->delete();
 
-            $repeaterItems->transform(static function ($item, $blockKey) use ($request, $requestAttribute, $repeatables) {
+            $repeaterItems->transform(static function (array $item, $blockKey) use ($request, $requestAttribute, $repeatables): array {
                 $block = $repeatables->findByKey($item['type']);
                 $fields = FieldCollection::make($block->fields($request));
                 $data = Fluent::make();

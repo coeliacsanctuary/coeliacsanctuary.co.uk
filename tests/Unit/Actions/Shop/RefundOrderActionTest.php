@@ -164,7 +164,7 @@ class RefundOrderActionTest extends TestCase
 
         $this->mockCreateRefund($this->order->payment->response->charge_id, 100);
 
-        $this->expectAction(CancelOrderAction::class, [function ($argOrder) {
+        $this->expectAction(CancelOrderAction::class, [function ($argOrder): true {
             $this->assertTrue($this->order->is($argOrder));
 
             return true;

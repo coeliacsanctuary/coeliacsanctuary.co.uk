@@ -33,7 +33,7 @@ class SearchTownTest extends TestCase
         $town = $this->create(EateryTown::class, ['town' => 'Bournemouth', 'county_id' => $county->id]);
         $this->build(Eatery::class)->createQuietly(['town_id' => $town->id, 'county_id' => $county->id]);
 
-        $result = json_decode((string) (new SearchTown())->handle(new Request([
+        $result = json_decode((string) new SearchTown()->handle(new Request([
             'county' => 'Dorset',
             'town' => 'Bournemouth',
         ])), true);
@@ -48,7 +48,7 @@ class SearchTownTest extends TestCase
         $town = $this->create(EateryTown::class, ['town' => 'Bournemouth', 'county_id' => $county->id]);
         $this->build(Eatery::class)->createQuietly(['town_id' => $town->id, 'county_id' => $county->id]);
 
-        $result = json_decode((string) (new SearchTown())->handle(new Request([
+        $result = json_decode((string) new SearchTown()->handle(new Request([
             'county' => 'Dorset',
             'town' => 'Bourne',
         ])), true);
@@ -67,7 +67,7 @@ class SearchTownTest extends TestCase
         $exeter = $this->create(EateryTown::class, ['town' => 'Exeter', 'county_id' => $devon->id]);
         $this->build(Eatery::class)->createQuietly(['town_id' => $exeter->id, 'county_id' => $devon->id]);
 
-        $result = json_decode((string) (new SearchTown())->handle(new Request([
+        $result = json_decode((string) new SearchTown()->handle(new Request([
             'county' => 'Dorset',
             'town' => '',
         ])), true);
@@ -83,7 +83,7 @@ class SearchTownTest extends TestCase
         $town = $this->create(EateryTown::class, ['town' => 'Bournemouth', 'county_id' => $county->id]);
         $this->build(Eatery::class)->createQuietly(['town_id' => $town->id, 'county_id' => $county->id]);
 
-        $result = json_decode((string) (new SearchTown())->handle(new Request([
+        $result = json_decode((string) new SearchTown()->handle(new Request([
             'county' => 'Dorset',
             'town' => 'Nonexistent',
         ])), true);
@@ -94,7 +94,7 @@ class SearchTownTest extends TestCase
     #[Test]
     public function itHasTheExpectedSchema(): void
     {
-        $schema = (new SearchTown())->schema(new JsonSchemaTypeFactory());
+        $schema = new SearchTown()->schema(new JsonSchemaTypeFactory());
 
         $this->assertArrayHasKey('county', $schema);
         $this->assertArrayHasKey('town', $schema);

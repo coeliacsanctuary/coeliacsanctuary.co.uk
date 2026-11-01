@@ -32,7 +32,7 @@ class CollectionFactory extends Factory
         return $this->state(fn () => ['display_on_homepage' => false]);
     }
 
-    public function displayedOnHomepage(Carbon $until = null)
+    public function displayedOnHomepage(?Carbon $until = null)
     {
         return $this->state(fn () => [
             'display_on_homepage' => true,

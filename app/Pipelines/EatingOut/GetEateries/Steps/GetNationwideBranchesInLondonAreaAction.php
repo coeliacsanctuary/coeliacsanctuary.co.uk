@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Models\EatingOut\EateryArea;
 use App\Builders\EatingOut\EateryBuilder;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
@@ -19,7 +20,7 @@ class GetNationwideBranchesInLondonAreaAction implements GetEateriesPipelineActi
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->area) {
+        if ( !$pipelineData->area instanceof EateryArea) {
             throw new RuntimeException('No Area');
         }
 
@@ -43,7 +44,7 @@ class GetNationwideBranchesInLondonAreaAction implements GetEateriesPipelineActi
             )
             ->where('wheretoeat_nationwide_branches.area_id', $pipelineData->area->id)
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
-            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData) {
+            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData): EateryBuilder {
                 $query->where('closed_down', false);
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);

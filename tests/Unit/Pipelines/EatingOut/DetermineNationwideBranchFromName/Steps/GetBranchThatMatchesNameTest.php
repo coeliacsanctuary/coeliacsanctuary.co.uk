@@ -17,7 +17,7 @@ class GetBranchThatMatchesNameTest extends BaseStepTestCase
 {
     #[Test]
     #[DataProvider('branchNames')]
-    public function ifThereIsABranchWithAMatchingNameInTheGivenBranchesItWillUseThat($branchName, $searchString): void
+    public function ifThereIsABranchWithAMatchingNameInTheGivenBranchesItWillUseThat(string $branchName, string $searchString): void
     {
         $eatery = $this->create(Eatery::class);
 

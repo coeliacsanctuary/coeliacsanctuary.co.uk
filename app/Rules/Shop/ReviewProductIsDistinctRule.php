@@ -30,7 +30,7 @@ class ReviewProductIsDistinctRule implements DataAwareRule, ValidationRule
             ->contains("{$type}:{$value}");
 
         if ($alreadyReviewed) {
-            $fail('You\'ve already left a review for this product');
+            $fail("You've already left a review for this product");
         }
     }
 

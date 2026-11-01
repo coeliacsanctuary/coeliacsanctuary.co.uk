@@ -34,9 +34,7 @@ class ShopOrder extends Model
     {
         self::creating(function (self $order): void {
             /** @phpstan-ignore-next-line  */
-            if ($order->state_id === null) {
-                $order->state_id = OrderState::BASKET;
-            }
+            $order->state_id ??= OrderState::BASKET;
 
             if ( ! $order->postage_country_id) {
                 $order->postage_country_id = 1;

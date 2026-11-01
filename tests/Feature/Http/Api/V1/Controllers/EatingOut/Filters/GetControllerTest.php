@@ -33,7 +33,7 @@ class GetControllerTest extends TestCase
     {
         $this->mock(GetFilters::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($filters) {
+            ->withArgs(function (array $filters): true {
                 $this->assertIsArray($filters);
                 $this->assertArrayHasKeys(['categories', 'venueTypes', 'features'], $filters);
 

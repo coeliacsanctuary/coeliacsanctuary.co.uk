@@ -29,7 +29,7 @@ class EateryOpeningTimes extends Model
     /** @return Attribute<bool, never> */
     public function isOpenNow(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): bool {
             $today = $this->currentDay();
 
             $todaysOpeningTime = $this->formatTime($today . '_start');

@@ -403,7 +403,7 @@ class StoreControllerTest extends TestCase
                     'town' => $test->town->slug,
                     'eatery' => $eatery ?? $test->eatery->slug,
                 ]),
-                fn (array $data = []): EateryCreateReviewRequestFactory => EateryCreateReviewRequestFactory::new($data),
+                EateryCreateReviewRequestFactory::new(...),
                 function (): void {
                 },
                 function (self $test, EateryReview $review): void {
@@ -417,7 +417,7 @@ class StoreControllerTest extends TestCase
                     'area' => $test->area->slug,
                     'eatery' => $eatery ?? $test->eatery->slug,
                 ]),
-                fn (array $data = []): EateryCreateReviewRequestFactory => EateryCreateReviewRequestFactory::new($data),
+                EateryCreateReviewRequestFactory::new(...),
                 function (self $test): void {
                     $test->eatery->update(['area_id' => $test->area->id]);
                 },

@@ -20,7 +20,7 @@ class EateryReviewImage extends Model
 
     protected static function booted(): void
     {
-        self::creating(function (self $model) {
+        self::creating(function (self $model): EateryReviewImage {
             $model->id ??= Str::uuid()->toString();
 
             return $model;

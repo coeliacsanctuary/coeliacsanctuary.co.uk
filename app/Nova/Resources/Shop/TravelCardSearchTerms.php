@@ -34,7 +34,7 @@ class TravelCardSearchTerms extends Resource
 
     public static $clickAction = 'view';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -55,7 +55,7 @@ class TravelCardSearchTerms extends Resource
             DateTime::make('Most Recent Click', 'updated_at')->sortable()->exceptOnForms(),
 
             BelongsToMany::make('Products', resource: Products::class)
-                ->display(function (Products $product) {
+                ->display(function (Products $product): string {
                     /** @var ShopCategory $category */
                     $category = $product->categories()->first();
 

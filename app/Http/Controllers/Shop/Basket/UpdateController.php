@@ -25,7 +25,6 @@ class UpdateController
         /** @var string | null $token */
         $token = $request->cookies->get('basket_token');
 
-        /** @var ShopOrder | null $basket */
         $basket = $resolveBasketAction->handle($token, false);
 
         if ( ! $basket) {

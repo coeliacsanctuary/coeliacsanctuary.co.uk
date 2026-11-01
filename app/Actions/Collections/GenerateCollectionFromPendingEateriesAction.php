@@ -116,7 +116,7 @@ class GenerateCollectionFromPendingEateriesAction
                 ->whereIn('id', $uniqueFieldIds)
                 ->with('country')
                 ->get()
-                ->mapWithKeys(function (EateryCounty $county) {
+                ->mapWithKeys(function (EateryCounty $county): array {
                     /** @var EateryCountry $country */
                     $country = $county->country;
 
@@ -128,7 +128,7 @@ class GenerateCollectionFromPendingEateriesAction
                 ->whereIn('id', $uniqueFieldIds)
                 ->with(['county', 'county.country'])
                 ->get()
-                ->mapWithKeys(function (EateryTown $town) {
+                ->mapWithKeys(function (EateryTown $town): array {
                     /** @var EateryCounty $county */
                     $county = $town->county;
 
@@ -143,7 +143,7 @@ class GenerateCollectionFromPendingEateriesAction
                 ->whereIn('id', $uniqueFieldIds)
                 ->with(['town', 'town.county', 'town.county.country'])
                 ->get()
-                ->mapWithKeys(function (EateryArea $area) {
+                ->mapWithKeys(function (EateryArea $area): array {
                     /** @var EateryTown $town */
                     $town = $area->town;
 

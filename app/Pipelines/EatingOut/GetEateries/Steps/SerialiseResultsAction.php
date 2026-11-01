@@ -23,7 +23,7 @@ class SerialiseResultsAction implements GetEateriesPipelineActionContract
         /** @var Collection<int, PendingEatery> $serialisedEateries */
         $serialisedEateries = $eateries->map(fn (Eatery $eatery) => new ($pipelineData->jsonResource)($eatery));
 
-        if ($pipelineData->paginator) {
+        if ($pipelineData->paginator instanceof LengthAwarePaginator) {
             $collection = $serialisedEateries;
 
             /** @var LengthAwarePaginator<int, JsonResource> $serialisedEateries */

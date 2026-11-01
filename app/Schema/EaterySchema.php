@@ -21,7 +21,7 @@ class EaterySchema
 
     public static function make(Eatery $eatery): Restaurant
     {
-        return (new self($eatery))->toSchema();
+        return new self($eatery)->toSchema();
     }
 
     public function __construct(protected Eatery $eatery)

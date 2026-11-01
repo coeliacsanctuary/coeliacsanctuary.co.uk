@@ -16,7 +16,7 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itErrorsWithAnInvalidSearchTermDetails(): void
     {
-        $this->submitSearch(term: null)->assertSessionHasErrors('term');
+        $this->submitSearch()->assertSessionHasErrors('term');
         $this->submitSearch(term: 123)->assertSessionHasErrors('term');
         $this->submitSearch(term: true)->assertSessionHasErrors('term');
         $this->submitSearch(term: 'aa')->assertSessionHasErrors('term'); // to short
@@ -26,21 +26,21 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itErrorsWithAnInvalidLatLng(): void
     {
-        $this->submitSearch(term: null, latlng: 'foo')->assertSessionHasErrors('latlng');
-        $this->submitSearch(term: null, latlng: '53.0873')->assertSessionHasErrors('latlng');
-        $this->submitSearch(term: null, latlng: '53.0873,')->assertSessionHasErrors('latlng');
+        $this->submitSearch(latlng: 'foo')->assertSessionHasErrors('latlng');
+        $this->submitSearch(latlng: '53.0873')->assertSessionHasErrors('latlng');
+        $this->submitSearch(latlng: '53.0873,')->assertSessionHasErrors('latlng');
     }
 
     #[Test]
     public function itAcceptsALatLngInsteadOfATerm(): void
     {
-        $this->submitSearch(term: null, latlng: '53.0873,-2.4419')->assertSessionHasNoErrors();
+        $this->submitSearch(latlng: '53.0873,-2.4419')->assertSessionHasNoErrors();
     }
 
     #[Test]
     public function itCreatesASearchFromTheUsersLocation(): void
     {
-        $this->submitSearch(term: null, latlng: '53.0873,-2.4419');
+        $this->submitSearch(latlng: '53.0873,-2.4419');
 
         $searchTerm = EaterySearchTerm::query()->sole();
 

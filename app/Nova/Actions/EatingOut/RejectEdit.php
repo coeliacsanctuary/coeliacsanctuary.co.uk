@@ -21,10 +21,8 @@ class RejectEdit extends Action
 
     /**
      * Perform the action on the given models.
-     *
-     * @return mixed
      */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (EaterySuggestedEdit $edit): void {
             if ($edit->rejected) {

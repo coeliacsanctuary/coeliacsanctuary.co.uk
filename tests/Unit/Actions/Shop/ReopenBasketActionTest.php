@@ -146,7 +146,7 @@ class ReopenBasketActionTest extends TestCase
             'quantity' => 1,
         ];
 
-        $this->expectAction(AddProductToBasketAction::class, [function (...$params) use ($args) {
+        $this->expectAction(AddProductToBasketAction::class, [function (...$params) use ($args): true {
             foreach (array_values($args) as $index => $value) {
                 if ($value instanceof Model) {
                     $this->assertTrue($value->is($params[$index]));
@@ -173,7 +173,7 @@ class ReopenBasketActionTest extends TestCase
             'quantity' => 2,
         ];
 
-        $this->expectAction(AddProductToBasketAction::class, [function (...$params) use ($args) {
+        $this->expectAction(AddProductToBasketAction::class, [function (...$params) use ($args): true {
             foreach (array_values($args) as $index => $value) {
                 if ($value instanceof Model) {
                     $this->assertTrue($value->is($params[$index]));
@@ -274,7 +274,7 @@ class ReopenBasketActionTest extends TestCase
     {
         $digitalItem = $this->digitalItem();
 
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function (ShopOrder $basket, ShopDigitalCard $card, ?ShopOrderItem $orderItem) use ($digitalItem) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function (ShopOrder $basket, ShopDigitalCard $card, ?ShopOrderItem $orderItem) use ($digitalItem): true {
             $this->assertTrue($basket->is($this->basket));
             $this->assertTrue($card->is($digitalItem->card));
             $this->assertNull($orderItem);
@@ -290,7 +290,7 @@ class ReopenBasketActionTest extends TestCase
     {
         $this->digitalItem($this->item);
 
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function (ShopOrder $basket, ShopDigitalCard $card, ?ShopOrderItem $orderItem) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function (ShopOrder $basket, ShopDigitalCard $card, ?ShopOrderItem $orderItem): true {
             $this->assertNotNull($orderItem);
             $this->assertTrue($orderItem->is($this->item));
 
@@ -381,7 +381,7 @@ class ReopenBasketActionTest extends TestCase
 
         $liveItem = $this->digitalItem();
 
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function (ShopOrder $basket, ShopDigitalCard $card, ?ShopOrderItem $orderItem) use ($liveItem) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function (ShopOrder $basket, ShopDigitalCard $card, ?ShopOrderItem $orderItem) use ($liveItem): true {
             $this->assertTrue($card->is($liveItem->card));
 
             return true;

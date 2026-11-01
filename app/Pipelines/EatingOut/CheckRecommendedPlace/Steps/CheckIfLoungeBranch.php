@@ -27,7 +27,7 @@ class CheckIfLoungeBranch extends AbstractStepAction
 
             if ( ! Str::of($data->name)->lower()->contains('o lounge')) {
                 $data->found = true;
-                $data->reason = 'It looks like you\'re recommending The Lounges, did you know we\'ve already got those listed on our Nationwide page?';
+                $data->reason = "It looks like you're recommending The Lounges, did you know we've already got those listed on our Nationwide page?";
                 $data->url = route('eating-out.nationwide.show', ['eatery' => $eatery->slug]);
                 $data->label = 'Check out The Lounges';
             }

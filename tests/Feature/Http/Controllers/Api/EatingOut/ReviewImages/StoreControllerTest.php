@@ -25,7 +25,7 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itReturnsAValidationErrorIfNoImagesAreSent(): void
     {
-        $this->makeRequest(images: null)
+        $this->makeRequest()
             ->assertStatus(422)
             ->assertJsonValidationErrorFor('images');
     }

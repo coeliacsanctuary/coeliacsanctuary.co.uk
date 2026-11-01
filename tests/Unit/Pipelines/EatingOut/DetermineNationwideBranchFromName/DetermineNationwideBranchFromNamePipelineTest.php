@@ -43,7 +43,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
     {
         return [
             'exact match' => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
                     $branch = $test->create(NationwideBranch::class, [
                         'wheretoeat_id' => $eatery->id,
@@ -55,7 +55,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'foo bar',
             ],
             'partial match' => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
                     $branch = $test->create(NationwideBranch::class, [
                         'wheretoeat_id' => $eatery->id,
@@ -67,7 +67,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'foo',
             ],
             'town match' => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
 
                     $town = $test->create(EateryTown::class, [
@@ -85,7 +85,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'crewe',
             ],
             "'the' prefix matching" => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
 
                     $branch = $test->create(NationwideBranch::class, [
@@ -98,7 +98,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'the superclub',
             ],
             "'the' prefix missing" => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
 
                     $branch = $test->create(NationwideBranch::class, [
@@ -111,7 +111,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'superclub',
             ],
             'branch name and town together' => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
 
                     $town = $test->create(EateryTown::class, [
@@ -129,7 +129,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'The Superclub, Crewe',
             ],
             'street and town in search term' => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
 
                     $town = $test->create(EateryTown::class, [
@@ -148,7 +148,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'My Street, Crewe',
             ],
             'street and town in search term without comma' => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
 
                     $town = $test->create(EateryTown::class, [
@@ -167,7 +167,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'Crewe Highstreet',
             ],
             'town in brackets with place name' => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
 
                     $town = $test->create(EateryTown::class, [
@@ -185,7 +185,7 @@ class DetermineNationwideBranchFromNamePipelineTest extends TestCase
                 'Superclub (Crewe)',
             ],
             'full and partial match for branch name' => [
-                function (self $test) {
+                function (self $test): array {
                     $eatery = $test->create(Eatery::class);
 
                     $branch = $test->create(NationwideBranch::class, [

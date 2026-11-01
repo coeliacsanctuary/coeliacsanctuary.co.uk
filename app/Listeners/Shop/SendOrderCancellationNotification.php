@@ -13,7 +13,6 @@ class SendOrderCancellationNotification
 {
     public function handle(OrderCancelledEvent $event): void
     {
-        /** @var ShopOrder $order */
         $order = $event->order;
 
         /** @var ShopCustomer $customer */

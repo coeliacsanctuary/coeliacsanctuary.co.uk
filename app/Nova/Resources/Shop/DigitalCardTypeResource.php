@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Resources\Shop;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use App\Models\Shop\ShopDigitalCardType;
 use App\Nova\Resource;
 use Illuminate\Http\Request;
@@ -60,7 +61,7 @@ class DigitalCardTypeResource extends Resource
         ];
     }
 
-    public static function indexQuery(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder $query)
+    public static function indexQuery(NovaRequest $request, Builder $query)
     {
         return $query->withoutGlobalScopes();
     }

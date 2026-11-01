@@ -45,7 +45,7 @@ class SealiacEateryOverviewAgent implements Agent
             return null;
         }
 
-        if ($this->branch && $this->eatery->adminReview->nationwide_branch_id !== $this->branch->id) {
+        if ($this->branch instanceof NationwideBranch && $this->eatery->adminReview->nationwide_branch_id !== $this->branch->id) {
             return null;
         }
 
@@ -54,7 +54,7 @@ class SealiacEateryOverviewAgent implements Agent
 
     protected function eateryName(): string
     {
-        if ($this->branch && $this->branch->name) {
+        if ($this->branch instanceof NationwideBranch && $this->branch->name) {
             return $this->branch->name;
         }
 
@@ -63,7 +63,7 @@ class SealiacEateryOverviewAgent implements Agent
 
     protected function eateryLocation(): string
     {
-        if ($this->branch) {
+        if ($this->branch instanceof NationwideBranch) {
             return $this->branch->full_location;
         }
 

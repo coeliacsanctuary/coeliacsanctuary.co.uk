@@ -51,7 +51,7 @@ class Helpers
     {
         $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
 
-        return (new IntlMoneyFormatter($numberFormatter, new ISOCurrencies()))->format($money);
+        return new IntlMoneyFormatter($numberFormatter, new ISOCurrencies())->format($money);
     }
 
     public static function isTravelCard(int|ShopCategory|null $category): bool

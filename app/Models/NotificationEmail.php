@@ -18,7 +18,7 @@ class NotificationEmail extends Model
 
     protected static function booted(): void
     {
-        self::creating(function (self $notificationEmail) {
+        self::creating(function (self $notificationEmail): NotificationEmail {
             if ( ! $notificationEmail->key) {
                 $notificationEmail->key = Str::uuid()->toString();
             }

@@ -19,6 +19,7 @@ class EateryAttractionRestaurantFactory extends Factory
             'info' => $this->faker->paragraph,
         ];
     }
+
     public function on(Eatery|int $eatery)
     {
         return $this->state(fn (array $attributes) => [

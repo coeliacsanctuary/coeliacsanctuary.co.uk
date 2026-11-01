@@ -20,7 +20,7 @@ class EateryVenueTypeListTest extends TestCase
         $this->create(EateryVenueType::class, ['venue_type' => 'Bakery']);
         $this->create(EateryVenueType::class, ['venue_type' => 'Pub']);
 
-        $result = json_decode((string) (new EateryVenueTypeList())->handle(new Request()), true);
+        $result = json_decode((string) new EateryVenueTypeList()->handle(new Request()), true);
 
         $this->assertEquals(['Bakery', 'Pub', 'Restaurant'], $result);
     }
@@ -28,7 +28,7 @@ class EateryVenueTypeListTest extends TestCase
     #[Test]
     public function itReturnsEmptyWhenNoVenueTypesExist(): void
     {
-        $result = json_decode((string) (new EateryVenueTypeList())->handle(new Request()), true);
+        $result = json_decode((string) new EateryVenueTypeList()->handle(new Request()), true);
 
         $this->assertEmpty($result);
     }
@@ -36,6 +36,6 @@ class EateryVenueTypeListTest extends TestCase
     #[Test]
     public function itHasAnEmptySchema(): void
     {
-        $this->assertEmpty((new EateryVenueTypeList())->schema(new JsonSchemaTypeFactory()));
+        $this->assertEmpty(new EateryVenueTypeList()->schema(new JsonSchemaTypeFactory()));
     }
 }

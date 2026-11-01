@@ -19,7 +19,7 @@ class SearchRequest extends FormRequest
         ];
     }
 
-    public function prepareForValidation(): void
+    protected function prepareForValidation(): void
     {
         $this->merge([
             'blogs' => $this->string('blogs', 'false')->toString() === 'true',

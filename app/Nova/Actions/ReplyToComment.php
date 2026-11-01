@@ -24,10 +24,8 @@ class ReplyToComment extends Action
 
     /**
      * Perform the action on the given models.
-     *
-     * @return mixed
      */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (Comment $comment) use ($fields): void {
             if ($comment->approved) {
@@ -40,7 +38,7 @@ class ReplyToComment extends Action
 
             $comment->update(['approved' => true]);
 
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $comment->email)
                 ->notify(new CommentRepliedNotification($reply));
         });

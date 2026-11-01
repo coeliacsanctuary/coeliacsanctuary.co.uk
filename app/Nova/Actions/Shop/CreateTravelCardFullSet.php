@@ -39,8 +39,8 @@ class CreateTravelCardFullSet extends Action
                     throw new Exception("Product {$card->title} does not have enough quantity to create {$suffix}.");
                 }
             });
-        } catch (Exception $e) {
-            return ActionResponse::danger($e->getMessage());
+        } catch (Exception $exception) {
+            return ActionResponse::danger($exception->getMessage());
         }
 
         try {

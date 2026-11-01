@@ -16,6 +16,7 @@ use Laravel\Nova\Nova;
 class ShopDailySales extends Trend
 {
     protected bool $excludingDigital = false;
+
     protected bool $isDigitalOnly = false;
 
     public function excludeDigital(): self

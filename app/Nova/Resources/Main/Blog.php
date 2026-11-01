@@ -51,7 +51,7 @@ class Blog extends Resource
 
     public static $with = ['tags', 'media'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -242,14 +242,14 @@ class Blog extends Resource
             $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
 
             return array_map(
-                fn ($metric) => ApexChart::make($metric)
+                fn (string $metric) => ApexChart::make($metric)
                     ->withParams(['blogId' => $blogId])
                     ->onlyOnDetail()
                     ->fixedHeight()
                     ->fullWidth(),
                 $metrics
             );
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return [];
         }
     }

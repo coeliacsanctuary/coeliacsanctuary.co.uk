@@ -71,7 +71,7 @@ class ProductSales extends Chartable
         return $this->getData($start, $end);
     }
 
-    public function getData(Carbon $startDate, Carbon $endDate): array
+    protected function getData(Carbon $startDate, Carbon $endDate): array
     {
         $products = [];
 

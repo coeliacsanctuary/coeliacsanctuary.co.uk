@@ -51,13 +51,13 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithWebsite) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithWebsite): true {
             $this->assertTrue($job->eatery->is($eateryWithWebsite));
 
             return true;
         });
 
-        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithoutWebsite) {
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithoutWebsite): false {
             $this->assertFalse($job->eatery->is($eateryWithoutWebsite));
 
             return false;
@@ -86,13 +86,13 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($normalEatery) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($normalEatery): true {
             $this->assertTrue($job->eatery->is($normalEatery));
 
             return true;
         });
 
-        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($snoozedEatery) {
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($snoozedEatery): false {
             $this->assertFalse($job->eatery->is($snoozedEatery));
 
             return false;
@@ -115,7 +115,7 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery): true {
             $this->assertTrue($job->eatery->is($eatery));
 
             return true;
@@ -139,13 +139,13 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($openEatery) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($openEatery): true {
             $this->assertTrue($job->eatery->is($openEatery));
 
             return true;
         });
 
-        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($closedEatery) {
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($closedEatery): false {
             $this->assertFalse($job->eatery->is($closedEatery));
 
             return false;
@@ -167,13 +167,13 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($regularEatery) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($regularEatery): true {
             $this->assertTrue($job->eatery->is($regularEatery));
 
             return true;
         });
 
-        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($nationwideEatery) {
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($nationwideEatery): false {
             $this->assertFalse($job->eatery->is($nationwideEatery));
 
             return false;
@@ -197,13 +197,13 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithoutAlert) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithoutAlert): true {
             $this->assertTrue($job->eatery->is($eateryWithoutAlert));
 
             return true;
         });
 
-        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithPendingAlert) {
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eateryWithPendingAlert): false {
             $this->assertFalse($job->eatery->is($eateryWithPendingAlert));
 
             return false;
@@ -222,7 +222,7 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery): true {
             $this->assertTrue($job->eatery->is($eatery));
 
             return true;
@@ -241,7 +241,7 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery): true {
             $this->assertTrue($job->eatery->is($eatery));
 
             return true;
@@ -273,13 +273,13 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($checkedLastMonth) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($checkedLastMonth): true {
             $this->assertTrue($job->eatery->is($checkedLastMonth));
 
             return true;
         });
 
-        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($checkedThisMonth) {
+        Bus::assertNotDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($checkedThisMonth): false {
             $this->assertFalse($job->eatery->is($checkedThisMonth));
 
             return false;
@@ -296,7 +296,7 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($neverChecked) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($neverChecked): true {
             $this->assertTrue($job->eatery->is($neverChecked));
 
             return true;
@@ -319,7 +319,7 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->artisan('coeliac:process-eatery-website-checks');
 
-        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery) {
+        Bus::assertDispatched(CheckSingleEateryWebsiteJob::class, function ($job) use ($eatery): true {
             $this->assertTrue($job->eatery->is($eatery));
 
             return true;

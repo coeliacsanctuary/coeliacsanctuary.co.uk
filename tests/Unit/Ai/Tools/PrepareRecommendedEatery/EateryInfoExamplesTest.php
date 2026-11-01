@@ -33,7 +33,7 @@ class EateryInfoExamplesTest extends TestCase
             'created_at' => now(),
         ]);
 
-        $result = json_decode((string) (new EateryInfoExamples())->handle(new Request()), true);
+        $result = json_decode((string) new EateryInfoExamples()->handle(new Request()), true);
 
         $this->assertContains($eatery->info, $result);
     }
@@ -47,7 +47,7 @@ class EateryInfoExamplesTest extends TestCase
             'created_at' => now()->subMonths(7),
         ]);
 
-        $result = json_decode((string) (new EateryInfoExamples())->handle(new Request()), true);
+        $result = json_decode((string) new EateryInfoExamples()->handle(new Request()), true);
 
         $this->assertNotContains('An old cafe.', $result);
     }
@@ -61,7 +61,7 @@ class EateryInfoExamplesTest extends TestCase
             'created_at' => now(),
         ]);
 
-        $result = json_decode((string) (new EateryInfoExamples())->handle(new Request()), true);
+        $result = json_decode((string) new EateryInfoExamples()->handle(new Request()), true);
 
         $this->assertNotContains('A nationwide chain.', $result);
     }
@@ -74,7 +74,7 @@ class EateryInfoExamplesTest extends TestCase
             'created_at' => now(),
         ]);
 
-        $result = json_decode((string) (new EateryInfoExamples())->handle(new Request()), true);
+        $result = json_decode((string) new EateryInfoExamples()->handle(new Request()), true);
 
         $this->assertLessThanOrEqual(10, count($result));
     }
@@ -82,6 +82,6 @@ class EateryInfoExamplesTest extends TestCase
     #[Test]
     public function itHasAnEmptySchema(): void
     {
-        $this->assertEmpty((new EateryInfoExamples())->schema(new JsonSchemaTypeFactory()));
+        $this->assertEmpty(new EateryInfoExamples()->schema(new JsonSchemaTypeFactory()));
     }
 }

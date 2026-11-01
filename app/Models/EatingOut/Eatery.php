@@ -79,11 +79,11 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
 
     protected $table = 'wheretoeat';
 
-    public static function booted(): void
+    protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
 
-        static::saving(function (self $eatery) {
+        static::saving(function (self $eatery): Eatery {
             if ( ! $eatery->slug) {
                 $eatery->slug = $eatery->generateSlug();
             }
@@ -376,7 +376,7 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
     /** @return Attribute<bool, never> */
     public function hasBeenRated(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): bool {
             if ( ! $this->relationLoaded('reviews')) {
                 return false;
             }

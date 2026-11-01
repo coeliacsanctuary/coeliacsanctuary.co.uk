@@ -52,7 +52,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
                 ->orWhereHas('liveBranches')
         );
 
-        static::saving(static function (self $area) {
+        static::saving(static function (self $area): EateryArea {
             if ( ! $area->slug) {
                 $area->slug = Str::slug($area->area);
             }
@@ -199,7 +199,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -216,7 +216,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
         return Attribute::get(function () { /** @phpstan-ignore-line */
             try {
                 return $this->main_image_as_webp;
-            } catch (Error $exception) { /** @phpstan-ignore-line */
+            } catch (Error) { /** @phpstan-ignore-line */
                 return null;
             }
         });

@@ -232,7 +232,7 @@ class ShowControllerTest extends TestCase
     /** @return LengthAwarePaginator<int, EateryListResource> */
     protected function resultsFor(?Eatery $eatery = null): LengthAwarePaginator
     {
-        $items = $eatery ? [new EateryListResource($eatery)] : [];
+        $items = $eatery instanceof Eatery ? [new EateryListResource($eatery)] : [];
 
         return new LengthAwarePaginator($items, count($items), 10);
     }

@@ -88,7 +88,7 @@ class Orders extends Resource
         ];
     }
 
-    public function fieldsForDetail(NovaRequest $request)
+    public function fieldsForDetail(NovaRequest $request): array
     {
         return [
             Text::make('Order ID', 'order_key'),

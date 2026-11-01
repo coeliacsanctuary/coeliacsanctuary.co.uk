@@ -15,7 +15,6 @@ class SendMyTravelCardsInvitationIfRequired implements ShouldQueue
 {
     public function handle(OrderPaidEvent $event): void
     {
-        /** @var ShopOrder $order */
         $order = $event->order;
 
         if ($order->has_digital_items === false) {

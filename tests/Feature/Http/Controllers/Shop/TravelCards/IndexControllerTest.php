@@ -127,7 +127,7 @@ class IndexControllerTest extends TestCase
     #[Test]
     public function itKeepsTheSearchTermWhenNothingResolves(): void
     {
-        $this->expectAction(ResolveTravelCardSearchAction::class, ['Narnia', null], return: null);
+        $this->expectAction(ResolveTravelCardSearchAction::class, ['Narnia', null]);
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Narnia']))
             ->assertInertia(fn (Assert $page) => $page

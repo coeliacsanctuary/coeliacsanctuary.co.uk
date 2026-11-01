@@ -96,7 +96,7 @@ class GetFilters
                 'slug',
                 fn (EateryVenueType $filterable) => ['groupBy' => Str::of(EateryTypeEnum::from($filterable->type_id)->name)->title()->plural()],
             )
-            ->sortBy(function (array $filterable) {
+            ->sortBy(function (array $filterable): int {
                 if ($filterable['groupBy'] === 'Eatery') {
                     return 0;
                 }

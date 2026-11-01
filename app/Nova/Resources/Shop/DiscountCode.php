@@ -70,7 +70,7 @@ class DiscountCode extends Resource
 
             Text::make('Deduction')
                 ->exceptOnForms()
-                ->displayUsing(function ($value) {
+                ->displayUsing(function ($value): string {
                     if ($this->type_id === DiscountCodeType::PERCENTAGE) {
                         return "{$value}%";
                     }

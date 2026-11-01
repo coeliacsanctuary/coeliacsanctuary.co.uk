@@ -22,7 +22,7 @@ class GetBlogsForBlogIndexAction
     {
         return new $resource(
             Blog::query()
-                ->when($tag && $tag->exists, fn (Builder $builder) => $builder->whereHas(
+                ->when($tag instanceof BlogTag && $tag->exists, fn (Builder $builder) => $builder->whereHas(
                     'tags',
                     fn (Builder $builder) => $builder->where('slug', $tag->slug), /** @phpstan-ignore-line */
                 ))

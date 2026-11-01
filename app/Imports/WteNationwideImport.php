@@ -27,7 +27,7 @@ class WteNationwideImport implements ToCollection, WithHeadingRow
      */
     public function collection(Collection $collection): Collection
     {
-        return $collection->map(function (Collection $item) {
+        return $collection->map(function (Collection $item): Collection {
             $result = $this->buildBaseObject($item);
 
             try {

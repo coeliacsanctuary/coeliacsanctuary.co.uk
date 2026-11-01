@@ -15,11 +15,6 @@ use RuntimeException;
 
 class IdentifySearchAreasWithAiActionTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     #[Test]
     public function itUsesACachedResponseFromTheDatabaseIfThereIsOneForTheSearchHistory(): void
     {

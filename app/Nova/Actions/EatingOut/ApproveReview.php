@@ -23,10 +23,8 @@ class ApproveReview extends Action
 
     /**
      * Perform the action on the given models.
-     *
-     * @return mixed
      */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (EateryReview $review): void {
             if ($review->approved) {
@@ -41,7 +39,7 @@ class ApproveReview extends Action
 
             $review->eatery->touch();
 
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $review->email)
                 ->notify(new EateryReviewApprovedNotification($review));
         });

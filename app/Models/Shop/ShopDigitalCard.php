@@ -97,7 +97,7 @@ class ShopDigitalCard extends Model
     /** @return Attribute<float, never> */
     public function averageRating(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): float {
             $this->loadMissing('reviews');
 
             return round($this->reviews->average('rating') * 2) / 2;

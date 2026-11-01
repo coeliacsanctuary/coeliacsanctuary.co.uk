@@ -14,7 +14,7 @@ class TravelCardSearchAiLookupAction
     public function handle(string $searchTerm): Collection
     {
         try {
-            return (new TravelCardSearchAgent())->lookup($searchTerm);
+            return new TravelCardSearchAgent()->lookup($searchTerm);
         } catch (Throwable) {
             return collect();
         }

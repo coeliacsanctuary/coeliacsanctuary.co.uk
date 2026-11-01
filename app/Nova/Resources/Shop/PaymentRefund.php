@@ -28,7 +28,7 @@ class PaymentRefund extends Resource
 
     public static $searchable = false;
 
-    public function fieldsForIndex(NovaRequest $request)
+    public function fieldsForIndex(NovaRequest $request): array
     {
         return [
             Currency::make('Amount')->asMinorUnits(),

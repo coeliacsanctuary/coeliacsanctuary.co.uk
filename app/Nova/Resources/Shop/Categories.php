@@ -98,7 +98,7 @@ class Categories extends Resource
             ->orderBy('title');
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Services\EatingOut\Collection\Configuration;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
@@ -20,7 +21,7 @@ class GetNationwideBranchesFromQueryBuilderConfigurationAction implements GetEat
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->configuration) {
+        if ( !$pipelineData->configuration instanceof Configuration) {
             throw new RuntimeException('No configuration');
         }
 

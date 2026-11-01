@@ -51,7 +51,7 @@ class ShopOrderItemResourceTest extends TestCase
 
     protected function resource(): array
     {
-        return (new ShopOrderItemResource($this->item))->toArray(new Request());
+        return new ShopOrderItemResource($this->item)->toArray(new Request());
     }
 
     #[Test]

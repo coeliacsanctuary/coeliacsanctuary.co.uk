@@ -13,7 +13,6 @@ class SendOrderShippedNotification
 {
     public function handle(OrderShippedEvent $event): void
     {
-        /** @var ShopOrder $order */
         $order = $event->order;
 
         /** @var ShopCustomer $customer */

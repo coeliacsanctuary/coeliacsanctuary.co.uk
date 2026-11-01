@@ -31,7 +31,7 @@ class SealiacOverviews extends Resource
 
     public static $clickAction = 'open';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

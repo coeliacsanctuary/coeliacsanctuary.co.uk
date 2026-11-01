@@ -24,11 +24,11 @@ class RecipeMetricSource implements MetricSource
     {
         $query = Recipe::query()->latest();
 
-        if ($this->createdAfter !== null) {
+        if ($this->createdAfter instanceof Carbon) {
             $query->where('created_at', '>=', $this->createdAfter);
         }
 
-        if ($this->createdBefore !== null) {
+        if ($this->createdBefore instanceof Carbon) {
             $query->where('created_at', '<=', $this->createdBefore);
         }
 

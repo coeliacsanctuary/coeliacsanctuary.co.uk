@@ -17,6 +17,7 @@ use Laravel\Nova\Nova;
 class ShopIncome extends Trend
 {
     protected bool $excludingDigital = false;
+
     protected bool $isDigitalOnly = false;
 
     public function excludeDigital(): self

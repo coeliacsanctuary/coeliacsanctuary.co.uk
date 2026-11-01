@@ -57,7 +57,7 @@ class TriggerMetricOrchestratorCommand extends Command
         });
 
         spin(
-            callback: fn () => (new $selected())->handle(),
+            callback: fn () => new $selected()->handle(),
             message: "Running {$this->orchestrators[$selected]}...",
         );
 

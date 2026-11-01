@@ -52,7 +52,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertEquals($this->order->order_key, $request['order_id']);
             $this->assertEquals($this->order->created_at->toIso8601String(), $request['ordered_at']);
             $this->assertEquals($this->order->payment->response->charge_id, $request['stripe_charge_id']);
@@ -81,7 +81,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertEquals([
                 'name' => 'Alison Peters',
                 'email' => 'alison@example.com',
@@ -109,7 +109,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendOrderToFinanceServiceAction::class, $order);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertSame([
                 'name' => 'Alison Peters',
                 'email' => 'alison@example.com',
@@ -128,7 +128,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) use ($item) {
+        Http::assertSent(function (Request $request) use ($item): true {
             $this->assertEquals([[
                 'id' => $item->product_id,
                 'variant_id' => $item->product_variant_id,
@@ -154,7 +154,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) use ($card) {
+        Http::assertSent(function (Request $request) use ($card): true {
             $this->assertEquals([[
                 'id' => $card->id,
                 'variant_id' => null,
@@ -176,7 +176,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertCount(2, $request['items']);
 
             return true;
@@ -193,7 +193,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertEquals([
                 ['name' => 'Customs Fee', 'amount' => 150],
                 ['name' => 'Handling Fee', 'amount' => 50],
@@ -208,7 +208,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
     {
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertSame([], $request['fees']);
 
             return true;
@@ -220,7 +220,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
     {
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertNull($request['discounts']);
 
             return true;
@@ -241,7 +241,7 @@ class SendOrderToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendOrderToFinanceServiceAction::class, $this->order);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertEquals([[
                 'name' => 'Ten Percent Off',
                 'code' => 'ten-off',

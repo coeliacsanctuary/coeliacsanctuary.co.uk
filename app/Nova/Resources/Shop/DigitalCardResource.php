@@ -183,7 +183,7 @@ class DigitalCardResource extends Resource
                     ->placeholder('I have Coeliac Disease and follow a strict gluten free diet. I cannot eat any foods which contain gluten, small amounts can make me sick.'),
             ])->help('The top of the card, in the native language'),
 
-            Panel::make('Can\'t Eat Section', [
+            Panel::make("Can't Eat Section", [
                 Select::make('Section Colour', 'cant_eat_colour')
                     ->required()
                     ->fullWidth()
