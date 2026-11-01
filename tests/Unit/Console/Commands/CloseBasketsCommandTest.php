@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\CloseBasketAction;
 use App\Console\Commands\CloseBasketsCommand;
 use App\Models\Shop\ShopOrder;
-use Carbon\Carbon;
 use Tests\TestCase;
 
 class CloseBasketsCommandTest extends TestCase

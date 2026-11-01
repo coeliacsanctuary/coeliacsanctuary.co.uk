@@ -6,7 +6,6 @@ namespace Tests\Unit\Console\Commands;
 
 use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
 use App\Models\MailcoachSchedule;
-use Carbon\Carbon;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;

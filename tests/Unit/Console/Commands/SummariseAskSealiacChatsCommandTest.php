@@ -8,7 +8,6 @@ use App\Ai\Agents\SummariseAskSealiacChatAgent;
 use App\Console\Commands\SummariseAskSealiacChatsCommand;
 use App\Models\AskSealiacChat;
 use App\Models\AskSealiacChatMessage;
-use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

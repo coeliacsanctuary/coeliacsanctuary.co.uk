@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\CloseBasketAction;
 use App\Console\Commands\ClosePendingOrdersCommand;
 use App\Models\Shop\ShopOrder;
-use Carbon\Carbon;
 use Stripe\PaymentIntent;
 use Tests\Concerns\MocksStripe;
 use Tests\TestCase;

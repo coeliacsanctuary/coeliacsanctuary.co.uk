@@ -30,7 +30,7 @@ class ReviewOrderInvitationMailable extends BaseShopMailable
 
     protected function buildReviewLink(): string
     {
-        throw_if(! $this->order->reviewInvitation || ! $this->order->customer, new RuntimeException('Not valid order'));
+        throw_if( ! $this->order->reviewInvitation || ! $this->order->customer, new RuntimeException('Not valid order'));
 
         return URL::temporarySignedRoute(
             'shop.review-order',
