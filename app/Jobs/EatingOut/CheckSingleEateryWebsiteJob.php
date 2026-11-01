@@ -8,11 +8,7 @@ use App\Actions\EatingOut\CheckEateryWebsiteAction;
 use App\Actions\EatingOut\CreateEateryAlertAction;
 use App\DataObjects\EatingOut\EateryWebsiteCheckResult;
 use App\Models\EatingOut\Eatery;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class CheckSingleEateryWebsiteJob implements ShouldQueue
 {

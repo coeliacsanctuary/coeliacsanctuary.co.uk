@@ -7,15 +7,11 @@ namespace App\Jobs\EatingOut;
 use App\Ai\Agents\EateryNationwideDescriptionAgent;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection as SupportCollection;
 
 #[Tries(1)]

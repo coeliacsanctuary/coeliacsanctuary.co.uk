@@ -8,11 +8,7 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\OpenGraphImage;
 use App\Services\RenderOpenGraphImage;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class CreateEateryIndexPageOpenGraphImageJob implements ShouldQueue
 {

@@ -7,11 +7,7 @@ namespace App\Jobs\OpenGraphImages;
 use App\Models\Blogs\Blog;
 use App\Models\OpenGraphImage;
 use App\Services\RenderOpenGraphImage;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class CreateBlogIndexPageOpenGraphImageJob implements ShouldQueue
 {

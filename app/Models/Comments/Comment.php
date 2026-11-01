@@ -42,6 +42,6 @@ class Comment extends Model
 
     protected function what(): Attribute
     {
-        return Attribute::make(get: fn(): string => class_basename($this->commentable_type));
+        return Attribute::make(get: fn (): string => class_basename($this->commentable_type));
     }
 }
