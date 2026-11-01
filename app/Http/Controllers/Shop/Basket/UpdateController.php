@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\Basket;
 
+use App\Models\Shop\ShopOrder;
 use App\Actions\Shop\AlterItemQuantityAction;
 use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\ResolveBasketAction;
@@ -26,7 +27,7 @@ class UpdateController
 
         $basket = $resolveBasketAction->handle($token, false);
 
-        if ( ! $basket) {
+        if ( ! $basket instanceof ShopOrder) {
             return redirect()->back();
         }
 
