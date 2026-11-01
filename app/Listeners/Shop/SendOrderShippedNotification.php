@@ -6,7 +6,6 @@ namespace App\Listeners\Shop;
 
 use App\Events\Shop\OrderShippedEvent;
 use App\Models\Shop\ShopCustomer;
-use App\Models\Shop\ShopOrder;
 use App\Notifications\Shop\OrderShippedNotification;
 
 class SendOrderShippedNotification

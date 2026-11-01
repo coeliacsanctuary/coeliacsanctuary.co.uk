@@ -32,7 +32,7 @@ class RedirectFallbackResolver implements RouteFallbackResolverContract
 
     public function handle(Request $request): Responsable|RedirectResponse
     {
-        if ( !$this->redirect instanceof Redirect) {
+        if ( ! $this->redirect instanceof Redirect) {
             // this should never happen
             throw new RuntimeException('Redirect not found.');
         }

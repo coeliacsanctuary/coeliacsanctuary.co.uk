@@ -44,7 +44,7 @@ class ShowController
         $token = $request->cookies->get('basket_token');
         $basket = $resolveBasketAction->handle($token, false);
 
-        if ( !$basket instanceof ShopOrder) {
+        if ( ! $basket instanceof ShopOrder) {
             try {
                 $basket = $checkForPendingOrderAction->handle($token);
             } catch (OrderAlreadyPaidException $exception) {

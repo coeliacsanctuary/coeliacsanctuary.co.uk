@@ -47,7 +47,7 @@ class LoadCompleteEateryDetailsForRequestAction
                         /** @var Builder<EateryReview> $builder */
                         return $builder
                             ->when(
-                                $pageType === 'branch' && !$showAllReviews,
+                                $pageType === 'branch' && ! $showAllReviews,
                                 fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
                             );
                     });
@@ -60,7 +60,7 @@ class LoadCompleteEateryDetailsForRequestAction
                     ->reorder('admin_review', 'desc')
                     ->orderByDesc('created_at')
                     ->when(
-                        $pageType === 'branch' && !$showAllReviews,
+                        $pageType === 'branch' && ! $showAllReviews,
                         fn (Builder $builder) => $builder->where('nationwide_branch_id', $nationwideBranch->id),
                     );
             },

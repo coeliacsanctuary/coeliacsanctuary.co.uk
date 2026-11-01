@@ -21,7 +21,7 @@ class GetNationwideBranchesFromQueryBuilderConfigurationAction implements GetEat
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( !$pipelineData->configuration instanceof Configuration) {
+        if ( ! $pipelineData->configuration instanceof Configuration) {
             throw new RuntimeException('No configuration');
         }
 

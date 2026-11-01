@@ -28,7 +28,7 @@ class EnsureNovaTwoFactorAuthMiddleware
 
     protected function shouldRedirect(?User $user, string $path): bool
     {
-        if ( !$user instanceof User) {
+        if ( ! $user instanceof User) {
             return false;
         }
 

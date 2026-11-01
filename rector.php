@@ -13,10 +13,10 @@ use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
-        __DIR__.'/app',
-        __DIR__.'/bootstrap/app.php',
-        __DIR__.'/tests',
-        __DIR__.'/database',
+        __DIR__ . '/app',
+        __DIR__ . '/bootstrap/app.php',
+        __DIR__ . '/tests',
+        __DIR__ . '/database',
     ]);
 
     $rectorConfig->sets([
@@ -34,15 +34,15 @@ return static function (RectorConfig $rectorConfig): void {
         RemoveNonExistingVarAnnotationRector::class,
         RemoveConcatAutocastRector::class,
         RemoveUnusedVariableAssignRector::class,
-//        RemoveUnusedPrivateMethodRector::class => [
-//            __DIR__.'/app/Http/Integrations/*/Requests/*',
-//        ],
-//        RemoveUnusedPrivatePropertyRector::class => [
-//            __DIR__.'/app/Http/Integrations/*/Requests/*',
-//        ],
-//        PrivatizeFinalClassMethodRector::class => [
-//            __DIR__.'/app/Http/Integrations/*/Requests/*',
-//        ],
+        //        RemoveUnusedPrivateMethodRector::class => [
+        //            __DIR__.'/app/Http/Integrations/*/Requests/*',
+        //        ],
+        //        RemoveUnusedPrivatePropertyRector::class => [
+        //            __DIR__.'/app/Http/Integrations/*/Requests/*',
+        //        ],
+        //        PrivatizeFinalClassMethodRector::class => [
+        //            __DIR__.'/app/Http/Integrations/*/Requests/*',
+        //        ],
     ]);
 
     $rectorConfig->importNames(importDocBlockNames: false);

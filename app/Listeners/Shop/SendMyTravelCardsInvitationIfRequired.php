@@ -7,7 +7,6 @@ namespace App\Listeners\Shop;
 use App\Enums\Shop\OrderState;
 use App\Events\Shop\OrderPaidEvent;
 use App\Models\Shop\ShopCustomer;
-use App\Models\Shop\ShopOrder;
 use App\Notifications\Shop\MyTravelCards\MyTravelCardsInvitationNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 

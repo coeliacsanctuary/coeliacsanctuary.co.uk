@@ -145,7 +145,7 @@ class ScoreTravelCardCountriesCommand extends Command
 
         $scores = $this->askAgent($agent) ?? $this->askAgent($agent);
 
-        if (!$scores instanceof Collection) {
+        if ( ! $scores instanceof Collection) {
             $this->skipped[] = $product->title;
 
             warning('No valid ordering returned');

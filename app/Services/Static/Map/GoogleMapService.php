@@ -74,7 +74,7 @@ class GoogleMapService
 
     protected function hasCachedImage(): bool
     {
-        if ( !$this->existingRecord instanceof GoogleStaticMap) {
+        if ( ! $this->existingRecord instanceof GoogleStaticMap) {
             return false;
         }
 

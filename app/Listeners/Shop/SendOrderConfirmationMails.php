@@ -6,7 +6,6 @@ namespace App\Listeners\Shop;
 
 use App\Events\Shop\OrderPaidEvent;
 use App\Models\Shop\ShopCustomer;
-use App\Models\Shop\ShopOrder;
 use App\Notifications\Shop\NewOrderAlertNotification;
 use App\Notifications\Shop\OrderConfirmedNotification;
 use App\Support\Helpers;

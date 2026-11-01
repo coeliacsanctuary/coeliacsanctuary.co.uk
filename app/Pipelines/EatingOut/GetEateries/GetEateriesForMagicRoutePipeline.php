@@ -57,7 +57,7 @@ class GetEateriesForMagicRoutePipeline
 
     public function rawData(): GetEateriesPipelineData
     {
-        if ( !$this->rawDto instanceof GetEateriesPipelineData) {
+        if ( ! $this->rawDto instanceof GetEateriesPipelineData) {
             throw new RuntimeException('Pipeline not ran');
         }
 

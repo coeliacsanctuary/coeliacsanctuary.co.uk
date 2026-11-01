@@ -363,7 +363,7 @@ abstract class GetEateriesTestCase extends TestCase
 
     protected function callPaginateEateriesAction(?Collection $eateries = null): ?GetEateriesPipelineData
     {
-        if ( !$eateries instanceof Collection) {
+        if ( ! $eateries instanceof Collection) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
             $eateries = $this->callGetBranchesAction($eateries)?->eateries;
         }
@@ -387,7 +387,7 @@ abstract class GetEateriesTestCase extends TestCase
 
     protected function callHydrateEateriesAction(?Collection $eateries = null, bool $hydrateFullReviews = false): ?GetEateriesPipelineData
     {
-        if ( !$eateries instanceof Collection) {
+        if ( ! $eateries instanceof Collection) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
             $eateries = $this->callGetBranchesAction($eateries)?->eateries;
         }
@@ -440,7 +440,7 @@ abstract class GetEateriesTestCase extends TestCase
 
     protected function callHydrateBranchesAction(?Collection $eateries = null, bool $hydrateFullReviews = false): ?GetEateriesPipelineData
     {
-        if ( !$eateries instanceof Collection) {
+        if ( ! $eateries instanceof Collection) {
             $eateries = $this->callGetEateriesInTownAction()?->eateries;
             $eateries = $this->callGetBranchesAction($eateries)?->eateries;
         }

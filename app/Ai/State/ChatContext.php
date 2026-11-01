@@ -25,7 +25,7 @@ class ChatContext
 
     public static function addToolUse(string $toolName, array $data = []): void
     {
-        if ( !self::$toolUses instanceof Collection) {
+        if ( ! self::$toolUses instanceof Collection) {
             self::$toolUses = collect();
         }
 

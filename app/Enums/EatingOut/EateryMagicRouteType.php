@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Enums\EatingOut;
 
 use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeMagicRouteContentAgent;
-use App\Ai\Agents\MagicRoutes\MagicRouteAgent;
 use App\Contracts\RouteFallbackResolverContract;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;

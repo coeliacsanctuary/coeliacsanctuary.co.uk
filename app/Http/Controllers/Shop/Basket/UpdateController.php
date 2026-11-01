@@ -10,7 +10,6 @@ use App\Actions\Shop\ResolveBasketAction;
 use App\DataObjects\Shop\PendingOrderCustomerDetails;
 use App\Exceptions\QuantityException;
 use App\Http\Requests\Shop\BasketPatchRequest;
-use App\Models\Shop\ShopOrder;
 use Exception;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\RedirectResponse;

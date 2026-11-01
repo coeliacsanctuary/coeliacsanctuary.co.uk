@@ -19,7 +19,7 @@ class GetEateriesInTownAction implements GetEateriesPipelineActionContract
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( !$pipelineData->town instanceof EateryTown) {
+        if ( ! $pipelineData->town instanceof EateryTown) {
             throw new RuntimeException('No Town');
         }
 

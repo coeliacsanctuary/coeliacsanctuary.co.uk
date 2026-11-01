@@ -7,7 +7,6 @@ namespace App\Listeners\Shop;
 use App\Actions\SignUpToNewsletterAction;
 use App\Events\Shop\OrderPaidEvent;
 use App\Models\Shop\ShopCustomer;
-use App\Models\Shop\ShopOrder;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SubscribeToNewsletterIfRequired implements ShouldQueue

@@ -30,7 +30,7 @@ class IntervalOrchestratorTest extends TestCase
         Bus::fake();
     }
 
-    /** @return array<string, array{class-string, \Illuminate\Support\Carbon, \Illuminate\Support\Carbon}> */
+    /** @return array<string, array{class-string, Carbon, Carbon}> */
     public static function orchestratorProvider(): array
     {
         return [
@@ -100,7 +100,7 @@ class IntervalOrchestratorTest extends TestCase
         Bus::assertDispatched(GetBlogMetricsJob::class, 2);
     }
 
-    /** @return array<string, array{class-string, \Illuminate\Support\Carbon}> */
+    /** @return array<string, array{class-string, Carbon}> */
     public static function outOfRangeProvider(): array
     {
         return [
