@@ -20,9 +20,9 @@ class NovaPreviewFactory extends Factory
             'model' => 'blog',
             'token' => Str::uuid()->toString(),
             'payload' => [
-                'title' => $this->faker->sentence,
-                'description' => $this->faker->paragraph,
-                'body' => $this->faker->paragraph,
+                'title' => $this->faker->sentence(),
+                'description' => $this->faker->paragraph(),
+                'body' => $this->faker->paragraph(),
                 'primary_image_url' => 'https://example.com/image.jpg',
                 'social_image_url' => 'https://example.com/social.jpg',
                 'show_author' => true,

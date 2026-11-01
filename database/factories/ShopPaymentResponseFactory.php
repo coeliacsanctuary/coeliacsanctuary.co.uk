@@ -18,7 +18,7 @@ class ShopPaymentResponseFactory extends Factory
     {
         return [
             'payment_id' => Factory::factoryForModel(ShopPayment::class),
-            'charge_id' => $this->faker->uuid,
+            'charge_id' => $this->faker->uuid(),
             'response' => ['foo' => 'bar'],
         ];
     }

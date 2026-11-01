@@ -16,7 +16,7 @@ class ShopSourceFactory extends Factory
     public function definition()
     {
         return [
-            'source' => $this->faker->word,
+            'source' => $this->faker->word(),
         ];
     }
 }

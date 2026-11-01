@@ -17,7 +17,7 @@ class ShopOrderReviewInvitationFactory extends Factory
     public function definition()
     {
         return [
-            'id' => $this->faker->uuid,
+            'id' => $this->faker->uuid(),
             'sent' => false,
             'order_id' => self::factoryForModel(ShopOrder::class),
             'sent_at' => null,

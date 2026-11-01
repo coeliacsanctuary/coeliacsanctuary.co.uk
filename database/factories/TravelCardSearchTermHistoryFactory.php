@@ -16,7 +16,7 @@ class TravelCardSearchTermHistoryFactory extends Factory
     public function definition()
     {
         return [
-            'term' => $this->faker->word,
+            'term' => $this->faker->word(),
             'hits' => 0,
         ];
     }

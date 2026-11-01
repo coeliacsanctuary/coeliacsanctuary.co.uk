@@ -16,8 +16,8 @@ class RecipeMealFactory extends Factory
     public function definition()
     {
         return [
-            'meal' => $this->faker->word,
-            'slug' => $this->faker->slug,
+            'meal' => $this->faker->word(),
+            'slug' => $this->faker->slug(),
         ];
     }
 }

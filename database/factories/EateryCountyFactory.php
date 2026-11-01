@@ -16,7 +16,7 @@ class EateryCountyFactory extends Factory
 
     public function definition()
     {
-        $county = $this->faker->unique->state;
+        $county = $this->faker->unique()->state();
 
         return [
             'country_id' => 1,

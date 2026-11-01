@@ -16,8 +16,8 @@ class EateryFeatureFactory extends Factory
     public function definition()
     {
         return [
-            'feature' => $this->faker->word,
-            'slug' => $this->faker->slug,
+            'feature' => $this->faker->word(),
+            'slug' => $this->faker->slug(),
         ];
     }
 }

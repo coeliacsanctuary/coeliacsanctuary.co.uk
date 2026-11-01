@@ -19,11 +19,11 @@ class EateryReviewFactory extends Factory
     {
         return [
             'rating' => $this->faker->numberBetween(1, 5),
-            'ip' => $this->faker->ipv6,
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
+            'ip' => $this->faker->ipv6(),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->email(),
             'how_expensive' => $this->faker->numberBetween(1, 5),
-            'review' => $this->faker->paragraph,
+            'review' => $this->faker->paragraph(),
             'method' => 'test',
             'approved' => false,
             'wheretoeat_id' => static::factoryForModel(Eatery::class),

@@ -17,8 +17,8 @@ class RedirectFactory extends Factory
     public function definition()
     {
         return [
-            'from' => $this->faker->slug,
-            'to' => $this->faker->slug,
+            'from' => $this->faker->slug(),
+            'to' => $this->faker->slug(),
             'status' => Response::HTTP_PERMANENTLY_REDIRECT,
             'hits' => 0,
         ];

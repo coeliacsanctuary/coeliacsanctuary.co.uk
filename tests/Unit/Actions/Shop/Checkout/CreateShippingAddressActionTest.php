@@ -31,13 +31,13 @@ class CreateShippingAddressActionTest extends TestCase
         $this->assertDatabaseEmpty(ShopShippingAddress::class);
 
         $payload = new PendingOrderShippingAddressDetails(
-            line_1: $this->faker()->streetAddress,
+            line_1: $this->faker()->streetAddress(),
             line_2: 'Foo',
             line_3: 'Bar',
-            town: $this->faker->city,
-            county: $this->faker->state,
-            postcode: $this->faker->postcode,
-            country: $this->faker->country,
+            town: $this->faker->city(),
+            county: $this->faker->state(),
+            postcode: $this->faker->postcode(),
+            country: $this->faker->country(),
         );
 
         app(CreateShippingAddressAction::class)->handle($this->customer, $payload);

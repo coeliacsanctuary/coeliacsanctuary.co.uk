@@ -16,8 +16,8 @@ class BlogTagFactory extends Factory
     public function definition()
     {
         return [
-            'tag' => $this->faker->word,
-            'slug' => $this->faker->slug,
+            'tag' => $this->faker->word(),
+            'slug' => $this->faker->slug(),
         ];
     }
 }

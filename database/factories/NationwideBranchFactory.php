@@ -18,14 +18,14 @@ class NationwideBranchFactory extends Factory
     {
         return [
             'wheretoeat_id' => 1,
-            'name' => $this->faker->word,
-            'slug' => $this->faker->slug,
+            'name' => $this->faker->word(),
+            'slug' => $this->faker->slug(),
             'town_id' => 1,
             'county_id' => 1,
             'country_id' => 1,
-            'address' => str_replace(', ', '<br />', $this->faker->address),
-            'lat' => $this->faker->latitude,
-            'lng' => $this->faker->longitude,
+            'address' => str_replace(', ', '<br />', $this->faker->address()),
+            'lat' => $this->faker->latitude(),
+            'lng' => $this->faker->longitude(),
             'live' => true,
         ];
     }

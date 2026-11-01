@@ -18,8 +18,8 @@ class EateryAttractionRestaurantFactory extends Factory
     {
         return [
             'wheretoeat_id' => static::factoryForModel(Eatery::class),
-            'restaurant_name' => $this->faker->company,
-            'info' => $this->faker->paragraph,
+            'restaurant_name' => $this->faker->company(),
+            'info' => $this->faker->paragraph(),
         ];
     }
 

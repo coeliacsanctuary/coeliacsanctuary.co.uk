@@ -16,7 +16,7 @@ class TravelCardSearchTermFactory extends Factory
     public function definition()
     {
         return [
-            'term' => $this->faker->word,
+            'term' => $this->faker->word(),
             'type' => $this->faker->randomElement(['country', 'language']),
             'hits' => 0,
         ];

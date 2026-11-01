@@ -25,7 +25,7 @@ class ShopOrderReviewItemFactory extends Factory
             'product_type' => ShopProduct::class,
             'product_id' => self::factoryForModel(ShopProduct::class),
             'rating' => $this->faker->numberBetween(1, 5),
-            'review' => $this->faker->paragraph,
+            'review' => $this->faker->paragraph(),
         ];
     }
 

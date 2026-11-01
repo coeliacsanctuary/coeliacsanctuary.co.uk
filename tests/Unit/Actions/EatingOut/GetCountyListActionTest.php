@@ -36,7 +36,7 @@ class GetCountyListActionTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
 
         $country2 = $this->build(EateryCountry::class)
-            ->state(['id' => 2, 'country' => $this->faker->unique->country])
+            ->state(['id' => 2, 'country' => $this->faker->unique()->country()])
             ->create();
 
         $this->build(EateryCounty::class)
@@ -54,7 +54,7 @@ class GetCountyListActionTest extends TestCase
             });
 
         $country3 = $this->build(EateryCountry::class)
-            ->state(['id' => 3, 'country' => $this->faker->unique->country])
+            ->state(['id' => 3, 'country' => $this->faker->unique()->country()])
             ->create();
 
         $county3 = $this->build(EateryCounty::class)

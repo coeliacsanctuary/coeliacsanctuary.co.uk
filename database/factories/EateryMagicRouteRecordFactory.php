@@ -19,7 +19,7 @@ class EateryMagicRouteRecordFactory extends Factory
     {
         return [
             'resolver_type' => EateryMagicRouteType::HundredPercentGlutenFree,
-            'raw_location' => $this->faker->slug,
+            'raw_location' => $this->faker->slug(),
             'location_type' => null,
             'location_id' => null,
             'builder_config' => app(Configuration::class),

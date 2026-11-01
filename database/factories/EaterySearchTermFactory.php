@@ -16,7 +16,7 @@ class EaterySearchTermFactory extends Factory
     public function definition()
     {
         return [
-            'term' => $this->faker->word,
+            'term' => $this->faker->word(),
             'range' => $this->faker->randomElement(['1', '2', '5', '10', '20']),
         ];
     }

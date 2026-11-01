@@ -18,7 +18,7 @@ class CommentReplyFactory extends Factory
     public function definition()
     {
         return [
-            'comment_reply' => $this->faker->paragraph,
+            'comment_reply' => $this->faker->paragraph(),
             'comment_id' => static::factoryForModel(Comment::class),
         ];
     }

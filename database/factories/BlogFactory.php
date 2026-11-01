@@ -17,16 +17,16 @@ class BlogFactory extends Factory
 
     public function definition()
     {
-        $title = $this->faker->sentence;
+        $title = $this->faker->sentence();
 
         return [
             'title' => $title,
             'slug' => Str::slug($title),
-            'description' => $this->faker->paragraph,
-            'body' => $this->faker->paragraph,
+            'description' => $this->faker->paragraph(),
+            'body' => $this->faker->paragraph(),
             'live' => true,
             'meta_tags' => implode(',', $this->faker->words(10)),
-            'meta_description' => $this->faker->paragraph,
+            'meta_description' => $this->faker->paragraph(),
             'publish_at' => Carbon::now(),
             'draft' => false,
         ];

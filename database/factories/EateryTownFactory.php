@@ -16,7 +16,7 @@ class EateryTownFactory extends Factory
 
     public function definition()
     {
-        $town = $this->faker->city;
+        $town = $this->faker->city();
 
         return [
             'county_id' => 1,

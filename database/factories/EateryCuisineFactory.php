@@ -16,7 +16,7 @@ class EateryCuisineFactory extends Factory
     public function definition()
     {
         return [
-            'cuisine' => $this->faker->name,
+            'cuisine' => $this->faker->name(),
         ];
     }
 }

@@ -17,20 +17,20 @@ class EateryFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->word,
-            'slug' => $this->faker->slug,
+            'name' => $this->faker->word(),
+            'slug' => $this->faker->slug(),
             'town_id' => 1,
             'county_id' => 1,
             'country_id' => 1,
             'type_id' => 1,
             'venue_type_id' => 1,
             'cuisine_id' => 1,
-            'info' => $this->faker->sentence,
-            'address' => str_replace(', ', '<br />', $this->faker->address),
-            'phone' => $this->faker->phoneNumber,
-            'website' => $this->faker->url,
-            'lat' => $this->faker->latitude,
-            'lng' => $this->faker->longitude,
+            'info' => $this->faker->sentence(),
+            'address' => str_replace(', ', '<br />', $this->faker->address()),
+            'phone' => $this->faker->phoneNumber(),
+            'website' => $this->faker->url(),
+            'lat' => $this->faker->latitude(),
+            'lng' => $this->faker->longitude(),
             'live' => true,
             'closed_down' => false,
         ];

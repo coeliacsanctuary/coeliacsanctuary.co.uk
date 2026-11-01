@@ -16,8 +16,8 @@ class EateryVenueTypeFactory extends Factory
     public function definition()
     {
         return [
-            'venue_type' => $this->faker->word,
-            'slug' => $this->faker->slug,
+            'venue_type' => $this->faker->word(),
+            'slug' => $this->faker->slug(),
             'type_id' => 1,
         ];
     }

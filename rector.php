@@ -5,9 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
-use RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector;
 use RectorLaravel\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector;
-use RectorLaravel\Rector\PropertyFetch\ReplaceFakerPropertyFetchWithMethodCallRector;
 use RectorLaravel\Set\LaravelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -30,7 +28,6 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->skip([
         ReplaceFakerInstanceWithHelperRector::class,
-        ReplaceFakerPropertyFetchWithMethodCallRector::class, // do seperate
     ]);
 
     $rectorConfig->importNames(importDocBlockNames: false);

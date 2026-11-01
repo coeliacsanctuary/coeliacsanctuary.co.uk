@@ -18,9 +18,9 @@ class ShopPaymentRefundFactory extends Factory
     {
         return [
             'payment_id' => Factory::factoryForModel(ShopPayment::class),
-            'refund_id' => $this->faker->uuid,
+            'refund_id' => $this->faker->uuid(),
             'amount' => $this->faker->numberBetween(1, 10),
-            'note' => $this->faker->text,
+            'note' => $this->faker->text(),
             'response' => ['foo' => 'bar'],
         ];
     }

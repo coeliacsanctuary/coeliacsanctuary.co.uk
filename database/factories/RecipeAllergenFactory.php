@@ -16,8 +16,8 @@ class RecipeAllergenFactory extends Factory
     public function definition()
     {
         return [
-            'allergen' => $this->faker->word,
-            'slug' => $this->faker->slug,
+            'allergen' => $this->faker->word(),
+            'slug' => $this->faker->slug(),
         ];
     }
 }

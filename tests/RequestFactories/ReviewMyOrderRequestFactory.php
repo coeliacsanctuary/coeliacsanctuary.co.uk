@@ -15,7 +15,7 @@ class ReviewMyOrderRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
+            'name' => $this->faker->name(),
             'whereHeard' => ['facebook', 'instagram'],
         ];
     }
@@ -45,7 +45,7 @@ class ReviewMyOrderRequestFactory extends RequestFactory
         return [
             'id' => $id,
             'rating' => $this->faker->numberBetween(1, 5),
-            'review' => $this->faker->paragraph,
+            'review' => $this->faker->paragraph(),
             'type' => $type,
         ];
     }

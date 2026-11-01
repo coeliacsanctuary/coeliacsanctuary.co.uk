@@ -18,11 +18,11 @@ class ShopShippingAddressFactory extends Factory
     {
         return [
             'customer_id' => Factory::factoryForModel(ShopCustomer::class),
-            'name' => $this->faker->name,
-            'line_1' => $this->faker->buildingNumber,
-            'line_2' => $this->faker->streetAddress,
-            'town' => $this->faker->city,
-            'postcode' => $this->faker->postcode,
+            'name' => $this->faker->name(),
+            'line_1' => $this->faker->buildingNumber(),
+            'line_2' => $this->faker->streetAddress(),
+            'town' => $this->faker->city(),
+            'postcode' => $this->faker->postcode(),
             'country' => 'England',
         ];
     }

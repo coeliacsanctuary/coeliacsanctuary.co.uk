@@ -23,11 +23,11 @@ class CollectionGroupFactory extends Factory
 
     public function withTitle(): self
     {
-        return $this->state(fn (): array => ['title' => $this->faker->sentence]);
+        return $this->state(fn (): array => ['title' => $this->faker->sentence()]);
     }
 
     public function withBody(): self
     {
-        return $this->state(fn (): array => ['body' => $this->faker->paragraph]);
+        return $this->state(fn (): array => ['body' => $this->faker->paragraph()]);
     }
 }

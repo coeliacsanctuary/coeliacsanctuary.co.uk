@@ -19,7 +19,7 @@ class ShopCustomsFeeFactory extends Factory
         return [
             'postage_country_id' => self::factoryForModel(ShopPostageCountry::class),
             'fee' => $this->faker->numberBetween(100, 200),
-            'description' => $this->faker->sentence,
+            'description' => $this->faker->sentence(),
         ];
     }
 }

@@ -59,8 +59,8 @@ class ShopOrderFactory extends Factory
             ->has(self::factoryForModel(ShopPayment::class)->has(self::factoryForModel(ShopPaymentResponse::class), 'response'), 'payment')
             ->state(fn (): array => [
                 'state_id' => OrderState::PENDING,
-                'payment_intent_id' => $this->faker->password,
-                'payment_intent_secret' => $this->faker->uuid,
+                'payment_intent_id' => $this->faker->password(),
+                'payment_intent_secret' => $this->faker->uuid(),
             ]);
     }
 

@@ -18,7 +18,7 @@ class TemporaryFileUploadFactory extends Factory
     public function definition(): array
     {
         return [
-            'filename' => $this->faker->uuid,
+            'filename' => $this->faker->uuid(),
             'path' => '/',
             'source' => 'uploads',
             'filesize' => $this->faker->numberBetween(1, 1000),

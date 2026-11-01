@@ -16,12 +16,12 @@ class RecipeNutritionFactory extends Factory
     public function definition()
     {
         return [
-            'calories' => $this->faker->randomDigitNotNull,
-            'carbs' => $this->faker->randomDigitNotNull,
-            'fat' => $this->faker->randomDigitNotNull,
-            'protein' => $this->faker->randomDigitNotNull,
-            'fibre' => $this->faker->randomDigitNotNull,
-            'sugar' => $this->faker->randomDigitNotNull,
+            'calories' => $this->faker->randomDigitNotNull(),
+            'carbs' => $this->faker->randomDigitNotNull(),
+            'fat' => $this->faker->randomDigitNotNull(),
+            'protein' => $this->faker->randomDigitNotNull(),
+            'fibre' => $this->faker->randomDigitNotNull(),
+            'sugar' => $this->faker->randomDigitNotNull(),
         ];
     }
 }

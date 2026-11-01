@@ -17,16 +17,16 @@ class RecipeFactory extends Factory
 
     public function definition()
     {
-        $title = $this->faker->sentence;
+        $title = $this->faker->sentence();
         return [
             'title' => $title,
             'slug' => Str::slug($title),
-            'meta_tags' => $this->faker->paragraph,
-            'meta_description' => $this->faker->paragraph,
-            'description' => $this->faker->paragraph,
-            'ingredients' => $this->faker->text,
+            'meta_tags' => $this->faker->paragraph(),
+            'meta_description' => $this->faker->paragraph(),
+            'description' => $this->faker->paragraph(),
+            'ingredients' => $this->faker->text(),
             'method' => $this->faker->paragraphs(5, true),
-            'author' => $this->faker->name,
+            'author' => $this->faker->name(),
             'serving_size' => '8 Slices',
             'per' => 'slice',
             'search_tags' => $this->faker->words(5, true),
