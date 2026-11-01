@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resources\EatingOut;
 
+use App\Builders\EatingOut\EateryBuilder;
 use App\Concerns\FormatsMarkdown;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
@@ -37,16 +38,13 @@ class NationwidePageResource extends JsonResource
     {
         $this->load([
             'eateries' => fn (HasMany $builder) => $builder
-                ->when($this->filters['categories'], function (Builder $builder, array $categories) {
-                    /** @var Builder<Eatery> $builder */
+                ->when($this->filters['categories'], function (EateryBuilder $builder, array $categories) {
                     return $builder->hasCategories($categories);
                 })
-                ->when($this->filters['venueTypes'], function (Builder $builder, array $venueTypes) {
-                    /** @var Builder<Eatery> $builder */
+                ->when($this->filters['venueTypes'], function (EateryBuilder $builder, array $venueTypes) {
                     return $builder->hasVenueTypes($venueTypes);
                 })
-                ->when($this->filters['features'], function (Builder $builder, array $features) {
-                    /** @var Builder<Eatery> $builder */
+                ->when($this->filters['features'], function (EateryBuilder $builder, array $features) {
                     return $builder->hasFeatures($features);
                 })
                 ->orderBy('name'),

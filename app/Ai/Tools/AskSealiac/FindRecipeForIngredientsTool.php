@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools\AskSealiac;
 
+use App\Builders\Recipes\RecipeBuilder;
 use App\Ai\Concerns\FormatsRecipes;
 use App\Models\Recipes\Recipe;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -41,9 +42,9 @@ class FindRecipeForIngredientsTool extends BaseTool
                     ->each(fn (string $ingredient) => $builder->orWhereLike('ingredients', "%{$ingredient}%"))
             )
             ->with(['media', 'nutrition'])
-            ->when($request->filled('allergens'), fn (Builder $builder) => $builder->hasFreeFrom($request->array('allergens')))
-            ->when($request->filled('meals'), fn (Builder $builder) => $builder->hasMeals($request->array('meals')))
-            ->when($request->filled('features'), fn (Builder $builder) => $builder->hasFeatures($request->array('features')))
+            ->when($request->filled('allergens'), fn (RecipeBuilder $builder) => $builder->hasFreeFrom($request->array('allergens')))
+            ->when($request->filled('meals'), fn (RecipeBuilder $builder) => $builder->hasMeals($request->array('meals')))
+            ->when($request->filled('features'), fn (RecipeBuilder $builder) => $builder->hasFeatures($request->array('features')))
             ->get()
             ->map($this->formatRecipe(...))
             ->toJson();

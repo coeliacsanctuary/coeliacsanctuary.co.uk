@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Builders\EatingOut\EateryBuilder;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\LatLng;
 use App\DataObjects\EatingOut\PendingEatery;
-use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EaterySearchTerm;
 use App\Models\EatingOut\NationwideBranch;
 use App\Services\EatingOut\LocationSearchService;
@@ -54,7 +54,6 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
 
         SearchResultIdsState::$branchIds = $ids->pluck('id')->all();
 
-        /** @var Builder<Eatery> $query */
         $query = NationwideBranch::query()
             ->selectDistance($latLng)
             /** @lang mysql */
@@ -71,8 +70,7 @@ class GetNationwideBranchesInSearchArea implements GetEateriesPipelineActionCont
             )
             ->whereIn('wheretoeat_nationwide_branches.id', $ids->pluck('id'))
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
-            ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
-                /** @var Builder<Eatery> $query */
+            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData) {
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
                 }

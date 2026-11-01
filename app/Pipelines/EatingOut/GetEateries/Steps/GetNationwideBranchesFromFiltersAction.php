@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Builders\EatingOut\EateryBuilder;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
-use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -22,7 +21,6 @@ class GetNationwideBranchesFromFiltersAction implements GetEateriesPipelineActio
             return $next($pipelineData);
         }
 
-        /** @var Builder<Eatery> $query */
         $query = NationwideBranch::query()
             /** @lang mysql */
             /** @phpstan-ignore argument.type */
@@ -32,8 +30,7 @@ class GetNationwideBranchesFromFiltersAction implements GetEateriesPipelineActio
                 'if(wheretoeat_nationwide_branches.name = "" or wheretoeat_nationwide_branches.name is null, concat(wheretoeat.name, "-", wheretoeat.id), concat(wheretoeat_nationwide_branches.name, " ", wheretoeat.name)) as ordering',
             ], ','))
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
-            ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
-                /** @var Builder<Eatery> $query */
+            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData) {
                 $query->where('closed_down', false);
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);

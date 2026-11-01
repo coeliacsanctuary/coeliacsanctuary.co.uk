@@ -10,7 +10,6 @@ use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use App\Support\Helpers;
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -26,7 +25,6 @@ class GetEateriesInLatLngRadiusAction implements GetEateriesPipelineActionContra
             return $next($pipelineData);
         }
 
-        /** @var Builder<Eatery> $idQuery */
         $idQuery = Eatery::databaseSearchAroundLatLng($pipelineData->latLng, $pipelineData->isMeters ? $pipelineData->latLng->radius : Helpers::milesToMeters($pipelineData->latLng->radius), ['venue_type_id'])
             ->whereRaw('(select county from wheretoeat_counties where wheretoeat_counties.id = wheretoeat.county_id) != ?', ['Nationwide']);
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Builders\EatingOut\EateryBuilder;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
-use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,7 +23,6 @@ class GetNationwideBranchesInLondonAreaAction implements GetEateriesPipelineActi
             throw new RuntimeException('No Area');
         }
 
-        /** @var Builder<Eatery> $query */
         $query = NationwideBranch::query()
             ->when(
                 $pipelineData->sort === 'rating',
@@ -44,8 +43,7 @@ class GetNationwideBranchesInLondonAreaAction implements GetEateriesPipelineActi
             )
             ->where('wheretoeat_nationwide_branches.area_id', $pipelineData->area->id)
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
-            ->whereHas('eatery', function (Builder $query) use ($pipelineData) {
-                /** @var Builder<Eatery> $query */
+            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData) {
                 $query->where('closed_down', false);
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Recipes;
 
+use App\Builders\Recipes\RecipeBuilder;
 use App\Concerns\CanBePublished;
 use App\Concerns\ClearsCache;
 use App\Concerns\Comments\Commentable;
@@ -20,6 +21,7 @@ use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -28,8 +30,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
@@ -46,6 +46,7 @@ use Spatie\SchemaOrg\Schema;
  * @property string $servings
  * @property string $portion_size
  */
+#[UseEloquentBuilder(RecipeBuilder::class)]
 class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -284,66 +285,6 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
         }
 
         return $suitableFor;
-    }
-
-    /**
-     * @param  Builder<Recipe>  $builder
-     * @return Builder<Recipe>
-     */
-    public function scopeHasFeatures(Builder $builder, array $features): Builder
-    {
-        $ids = Cache::remember(
-            'recipe-feature-ids-' . implode('-', $features),
-            now()->addSecond(),
-            fn () => RecipeFeature::query()->whereIn('slug', $features)->pluck('id'),
-        );
-
-        foreach ($ids as $id) {
-            /** @phpstan-ignore argument.type */
-            $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_features f where f.recipe_id = recipes.id and f.feature_type_id = {$id})"));
-        }
-
-        return $builder;
-    }
-
-    /**
-     * @param  Builder<Recipe>  $builder
-     * @return Builder<Recipe>
-     */
-    public function scopeHasMeals(Builder $builder, array $meals): Builder
-    {
-        $ids = Cache::remember(
-            'recipe-meal-ids-' . implode('-', $meals),
-            now()->addSecond(),
-            fn () => RecipeMeal::query()->whereIn('slug', $meals)->pluck('id'),
-        );
-
-        foreach ($ids as $id) {
-            /** @phpstan-ignore argument.type */
-            $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_meals m where m.recipe_id = recipes.id and m.meal_type_id = {$id})"));
-        }
-
-        return $builder;
-    }
-
-    /**
-     * @param  Builder<Recipe>  $builder
-     * @return Builder<Recipe>
-     */
-    public function scopeHasFreeFrom(Builder $builder, array $freeFrom): Builder
-    {
-        $ids = Cache::remember(
-            'recipe-freefrom-ids-' . implode('-', $freeFrom),
-            now()->addSecond(),
-            fn () => RecipeAllergen::query()->whereIn('slug', $freeFrom)->pluck('id'),
-        );
-
-        foreach ($ids as $id) {
-            /** @phpstan-ignore argument.type */
-            $builder->whereRaw(DB::raw("exists (select * from recipe_assigned_allergens a where a.recipe_id = recipes.id and a.allergen_type_id = {$id})"));
-        }
-
-        return $builder;
     }
 
     public function toSearchableArray(): array
