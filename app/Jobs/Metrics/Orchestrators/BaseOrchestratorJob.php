@@ -18,10 +18,7 @@ use Illuminate\Support\Collection;
 
 abstract class BaseOrchestratorJob implements ShouldQueue, ShouldBeUnique
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use \Illuminate\Foundation\Queue\Queueable;
 
     public function __construct()
     {

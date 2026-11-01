@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -11,14 +13,14 @@ use Illuminate\Support\Str;
 /**
  * @property int $range
  */
+#[RouteKey('key')]
+#[Table(name: 'wheretoeat_search_terms')]
 class EaterySearchTerm extends Model
 {
     protected $casts = [
         'range' => 'int',
         'from_user_location' => 'bool',
     ];
-
-    protected $table = 'wheretoeat_search_terms';
 
     protected static function boot(): void
     {
@@ -39,11 +41,6 @@ class EaterySearchTerm extends Model
 
             return $searchTerm;
         });
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'key';
     }
 
     public function logSearch(): void

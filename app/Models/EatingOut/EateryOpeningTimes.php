@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -14,11 +15,10 @@ use Illuminate\Support\Str;
  * @property bool $is_open_now
  * @property array $opening_times_array
  */
+#[Table(name: 'wheretoeat_opening_times')]
 class EateryOpeningTimes extends Model
 {
     protected $casts = ['is_open_now' => 'bool'];
-
-    protected $table = 'wheretoeat_opening_times';
 
     /** @return BelongsTo<Eatery, $this> */
     public function eatery(): BelongsTo

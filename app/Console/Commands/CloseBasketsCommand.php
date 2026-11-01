@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Actions\Shop\CloseBasketAction;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
+#[Signature('coeliac:close-baskets')]
 class CloseBasketsCommand extends Command
 {
-    protected $signature = 'coeliac:close-baskets';
-
     public function handle(): void
     {
         ShopOrder::query()

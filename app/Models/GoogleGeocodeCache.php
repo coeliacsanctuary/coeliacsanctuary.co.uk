@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\DataObjects\EatingOut\LatLng;
 use Illuminate\Database\Eloquent\Model;
 
+#[Table(name: 'google_geocode_cache')]
 class GoogleGeocodeCache extends Model
 {
-    protected $table = 'google_geocode_cache';
-
     protected $casts = [
         'response' => 'array',
         'most_recent_hit' => 'datetime',

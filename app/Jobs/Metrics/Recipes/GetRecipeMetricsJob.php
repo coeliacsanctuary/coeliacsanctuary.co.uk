@@ -24,10 +24,7 @@ use Throwable;
 
 class GetRecipeMetricsJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use \Illuminate\Foundation\Queue\Queueable;
 
     public int $tries = 1;
 

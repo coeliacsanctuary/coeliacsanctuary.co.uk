@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Blogs;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\CanBePublished;
 use App\Concerns\ClearsCache;
 use App\Concerns\Comments\Commentable;
@@ -41,6 +42,7 @@ use Spatie\SchemaOrg\Schema;
  * @implements HasComments<$this>
  * @implements HasFaqs<$this>
  */
+#[RouteKey('slug')]
 class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -76,11 +78,6 @@ class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia,
             CreateBlogIndexPageOpenGraphImageJob::dispatch();
             CreateHomePageOpenGraphImageJob::dispatch();
         });
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     /** @param Builder<static> $query */

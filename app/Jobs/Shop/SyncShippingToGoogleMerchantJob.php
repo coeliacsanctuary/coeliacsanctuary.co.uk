@@ -13,10 +13,7 @@ use Illuminate\Queue\SerializesModels;
 
 class SyncShippingToGoogleMerchantJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use \Illuminate\Foundation\Queue\Queueable;
 
     public function handle(SyncShippingToGoogleMerchantAction $action): void
     {

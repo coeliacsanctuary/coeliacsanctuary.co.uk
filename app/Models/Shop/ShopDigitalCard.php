@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Actions\Shop\MyTravelCards\SyncGoogleWalletClassAction;
 use App\Enums\Shop\DigitalCardColor;
 use App\Enums\Shop\DigitalCardIcon;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property DigitalCardType $type_id
  * @property float $averageRating
  */
+#[RouteKey('slug')]
 class ShopDigitalCard extends Model
 {
     protected $casts = [
@@ -45,11 +47,6 @@ class ShopDigitalCard extends Model
                 dispatch(fn () => app(SyncGoogleWalletClassAction::class)->handle($card));
             }
         });
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     public function resolveRouteBindingQuery($query, $value, $field = null)

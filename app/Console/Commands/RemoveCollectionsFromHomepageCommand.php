@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Collections\Collection;
 use Illuminate\Console\Command;
 
+#[Signature('coeliac:remove-collections-from-homepage')]
 class RemoveCollectionsFromHomepageCommand extends Command
 {
-    protected $signature = 'coeliac:remove-collections-from-homepage';
-
     public function handle(): void
     {
         Collection::query()

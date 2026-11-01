@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasOpenGraphImage;
 use App\Contracts\HasOpenGraphImageContract;
@@ -29,6 +31,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  *
  * @property string $image
  */
+#[RouteKey('slug')]
+#[Table(name: 'wheretoeat_counties')]
 class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
 {
     use DisplaysMedia;
@@ -38,8 +42,6 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
-
-    protected $table = 'wheretoeat_counties';
 
     protected static function booted(): void
     {
@@ -61,11 +63,6 @@ class EateryCounty extends Model implements HasMedia, HasOpenGraphImageContract
         });
 
         static::saved(fn (self $county) => CreateEatingOutOpenGraphImageJob::dispatch($county));
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     public function registerMediaCollections(): void

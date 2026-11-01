@@ -13,7 +13,7 @@ class MailcoachIncomingRequestMiddleware
 {
     public function handle(Request $request, Closure $next): Response|JsonResponse
     {
-        if ($request->get('key') !== config('mailcoach-sdk.incoming-key')) {
+        if ($request->input('key') !== config('mailcoach-sdk.incoming-key')) {
             abort(403);
         }
 

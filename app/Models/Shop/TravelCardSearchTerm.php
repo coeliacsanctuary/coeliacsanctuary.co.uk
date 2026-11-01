@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Builders\Shop\TravelCardSearchTermBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -13,10 +14,9 @@ use Illuminate\Support\Str;
 
 /** @property string $display_term */
 #[UseEloquentBuilder(TravelCardSearchTermBuilder::class)]
+#[Table(name: 'shop_product_travel_cards_search_terms')]
 class TravelCardSearchTerm extends Model
 {
-    protected $table = 'shop_product_travel_cards_search_terms';
-
     /** @return Attribute<string, never> */
     public function displayTerm(): Attribute
     {

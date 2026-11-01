@@ -106,7 +106,7 @@ class PlaceRecommendations extends Resource
 
             SelectPlus::make('eatery_id')
                 ->onlyOnForms()
-                ->options(fn (Request $request): Collection => $this->searchLocations($request->get('search')))
+                ->options(fn (Request $request): Collection => $this->searchLocations($request->input('search')))
                 ->ajaxSearchable($this->searchLocations(...)),
         ];
     }

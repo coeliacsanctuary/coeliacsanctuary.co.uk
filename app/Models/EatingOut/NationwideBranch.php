@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
 use App\Builders\EatingOut\NationwideBranchBuilder;
 use App\Concerns\ClearsCache;
@@ -48,6 +50,8 @@ use Laravel\Scout\Searchable;
  * @property array{value: string, label: string} | null $average_expense
  */
 #[UseEloquentBuilder(NationwideBranchBuilder::class)]
+#[Appends(['formatted_address', 'full_location'])]
+#[Table(name: 'wheretoeat_nationwide_branches')]
 class NationwideBranch extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -61,11 +65,6 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
 
     use HasSealiacOverview;
     use Searchable;
-
-    protected $table = 'wheretoeat_nationwide_branches';
-
-    /** @phpstan-ignore-next-line */
-    protected $appends = ['formatted_address', 'full_location'];
 
     protected $casts = [
         'lat' => 'float',

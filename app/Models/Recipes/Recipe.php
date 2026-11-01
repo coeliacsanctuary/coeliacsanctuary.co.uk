@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Recipes;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Builders\Recipes\RecipeBuilder;
 use App\Concerns\CanBePublished;
 use App\Concerns\ClearsCache;
@@ -47,6 +48,7 @@ use Spatie\SchemaOrg\Schema;
  * @property string $portion_size
  */
 #[UseEloquentBuilder(RecipeBuilder::class)]
+#[RouteKey('slug')]
 class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -82,11 +84,6 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
             CreateRecipeIndexPageOpenGraphImageJob::dispatch();
             CreateHomePageOpenGraphImageJob::dispatch();
         });
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     /** @param Builder<static> $query */

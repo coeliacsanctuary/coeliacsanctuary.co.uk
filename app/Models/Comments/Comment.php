@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\Comments;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Concerns\DisplaysDates;
 use App\Contracts\Comments\HasComments;
 use Illuminate\Database\Eloquent\Model;
@@ -13,11 +15,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * @param  HasComments  $commentable
  */
+#[Appends(['what'])]
 class Comment extends Model
 {
     use DisplaysDates;
-
-    protected $appends = ['what'];
 
     protected $attributes = [
         'approved' => false,
@@ -39,8 +40,8 @@ class Comment extends Model
         return $this->morphTo();
     }
 
-    public function getWhatAttribute(): string
+    protected function what(): Attribute
     {
-        return class_basename($this->commentable_type);
+        return Attribute::make(get: fn(): string => class_basename($this->commentable_type));
     }
 }

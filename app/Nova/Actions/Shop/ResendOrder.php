@@ -58,7 +58,7 @@ class ResendOrder extends Action
         $order = $this->resource;
 
         if ( ! $order && $request->has('resources')) {
-            $order = ShopOrder::query()->find($request->get('resources')[0]);
+            $order = ShopOrder::query()->find($request->input('resources')[0]);
         }
 
         if ( ! $order) {

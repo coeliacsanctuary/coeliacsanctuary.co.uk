@@ -16,10 +16,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProcessReviewImagesJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use \Illuminate\Foundation\Queue\Queueable;
 
     public function __construct(protected EateryReview $review, protected array $fileIds)
     {

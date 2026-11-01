@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Contracts\RegexRouteFallbackResolver;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Services\EatingOut\Collection\Configuration;
@@ -20,10 +21,9 @@ use RuntimeException;
  * @property Configuration $builder_config
  * @property EateryCounty|EateryTown|EateryArea $location
  */
+#[Table(name: 'wheretoeat_magic_route_records')]
 class EateryMagicRouteRecord extends Model
 {
-    protected $table = 'wheretoeat_magic_route_records';
-
     protected $casts = [
         'body' => 'array',
         'resolver_type' => EateryMagicRouteType::class,

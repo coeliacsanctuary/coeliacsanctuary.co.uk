@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
 use App\Builders\EatingOut\EateryBuilder;
 use App\Concerns\ClearsCache;
@@ -56,6 +57,7 @@ use Spatie\SchemaOrg\Restaurant;
  * @property string $display_snippet
  */
 #[UseEloquentBuilder(EateryBuilder::class)]
+#[Table(name: 'wheretoeat')]
 class Eatery extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -76,8 +78,6 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
         'live' => 'bool',
         'closed_down' => 'bool',
     ];
-
-    protected $table = 'wheretoeat';
 
     protected static function booted(): void
     {

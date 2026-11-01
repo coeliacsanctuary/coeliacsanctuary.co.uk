@@ -470,7 +470,7 @@ class Eateries extends Resource
             return;
         }
 
-        $placeRecommendation = EateryRecommendation::query()->find($request->get('place_recommendation_id'));
+        $placeRecommendation = EateryRecommendation::query()->find($request->input('place_recommendation_id'));
 
         if ( ! $placeRecommendation) {
             return;

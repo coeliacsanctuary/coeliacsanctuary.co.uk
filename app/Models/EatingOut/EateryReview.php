@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\ClearsCache;
 use App\Scopes\LiveScope;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $rating
  * @property array | null $price
  */
+#[Table(name: 'wheretoeat_reviews')]
 class EateryReview extends Model
 {
     use ClearsCache;
@@ -30,8 +32,6 @@ class EateryReview extends Model
         4 => 'A special treat',
         5 => 'Expensive',
     ];
-
-    protected $table = 'wheretoeat_reviews';
 
     protected $casts = [
         'admin_review' => 'bool',

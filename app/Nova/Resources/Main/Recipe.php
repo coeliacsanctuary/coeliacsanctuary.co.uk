@@ -99,7 +99,7 @@ class Recipe extends Resource
                             return;
                         }
 
-                        $group = CollectionModel::query()->find($request->get($requestAttribute))?->groups->last();
+                        $group = CollectionModel::query()->find($request->input($requestAttribute))?->groups->last();
 
                         if ( ! $group) {
                             return;

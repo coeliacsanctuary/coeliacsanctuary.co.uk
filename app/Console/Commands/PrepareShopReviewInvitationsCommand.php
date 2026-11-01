@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\DataObjects\Shop\ReviewInvitationRule;
 use App\Enums\Shop\OrderState;
 use App\Jobs\Shop\SendReviewInvitationJob;
@@ -12,10 +13,9 @@ use App\Support\Shop\ReviewInvitations\SendingRules;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 
+#[Signature('coeliac:prepare-shop-review-invitations')]
 class PrepareShopReviewInvitationsCommand extends Command
 {
-    protected $signature = 'coeliac:prepare-shop-review-invitations';
-
     public function handle(): void
     {
         SendingRules::get()->each(fn (ReviewInvitationRule $rule) => ShopOrder::query()

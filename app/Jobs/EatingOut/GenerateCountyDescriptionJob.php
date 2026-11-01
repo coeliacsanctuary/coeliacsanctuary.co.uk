@@ -21,10 +21,7 @@ use Illuminate\Queue\SerializesModels;
 #[Timeout(300)]
 class GenerateCountyDescriptionJob implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use \Illuminate\Foundation\Queue\Queueable;
 
     public int $uniqueFor = 600;
 

@@ -15,10 +15,7 @@ use Illuminate\Queue\SerializesModels;
 
 class SendReviewInvitationJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use \Illuminate\Foundation\Queue\Queueable;
 
     public function __construct(protected ShopOrder $order, protected string $delayText)
     {

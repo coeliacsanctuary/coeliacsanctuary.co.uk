@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Comments;
 
+use Illuminate\Foundation\Http\Attributes\StopOnFirstFailure;
 use App\Models\Blogs\Blog;
 use App\Models\Recipes\Recipe;
 use Closure;
@@ -11,10 +12,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+#[StopOnFirstFailure]
 class CommentRequest extends FormRequest
 {
-    protected $stopOnFirstFailure = true;
-
     public function resolveItem(): Blog | Recipe
     {
         $builder = match ($this->string('module')->toString()) {

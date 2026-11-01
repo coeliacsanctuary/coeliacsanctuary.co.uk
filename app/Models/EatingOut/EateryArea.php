@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasOpenGraphImage;
 use App\Contracts\HasOpenGraphImageContract;
@@ -31,6 +33,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  *
  * @property string $image
  */
+#[RouteKey('slug')]
+#[Table(name: 'wheretoeat_areas')]
 class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
 {
     use DisplaysMedia;
@@ -40,8 +44,6 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
-
-    protected $table = 'wheretoeat_areas';
 
     protected static function booted(): void
     {
@@ -79,11 +81,6 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
             CreateEatingOutOpenGraphImageJob::dispatch($area->town()->withoutGlobalScopes()->firstOrFail());
             CreateEatingOutOpenGraphImageJob::dispatch($area->town()->withoutGlobalScopes()->firstOrFail()->county()->withoutGlobalScopes()->firstOrFail());
         });
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     /**

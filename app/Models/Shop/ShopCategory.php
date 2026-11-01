@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+#[RouteKey('slug')]
 class ShopCategory extends Model implements HasMedia
 {
     use ClearsCache;
@@ -31,11 +33,6 @@ class ShopCategory extends Model implements HasMedia
             fn (Builder $builder) => $builder
                 ->whereHas('products', fn (Builder $builder) => $builder->whereHas('variants'))
         ));
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     /** @return BelongsToMany<ShopProduct, $this> */

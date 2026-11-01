@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\OneTime;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeMetric;
 use Carbon\Carbon;
@@ -14,10 +15,9 @@ use JourneyTracker\JourneyTrackerLaravel\Query\EventFilter;
 use JourneyTracker\JourneyTrackerLaravel\Query\PageFilter;
 use JourneyTracker\JourneyTrackerLaravel\Query\QueryDescriptor;
 
+#[Signature('coeliac:one-time:back-fill-recipe-metrics')]
 class BackFillRecipeMetricsCommand extends Command
 {
-    protected $signature = 'coeliac:one-time:back-fill-recipe-metrics';
-
     public function handle(): void
     {
         Recipe::query()

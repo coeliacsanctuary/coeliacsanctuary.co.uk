@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
@@ -24,10 +25,9 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\textarea;
 
+#[Signature('coeliac:convert-eateries-to-nationwide')]
 class ConvertEateriesToNationwideCommand extends Command
 {
-    protected $signature = 'coeliac:convert-eateries-to-nationwide';
-
     public function handle(): void
     {
         $selectedIds = multisearch(

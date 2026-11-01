@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Ai\Agents\EateryDescriptionAgent;
 use App\Models\EateryAiDescription;
 use App\Models\EatingOut\Eatery;
 use Exception;
 use Illuminate\Console\Command;
 
+#[Signature('coeliac:generate-ai-eatery-descriptions')]
 class GenerateAiEateryDescriptionsCommand extends Command
 {
-    protected $signature = 'coeliac:generate-ai-eatery-descriptions';
-
     public function handle(): void
     {
         Eatery::query()

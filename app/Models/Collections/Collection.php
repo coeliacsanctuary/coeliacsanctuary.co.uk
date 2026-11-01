@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Collections;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\CanBePublished;
 use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysDates;
@@ -28,6 +29,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int $eateries_count
  * @property CollectionDisplayType $display_type
  */
+#[RouteKey('slug')]
 class Collection extends Model implements HasMedia
 {
     use CanBePublished;
@@ -59,11 +61,6 @@ class Collection extends Model implements HasMedia
 
             CreateCollectionIndexPageOpenGraphImageJob::dispatch();
         });
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     public function registerMediaCollections(): void

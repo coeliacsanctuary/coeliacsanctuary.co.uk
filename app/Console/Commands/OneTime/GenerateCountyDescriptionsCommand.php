@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\OneTime;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Jobs\EatingOut\GenerateCountyDescriptionJob;
 use App\Models\EatingOut\EateryCounty;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 
+#[Signature('coeliac:one-time:generate-county-descriptions {--force}')]
 class GenerateCountyDescriptionsCommand extends Command
 {
-    protected $signature = 'coeliac:one-time:generate-county-descriptions {--force}';
-
     public function handle(): void
     {
         EateryCounty::query()

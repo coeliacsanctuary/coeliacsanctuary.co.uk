@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\OneTime;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Ai\Agents\TravelCardCountryScoringAgent;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\TravelCardSearchTerm;
@@ -24,10 +25,9 @@ use function Laravel\Prompts\title;
 use function Laravel\Prompts\warning;
 
 /** @phpstan-type TermScore array{term_id: int, show_on_product_page: bool, score: int|null, reason: string, language?: string} */
+#[Signature('coeliac:one-time:score-travel-card-countries')]
 class ScoreTravelCardCountriesCommand extends Command
 {
-    protected $signature = 'coeliac:one-time:score-travel-card-countries';
-
     /** @var array<int, string> */
     protected array $skipped = [];
 

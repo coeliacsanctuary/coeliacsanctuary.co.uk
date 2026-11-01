@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryRecommendation;
 use Illuminate\Console\Command;
@@ -11,12 +13,10 @@ use Illuminate\Support\Collection;
 
 use function Laravel\Prompts\confirm;
 
+#[Description('Check My Places recommendations against the eateries table and interactively delete duplicates')]
+#[Signature('coeliac:eating-out:check-my-places-duplicates')]
 class CheckMyPlacesDuplicatesCommand extends Command
 {
-    protected $signature = 'coeliac:eating-out:check-my-places-duplicates';
-
-    protected $description = 'Check My Places recommendations against the eateries table and interactively delete duplicates';
-
     public function handle(): void
     {
         $recommendations = EateryRecommendation::query()

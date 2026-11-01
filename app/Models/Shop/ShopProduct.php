@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\Faqs\Faqable;
@@ -41,6 +42,7 @@ use Spatie\SchemaOrg\Schema;
  *
  * @implements HasFaqs<$this>
  */
+#[RouteKey('slug')]
 class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
 {
     use ClearsCache;
@@ -71,11 +73,6 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
         return [
             'google_merchant_enabled' => 'boolean',
         ];
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     public function resolveRouteBindingQuery($query, $value, $field = null)

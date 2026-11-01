@@ -22,10 +22,7 @@ use Illuminate\Support\Collection as SupportCollection;
 #[Timeout(300)]
 class GenerateNationwideDescriptionJob implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use \Illuminate\Foundation\Queue\Queueable;
 
     public int $uniqueFor = 600;
 

@@ -59,7 +59,7 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
         return [
             SelectPlus::make('eatery_id')
                 ->fillUsing(function (Request $request, Fluent $fluent, $attribute, $requestAttribute): void {
-                    $fluent->set($attribute, $request->get($requestAttribute));
+                    $fluent->set($attribute, $request->input($requestAttribute));
                 })
                 ->options([])
                 ->ajaxSearchable(fn ($search): array => []),

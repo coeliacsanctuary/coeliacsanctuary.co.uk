@@ -22,10 +22,7 @@ use Illuminate\Support\Facades\Cache;
 #[Timeout(300)]
 class GenerateCountryDescriptionJob implements ShouldQueue, ShouldBeUnique
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use \Illuminate\Foundation\Queue\Queueable;
 
     public int $uniqueFor = 600;
 

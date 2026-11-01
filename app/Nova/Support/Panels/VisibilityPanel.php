@@ -49,8 +49,8 @@ class VisibilityPanel
                 ->default(fn () => Carbon::now()->addDay())
                 ->fillUsing(
                     fn ($request, $model, $attribute, $requestAttribute): ?Carbon =>
-                    $model->{$attribute} = $request->get($requestAttribute)
-                        ? Carbon::parse($request->get($requestAttribute))
+                    $model->{$attribute} = $request->input($requestAttribute)
+                        ? Carbon::parse($request->input($requestAttribute))
                         : null
                 )
                 ->dependsOn('_status', function (DateTime $field, NovaRequest $request, FormData $formData): void {

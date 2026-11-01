@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\OneTime;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\EatingOut\Eatery;
 use Illuminate\Console\Command;
 
 use function Laravel\Prompts\progress;
 
+#[Signature('one-time:migrate-eateries-social-urls')]
 class MigrateEateriesSocialUrlsCommand extends Command
 {
-    protected $signature = 'one-time:migrate-eateries-social-urls';
-
     protected int $facebookMigrated = 0;
 
     protected int $instagramMigrated = 0;
