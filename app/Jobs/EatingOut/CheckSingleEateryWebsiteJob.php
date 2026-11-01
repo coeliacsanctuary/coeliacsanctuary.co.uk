@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Actions\EatingOut\CheckEateryWebsiteAction;
 use App\Actions\EatingOut\CreateEateryAlertAction;
 use App\DataObjects\EatingOut\EateryWebsiteCheckResult;
@@ -12,7 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CheckSingleEateryWebsiteJob implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public function __construct(public Eatery $eatery)
     {

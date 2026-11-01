@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\Metrics\Recipes;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeMetric;
 use Exception;
@@ -20,7 +21,7 @@ use Throwable;
 
 class GetRecipeMetricsJob implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public int $tries = 1;
 

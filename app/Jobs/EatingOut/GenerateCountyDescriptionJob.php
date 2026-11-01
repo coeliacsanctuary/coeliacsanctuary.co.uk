@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Ai\Agents\EateryCountyDescriptionAgent;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
@@ -17,7 +18,7 @@ use Illuminate\Queue\Attributes\Tries;
 #[Timeout(300)]
 class GenerateCountyDescriptionJob implements ShouldBeUnique, ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public int $uniqueFor = 600;
 

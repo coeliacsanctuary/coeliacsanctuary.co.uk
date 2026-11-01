@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\Metrics\Blogs;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogMetric;
 use Exception;
@@ -20,7 +21,7 @@ use Throwable;
 
 class GetBlogMetricsJob implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public int $tries = 1;
 

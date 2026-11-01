@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Models\OpenGraphImage;
 use App\Models\Recipes\Recipe;
 use App\Services\RenderOpenGraphImage;
@@ -11,7 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CreateRecipeIndexPageOpenGraphImageJob implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public int $tries = 2;
 

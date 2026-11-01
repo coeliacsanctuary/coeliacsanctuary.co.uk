@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Enums\EatingOut\EateryType;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReview;
@@ -14,7 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CreateEateryAppPageOpenGraphImageJob implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public int $tries = 2;
 

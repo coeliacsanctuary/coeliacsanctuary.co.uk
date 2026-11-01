@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Ai\Agents\EateryNationwideDescriptionAgent;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
@@ -18,7 +19,7 @@ use Illuminate\Support\Collection as SupportCollection;
 #[Timeout(300)]
 class GenerateNationwideDescriptionJob implements ShouldBeUnique, ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public int $uniqueFor = 600;
 

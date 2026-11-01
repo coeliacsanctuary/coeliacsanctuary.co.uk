@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\Metrics\Orchestrators;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Contracts\Metrics\MetricSource;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -14,7 +15,7 @@ use Illuminate\Support\Collection;
 
 abstract class BaseOrchestratorJob implements ShouldQueue, ShouldBeUnique
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public function __construct()
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Actions\OpenGraphImages\GenerateAreaOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateCountyOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateEateryOpenGraphImageAction;
@@ -23,7 +24,7 @@ use RuntimeException;
 
 class CreateEatingOutOpenGraphImageJob implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public int $tries = 2;
 

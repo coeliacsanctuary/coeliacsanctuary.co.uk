@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Actions\EatingOut\SendEateryRecommendationToAiAction;
 use App\Models\EatingOut\EateryRecommendation;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,7 +16,7 @@ use Throwable;
 #[Timeout(300)]
 class SendEateryRecommendationToAiJob implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public function __construct(protected EateryRecommendation $eateryRecommendation)
     {

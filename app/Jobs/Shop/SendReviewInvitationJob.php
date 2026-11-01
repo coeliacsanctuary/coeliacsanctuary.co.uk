@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\Shop;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Models\Shop\ShopOrder;
 use App\Notifications\Shop\ReviewOrderInvitationNotification;
 use Carbon\Carbon;
@@ -11,7 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendReviewInvitationJob implements ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     public function __construct(protected ShopOrder $order, protected string $delayText)
     {
