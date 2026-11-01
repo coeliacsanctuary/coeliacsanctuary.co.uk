@@ -14,6 +14,7 @@ class ShopPrice extends Model
     {
         return $this->morphTo();
     }
+
     protected function casts(): array
     {
         return [

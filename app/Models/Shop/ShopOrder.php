@@ -128,6 +128,7 @@ class ShopOrder extends Model
 
         return (bool) ($this->digitalItems()->exists());
     }
+
     protected function casts(): array
     {
         return [

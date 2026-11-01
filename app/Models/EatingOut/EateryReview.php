@@ -112,6 +112,7 @@ class EateryReview extends Model
     {
         return 'eating-out-reviews';
     }
+
     protected function casts(): array
     {
         return [

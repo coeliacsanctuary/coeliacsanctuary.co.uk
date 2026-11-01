@@ -22,6 +22,7 @@ class EateryReport extends Model
     {
         return $this->belongsTo(NationwideBranch::class, 'branch_id');
     }
+
     protected function casts(): array
     {
         return [

@@ -24,6 +24,7 @@ class ShopOrderReviewInvitation extends Model
     {
         return $this->hasOne(ShopOrderReview::class, 'invitation_id');
     }
+
     protected function casts(): array
     {
         return [

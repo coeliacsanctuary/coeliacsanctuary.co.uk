@@ -126,6 +126,7 @@ class EateryOpeningTimes extends Model
     {
         return Str::lower(Carbon::now()->dayName);
     }
+
     protected function casts(): array
     {
         return ['is_open_now' => 'bool'];

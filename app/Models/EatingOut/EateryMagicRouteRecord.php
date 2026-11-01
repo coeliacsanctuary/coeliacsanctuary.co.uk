@@ -62,6 +62,7 @@ class EateryMagicRouteRecord extends Model
 
         return null;
     }
+
     protected function casts(): array
     {
         return [

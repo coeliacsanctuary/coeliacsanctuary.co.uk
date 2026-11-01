@@ -16,6 +16,7 @@ class ShopPaymentResponse extends Model
     {
         return $this->belongsTo(ShopPayment::class, 'payment_id');
     }
+
     protected function casts(): array
     {
         return ['response' => 'json'];

@@ -110,6 +110,7 @@ class Collection extends Model implements HasMedia
     {
         return 'collections';
     }
+
     protected function casts(): array
     {
         return [

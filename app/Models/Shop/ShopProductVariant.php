@@ -20,6 +20,7 @@ class ShopProductVariant extends Model
     {
         return $this->belongsTo(ShopProduct::class);
     }
+
     protected function casts(): array
     {
         return [

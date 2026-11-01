@@ -62,6 +62,7 @@ class ShopDigitalCardType extends Model implements HasMedia
             ->nonQueued()
             ->format('webp');
     }
+
     protected function casts(): array
     {
         return [

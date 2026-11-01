@@ -15,6 +15,7 @@ class GoogleGeocodeCache extends Model
     {
         return new LatLng((float) $this->response['lat'], (float) $this->response['lng']);
     }
+
     protected function casts(): array
     {
         return [

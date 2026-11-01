@@ -28,6 +28,7 @@ class NotificationEmail extends Model
     {
         return $this->belongsTo(ShopCustomer::class, 'user_id');
     }
+
     protected function casts(): array
     {
         return [

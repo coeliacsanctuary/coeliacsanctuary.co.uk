@@ -19,6 +19,7 @@ class ShopMassDiscount extends Model
             'category_id',
         );
     }
+
     protected function casts(): array
     {
         return [

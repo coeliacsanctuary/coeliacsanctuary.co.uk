@@ -36,6 +36,7 @@ class ShopDiscountCode extends Model
     {
         return $this->hasMany(ShopDiscountCodesUsed::class, 'discount_id');
     }
+
     protected function casts(): array
     {
         return [

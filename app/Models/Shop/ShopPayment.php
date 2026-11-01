@@ -37,6 +37,7 @@ class ShopPayment extends Model
     {
         return $this->hasMany(ShopPaymentRefund::class, 'payment_id');
     }
+
     protected function casts(): array
     {
         return [

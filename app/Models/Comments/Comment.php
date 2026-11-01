@@ -41,6 +41,7 @@ class Comment extends Model
     {
         return Attribute::make(get: fn (): string => class_basename($this->commentable_type));
     }
+
     protected function casts(): array
     {
         return [

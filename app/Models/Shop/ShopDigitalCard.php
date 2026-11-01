@@ -90,6 +90,7 @@ class ShopDigitalCard extends Model
             return round($this->reviews->average('rating') * 2) / 2;
         });
     }
+
     protected function casts(): array
     {
         return [

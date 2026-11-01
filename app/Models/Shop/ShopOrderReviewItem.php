@@ -50,6 +50,7 @@ class ShopOrderReviewItem extends Model
     {
         return 'shop-reviews';
     }
+
     protected function casts(): array
     {
         return [

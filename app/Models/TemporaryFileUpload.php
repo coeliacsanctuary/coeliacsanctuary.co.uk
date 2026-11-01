@@ -21,6 +21,7 @@ class TemporaryFileUpload extends Model
             return $model;
         });
     }
+
     protected function casts(): array
     {
         return ['delete_at' => 'datetime'];

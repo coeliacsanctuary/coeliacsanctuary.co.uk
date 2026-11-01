@@ -16,6 +16,7 @@ class EateryRecommendationAiData extends Model
     {
         return $this->belongsTo(EateryRecommendation::class, 'wheretoeat_place_recommendation_id');
     }
+
     protected function casts(): array
     {
         return [

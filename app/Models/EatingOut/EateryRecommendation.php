@@ -23,6 +23,7 @@ class EateryRecommendation extends Model
     {
         return $this->belongsTo(EateryVenueType::class, 'place_venue_type_id');
     }
+
     protected function casts(): array
     {
         return [

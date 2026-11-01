@@ -486,6 +486,7 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
     {
         return EaterySchema::make($this);
     }
+
     protected function casts(): array
     {
         return [

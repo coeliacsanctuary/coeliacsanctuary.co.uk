@@ -59,6 +59,7 @@ class EaterySuggestedEdit extends Model
             return 'New';
         });
     }
+
     protected function casts(): array
     {
         return [

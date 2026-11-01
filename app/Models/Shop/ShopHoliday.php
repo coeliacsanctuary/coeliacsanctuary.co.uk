@@ -20,6 +20,7 @@ class ShopHoliday extends Model
             "Any orders placed during this time will be despatched on {$this->ship_on->format('l jS F')}.",
         ]));
     }
+
     protected function casts(): array
     {
         return [

@@ -50,6 +50,7 @@ class EaterySearchTerm extends Model
     {
         return $this->hasMany(EaterySearch::class, 'search_term_id');
     }
+
     protected function casts(): array
     {
         return [

@@ -45,6 +45,7 @@ class ShopCustomer extends Model implements Authenticatable
     {
         return (string) $this->id;
     }
+
     protected function casts(): array
     {
         return [

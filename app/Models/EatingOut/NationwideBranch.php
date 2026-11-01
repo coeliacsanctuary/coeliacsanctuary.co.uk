@@ -305,6 +305,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
     {
         return 'eating-out';
     }
+
     protected function casts(): array
     {
         return [
