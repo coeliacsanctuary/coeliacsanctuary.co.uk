@@ -93,6 +93,15 @@ class PrepareRecommendedEateryTest extends TestCase
     }
 
     #[Test]
+    public function itUsesAnAnthropicProviderWithNativeStructuredOutputDisabled(): void
+    {
+        $provider = $this->agent->provider();
+
+        $this->assertSame('anthropic', $provider->driver());
+        $this->assertFalse($provider->additionalConfiguration()['use_native_structured_output']);
+    }
+
+    #[Test]
     public function itImplementsHasProviderOptions(): void
     {
         $this->assertInstanceOf(HasProviderOptions::class, $this->agent);
