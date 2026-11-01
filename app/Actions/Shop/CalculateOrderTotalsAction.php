@@ -37,7 +37,7 @@ class CalculateOrderTotalsAction
                 return $product->shipping_method_id;
             });
 
-            $totalWeight = $items->sum(function (ShopOrderItemResource $resource): int|float {
+            $totalWeight = $items->sum(function (ShopOrderItemResource $resource): int {
                 /** @var ShopProductVariant $variant */
                 $variant = $resource->variant;
 

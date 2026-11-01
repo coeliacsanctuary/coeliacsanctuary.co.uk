@@ -152,13 +152,17 @@ trait HasEateryDetails
                 return null;
             }
 
+            /** @var int[] $reviewsWithHowExpense */
             $reviewsWithHowExpense = array_filter($this->reviews->flatten()->pluck('how_expensive')->toArray());
 
             if (count($reviewsWithHowExpense) === 0) {
                 return null;
             }
 
-            $average = round(Arr::average($reviewsWithHowExpense));
+            /** @var int|float $rawAverage */
+            $rawAverage = Arr::average($reviewsWithHowExpense);
+
+            $average = round($rawAverage);
 
             return [
                 'value' => (string) $average,
@@ -167,7 +171,7 @@ trait HasEateryDetails
         });
     }
 
-    /** @return Attribute<string | null, never> */
+    /** @return Attribute<''|(numeric-string&uppercase-string)|null, never> */
     public function averageRating(): Attribute
     {
         return Attribute::get(function (): ?string {

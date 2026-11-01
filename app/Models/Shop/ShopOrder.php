@@ -33,7 +33,6 @@ class ShopOrder extends Model
     protected static function booted(): void
     {
         self::creating(function (self $order): void {
-            /** @phpstan-ignore-next-line  */
             $order->state_id ??= OrderState::BASKET;
 
             if ( ! $order->postage_country_id) {
