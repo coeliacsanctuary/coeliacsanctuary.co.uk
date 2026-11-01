@@ -8,6 +8,7 @@ use Algolia\ScoutExtended\Searchable\Aggregator;
 use App\Ai\Agents\MagicRoutes\HundredPercentGlutenFreeMagicRouteContentAgent;
 use App\Ai\Agents\MagicRoutes\MagicRouteAgent;
 use App\Ai\Tools\AskSealiac\BaseTool;
+use App\Builders\Recipes\RecipeAllergenBuilder;
 use App\Contracts\Search\IsSearchable;
 use App\Feeds\Feed;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -23,6 +24,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Foundation\Http\FormRequest;
@@ -314,6 +316,15 @@ class CodeArchitectureTest extends CodeAssertionsTestCase
             ->areClasses()
             ->hasSuffix('Rule')
             ->implements(ValidationRule::class);
+    }
+
+    #[Test]
+    public function allCustomBuildersFollowTheCorrectFormat(): void
+    {
+        $this->assertClassesIn('app/Builders')
+            ->areClasses()
+            ->hasSuffix('Builder')
+            ->extends(Builder::class)->except(RecipeAllergenBuilder::class);
     }
 
     #[Test]

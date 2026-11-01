@@ -32,7 +32,7 @@ use App\Models\EatingOut\EateryVenueType;
 use App\Models\SealiacOverview;
 use App\Support\Helpers;
 use Database\Seeders\EateryScaffoldingSeeder;
-use Illuminate\Database\Eloquent\Builder;
+use App\Builders\EatingOut\EateryBuilder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
@@ -444,21 +444,21 @@ class EateryTest extends TestCase
     }
 
     #[Test]
-    public function itHasAnHasCategoriesScope(): void
+    public function itHasAHasCategoriesBuilderMethod(): void
     {
-        $this->assertInstanceOf(Builder::class, Eatery::query()->hasCategories([]));
+        $this->assertInstanceOf(EateryBuilder::class, Eatery::query()->hasCategories([]));
     }
 
     #[Test]
-    public function itHasAnHasVenueTypesScope(): void
+    public function itHasAHasVenueTypesBuilderMethod(): void
     {
-        $this->assertInstanceOf(Builder::class, Eatery::query()->hasVenueTypes([]));
+        $this->assertInstanceOf(EateryBuilder::class, Eatery::query()->hasVenueTypes([]));
     }
 
     #[Test]
-    public function itHasAnHasFeaturesScope(): void
+    public function itHasAHasFeaturesBuilderMethod(): void
     {
-        $this->assertInstanceOf(Builder::class, Eatery::query()->hasFeatures([]));
+        $this->assertInstanceOf(EateryBuilder::class, Eatery::query()->hasFeatures([]));
     }
 
     #[Test]

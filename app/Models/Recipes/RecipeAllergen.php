@@ -4,26 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models\Recipes;
 
-use App\Concerns\Recipes\FiltersRecipeRelations;
+use App\Builders\Recipes\RecipeAllergenBuilder;
 use App\Contracts\Recipes\FilterableRecipeRelation;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /** @implements FilterableRecipeRelation<$this> */
+#[UseEloquentBuilder(RecipeAllergenBuilder::class)]
 class RecipeAllergen extends Model implements FilterableRecipeRelation
 {
-    use FiltersRecipeRelations;
-
-    /**
-     * @param  Builder<$this>  $query
-     * @return Builder<$this>
-     */
-    public function scopeSelectableAsFilter(Builder $query): Builder
-    {
-        return $query->where('slug', '!=', 'gluten');
-    }
-
     /** @return BelongsToMany<Recipe, $this> */
     public function recipes(): BelongsToMany
     {

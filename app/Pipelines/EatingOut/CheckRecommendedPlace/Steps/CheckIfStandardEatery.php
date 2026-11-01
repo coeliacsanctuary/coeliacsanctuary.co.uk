@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\CheckRecommendedPlace\Steps;
 
+use App\Builders\EatingOut\EateryBuilder;
 use App\DataObjects\EatingOut\RecommendAPlaceExistsCheckData;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryTown;
@@ -42,8 +43,7 @@ class CheckIfStandardEatery extends AbstractStepAction
         $eatery = Eatery::query()
             ->notNationwide()
             ->where(DB::raw('replace(name, "\'", "")'), 'like', "%{$name}%")
-            ->where(function (Builder $builder) use ($towns, $locations) {
-                /** @var Builder<Eatery> $builder */
+            ->where(function (EateryBuilder $builder) use ($towns, $locations) {
                 return $builder
                     ->whereIn('town_id', $towns)
                     ->orWhere(function (Builder $query) use ($locations): void {

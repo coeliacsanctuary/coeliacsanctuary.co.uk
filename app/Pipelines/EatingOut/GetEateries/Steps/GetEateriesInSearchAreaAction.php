@@ -58,7 +58,6 @@ class GetEateriesInSearchAreaAction implements GetEateriesPipelineActionContract
 
         SearchResultIdsState::$eateryIds = $ids->pluck('id')->all();
 
-        /** @var Builder<Eatery> $query */
         $query = Eatery::query()
             ->selectDistance($latLng, ['id', 'name'])
             ->when(

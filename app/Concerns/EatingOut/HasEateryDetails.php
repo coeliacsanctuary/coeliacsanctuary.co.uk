@@ -10,7 +10,6 @@ use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -178,23 +177,5 @@ trait HasEateryDetails
 
             return (string) Arr::average($this->reviews->pluck('rating')->toArray());
         });
-    }
-
-    /**
-     * @param  Builder<$this>  $query
-     * @return Builder<$this>
-     */
-    public function scopeNationwide(Builder $query): Builder
-    {
-        return $query->where('county_id', 1);
-    }
-
-    /**
-     * @param  Builder<$this>  $query
-     * @return Builder<$this>
-     */
-    public function scopeNotNationwide(Builder $query): Builder
-    {
-        return $query->where('county_id', '!=', 1);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
+use App\Builders\EatingOut\EateryBuilder;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
@@ -27,6 +28,7 @@ use App\Schema\EaterySchema;
 use App\Scopes\LiveScope;
 use App\Support\Helpers;
 use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -53,6 +55,7 @@ use Spatie\SchemaOrg\Restaurant;
  * @property string $typeDescription
  * @property string $display_snippet
  */
+#[UseEloquentBuilder(EateryBuilder::class)]
 class Eatery extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -154,8 +157,7 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
         return $searcher->with($params);
     }
 
-    /** @return Builder<static> */
-    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2, array $additionalColumns = []): Builder
+    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2, array $additionalColumns = []): EateryBuilder
     {
         return static::query()
             ->selectRaw('(
@@ -175,28 +177,6 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
             ->addSelect(['id', 'lat', 'lng', 'name', 'county_id', 'type_id', ...$additionalColumns])
             ->where('closed_down', false)
             ->orderBy('distance');
-    }
-
-    /**
-     * @param  Builder<self>  $query
-     * @return Builder<self>
-     */
-    public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
-    {
-        return $this->selectRaw('(
-                        6371000 * acos (
-                          cos ( radians(?) )
-                          * cos( radians( lat ) )
-                          * cos( radians( lng ) - radians(?) )
-                          + sin ( radians(?) )
-                          * sin( radians( lat ) )
-                        )
-                     ) AS distance', [
-            $latLng->lat,
-            $latLng->lng,
-            $latLng->lat,
-        ])
-            ->addSelect($columns);
     }
 
     /**
@@ -435,33 +415,6 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
 
             return Str::limit((string) $info, 125, preserveWords: true);
         });
-    }
-
-    /**
-     * @param  Builder<static>  $builder
-     * @return Builder<static>
-     */
-    public function scopeHasCategories(Builder $builder, array $categories): Builder
-    {
-        return $builder->where(fn (Builder $builder) => $builder->whereHas('type', fn (Builder $builder) => $builder->whereIn('type', $categories)));
-    }
-
-    /**
-     * @param  Builder<static>  $builder
-     * @return Builder<static>
-     */
-    public function scopeHasVenueTypes(Builder $builder, array $venueTypes): Builder
-    {
-        return $builder->where(fn (Builder $builder) => $builder->whereHas('venueType', fn (Builder $builder) => $builder->whereIn('slug', $venueTypes)));
-    }
-
-    /**
-     * @param  Builder<static>  $builder
-     * @return Builder<static>
-     */
-    public function scopeHasFeatures(Builder $builder, array $features): Builder
-    {
-        return $builder->where(fn (Builder $builder) => $builder->whereHas('features', fn (Builder $builder) => $builder->whereIn('slug', $features)));
     }
 
     public function keywords(): array

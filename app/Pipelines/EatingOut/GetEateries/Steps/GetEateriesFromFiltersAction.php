@@ -9,7 +9,6 @@ use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
 use App\Models\EatingOut\Eatery;
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -21,7 +20,6 @@ class GetEateriesFromFiltersAction implements GetEateriesPipelineActionContract
             return $next($pipelineData);
         }
 
-        /** @var Builder<Eatery> $query */
         $query = Eatery::query()
             ->selectRaw('wheretoeat.id, null as branch_id, wheretoeat.name as ordering')
             ->where('closed_down', false)

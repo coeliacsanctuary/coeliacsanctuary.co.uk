@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Recipes;
 
+use App\Builders\Recipes\RecipeBuilder;
 use App\Models\Recipes\Recipe;
 use App\ResourceCollections\Recipes\RecipeListCollection;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,9 +33,9 @@ class GetRecipesForIndexAction
                         ->where('id', $search)
                         ->orWhere('title', 'LIKE', "%{$search}%")
                 ))
-                ->when(count($featureFilters) > 0, fn (Builder $query) => $query->hasFeatures($featureFilters))
-                ->when(count($mealFilters) > 0, fn (Builder $query) => $query->hasMeals($mealFilters))
-                ->when(count($freeFromFilters) > 0, fn (Builder $query) => $query->hasFreeFrom($freeFromFilters))
+                ->when(count($featureFilters) > 0, fn (RecipeBuilder $query) => $query->hasFeatures($featureFilters))
+                ->when(count($mealFilters) > 0, fn (RecipeBuilder $query) => $query->hasMeals($mealFilters))
+                ->when(count($freeFromFilters) > 0, fn (RecipeBuilder $query) => $query->hasFreeFrom($freeFromFilters))
                 ->latest()
                 ->paginate($perPage)
                 ->withQueryString()

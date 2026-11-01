@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Actions\Recipes;
 
+use App\Builders\Recipes\RecipeBuilder;
+use App\Builders\Recipes\RecipeFilterBuilder;
 use App\Contracts\Recipes\FilterableRecipeRelation;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -26,19 +27,16 @@ class GetRecipeFiltersForIndexAction
 
         $column = Str::of(class_basename($relation))->after('Recipe')->lower()->toString();
 
-        /** @var Builder<TFilter> $query */
-        $query = $relation::query();  /** @phpstan-ignore-line */
-
-        return $query
+        return $relation::query()
             ->selectableAsFilter()
-            ->when(count($featureFilters) > 0, fn (Builder $query) => $query->hasRecipesWithFeatures($featureFilters))
-            ->when(count($mealFilters) > 0, fn (Builder $query) => $query->hasRecipesWithMeals($mealFilters))
-            ->when(count($freeFromFilters) > 0, fn (Builder $query) => $query->hasRecipesWithFreeFrom($freeFromFilters))
+            ->when(count($featureFilters) > 0, fn (RecipeFilterBuilder $query) => $query->hasRecipesWithFeatures($featureFilters))
+            ->when(count($mealFilters) > 0, fn (RecipeFilterBuilder $query) => $query->hasRecipesWithMeals($mealFilters))
+            ->when(count($freeFromFilters) > 0, fn (RecipeFilterBuilder $query) => $query->hasRecipesWithFreeFrom($freeFromFilters))
             ->withCount([
-                'recipes' => fn (Builder $builder): Builder => $builder
-                    ->when(count($featureFilters) > 0, fn (Builder $query): Builder => $query->hasFeatures($featureFilters))/** @phpstan-ignore-line */
-                    ->when(count($mealFilters) > 0, fn (Builder $query): Builder => $query->hasMeals($mealFilters))/** @phpstan-ignore-line */
-                    ->when(count($freeFromFilters) > 0, fn (Builder $query): Builder => $query->hasFreeFrom($freeFromFilters)),/** @phpstan-ignore-line */
+                'recipes' => fn (RecipeBuilder $builder): RecipeBuilder => $builder
+                    ->when(count($featureFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasFeatures($featureFilters))
+                    ->when(count($mealFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasMeals($mealFilters))
+                    ->when(count($freeFromFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasFreeFrom($freeFromFilters)),
             ])
             ->orderBy($column)
             ->get()

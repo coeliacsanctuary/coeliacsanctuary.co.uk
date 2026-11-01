@@ -22,7 +22,6 @@ class GetEateriesInTownAction implements GetEateriesPipelineActionContract
             throw new RuntimeException('No Town');
         }
 
-        /** @var Builder<Eatery> $query */
         $query = Eatery::query()
             ->when(
                 $pipelineData->sort === 'rating',

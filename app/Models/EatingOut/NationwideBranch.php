@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\EatingOut;
 
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
+use App\Builders\EatingOut\NationwideBranchBuilder;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
@@ -25,6 +26,7 @@ use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Scopes\LiveScope;
 use App\Support\Helpers;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -45,6 +47,7 @@ use Laravel\Scout\Searchable;
  * @property string | null $average_rating
  * @property array{value: string, label: string} | null $average_expense
  */
+#[UseEloquentBuilder(NationwideBranchBuilder::class)]
 class NationwideBranch extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -141,8 +144,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
         return $searcher->with($params);
     }
 
-    /** @return Builder<static> */
-    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2, array $additionalColumns = []): Builder
+    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2, array $additionalColumns = []): NationwideBranchBuilder
     {
         return static::query()
             ->selectRaw('(
@@ -161,28 +163,6 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
             ->having('distance', '<=', $radius)
             ->addSelect(['id', 'wheretoeat_id', 'lat', 'lng', 'name', ...$additionalColumns])
             ->orderBy('distance');
-    }
-
-    /**
-     * @param  Builder<self>  $query
-     * @return Builder<self>
-     */
-    public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
-    {
-        return $this->selectRaw('(
-                        6371000 * acos (
-                          cos ( radians(?) )
-                          * cos( radians( wheretoeat_nationwide_branches.lat ) )
-                          * cos( radians( wheretoeat_nationwide_branches.lng ) - radians(?) )
-                          + sin ( radians(?) )
-                          * sin( radians( wheretoeat_nationwide_branches.lat ) )
-                        )
-                     ) AS distance', [
-            $latLng->lat,
-            $latLng->lng,
-            $latLng->lat,
-        ])
-            ->addSelect($columns);
     }
 
     /** @return BelongsTo<Eatery, $this> */
