@@ -43,7 +43,6 @@ use Spatie\SchemaOrg\Schema;
  * @implements Collectable<$this>
  * @implements HasComments<$this>
  * @implements HasFaqs<$this>
- *
  * @property string $servings
  * @property string $portion_size
  */

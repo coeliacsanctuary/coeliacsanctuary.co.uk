@@ -23,10 +23,6 @@ class GenerateNationwideDescriptionJob implements ShouldBeUnique, ShouldQueue
 
     public int $uniqueFor = 600;
 
-    /**
-     * A chain needs at least this many reviews before its rating is worth
-     * mentioning, otherwise a single five star review reads as top rated.
-     */
     protected int $minimumReviewsForRating = 5;
 
     public function __construct(protected EateryCounty $county)

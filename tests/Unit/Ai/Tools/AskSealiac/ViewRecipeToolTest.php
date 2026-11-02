@@ -89,13 +89,11 @@ class ViewRecipeToolTest extends TestCase
         $allergenA = $this->create(RecipeAllergen::class, ['allergen' => 'Dairy']);
         $this->create(RecipeAllergen::class, ['allergen' => 'Eggs']);
 
-        // Attach only one allergen as "free from" - the other should show as "contains"
         $recipe->allergens()->attach($allergenA);
 
         $tool = new ViewRecipeTool();
         $result = json_decode((string) $tool->handle(new Request(['recipe_slug' => 'test-recipe'])), true);
 
-        // The "contains" list should include allergens NOT attached to the recipe (i.e., not free from)
         $this->assertContains('Eggs', $result['contains']);
         $this->assertNotContains('Dairy', $result['contains']);
     }

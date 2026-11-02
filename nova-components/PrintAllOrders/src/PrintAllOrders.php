@@ -9,8 +9,6 @@ use Laravel\Nova\Card;
 class PrintAllOrders extends Card
 {
     /**
-     * The width of the card (1/3, 1/2, or full).
-     *
      * @var string
      */
     public $width = 'full';
@@ -18,8 +16,6 @@ class PrintAllOrders extends Card
     public $height = 'dynamic';
 
     /**
-     * Get the component name for the element.
-     *
      * @return string
      */
     public function component()

@@ -467,7 +467,6 @@ abstract class GetEateriesTestCase extends TestCase
     protected function callAppendDistanceToBranchesMethod(Collection $eateries, Collection $hydrated): ?GetEateriesPipelineData
     {
         $hydrated = $hydrated->map(function (NationwideBranch $eatery, $index): NationwideBranch {
-            //            $eatery->branchId = $index + 1;
             $eatery->distance = $this->faker->randomFloat();
 
             return $eatery;

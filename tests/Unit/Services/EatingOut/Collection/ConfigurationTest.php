@@ -15,8 +15,6 @@ use Tests\TestCase;
 
 class ConfigurationTest extends TestCase
 {
-    // --- Constructor deduplication ---
-
     #[Test]
     public function itDeduplicatesDuplicateWhereObjectsInConstructor(): void
     {
@@ -97,8 +95,6 @@ class ConfigurationTest extends TestCase
         $this->assertCount(1, $config->getWheres());
     }
 
-    // --- addWhere deduplication ---
-
     #[Test]
     public function itDeduplicatesWhenAddingTheSameWhereTwiceViaAddWhere(): void
     {
@@ -121,8 +117,6 @@ class ConfigurationTest extends TestCase
         $this->assertCount(1, $config->getWheres());
     }
 
-    // --- addJoin deduplication ---
-
     #[Test]
     public function itDeduplicatesWhenAddingTheSameJoinTwiceViaAddJoin(): void
     {
@@ -134,8 +128,6 @@ class ConfigurationTest extends TestCase
 
         $this->assertCount(1, $config->getJoins());
     }
-
-    // --- addOrder deduplication ---
 
     #[Test]
     public function itDeduplicatesWhenAddingTheSameOrderTwiceViaAddOrder(): void
@@ -168,8 +160,6 @@ class ConfigurationTest extends TestCase
 
         $this->assertSame($config, $result);
     }
-
-    // --- Distinct items are preserved ---
 
     #[Test]
     public function itKeepsDistinctWheresIntact(): void

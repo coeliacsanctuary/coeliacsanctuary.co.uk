@@ -12,7 +12,7 @@ return new class () extends Migration {
         Schema::create('temp_mailcoach_mails', function (Blueprint $table): void {
             $table->id();
             $table->text('message');
-            $table->timestamps(); //
+            $table->timestamps();
         });
     }
 };

@@ -25,7 +25,6 @@ class Helpers
             ->setUnit('kg');
     }
 
-    /** Pass null to represent an unbounded (infinity) weight tier. */
     public static function weightFromGrams(?int $grams): Weight
     {
         return new Weight()

@@ -24,9 +24,6 @@ class ResendOrder extends Action
     use InteractsWithQueue;
     use Queueable;
 
-    /**
-     * Perform the action on the given models.
-     */
     public function handle(ActionFields $fields, Collection $models): void
     {
         /** @var ShopOrder $order */
@@ -48,8 +45,6 @@ class ResendOrder extends Action
     }
 
     /**
-     * Get the fields available on the action.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field>
      */
     public function fields(NovaRequest $request): array

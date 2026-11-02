@@ -435,21 +435,17 @@ class StoreControllerTest extends TestCase
     public static function contactValidationDataProvider(): array
     {
         return [
-            // contact details
             'missing contact object' => [['contact' => null], 'contact'],
 
-            // contact name
             'missing contact name' => [['contact.name' => null], 'contact.name'],
             'contact name is numeric' => [['contact.name' => 123], 'contact.name'],
             'contact name is bool' => [['contact.name' => true], 'contact.name'],
 
-            // contact email
             'missing contact email' => [['contact.email' => null], 'contact.email'],
             'contact email is numeric' => [['contact.email' => 123], 'contact.email'],
             'contact email is bool' => [['contact.email' => true], 'contact.email'],
             'contact email is not an email address' => [['contact.email' => 'foobar'], 'contact.email'],
 
-            // contact subscribe to newsletter
             'contact subscribe to email is not a bool' => [['contact.subscribeToNewsletter' => 'foo'], ['contact.subscribeToNewsletter']],
         ];
     }
@@ -457,32 +453,25 @@ class StoreControllerTest extends TestCase
     public static function shippingValidationDataProvider(): array
     {
         return [
-            // shipping details
             'missing shipping object' => [['shipping' => null], 'shipping'],
 
-            // shipping address 1
             'missing shipping address line 1' => [['shipping.address_1' => null], 'shipping.address_1'],
             'shipping address line 1 is numeric' => [['shipping.address_1' => 123], 'shipping.address_1'],
             'shipping address line 1 is bool' => [['shipping.address_1' => true], 'shipping.address_1'],
 
-            // shipping address 2
             'shipping address line 2 is numeric' => [['shipping.address_2' => 123], 'shipping.address_2'],
             'shipping address line 2 is bool' => [['shipping.address_2' => true], 'shipping.address_2'],
 
-            // shipping address 3
             'shipping address line 3 is numeric' => [['shipping.address_3' => 123], 'shipping.address_3'],
             'shipping address line 3 is bool' => [['shipping.address_3' => true], 'shipping.address_3'],
 
-            // shipping town
             'missing shipping town' => [['shipping.town' => null], 'shipping.town'],
             'shipping town is numeric' => [['shipping.town' => 123], 'shipping.town'],
             'shipping town is bool' => [['shipping.town' => true], 'shipping.town'],
 
-            // shipping address 3
             'shipping county is numeric' => [['shipping.county' => 123], 'shipping.county'],
             'shipping county is bool' => [['shipping.county' => true], 'shipping.county'],
 
-            // postcode
             'missing shipping postcode' => [['shipping.postcode' => null], 'shipping.postcode'],
             'shipping postcode is numeric' => [['shipping.postcode' => 123], 'shipping.postcode'],
             'shipping postcode is bool' => [['shipping.postcode' => true], 'shipping.postcode'],

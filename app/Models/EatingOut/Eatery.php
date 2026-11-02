@@ -45,7 +45,6 @@ use Spatie\SchemaOrg\Restaurant;
 /**
  * @implements HasOpenGraphImageContract<$this>
  * @implements Collectable<$this>
- *
  * @property string | null $average_rating
  * @property string | null $formatted_address
  * @property array{value: string, label: string} | null $average_expense

@@ -30,8 +30,6 @@ class ShowControllerTest extends TestCase
 
         $this->product = ShopProduct::query()->first();
 
-        // The seeder creates category 1, which is a travel card category. Tests that want the travel
-        // card resource opt in explicitly, so everything else runs against the standard resource.
         $this->assignProductToCategory(99);
     }
 
@@ -226,8 +224,6 @@ class ShowControllerTest extends TestCase
 
     protected function assignProductToCategory(int $categoryId, string $title = 'Some Category'): void
     {
-        // ShopCategory is behind a LiveScope that requires it to still have products, which won't
-        // hold for whichever category the product is being moved away from.
         $category = ShopCategory::query()->withoutGlobalScopes()->find($categoryId) ?? $this->build(ShopCategory::class)->create([
             'id' => $categoryId,
             'title' => $title,

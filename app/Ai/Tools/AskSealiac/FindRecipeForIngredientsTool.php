@@ -16,9 +16,6 @@ class FindRecipeForIngredientsTool extends BaseTool
 {
     use FormatsRecipes;
 
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'Text'
@@ -30,9 +27,6 @@ class FindRecipeForIngredientsTool extends BaseTool
         Text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         return Recipe::query()
@@ -50,9 +44,6 @@ class FindRecipeForIngredientsTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

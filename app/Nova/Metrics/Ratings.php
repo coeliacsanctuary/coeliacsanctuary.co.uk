@@ -16,9 +16,6 @@ class Ratings extends Value
 
     public $icon = 'star';
 
-    /**
-     * Calculate the value of the metric.
-     */
     public function calculate(NovaRequest $request): LinkableValueResult
     {
         return $this->result(EateryReview::query()->withoutGlobalScopes()->where('approved', false)->count());

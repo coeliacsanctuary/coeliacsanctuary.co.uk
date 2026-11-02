@@ -28,7 +28,7 @@ enum EateryMagicRouteType: string
             /** @phpstan-ignore-next-line */
             self::HundredPercentGlutenFree => fn (Configuration $configuration): Configuration => $configuration
                 ->addJoin(new Join('wheretoeat_assigned_features', 'wheretoeat_assigned_features.wheretoeat_id', 'wheretoeat.id'))
-                ->addWhere(new Where('wheretoeat_assigned_features.feature_id', '=', 1)), // 100 percent gluten free,
+                ->addWhere(new Where('wheretoeat_assigned_features.feature_id', '=', 1)),
             default => null,
         };
     }

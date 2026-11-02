@@ -16,16 +16,13 @@ class ReconcileBasketItemsAction
         $basket->loadMissing(['items', 'digitalItems', 'digitalItems.card', 'digitalItems.card.price', 'digitalItems.card.product']);
 
         $basket->digitalItems->each(function (ShopOrderDigitalItem $item) use ($basket): void {
-            // Card isnt linked to a physical product
             if ( ! $item->card->product) {
                 return;
             }
 
             $price = $item->card->price ?? ShopDigitalCard::defaultPrice();
 
-            // cards linked physical product isnt in the basket
             if ($basket->items->where('product_id', $item->card->product_id)->isEmpty()) {
-                // cards price is incorrect (set as bundle price)
                 if ($item->digital_card_price !== $price->price) {
                     $item->digital_card_price = $price->price;
                 }
@@ -39,8 +36,6 @@ class ReconcileBasketItemsAction
                 return;
             }
 
-            // cards linked product IS in the database
-            // and its price isnt set as the bundle price
             if ($item->digital_card_price !== $price->price_with_physical_product) {
                 $item->digital_card_price = $price->price_with_physical_product;
             }

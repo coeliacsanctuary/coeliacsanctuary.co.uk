@@ -37,7 +37,6 @@ use Spatie\SchemaOrg\Schema;
 
 /**
  * @property int<1, max> $reading_time
- *
  * @implements Collectable<$this>
  * @implements HasComments<$this>
  * @implements HasFaqs<$this>

@@ -11,9 +11,6 @@ use Laravel\Nova\Tool;
 
 class ShopDailyStock extends Tool
 {
-    /**
-     * Perform any tasks that need to happen when the tool is booted.
-     */
     public function boot(): void
     {
         Nova::script('shop-daily-stock', __DIR__ . '/../dist/js/tool.js');

@@ -19,8 +19,6 @@ use Laravel\Nova\Nova;
 class ProductSalesTrend extends Trend
 {
     /**
-     * Calculate the value of the metric.
-     *
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -41,8 +39,6 @@ class ProductSalesTrend extends Trend
     }
 
     /**
-     * Get the ranges available for the metric.
-     *
      * @return array
      */
     public function ranges()
@@ -57,8 +53,6 @@ class ProductSalesTrend extends Trend
     }
 
     /**
-     * Determine the amount of time the results of the metric should be cached.
-     *
      * @return DateTimeInterface|DateInterval|float|int|null
      */
     public function cacheFor()
@@ -67,8 +61,6 @@ class ProductSalesTrend extends Trend
     }
 
     /**
-     * Get the URI key for the metric.
-     *
      * @return string
      */
     public function uriKey()

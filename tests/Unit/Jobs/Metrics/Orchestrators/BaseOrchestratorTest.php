@@ -172,13 +172,10 @@ class BaseOrchestratorTest extends TestCase
         Bus::assertDispatched(GetBlogMetricsJob::class, 2);
     }
 
-    // --- targetDate logic ---
-
     #[Test]
     public function itUsesYesterdayWhenRunningWithinTheIntervalWindowOfMidnight(): void
     {
-        $this->travelTo(now()->startOfDay()); // 00:00 — within 10-minute window
-
+        $this->travelTo(now()->startOfDay());
         $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
 
         $this->makeOrchestrator(intervalMinutes: 10)->handle();
@@ -189,8 +186,7 @@ class BaseOrchestratorTest extends TestCase
     #[Test]
     public function itUsesTodayOnceTheIntervalWindowHasPassed(): void
     {
-        $this->travelTo(now()->startOfDay()->addMinutes(10)); // 00:10 — window closed
-
+        $this->travelTo(now()->startOfDay()->addMinutes(10));
         $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
 
         $this->makeOrchestrator(intervalMinutes: 10)->handle();
@@ -201,14 +197,13 @@ class BaseOrchestratorTest extends TestCase
     #[Test]
     public function itAlwaysDispatchesTheMidnightWrapUpEvenWhenYesterdaysMetricIsRecent(): void
     {
-        $this->travelTo(now()->startOfDay()); // 00:00
-
+        $this->travelTo(now()->startOfDay());
         $blog = $this->create(Blog::class, ['created_at' => now()->subDays(3)]);
 
         $this->create(BlogMetric::class, [
             'blog_id' => $blog->id,
             'date' => today()->subDay(),
-            'created_at' => now()->subMinutes(9), // fresher than the 10-min interval
+            'created_at' => now()->subMinutes(9),
         ]);
 
         $this->makeOrchestrator(intervalMinutes: 10)->handle();

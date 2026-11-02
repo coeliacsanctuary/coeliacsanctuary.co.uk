@@ -31,7 +31,7 @@ class IndexController
         return $inertia
             ->title($cardType->title)
             ->metaImage($cardType->social_image)
-            ->metaDescription('Digital gluten free travel cards to help communicate your coeliac dietary needs when travelling abroad. Instant access on your phone wherever you travel.') // todo
+            ->metaDescription('Digital gluten free travel cards to help communicate your coeliac dietary needs when travelling abroad. Instant access on your phone wherever you travel.')
             ->metaTags([
                 'digital coeliac travel cards', 'digital gluten free travel cards', 'coeliac travel cards',
                 'gluten free travel cards', 'coeliac translation cards', 'gluten free translation cards',

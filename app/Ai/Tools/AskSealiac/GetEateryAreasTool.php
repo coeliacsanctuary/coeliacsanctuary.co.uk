@@ -11,17 +11,11 @@ use Stringable;
 
 class GetEateryAreasTool extends BaseTool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Get all areas within a London borough. Only applicable when the county is London. For example, the borough (town) "City of Westminster" contains areas like "Leicester Square".';
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         return EateryArea::query()
@@ -35,9 +29,6 @@ class GetEateryAreasTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

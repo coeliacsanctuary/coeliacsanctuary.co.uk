@@ -57,15 +57,12 @@ class CreateEateryIndexPageOpenGraphImageJobTest extends TestCase
     #[Test]
     public function itPassesCorrectGeographicCountsToTheView(): void
     {
-        $this->create(Eatery::class, 7, ['country_id' => 1], true);  // England eateries
-        $this->create(Eatery::class, 3, ['country_id' => 8], true);  // Wales eateries
-        $this->create(Eatery::class, 2, ['country_id' => 7], true);  // Scotland eateries
-        $this->create(NationwideBranch::class, 4, ['country_id' => 1], true); // England branches
-        $this->create(NationwideBranch::class, 5, ['country_id' => 5], true); // NI branches
-        $this->create(NationwideBranch::class, 6, ['country_id' => 6], true); // ROI branches
-
-        // England = 7+4 = 11, Wales = 3, Scotland = 2, NI = 5, ROI = 6, total = 27
-
+        $this->create(Eatery::class, 7, ['country_id' => 1], true);
+        $this->create(Eatery::class, 3, ['country_id' => 8], true);
+        $this->create(Eatery::class, 2, ['country_id' => 7], true);
+        $this->create(NationwideBranch::class, 4, ['country_id' => 1], true);
+        $this->create(NationwideBranch::class, 5, ['country_id' => 5], true);
+        $this->create(NationwideBranch::class, 6, ['country_id' => 6], true);
         $captured = null;
 
         $this->mock(RenderOpenGraphImage::class)
@@ -81,11 +78,11 @@ class CreateEateryIndexPageOpenGraphImageJobTest extends TestCase
         new CreateEateryIndexPageOpenGraphImageJob()->handle(app(RenderOpenGraphImage::class));
 
         $this->assertNotNull($captured);
-        $this->assertMatchesRegularExpression('/>\s*27\s*</', $captured);  // total
-        $this->assertMatchesRegularExpression('/>\s*11\s*</', $captured);  // England
-        $this->assertMatchesRegularExpression('/>\s*3\s*</', $captured);   // Wales
-        $this->assertMatchesRegularExpression('/>\s*2\s*</', $captured);   // Scotland
-        $this->assertMatchesRegularExpression('/>\s*5\s*</', $captured);   // NI
-        $this->assertMatchesRegularExpression('/>\s*6\s*</', $captured);   // ROI
+        $this->assertMatchesRegularExpression('/>\s*27\s*</', $captured);
+        $this->assertMatchesRegularExpression('/>\s*11\s*</', $captured);
+        $this->assertMatchesRegularExpression('/>\s*3\s*</', $captured);
+        $this->assertMatchesRegularExpression('/>\s*2\s*</', $captured);
+        $this->assertMatchesRegularExpression('/>\s*5\s*</', $captured);
+        $this->assertMatchesRegularExpression('/>\s*6\s*</', $captured);
     }
 }

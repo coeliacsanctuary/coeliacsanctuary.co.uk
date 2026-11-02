@@ -14,7 +14,6 @@ class GetRecipeFiltersForIndexAction
 {
     /**
      * @template TFilter of FilterableRecipeRelation
-     *
      * @param  class-string<TFilter>  $relation
      * @param  array{features?: string[], meals?: string[], freeFrom?: string[]}  $filters
      * @return Collection<int, array<string, mixed>>

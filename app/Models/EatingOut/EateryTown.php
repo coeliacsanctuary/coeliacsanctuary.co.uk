@@ -29,7 +29,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
- *
  * @property string $image
  */
 #[RouteKey('slug')]

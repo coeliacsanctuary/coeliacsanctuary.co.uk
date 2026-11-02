@@ -69,8 +69,6 @@ class LoadCompleteEateryDetailsForRequestAction
             ->loadCount(['reviews']);
 
         if ($pageType === 'nationwide') {
-            // The branches themselves are a deferred prop, loaded by
-            // GetGroupedEateryNationwideBranchesAction. Only the count is needed up front.
             $eatery->loadCount('nationwideBranches');
         }
 

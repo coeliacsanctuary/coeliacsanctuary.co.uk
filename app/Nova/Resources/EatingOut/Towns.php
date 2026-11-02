@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Slug;
@@ -71,7 +70,6 @@ class Towns extends Resource
 
             Number::make('Eateries', 'eateries_count')->onlyOnIndex()->sortable(),
 
-            //            HasMany::make('eateries')
         ];
     }
 

@@ -28,7 +28,6 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $this->seed(EateryScaffoldingSeeder::class);
 
-        // Create a non-nationwide county (id != 1) for regular eateries
         $this->regularCounty = $this->build(EateryCounty::class)->create([
             'id' => 2,
             'county' => 'Regular County',
@@ -162,7 +161,7 @@ class ProcessEateryWebsiteChecksCommandTest extends TestCase
 
         $nationwideEatery = $this->create(Eatery::class, [
             'website' => 'https://example.com',
-            'county_id' => 1, // county_id = 1 is nationwide
+            'county_id' => 1,
         ]);
 
         $this->artisan('coeliac:process-eatery-website-checks');

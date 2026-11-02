@@ -39,7 +39,7 @@ class GetNationwideBranchesInTownActionTest extends GetEateriesTestCase
 
         $newCollection = $this->callGetBranchesAction($eateries);
 
-        $this->assertCount(10, $newCollection->eateries); // 5 in setup, 5 from above
+        $this->assertCount(10, $newCollection->eateries);
     }
 
     #[Test]

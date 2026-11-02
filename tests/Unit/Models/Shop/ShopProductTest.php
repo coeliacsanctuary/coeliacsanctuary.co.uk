@@ -454,7 +454,6 @@ class ShopProductTest extends TestCase
         $this->assertArrayHasKey('shippingRate', $schema['offers']['shippingDetails']);
     }
 
-    /** schema() reads the primary image and the variants, and the model's live scope needs a variant to exist. */
     protected function schemaReadyProduct(): ShopProduct
     {
         Storage::fake('media');

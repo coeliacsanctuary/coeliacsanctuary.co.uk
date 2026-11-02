@@ -39,7 +39,6 @@ use Spatie\SchemaOrg\Schema;
  * @property float $average_rating
  * @property array{current_price: string, old_price?: string} $price
  * @property Carbon $created_at
- *
  * @implements HasFaqs<$this>
  */
 #[RouteKey('slug')]

@@ -32,17 +32,12 @@ class PrepareRecommendedEatery implements Agent, HasProviderOptions, HasStructur
 {
     use Promptable;
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         return view('prompts.prepare-recommended-eatery-base-instructions')->render();
     }
 
     /**
-     * Get the tools available to the agent.
-     *
      * @return iterable<Tool>
      */
     public function tools(): iterable
@@ -64,9 +59,6 @@ class PrepareRecommendedEatery implements Agent, HasProviderOptions, HasStructur
         return $tools;
     }
 
-    /**
-     * Get the agent's structured output schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

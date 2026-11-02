@@ -63,7 +63,6 @@ class GetNearbyEateriesAction
 
     /**
      * @template T of Eatery | NationwideBranch
-     *
      * @param  class-string<T>  $model
      * @return Collection<int, T>
      */

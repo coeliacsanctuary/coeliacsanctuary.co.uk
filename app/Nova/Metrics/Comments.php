@@ -16,9 +16,6 @@ class Comments extends Value
 
     public $icon = 'chat-alt';
 
-    /**
-     * Calculate the value of the metric.
-     */
     public function calculate(NovaRequest $request): LinkableValueResult
     {
         return $this->result(Comment::query()->withoutGlobalScopes()->where('approved', false)->count());

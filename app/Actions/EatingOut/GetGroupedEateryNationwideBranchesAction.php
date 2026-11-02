@@ -30,9 +30,6 @@ class GetGroupedEateryNationwideBranchesAction
     }
 
     /**
-     * Eager loads everything the grouping and the resource reach for, so that
-     * neither this action nor NationwideBranchResource triggers an N+1.
-     *
      * @return Collection<int, NationwideBranch>
      */
     protected function loadBranchesFor(Eatery $eatery): Collection

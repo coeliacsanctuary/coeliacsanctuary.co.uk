@@ -15,9 +15,6 @@ class EateryCountryDescriptionAgent implements Agent, HasTools
 {
     use Promptable;
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         return <<<'TEXT'

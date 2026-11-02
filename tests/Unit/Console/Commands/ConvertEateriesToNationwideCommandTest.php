@@ -354,7 +354,7 @@ class ConvertEateriesToNationwideCommandTest extends TestCase
         try {
             $this->runCommand($eatery)->run();
         } catch (Exception) {
-            // The exception may propagate depending on the Artisan runner
+            //
         }
 
         $this->assertDatabaseMissing('wheretoeat', [

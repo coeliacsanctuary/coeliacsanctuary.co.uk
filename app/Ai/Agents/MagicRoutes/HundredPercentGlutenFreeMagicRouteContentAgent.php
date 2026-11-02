@@ -66,9 +66,6 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
         $this->eateries = $eateries;
     }
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         return match (true) {

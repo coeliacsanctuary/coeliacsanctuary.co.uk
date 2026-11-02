@@ -11,9 +11,6 @@ use Laravel\Nova\Nova;
 
 class FieldServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         $this->app->booted(function (): void {
@@ -36,9 +33,6 @@ class FieldServiceProvider extends ServiceProvider
             ->group(__DIR__ . '/../routes/api.php');
     }
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //

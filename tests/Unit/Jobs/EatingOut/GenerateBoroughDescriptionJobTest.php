@@ -53,7 +53,6 @@ class GenerateBoroughDescriptionJobTest extends TestCase
             });
     }
 
-    /** The town needs a live eatery, otherwise the hasPlaces scope hides its county. */
     protected function createNonLondonTown(): EateryTown
     {
         $county = $this->create(EateryCounty::class, ['county' => 'Cheshire East']);

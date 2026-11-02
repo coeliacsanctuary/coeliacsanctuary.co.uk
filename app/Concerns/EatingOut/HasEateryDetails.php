@@ -19,7 +19,6 @@ use Illuminate\Support\Stringable;
 
 /**
  * @mixin Model
- *
  * @property string $full_location
  * @property string $short_location
  * @property null|string $slug

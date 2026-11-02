@@ -16,9 +16,6 @@ class PlaceRequests extends Value
 
     public $icon = 'document-add';
 
-    /**
-     * Calculate the value of the metric.
-     */
     public function calculate(NovaRequest $request): LinkableValueResult
     {
         return $this->result(

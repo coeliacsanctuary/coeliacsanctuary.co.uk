@@ -12,17 +12,11 @@ use Stringable;
 
 class ViewBlogsForBlogTagTool extends BaseTool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'View the blogs tagged with one or more given tag id, returned by newest first.';
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         return Blog::query()
@@ -44,9 +38,6 @@ class ViewBlogsForBlogTagTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

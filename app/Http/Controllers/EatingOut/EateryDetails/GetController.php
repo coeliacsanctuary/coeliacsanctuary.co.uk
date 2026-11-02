@@ -68,7 +68,6 @@ class GetController
             'nearbyEateries' => fn (): Collection => $getNearbyEateriesAction->handle($nationwideBranch->exists ? $nationwideBranch : $eatery),
         ];
 
-        // Only chain pages have a branch list, and only they should pay for the follow up request.
         if ($pageType === 'nationwide') {
             $props['branches'] = Inertia::defer(fn (): array => $getGroupedEateryNationwideBranchesAction->handle($eatery));
         }

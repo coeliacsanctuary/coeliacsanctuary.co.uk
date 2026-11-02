@@ -109,7 +109,6 @@ class OpeningTimesFieldTest extends TestCase
             'end' => [fake()->numberBetween(16, 23), fake()->randomElement([0,15,30,45])],
         ])->toArray();
 
-        // shut sunday
         $payload[6]['start'] = [null, null];
         $payload[6]['end'] = [null, null];
 

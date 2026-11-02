@@ -114,7 +114,6 @@ class GetTopBlogsForHomePageActionTest extends TestCase
 
         $this->callAction(GetTopBlogsForHomepageAction::class);
 
-        // Blogs (with metrics sum subquery) and media relation
         $this->assertCount(2, DB::getQueryLog());
 
         $this->callAction(GetTopBlogsForHomepageAction::class);

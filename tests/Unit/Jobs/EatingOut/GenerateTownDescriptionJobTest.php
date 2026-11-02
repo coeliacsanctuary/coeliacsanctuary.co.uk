@@ -46,7 +46,6 @@ class GenerateTownDescriptionJobTest extends TestCase
             ->create();
     }
 
-    /** The town needs a live eatery, otherwise the hasPlaces scope hides its county. */
     protected function createLondonBorough(): EateryTown
     {
         $county = $this->create(EateryCounty::class, ['county' => 'London']);
@@ -57,7 +56,6 @@ class GenerateTownDescriptionJobTest extends TestCase
         return $town;
     }
 
-    /** The town needs a live eatery, otherwise the hasPlaces scope hides its county. */
     protected function createNationwideTown(): EateryTown
     {
         $country = $this->create(EateryCountry::class, ['country' => 'Nationwide']);

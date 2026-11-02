@@ -19,9 +19,6 @@ use Stringable;
 
 class ListEateriesInTownTool extends BaseTool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'text'
@@ -45,9 +42,6 @@ class ListEateriesInTownTool extends BaseTool
         text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         $filters = [
@@ -158,9 +152,6 @@ class ListEateriesInTownTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

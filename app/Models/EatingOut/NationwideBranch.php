@@ -42,7 +42,6 @@ use Laravel\Scout\Searchable;
 /**
  * @implements HasOpenGraphImageContract<$this>
  * @implements Collectable<$this>
- *
  * @property Eatery $eatery
  * @property string $short_name
  * @property string $full_name

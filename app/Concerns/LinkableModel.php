@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 
 /**
  * @mixin Model
- *
  * @property string $link
  * @property string $absolute_link
  */

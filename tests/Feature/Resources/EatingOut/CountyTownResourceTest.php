@@ -60,7 +60,7 @@ class CountyTownResourceTest extends TestCase
         $resource = new CountyTownResource($this->town)->toArray(request());
 
         $this->assertArrayHasKey('eateries', $resource);
-        $this->assertEquals(5, $resource['eateries']); // 4 created, plus one in setup
+        $this->assertEquals(5, $resource['eateries']);
     }
 
     #[Test]
@@ -81,7 +81,7 @@ class CountyTownResourceTest extends TestCase
         $resource = new CountyTownResource($this->town)->toArray(request());
 
         $this->assertArrayHasKey('eateries', $resource);
-        $this->assertEquals(10, $resource['eateries']); // 4 eateries, plus one in setup, 5 branches
+        $this->assertEquals(10, $resource['eateries']);
     }
 
     #[Test]

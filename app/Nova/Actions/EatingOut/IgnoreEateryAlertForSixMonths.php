@@ -19,9 +19,6 @@ class IgnoreEateryAlertForSixMonths extends Action
 
     public $withoutActionEvents = true;
 
-    /**
-     * Perform the action on the given models.
-     */
     public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (EateryAlert $model): void {
@@ -39,8 +36,6 @@ class IgnoreEateryAlertForSixMonths extends Action
     }
 
     /**
-     * Get the fields available on the action.
-     *
      * @return array
      */
     public function fields(NovaRequest $request)

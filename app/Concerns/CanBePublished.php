@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @mixin Model
- *
  * @property Carbon $publish_at
  * @property bool $draft
  */

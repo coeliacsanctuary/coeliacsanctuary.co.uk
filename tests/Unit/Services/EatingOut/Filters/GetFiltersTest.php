@@ -103,8 +103,8 @@ class GetFiltersTest extends TestCase
 
         $categoryFilters = $this->getFilters(['categories' => 'att'])['categories'];
 
-        $this->assertFalse($categoryFilters[0]['checked']); // wte
-        $this->assertTrue($categoryFilters[1]['checked']); // att
+        $this->assertFalse($categoryFilters[0]['checked']);
+        $this->assertTrue($categoryFilters[1]['checked']);
     }
 
     #[Test]

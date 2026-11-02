@@ -51,7 +51,6 @@ class GetFilters
 
     /**
      * @template T of EateryType|EateryVenueType|EateryFeature|EateryTown|EateryCounty
-     *
      * @param  class-string<T>  $filterable
      * @param  null | callable(T $filterable): array  $mergeWithMap
      * @return Collection<int, non-empty-array>

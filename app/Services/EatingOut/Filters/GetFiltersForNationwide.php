@@ -46,10 +46,6 @@ class GetFiltersForNationwide extends GetFilters
         return $builder->orderByRaw("eateries_count desc, {$field} asc");
     }
 
-    /**
-     * Chains are counted once each, their nationwide branches are deliberately
-     * not included, the list this filters shows one row per chain.
-     */
     protected function eateryQuery(): string
     {
         return Eatery::query()

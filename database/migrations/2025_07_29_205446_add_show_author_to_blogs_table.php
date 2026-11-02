@@ -15,10 +15,10 @@ return new class () extends Migration {
         });
 
         $blogsToHide = [
-            112, // heidi, cancer story
-            121, // jess, hospital
-            123, // katie, disney
-            246, // sophie, tour of italy
+            112,
+            121,
+            123,
+            246,
         ];
 
         Blog::query()->whereIn('id', $blogsToHide)->update(['show_author' => false]);

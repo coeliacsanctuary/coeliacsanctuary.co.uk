@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template TModel of Model&FilterableRecipeRelation
- *
  * @extends Builder<TModel>
  */
 class RecipeFilterBuilder extends Builder

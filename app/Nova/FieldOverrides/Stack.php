@@ -11,7 +11,6 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
  * @codeCoverageIgnore
- *
  * @method static static make(string $name, Closure $lines)
  */
 class Stack extends \Laravel\Nova\Fields\Stack

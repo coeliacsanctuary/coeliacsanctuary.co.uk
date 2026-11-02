@@ -14,7 +14,6 @@ class GetBlogsForBlogIndexAction
 {
     /**
      * @template T of ResourceCollection
-     *
      * @param  class-string<T>  $resource
      * @return T
      */

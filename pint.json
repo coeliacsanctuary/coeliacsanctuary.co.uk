@@ -1,6 +1,8 @@
 {
     "preset": "psr12",
     "rules": {
+        "Pint/laravel_blade": false,
+        "Pint/phpdoc_type_annotations_only": true,
         "align_multiline_comment": true,
         "array_indentation": true,
         "array_syntax": true,

@@ -21,7 +21,6 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
  * @extends Resource<ShopOrderReview>
- *
  * @codeCoverageIgnore
  */
 class OrderReviews extends Resource

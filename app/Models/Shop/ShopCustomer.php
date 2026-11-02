@@ -34,10 +34,10 @@ class ShopCustomer extends Model implements Authenticatable
         return $this->hasManyThrough(
             ShopOrderDigitalItem::class,
             ShopOrder::class,
-            'customer_id', // shop_orders.customer_id
-            'order_id', // shop_order_digital_items.order_id
-            'id', // customer.id
-            'id', // orders.id
+            'customer_id',
+            'order_id',
+            'id',
+            'id',
         )->whereIn('shop_orders.state_id', [OrderState::PAID, OrderState::READY, OrderState::SHIPPED]);
     }
 

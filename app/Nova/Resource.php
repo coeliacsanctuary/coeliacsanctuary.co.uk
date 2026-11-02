@@ -15,11 +15,8 @@ use Laravel\Nova\Resource as NovaResource;
 
 /**
  * @template TModel of Model
- *
  * @mixin TModel
- *
  * @method mixed getKey()
- *
  * @extends NovaResource<TModel>
  */
 abstract class Resource extends NovaResource

@@ -13,17 +13,11 @@ use Stringable;
 
 class ListPopularEateriesInTown implements Tool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'List the most popular eateries, by rating, in our database, for a given town or London borough.';
     }
 
-    /**
-     * Execute the tool.
-     */
     public function handle(Request $request): Stringable|string
     {
         $places = EateryTown::query()
@@ -50,9 +44,6 @@ class ListPopularEateriesInTown implements Tool
         return (string) json_encode($places);
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

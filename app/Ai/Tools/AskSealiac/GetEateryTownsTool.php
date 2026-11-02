@@ -11,17 +11,11 @@ use Stringable;
 
 class GetEateryTownsTool extends BaseTool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Get all towns within a given county. If the county is London, the results will be London boroughs (eg City of Westminster) rather than traditional towns.';
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         return EateryTown::query()
@@ -35,9 +29,6 @@ class GetEateryTownsTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

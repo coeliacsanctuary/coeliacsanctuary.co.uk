@@ -14,9 +14,6 @@ use Tests\TestCase;
 class FindRelatedBlogsActionTest extends TestCase
 {
     /**
-     * The factory's hasAttached() leaves a stale tags relation on the model, so
-     * these load fresh the way a route-bound blog would.
-     *
      * @return Collection<int, Blog>
      */
     protected function findRelatedBlogs(Blog $blog, int $limit = 10): Collection
@@ -186,13 +183,11 @@ class FindRelatedBlogsActionTest extends TestCase
         $primaryTag = $this->create(BlogTag::class);
         $otherTag = $this->create(BlogTag::class);
 
-        // Create 3 blogs with the primary tag (less than the default limit of 10)
         $primaryTagBlogs = $this->build(Blog::class)
             ->count(3)
             ->hasAttached($primaryTag, relationship: 'tags')
             ->create();
 
-        // Create blogs with a different tag
         $this->build(Blog::class)
             ->count(3)
             ->hasAttached($otherTag, relationship: 'tags')
@@ -204,7 +199,6 @@ class FindRelatedBlogsActionTest extends TestCase
 
         $relatedBlogs = $this->findRelatedBlogs($blog);
 
-        // Should have 2 from primary tag + 3 from other tag = 5 total
         $this->assertCount(5, $relatedBlogs);
     }
 

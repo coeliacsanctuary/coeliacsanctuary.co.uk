@@ -54,7 +54,6 @@ class AddToBasketRequest extends FormRequest
     public function after(): array
     {
         return [
-            // Valid Variant Id
             function (Validator $validator): void {
                 if ($this->isNotFilled('product_id')) {
                     return;
@@ -77,7 +76,6 @@ class AddToBasketRequest extends FormRequest
                 }
             },
 
-            // Variant is live
             function (Validator $validator): void {
                 if ($this->isNotFilled('variant_id')) {
                     return;
@@ -90,7 +88,6 @@ class AddToBasketRequest extends FormRequest
                 }
             },
 
-            // Quantity Available
             function (Validator $validator): void {
                 if ($this->isNotFilled('product_id')) {
                     return;

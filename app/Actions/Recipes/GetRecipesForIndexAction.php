@@ -14,7 +14,6 @@ class GetRecipesForIndexAction
 {
     /**
      * @template T of ResourceCollection
-     *
      * @param  array{features?: string[], meals?: string[], freeFrom?: string[]}  $filters
      * @param  class-string<T>  $resource
      * @return T

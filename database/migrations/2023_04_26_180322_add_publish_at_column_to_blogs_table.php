@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('blogs', function (Blueprint $table): void {
@@ -23,9 +20,6 @@ return new class () extends Migration {
         DB::statement('UPDATE blogs SET publish_at = created_at');
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('blogs', function (Blueprint $table): void {

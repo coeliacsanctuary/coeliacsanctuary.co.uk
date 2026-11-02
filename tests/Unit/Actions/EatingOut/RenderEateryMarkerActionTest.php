@@ -146,7 +146,6 @@ class RenderEateryMarkerActionTest extends TestCase
         $this->assertTrue($response->headers->hasCacheControlDirective('no-store'));
     }
 
-    /** Editing a glyph or the pin has to show up straight away while developing. */
     #[Test]
     public function itNeverReturnsA304LocallyEvenWhenTheEtagWouldHaveMatched(): void
     {

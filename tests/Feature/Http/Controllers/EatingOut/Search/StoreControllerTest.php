@@ -19,8 +19,8 @@ class StoreControllerTest extends TestCase
         $this->submitSearch()->assertSessionHasErrors('term');
         $this->submitSearch(term: 123)->assertSessionHasErrors('term');
         $this->submitSearch(term: true)->assertSessionHasErrors('term');
-        $this->submitSearch(term: 'aa')->assertSessionHasErrors('term'); // to short
-        $this->submitSearch(term: Str::random(101))->assertSessionHasErrors('term'); // to long
+        $this->submitSearch(term: 'aa')->assertSessionHasErrors('term');
+        $this->submitSearch(term: Str::random(101))->assertSessionHasErrors('term');
     }
 
     #[Test]
@@ -65,7 +65,7 @@ class StoreControllerTest extends TestCase
         $this->submitSearch(range: null)->assertSessionHasErrors('range');
         $this->submitSearch(range: 'foo')->assertSessionHasErrors('range');
         $this->submitSearch(range: true)->assertSessionHasErrors('range');
-        $this->submitSearch(range: 7)->assertSessionHasErrors('range'); // not valid entry
+        $this->submitSearch(range: 7)->assertSessionHasErrors('range');
     }
 
     #[Test]

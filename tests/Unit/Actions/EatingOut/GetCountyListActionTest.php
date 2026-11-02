@@ -309,9 +309,9 @@ class GetCountyListActionTest extends TestCase
         $countryResult = $collection->firstWhere('name', $country->country);
         $topCounties = collect($countryResult['top_counties']);
 
-        $this->assertEquals($counties[1]->county, $topCounties[0]['name']); // 4.67
-        $this->assertEquals($counties[0]->county, $topCounties[1]['name']); // 4.17
-        $this->assertEquals($counties[2]->county, $topCounties[2]['name']); // 4.0
+        $this->assertEquals($counties[1]->county, $topCounties[0]['name']);
+        $this->assertEquals($counties[0]->county, $topCounties[1]['name']);
+        $this->assertEquals($counties[2]->county, $topCounties[2]['name']);
     }
 
     #[Test]
