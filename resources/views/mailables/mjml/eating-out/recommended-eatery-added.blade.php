@@ -2,20 +2,23 @@
     use App\Models\EatingOut\EateryRecommendation;
     use App\Models\EatingOut\Eatery;
     use App\Support\Helpers;
-    use Illuminate\Support\Collection;use Illuminate\Support\Str;
+    use Illuminate\Support\Collection;
+    use Illuminate\Support\Str;
     use Money\Money;
+
     /** @var Eatery $eatery */
     /** @var EateryRecommendation $recommendation */
     /** @var Collection<int, Eatery> $nearbyEateries */
 
-$hideRelatedGap = true;
+    $hideRelatedGap = true;
 @endphp
 
 @extends('mailables.mjml.layout')
 
 @push('head')
     <mj-style>
-        @media only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
+        @media
+        only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
     </mj-style>
 @endpush
 
@@ -35,17 +38,13 @@ $hideRelatedGap = true;
                 Why don't you checkout <strong>{{ $eatery->name }}</strong> on Coeliac Sanctuary and leave a review to
                 let others know your experience eating out there?
             </mj-text>
-            <mj-text mj-class="inner" padding-top="10px">
-                Thanks, Alison - Coeliac Sanctuary
-            </mj-text>
+            <mj-text mj-class="inner" padding-top="10px"> Thanks, Alison - Coeliac Sanctuary </mj-text>
         </mj-column>
     </mj-section>
 
     <mj-section padding-bottom="20px">
         <mj-column>
-            <mj-button href="{{ $eatery->absoluteLink() }}">
-                Visit {{ $eatery->name }} and leave a review!
-            </mj-button>
+            <mj-button href="{{ $eatery->absoluteLink() }}"> Visit {{ $eatery->name }} and leave a review! </mj-button>
         </mj-column>
     </mj-section>
 

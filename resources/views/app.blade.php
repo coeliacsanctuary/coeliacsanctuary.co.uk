@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
-    <meta data-rh="true" name="theme-color" content="#80CCFC">
+    <meta data-rh="true" name="theme-color" content="#80CCFC" />
 
     <meta name="author" content="Coeliac Sanctuary" />
 
@@ -27,71 +27,81 @@
     @googlefonts
     @preloadImage
 
-    @if(! app()->isLocal())
+    @if ( ! app()->isLocal())
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
+            function gtag() {
+                dataLayer.push(arguments);
+            }
             gtag('js', new Date());
 
             gtag('config', 'G-5PWV6VHY13');
         </script>
     @endif
 
-    @if(config('coeliac.show_ads'))
-        <script type="text/javascript" async="async" data-noptimize="1" data-cfasync="false" src="//scripts.mediavine.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"></script>
+    @if (config('coeliac.show_ads'))
+        <script
+            type="text/javascript"
+            async="async"
+            data-noptimize="1"
+            data-cfasync="false"
+            src="//scripts.mediavine.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"
+        ></script>
     @endif
 
     @vite('resources/js/app.ts')
     @inertiaHead
 </head>
 <body class="mb-0 {{ data_get($page, 'props.meta.bodyClass') }}">
-@inertia
-@if(app()->isLocal())
-    <div class="fixed bottom-0 right-0 bg-red text-white text-xs font-semibold leading-0 p-2">
-        <span class="xxs:hidden">xxxs</span>
-        <span class="hidden xxs:max-xs:block">xxs</span>
-        <span class="hidden xs:max-sm:block">xs</span>
-        <span class="hidden sm:max-md:block">sm</span>
-        <span class="hidden md:max-xmd:block">md</span>
-        <span class="hidden xmd:max-lg:block">xmd</span>
-        <span class="hidden lg:max-xl:block">lg</span>
-        <span class="hidden xl:max-2xl:block">xl</span>
-        <span class="hidden 2xl:block">2xl</span>
-    </div>
-@endif
+    @inertia
+    @if (app()->isLocal())
+        <div class="bg-red fixed right-0 bottom-0 p-2 text-xs leading-0 font-semibold text-white">
+            <span class="xxs:hidden">xxxs</span>
+            <span class="xxs:max-xs:block hidden">xxs</span>
+            <span class="xs:max-sm:block hidden">xs</span>
+            <span class="hidden sm:max-md:block">sm</span>
+            <span class="md:max-xmd:block hidden">md</span>
+            <span class="xmd:max-lg:block hidden">xmd</span>
+            <span class="hidden lg:max-xl:block">lg</span>
+            <span class="hidden xl:max-2xl:block">xl</span>
+            <span class="hidden 2xl:block">2xl</span>
+        </div>
+    @endif
 
-<noscript>
-    <img alt='' height="1" width="1" style="display:none"
-         src="https://www.facebook.com/tr?id=376206517120953&ev=PageView&noscript=1"
-    />
-</noscript>
+    <noscript>
+        <img
+            alt=""
+            height="1"
+            width="1"
+            style="display: none"
+            src="https://www.facebook.com/tr?id=376206517120953&ev=PageView&noscript=1"
+        />
+    </noscript>
 
-<script>
-    setTimeout(() => {
-        !(function(f, b, e, v, n, t, s) {
-            if (f.fbq) return;
-            n = f.fbq = function() {
-                n.callMethod
-                    ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-            };
-            if (!f._fbq) f._fbq = n;
-            n.push = n;
-            n.loaded = !0;
-            n.version = '2.0';
-            n.queue = [];
-            t = b.createElement(e);
-            t.async = !0;
-            t.src = v;
-            s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s);
-        }(window, document, 'script',
-            'https://connect.facebook.net/en_US/fbevents.js'));
-        fbq('init', '376206517120953');
-        fbq('track', 'PageView');
-    }, 5000);
-</script>
+    <script>
+        setTimeout(() => {
+            !(function (f, b, e, v, n, t, s) {
+                if (f.fbq) return;
+                n = f.fbq = function () {
+                    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+                };
+                if (!f._fbq) f._fbq = n;
+                n.push = n;
+                n.loaded = !0;
+                n.version = '2.0';
+                n.queue = [];
+                t = b.createElement(e);
+                t.async = !0;
+                t.src = v;
+                s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s);
+            })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '376206517120953');
+            fbq('track', 'PageView');
+        }, 5000);
+    </script>
 
-@journeyTracker
+    @journeyTracker
 </body>
 </html>
