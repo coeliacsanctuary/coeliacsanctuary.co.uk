@@ -41,9 +41,6 @@ class PrepareRecommendedEatery implements Agent, HasProviderOptions, HasStructur
         ]);
     }
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         return view('prompts.prepare-recommended-eatery-base-instructions')->render();
