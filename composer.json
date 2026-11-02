@@ -304,6 +304,7 @@
         "rector-dry": "vendor/bin/rector process --dry-run",
         "pre-commit": [
             "Composer\\Config::disableProcessTimeout",
+            "composer run rector",
             "composer run pint",
             "composer run stan",
             "composer run test"
