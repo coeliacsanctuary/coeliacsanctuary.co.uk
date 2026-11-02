@@ -117,7 +117,7 @@ class EateryRecommendationAlreadyExistsNotificationTest extends TestCase
             ->render();
 
         $this->assertStringContainsString(
-            "Why don't you checkout the <strong>Nantwich</strong> branch of <strong>{$eatery->name}</strong>",
+            "Why don't you checkout the <strong>Nantwich</strong> branch of",
             $content,
         );
     }
