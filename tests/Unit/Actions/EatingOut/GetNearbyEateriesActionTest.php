@@ -406,9 +406,6 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     /**
-     * The parent of a nationwide branch is always a nationwide eatery, so it is
-     * never itself a nearby result.
-     *
      * @param  array<string, mixed>  $attributes
      */
     protected function createNationwideEatery(array $attributes = []): Eatery

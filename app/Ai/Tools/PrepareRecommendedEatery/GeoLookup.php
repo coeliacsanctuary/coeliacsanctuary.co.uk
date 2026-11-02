@@ -13,17 +13,11 @@ use Stringable;
 
 class GeoLookup implements Tool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Perform a geocode lookup of a given address to get the latlng';
     }
 
-    /**
-     * Execute the tool.
-     */
     public function handle(Request $request): Stringable|string
     {
         /** @var LatLng $lookup */
@@ -35,9 +29,6 @@ class GeoLookup implements Tool
         ]);
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

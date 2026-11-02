@@ -35,7 +35,6 @@ class Popup extends Model implements HasMedia
 
     /**
      * @return Attribute<string, never>
-     *
      * @throws Exception
      */
     public function secondaryImage(): Attribute

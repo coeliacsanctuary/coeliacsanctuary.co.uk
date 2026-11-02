@@ -39,10 +39,9 @@ class GetNationwideBranchesInLatLngActionTest extends GetEateriesTestCase
 
         $newCollection = $this->callGetBranchesInLatLngRadiusAction($eateries);
 
-        $this->assertCount(10, $newCollection->eateries); // 5 in setup, 5 from above
+        $this->assertCount(10, $newCollection->eateries);
     }
 
-    /** A branch has no venue type of its own, it comes from the eatery it belongs to. */
     #[Test]
     public function itSetsTheVenueTypeIdFromTheParentEatery(): void
     {

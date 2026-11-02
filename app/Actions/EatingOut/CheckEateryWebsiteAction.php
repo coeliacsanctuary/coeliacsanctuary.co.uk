@@ -50,11 +50,11 @@ class CheckEateryWebsiteAction
                 statusCode: $response->status(),
                 errorMessage: "HTTP {$response->status()} response",
             );
-        } catch (ConnectionException $e) {
+        } catch (ConnectionException $connectionException) {
             return new EateryWebsiteCheckResult(
                 success: false,
                 statusCode: 500,
-                errorMessage: "Connection failed: {$e->getMessage()}",
+                errorMessage: "Connection failed: {$connectionException->getMessage()}",
                 timedOut: true,
             );
         }

@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace App\Jobs\Metrics\Blogs;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogMetric;
 use Exception;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use JourneyTracker\JourneyTrackerLaravel\Enums\EventType;
@@ -24,10 +21,7 @@ use Throwable;
 
 class GetBlogMetricsJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $tries = 1;
 
@@ -49,14 +43,14 @@ class GetBlogMetricsJob implements ShouldQueue
                 ->today($this->date)
                 ->count(
                     'views',
-                    fn (QueryDescriptor $query) => $query
-                        ->withPage(fn (PageFilter $page) => $page->path(mb_trim($this->blog->link, '/')))
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
+                        ->withPage(fn (PageFilter $page): PageFilter => $page->path(mb_trim($this->blog->link, '/')))
                 )
                 ->count(
                     'comment_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
+                            fn (EventFilter $event): EventFilter => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('CommentsCard')
                                 ->withParameters([
@@ -67,9 +61,9 @@ class GetBlogMetricsJob implements ShouldQueue
                 )
                 ->count(
                     'detail_card_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
+                            fn (EventFilter $event): EventFilter => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('BlogDetailCard')
                                 ->withParameters([
@@ -79,9 +73,9 @@ class GetBlogMetricsJob implements ShouldQueue
                 )
                 ->count(
                     'collection_card_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
+                            fn (EventFilter $event): EventFilter => $event
                                 ->type(EventType::SCROLLED_INTO_VIEW)
                                 ->identifier('CollectionItemCard')
                                 ->withParameters([

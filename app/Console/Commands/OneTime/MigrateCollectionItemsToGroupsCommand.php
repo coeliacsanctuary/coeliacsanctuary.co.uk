@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\OneTime;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Collections\Collection;
 use App\Models\Collections\CollectionGroup;
 use Illuminate\Console\Command;
@@ -11,17 +12,16 @@ use Illuminate\Support\Facades\DB;
 
 use function Laravel\Prompts\progress;
 
+#[Signature('one-time:migrate-collection-items-to-groups')]
 class MigrateCollectionItemsToGroupsCommand extends Command
 {
-    protected $signature = 'one-time:migrate-collection-items-to-groups';
-
     protected int $groupsCreated = 0;
 
     protected int $itemsMigrated = 0;
 
     public function handle(): void
     {
-        $collections = Collection::withoutGlobalScopes()->get();
+        $collections = Collection::query()->withoutGlobalScopes()->get();
 
         progress(
             label: 'Migrating collection items to groups',
@@ -35,7 +35,7 @@ class MigrateCollectionItemsToGroupsCommand extends Command
 
     protected function processCollection(Collection $collection): void
     {
-        $group = CollectionGroup::create([
+        $group = CollectionGroup::query()->create([
             'collection_id' => $collection->id,
             'title' => null,
             'body' => null,

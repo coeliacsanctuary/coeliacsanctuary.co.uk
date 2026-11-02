@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasOpenGraphImage;
 use App\Contracts\HasOpenGraphImageContract;
@@ -28,9 +30,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
- *
  * @property string $image
  */
+#[RouteKey('slug')]
+#[Table(name: 'wheretoeat_areas')]
 class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
 {
     use DisplaysMedia;
@@ -41,8 +44,6 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
-    protected $table = 'wheretoeat_areas';
-
     protected static function booted(): void
     {
         static::addGlobalScope(
@@ -52,7 +53,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
                 ->orWhereHas('liveBranches')
         );
 
-        static::saving(static function (self $area) {
+        static::saving(static function (self $area): EateryArea {
             if ( ! $area->slug) {
                 $area->slug = Str::slug($area->area);
             }
@@ -81,11 +82,6 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
         });
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
     /**
      * @param  Builder<static>  $query
      * @param  string  $value
@@ -112,9 +108,11 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
             if ($return->count() === 0) {
                 $eateryCheck = $borough->liveEateries()->where('slug', $value)->first();
 
-                if ($eateryCheck) {
-                    abort(redirect($eateryCheck->absoluteLink()));
+                if ( ! $eateryCheck) {
+                    return $query->where('slug', $value);
                 }
+
+                redirect($eateryCheck->absoluteLink());
             }
 
             return $return;
@@ -199,7 +197,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -216,7 +214,7 @@ class EateryArea extends Model implements HasMedia, HasOpenGraphImageContract
         return Attribute::get(function () { /** @phpstan-ignore-line */
             try {
                 return $this->main_image_as_webp;
-            } catch (Error $exception) { /** @phpstan-ignore-line */
+            } catch (Error) { /** @phpstan-ignore-line */
                 return null;
             }
         });

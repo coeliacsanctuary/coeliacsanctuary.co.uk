@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Models\EatingOut\EaterySearchTerm;
+use App\DataObjects\EatingOut\LatLng;
 use App\Builders\EatingOut\EateryBuilder;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
@@ -17,7 +19,7 @@ class GetNationwideBranchesFromFiltersAction implements GetEateriesPipelineActio
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ($pipelineData->searchTerm || $pipelineData->latLng) {
+        if ($pipelineData->searchTerm instanceof EaterySearchTerm || $pipelineData->latLng instanceof LatLng) {
             return $next($pipelineData);
         }
 
@@ -30,7 +32,7 @@ class GetNationwideBranchesFromFiltersAction implements GetEateriesPipelineActio
                 'if(wheretoeat_nationwide_branches.name = "" or wheretoeat_nationwide_branches.name is null, concat(wheretoeat.name, "-", wheretoeat.id), concat(wheretoeat_nationwide_branches.name, " ", wheretoeat.name)) as ordering',
             ], ','))
             ->join('wheretoeat', 'wheretoeat.id', 'wheretoeat_nationwide_branches.wheretoeat_id')
-            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData) {
+            ->whereHas('eatery', function (EateryBuilder $query) use ($pipelineData): EateryBuilder {
                 $query->where('closed_down', false);
                 if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
                     $query = $query->hasCategories($pipelineData->filters['categories']);
@@ -51,7 +53,7 @@ class GetNationwideBranchesFromFiltersAction implements GetEateriesPipelineActio
         /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string}> $pendingEateries */
         $pendingEateries = $query->toBase()->get();
 
-        $pendingEateries = $pendingEateries->map(fn (object $eatery) => new PendingEatery(
+        $pendingEateries = $pendingEateries->map(fn (object $eatery): PendingEatery => new PendingEatery(
             id: $eatery->id,
             branchId: $eatery->branch_id,
             ordering: $eatery->ordering,

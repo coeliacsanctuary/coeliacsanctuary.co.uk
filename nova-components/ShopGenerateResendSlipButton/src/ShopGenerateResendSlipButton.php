@@ -12,8 +12,6 @@ class ShopGenerateResendSlipButton extends Field
     use SupportsDependentFields;
 
     /**
-     * The field's component.
-     *
      * @var string
      */
     public $component = 'shop-generate-resend-slip-button';

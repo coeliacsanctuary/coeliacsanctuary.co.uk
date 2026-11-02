@@ -93,7 +93,7 @@ class ShowControllerTest extends TestCase
     {
         $this->visitTown()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Town')
                     ->has('town')
                     ->where('town.name', $this->town->town)

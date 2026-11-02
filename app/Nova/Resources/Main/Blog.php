@@ -51,7 +51,7 @@ class Blog extends Resource
 
     public static $with = ['tags', 'media'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -104,7 +104,7 @@ class Blog extends Resource
                         }
 
                         $field->readonly(false)
-                            ->options($tags->mapWithKeys(fn ($tag) => [$tag => $tag])->toArray())
+                            ->options($tags->mapWithKeys(fn ($tag): array => [$tag => $tag])->toArray())
                             ->displayUsingLabels()
                             ->help('If set, the primary tag will be used for related blogs in the sidebar');
                     })
@@ -130,7 +130,7 @@ class Blog extends Resource
                             return;
                         }
 
-                        $group = CollectionModel::query()->find($request->get($requestAttribute))?->groups->last();
+                        $group = CollectionModel::query()->find($request->input($requestAttribute))?->groups->last();
 
                         if ( ! $group) {
                             return;
@@ -242,14 +242,14 @@ class Blog extends Resource
             $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
 
             return array_map(
-                fn ($metric) => ApexChart::make($metric)
+                fn (string $metric) => ApexChart::make($metric)
                     ->withParams(['blogId' => $blogId])
                     ->onlyOnDetail()
                     ->fixedHeight()
                     ->fullWidth(),
                 $metrics
             );
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return [];
         }
     }

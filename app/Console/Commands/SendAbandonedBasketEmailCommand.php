@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Enums\Shop\OrderState;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Notifications\Shop\AbandonedBasketNotification;
 use Illuminate\Console\Command;
 
+#[Signature('coeliac:send-abandoned-basket-email')]
 class SendAbandonedBasketEmailCommand extends Command
 {
-    protected $signature = 'coeliac:send-abandoned-basket-email';
-
     public function handle(): void
     {
         /** @var int $limit */
@@ -28,7 +28,7 @@ class SendAbandonedBasketEmailCommand extends Command
             ->withWhereHas('customer')
             ->get()
             ->each(function (ShopOrder $basket): void {
-                $itemsInStock = $basket->items->reject(fn (ShopOrderItem $item) => $item->variant?->quantity === 0);
+                $itemsInStock = $basket->items->reject(fn (ShopOrderItem $item): bool => $item->variant?->quantity === 0);
 
                 if ($itemsInStock->isEmpty()) {
                     return;

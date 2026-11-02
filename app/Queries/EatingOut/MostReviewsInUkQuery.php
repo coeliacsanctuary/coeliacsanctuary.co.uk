@@ -29,11 +29,11 @@ class MostReviewsInUkQuery
             ->orderByRaw($rating)
             ->take(3)
             ->get()
-            ->map(function (Eatery $eatery) {
+            ->map(function (Eatery $eatery): Eatery {
                 $eatery->town?->setRelation('county', $eatery->county);
 
                 return $eatery;
             })
-            ->map(fn (Eatery $eatery) => new CountyEateryResource($eatery));
+            ->map(fn (Eatery $eatery): CountyEateryResource => new CountyEateryResource($eatery));
     }
 }

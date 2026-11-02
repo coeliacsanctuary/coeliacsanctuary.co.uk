@@ -13,9 +13,7 @@ class GetController
     {
         $response = Http::getAddress()->get("get-location/{$id}");
 
-        if ( ! $response->successful()) {
-            abort(404);
-        }
+        abort_unless($response->successful(), 404);
 
         /** @var array{latitude: float, longitude: float} $location */
         $location = $response->json();

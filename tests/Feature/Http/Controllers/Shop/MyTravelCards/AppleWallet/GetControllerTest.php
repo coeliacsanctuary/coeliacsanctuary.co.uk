@@ -47,7 +47,7 @@ class GetControllerTest extends TestCase
     public function itBuildsThePassForTheCustomersCard(): void
     {
         $this->expectAction(GetOrCreateAppleWalletPassAction::class, [
-            fn (ShopCustomer $customer, ShopDigitalCard $card) => $customer->is($this->customer) && $card->is($this->card),
+            fn (ShopCustomer $customer, ShopDigitalCard $card): bool => $customer->is($this->customer) && $card->is($this->card),
         ], return: new StubMobilePass());
 
         $this->makeRequest()->assertOk();

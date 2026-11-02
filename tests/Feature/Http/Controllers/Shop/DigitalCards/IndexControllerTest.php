@@ -40,7 +40,7 @@ class IndexControllerTest extends TestCase
         /** @var ShopProduct $product */
         $product = $this->build(ShopProduct::class)
             ->has($this->build(ShopProductVariant::class), 'variants')
-            ->has($this->build(ShopPrice::class)->state(fn () => ['price' => 1000]), 'prices')
+            ->has($this->build(ShopPrice::class)->state(fn (): array => ['price' => 1000]), 'prices')
             ->create();
 
         $this->product = $product;
@@ -65,7 +65,7 @@ class IndexControllerTest extends TestCase
         /** @var ShopDigitalCard $card */
         $card = $this->build(ShopDigitalCard::class)
             ->forProduct($this->product)
-            ->has($this->build(ShopDigitalCardPrice::class)->state(fn () => ['price' => 500, 'price_with_physical_product' => 300]), 'price')
+            ->has($this->build(ShopDigitalCardPrice::class)->state(fn (): array => ['price' => 500, 'price_with_physical_product' => 300]), 'price')
             ->state($attributes)
             ->create();
 
@@ -90,7 +90,7 @@ class IndexControllerTest extends TestCase
     {
         $this->expectAction(GetDigitalCardsIndexAction::class, return: collect());
 
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/DigitalCards'));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->component('Shop/DigitalCards'));
     }
 
     #[Test]
@@ -99,7 +99,7 @@ class IndexControllerTest extends TestCase
         $this->expectAction(GetDigitalCardsIndexAction::class, return: collect());
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page->where('meta.title', 'Digital Coeliac Gluten Free Travel Cards')->etc()
+            fn (Assert $page): Assert => $page->where('meta.title', 'Digital Coeliac Gluten Free Travel Cards')->etc()
         );
     }
 
@@ -109,7 +109,7 @@ class IndexControllerTest extends TestCase
         $this->expectAction(GetDigitalCardsIndexAction::class, return: collect());
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('type', 'Digital Coeliac Gluten Free Travel Cards')
                 ->where('categoryLink', route('shop.category', $this->category))
                 ->etc()
@@ -120,7 +120,7 @@ class IndexControllerTest extends TestCase
     public function itCallsTheGetDigitalCardsIndexActionWithTheTypeResolvedFromTheRequestPath(): void
     {
         $this->expectAction(GetDigitalCardsIndexAction::class, [
-            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && $passedBasket === null,
+            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket): bool => $type->is($this->cardType) && ! $passedBasket instanceof ShopOrder,
         ], return: collect());
 
         $this->makeRequest();
@@ -151,7 +151,7 @@ class IndexControllerTest extends TestCase
         $basket = $this->build(ShopOrder::class)->asBasket()->create();
 
         $this->expectAction(GetDigitalCardsIndexAction::class, [
-            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && $passedBasket?->is($basket),
+            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket): bool => $type->is($this->cardType) && $passedBasket?->is($basket),
         ], return: collect());
 
         $this->withCookie('basket_token', $basket->token)->makeRequest();
@@ -161,7 +161,7 @@ class IndexControllerTest extends TestCase
     public function itPassesNoBasketToTheGetDigitalCardsIndexActionWhenTheTokenDoesntResolveToABasket(): void
     {
         $this->expectAction(GetDigitalCardsIndexAction::class, [
-            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket) => $type->is($this->cardType) && $passedBasket === null,
+            fn (ShopDigitalCardType $type, ?ShopOrder $passedBasket): bool => $type->is($this->cardType) && ! $passedBasket instanceof ShopOrder,
         ], return: collect());
 
         $this->withCookie('basket_token', 'not-a-basket')->makeRequest();
@@ -176,7 +176,7 @@ class IndexControllerTest extends TestCase
         );
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->has('products', 1)
                 ->where('products.0.title', 'French Travel Card')
                 ->where('products.0.language', 'french')
@@ -194,7 +194,7 @@ class IndexControllerTest extends TestCase
     {
         $this->expectAction(GetDigitalCardsIndexAction::class, return: collect());
 
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->has('products', 0)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->has('products', 0)->etc());
     }
 
     #[Test]

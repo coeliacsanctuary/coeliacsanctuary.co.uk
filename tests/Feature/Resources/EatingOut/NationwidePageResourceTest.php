@@ -33,7 +33,7 @@ class NationwidePageResourceTest extends TestCase
     {
         $keys = ['name', 'slug', 'description', 'chains', 'eateries', 'reviews'];
 
-        $resource = (new NationwidePageResource($this->county))->toArray(request());
+        $resource = new NationwidePageResource($this->county)->toArray(request());
 
         foreach ($keys as $key) {
             $this->assertArrayHasKey($key, $resource);
@@ -45,7 +45,7 @@ class NationwidePageResourceTest extends TestCase
     {
         $this->county->updateQuietly(['description' => 'Some **gluten free** chains']);
 
-        $resource = (new NationwidePageResource($this->county))->toArray(request());
+        $resource = new NationwidePageResource($this->county)->toArray(request());
 
         $this->assertStringContainsString('<strong>gluten free</strong>', (string) $resource['description']);
     }
@@ -55,7 +55,7 @@ class NationwidePageResourceTest extends TestCase
     {
         $this->county->updateQuietly(['description' => null]);
 
-        $resource = (new NationwidePageResource($this->county))->toArray(request());
+        $resource = new NationwidePageResource($this->county)->toArray(request());
 
         $this->assertNotEmpty((string) $resource['description']);
         $this->assertStringContainsString(
@@ -71,7 +71,7 @@ class NationwidePageResourceTest extends TestCase
             ->count(3)
             ->create(['county_id' => $this->county->id]);
 
-        $resource = (new NationwidePageResource($this->county))->toArray(request());
+        $resource = new NationwidePageResource($this->county)->toArray(request());
 
         $this->assertInstanceOf(NationwideListCollection::class, $resource['chains']);
     }
@@ -83,7 +83,7 @@ class NationwidePageResourceTest extends TestCase
             ->count(5)
             ->create(['county_id' => $this->county->id]);
 
-        $resource = (new NationwidePageResource($this->county))->toArray(request());
+        $resource = new NationwidePageResource($this->county)->toArray(request());
 
         $this->assertEquals(5, $resource['eateries']);
     }
@@ -94,7 +94,7 @@ class NationwidePageResourceTest extends TestCase
         $this->build(Eatery::class)->count(3)->create(['county_id' => $this->county->id]);
         $attraction = $this->build(Eatery::class)->attraction()->create(['county_id' => $this->county->id]);
 
-        $resource = (new NationwidePageResource($this->county))
+        $resource = new NationwidePageResource($this->county)
             ->withFilters(['categories' => ['att'], 'venueTypes' => null, 'features' => null])
             ->toArray(request());
 
@@ -108,7 +108,7 @@ class NationwidePageResourceTest extends TestCase
         $this->build(Eatery::class)->count(3)->create(['county_id' => $this->county->id]);
         $this->build(Eatery::class)->attraction()->create(['county_id' => $this->county->id]);
 
-        $resource = (new NationwidePageResource($this->county))
+        $resource = new NationwidePageResource($this->county)
             ->withFilters(['categories' => ['att'], 'venueTypes' => null, 'features' => null])
             ->toArray(request());
 
@@ -123,7 +123,7 @@ class NationwidePageResourceTest extends TestCase
             ->has($this->build(EateryReview::class)->approved()->count(5), 'reviews')
             ->create(['county_id' => $this->county->id]);
 
-        $resource = (new NationwidePageResource($this->county))->toArray(request());
+        $resource = new NationwidePageResource($this->county)->toArray(request());
 
         $this->assertEquals(25, $resource['reviews']);
     }

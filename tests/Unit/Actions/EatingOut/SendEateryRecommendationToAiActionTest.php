@@ -32,7 +32,7 @@ class SendEateryRecommendationToAiActionTest extends TestCase
         app(SendEateryRecommendationToAiAction::class)->handle($this->recommendation);
 
         PrepareRecommendedEatery::assertPrompted(
-            fn ($prompt) => str_contains($prompt->prompt, 'Place Name: ' . $this->recommendation->place_name)
+            fn ($prompt): bool => str_contains($prompt->prompt, 'Place Name: ' . $this->recommendation->place_name)
         );
     }
 

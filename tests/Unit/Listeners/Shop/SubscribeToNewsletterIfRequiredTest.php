@@ -38,7 +38,7 @@ class SubscribeToNewsletterIfRequiredTest extends TestCase
 
         $this->mock(SignUpToNewsletterAction::class)
             ->shouldReceive('handle')
-            ->withArgs(fn ($email) => $email === $order->customer->email)
+            ->withArgs(fn ($email): bool => $email === $order->customer->email)
             ->once();
 
         app(SubscribeToNewsletterIfRequired::class)->handle($event);

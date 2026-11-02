@@ -50,8 +50,8 @@ class RecipeAllergens implements PolymorphicResource
 
         $model->allergens->each($callback);
 
-        $values->map(fn ($value) => filter_var($value, FILTER_VALIDATE_BOOL))
-            ->filter(fn ($value) => $value === false)
+        $values->map(fn ($value): false => filter_var($value, FILTER_VALIDATE_BOOL))
+            ->filter(fn ($value): bool => $value === false)
             ->map(fn ($value, $key) => RecipeAllergen::query()->where('allergen', Str::headline($key))->firstOrFail()->id)
             ->each(fn ($id) => $model->allergens()->attach($id));
     }

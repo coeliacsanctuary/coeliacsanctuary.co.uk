@@ -21,12 +21,7 @@ class CompleteReportOrRecommendation extends Action
 
     public $withoutActionEvents = true;
 
-    /**
-     * Perform the action on the given models.
-     *
-     * @return mixed
-     */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (EateryRecommendation|EateryReport|EateryAlert $model): void {
             if ($model->completed) {
@@ -38,8 +33,6 @@ class CompleteReportOrRecommendation extends Action
     }
 
     /**
-     * Get the fields available on the action.
-     *
      * @return array
      */
     public function fields(NovaRequest $request)

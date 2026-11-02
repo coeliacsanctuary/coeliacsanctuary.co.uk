@@ -80,7 +80,6 @@ class ResourceRegistrar
     public static function handle(): void
     {
         Nova::resources([
-            // Main
             Blog::class,
             BlogTag::class,
             Collection::class,
@@ -94,11 +93,9 @@ class ResourceRegistrar
             AnnouncementResource::class,
             RedirectResource::class,
 
-            // Ask Sealiac
             AskSealiacChatResource::class,
             AskSealiacChatMessageResource::class,
 
-            // Eating Out
             Eateries::class,
             NationwideEateries::class,
             NationwideBranches::class,
@@ -121,12 +118,10 @@ class ResourceRegistrar
             EateryAttractionRestaurantResource::class,
             EateryMagicRoutesResource::class,
 
-            // Search
             SearchResource::class,
             SearchAiResponseResource::class,
             SearchHistoryResource::class,
 
-            // Shop Sales
             Baskets::class,
             Orders::class,
             DigitalOrders::class,
@@ -135,22 +130,18 @@ class ResourceRegistrar
             OrderItem::class,
             OrderDigitalItem::class,
 
-            // Shop Physical Inventory
             Categories::class,
             Products::class,
             ShippingMethod::class,
             Price::class,
             ProductVariant::class,
 
-            // Shop Digital Products
             DigitalCardResource::class,
             DigitalCardTypeResource::class,
 
-            // Shop Customers
             Customer::class,
             ShippingAddress::class,
 
-            // Shop Admin
             DiscountCode::class,
             PostageCountry::class,
             PostagePrice::class,
@@ -162,7 +153,6 @@ class ResourceRegistrar
             OrderReviewItem::class,
             OrderSourcesResource::class,
 
-            // Shop Search
             TravelCardSearchHistory::class,
             TravelCardSearchTerms::class,
         ]);

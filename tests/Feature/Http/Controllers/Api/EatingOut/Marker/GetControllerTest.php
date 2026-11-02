@@ -26,7 +26,7 @@ class GetControllerTest extends TestCase
     public function itCallsTheRenderEateryMarkerActionWithTheTypeAndVenueType(): void
     {
         $this->expectAction(RenderEateryMarkerAction::class, [
-            fn (Request $request, int $typeId, ?int $venueTypeId) => $typeId === EateryType::ATTRACTION && $venueTypeId === 123,
+            fn (Request $request, int $typeId, ?int $venueTypeId): bool => $typeId === EateryType::ATTRACTION && $venueTypeId === 123,
         ], return: new Response('<svg></svg>'));
 
         $this->visitRoute(EateryType::ATTRACTION, 123)->assertOk();
@@ -36,7 +36,7 @@ class GetControllerTest extends TestCase
     public function itCallsTheRenderEateryMarkerActionWithNoVenueType(): void
     {
         $this->expectAction(RenderEateryMarkerAction::class, [
-            fn (Request $request, int $typeId, ?int $venueTypeId) => $typeId === EateryType::HOTEL && $venueTypeId === null,
+            fn (Request $request, int $typeId, ?int $venueTypeId): bool => $typeId === EateryType::HOTEL && $venueTypeId === null,
         ], return: new Response('<svg></svg>'));
 
         $this->visitRoute(EateryType::HOTEL)->assertOk();

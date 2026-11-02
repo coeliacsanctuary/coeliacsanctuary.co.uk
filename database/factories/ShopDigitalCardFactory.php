@@ -9,13 +9,16 @@ use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopDigitalCard>
+ */
 class ShopDigitalCardFactory extends Factory
 {
     protected $model = ShopDigitalCard::class;
 
     public function definition()
     {
-        $language = $this->faker->unique()->word;
+        $language = $this->faker->unique()->word();
 
         return [
             'type_id' => DigitalCardType::STANDARD,
@@ -25,24 +28,24 @@ class ShopDigitalCardFactory extends Factory
             'native_language' => $language,
             'live' => true,
             'enable_physical_addons' => false,
-            'card_title' => $this->faker->sentence,
-            'card_intro' => $this->faker->paragraph,
+            'card_title' => $this->faker->sentence(),
+            'card_intro' => $this->faker->paragraph(),
             'cant_eat_label' => 'I cant eat',
-            'cant_eat_items' => $this->faker->sentence,
+            'cant_eat_items' => $this->faker->sentence(),
             'can_eat_label' => 'I can eat',
-            'can_eat_items' => $this->faker->sentence,
-            'card_outro' => $this->faker->paragraph,
-            'card_thank_you' => $this->faker->sentence,
+            'can_eat_items' => $this->faker->sentence(),
+            'card_outro' => $this->faker->paragraph(),
+            'card_thank_you' => $this->faker->sentence(),
         ];
     }
 
     public function forProduct(ShopProduct $product): self
     {
-        return $this->state(fn () => ['product_id' => $product->id]);
+        return $this->state(fn (): array => ['product_id' => $product->id]);
     }
 
     public function notLive(): self
     {
-        return $this->state(fn () => ['live' => false]);
+        return $this->state(fn (): array => ['live' => false]);
     }
 }

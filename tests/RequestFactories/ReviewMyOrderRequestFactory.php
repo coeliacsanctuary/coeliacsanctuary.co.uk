@@ -15,7 +15,7 @@ class ReviewMyOrderRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
+            'name' => $this->faker->name(),
             'whereHeard' => ['facebook', 'instagram'],
         ];
     }
@@ -23,16 +23,16 @@ class ReviewMyOrderRequestFactory extends RequestFactory
     /** @param Collection<int, ShopOrderItem | ShopOrderDigitalItem> $items */
     public function forItems(Collection $items): self
     {
-        [$digitalItems, $physicalItems] = $items->partition(fn (Model $item) => $item instanceof ShopOrderDigitalItem);
+        [$digitalItems, $physicalItems] = $items->partition(fn (Model $item): bool => $item instanceof ShopOrderDigitalItem);
 
         return $this->state([
             'products' => $physicalItems
                 ->unique('product_id')
-                ->map(fn (ShopOrderItem $item) => $this->reviewFor($item->product_id, 'physical'))
+                ->map(fn (ShopOrderItem $item): array => $this->reviewFor($item->product_id, 'physical'))
                 ->concat(
                     $digitalItems
                         ->unique('digital_card_id')
-                        ->map(fn (ShopOrderDigitalItem $item) => $this->reviewFor($item->digital_card_id, 'digital'))
+                        ->map(fn (ShopOrderDigitalItem $item): array => $this->reviewFor($item->digital_card_id, 'digital'))
                 )
                 ->values()
                 ->toArray(),
@@ -45,7 +45,7 @@ class ReviewMyOrderRequestFactory extends RequestFactory
         return [
             'id' => $id,
             'rating' => $this->faker->numberBetween(1, 5),
-            'review' => $this->faker->paragraph,
+            'review' => $this->faker->paragraph(),
             'type' => $type,
         ];
     }

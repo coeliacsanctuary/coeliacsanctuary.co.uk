@@ -40,7 +40,7 @@ class Collection extends Resource
 
     public static $search = ['id', 'title'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -140,7 +140,7 @@ class Collection extends Resource
 
             new Panel('Layout', [
                 Select::make('Display Type', 'display_type')
-                    ->options(collect(CollectionDisplayType::cases())->mapWithKeys(fn (CollectionDisplayType $type) => [$type->value => $type->name()]))
+                    ->options(collect(CollectionDisplayType::cases())->mapWithKeys(fn (CollectionDisplayType $type): array => [$type->value => $type->name()]))
                     ->default(CollectionDisplayType::GRID->value)
                     ->displayUsingLabels()
                     ->help('Grid lays the items out as cards, best for recipe and blog collections. List stacks them vertically as rows under each group heading, best for eateries broken down by county.'),
@@ -167,12 +167,12 @@ class Collection extends Resource
         ];
     }
 
-    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    public static function redirectAfterCreate(NovaRequest $request, $resource): string
     {
         return '/resources/' . static::uriKey() . '/' . $resource->getKey();
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return '/resources/' . static::uriKey() . '/' . $resource->getKey();
     }

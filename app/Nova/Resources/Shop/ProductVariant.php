@@ -33,7 +33,7 @@ class ProductVariant extends Resource
 
     public static $clickAction = 'view';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -91,9 +91,7 @@ class ProductVariant extends Resource
         $fillFields = parent::fillFields($request, $model, $fields);
         $variant = $fillFields[0];
 
-        if ($variant->title === null) {
-            $variant->title = '';
-        }
+        $variant->title ??= '';
 
         return $fillFields;
     }
@@ -126,12 +124,12 @@ class ProductVariant extends Resource
         SyncProductToGoogleMerchantJob::dispatch($model->product);
     }
 
-    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    public static function redirectAfterCreate(NovaRequest $request, $resource): string
     {
         return '/resources/' . Products::uriKey() . '/' . $resource->resource->product_id;
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return '/resources/' . Products::uriKey() . '/' . $resource->resource->product_id;
     }

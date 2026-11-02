@@ -101,17 +101,17 @@ class Products extends Resource
 
                 Stack::make('Quantity', fn (ShopProduct $resource) => $resource->variants->pluck('quantity'))
                     ->onlyOnIndex()
-                    ->withClasses(fn ($quantity) => $quantity < 10 ? 'font-semibold text-red-500' : ''),
+                    ->withClasses(fn ($quantity): string => $quantity < 10 ? 'font-semibold text-red-500' : ''),
 
                 Stack::make(
                     '',
                     fn (ShopProduct $resource) => $resource
                         ->variants
                         ->pluck('live')
-                        ->map(fn (int $live) => $live === 1 ? 'Live' : 'Not Live'),
+                        ->map(fn (int $live): string => $live === 1 ? 'Live' : 'Not Live'),
                 )
                     ->onlyOnIndex()
-                    ->withClasses(fn ($value) => $value === 'Live' ? 'font-semibold text-green-500' : 'font-semibold text-red-500'),
+                    ->withClasses(fn ($value): string => $value === 'Live' ? 'font-semibold text-green-500' : 'font-semibold text-red-500'),
 
                 Boolean::make('Pinned')->onlyOnForms()->help('Pin the product to top of category page'),
 
@@ -248,7 +248,7 @@ class Products extends Resource
 
             MorphMany::make('Reviews', resource: OrderReviewItem::class),
 
-            BelongsToMany::make('Search Terms', 'travelCardSearchTerms', resource: TravelCardSearchTerms::class)->fields(fn () => [
+            BelongsToMany::make('Search Terms', 'travelCardSearchTerms', resource: TravelCardSearchTerms::class)->fields(fn (): array => [
                 Boolean::make('Show on Product Page Country List', 'card_show_on_product_page'),
 
                 Select::make('Language', 'card_language')
@@ -270,8 +270,8 @@ class Products extends Resource
                                     Str::of($product->title)
                                         ->before(' Coeliac')
                                         ->explode(' and ')
-                                        ->map(fn (string $language) => mb_trim($language))
-                                        ->mapWithKeys(fn (string $language) => [Str::headline($language) => Str::headline($language)])
+                                        ->map(fn (string $language): string => mb_trim($language))
+                                        ->mapWithKeys(fn (string $language): array => [Str::headline($language) => Str::headline($language)])
                                         ->put('both', 'Both Languages')
                                         ->toArray()
                                 )
@@ -350,7 +350,7 @@ class Products extends Resource
             );
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -395,12 +395,12 @@ class Products extends Resource
         SyncProductToGoogleMerchantJob::dispatch($model);
     }
 
-    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    public static function redirectAfterCreate(NovaRequest $request, $resource): string
     {
         return '/resources/' . self::uriKey() . '/' . $resource->getKey();
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return '/resources/' . self::uriKey() . '/' . $resource->getKey();
     }

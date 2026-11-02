@@ -28,7 +28,7 @@ class PaymentRefund extends Resource
 
     public static $searchable = false;
 
-    public function fieldsForIndex(NovaRequest $request)
+    public function fieldsForIndex(NovaRequest $request): array
     {
         return [
             Currency::make('Amount')->asMinorUnits(),
@@ -52,8 +52,8 @@ class PaymentRefund extends Resource
                 ->showOnCreating()
                 ->readonly()
                 ->default(function (NovaRequest $request) {
-                    if ($request->get('viaResourceId')) {
-                        $order = ShopOrder::query()->find($request->get('viaResourceId'));
+                    if ($request->input('viaResourceId')) {
+                        $order = ShopOrder::query()->find($request->input('viaResourceId'));
 
                         return $order?->payment?->id;
                     }

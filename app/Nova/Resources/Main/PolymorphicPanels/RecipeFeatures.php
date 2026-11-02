@@ -45,8 +45,8 @@ class RecipeFeatures implements PolymorphicResource
 
         $model->features->each($callback);
 
-        $values->map(fn ($value) => filter_var($value, FILTER_VALIDATE_BOOL))
-            ->filter(fn ($value) => $value === true)
+        $values->map(fn ($value): false => filter_var($value, FILTER_VALIDATE_BOOL))
+            ->filter(fn ($value): bool => $value === true)
             ->map(fn ($value, $key) => RecipeFeature::query()->where('feature', Str::headline($key))->firstOrFail()->id)
             ->each(fn ($id) => $model->features()->attach($id));
     }

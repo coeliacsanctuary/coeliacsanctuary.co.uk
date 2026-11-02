@@ -35,7 +35,7 @@ class SearchAreaTest extends TestCase
         $this->create(EateryArea::class, ['area' => 'Soho', 'town_id' => $town->id]);
         $this->build(Eatery::class)->createQuietly(['town_id' => $town->id, 'county_id' => $county->id]);
 
-        $result = json_decode((string) (new SearchArea())->handle(new Request([
+        $result = json_decode((string) new SearchArea()->handle(new Request([
             'town' => 'City of Westminster',
             'area' => 'Soho',
         ])), true);
@@ -51,7 +51,7 @@ class SearchAreaTest extends TestCase
         $this->create(EateryArea::class, ['area' => 'Soho', 'town_id' => $town->id]);
         $this->build(Eatery::class)->createQuietly(['town_id' => $town->id, 'county_id' => $county->id]);
 
-        $result = json_decode((string) (new SearchArea())->handle(new Request([
+        $result = json_decode((string) new SearchArea()->handle(new Request([
             'town' => 'City of Westminster',
             'area' => 'Soh',
         ])), true);
@@ -72,7 +72,7 @@ class SearchAreaTest extends TestCase
         $this->create(EateryArea::class, ['area' => 'Primrose Hill', 'town_id' => $camden->id]);
         $this->build(Eatery::class)->createQuietly(['town_id' => $camden->id, 'county_id' => $county->id]);
 
-        $result = json_decode((string) (new SearchArea())->handle(new Request([
+        $result = json_decode((string) new SearchArea()->handle(new Request([
             'town' => 'City of Westminster',
             'area' => '',
         ])), true);
@@ -89,7 +89,7 @@ class SearchAreaTest extends TestCase
         $this->create(EateryArea::class, ['area' => 'Soho', 'town_id' => $town->id]);
         $this->build(Eatery::class)->createQuietly(['town_id' => $town->id, 'county_id' => $county->id]);
 
-        $result = json_decode((string) (new SearchArea())->handle(new Request([
+        $result = json_decode((string) new SearchArea()->handle(new Request([
             'town' => 'City of Westminster',
             'area' => 'Nonexistent',
         ])), true);
@@ -100,7 +100,7 @@ class SearchAreaTest extends TestCase
     #[Test]
     public function itHasTheExpectedSchema(): void
     {
-        $schema = (new SearchArea())->schema(new JsonSchemaTypeFactory());
+        $schema = new SearchArea()->schema(new JsonSchemaTypeFactory());
 
         $this->assertArrayHasKey('borough', $schema);
         $this->assertArrayHasKey('area', $schema);

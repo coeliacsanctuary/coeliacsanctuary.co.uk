@@ -20,7 +20,7 @@ class IndexControllerTest extends TestCase
     {
         $basket = $this->build(ShopOrder::class)->asExpired()->beenSentAbandonedBasketEmail()->create();
 
-        $this->get(route('shop.basket.reopen', $basket))->assertInertia(fn (AssertableInertia $assert) => $assert->component('Shop/LinkExpired'));
+        $this->get(route('shop.basket.reopen', $basket))->assertInertia(fn (AssertableInertia $assert): AssertableInertia => $assert->component('Shop/LinkExpired'));
     }
 
     #[Test]

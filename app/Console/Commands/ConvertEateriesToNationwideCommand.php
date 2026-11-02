@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
@@ -24,10 +25,9 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\textarea;
 
+#[Signature('coeliac:convert-eateries-to-nationwide')]
 class ConvertEateriesToNationwideCommand extends Command
 {
-    protected $signature = 'coeliac:convert-eateries-to-nationwide';
-
     public function handle(): void
     {
         $selectedIds = multisearch(
@@ -42,12 +42,12 @@ class ConvertEateriesToNationwideCommand extends Command
                         ->orWhereHas('town', fn (Builder $query) => $query->whereLike('town', "%{$value}%"))
                 )
                 ->get()
-                ->mapWithKeys(fn (Eatery $eatery) => [$eatery->id => "{$eatery->name} — {$eatery->town?->town}, {$eatery->county?->county}"])
+                ->mapWithKeys(fn (Eatery $eatery): array => [$eatery->id => "{$eatery->name} — {$eatery->town?->town}, {$eatery->county?->county}"])
                 ->toArray(),
             required: true,
         );
 
-        $eateries = Eatery::withoutGlobalScopes()
+        $eateries = Eatery::query()->withoutGlobalScopes()
             ->with(['town', 'county', 'country', 'area', 'features', 'reviews'])
             ->whereIn('id', $selectedIds)
             ->get();
@@ -129,7 +129,7 @@ class ConvertEateriesToNationwideCommand extends Command
 
                 $usedSlugs[] = $slug;
 
-                $branch = NationwideBranch::create([
+                $branch = NationwideBranch::query()->create([
                     'wheretoeat_id' => $baseEatery->id,
                     'name' => $branchName,
                     'slug' => $slug,
@@ -147,7 +147,7 @@ class ConvertEateriesToNationwideCommand extends Command
 
                 $branchCount++;
 
-                $reviewCount += EateryReview::withoutGlobalScopes()
+                $reviewCount += EateryReview::query()->withoutGlobalScopes()
                     ->where('wheretoeat_id', $eatery->id)
                     ->update([
                         'wheretoeat_id' => $baseEatery->id,
@@ -163,10 +163,10 @@ class ConvertEateriesToNationwideCommand extends Command
             $this->components->info("Created {$branchCount} " . str('branch')->plural($branchCount));
             $this->components->info("Migrated {$reviewCount} " . str('review')->plural($reviewCount));
             $this->components->info("Deactivated {$eateries->count()} original " . str('eatery')->plural($eateries->count()));
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             DB::rollBack();
 
-            throw $e;
+            throw $throwable;
         }
     }
 }

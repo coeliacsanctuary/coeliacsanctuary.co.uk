@@ -17,6 +17,7 @@ use Laravel\Nova\Nova;
 class ShopIncome extends Trend
 {
     protected bool $excludingDigital = false;
+
     protected bool $isDigitalOnly = false;
 
     public function excludeDigital(): self
@@ -54,7 +55,7 @@ class ShopIncome extends Trend
             )
             ->format(['average' => false])
             ->prefix('£')
-            ->transform(fn ($value) => $value / 100)
+            ->transform(fn ($value): int|float => $value / 100)
             ->showSumValue();
     }
 

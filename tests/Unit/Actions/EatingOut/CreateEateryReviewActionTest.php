@@ -45,7 +45,7 @@ class CreateEateryReviewActionTest extends TestCase
                     'email' => 'foo@bar.com',
                 ])
                 ->create(),
-            'ip' => $this->faker->ipv4,
+            'ip' => $this->faker->ipv4(),
             'approved' => false,
         ];
 
@@ -70,10 +70,10 @@ class CreateEateryReviewActionTest extends TestCase
                     'rating' => 4,
                     'name' => 'Foo Bar',
                     'email' => 'foo@bar.com',
-                    'images' => [$this->faker->uuid],
+                    'images' => [$this->faker->uuid()],
                 ])
                 ->create(),
-            'ip' => $this->faker->ipv4,
+            'ip' => $this->faker->ipv4(),
             'approved' => false,
         ];
 
@@ -93,7 +93,7 @@ class CreateEateryReviewActionTest extends TestCase
                     'email' => 'foo@bar.com',
                 ])
                 ->create(),
-            'ip' => $this->faker->ipv4,
+            'ip' => $this->faker->ipv4(),
             'approved' => false,
         ];
 

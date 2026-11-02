@@ -40,7 +40,7 @@ class Baskets extends Resource
 
             DateTime::make('Last Updated', 'updated_at'),
 
-            CountryIcon::make('Country', fn (ShopOrder $order) => [
+            CountryIcon::make('Country', fn (ShopOrder $order): array => [
                 'name' => $order->postageCountry->country,
                 'code' => $order->postageCountry->iso_code,
             ])->withLabel(),
@@ -109,7 +109,7 @@ class Baskets extends Resource
         return [
             CloseBasket::make()
                 ->showInline()
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::BASKET),
+                ->canRun(fn ($request, ShopOrder $order): bool => $order->state_id === OrderState::BASKET),
         ];
     }
 

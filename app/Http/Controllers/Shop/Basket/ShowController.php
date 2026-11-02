@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\Basket;
 
+use App\Models\Shop\ShopOrder;
 use App\Actions\Shop\ApplyDiscountCodeAction;
 use App\Actions\Shop\CalculateOrderTotalsAction;
 use App\Actions\Shop\CheckForPendingOrderAction;
@@ -43,7 +44,7 @@ class ShowController
         $token = $request->cookies->get('basket_token');
         $basket = $resolveBasketAction->handle($token, false);
 
-        if ( ! $basket) {
+        if ( ! $basket instanceof ShopOrder) {
             try {
                 $basket = $checkForPendingOrderAction->handle($token);
             } catch (OrderAlreadyPaidException $exception) {
@@ -92,7 +93,7 @@ class ShowController
                     $discount = $applyDiscountCodeAction->handle($discountCode, $token);
 
                     $total -= ($discount ?? 0);
-                } catch (Exception $exception) {
+                } catch (Exception) {
                     $request->session()->forget('discountCode');
                 }
             }
@@ -102,11 +103,11 @@ class ShowController
                 'countries' => fn () => ShopPostageCountry::query()
                     ->orderBy('country')
                     ->get()
-                    ->map(fn (ShopPostageCountry $postageCountry) => [
+                    ->map(fn (ShopPostageCountry $postageCountry): array => [
                         'value' => $postageCountry->id,
                         'label' => $postageCountry->country,
                     ]),
-                'basket' => fn () => [
+                'basket' => fn (): array => [
                     'items' => $physicalItems,
                     'digital_items' => $digitalItems,
                     'digital_only' => $physicalItemCollection->isEmpty(),
@@ -115,7 +116,7 @@ class ShowController
                     'subtotal' => Helpers::formatMoney(Money::GBP($subtotal)),
                     'postage' => Helpers::formatMoney(Money::GBP($postage)),
                     'discount' => $discount ? Helpers::formatMoney(Money::GBP($discount)) : null,
-                    'fees' => $fees->map(fn (array $fee) => [
+                    'fees' => $fees->map(fn (array $fee): array => [
                         ...$fee,
                         'fee' => Helpers::formatMoney(Money::GBP($fee['fee'])),
                     ]),

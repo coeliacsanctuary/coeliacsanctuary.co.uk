@@ -82,7 +82,7 @@ class CountyControllerTest extends TestCase
     {
         $this->visitMagicRoute()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/MagicRoutes/HundredPercentGlutenFree/County')
                     ->has('county')
                     ->where('county.name', $this->county->county)
@@ -102,7 +102,7 @@ class CountyControllerTest extends TestCase
 
         $this->visitMagicRoute()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('towns', 1)
                     ->etc()
             );

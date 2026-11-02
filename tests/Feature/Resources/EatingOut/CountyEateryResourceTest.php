@@ -29,7 +29,7 @@ class CountyEateryResourceTest extends TestCase
             'info' => 'Something much longer',
         ]);
 
-        $resource = (new CountyEateryResource($eatery))->toArray(request());
+        $resource = new CountyEateryResource($eatery)->toArray(request());
 
         $this->assertArrayHasKey('info', $resource);
         $this->assertEquals('A short and snappy summary', $resource['info']);
@@ -42,7 +42,7 @@ class CountyEateryResourceTest extends TestCase
 
         $eatery = $this->create(Eatery::class, ['snippet' => null, 'info' => $info]);
 
-        $resource = (new CountyEateryResource($eatery))->toArray(request());
+        $resource = new CountyEateryResource($eatery)->toArray(request());
 
         $this->assertEquals(Str::limit($info, 125, preserveWords: true), $resource['info']);
     }
@@ -58,7 +58,7 @@ class CountyEateryResourceTest extends TestCase
 
         $eatery->load('restaurants');
 
-        $resource = (new CountyEateryResource($eatery))->toArray(request());
+        $resource = new CountyEateryResource($eatery)->toArray(request());
 
         $this->assertEquals('The first restaurant in the attraction', $resource['info']);
     }

@@ -321,7 +321,7 @@ class PreloadHeaderImageActionTest extends TestCase
     {
         $request = Request::create($url);
 
-        $this->app->bind(Request::class, fn () => $request);
+        $this->app->bind(Request::class, fn (): Request => $request);
 
         app(Router::class)->dispatch($request);
 

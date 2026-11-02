@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Jobs\EatingOut\CheckSingleEateryWebsiteJob;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAlert;
@@ -11,11 +12,10 @@ use App\Models\EatingOut\EateryCheck;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 
+#[Signature('coeliac:process-eatery-website-checks')]
 class ProcessEateryWebsiteChecksCommand extends Command
 {
     protected int $batchSize = 150;
-
-    protected $signature = 'coeliac:process-eatery-website-checks';
 
     public function handle(): void
     {

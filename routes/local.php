@@ -464,11 +464,6 @@ Route::get('og/generic/shop', function () {
         ->where('title', 'like', 'spanish and italian%')
         ->firstOrFail();
 
-    //    $stickers = ShopProduct::query()
-    //        ->with(['media'])
-    //        ->where('title', 'like', '%stickers%')
-    //        ->firstOrFail();
-
     $otherAllergyCard = ShopProduct::query()
         ->with(['media'])
         ->where('title', 'like', '%coeliac+%')
@@ -476,7 +471,6 @@ Route::get('og/generic/shop', function () {
 
     return view('og-images.shop', [
         'spanishCard' => $spanishCard,
-        //        'stickers' => $stickers,
         'otherAllergyCard' => $otherAllergyCard,
     ]);
 });

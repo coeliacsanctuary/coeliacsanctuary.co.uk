@@ -16,6 +16,6 @@ class InfoField extends EditableField
 
     public function commitSuggestedValue(Eatery $eatery): void
     {
-        throw new RuntimeException('Can\'t commit info field');
+        throw new RuntimeException("Can't commit info field");
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Pipelines\Search\Steps;
 
-use App\Contracts\Search\IsSearchable;
 use App\DataObjects\Search\SearchResultItem;
 use App\Models\Blogs\Blog;
 use App\Models\EatingOut\Eatery;
@@ -34,7 +33,6 @@ class HydratePageTest extends TestCase
         $paginator = collect([$blog])->paginate();
 
         $closure = function (LengthAwarePaginator $paginator) use ($blogModel): void {
-            /** @var LengthAwarePaginator<int, IsSearchable> $results */
             $this->assertTrue($blogModel->is($paginator->first()));
 
             /** @var Blog $hydratedBlog */
@@ -62,7 +60,6 @@ class HydratePageTest extends TestCase
         $paginator = collect([$recipe])->paginate();
 
         $closure = function (LengthAwarePaginator $paginator) use ($recipeModel): void {
-            /** @var LengthAwarePaginator<int, IsSearchable> $results */
             $this->assertTrue($recipeModel->is($paginator->first()));
 
             /** @var Recipe $hydratedRecipe */
@@ -90,7 +87,6 @@ class HydratePageTest extends TestCase
         $paginator = collect([$eatery])->paginate();
 
         $closure = function (LengthAwarePaginator $paginator) use ($eateryModel): void {
-            /** @var LengthAwarePaginator<int, IsSearchable> $results */
             $this->assertTrue($eateryModel->is($paginator->first()));
 
             /** @var Eatery $hydratedEatery */
@@ -122,7 +118,6 @@ class HydratePageTest extends TestCase
         $paginator = collect([$nationwideBranch])->paginate();
 
         $closure = function (LengthAwarePaginator $paginator) use ($nationwideBranchModel): void {
-            /** @var LengthAwarePaginator<int, IsSearchable> $results */
             $this->assertTrue($nationwideBranchModel->is($paginator->first()));
 
             /** @var NationwideBranch $hydratedNationwideBranch */
@@ -155,7 +150,6 @@ class HydratePageTest extends TestCase
         $paginator = collect([$shopProduct])->paginate();
 
         $closure = function (LengthAwarePaginator $paginator) use ($shopProductModel): void {
-            /** @var LengthAwarePaginator<int, IsSearchable> $results */
             $this->assertTrue($shopProductModel->is($paginator->first()));
 
             /** @var ShopProduct $hydratedShopProduct */

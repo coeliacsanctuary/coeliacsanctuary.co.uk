@@ -45,8 +45,6 @@ class RefundOrder extends DestructiveAction
     }
 
     /**
-     * Get the fields available on the action.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field>
      */
     public function fields(NovaRequest $request): array
@@ -55,7 +53,7 @@ class RefundOrder extends DestructiveAction
         $order = $this->resource;
 
         if ( ! $order && $request->has('resources')) {
-            $order = ShopOrder::query()->find($request->get('resources')[0]);
+            $order = ShopOrder::query()->find($request->input('resources')[0]);
         }
 
         if ( ! $order) {
@@ -64,7 +62,7 @@ class RefundOrder extends DestructiveAction
 
         $total = number_format($order->payment->total / 100, 2);
         $subtotal = number_format($order->payment->subtotal / 100, 2);
-        $physicalTotal = number_format($order->items?->sum(fn (ShopOrderItem $item) => $item->quantity * $item->product_price) / 100, 2);
+        $physicalTotal = number_format($order->items?->sum(fn (ShopOrderItem $item): int|float => $item->quantity * $item->product_price) / 100, 2);
         $digitalTotal = number_format($order->digitalItems?->sum(fn (ShopOrderDigitalItem $item) => $item->digital_card_price) / 100, 2);
         $postage = number_format($order->payment->postage / 100, 2);
         $fee = number_format($order->payment->fee / 100, 2);
@@ -72,7 +70,7 @@ class RefundOrder extends DestructiveAction
         $baseFields = [
             Select::make('Amount', 'refund_type')
                 ->displayUsingLabels()
-                ->options(fn () => array_filter([
+                ->options(fn (): array => array_filter([
                     'full' => 'Full Amount',
                     'no_postage' => 'Subtotal excluding postage',
                     $digitalTotal > 0 ? 'physical' : null => 'Physical Items Only',
@@ -91,7 +89,7 @@ class RefundOrder extends DestructiveAction
             ...$baseFields,
             Currency::make('', 'amount')
                 ->asMinorUnits()
-                ->dependsOn(['refund_type'], function (Currency $field, NovaRequest $request, FormData $data) use ($total, $subtotal, $physicalTotal, $postage) {
+                ->dependsOn(['refund_type'], function (Currency $field, NovaRequest $request, FormData $data) use ($total, $subtotal, $physicalTotal, $postage): Currency {
                     $field->readonly($data->get('refund_type') !== 'custom');
 
                     $value = match ($data->get('refund_type')) {

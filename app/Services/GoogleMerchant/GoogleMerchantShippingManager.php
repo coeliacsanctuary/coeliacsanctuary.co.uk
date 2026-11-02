@@ -18,7 +18,7 @@ class GoogleMerchantShippingManager
 
     public function update(ShippingSettings $settings): ShippingSettings
     {
-        $request = (new InsertShippingSettingsRequest())
+        $request = new InsertShippingSettingsRequest()
             ->setParent("accounts/{$this->client->merchantId()}")
             ->setShippingSetting($settings);
 

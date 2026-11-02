@@ -64,7 +64,7 @@ class FeaturesFieldTest extends TestCase
     {
         $allFeatures = EateryFeature::query()->get();
 
-        $payload = $allFeatures->map(fn (EateryFeature $feature, int $index) => [
+        $payload = $allFeatures->map(fn (EateryFeature $feature, int $index): array => [
             'key' => $index + 1,
             'label' => $feature->feature,
             'selected' => $index > 2,

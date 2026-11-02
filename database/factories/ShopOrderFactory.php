@@ -13,6 +13,9 @@ use App\Models\Shop\ShopShippingAddress;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopOrder>
+ */
 class ShopOrderFactory extends Factory
 {
     protected $model = ShopOrder::class;
@@ -29,21 +32,21 @@ class ShopOrderFactory extends Factory
 
     public function forCustomer(?ShopCustomer $customer = null): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'customer_id' => $customer->id ?? static::factoryForModel(ShopCustomer::class),
         ]);
     }
 
     public function toAddress(?ShopShippingAddress $address = null): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'shipping_address_id' => $address->id ?? static::factoryForModel(ShopShippingAddress::class),
         ]);
     }
 
     public function asBasket(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'state_id' => OrderState::BASKET,
         ]);
     }
@@ -54,10 +57,10 @@ class ShopOrderFactory extends Factory
             ->forCustomer($customer)
             ->toAddress($address)
             ->has(self::factoryForModel(ShopPayment::class)->has(self::factoryForModel(ShopPaymentResponse::class), 'response'), 'payment')
-            ->state(fn () => [
+            ->state(fn (): array => [
                 'state_id' => OrderState::PENDING,
-                'payment_intent_id' => $this->faker->password,
-                'payment_intent_secret' => $this->faker->uuid,
+                'payment_intent_id' => $this->faker->password(),
+                'payment_intent_secret' => $this->faker->uuid(),
             ]);
     }
 
@@ -67,7 +70,7 @@ class ShopOrderFactory extends Factory
             ->forCustomer($customer)
             ->toAddress($address)
             ->has(self::factoryForModel(ShopPayment::class)->has(self::factoryForModel(ShopPaymentResponse::class), 'response'), 'payment')
-            ->state(fn () => [
+            ->state(fn (): array => [
                 'state_id' => OrderState::PAID,
                 'order_key' => random_int(10000000, 99999999),
             ]);
@@ -79,7 +82,7 @@ class ShopOrderFactory extends Factory
             ->forCustomer($customer)
             ->toAddress($address)
             ->has(self::factoryForModel(ShopPayment::class)->has(self::factoryForModel(ShopPaymentResponse::class), 'response'), 'payment')
-            ->state(fn () => [
+            ->state(fn (): array => [
                 'state_id' => OrderState::SHIPPED,
                 'order_key' => random_int(10000000, 99999999),
                 'shipped_at' => $shippedAt ?? Carbon::now(),
@@ -88,35 +91,35 @@ class ShopOrderFactory extends Factory
 
     public function asReady(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'state_id' => OrderState::READY,
         ]);
     }
 
     public function asCancelled(): self
     {
-        return $this->asPaid()->state(fn () => [
+        return $this->asPaid()->state(fn (): array => [
             'state_id' => OrderState::CANCELLED,
         ]);
     }
 
     public function asExpired(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'state_id' => OrderState::EXPIRED,
         ]);
     }
 
     public function beenSentAbandonedBasketEmail(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'sent_abandoned_basket_email' => true,
         ]);
     }
 
     public function asCompleted(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'state_id' => OrderState::SHIPPED,
             'order_key' => random_int(10000000, 99999999),
             'shipped_at' => Carbon::now(),

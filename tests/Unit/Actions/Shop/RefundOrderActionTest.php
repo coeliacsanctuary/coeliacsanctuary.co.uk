@@ -10,7 +10,6 @@ use App\DataObjects\Shop\RefundOrderDto;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPaymentRefund;
 use App\Notifications\Shop\OrderRefundNotification;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -119,7 +118,7 @@ class RefundOrderActionTest extends TestCase
     #[Test]
     public function itWillCreateTheRefundRecordUsingTheGivenDateIfOneIsSpecified(): void
     {
-        $createdAt = Carbon::setTestNow('2025-06-01');
+        $this->travelTo('2025-06-01');
 
         $dto = new RefundOrderDto(100, 'foo', false, false, null, now());
 
@@ -164,7 +163,7 @@ class RefundOrderActionTest extends TestCase
 
         $this->mockCreateRefund($this->order->payment->response->charge_id, 100);
 
-        $this->expectAction(CancelOrderAction::class, [function ($argOrder) {
+        $this->expectAction(CancelOrderAction::class, [function ($argOrder): true {
             $this->assertTrue($this->order->is($argOrder));
 
             return true;

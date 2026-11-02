@@ -26,11 +26,11 @@ class ReviewProductIsDistinctRule implements DataAwareRule, ValidationRule
 
         $alreadyReviewed = collect($products)
             ->take($index)
-            ->map(fn (mixed $product) => Arr::get($product, 'type') . ':' . Arr::get($product, 'id'))
+            ->map(fn (mixed $product): string => Arr::get($product, 'type') . ':' . Arr::get($product, 'id'))
             ->contains("{$type}:{$value}");
 
         if ($alreadyReviewed) {
-            $fail('You\'ve already left a review for this product');
+            $fail("You've already left a review for this product");
         }
     }
 

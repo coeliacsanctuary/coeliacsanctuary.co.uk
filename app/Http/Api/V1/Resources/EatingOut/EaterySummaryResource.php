@@ -33,7 +33,7 @@ class EaterySummaryResource extends JsonResource
             'info' => $this->display_snippet,
             'location' => [
                 'address' => collect(explode("\n", $this->relationLoaded('branch') && $this->branch ? $this->branch->address : $this->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
             ],
             'phone' => $this->phone,

@@ -21,22 +21,10 @@ use Illuminate\Support\Str;
  */
 class ShopOrder extends Model
 {
-    protected $casts = [
-        'state_id' => OrderState::class,
-        'shipped_at' => 'datetime',
-        'is_digital_only' => 'boolean',
-        'has_digital_items' => 'boolean',
-        'sent_abandoned_basket_email' => 'boolean',
-        'newsletter_signup' => 'boolean',
-    ];
-
     protected static function booted(): void
     {
         self::creating(function (self $order): void {
-            /** @phpstan-ignore-next-line  */
-            if ($order->state_id === null) {
-                $order->state_id = OrderState::BASKET;
-            }
+            $order->state_id ??= OrderState::BASKET;
 
             if ( ! $order->postage_country_id) {
                 $order->postage_country_id = 1;
@@ -139,5 +127,17 @@ class ShopOrder extends Model
         }
 
         return (bool) ($this->digitalItems()->exists());
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'state_id' => OrderState::class,
+            'shipped_at' => 'datetime',
+            'is_digital_only' => 'boolean',
+            'has_digital_items' => 'boolean',
+            'sent_abandoned_basket_email' => 'boolean',
+            'newsletter_signup' => 'boolean',
+        ];
     }
 }

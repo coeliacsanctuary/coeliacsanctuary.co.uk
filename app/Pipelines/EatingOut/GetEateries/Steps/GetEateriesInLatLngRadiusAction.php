@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\DataObjects\EatingOut\LatLng;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
@@ -19,7 +20,7 @@ class GetEateriesInLatLngRadiusAction implements GetEateriesPipelineActionContra
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->latLng || ! $pipelineData->latLng->radius) {
+        if ( ! $pipelineData->latLng instanceof LatLng || ! $pipelineData->latLng->radius) {
             throw_if($pipelineData->throwSearchException, new RuntimeException('No Lat/Lng'));
 
             return $next($pipelineData);
@@ -43,15 +44,15 @@ class GetEateriesInLatLngRadiusAction implements GetEateriesPipelineActionContra
         /** @var EloquentCollection<int, Eatery> $eateries */
         $eateries = $idQuery->get();
 
-        $pendingEateries = $eateries->map(fn (Eatery $eatery) => new PendingEatery(
+        $pendingEateries = $eateries->map(fn (Eatery $eatery): PendingEatery => new PendingEatery(
             id: $eatery->id,
             branchId: null,
             ordering: (float)$eatery->distance,
             lat: $eatery->lat,
             lng: $eatery->lng,
+            distance: (float)$eatery->distance,
             typeId: $eatery->type_id,
             venueTypeId: $eatery->venue_type_id,
-            distance: (float)$eatery->distance,
         ));
 
         if ( ! $pipelineData->eateries instanceof Collection) {

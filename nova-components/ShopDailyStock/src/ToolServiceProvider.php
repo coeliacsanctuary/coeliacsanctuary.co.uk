@@ -14,8 +14,6 @@ use Laravel\Nova\Nova;
 class ToolServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
-     *
      * @return void
      */
     public function boot(): void
@@ -30,8 +28,6 @@ class ToolServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the tool's routes.
-     *
      * @return void
      */
     protected function routes(): void
@@ -49,8 +45,6 @@ class ToolServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register any application services.
-     *
      * @return void
      */
     public function register(): void

@@ -33,7 +33,7 @@ class ShowControllerTest extends TestCase
 
     protected ShopOrderReviewInvitation $invitation;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -81,12 +81,12 @@ class ShowControllerTest extends TestCase
     {
         $this->getSignedLink()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/ReviewMyOrder')
                     ->where('id', (string) $this->order->order_key)
                     ->where('invitation', $this->invitation->id)
                     ->where('name', $this->order->customer->name)
-                    ->has('products', 1, fn (Assert $page) => $page->hasAll(['id', 'title', 'variants', 'image', 'link', 'type']))
+                    ->has('products', 1, fn (Assert $page): Assert => $page->hasAll(['id', 'title', 'variants', 'image', 'link', 'type']))
             );
     }
 
@@ -97,7 +97,7 @@ class ShowControllerTest extends TestCase
 
         $this->getSignedLink()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('products', 2)
                     ->where('products.0.id', $this->product->id)
                     ->where('products.1.id', $this->secondProduct->id)
@@ -111,7 +111,7 @@ class ShowControllerTest extends TestCase
 
         $this->getSignedLink()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('products.0.variants', [$this->variant->title, $this->secondVariant->title])
                     ->where('products.1.variants', [$this->secondProduct->variants->first()->title])
             );
@@ -123,7 +123,7 @@ class ShowControllerTest extends TestCase
         $this->item->update(['product_title' => 'A stale variant specific title']);
 
         $this->getSignedLink()
-            ->assertInertia(fn (Assert $page) => $page->where('products.0.title', $this->product->title));
+            ->assertInertia(fn (Assert $page): Assert => $page->where('products.0.title', $this->product->title));
     }
 
     #[Test]
@@ -134,7 +134,7 @@ class ShowControllerTest extends TestCase
         $this->getSignedLink()
             ->assertOk()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('products', 1)
                     ->where('products.0.id', $this->product->id)
                     ->where('products.0.title', $this->product->title)
@@ -148,7 +148,7 @@ class ShowControllerTest extends TestCase
         $this->discontinueProduct();
 
         $this->getSignedLink()
-            ->assertInertia(fn (Assert $page) => $page->where('products.0.variants', [$this->variant->title]));
+            ->assertInertia(fn (Assert $page): Assert => $page->where('products.0.variants', [$this->variant->title]));
     }
 
     #[Test]

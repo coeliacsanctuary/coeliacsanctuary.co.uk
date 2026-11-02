@@ -94,7 +94,7 @@ abstract class QueryBuilderTestCase extends TestCase
         $where = new Where('foo', '=', 'bar');
         $sql = $this->getBuilder(new Configuration([$where]))->toSql();
 
-        $this->assertStringContainsString('(`foo` = \'bar\')', $sql);
+        $this->assertStringContainsString("(`foo` = 'bar')", $sql);
     }
 
     #[Test]
@@ -103,7 +103,7 @@ abstract class QueryBuilderTestCase extends TestCase
         $where = ['foo', '=', 'bar'];
         $sql = $this->getBuilder(new Configuration([$where]))->toSql();
 
-        $this->assertStringContainsString('(`foo` = \'bar\')', $sql);
+        $this->assertStringContainsString("(`foo` = 'bar')", $sql);
     }
 
     #[Test]
@@ -113,7 +113,7 @@ abstract class QueryBuilderTestCase extends TestCase
         $orWhere = new Where('baz', '=', 'bop', 'or');
         $sql = $this->getBuilder(new Configuration([$firstWhere, $orWhere]))->toSql();
 
-        $this->assertStringContainsString('(`foo` = \'bar\' or `baz` = \'bop\')', $sql);
+        $this->assertStringContainsString("(`foo` = 'bar' or `baz` = 'bop')", $sql);
     }
 
     #[Test]
@@ -123,7 +123,7 @@ abstract class QueryBuilderTestCase extends TestCase
         $orWhere = ['baz', '=', 'bop', 'or'];
         $sql = $this->getBuilder(new Configuration([$firstWhere, $orWhere]))->toSql();
 
-        $this->assertStringContainsString('(`foo` = \'bar\' or `baz` = \'bop\')', $sql);
+        $this->assertStringContainsString("(`foo` = 'bar' or `baz` = 'bop')", $sql);
     }
 
     #[Test]
@@ -133,7 +133,7 @@ abstract class QueryBuilderTestCase extends TestCase
         $andWhere = new Where('baz', '=', 'bop', 'and');
         $sql = $this->getBuilder(new Configuration([$firstWhere, $andWhere]))->toSql();
 
-        $this->assertStringContainsString('(`foo` = \'bar\' and `baz` = \'bop\')', $sql);
+        $this->assertStringContainsString("(`foo` = 'bar' and `baz` = 'bop')", $sql);
     }
 
     #[Test]
@@ -143,7 +143,7 @@ abstract class QueryBuilderTestCase extends TestCase
         $andWhere = ['baz', '=', 'bop', 'and'];
         $sql = $this->getBuilder(new Configuration([$firstWhere, $andWhere]))->toSql();
 
-        $this->assertStringContainsString('(`foo` = \'bar\' and `baz` = \'bop\')', $sql);
+        $this->assertStringContainsString("(`foo` = 'bar' and `baz` = 'bop')", $sql);
     }
 
     #[Test]
@@ -154,7 +154,7 @@ abstract class QueryBuilderTestCase extends TestCase
         $secondNestedWhere = new Where('dit', '=', 'dot');
         $sql = $this->getBuilder(new Configuration([$baseWhere, [$firstNestedWhere, $secondNestedWhere]]))->toSql();
 
-        $this->assertStringContainsString('(`foo` = \'bar\' and (`baz` = \'bop\' and `dit` = \'dot\'))', $sql);
+        $this->assertStringContainsString("(`foo` = 'bar' and (`baz` = 'bop' and `dit` = 'dot'))", $sql);
     }
 
     #[Test]
@@ -165,7 +165,7 @@ abstract class QueryBuilderTestCase extends TestCase
         $secondNestedWhere = ['dit', '=', 'dot'];
         $sql = $this->getBuilder(new Configuration([$baseWhere, [$firstNestedWhere, $secondNestedWhere]]))->toSql();
 
-        $this->assertStringContainsString('(`foo` = \'bar\' and (`baz` = \'bop\' and `dit` = \'dot\'))', $sql);
+        $this->assertStringContainsString("(`foo` = 'bar' and (`baz` = 'bop' and `dit` = 'dot'))", $sql);
     }
 
     #[Test]

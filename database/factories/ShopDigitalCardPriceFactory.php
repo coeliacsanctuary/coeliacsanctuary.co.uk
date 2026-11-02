@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopDigitalCardPrice;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopDigitalCardPrice>
+ */
 class ShopDigitalCardPriceFactory extends Factory
 {
     protected $model = ShopDigitalCardPrice::class;
@@ -21,6 +24,6 @@ class ShopDigitalCardPriceFactory extends Factory
 
     public function forCard(ShopDigitalCard $card): self
     {
-        return $this->state(fn () => ['digital_card_id' => $card->id]);
+        return $this->state(fn (): array => ['digital_card_id' => $card->id]);
     }
 }

@@ -28,7 +28,7 @@ class LogChatMiddleware
             ]);
 
             $chat->messages()->create([
-                'prompt' => collect($step->messages)->last(fn (Message $message) => $message instanceof UserMessage)?->content,
+                'prompt' => collect($step->messages)->last(fn (Message $message): bool => $message instanceof UserMessage)?->content,
                 'response' => $response->text,
                 'tool_uses' => ChatContext::getToolUses(),
             ]);

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\Basket;
 
+use App\Models\Shop\ShopOrder;
 use App\Actions\Shop\AlterItemQuantityAction;
 use App\Actions\Shop\Checkout\CreateCustomerAction;
 use App\Actions\Shop\ResolveBasketAction;
 use App\DataObjects\Shop\PendingOrderCustomerDetails;
 use App\Exceptions\QuantityException;
 use App\Http\Requests\Shop\BasketPatchRequest;
-use App\Models\Shop\ShopOrder;
 use Exception;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\RedirectResponse;
@@ -25,10 +25,9 @@ class UpdateController
         /** @var string | null $token */
         $token = $request->cookies->get('basket_token');
 
-        /** @var ShopOrder | null $basket */
         $basket = $resolveBasketAction->handle($token, false);
 
-        if ( ! $basket) {
+        if ( ! $basket instanceof ShopOrder) {
             return redirect()->back();
         }
 

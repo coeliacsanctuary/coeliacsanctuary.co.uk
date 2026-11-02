@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Recipes;
 
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Collection;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Recipes\BuildRecipeIndexDescriptionAction;
 use App\Actions\Recipes\BuildRecipeIndexTitleAction;
@@ -55,11 +57,11 @@ class IndexController
                 new BreadcrumbItemData('Recipes'),
             ]))
             ->render('Recipe/Index', [
-                'recipes' => fn () => $getRecipesForIndexAction->handle($filters),
-                'features' => fn () => $getRecipeFiltersForIndexAction->handle(RecipeFeature::class, $filters),
-                'meals' => fn () => $getRecipeFiltersForIndexAction->handle(RecipeMeal::class, $filters),
-                'freeFrom' => fn () => $getRecipeFiltersForIndexAction->handle(RecipeAllergen::class, $filters),
-                'setFilters' => fn () => $filters,
+                'recipes' => fn (): ResourceCollection => $getRecipesForIndexAction->handle($filters),
+                'features' => fn (): Collection => $getRecipeFiltersForIndexAction->handle(RecipeFeature::class, $filters),
+                'meals' => fn (): Collection => $getRecipeFiltersForIndexAction->handle(RecipeMeal::class, $filters),
+                'freeFrom' => fn (): Collection => $getRecipeFiltersForIndexAction->handle(RecipeAllergen::class, $filters),
+                'setFilters' => fn (): array => $filters,
             ]);
     }
 }

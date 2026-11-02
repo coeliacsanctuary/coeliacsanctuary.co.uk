@@ -4,22 +4,16 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Actions\EatingOut\CheckEateryWebsiteAction;
 use App\Actions\EatingOut\CreateEateryAlertAction;
 use App\DataObjects\EatingOut\EateryWebsiteCheckResult;
 use App\Models\EatingOut\Eatery;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class CheckSingleEateryWebsiteJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public function __construct(public Eatery $eatery)
     {

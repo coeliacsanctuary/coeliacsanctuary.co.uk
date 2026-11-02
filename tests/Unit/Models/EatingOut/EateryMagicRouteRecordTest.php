@@ -57,8 +57,7 @@ class EateryMagicRouteRecordTest extends TestCase
     #[Test]
     public function itResolvesTheLocationForACounty(): void
     {
-        $this->create(Eatery::class); // makes the seeded county + town live
-
+        $this->create(Eatery::class);
         $county = EateryCounty::query()->firstOrFail();
 
         $record = $this->create(EateryMagicRouteRecord::class, [

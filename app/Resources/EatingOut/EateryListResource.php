@@ -55,7 +55,7 @@ class EateryListResource extends JsonResource
                     'lat' => $branch->lat,
                     'lng' => $branch->lng,
                     'address' => collect(explode("\n", $branch->address))
-                        ->map(fn (string $line) => mb_trim($line))
+                        ->map(fn (string $line): string => mb_trim($line))
                         ->join(', '),
                 ],
                 'link' => $branch->link(),
@@ -72,7 +72,7 @@ class EateryListResource extends JsonResource
             'is_fully_gf' => $this->features->where('feature', '100% Gluten Free')->isNotEmpty(),
             'location' => [
                 'address' => collect(explode("\n", $this->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
                 'lat' => $this->lat,
                 'lng' => $this->lng,

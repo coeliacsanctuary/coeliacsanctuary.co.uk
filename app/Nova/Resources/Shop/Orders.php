@@ -55,7 +55,7 @@ class Orders extends Resource
 
             DateTime::make('Order Date', fn (ShopOrder $order) => $order->payment->created_at),
 
-            Text::make('Address', fn (ShopOrder $order) => nl2br($order->address->formatted_address ?? ''))->asHtml(),
+            Text::make('Address', fn (ShopOrder $order): string => nl2br($order->address->formatted_address ?? ''))->asHtml(),
 
             Number::make('Items', fn (ShopOrder $order) => $order->items->sum('quantity')),
 
@@ -71,12 +71,12 @@ class Orders extends Resource
 
             Currency::make('Processing Fee', fn (ShopOrder $order) => $order->payment->fee)->asMinorUnits(),
 
-            CountryIcon::make('Country', fn (ShopOrder $order) => [
+            CountryIcon::make('Country', fn (ShopOrder $order): array => [
                 'name' => $order->postageCountry->country,
                 'code' => $order->postageCountry->iso_code,
             ]),
 
-            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order) => [
+            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order): array => [
                 'parent_id' => $order->id,
                 'state_id' => $order->state_id->value,
                 'shipped_at' => $order->shipped_at?->format('jS M y'),
@@ -88,7 +88,7 @@ class Orders extends Resource
         ];
     }
 
-    public function fieldsForDetail(NovaRequest $request)
+    public function fieldsForDetail(NovaRequest $request): array
     {
         return [
             Text::make('Order ID', 'order_key'),
@@ -97,12 +97,12 @@ class Orders extends Resource
 
             Boolean::make('Has Digital Cards', 'has_digital_items'),
 
-            CountryIcon::make('Country', fn (ShopOrder $order) => [
+            CountryIcon::make('Country', fn (ShopOrder $order): array => [
                 'name' => $order->postageCountry->country,
                 'code' => $order->postageCountry->iso_code,
             ])->withLabel(),
 
-            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order) => [
+            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order): array => [
                 'parent_id' => $order->id,
                 'state_id' => $order->state_id->value,
                 'shipped_at' => $order->shipped_at?->format('jS M y'),
@@ -151,12 +151,12 @@ class Orders extends Resource
             ShipOrder::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::READY),
+                ->canRun(fn ($request, ShopOrder $order): bool => $order->state_id === OrderState::READY),
 
             ResendOrder::make()
                 ->sole()
                 ->confirmButtonText('Resend Order')
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::SHIPPED),
+                ->canRun(fn ($request, ShopOrder $order): bool => $order->state_id === OrderState::SHIPPED),
         ];
     }
 

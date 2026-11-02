@@ -15,9 +15,6 @@ class EateryCountyDescriptionAgent implements Agent, HasTools
 {
     use Promptable;
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         return view('prompts.county-description')->render();

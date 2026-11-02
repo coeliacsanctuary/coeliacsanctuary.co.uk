@@ -20,9 +20,7 @@ class CustomerOwnsDigitalCardMiddleware
         /** @var ShopCustomer $customer */
         $customer = $request->user();
 
-        if ($customer->ownedDigitalItems()->where('digital_card_id', $card->id)->doesntExist()) {
-            abort(Response::HTTP_NOT_FOUND);
-        }
+        abort_if($customer->ownedDigitalItems()->where('digital_card_id', $card->id)->doesntExist(), Response::HTTP_NOT_FOUND);
 
         return $next($request);
     }

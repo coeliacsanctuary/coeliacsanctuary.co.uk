@@ -45,7 +45,7 @@ class ShopOrderCompleteResource extends JsonResource
                 'digital' => ShopOrderDigitalItemResource::collection($this->digitalItems),
             ],
             'subtotal' => Helpers::formatMoney(Money::GBP($payment->subtotal)),
-            'fees' => Arr::map($payment->fees_breakdown ?? [], fn (array $fee) => [
+            'fees' => Arr::map($payment->fees_breakdown ?? [], fn (array $fee): array => [
                 ...$fee,
                 'fee' => Helpers::formatMoney(Money::GBP($fee['fee'])),
             ]),
@@ -77,7 +77,7 @@ class ShopOrderCompleteResource extends JsonResource
                 'tax' => 0,
                 'affiliation' => 'Coeliac Sanctuary',
                 'items' => [
-                    ...$this->items->map(fn (ShopOrderItem $item) => [
+                    ...$this->items->map(fn (ShopOrderItem $item): array => [
                         'id' => $item->product_id,
                         'sku' => "{$item->product_id} - {$item->product_variant_id}",
                         'name' => $item->product_title,
@@ -85,7 +85,7 @@ class ShopOrderCompleteResource extends JsonResource
                         'quantity' => $item->quantity,
                         'price' => $item->product_price / 100,
                     ]),
-                    ...$this->digitalItems->map(fn (ShopOrderDigitalItem $item) => [
+                    ...$this->digitalItems->map(fn (ShopOrderDigitalItem $item): array => [
                         'id' => $item->digital_card_id,
                         'sku' => "digital - {$item->digital_card_id}",
                         'name' => $item->digital_card_title,

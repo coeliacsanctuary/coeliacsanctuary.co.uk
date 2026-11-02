@@ -37,9 +37,7 @@ class ShowController
 
         $product->load(['categories', 'prices', 'variants', 'media', 'reviews', 'faqs']);
 
-        if ($product->currentPrices()->isEmpty()) {
-            abort(LaravelResponse::HTTP_NOT_FOUND);
-        }
+        abort_if($product->currentPrices()->isEmpty(), LaravelResponse::HTTP_NOT_FOUND);
 
         /** @var class-string<JsonResource> $resource */
         $resource = ShopProductResource::class;

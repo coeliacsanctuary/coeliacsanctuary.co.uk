@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Table(name: 'wheretoeat_place_reports')]
 class EateryReport extends Model
 {
-    protected $table = 'wheretoeat_place_reports';
-
-    protected $casts = [
-        'completed' => 'bool',
-        'ignored' => 'bool',
-    ];
-
     /** @return BelongsTo<Eatery, $this> */
     public function eatery(): BelongsTo
     {
@@ -26,5 +21,13 @@ class EateryReport extends Model
     public function branch(): BelongsTo
     {
         return $this->belongsTo(NationwideBranch::class, 'branch_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'completed' => 'bool',
+            'ignored' => 'bool',
+        ];
     }
 }

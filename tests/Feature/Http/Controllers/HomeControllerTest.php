@@ -99,12 +99,12 @@ class HomeControllerTest extends TestCase
         $this->withBlogs()
             ->get(route('home'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Home')
                     ->has(
                         'blogs.latest',
                         3,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'date'])
                     )
                     ->where('blogs.latest.0.title', 'Blog 0')
@@ -119,12 +119,12 @@ class HomeControllerTest extends TestCase
         $this->withBlogs(then: fn () => Blog::query()->first()->update(['live' => false]))
             ->get(route('home'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Home')
                     ->has(
                         'blogs.latest',
                         3,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'date'])
                     )
                     ->where('blogs.latest.0.title', 'Blog 1')
@@ -139,12 +139,12 @@ class HomeControllerTest extends TestCase
         $this->withRecipes()
             ->get(route('home'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Home')
                     ->has(
                         'recipes.latest',
                         4,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'square_image', 'date', 'nutrition'])
                     )
                     ->where('recipes.latest.0.title', 'Recipe 0')
@@ -159,12 +159,12 @@ class HomeControllerTest extends TestCase
         $this->withRecipes(then: fn () => Recipe::query()->first()->update(['live' => false]))
             ->get(route('home'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Home')
                     ->has(
                         'recipes.latest',
                         4,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'square_image', 'date', 'nutrition'])
                     )
                     ->where('recipes.latest.0.title', 'Recipe 1')
@@ -183,12 +183,12 @@ class HomeControllerTest extends TestCase
         })
             ->get(route('home'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Home')
                     ->has(
                         'blogs.top',
                         3,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'date'])
                     )
                     ->where('blogs.top.0.title', 'Blog 0')
@@ -208,12 +208,12 @@ class HomeControllerTest extends TestCase
         })
             ->get(route('home'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Home')
                     ->has(
                         'recipes.top',
                         4,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['type', 'title', 'image', 'header_image_alt_text', 'link', 'square_image', 'date', 'nutrition'])
                     )
                     ->where('recipes.top.0.title', 'Recipe 0')
@@ -228,12 +228,12 @@ class HomeControllerTest extends TestCase
         $this->withCollections(then: fn () => Collection::query()->first()->update(['display_on_homepage' => true]))
             ->get(route('home'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Home')
                     ->has(
                         'collections',
                         1,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['title', 'description', 'link', 'items', 'items_to_display'])
                     )
                     ->where('collections.0.title', 'Collection 0')

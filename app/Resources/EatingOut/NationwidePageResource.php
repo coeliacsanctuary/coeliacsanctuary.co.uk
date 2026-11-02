@@ -37,9 +37,9 @@ class NationwidePageResource extends JsonResource
     {
         $this->load([
             'eateries' => fn (HasMany $builder) => $builder
-                ->when($this->filters['categories'], fn (EateryBuilder $builder, array $categories) => $builder->hasCategories($categories))
-                ->when($this->filters['venueTypes'], fn (EateryBuilder $builder, array $venueTypes) => $builder->hasVenueTypes($venueTypes))
-                ->when($this->filters['features'], fn (EateryBuilder $builder, array $features) => $builder->hasFeatures($features))
+                ->when($this->filters['categories'], fn (EateryBuilder $builder, array $categories): EateryBuilder => $builder->hasCategories($categories))
+                ->when($this->filters['venueTypes'], fn (EateryBuilder $builder, array $venueTypes): EateryBuilder => $builder->hasVenueTypes($venueTypes))
+                ->when($this->filters['features'], fn (EateryBuilder $builder, array $features): EateryBuilder => $builder->hasFeatures($features))
                 ->orderBy('name'),
             'eateries.features' => function (BelongsToMany $builder) {
                 /** @var BelongsToMany<EateryFeature, Eatery> $builder */

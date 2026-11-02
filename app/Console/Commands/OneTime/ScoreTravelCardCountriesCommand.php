@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\OneTime;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Ai\Agents\TravelCardCountryScoringAgent;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\TravelCardSearchTerm;
@@ -24,10 +25,9 @@ use function Laravel\Prompts\title;
 use function Laravel\Prompts\warning;
 
 /** @phpstan-type TermScore array{term_id: int, show_on_product_page: bool, score: int|null, reason: string, language?: string} */
+#[Signature('coeliac:one-time:score-travel-card-countries')]
 class ScoreTravelCardCountriesCommand extends Command
 {
-    protected $signature = 'coeliac:one-time:score-travel-card-countries';
-
     /** @var array<int, string> */
     protected array $skipped = [];
 
@@ -72,8 +72,8 @@ class ScoreTravelCardCountriesCommand extends Command
     {
         TravelCardSearchTerm::query()
             ->get()
-            ->groupBy(fn (TravelCardSearchTerm $term) => Str::lower($term->term) . '|' . $term->type)
-            ->filter(fn (Collection $group) => $group->count() > 1)
+            ->groupBy(fn (TravelCardSearchTerm $term): string => Str::lower($term->term) . '|' . $term->type)
+            ->filter(fn (Collection $group): bool => $group->count() > 1)
             ->each($this->mergeDuplicateGroup(...));
     }
 
@@ -82,8 +82,8 @@ class ScoreTravelCardCountriesCommand extends Command
     {
         /** @var TravelCardSearchTerm $survivor */
         $survivor = $group->sortBy([
-            fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b) => $b->hits <=> $a->hits,
-            fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b) => $a->id <=> $b->id,
+            fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b): int => $b->hits <=> $a->hits,
+            fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b): int => $a->id <=> $b->id,
         ])->first();
 
         $group
@@ -145,7 +145,7 @@ class ScoreTravelCardCountriesCommand extends Command
 
         $scores = $this->askAgent($agent) ?? $this->askAgent($agent);
 
-        if ($scores === null) {
+        if ( ! $scores instanceof Collection) {
             $this->skipped[] = $product->title;
 
             warning('No valid ordering returned');
@@ -171,8 +171,8 @@ class ScoreTravelCardCountriesCommand extends Command
             $scores = collect($terms);
 
             return $this->isValid($agent, $scores) ? $scores : null;
-        } catch (Throwable $e) {
-            warning($e->getMessage());
+        } catch (Throwable $throwable) {
+            warning($throwable->getMessage());
 
             return null;
         }
@@ -187,7 +187,7 @@ class ScoreTravelCardCountriesCommand extends Command
             return false;
         }
 
-        return $lists->every(function (Collection $list) {
+        return $lists->every(function (Collection $list): bool {
             $values = $list->pluck('score');
 
             if ($values->contains(null)) {
@@ -225,9 +225,9 @@ class ScoreTravelCardCountriesCommand extends Command
         }
 
         return collect($agent->languages())
-            ->mapWithKeys(fn (string $language) => [
+            ->mapWithKeys(fn (string $language): array => [
                 $language => $kept
-                    ->filter(fn (array $score) => $this->belongsToLanguage($score, $language))
+                    ->filter(fn (array $score): bool => $this->belongsToLanguage($score, $language))
                     ->sortByDesc('score')
                     ->values(),
             ])
@@ -265,7 +265,7 @@ class ScoreTravelCardCountriesCommand extends Command
 
             table(
                 ['Country', 'Score', 'Flag', 'Reason'],
-                $list->map(function (array $score) use ($terms) {
+                $list->map(function (array $score) use ($terms): array {
                     $term = $this->termName($terms, $score);
 
                     return [

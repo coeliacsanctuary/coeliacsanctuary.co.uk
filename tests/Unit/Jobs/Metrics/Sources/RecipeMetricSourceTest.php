@@ -88,6 +88,6 @@ class RecipeMetricSourceTest extends TestCase
 
         $source->dispatch($recipe, 30, today());
 
-        Bus::assertDispatched(GetRecipeMetricsJob::class, fn (GetRecipeMetricsJob $job) => $job->delay === 30 && $job->date->isToday());
+        Bus::assertDispatched(GetRecipeMetricsJob::class, fn (GetRecipeMetricsJob $job): bool => $job->delay === 30 && $job->date->isToday());
     }
 }

@@ -123,7 +123,7 @@ class IndexControllerTest extends TestCase
         $digitalCardId = $this->digitalCard->id;
 
         $this->build(ShopOrderReviewItem::class)
-            ->state(fn () => ['product_type' => ShopProduct::class, 'product_id' => $digitalCardId])
+            ->state(fn (): array => ['product_type' => ShopProduct::class, 'product_id' => $digitalCardId])
             ->create();
 
         $this->makeRequest()

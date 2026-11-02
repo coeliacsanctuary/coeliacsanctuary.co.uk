@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\Faqs\Faqable;
@@ -38,9 +39,9 @@ use Spatie\SchemaOrg\Schema;
  * @property float $average_rating
  * @property array{current_price: string, old_price?: string} $price
  * @property Carbon $created_at
- *
  * @implements HasFaqs<$this>
  */
+#[RouteKey('slug')]
 class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
 {
     use ClearsCache;
@@ -73,11 +74,6 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
         ];
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
         if (app(Request::class)->wantsJson()) {
@@ -99,7 +95,7 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -167,7 +163,7 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
     /** @return Attribute<float, never> */
     public function averageRating(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): float {
             $this->loadMissing('reviews');
 
             return round($this->reviews->average('rating') * 2) / 2;
@@ -201,7 +197,7 @@ class ShopProduct extends Model implements HasFaqs, HasMedia, IsSearchable
     {
         $this->loadMissing('variants');
 
-        return $this->variants->contains(fn (ShopProductVariant $variant) => $variant->quantity > 0);
+        return $this->variants->contains(fn (ShopProductVariant $variant): bool => $variant->quantity > 0);
     }
 
     protected function baseShippingRate(): int

@@ -25,7 +25,7 @@ trait InteractsWithActions
     {
         $mockery = $this->partialMock($action)->shouldReceive('handle');
 
-        if ($args) {
+        if ($args !== []) {
             if (count($args) === 1 && $args[0] instanceof Closure) {
                 $args = $args[0];
             }

@@ -15,13 +15,13 @@ class ShopCategoryListSchema
     /** @param Collection<int, ShopCategory> $categories */
     public static function make(Collection $categories): ItemList
     {
-        return (new ItemList())
+        return new ItemList()
             ->name('Coeliac Sanctuary Shop Categories')
             ->numberOfItems($categories->count())
-            ->itemListElement($categories->values()->map(fn (ShopCategory $category, int $index): ListItem => (new ListItem())
+            ->itemListElement($categories->values()->map(fn (ShopCategory $category, int $index): ListItem => new ListItem()
                 ->position($index + 1)
                 ->name($category->title)
-                ->item((new Thing())
+                ->item(new Thing()
                     ->name($category->title)
                     ->description($category->description)
                     ->url($category->absolute_link)

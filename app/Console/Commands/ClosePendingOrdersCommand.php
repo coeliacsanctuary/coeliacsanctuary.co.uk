@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Actions\Shop\CloseBasketAction;
 use App\Actions\Shop\GetPaymentIntentAction;
 use App\Enums\Shop\OrderState;
@@ -14,10 +15,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Stripe\PaymentIntent;
 
+#[Signature('coeliac:close-pending-orders')]
 class ClosePendingOrdersCommand extends Command
 {
-    protected $signature = 'coeliac:close-pending-orders';
-
     public function handle(): void
     {
         /** @var int $limit */

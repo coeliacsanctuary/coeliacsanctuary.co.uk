@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop\TravelCardSearch;
 
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Actions\Shop\TravelCardSearch\GetTravelCardDigitalTypesAction;
 use App\Enums\Shop\DigitalCardType;
 use App\Models\Shop\ShopDigitalCard;
@@ -32,7 +33,7 @@ class GetTravelCardDigitalTypesActionTest extends TestCase
         ShopDigitalCardType::query()
             ->withoutGlobalScopes()
             ->get()
-            ->each(fn (ShopDigitalCardType $type) => $type
+            ->each(fn (ShopDigitalCardType $type): Media => $type
                 ->addMedia(UploadedFile::fake()->image('type.jpg'))
                 ->toMediaCollection('primary'));
 

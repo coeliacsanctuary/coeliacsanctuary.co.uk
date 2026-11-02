@@ -24,7 +24,7 @@ class CalculateOrderTotalsAction
     public function handle(Collection $items, Collection $digitalItems, ShopPostageCountry $country): array
     {
         /** @var int $physicalSubtotal */
-        $physicalSubtotal = $items->sum(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity);
+        $physicalSubtotal = $items->sum(fn (ShopOrderItemResource $item): int => $item->product_price * $item->quantity);
 
         /** @var int $digitalSubtotal */
         $digitalSubtotal = $digitalItems->sum(fn (ShopOrderDigitalItemResource $item) => $item->digital_card_price);
@@ -37,7 +37,7 @@ class CalculateOrderTotalsAction
                 return $product->shipping_method_id;
             });
 
-            $totalWeight = $items->sum(function (ShopOrderItemResource $resource) {
+            $totalWeight = $items->sum(function (ShopOrderItemResource $resource): int {
                 /** @var ShopProductVariant $variant */
                 $variant = $resource->variant;
 
@@ -58,7 +58,7 @@ class CalculateOrderTotalsAction
         $fees = ShopCustomsFee::query()
             ->where('postage_country_id', $country->id)
             ->get()
-            ->map(fn (ShopCustomsFee $fee) => [
+            ->map(fn (ShopCustomsFee $fee): array => [
                 'fee' => $fee->fee,
                 'description' => $fee->description,
             ]);

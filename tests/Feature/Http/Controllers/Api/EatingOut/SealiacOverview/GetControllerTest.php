@@ -80,7 +80,7 @@ class GetControllerTest extends TestCase
         $this->mock(GetSealiacEateryOverviewAction::class)
             ->shouldReceive('handle')
             ->once()
-            ->withArgs(function ($eatery) {
+            ->withArgs(function ($eatery): true {
                 $this->assertTrue($this->eatery->is($eatery));
 
                 return true;
@@ -96,7 +96,7 @@ class GetControllerTest extends TestCase
         $this->mock(GetSealiacEateryOverviewAction::class)
             ->shouldReceive('handle')
             ->once()
-            ->withArgs(function ($eatery, $branch) {
+            ->withArgs(function ($eatery, $branch): true {
                 $this->assertTrue($this->eatery->is($eatery));
                 $this->assertTrue($this->branch->is($branch));
 
@@ -128,7 +128,7 @@ class GetControllerTest extends TestCase
 
         $this->mock(FormatResponseAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($argResponse) {
+            ->withArgs(function ($argResponse): true {
                 $this->assertEquals('this is the ai overview', $argResponse);
 
                 return true;

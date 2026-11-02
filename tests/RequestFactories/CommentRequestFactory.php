@@ -13,9 +13,9 @@ class CommentRequestFactory extends RequestFactory
         return [
             'module' => 'blog',
             'id' => 1,
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
-            'comment' => $this->faker->paragraph,
+            'name' => $this->faker->name(),
+            'email' => $this->faker->email(),
+            'comment' => $this->faker->paragraph(),
         ];
     }
 }

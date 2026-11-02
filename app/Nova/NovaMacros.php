@@ -20,7 +20,7 @@ class NovaMacros
 
     protected function handle(): void
     {
-        Field::macro('deferrable', function () {
+        Field::macro('deferrable', function (): object {
             /** @phpstan-ignore-next-line */
             $this->deferrable = true;
 

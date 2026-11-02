@@ -3,6 +3,7 @@
     use App\Models\Shop\ShopPaymentRefund;
     use App\Support\Helpers;
     use Money\Money;
+
     /** @var ShopOrder $order */
     /** @var ShopPaymentRefund $refund */
 @endphp
@@ -16,13 +17,11 @@
 @section('intro')
     <mj-text mj-class="inner">Hi {{ $order->customer->name }}</mj-text>
     <mj-text mj-class="inner">
-        Your Coeliac Sanctuary order #{{ $order->order_key }} has received a refund of {{ Helpers::formatMoney(Money::GBP($refund->amount))  }}
+        Your Coeliac Sanctuary order #{{ $order->order_key }} has received a refund of {{ Helpers::formatMoney(Money::GBP($refund->amount)) }}
     </mj-text>
-    @if($refundReason)
+    @if ($refundReason)
         <mj-text mj-class="inner">The reason given for your refund was:</mj-text>
         <mj-text mj-class="inner"><strong>{{ $refundReason }}</strong></mj-text>
     @endif
-    <mj-text mj-class="inner" padding-top="10px">
-        Thanks, Alison - Coeliac Sanctuary
-    </mj-text>
+    <mj-text mj-class="inner" padding-top="10px"> Thanks, Alison - Coeliac Sanctuary </mj-text>
 @endsection

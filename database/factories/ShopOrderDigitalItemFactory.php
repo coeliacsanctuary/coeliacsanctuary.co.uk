@@ -8,6 +8,9 @@ use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDigitalItem;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopOrderDigitalItem>
+ */
 class ShopOrderDigitalItemFactory extends Factory
 {
     protected $model = ShopOrderDigitalItem::class;
@@ -24,12 +27,12 @@ class ShopOrderDigitalItemFactory extends Factory
 
     public function inOrder(ShopOrder $order): self
     {
-        return $this->state(fn () => ['order_id' => $order->id]);
+        return $this->state(fn (): array => ['order_id' => $order->id]);
     }
 
     public function forCard(ShopDigitalCard $card): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'digital_card_id' => $card->id,
             'digital_card_title' => $card->title,
         ]);

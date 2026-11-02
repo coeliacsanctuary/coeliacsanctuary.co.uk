@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\LinkableModel;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+#[RouteKey('slug')]
 class ShopCategory extends Model implements HasMedia
 {
     use ClearsCache;
@@ -33,11 +35,6 @@ class ShopCategory extends Model implements HasMedia
         ));
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
     /** @return BelongsToMany<ShopProduct, $this> */
     public function products(): BelongsToMany
     {
@@ -53,7 +50,7 @@ class ShopCategory extends Model implements HasMedia
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 

@@ -87,11 +87,6 @@ class MarkerGlyphServiceTest extends TestCase
         $this->assertEquals('markers.glyphs.generic.eatery', $this->service->resolve(99));
     }
 
-    /**
-     * Adding a venue type is a data change made in Nova, with no code alongside
-     * it, so nothing else would catch a glyph that resolves to a view which
-     * isn't there.
-     */
     #[Test]
     public function everyVenueTypeResolvesToAGlyphThatExists(): void
     {

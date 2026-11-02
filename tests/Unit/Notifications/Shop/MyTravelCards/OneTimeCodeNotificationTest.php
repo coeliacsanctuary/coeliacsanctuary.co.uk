@@ -17,7 +17,7 @@ class OneTimeCodeNotificationTest extends TestCase
 {
     protected ShopCustomer $customer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

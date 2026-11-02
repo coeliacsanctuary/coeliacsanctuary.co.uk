@@ -23,7 +23,6 @@ class EmailDataCast implements CastsAttributes
 {
     /**
      * @phpstan-param  string  $value
-     *
      * @return array{date?: Carbon|null, comment?: Comment|null, reply?: CommentReply, rating?: EateryReview, order?: ShopOrder, notifiable?: ShopCustomer, recommendation?: EateryRecommendation, eatery?: Eatery, branch?: NationwideBranch, nearbyEateries?: Collection<int, Eatery>}
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): array
@@ -136,8 +135,8 @@ class EmailDataCast implements CastsAttributes
 
             if ($value instanceof Collection) {
                 $references[$key] = $value
-                    ->filter(fn (mixed $item) => $item instanceof Model)
-                    ->map(fn (Model $item) => ['id' => $item->getKey()])
+                    ->filter(fn (mixed $item): bool => $item instanceof Model)
+                    ->map(fn (Model $item): array => ['id' => $item->getKey()])
                     ->values()
                     ->all();
 

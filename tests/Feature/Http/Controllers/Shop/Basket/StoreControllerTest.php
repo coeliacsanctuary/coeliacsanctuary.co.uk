@@ -235,7 +235,7 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itCallsTheAddProductToBasketAction(): void
     {
-        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $shouldIncreaseQuantity) {
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $shouldIncreaseQuantity): true {
             $this->assertTrue($this->product->is($product));
             $this->assertTrue($this->variant->is($variant));
             $this->assertEquals(1, $quantity);
@@ -252,7 +252,7 @@ class StoreControllerTest extends TestCase
     {
         $orderItem = $this->create(ShopOrderItem::class);
 
-        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $shouldIncreaseQuantity) {
+        $this->expectAction(AddProductToBasketAction::class, [function ($order, $product, $variant, $quantity, $shouldIncreaseQuantity): true {
             $this->assertFalse($shouldIncreaseQuantity);
 
             return true;
@@ -274,7 +274,7 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itCallsTheAddDigitalCardToBasketAction(): void
     {
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem): true {
             $this->assertTrue(ShopOrder::query()->first()->is($order));
             $this->assertTrue($this->digitalCard->is($card));
             $this->assertNull($physicalItem);
@@ -300,7 +300,7 @@ class StoreControllerTest extends TestCase
 
         $this->expectAction(AddProductToBasketAction::class, return: $orderItem);
 
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use ($orderItem) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use ($orderItem): true {
             $this->assertTrue($this->digitalCard->is($card));
             $this->assertTrue($orderItem->is($physicalItem));
 
@@ -318,7 +318,7 @@ class StoreControllerTest extends TestCase
 
         $cards = [];
 
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use (&$cards) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use (&$cards): true {
             $cards[] = $card->id;
 
             $this->assertNull($physicalItem);
@@ -342,7 +342,7 @@ class StoreControllerTest extends TestCase
 
         $this->expectAction(AddProductToBasketAction::class, return: $orderItem);
 
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use ($orderItem) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card, $physicalItem) use ($orderItem): true {
             $this->assertTrue($orderItem->is($physicalItem));
 
             return true;
@@ -355,7 +355,7 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itOnlyAddsADigitalCardOnceIfTheSameIdIsGivenTwice(): void
     {
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card): true {
             $this->assertTrue($this->digitalCard->is($card));
 
             return true;
@@ -373,7 +373,7 @@ class StoreControllerTest extends TestCase
 
         $cards = [];
 
-        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card) use (&$cards) {
+        $this->expectAction(AddDigitalCardToBasketAction::class, [function ($order, $card) use (&$cards): true {
             $cards[] = $card->id;
 
             return true;

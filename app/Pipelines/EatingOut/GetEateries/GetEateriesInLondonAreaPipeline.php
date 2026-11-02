@@ -42,9 +42,9 @@ class GetEateriesInLondonAreaPipeline
         ];
 
         $pipelineData = new GetEateriesPipelineData(
-            area: $area,
             filters: $filters,
             sort: $sort,
+            area: $area,
             jsonResource: $jsonResource
         );
 

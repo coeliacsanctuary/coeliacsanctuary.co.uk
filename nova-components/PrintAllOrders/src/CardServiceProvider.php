@@ -11,9 +11,6 @@ use Laravel\Nova\Nova;
 
 class CardServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         $this->app->booted(function (): void {
@@ -26,9 +23,6 @@ class CardServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Register the card's routes.
-     */
     protected function routes(): void
     {
         if ($this->app->routesAreCached()) {
@@ -40,9 +34,6 @@ class CardServiceProvider extends ServiceProvider
             ->group(__DIR__ . '/../routes/api.php');
     }
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //

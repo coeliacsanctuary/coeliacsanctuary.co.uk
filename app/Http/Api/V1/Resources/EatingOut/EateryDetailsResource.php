@@ -50,7 +50,7 @@ class EateryDetailsResource extends JsonResource
             'info' => $this->info,
             'location' => [
                 'address' => collect(explode("\n", $this->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
                 'lat' => $this->lat,
                 'lng' => $this->lng,
@@ -61,7 +61,7 @@ class EateryDetailsResource extends JsonResource
                 'average' => $branch ? $branch->average_rating : $this->average_rating,
                 'expense' => $branch ? $branch->average_expense : $this->average_expense,
             ],
-            'features' => $features->map(fn (EateryFeature $feature) => [
+            'features' => $features->map(fn (EateryFeature $feature): array => [
                 'name' => $feature->feature,
                 'slug' => $feature->slug,
             ]),
@@ -76,7 +76,7 @@ class EateryDetailsResource extends JsonResource
             'is_nationwide' => $this->county_id === 1,
             'last_updated' => $this->updated_at,
             'last_updated_human' => $this->updated_at?->diffForHumans(),
-            'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)->count() > 0,
+            'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review): bool => $review->admin_review === false && $review->review)->count() > 0,
             'number_of_branches' => $this->nationwideBranches()->count(),
         ];
     }
@@ -91,7 +91,7 @@ class EateryDetailsResource extends JsonResource
             'area' => $branch->area?->area,
             'location' => [
                 'address' => collect(explode("\n", $branch->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
                 'lat' => $branch->lat,
                 'lng' => $branch->lng,

@@ -34,7 +34,7 @@ abstract class BaseShopMailable extends BaseMailable
                 ->take(3)
                 ->inRandomOrder()
                 ->get()
-                ->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+                ->map(fn (ShopProduct $product): NotificationRelatedObject => new NotificationRelatedObject(
                     title: $product->title,
                     image: $product->main_image,
                     link: $product->absolute_link,

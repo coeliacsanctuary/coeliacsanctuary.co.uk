@@ -29,7 +29,7 @@ class BlogShowResourceTest extends TestCase
     #[Test]
     public function itReturnsNullFaqsWhenThereAreNoFaqs(): void
     {
-        $resource = (new BlogShowResource($this->blog))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog)->toArray(new Request());
 
         $this->assertNull($resource['faqs']);
     }
@@ -40,7 +40,7 @@ class BlogShowResourceTest extends TestCase
         $this->build(Faq::class)->on($this->blog)->create(['question' => 'Is this gluten free?', 'answer' => 'Yes!']);
         $this->build(Faq::class)->on($this->blog)->create(['question' => 'Can I freeze it?', 'answer' => 'Absolutely.']);
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertCount(2, $resource['faqs']);
         $this->assertSame('Is this gluten free?', $resource['faqs'][0]['question']);
@@ -54,7 +54,7 @@ class BlogShowResourceTest extends TestCase
     {
         $this->blog->update(['short_title' => 'My short title']);
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertSame('My short title', $resource['short_title']);
     }
@@ -62,7 +62,7 @@ class BlogShowResourceTest extends TestCase
     #[Test]
     public function itReturnsNullShortTitleWhenNotSet(): void
     {
-        $resource = (new BlogShowResource($this->blog))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog)->toArray(new Request());
 
         $this->assertNull($resource['short_title']);
     }
@@ -72,7 +72,7 @@ class BlogShowResourceTest extends TestCase
     {
         $this->blog->update(['faq_display' => 'top']);
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertSame('top', $resource['faq_display']);
     }
@@ -80,7 +80,7 @@ class BlogShowResourceTest extends TestCase
     #[Test]
     public function itReturnsNullFaqDisplayWhenNotSet(): void
     {
-        $resource = (new BlogShowResource($this->blog))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog)->toArray(new Request());
 
         $this->assertNull($resource['faq_display']);
     }
@@ -88,7 +88,7 @@ class BlogShowResourceTest extends TestCase
     #[Test]
     public function itReturnsNullUpdatedForABlogThatHasNeverBeenEdited(): void
     {
-        $resource = (new BlogShowResource($this->blog))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog)->toArray(new Request());
 
         $this->assertNull($resource['updated']);
     }
@@ -98,7 +98,7 @@ class BlogShowResourceTest extends TestCase
     {
         $this->blog->update(['updated_at' => Carbon::now()->addYear()]);
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertNotNull($resource['updated']);
         $this->assertNotSame($resource['published'], $resource['updated']);
@@ -109,7 +109,7 @@ class BlogShowResourceTest extends TestCase
     {
         $this->blog->update(['body' => implode(' ', array_fill(0, 450, 'word'))]);
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertSame(3, $resource['reading_time']);
     }
@@ -120,7 +120,7 @@ class BlogShowResourceTest extends TestCase
         $this->build(Comment::class)->on($this->blog)->approved()->create();
         $this->build(Comment::class)->on($this->blog)->create();
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertSame(1, $resource['comments_count']);
     }
@@ -130,7 +130,7 @@ class BlogShowResourceTest extends TestCase
     {
         $this->blog->update(['body' => 'Short.']);
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertSame(1, $resource['reading_time']);
     }
@@ -142,7 +142,7 @@ class BlogShowResourceTest extends TestCase
             'body' => '<article-header>Heading</article-header><article-image src="foo.jpg" /> word word',
         ]);
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertSame(1, $resource['reading_time']);
     }
@@ -154,7 +154,7 @@ class BlogShowResourceTest extends TestCase
 
         $this->blog->update(['body' => "Some words. {$script}"]);
 
-        $resource = (new BlogShowResource($this->blog->fresh()))->toArray(new Request());
+        $resource = new BlogShowResource($this->blog->fresh())->toArray(new Request());
 
         $this->assertTrue($resource['hasTwitterEmbed']);
         $this->assertStringNotContainsString('platform.twitter.com', (string) $resource['body']);

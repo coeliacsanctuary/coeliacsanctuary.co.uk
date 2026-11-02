@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\Shop\TravelCards;
 
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Shop\GetTravelCardReviewsAction;
 use App\Actions\Shop\TravelCardSearch\GetPopularTravelCardDestinationsAction;
@@ -27,7 +28,7 @@ class IndexControllerTest extends TestCase
 
         ShopDigitalCardType::query()
             ->get()
-            ->each(fn (ShopDigitalCardType $type) => $type
+            ->each(fn (ShopDigitalCardType $type): Media => $type
                 ->addMedia(UploadedFile::fake()->image('type.jpg'))
                 ->toMediaCollection('primary'));
     }
@@ -52,7 +53,7 @@ class IndexControllerTest extends TestCase
     public function itLoadsThePageAndRendersTheInertiaView(): void
     {
         $this->get(route('shop.travel-cards.landing-page'))
-            ->assertInertia(fn (Assert $page) => $page->component('Shop/TravelCards'))
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Shop/TravelCards'))
             ->assertOk();
     }
 
@@ -78,7 +79,7 @@ class IndexControllerTest extends TestCase
         );
 
         $this->get(route('shop.travel-cards.landing-page'))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('destinations.0.term', 'Spain')
                 ->where('reviews.count', 5)
                 ->where('reviews.average', 4.9));
@@ -90,7 +91,7 @@ class IndexControllerTest extends TestCase
         $this->dontExpectAction(ResolveTravelCardSearchAction::class);
 
         $this->get(route('shop.travel-cards.landing-page'))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('searchTerm', null)
                 ->where('search', null));
     }
@@ -101,7 +102,7 @@ class IndexControllerTest extends TestCase
         $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain', null], return: $this->resolved());
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Spain']))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('searchTerm', 'Spain')
                 ->where('search.term', 'Spain'));
     }
@@ -112,7 +113,7 @@ class IndexControllerTest extends TestCase
         $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain', null], return: $this->resolved());
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => '  Spain  ']))
-            ->assertInertia(fn (Assert $page) => $page->where('searchTerm', 'Spain'));
+            ->assertInertia(fn (Assert $page): Assert => $page->where('searchTerm', 'Spain'));
     }
 
     #[Test]
@@ -121,16 +122,16 @@ class IndexControllerTest extends TestCase
         $this->dontExpectAction(ResolveTravelCardSearchAction::class);
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => '   ']))
-            ->assertInertia(fn (Assert $page) => $page->where('searchTerm', null));
+            ->assertInertia(fn (Assert $page): Assert => $page->where('searchTerm', null));
     }
 
     #[Test]
     public function itKeepsTheSearchTermWhenNothingResolves(): void
     {
-        $this->expectAction(ResolveTravelCardSearchAction::class, ['Narnia', null], return: null);
+        $this->expectAction(ResolveTravelCardSearchAction::class, ['Narnia', null]);
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Narnia']))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('searchTerm', 'Narnia')
                 ->where('search', null));
     }
@@ -141,7 +142,7 @@ class IndexControllerTest extends TestCase
         $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain', null], return: $this->resolved());
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Spain']))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('meta.title', 'Gluten Free Travel and Translation Cards for Spain'));
     }
 
@@ -154,7 +155,7 @@ class IndexControllerTest extends TestCase
         $this->expectAction(ResolveTravelCardSearchAction::class, ['Spain', null], return: $resolved);
 
         $this->get(route('shop.travel-cards.landing-page', ['term' => 'Spain']))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where('search.destinations.0.digital_cards.0.title', 'Spanish Digital Card'));
     }
 
@@ -169,7 +170,7 @@ class IndexControllerTest extends TestCase
         config()->set('coeliac.digital_cards_enabled', true);
 
         $this->get(route('shop.travel-cards.landing-page'))
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (Assert $page): Assert => $page
                 ->where(
                     'digitalCardTypes.0.title',
                     'Digital Coeliac Gluten Free Travel Cards',
@@ -180,10 +181,10 @@ class IndexControllerTest extends TestCase
     public function itAddsTheBreadcrumbSchema(): void
     {
         $this->get(route('shop.travel-cards.landing-page'))
-            ->assertInertia(fn (Assert $page) => $page->where(
+            ->assertInertia(fn (Assert $page): Assert => $page->where(
                 'meta.schema',
                 fn (Collection $schema) => $schema->contains(
-                    fn (string $entry) => str_contains($entry, 'BreadcrumbList')
+                    fn (string $entry): bool => str_contains($entry, 'BreadcrumbList')
                         && str_contains($entry, 'Gluten Free Travel and Translation Cards'),
                 ),
             ));

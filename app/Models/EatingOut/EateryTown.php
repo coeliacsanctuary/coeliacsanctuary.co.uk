@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\DisplaysMedia;
 use App\Concerns\HasOpenGraphImage;
 use App\Contracts\HasOpenGraphImageContract;
@@ -27,9 +29,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @implements HasOpenGraphImageContract<$this>
- *
  * @property string $image
  */
+#[RouteKey('slug')]
+#[Table(name: 'wheretoeat_towns')]
 class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
 {
     use DisplaysMedia;
@@ -40,8 +43,6 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
-    protected $table = 'wheretoeat_towns';
-
     protected static function booted(): void
     {
         static::addGlobalScope(
@@ -51,7 +52,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
                 ->orWhereHas('liveBranches')
         );
 
-        static::saving(static function (self $town) {
+        static::saving(static function (self $town): EateryTown {
             if ( ! $town->slug) {
                 $town->slug = Str::slug($town->town);
                 $town->legacy = $town->slug;
@@ -75,11 +76,6 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
             CreateEatingOutOpenGraphImageJob::dispatch($town);
             CreateEatingOutOpenGraphImageJob::dispatch($town->county()->withoutGlobalScopes()->firstOrFail());
         });
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     /**
@@ -200,7 +196,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -217,7 +213,7 @@ class EateryTown extends Model implements HasMedia, HasOpenGraphImageContract
         return Attribute::get(function () { /** @phpstan-ignore-line */
             try {
                 return $this->main_image_as_webp;
-            } catch (Error $exception) { /** @phpstan-ignore-line */
+            } catch (Error) { /** @phpstan-ignore-line */
                 return null;
             }
         });

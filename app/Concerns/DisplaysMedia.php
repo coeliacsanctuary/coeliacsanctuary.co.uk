@@ -17,7 +17,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
  * @property string $square_image
  * @property string $square_image_as_webp
  * @property string $first_image
- *
  * @mixin HasMedia
  */
 trait DisplaysMedia
@@ -35,7 +34,6 @@ trait DisplaysMedia
 
     /**
      * @return Attribute<string, never>
-     *
      * @throws Exception
      */
     public function mainImage(): Attribute
@@ -53,7 +51,6 @@ trait DisplaysMedia
 
     /**
      * @return Attribute<string, never>
-     *
      * @throws Exception
      */
     public function mainImageAsWebp(): Attribute

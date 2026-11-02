@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\CloseBasketAction;
 use App\Console\Commands\ClosePendingOrdersCommand;
 use App\Models\Shop\ShopOrder;
-use Carbon\Carbon;
 use Stripe\PaymentIntent;
 use Tests\Concerns\MocksStripe;
 use Tests\TestCase;
@@ -21,7 +20,7 @@ class ClosePendingOrdersCommandTest extends TestCase
     {
         parent::setUp();
 
-        Carbon::setTestNow('2024-04-01 12:00:00');
+        $this->travelTo('2024-04-01 12:00:00');
     }
 
     #[Test]

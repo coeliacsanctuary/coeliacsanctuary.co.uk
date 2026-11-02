@@ -56,7 +56,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(BrowseEateriesPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($latlng) {
+            ->withArgs(function ($latlng): true {
                 $this->assertInstanceOf(LatLng::class, $latlng);
                 $this->assertEquals(51, $latlng->lat);
                 $this->assertEquals(-1, $latlng->lng);
@@ -75,7 +75,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(BrowseEateriesPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($latlng, $filters) {
+            ->withArgs(function ($latlng, array $filters): true {
                 $this->assertIsArray($filters);
                 $this->assertArrayHasKeys(['categories', 'venueTypes', 'features'], $filters);
 
@@ -106,7 +106,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(BrowseEateriesPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($latlng, $filters, $resource) {
+            ->withArgs(function ($latlng, $filters, $resource): true {
                 $this->assertEquals(EateryBrowseResource::class, $resource);
 
                 return true;
@@ -138,7 +138,7 @@ class IndexControllerTest extends TestCase
         );
     }
 
-    protected function paramFactory($lat = 51, $lng = -1, $radius = 5, $filters = [])
+    protected function paramFactory($lat = 51, $lng = -1, $radius = 5, $filters = []): array
     {
         return [
             'lat' => $lat,

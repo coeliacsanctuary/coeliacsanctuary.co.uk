@@ -14,7 +14,6 @@ class GetRecipesForIndexAction
 {
     /**
      * @template T of ResourceCollection
-     *
      * @param  array{features?: string[], meals?: string[], freeFrom?: string[]}  $filters
      * @param  class-string<T>  $resource
      * @return T
@@ -31,11 +30,11 @@ class GetRecipesForIndexAction
                 ->when($search, fn (Builder $builder) => $builder->where(
                     fn (Builder $builder) => $builder
                         ->where('id', $search)
-                        ->orWhere('title', 'LIKE', "%{$search}%")
+                        ->orWhereLike('title', "%{$search}%")
                 ))
-                ->when(count($featureFilters) > 0, fn (RecipeBuilder $query) => $query->hasFeatures($featureFilters))
-                ->when(count($mealFilters) > 0, fn (RecipeBuilder $query) => $query->hasMeals($mealFilters))
-                ->when(count($freeFromFilters) > 0, fn (RecipeBuilder $query) => $query->hasFreeFrom($freeFromFilters))
+                ->when(count($featureFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasFeatures($featureFilters))
+                ->when(count($mealFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasMeals($mealFilters))
+                ->when(count($freeFromFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasFreeFrom($freeFromFilters))
                 ->latest()
                 ->paginate($perPage)
                 ->withQueryString()

@@ -12,7 +12,7 @@ class ShopReturnPolicySchema
 {
     public static function make(): MerchantReturnPolicy
     {
-        return (new MerchantReturnPolicy())
+        return new MerchantReturnPolicy()
             ->applicableCountry('GB')
             ->merchantReturnDays(14)
             ->setProperty('returnPolicyCategory', MerchantReturnEnumeration::MerchantReturnFiniteReturnWindow)

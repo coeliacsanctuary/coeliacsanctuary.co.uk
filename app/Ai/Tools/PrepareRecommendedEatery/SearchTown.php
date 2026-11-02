@@ -12,17 +12,11 @@ use Stringable;
 
 class SearchTown implements Tool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Search for a town in the given county';
     }
 
-    /**
-     * Execute the tool.
-     */
     public function handle(Request $request): Stringable|string
     {
         $search = EateryTown::query()
@@ -35,9 +29,6 @@ class SearchTown implements Tool
         return (string) json_encode($search);
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

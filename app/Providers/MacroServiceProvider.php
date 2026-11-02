@@ -53,7 +53,7 @@ class MacroServiceProvider extends ServiceProvider
             return $get;
         });
 
-        Arr::macro('average', function (?array $values) {
+        Arr::macro('average', function (?array $values): ?float {
             if ( ! $values) {
                 return null;
             }

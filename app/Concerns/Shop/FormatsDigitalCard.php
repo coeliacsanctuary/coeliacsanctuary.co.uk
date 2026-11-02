@@ -28,13 +28,13 @@ trait FormatsDigitalCard
             );
         }
 
-        if ($basket && $digitalCard->product) {
+        if ($basket instanceof ShopOrder && $digitalCard->product) {
             $basket->loadMissing('items');
 
             $digitalCard->setAttribute('physicalProductInBasket', $basket->items->where('product_id', $digitalCard->product_id)->isNotEmpty());
         }
 
-        if ($basket) {
+        if ($basket instanceof ShopOrder) {
             $basket->loadMissing('digitalItems');
 
             $digitalCard->setAttribute('isInBasket', $basket->digitalItems->where('digital_card_id', $digitalCard->id)->isNotEmpty());

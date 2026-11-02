@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Ai\Tools\AskSealiac;
 
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use App\Ai\State\ChatContext;
 use App\Ai\Tools\AskSealiac\SearchEateriesBySearchTermTool;
 use App\Models\EatingOut\Eatery;
@@ -52,7 +53,7 @@ class SearchEateriesBySearchTermToolTest extends TestCase
         $pipeline = Mockery::mock(GetEateriesForAskSealiacSearchPipeline::class);
         $pipeline->shouldReceive('run')
             ->once()
-            ->withArgs(fn (string $term, int $radius, array $filters, string $sort) => $term === 'London' && $radius === 5 && $sort === 'distance')
+            ->withArgs(fn (string $term, int $radius, array $filters, string $sort): bool => $term === 'London' && $radius === 5 && $sort === 'distance')
             ->andReturn(collect([$eatery]));
 
         $this->app->instance(GetEateriesForAskSealiacSearchPipeline::class, $pipeline);
@@ -82,7 +83,7 @@ class SearchEateriesBySearchTermToolTest extends TestCase
         $pipeline = Mockery::mock(GetEateriesForAskSealiacSearchPipeline::class);
         $pipeline->shouldReceive('run')
             ->once()
-            ->withArgs(fn (string $term, int $radius, array $filters, string $sort) => $term === 'Manchester' && $radius === 10 && $sort === 'rating')
+            ->withArgs(fn (string $term, int $radius, array $filters, string $sort): bool => $term === 'Manchester' && $radius === 10 && $sort === 'rating')
             ->andReturn(collect());
 
         $this->app->instance(GetEateriesForAskSealiacSearchPipeline::class, $pipeline);
@@ -104,7 +105,7 @@ class SearchEateriesBySearchTermToolTest extends TestCase
         $pipeline = Mockery::mock(GetEateriesForAskSealiacSearchPipeline::class);
         $pipeline->shouldReceive('run')
             ->once()
-            ->withArgs(fn (string $term, int $radius, array $filters, string $sort) => $filters['categories'] === ['eatery']
+            ->withArgs(fn (string $term, int $radius, array $filters, string $sort): bool => $filters['categories'] === ['eatery']
                     && $filters['venueTypes'] === ['pub']
                     && $filters['features'] === ['100-gluten-free'])
             ->andReturn(collect());
@@ -126,7 +127,7 @@ class SearchEateriesBySearchTermToolTest extends TestCase
         $pipeline = Mockery::mock(GetEateriesForAskSealiacSearchPipeline::class);
         $pipeline->shouldReceive('run')
             ->once()
-            ->withArgs(fn (string $term, int $radius, array $filters) => $filters['categories'] === null
+            ->withArgs(fn (string $term, int $radius, array $filters): bool => $filters['categories'] === null
                     && $filters['venueTypes'] === null
                     && $filters['features'] === null)
             ->andReturn(collect());
@@ -167,7 +168,7 @@ class SearchEateriesBySearchTermToolTest extends TestCase
     public function itHasTheCorrectSchema(): void
     {
         $tool = new SearchEateriesBySearchTermTool();
-        $schema = new \Illuminate\JsonSchema\JsonSchemaTypeFactory();
+        $schema = new JsonSchemaTypeFactory();
 
         $result = $tool->schema($schema);
 

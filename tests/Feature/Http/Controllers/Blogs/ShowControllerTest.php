@@ -76,7 +76,7 @@ class ShowControllerTest extends TestCase
     {
         $this->visitBlog()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Blog/Show')
                     ->has('blog')
                     ->where('blog.title', 'Blog 0')
@@ -88,7 +88,7 @@ class ShowControllerTest extends TestCase
     public function itSetsTheMediavineBodyClass(): void
     {
         $this->visitBlog()
-            ->assertInertia(fn (Assert $page) => $page->where('meta.bodyClass', 'mv-blog')->etc())
+            ->assertInertia(fn (Assert $page): Assert => $page->where('meta.bodyClass', 'mv-blog')->etc())
             ->assertSee('<body class="mb-0 mv-blog">', false);
     }
 

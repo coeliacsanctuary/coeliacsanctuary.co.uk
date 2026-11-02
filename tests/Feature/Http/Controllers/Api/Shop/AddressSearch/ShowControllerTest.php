@@ -21,7 +21,7 @@ class ShowControllerTest extends TestCase
 
         $this->getJson(route('api.shop.address-search.get', ['id' => 'foo']))->assertOk();
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertEquals('GET', $request->method());
             $this->assertStringContainsString(config('services.idealPostcodes.url'), $request->url());
             $this->assertStringContainsString('/autocomplete/addresses/foo', $request->url());

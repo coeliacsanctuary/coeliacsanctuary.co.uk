@@ -6,9 +6,6 @@ use App\Models\EatingOut\NationwideBranch;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         NationwideBranch::query()->get()->each(function (NationwideBranch $branch): void {

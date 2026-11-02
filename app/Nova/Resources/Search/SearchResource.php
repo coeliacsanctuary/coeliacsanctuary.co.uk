@@ -26,7 +26,7 @@ class SearchResource extends Resource
 
     public static $clickAction = 'view';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

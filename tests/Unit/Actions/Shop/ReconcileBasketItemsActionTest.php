@@ -43,7 +43,7 @@ class ReconcileBasketItemsActionTest extends TestCase
     {
         $factory = $this->build(ShopDigitalCard::class);
 
-        if ($product) {
+        if ($product instanceof ShopProduct) {
             $factory = $factory->forProduct($product);
         }
 

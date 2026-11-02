@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @template T of Model
- *
  * @mixin Model
  */
 trait Faqable

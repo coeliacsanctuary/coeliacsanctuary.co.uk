@@ -15,9 +15,6 @@ class SearchRecipesTool extends BaseTool
 {
     use FormatsRecipes;
 
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'Text'
@@ -29,9 +26,6 @@ class SearchRecipesTool extends BaseTool
         Text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         $recipes = Recipe::search($request->string('value')->toString())->get();
@@ -39,17 +33,14 @@ class SearchRecipesTool extends BaseTool
         return Recipe::query()
             ->whereIn('id', $recipes->pluck('id'))
             ->with(['media', 'nutrition'])
-            ->when($request->filled('allergens'), fn (RecipeBuilder $builder) => $builder->hasFreeFrom($request->array('allergens')))
-            ->when($request->filled('meals'), fn (RecipeBuilder $builder) => $builder->hasMeals($request->array('meals')))
-            ->when($request->filled('features'), fn (RecipeBuilder $builder) => $builder->hasFeatures($request->array('features')))
+            ->when($request->filled('allergens'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasFreeFrom($request->array('allergens')))
+            ->when($request->filled('meals'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasMeals($request->array('meals')))
+            ->when($request->filled('features'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasFeatures($request->array('features')))
             ->get()
             ->map($this->formatRecipe(...))
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

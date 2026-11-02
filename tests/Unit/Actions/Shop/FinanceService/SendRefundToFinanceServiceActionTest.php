@@ -42,7 +42,7 @@ class SendRefundToFinanceServiceActionTest extends TestCase
     {
         $this->callAction(SendRefundToFinanceServiceAction::class, $this->refund);
 
-        Http::assertSent(fn (Request $request) => $request->method() === 'POST'
+        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
             && $request->url() === "https://finance.test/api/v1/orders/{$this->order->order_key}/refunds"
             && $request->hasHeader('Authorization', 'Bearer secret-key'));
     }
@@ -54,7 +54,7 @@ class SendRefundToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendRefundToFinanceServiceAction::class, $this->refund);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertSame((string) $this->refund->id, $request['refund_id']);
             $this->assertEquals($this->refund->created_at->toIso8601String(), $request['refunded_at']);
             $this->assertEquals('re_123', $request['stripe_refund_id']);
@@ -72,7 +72,7 @@ class SendRefundToFinanceServiceActionTest extends TestCase
 
         $this->callAction(SendRefundToFinanceServiceAction::class, $this->refund);
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertLessThanOrEqual(255, mb_strlen($request['reason']));
 
             return true;

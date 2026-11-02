@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Builders\EatingOut\EateryAlertBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[UseEloquentBuilder(EateryAlertBuilder::class)]
+#[Table(name: 'wheretoeat_alerts')]
 class EateryAlert extends Model
 {
-    protected $table = 'wheretoeat_alerts';
-
     protected function casts(): array
     {
         return [

@@ -7,7 +7,6 @@ namespace App\Listeners\Shop;
 use App\Enums\Shop\OrderState;
 use App\Events\Shop\OrderPaidEvent;
 use App\Models\Shop\ShopCustomer;
-use App\Models\Shop\ShopOrder;
 use App\Notifications\Shop\MyTravelCards\MyTravelCardsInvitationNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -15,7 +14,6 @@ class SendMyTravelCardsInvitationIfRequired implements ShouldQueue
 {
     public function handle(OrderPaidEvent $event): void
     {
-        /** @var ShopOrder $order */
         $order = $event->order;
 
         if ($order->has_digital_items === false) {

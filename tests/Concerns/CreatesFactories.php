@@ -14,7 +14,6 @@ trait CreatesFactories
 {
     /**
      * @template T
-     *
      * @param  class-string<T>  $what
      * @return IlluminateFactory<T>
      */
@@ -25,7 +24,6 @@ trait CreatesFactories
 
     /**
      * @template T
-     *
      * @param  class-string<T>  $what
      * @return ($countOrAttributes is positive-int ? Collection<int, T> : T)
      */

@@ -30,8 +30,6 @@ class ShowControllerTest extends TestCase
 
         $this->product = ShopProduct::query()->first();
 
-        // The seeder creates category 1, which is a travel card category. Tests that want the travel
-        // card resource opt in explicitly, so everything else runs against the standard resource.
         $this->assignProductToCategory(99);
     }
 
@@ -58,7 +56,7 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itRendersTheShopProductPage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/Product'));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->component('Shop/Product'));
     }
 
     #[Test]
@@ -71,7 +69,7 @@ class ShowControllerTest extends TestCase
             /** @var string[] $schema */
             $schema = $page->toArray()['props']['meta']['schema'];
 
-            $breadcrumbs = collect($schema)->first(fn (string $item) => str_contains($item, 'BreadcrumbList'));
+            $breadcrumbs = collect($schema)->first(fn (string $item): bool => str_contains($item, 'BreadcrumbList'));
 
             $this->assertNotNull($breadcrumbs);
             $this->assertStringContainsString(route('shop.category', $category), $breadcrumbs);
@@ -84,9 +82,9 @@ class ShowControllerTest extends TestCase
     {
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Product')
-                    ->has('product', fn (Assert $page) => $page->hasAll([
+                    ->has('product', fn (Assert $page): Assert => $page->hasAll([
                         'id', 'title', 'description', 'long_description', 'image', 'additional_images', 'prices', 'rating', 'variants', 'category', 'variant_title', 'faqs'
                     ]))
             );
@@ -100,11 +98,11 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Product')
                     ->has(
                         'product',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('is_travel_card', true)
                             ->has('countries')
                             ->etc()
@@ -128,11 +126,11 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Product')
                     ->has(
                         'product',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->missing('is_travel_card')
                             ->missing('countries')
                             ->etc()
@@ -147,9 +145,9 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Product')
-                    ->has('product', fn (Assert $page) => $page->missing('is_travel_card')->etc())
+                    ->has('product', fn (Assert $page): Assert => $page->missing('is_travel_card')->etc())
             );
     }
 
@@ -166,7 +164,7 @@ class ShowControllerTest extends TestCase
     {
         $this->buildReviewWithItems(['The real review', 'Same as above', null]);
 
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->has('reviews.data', 1));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->has('reviews.data', 1));
     }
 
     #[Test]
@@ -175,7 +173,7 @@ class ShowControllerTest extends TestCase
         $this->buildReviewWithItems([null, 'The real review', 'Same as above']);
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page->where('reviews.data.0.review', 'The real review')
+            fn (Assert $page): Assert => $page->where('reviews.data.0.review', 'The real review')
         );
     }
 
@@ -184,7 +182,7 @@ class ShowControllerTest extends TestCase
     {
         $this->buildReviewWithItems(['The real review', 'Same as above', 'Same as above']);
 
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->where('product.rating.count', 1)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->where('product.rating.count', 1)->etc());
     }
 
     #[Test]
@@ -193,7 +191,7 @@ class ShowControllerTest extends TestCase
         $this->build(Faq::class)->on($this->product)->create(['question' => 'Is this gluten free?', 'answer' => 'Yes!']);
 
         $this->makeRequest()->assertInertia(
-            fn (Assert $page) => $page
+            fn (Assert $page): Assert => $page
                 ->where('product.faqs.0.question', 'Is this gluten free?')
                 ->where('product.faqs.0.answer', 'Yes!')
                 ->etc()
@@ -203,7 +201,7 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itReturnsNullFaqsWhenTheProductHasNone(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->where('product.faqs', null)->etc());
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->where('product.faqs', null)->etc());
     }
 
     #[Test]
@@ -226,8 +224,6 @@ class ShowControllerTest extends TestCase
 
     protected function assignProductToCategory(int $categoryId, string $title = 'Some Category'): void
     {
-        // ShopCategory is behind a LiveScope that requires it to still have products, which won't
-        // hold for whichever category the product is being moved away from.
         $category = ShopCategory::query()->withoutGlobalScopes()->find($categoryId) ?? $this->build(ShopCategory::class)->create([
             'id' => $categoryId,
             'title' => $title,
@@ -264,7 +260,7 @@ class ShowControllerTest extends TestCase
     {
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Product')
                     ->has(
                         'product.variants',

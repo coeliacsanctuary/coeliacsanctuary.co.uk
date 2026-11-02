@@ -20,7 +20,7 @@ class GetTravelCardDigitalTypesAction
             ->with(['media', 'cards.price'])
             ->orderBy('id')
             ->get()
-            ->map(fn (ShopDigitalCardType $type) => [
+            ->map(fn (ShopDigitalCardType $type): array => [
                 'title' => $type->title,
                 'link' => DigitalCardType::from($type->id)->route(),
                 'image' => $type->main_image_as_webp ?? $type->main_image,

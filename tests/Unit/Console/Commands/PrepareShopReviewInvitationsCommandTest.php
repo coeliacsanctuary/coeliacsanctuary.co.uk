@@ -16,13 +16,13 @@ use Tests\TestCase;
 
 class PrepareShopReviewInvitationsCommandTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->seed(ShopScaffoldingSeeder::class);
 
-        Carbon::setTestNow('2024-04-15');
+        $this->travelTo('2024-04-15');
 
         Bus::fake();
     }

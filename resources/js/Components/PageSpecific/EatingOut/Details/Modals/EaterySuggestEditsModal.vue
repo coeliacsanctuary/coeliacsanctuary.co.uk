@@ -103,12 +103,10 @@ const parseFields = () => {
         component: FormSelect as Component,
         value: () => eatery.venue_type.id,
         props: {
-          options: eatery.venue_type.values.map(
-            (value): FormSelectOption => ({
-              label: value.label,
-              value: value.value,
-            }),
-          ),
+          options: eatery.venue_type.values.map((value): FormSelectOption => ({
+            label: value.label,
+            value: value.value,
+          })),
         },
       },
       updated: false,
@@ -123,12 +121,10 @@ const parseFields = () => {
         component: FormSelect as Component,
         value: () => eatery.cuisine.id,
         props: {
-          options: eatery.cuisine.values.map(
-            (value): FormSelectOption => ({
-              label: value.label,
-              value: value.value,
-            }),
-          ),
+          options: eatery.cuisine.values.map((value): FormSelectOption => ({
+            label: value.label,
+            value: value.value,
+          })),
         },
       },
       updated: false,

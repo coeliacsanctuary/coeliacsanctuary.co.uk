@@ -41,17 +41,12 @@ class PrepareRecommendedEatery implements Agent, HasProviderOptions, HasStructur
         ]);
     }
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         return view('prompts.prepare-recommended-eatery-base-instructions')->render();
     }
 
     /**
-     * Get the tools available to the agent.
-     *
      * @return iterable<Tool>
      */
     public function tools(): iterable
@@ -73,13 +68,10 @@ class PrepareRecommendedEatery implements Agent, HasProviderOptions, HasStructur
         return $tools;
     }
 
-    /**
-     * Get the agent's structured output schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [
-            'data' => $schema->object(fn (JsonSchema $schema) => [
+            'data' => $schema->object(fn (JsonSchema $schema): array => [
                 'place_name' => $schema->string()->required()->nullable(),
                 'place_address' => $schema->string()->required()->nullable(),
                 'place_country' => $schema->string()->enum(['England', 'Scotland', 'Wales', 'Northern Ireland', 'Republic of Ireland', 'Isle of Man', 'Channel Islands'])->required()->nullable(),

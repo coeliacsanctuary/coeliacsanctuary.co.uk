@@ -16,28 +16,28 @@ use Jpeters8889\ApexCharts\DTO\DateRange;
 class ProductSales extends Chartable
 {
     protected array $colours = [
-        1 => '#80CCFC', // cards
-        2 => '#addaf9', // multi
-        3 => '#f26522', // cals
-        4 => '#ff0000', // wristbands
-        5 => '#00ff00', // stickers
-        6 => '#FFB6C1', // pens
-        7 => '#f5f5f5', // bags
-        8 => '#ecd14a', // coeliac other cards
-        10 => '#186ba3', // keyrings
-        11 => '#ecd14a', // coeliac plus
-        12 => '#cccccc', // lanyard
+        1 => '#80CCFC',
+        2 => '#addaf9',
+        3 => '#f26522',
+        4 => '#ff0000',
+        5 => '#00ff00',
+        6 => '#FFB6C1',
+        7 => '#f5f5f5',
+        8 => '#ecd14a',
+        10 => '#186ba3',
+        11 => '#ecd14a',
+        12 => '#cccccc',
     ];
 
     protected array $backgroundColours = [];
 
     protected function products(): Collection
     {
-        return once(fn () => ShopProduct::withoutGlobalScopes()
+        return once(fn () => ShopProduct::query()->withoutGlobalScopes()
             ->with(['categories' => fn (Relation $builder) => $builder->withoutGlobalScopes()])
             ->orderBy('title')
             ->get()
-            ->map(fn (ShopProduct $product) => ['id' => $product->id, 'title' => $product->title, 'category_id' => $product->categories[0]->id ?? null]));
+            ->map(fn (ShopProduct $product): array => ['id' => $product->id, 'title' => $product->title, 'category_id' => $product->categories[0]->id ?? null]));
     }
 
     protected function getLabels(DateRange $dateRange): array
@@ -71,7 +71,7 @@ class ProductSales extends Chartable
         return $this->getData($start, $end);
     }
 
-    public function getData(Carbon $startDate, Carbon $endDate): array
+    protected function getData(Carbon $startDate, Carbon $endDate): array
     {
         $products = [];
 

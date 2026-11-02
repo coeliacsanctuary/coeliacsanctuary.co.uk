@@ -35,7 +35,7 @@ class GetEateriesInLatLngRadiusActionTest extends GetEateriesTestCase
 
         $newCollection = $this->callGetEateriesInLatLngAction($eateries)->eateries;
 
-        $this->assertCount(10, $newCollection); // 5 in setup, 5 from above
+        $this->assertCount(10, $newCollection);
     }
 
     #[Test]

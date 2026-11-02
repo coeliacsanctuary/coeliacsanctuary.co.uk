@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Ai\Tools\AskSealiac;
 
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use App\Ai\State\ChatContext;
 use App\Ai\Tools\AskSealiac\WhatAreTravelCardsTool;
 use Laravel\Ai\Tools\Request;
@@ -35,7 +36,7 @@ class WhatAreTravelCardsToolTest extends TestCase
     public function itHasAnEmptySchema(): void
     {
         $tool = new WhatAreTravelCardsTool();
-        $schema = new \Illuminate\JsonSchema\JsonSchemaTypeFactory();
+        $schema = new JsonSchemaTypeFactory();
 
         $this->assertEmpty($tool->schema($schema));
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Recipes;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Builders\Recipes\RecipeBuilder;
 use App\Concerns\CanBePublished;
 use App\Concerns\ClearsCache;
@@ -42,11 +43,11 @@ use Spatie\SchemaOrg\Schema;
  * @implements Collectable<$this>
  * @implements HasComments<$this>
  * @implements HasFaqs<$this>
- *
  * @property string $servings
  * @property string $portion_size
  */
 #[UseEloquentBuilder(RecipeBuilder::class)]
+#[RouteKey('slug')]
 class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -84,11 +85,6 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
         });
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
     /** @param Builder<static> $query */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
@@ -114,7 +110,7 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -141,7 +137,7 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
     {
         return RecipeAllergen::query()
             ->get()
-            ->reject(fn (RecipeAllergen $allergen) => $this->allergens->where('allergen', $allergen->allergen)->count() > 0);
+            ->reject(fn (RecipeAllergen $allergen): bool => $this->allergens->where('allergen', $allergen->allergen)->count() > 0);
     }
 
     /** @return BelongsToMany<RecipeFeature, $this> */
@@ -254,7 +250,7 @@ class Recipe extends Model implements Collectable, HasComments, HasFaqs, HasMedi
         if (count($bits) === 2) {
             $unit = 'M';
 
-            if (in_array($bits[1], ['Hour', 'Hours'])) {
+            if (in_array($bits[1], ['Hour', 'Hours'], true)) {
                 $unit = 'H';
             }
 

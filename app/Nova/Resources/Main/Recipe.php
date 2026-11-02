@@ -48,7 +48,7 @@ class Recipe extends Resource
 
     public static $search = ['id', 'title'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -99,7 +99,7 @@ class Recipe extends Resource
                             return;
                         }
 
-                        $group = CollectionModel::query()->find($request->get($requestAttribute))?->groups->last();
+                        $group = CollectionModel::query()->find($request->input($requestAttribute))?->groups->last();
 
                         if ( ! $group) {
                             return;
@@ -184,9 +184,9 @@ class Recipe extends Resource
 
             HasOne::make('Nutritional Information', 'nutrition', RecipeNutritionalInformation::class)->onlyOnForms()->fullWidth(),
 
-            (new Panel('Allergens', [
+            new Panel('Allergens', [
                 PolymorphicPanel::make('Allergens', new RecipeAllergenPanel())->display('row'),
-            ]))->help('Tick the allergens that apply to this recipe.'),
+            ])->help('Tick the allergens that apply to this recipe.'),
 
             new Panel('Meals', [
                 PolymorphicPanel::make('Meals', new RecipeMealPanel())->display('row'),
@@ -241,14 +241,14 @@ class Recipe extends Resource
             $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
 
             return array_map(
-                fn ($metric) => ApexChart::make($metric)
+                fn (string $metric) => ApexChart::make($metric)
                     ->withParams(['recipeId' => $recipeId])
                     ->onlyOnDetail()
                     ->fixedHeight()
                     ->fullWidth(),
                 $metrics
             );
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return [];
         }
     }

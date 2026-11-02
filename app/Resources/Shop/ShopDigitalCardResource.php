@@ -27,7 +27,7 @@ class ShopDigitalCardResource extends JsonResource
             'slug' => $this->slug,
             'language' => $this->language,
             'native_language' => $this->native_language,
-            'product' => $this->whenLoaded('product', fn (ShopProduct $product) => [
+            'product' => $this->whenLoaded('product', fn (ShopProduct $product): array => [
                 'title' => $product->title,
                 'link' => $product->link,
                 'id' => $product->id,
@@ -36,7 +36,7 @@ class ShopDigitalCardResource extends JsonResource
                 'isInBasket' => $this->hasAttribute('physicalProductInBasket') && $this->getAttribute('physicalProductInBasket'),
                 'quantity' => $product->variants->first()?->quantity,
             ]),
-            'countries' => $this->whenLoaded('countries', fn (Collection $countries) => $countries->map(fn (TravelCardSearchTerm $searchTerm) => [
+            'countries' => $this->whenLoaded('countries', fn (Collection $countries) => $countries->map(fn (TravelCardSearchTerm $searchTerm): array => [
                 'country' => ucwords($searchTerm->term),
                 'code' => Helpers::countryCode($searchTerm->term),
             ])),
@@ -46,11 +46,11 @@ class ShopDigitalCardResource extends JsonResource
                 'bundle' => $prices['bundle'],
                 'saving' => $prices['saving'],
             ],
-            'rating' => $this->whenLoaded('reviews', fn () => [
+            'rating' => $this->whenLoaded('reviews', fn (): array => [
                 'average' => $this->averageRating,
                 'count' => $this->reviews->count(),
             ]),
-            'flag' => $this->whenLoaded('countries', fn (Collection $countries) => Helpers::countryCode($countries->first()->term)),
+            'flag' => $this->whenLoaded('countries', fn (Collection $countries): ?string => Helpers::countryCode($countries->first()->term)),
         ];
     }
 

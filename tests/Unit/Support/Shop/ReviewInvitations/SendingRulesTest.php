@@ -7,7 +7,6 @@ namespace Tests\Unit\Support\Shop\ReviewInvitations;
 use App\DataObjects\Shop\ReviewInvitationRule;
 use App\Models\Shop\ShopOrder;
 use App\Support\Shop\ReviewInvitations\SendingRules;
-use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use PHPUnit\Framework\Attributes\Test;
@@ -15,11 +14,11 @@ use Tests\TestCase;
 
 class SendingRulesTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        Carbon::setTestNow('2024-04-15');
+        $this->travelTo('2024-04-15');
     }
 
     #[Test]
@@ -46,7 +45,7 @@ class SendingRulesTest extends TestCase
     {
         $minimumDates = SendingRules::get()
             ->pluck('minimumDate')
-            ->map(fn (CarbonInterface $date) => $date->toDateTimeString())
+            ->map(fn (CarbonInterface $date): string => $date->toDateTimeString())
             ->all();
 
         $this->assertSame([
@@ -111,7 +110,7 @@ class SendingRulesTest extends TestCase
         $rule = $this->rule($notificationDelayText);
 
         return ShopOrder::query()
-            ->pipe(fn (Builder $query) => call_user_func($rule->pipe, $query))
+            ->pipe(fn (Builder $query): Builder => call_user_func($rule->pipe, $query))
             ->toRawSql();
     }
 }

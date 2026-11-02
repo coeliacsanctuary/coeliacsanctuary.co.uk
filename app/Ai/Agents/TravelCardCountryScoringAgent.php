@@ -89,7 +89,7 @@ class TravelCardCountryScoringAgent implements Agent, HasStructuredOutput
     {
         return $this->product
             ->travelCardSearchTerms
-            ->map(fn (TravelCardSearchTerm $term) => [
+            ->map(fn (TravelCardSearchTerm $term): array => [
                 'id' => $term->id,
                 'term' => $term->term,
                 'current_language' => $this->pivotValue($term, 'card_language'),

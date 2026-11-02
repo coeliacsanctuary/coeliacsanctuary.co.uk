@@ -16,10 +16,10 @@ class SendOrderToFinanceService implements ShouldQueue
     {
         try {
             app(SendOrderToFinanceServiceAction::class)->handle($event->order);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             Log::error('Unable to send order to finance service', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTrace(),
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTrace(),
             ]);
         }
     }

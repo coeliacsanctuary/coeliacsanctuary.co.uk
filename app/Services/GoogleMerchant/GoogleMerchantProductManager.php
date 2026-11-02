@@ -20,7 +20,7 @@ class GoogleMerchantProductManager
 
     public function insert(ProductInput $productInput): ProductInput
     {
-        $request = (new InsertProductInputRequest())
+        $request = new InsertProductInputRequest()
             ->setParent("accounts/{$this->client->merchantId()}")
             ->setProductInput($productInput)
             ->setDataSource($this->client->dataSource());
@@ -32,7 +32,7 @@ class GoogleMerchantProductManager
     {
         $productInput->setName($productInputName);
 
-        $request = (new UpdateProductInputRequest())
+        $request = new UpdateProductInputRequest()
             ->setProductInput($productInput)
             ->setDataSource($this->client->dataSource());
 
@@ -41,7 +41,7 @@ class GoogleMerchantProductManager
 
     public function delete(string $productInputName): void
     {
-        $request = (new DeleteProductInputRequest())
+        $request = new DeleteProductInputRequest()
             ->setName($productInputName)
             ->setDataSource($this->client->dataSource());
 

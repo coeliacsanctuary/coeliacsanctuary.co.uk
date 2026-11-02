@@ -25,7 +25,7 @@ class StoreController
         return Http::idealPostcodes()
             ->get('/autocomplete/addresses', $payload)
             ->collect('result.hits')
-            ->map(fn (array $result) => [
+            ->map(fn (array $result): array => [
                 'id' => Arr::get($result, 'id'),
                 'address' => Arr::get($result, 'suggestion'),
             ]);

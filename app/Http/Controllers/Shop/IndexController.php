@@ -32,8 +32,8 @@ class IndexController
             ->orderBy('title')
             ->get();
 
-        $travelCardCategories = $allCategories->filter(fn (ShopCategory $category) => Helpers::isTravelCard($category));
-        $everythingElse = $allCategories->reject(fn (ShopCategory $category) => Helpers::isTravelCard($category));
+        $travelCardCategories = $allCategories->filter(fn (ShopCategory $category): bool => Helpers::isTravelCard($category));
+        $everythingElse = $allCategories->reject(fn (ShopCategory $category): bool => Helpers::isTravelCard($category));
 
         $digitalCardCategories = config('coeliac.digital_cards_enabled')
             ? ShopDigitalCardType::query()->with(['media'])->get()
@@ -58,14 +58,14 @@ class IndexController
                     'travelCards' => ShopCategoryIndexResource::collection($travelCardCategories),
                     'everythingElse' => ShopCategoryIndexResource::collection($everythingElse),
                 ],
-                'digitalCards' => $digitalCardCategories->map(fn (ShopDigitalCardType $type) => [
+                'digitalCards' => $digitalCardCategories->map(fn (ShopDigitalCardType $type): array => [
                     'id' => $type->id,
                     'pageTitle' => $type->title,
                     'link' => DigitalCardType::from($type->id)->route(),
                     'image' => $type->main_image_as_webp ?? $type->main_image,
                 ]),
-                'popularProducts' => fn () => $getBestSellingProductsForShopIndexAction->handle(),
-                'reviews' => fn () => $getRecentReviewsForShopIndexAction->handle(),
+                'popularProducts' => $getBestSellingProductsForShopIndexAction->handle(...),
+                'reviews' => $getRecentReviewsForShopIndexAction->handle(...),
             ]);
     }
 }

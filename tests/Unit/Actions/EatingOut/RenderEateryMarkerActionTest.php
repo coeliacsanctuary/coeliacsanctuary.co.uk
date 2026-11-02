@@ -137,7 +137,7 @@ class RenderEateryMarkerActionTest extends TestCase
     #[Test]
     public function itDoesntCacheTheMarkerLocally(): void
     {
-        $this->app->detectEnvironment(fn () => 'local');
+        $this->app->detectEnvironment(fn (): string => 'local');
 
         $response = $this->renderMarker();
 
@@ -146,7 +146,6 @@ class RenderEateryMarkerActionTest extends TestCase
         $this->assertTrue($response->headers->hasCacheControlDirective('no-store'));
     }
 
-    /** Editing a glyph or the pin has to show up straight away while developing. */
     #[Test]
     public function itNeverReturnsA304LocallyEvenWhenTheEtagWouldHaveMatched(): void
     {
@@ -154,7 +153,7 @@ class RenderEateryMarkerActionTest extends TestCase
 
         $this->assertNotNull($etag);
 
-        $this->app->detectEnvironment(fn () => 'local');
+        $this->app->detectEnvironment(fn (): string => 'local');
 
         $this->assertEquals(200, $this->renderMarker(headers: ['If-None-Match' => $etag])->getStatusCode());
     }

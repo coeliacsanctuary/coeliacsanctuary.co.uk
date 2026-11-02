@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopMassDiscount;
 use App\Models\Shop\ShopProduct;
@@ -11,10 +12,9 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Mattiasgeniar\Percentage\Percentage;
 
+#[Signature('coeliac:apply-mass-discounts')]
 class ApplyMassDiscountsCommand extends Command
 {
-    protected $signature = 'coeliac:apply-mass-discounts';
-
     public function handle(): void
     {
         ShopMassDiscount::query()

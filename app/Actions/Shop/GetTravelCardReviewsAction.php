@@ -23,7 +23,7 @@ class GetTravelCardReviewsAction
         $summary = Cache::flexible(
             'travel-card-reviews',
             [CarbonInterval::hours(6), CarbonInterval::minutes(30)],
-            fn () => [
+            fn (): array => [
                 'reviews' => ShopIndexReviewResource::collection(
                     $this->travelCardReviews()
                         ->where('rating', '>=', 4)

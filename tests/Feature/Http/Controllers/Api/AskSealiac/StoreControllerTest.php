@@ -126,7 +126,7 @@ class StoreControllerTest extends TestCase
     {
         $this->makeRequest(['prompt' => 'What is coeliac disease?']);
 
-        AskSealiac::assertPrompted(fn (AgentPrompt $prompt) => $prompt->contains('What is coeliac disease?'));
+        AskSealiac::assertPrompted(fn (AgentPrompt $prompt): bool => $prompt->contains('What is coeliac disease?'));
     }
 
     #[Test]
@@ -139,7 +139,7 @@ class StoreControllerTest extends TestCase
 
         $this->makeRequest(['messages' => $messages]);
 
-        AskSealiac::assertPrompted(fn (AgentPrompt $prompt) => $prompt->contains('Tell me about gluten free food'));
+        AskSealiac::assertPrompted(fn (AgentPrompt $prompt): bool => $prompt->contains('Tell me about gluten free food'));
     }
 
     #[Test]

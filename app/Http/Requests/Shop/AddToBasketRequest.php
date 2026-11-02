@@ -54,7 +54,6 @@ class AddToBasketRequest extends FormRequest
     public function after(): array
     {
         return [
-            // Valid Variant Id
             function (Validator $validator): void {
                 if ($this->isNotFilled('product_id')) {
                     return;
@@ -77,7 +76,6 @@ class AddToBasketRequest extends FormRequest
                 }
             },
 
-            // Variant is live
             function (Validator $validator): void {
                 if ($this->isNotFilled('variant_id')) {
                     return;
@@ -86,11 +84,10 @@ class AddToBasketRequest extends FormRequest
                 $variant = ShopProductVariant::query()->find($this->integer('variant_id'));
 
                 if ( ! $variant) {
-                    $validator->errors()->add('variant_id', 'The product variant can\'t be found');
+                    $validator->errors()->add('variant_id', "The product variant can't be found");
                 }
             },
 
-            // Quantity Available
             function (Validator $validator): void {
                 if ($this->isNotFilled('product_id')) {
                     return;
@@ -99,7 +96,7 @@ class AddToBasketRequest extends FormRequest
                 $variant = ShopProductVariant::query()->find($this->integer('variant_id'));
 
                 if ( ! $variant || $variant->quantity < $this->integer('quantity')) {
-                    $validator->errors()->add('quantity', 'The product doesn\'t have the requested quantity available');
+                    $validator->errors()->add('quantity', "The product doesn't have the requested quantity available");
                 }
             },
         ];

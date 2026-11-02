@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
 use App\Builders\EatingOut\EateryBuilder;
 use App\Concerns\ClearsCache;
@@ -44,7 +45,6 @@ use Spatie\SchemaOrg\Restaurant;
 /**
  * @implements HasOpenGraphImageContract<$this>
  * @implements Collectable<$this>
- *
  * @property string | null $average_rating
  * @property string | null $formatted_address
  * @property array{value: string, label: string} | null $average_expense
@@ -56,6 +56,7 @@ use Spatie\SchemaOrg\Restaurant;
  * @property string $display_snippet
  */
 #[UseEloquentBuilder(EateryBuilder::class)]
+#[Table(name: 'wheretoeat')]
 class Eatery extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -70,20 +71,11 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
     use HasSealiacOverview;
     use Searchable;
 
-    protected $casts = [
-        'lat' => 'float',
-        'lng' => 'float',
-        'live' => 'bool',
-        'closed_down' => 'bool',
-    ];
-
-    protected $table = 'wheretoeat';
-
-    public static function booted(): void
+    protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
 
-        static::saving(function (self $eatery) {
+        static::saving(function (self $eatery): Eatery {
             if ( ! $eatery->slug) {
                 $eatery->slug = $eatery->generateSlug();
             }
@@ -376,7 +368,7 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
     /** @return Attribute<bool, never> */
     public function hasBeenRated(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): bool {
             if ( ! $this->relationLoaded('reviews')) {
                 return false;
             }
@@ -492,5 +484,15 @@ class Eatery extends Model implements Collectable, HasOpenGraphImageContract, Is
     public function schema(): Restaurant
     {
         return EaterySchema::make($this);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'lat' => 'float',
+            'lng' => 'float',
+            'live' => 'bool',
+            'closed_down' => 'bool',
+        ];
     }
 }

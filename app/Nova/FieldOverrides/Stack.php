@@ -11,22 +11,17 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
  * @codeCoverageIgnore
- *
  * @method static static make(string $name, Closure $lines)
  */
 class Stack extends \Laravel\Nova\Fields\Stack
 {
     protected ?Closure $loadClasses = null;
 
-    protected ?Closure $unpreparedLines = null;
-
     protected ?Closure $processUsingCallback = null;
 
-    public function __construct($name, Closure $lines)
+    public function __construct($name, protected Closure $unpreparedLines)
     {
         parent::__construct($name);
-
-        $this->unpreparedLines = $lines;
     }
 
     public function prepareLines($resource, $attribute = null): void
@@ -36,8 +31,8 @@ class Stack extends \Laravel\Nova\Fields\Stack
         $request = app(NovaRequest::class);
 
         $this->lines = $this->lines
-            ->map(fn (string | Line $line) => $line instanceof Line ? $line : Line::make('', fn () => $line))
-            ->filter(function (Line $field) use ($request, $resource) {
+            ->map(fn (string | Line $line) => $line instanceof Line ? $line : Line::make('', fn (): string => $line))
+            ->filter(function (Line $field) use ($request, $resource): bool {
                 if ($request->isResourceIndexRequest()) {
                     return $field->isShownOnIndex($request, $resource);
                 }
@@ -56,7 +51,7 @@ class Stack extends \Laravel\Nova\Fields\Stack
     protected function processLines(mixed $resource): void
     {
         $this->lines = collect(call_user_func($this->unpreparedLines, $resource))
-            ->when($this->processUsingCallback, fn (Collection $collection) => call_user_func($this->processUsingCallback, $collection))
+            ->when($this->processUsingCallback, fn (Collection $collection): mixed => call_user_func($this->processUsingCallback, $collection))
             ->flatten();
     }
 

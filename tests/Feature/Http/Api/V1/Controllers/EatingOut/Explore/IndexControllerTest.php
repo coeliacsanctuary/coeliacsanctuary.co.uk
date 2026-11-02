@@ -40,7 +40,7 @@ class IndexControllerTest extends TestCase
         $this->mock(CreateSearchAction::class)
             ->shouldReceive('handle')
             ->once()
-            ->withArgs(function ($search) {
+            ->withArgs(function ($search): true {
                 $this->assertEquals('foo', $search);
 
                 return true;
@@ -66,7 +66,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(GetSearchResultsPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($searchTerm) {
+            ->withArgs(function ($searchTerm): true {
                 $this->assertInstanceOf(EaterySearchTerm::class, $searchTerm);
                 $this->assertEquals('foo', $searchTerm->term);
 
@@ -83,7 +83,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(GetSearchResultsPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($searchTerm, $filters) {
+            ->withArgs(function ($searchTerm, array $filters): true {
                 $this->assertIsArray($filters);
                 $this->assertArrayHasKeys(['categories', 'venueTypes', 'features'], $filters);
 
@@ -114,7 +114,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(GetSearchResultsPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($latlng, $filters, $sort, $resource) {
+            ->withArgs(function ($latlng, $filters, $sort, $resource): true {
                 $this->assertEquals('rating', $sort);
 
                 return true;
@@ -130,7 +130,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(GetSearchResultsPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($latlng, $filters, $sort, $resource) {
+            ->withArgs(function ($latlng, $filters, $sort, $resource): true {
                 $this->assertEquals(ExploreEateryResource::class, $resource);
 
                 return true;

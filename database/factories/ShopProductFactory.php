@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopProduct;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopProduct>
+ */
 class ShopProductFactory extends Factory
 {
     protected $model = ShopProduct::class;
@@ -15,10 +18,10 @@ class ShopProductFactory extends Factory
     {
         return [
             'title' => $this->faker->words(3, true),
-            'meta_description' => $this->faker->sentence,
-            'meta_keywords' => $this->faker->sentence,
-            'slug' => $this->faker->slug,
-            'description' => $this->faker->sentence,
+            'meta_description' => $this->faker->sentence(),
+            'meta_keywords' => $this->faker->sentence(),
+            'slug' => $this->faker->slug(),
+            'description' => $this->faker->sentence(),
             'long_description' => $this->faker->paragraphs(2, true),
             'shipping_method_id' => 1,
             'pinned' => false,
@@ -35,11 +38,11 @@ class ShopProductFactory extends Factory
 
     public function pinned(): self
     {
-        return $this->state(fn () => ['pinned' => true]);
+        return $this->state(fn (): array => ['pinned' => true]);
     }
 
     public function googleMerchantDisabled(): self
     {
-        return $this->state(fn () => ['google_merchant_enabled' => false]);
+        return $this->state(fn (): array => ['google_merchant_enabled' => false]);
     }
 }

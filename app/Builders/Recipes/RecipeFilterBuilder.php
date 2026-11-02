@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template TModel of Model&FilterableRecipeRelation
- *
  * @extends Builder<TModel>
  */
 class RecipeFilterBuilder extends Builder
@@ -22,16 +21,16 @@ class RecipeFilterBuilder extends Builder
 
     public function hasRecipesWithFeatures(array $features): static
     {
-        return $this->whereHas('recipes', fn (RecipeBuilder $builder) => $builder->hasFeatures($features));
+        return $this->whereHas('recipes', fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasFeatures($features));
     }
 
     public function hasRecipesWithMeals(array $meals): static
     {
-        return $this->whereHas('recipes', fn (RecipeBuilder $builder) => $builder->hasMeals($meals));
+        return $this->whereHas('recipes', fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasMeals($meals));
     }
 
     public function hasRecipesWithFreeFrom(array $freeFrom): static
     {
-        return $this->whereHas('recipes', fn (RecipeBuilder $builder) => $builder->hasFreeFrom($freeFrom));
+        return $this->whereHas('recipes', fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasFreeFrom($freeFrom));
     }
 }
