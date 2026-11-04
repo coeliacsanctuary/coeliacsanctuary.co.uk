@@ -38,7 +38,7 @@ class GetRouteActionTest extends TestCase
         ]);
     }
 
-    /** @return \Illuminate\Support\Collection<int, LatLng> */
+    /** @return Collection<int, LatLng> */
     protected function points(): Collection
     {
         return collect([new LatLng(53.1, -2.44), new LatLng(53.3, -2.3), new LatLng(53.48, -2.24)]);

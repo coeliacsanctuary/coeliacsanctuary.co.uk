@@ -28,7 +28,6 @@ class GetEateriesAlongRouteActionTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
     }
 
-    /** A route running due north from 53.00,-2.44 to 53.20,-2.44, roughly 22.2km, taking 20 minutes. */
     protected function makeRoute(): TripRoute
     {
         return new TripRoute(

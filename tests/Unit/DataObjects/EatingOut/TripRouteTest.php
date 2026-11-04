@@ -12,7 +12,6 @@ use Tests\TestCase;
 
 class TripRouteTest extends TestCase
 {
-    /** A route running due north from 53.00,-2.44 to 53.20,-2.44, roughly 22.2km, with one 20 minute step. */
     protected function makeRoute(): TripRoute
     {
         return new TripRoute(
