@@ -37,6 +37,7 @@
         <env name="FINANCE_SERVICE_URL" value="foo"/>
         <env name="FINANCE_SERVICE_KEY" value="bar"/>
         <env name="OPEN_ROUTE_SERVICE_KEY" value="foo"/>
+        <env name="GOOGLE_MAP_PLACES" value="foo"/>
     </php>
     <source>
         <include>

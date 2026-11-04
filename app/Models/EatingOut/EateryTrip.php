@@ -39,6 +39,15 @@ class EateryTrip extends Model
         });
     }
 
+    public function canBeEditedWith(?string $token): bool
+    {
+        if ($token === null) {
+            return false;
+        }
+
+        return hash_equals($this->edit_token, $token);
+    }
+
     public function toTripRoute(): TripRoute
     {
         return new TripRoute(

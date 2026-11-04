@@ -5,111 +5,146 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\EatingOut\TripPlanner;
 
 use App\Actions\EatingOut\TripPlanner\AutocompleteLocationAction;
-use App\Models\OpenRouteServiceAutocompleteCache;
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Http;
+use App\Models\GooglePlacesAutocompleteCache;
 use PHPUnit\Framework\Attributes\Test;
+use Saloon\Http\Faking\MockClient;
+use Saloon\Http\Faking\MockResponse;
+use Saloon\Http\Request;
+use Saloon\Http\Response;
+use SKAgarwal\GoogleApi\PlacesNew\GooglePlaces;
+use SKAgarwal\GoogleApi\PlacesNew\Requests\Autocomplete;
 use Tests\TestCase;
 
 class AutocompleteLocationActionTest extends TestCase
 {
-    protected function fakeAutocompleteResponse(): void
+    protected function mockGoogle(?MockResponse $response = null): MockClient
     {
-        Http::preventStrayRequests();
-
-        Http::fake([
-            'api.openrouteservice.org/geocode/autocomplete*' => Http::response([
-                'features' => [
-                    ['properties' => ['id' => '1', 'label' => 'Ennis, CE, Ireland'], 'geometry' => ['coordinates' => [-8.98, 52.84]]],
-                    ['properties' => ['id' => '2', 'label' => 'Ennis, CE, Ireland'], 'geometry' => ['coordinates' => [-8.99, 52.85]]],
-                    ['properties' => ['id' => '3', 'label' => 'Enniskillen, Northern Ireland, United Kingdom'], 'geometry' => ['coordinates' => [-7.63, 54.34]]],
+        $mockClient = new MockClient([
+            Autocomplete::class => $response ?? MockResponse::make([
+                'suggestions' => [
+                    ['placePrediction' => ['placeId' => 'place-1', 'text' => ['text' => '5 Queen Street, Crewe, UK']]],
+                    ['queryPrediction' => ['text' => ['text' => '5 queen street crewe']]],
+                    ['placePrediction' => ['placeId' => 'place-2', 'text' => ['text' => '5 Queen Street, Chester, UK']]],
                 ],
             ]),
+        ]);
+
+        $this->app->instance(GooglePlaces::class, new GooglePlaces()->withMockClient($mockClient));
+
+        return $mockClient;
+    }
+
+    #[Test]
+    public function itReturnsNothingForATermUnderThreeCharactersWithoutCallingGoogle(): void
+    {
+        $mockClient = $this->mockGoogle();
+
+        $this->assertSame([], $this->callAction(AutocompleteLocationAction::class, ' 5q ', 'token'));
+
+        $mockClient->assertNothingSent();
+        $this->assertDatabaseEmpty(GooglePlacesAutocompleteCache::class);
+    }
+
+    #[Test]
+    public function itSearchesTheUkIrelandAndCrownDependenciesWithTheSessionToken(): void
+    {
+        $mockClient = $this->mockGoogle();
+
+        $this->callAction(AutocompleteLocationAction::class, '5 Queen Street Crewe', 'session-token');
+
+        $mockClient->assertSent(fn (Request $request, Response $response): bool => $response->getPendingRequest()->body()?->all() === [
+            'input' => '5 queen street crewe',
+            'includeQueryPredictions' => false,
+            'includedRegionCodes' => ['gb', 'ie', 'je', 'gg', 'im'],
+            'sessionToken' => 'session-token',
         ]);
     }
 
     #[Test]
-    public function itReturnsNothingForATermUnderThreeCharactersWithoutCallingTheApi(): void
+    public function itReturnsEachPlacePredictionsIdAndLabel(): void
     {
-        Http::preventStrayRequests();
-        Http::fake();
-
-        $this->assertSame([], $this->callAction(AutocompleteLocationAction::class, ' en '));
-
-        Http::assertNothingSent();
-        $this->assertDatabaseEmpty(OpenRouteServiceAutocompleteCache::class);
-    }
-
-    #[Test]
-    public function itSearchesTownsAndPostcodesInTheUkAndIreland(): void
-    {
-        $this->fakeAutocompleteResponse();
-
-        $this->callAction(AutocompleteLocationAction::class, 'ennis');
-
-        Http::assertSent(fn (Request $request): bool => $request['text'] === 'ennis'
-            && $request['boundary.country'] === 'GB,IE'
-            && $request['layers'] === 'locality,localadmin,postalcode,county');
-    }
-
-    #[Test]
-    public function itReturnsEachUniqueLabelWithItsLatLng(): void
-    {
-        $this->fakeAutocompleteResponse();
+        $this->mockGoogle();
 
         $this->assertSame([
-            ['id' => '1', 'label' => 'Ennis, CE, Ireland', 'lat' => 52.84, 'lng' => -8.98],
-            ['id' => '3', 'label' => 'Enniskillen, Northern Ireland, United Kingdom', 'lat' => 54.34, 'lng' => -7.63],
-        ], $this->callAction(AutocompleteLocationAction::class, 'ennis'));
+            ['id' => 'place-1', 'label' => '5 Queen Street, Crewe, UK'],
+            ['id' => 'place-2', 'label' => '5 Queen Street, Chester, UK'],
+        ], $this->callAction(AutocompleteLocationAction::class, '5 queen street crewe', 'token'));
     }
 
     #[Test]
     public function itCachesTheResultsAgainstTheNormalisedTerm(): void
     {
-        $this->fakeAutocompleteResponse();
+        $this->freezeSecond();
 
-        $this->callAction(AutocompleteLocationAction::class, '  ENNIS ');
+        $this->mockGoogle();
 
-        $cache = OpenRouteServiceAutocompleteCache::query()->sole();
+        $this->callAction(AutocompleteLocationAction::class, '  5 QUEEN Street   Crewe ', 'token');
 
-        $this->assertSame('ennis', $cache->term);
+        $cache = GooglePlacesAutocompleteCache::query()->sole();
+
+        $this->assertSame('5 queen street crewe', $cache->term);
         $this->assertCount(2, $cache->response);
+        $this->assertSame(now()->toDateTimeString(), $cache->last_fetched_at->toDateTimeString());
     }
 
     #[Test]
-    public function itReturnsACachedResultWithoutCallingTheApi(): void
+    public function itReturnsAFreshCachedResultWithoutCallingGoogle(): void
     {
-        Http::preventStrayRequests();
-        Http::fake();
+        $mockClient = $this->mockGoogle();
 
-        $results = [['id' => '9', 'label' => 'Crewe, England, United Kingdom', 'lat' => 53.1, 'lng' => -2.44]];
+        $results = [['id' => 'cached', 'label' => 'Crewe, UK']];
 
-        $this->create(OpenRouteServiceAutocompleteCache::class, ['term' => 'crewe', 'response' => $results]);
+        $this->create(GooglePlacesAutocompleteCache::class, ['term' => 'crewe', 'response' => $results, 'last_fetched_at' => now()->subDays(29)]);
 
-        $this->assertSame($results, $this->callAction(AutocompleteLocationAction::class, 'Crewe'));
+        $this->assertSame($results, $this->callAction(AutocompleteLocationAction::class, 'Crewe', 'token'));
 
-        Http::assertNothingSent();
+        $mockClient->assertNothingSent();
     }
 
     #[Test]
-    public function itRecordsAHitOnTheCachedResult(): void
+    public function itRecordsAHitOnAFreshCachedResult(): void
+    {
+        $this->mockGoogle();
+
+        $cache = $this->create(GooglePlacesAutocompleteCache::class, ['term' => 'crewe', 'hits' => 3]);
+
+        $this->callAction(AutocompleteLocationAction::class, 'crewe', 'token');
+
+        $this->assertSame(4, $cache->refresh()->hits);
+    }
+
+    #[Test]
+    public function itRefetchesAndOverwritesACachedResultOlderThanThirtyDays(): void
     {
         $this->freezeSecond();
 
-        Http::preventStrayRequests();
-        Http::fake();
+        $mockClient = $this->mockGoogle();
 
-        $cache = $this->create(OpenRouteServiceAutocompleteCache::class, [
-            'term' => 'crewe',
-            'hits' => 3,
-            'most_recent_hit' => now()->subWeek(),
+        $cache = $this->create(GooglePlacesAutocompleteCache::class, [
+            'term' => '5 queen street crewe',
+            'response' => [['id' => 'stale', 'label' => 'Stale']],
+            'last_fetched_at' => now()->subDays(31),
         ]);
 
-        $this->callAction(AutocompleteLocationAction::class, 'crewe');
+        $results = $this->callAction(AutocompleteLocationAction::class, '5 queen street crewe', 'token');
+
+        $mockClient->assertSentCount(1);
+        $this->assertSame('place-1', $results[0]['id']);
 
         $cache->refresh();
 
-        $this->assertSame(4, $cache->hits);
-        $this->assertSame(now()->toDateTimeString(), $cache->most_recent_hit->toDateTimeString());
+        $this->assertDatabaseCount(GooglePlacesAutocompleteCache::class, 1);
+        $this->assertSame('place-1', $cache->response[0]['id']);
+        $this->assertSame(now()->toDateTimeString(), $cache->last_fetched_at->toDateTimeString());
+    }
+
+    #[Test]
+    public function itReturnsNothingAndCachesNothingWhenGoogleFails(): void
+    {
+        $this->mockGoogle(MockResponse::make(['error' => ['message' => 'bad']], 500));
+
+        $this->assertSame([], $this->callAction(AutocompleteLocationAction::class, '5 queen street crewe', 'token'));
+
+        $this->assertDatabaseEmpty(GooglePlacesAutocompleteCache::class);
     }
 }

@@ -86,4 +86,18 @@ class ShowControllerTest extends TestCase
 
         $this->assertSame(now()->toDateTimeString(), $this->trip->refresh()->last_visited_at?->toDateTimeString());
     }
+
+    #[Test]
+    public function itLetsTheTripBeEditedWithTheEditTokenCookie(): void
+    {
+        $this->withCookie("trip-planner-{$this->trip->key}", $this->trip->edit_token)
+            ->visitPage()
+            ->assertInertia(fn (Assert $page): Assert => $page->where('canEdit', true)->etc());
+    }
+
+    #[Test]
+    public function itDoesNotLetTheTripBeEditedWithoutTheEditTokenCookie(): void
+    {
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->where('canEdit', false)->etc());
+    }
 }

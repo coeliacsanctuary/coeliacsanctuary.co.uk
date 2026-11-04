@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
+import { useHttp } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
 import Loader from '@/Components/Loader.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
@@ -45,6 +46,7 @@ type Trip = {
 
 const props = defineProps<{
   trip?: Trip;
+  canEdit?: boolean;
   eateries?: TripEatery[];
 }>();
 
@@ -64,14 +66,64 @@ const form = useForm<{ points: TripLocation[]; distance: number }>(
   },
 );
 
-const showPlanner = ref(!props.trip);
+const plannerMode: Ref<'new' | 'edit' | undefined> = ref(
+  props.trip ? undefined : 'new',
+);
+
+const tripTitle = computed((): string =>
+  [props.trip?.points[0], props.trip?.points.at(-1)]
+    .map((point) => point?.label.split(',')[0] ?? '')
+    .join(' → '),
+);
+
+const isEditing = computed((): boolean => plannerMode.value === 'edit');
+
+const submitLabel = computed((): string => {
+  if (!isEditing.value) {
+    return 'Plan my trip';
+  }
+
+  return props.canEdit ? 'Update this trip' : 'Save as my own copy';
+});
+
+const openPlanner = (mode: 'new' | 'edit') => {
+  const editing = mode === 'edit' && props.trip;
+
+  start.value = editing ? props.trip?.points[0] : undefined;
+  end.value = editing ? props.trip?.points.at(-1) : undefined;
+  form.distance = editing ? (props.trip?.distance ?? 2) : 2;
+  form.clearErrors();
+  lookupError.value = false;
+
+  plannerMode.value = mode;
+};
 
 const route = computed((): TripRoute | undefined => props.trip?.route);
 const eateries = computed((): TripEatery[] => props.eateries ?? []);
 
-const errorMessage = computed((): string | undefined =>
-  form.hasErrors ? 'Sorry, there was an error planning your trip...' : undefined,
-);
+const sessionTokens = ref({
+  start: crypto.randomUUID(),
+  end: crypto.randomUUID(),
+});
+
+const lookupEndpoint = (target: 'start' | 'end'): string =>
+  `/api/wheretoeat/trip-planner/lookup?sessionToken=${sessionTokens.value[target]}`;
+
+const placeLookup = useHttp<{ sessionToken: string }, LatLng>({
+  sessionToken: '',
+});
+
+const lookupError = ref(false);
+
+const errorMessage = computed((): string | undefined => {
+  if (lookupError.value) {
+    return "Sorry, I couldn't find that location...";
+  }
+
+  return form.hasErrors
+    ? 'Sorry, there was an error planning your trip...'
+    : undefined;
+});
 
 const mapElement: Ref<HTMLDivElement | undefined> = ref();
 const map: Ref<Map | undefined> = ref();
@@ -83,18 +135,38 @@ const distanceOptions = [1, 2, 3, 5, 10].map((miles) => ({
   label: `Within ${miles} mile${miles > 1 ? 's' : ''} of my route`,
 }));
 
-const selectLocation = (location: TripLocation, target: 'start' | 'end') => {
-  const { label, lat, lng } = location;
+const selectLocation = (
+  location: { id: string; label: string },
+  target: 'start' | 'end',
+) => {
+  const lookup = target === 'start' ? startLookup : endLookup;
 
-  if (target === 'start') {
-    start.value = { label, lat, lng };
-    startLookup.value?.setValue(label);
+  lookup.value?.setValue(location.label);
+  lookupError.value = false;
+  placeLookup.sessionToken = sessionTokens.value[target];
 
-    return;
-  }
+  placeLookup.get(
+    `/api/wheretoeat/trip-planner/lookup/${encodeURIComponent(location.id)}`,
+    {
+      onSuccess: ({ lat, lng }) => {
+        const selected = { label: location.label, lat, lng };
 
-  end.value = { label, lat, lng };
-  endLookup.value?.setValue(label);
+        if (target === 'start') {
+          start.value = selected;
+        } else {
+          end.value = selected;
+        }
+
+        sessionTokens.value[target] = crypto.randomUUID();
+      },
+      onHttpException: () => {
+        lookupError.value = true;
+      },
+      onNetworkError: () => {
+        lookupError.value = true;
+      },
+    },
+  );
 };
 
 const planTrip = () => {
@@ -104,11 +176,19 @@ const planTrip = () => {
 
   form.points = [start.value, end.value];
 
-  form.submit({
+  const options = {
     onSuccess: () => {
-      showPlanner.value = false;
+      plannerMode.value = undefined;
     },
-  });
+  };
+
+  if (isEditing.value && props.canEdit && props.trip) {
+    form.submit('patch', `/wheretoeat/trip-planner/${props.trip.key}`, options);
+
+    return;
+  }
+
+  form.submit('post', '/wheretoeat/trip-planner', options);
 };
 
 const drawTrip = () => {
@@ -143,7 +223,7 @@ const drawTrip = () => {
 };
 
 watch(
-  () => props.trip?.key,
+  () => props.trip?.route.geometry,
   () => nextTick(() => drawTrip()),
 );
 
@@ -198,25 +278,46 @@ onMounted(() => {
       background
     />
 
-    <div class="absolute top-0 left-0 z-10 p-2">
-      <CoeliacButton
-        as="button"
-        type="button"
-        :label="route ? 'Plan a new trip' : 'Plan a trip'"
-        @click="showPlanner = true"
-      />
+    <div class="absolute top-0 left-0 z-10 w-[calc(100%-40px)] max-w-lg p-2">
+      <div class="flex flex-col gap-2 rounded-md bg-white p-3 shadow-sm">
+        <template v-if="trip && route">
+          <p
+            class="font-semibold"
+            v-text="tripTitle"
+          />
+
+          <p class="text-sm text-grey-dark">
+            {{ metersToMiles(route.distance) }} miles &middot;
+            {{ formatDuration(route.duration) }} &middot;
+            {{ eateries.length }} places along the way
+          </p>
+        </template>
+
+        <div class="flex justify-end gap-2">
+          <CoeliacButton
+            v-if="trip"
+            as="button"
+            type="button"
+            theme="secondary"
+            label="Edit trip"
+            @click="openPlanner('edit')"
+          />
+
+          <CoeliacButton
+            as="button"
+            type="button"
+            theme="primary"
+            :label="trip ? 'New trip' : 'Plan a trip'"
+            @click="openPlanner('new')"
+          />
+        </div>
+      </div>
     </div>
 
     <Card
       v-if="route"
       class="absolute bottom-2 left-2 z-10 flex max-h-[40%] w-[calc(100%-1rem)] max-w-md flex-col space-y-2 overflow-y-auto"
     >
-      <p class="font-semibold">
-        {{ metersToMiles(route.distance) }} miles,
-        {{ formatDuration(route.duration) }} -
-        {{ eateries.length }} places along the way
-      </p>
-
       <ol class="list-decimal pl-6">
         <li
           v-for="eatery in eateries"
@@ -237,15 +338,18 @@ onMounted(() => {
   </div>
 
   <Modal
-    :open="showPlanner"
-    :closeable="!!route"
+    :open="plannerMode !== undefined"
+    :closeable="!!trip"
     size="relaxed"
     width="w-full"
     no-padding
-    @close="showPlanner = false"
+    @close="plannerMode = undefined"
   >
     <template #header>
-      <h3 class="pl-3 font-semibold lg:text-lg">Plan your trip</h3>
+      <h3
+        class="pl-3 font-semibold lg:text-lg"
+        v-text="isEditing ? 'Edit your trip' : 'Plan your trip'"
+      />
     </template>
 
     <form
@@ -260,9 +364,9 @@ onMounted(() => {
         label="Starting from"
         results-classes="absolute bg-white w-full z-20"
         placeholder="Town, city or postcode..."
-        lookup-endpoint="/api/wheretoeat/trip-planner/lookup"
+        :lookup-endpoint="lookupEndpoint('start')"
       >
-        <template #item="location: TripLocation">
+        <template #item="location: { id: string; label: string }">
           <div
             class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
             @click="selectLocation(location, 'start')"
@@ -279,9 +383,9 @@ onMounted(() => {
         label="Going to"
         results-classes="absolute bg-white w-full z-20"
         placeholder="Town, city or postcode..."
-        lookup-endpoint="/api/wheretoeat/trip-planner/lookup"
+        :lookup-endpoint="lookupEndpoint('end')"
       >
-        <template #item="location: TripLocation">
+        <template #item="location: { id: string; label: string }">
           <div
             class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
             @click="selectLocation(location, 'end')"
@@ -299,12 +403,20 @@ onMounted(() => {
         :options="distanceOptions"
       />
 
+      <p
+        v-if="isEditing && !canEdit"
+        class="text-grey-dark"
+      >
+        This trip was shared with you, so any changes will be saved as your own
+        copy.
+      </p>
+
       <CoeliacButton
         theme="primary"
         size="lg"
         as="button"
         type="submit"
-        label="Plan my trip"
+        :label="submitLabel"
         bold
         classes="justify-center"
         :loading="form.processing"

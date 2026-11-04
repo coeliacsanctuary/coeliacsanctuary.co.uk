@@ -26,13 +26,21 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
+    public function itReturnsAValidationErrorWithoutASessionToken(): void
+    {
+        $this->dontExpectAction(AutocompleteLocationAction::class);
+
+        $this->makeRequest(['sessionToken' => null])->assertJsonValidationErrorFor('sessionToken');
+    }
+
+    #[Test]
     public function itReturnsTheLocationsFromTheAutocompleteAction(): void
     {
-        $results = [['id' => '1', 'label' => 'Ennis, CE, Ireland', 'lat' => 52.84, 'lng' => -8.98]];
+        $results = [['id' => 'place-1', 'label' => 'Ennis, Co. Clare, Ireland']];
 
-        $this->expectAction(AutocompleteLocationAction::class, ['ennis'], return: $results);
+        $this->expectAction(AutocompleteLocationAction::class, ['ennis', 'session-token'], return: $results);
 
-        $this->makeRequest(['term' => 'ennis'])
+        $this->makeRequest(['term' => 'ennis', 'sessionToken' => 'session-token'])
             ->assertOk()
             ->assertExactJson(['data' => $results]);
     }

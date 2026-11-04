@@ -12,6 +12,7 @@ class TripPlannerLookupRequestFactory extends RequestFactory
     {
         return [
             'term' => $this->faker->city(),
+            'sessionToken' => $this->faker->uuid(),
         ];
     }
 }

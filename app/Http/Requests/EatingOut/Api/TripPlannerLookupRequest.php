@@ -12,6 +12,7 @@ class TripPlannerLookupRequest extends FormRequest
     {
         return [
             'term' => ['required', 'string'],
+            'sessionToken' => ['required', 'string'],
         ];
     }
 }

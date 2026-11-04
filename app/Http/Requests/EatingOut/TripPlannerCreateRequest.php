@@ -4,31 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\EatingOut;
 
+use App\Concerns\EatingOut\ValidatesTripPlannerInput;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TripPlannerCreateRequest extends FormRequest
 {
+    use ValidatesTripPlannerInput;
+
     public function rules(): array
     {
-        return [
-            'points' => ['required', 'array', 'min:2'],
-            'points.*.label' => ['required', 'string'],
-            'points.*.lat' => ['required', 'numeric'],
-            'points.*.lng' => ['required', 'numeric'],
-            'distance' => ['required', 'numeric', 'min:1', 'max:10'],
-        ];
-    }
-
-    /** @return array<int, array{label: string, lat: float, lng: float}> */
-    public function points(): array
-    {
-        /** @var array<int, array{label: string, lat: float|string, lng: float|string}> $points */
-        $points = $this->collect('points')->values()->all();
-
-        return array_map(fn (array $point): array => [
-            'label' => (string) $point['label'],
-            'lat' => (float) $point['lat'],
-            'lng' => (float) $point['lng'],
-        ], $points);
+        return $this->tripPlannerRules();
     }
 }

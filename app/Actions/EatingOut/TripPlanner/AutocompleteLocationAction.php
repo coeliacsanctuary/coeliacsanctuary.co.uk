@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Actions\EatingOut\TripPlanner;
 
-use App\Models\OpenRouteServiceAutocompleteCache;
-use Illuminate\Support\Facades\Http;
+use App\Models\GooglePlacesAutocompleteCache;
 use Illuminate\Support\Str;
+use SKAgarwal\GoogleApi\PlacesNew\GooglePlaces;
 
 class AutocompleteLocationAction
 {
-    /** @return array<int, array{id: string, label: string, lat: float, lng: float}> */
-    public function handle(string $term): array
+    /** @return array<int, array{id: string, label: string}> */
+    public function handle(string $term, string $sessionToken): array
     {
         $term = Str::of($term)->lower()->squish()->toString();
 
@@ -19,45 +19,42 @@ class AutocompleteLocationAction
             return [];
         }
 
-        $cached = OpenRouteServiceAutocompleteCache::query()->where('term', $term)->first();
+        $cached = GooglePlacesAutocompleteCache::query()->where('term', $term)->first();
 
-        if ($cached) {
-            $cached->update([
-                'hits' => $cached->hits + 1,
-                'most_recent_hit' => now(),
-            ]);
+        if ($cached?->isFresh()) {
+            $cached->increment('hits');
 
-            /** @var array<int, array{id: string, label: string, lat: float, lng: float}> $results */
+            /** @var array<int, array{id: string, label: string}> $results */
             $results = $cached->response;
 
             return $results;
         }
 
-        $response = Http::openRouteService()
-            ->get('geocode/autocomplete', [
-                'text' => $term,
-                'boundary.country' => 'GB,IE',
-                'layers' => 'locality,localadmin,postalcode,county',
-            ])
-            ->throw();
+        $response = app(GooglePlaces::class)->autocomplete($term, params: [
+            'includedRegionCodes' => ['gb', 'ie', 'je', 'gg', 'im'],
+            'sessionToken' => $sessionToken,
+        ]);
 
-        /** @var array<int, array{properties: array{id: string, label: string}, geometry: array{coordinates: array{float, float}}}> $features */
-        $features = $response->json('features', []);
+        if ($response->failed()) {
+            return [];
+        }
 
-        $results = collect($features)
-            ->map(fn (array $feature): array => [
-                'id' => $feature['properties']['id'],
-                'label' => $feature['properties']['label'],
-                'lat' => (float) $feature['geometry']['coordinates'][1],
-                'lng' => (float) $feature['geometry']['coordinates'][0],
+        /** @var array<int, array{placePrediction?: array{placeId: string, text: array{text: string}}}> $suggestions */
+        $suggestions = $response->json('suggestions', []);
+
+        $results = collect($suggestions)
+            ->pluck('placePrediction')
+            ->filter()
+            ->map(fn (array $prediction): array => [
+                'id' => $prediction['placeId'],
+                'label' => $prediction['text']['text'],
             ])
-            ->unique('label')
             ->values()
             ->all();
 
-        OpenRouteServiceAutocompleteCache::query()->create([
-            'term' => $term,
+        GooglePlacesAutocompleteCache::query()->updateOrCreate(['term' => $term], [
             'response' => $results,
+            'last_fetched_at' => now(),
         ]);
 
         return $results;

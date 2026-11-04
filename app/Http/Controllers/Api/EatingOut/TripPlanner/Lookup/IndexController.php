@@ -13,7 +13,10 @@ class IndexController
     public function __invoke(TripPlannerLookupRequest $request, AutocompleteLocationAction $autocompleteLocationAction): JsonResponse
     {
         return new JsonResponse([
-            'data' => $autocompleteLocationAction->handle($request->string('term')->toString()),
+            'data' => $autocompleteLocationAction->handle(
+                $request->string('term')->toString(),
+                $request->string('sessionToken')->toString(),
+            ),
         ]);
     }
 }

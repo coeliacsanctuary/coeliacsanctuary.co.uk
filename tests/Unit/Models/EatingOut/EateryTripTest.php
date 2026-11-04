@@ -84,4 +84,28 @@ class EateryTripTest extends TestCase
         $this->assertSame('2026-02-01 12:00:00', $trip->last_visited_at?->toDateTimeString());
         $this->assertSame('2026-01-01 10:00:00', $trip->updated_at?->toDateTimeString());
     }
+
+    #[Test]
+    public function itCanBeEditedWithItsEditToken(): void
+    {
+        $trip = $this->create(EateryTrip::class);
+
+        $this->assertTrue($trip->canBeEditedWith($trip->edit_token));
+    }
+
+    #[Test]
+    public function itCannotBeEditedWithADifferentToken(): void
+    {
+        $trip = $this->create(EateryTrip::class);
+
+        $this->assertFalse($trip->canBeEditedWith('not-the-token'));
+    }
+
+    #[Test]
+    public function itCannotBeEditedWithoutAToken(): void
+    {
+        $trip = $this->create(EateryTrip::class);
+
+        $this->assertFalse($trip->canBeEditedWith(null));
+    }
 }
