@@ -36,6 +36,7 @@
         <env name="ENABLE_EATERY_COLLECTIONS" value="true"/>
         <env name="FINANCE_SERVICE_URL" value="foo"/>
         <env name="FINANCE_SERVICE_KEY" value="bar"/>
+        <env name="OPEN_ROUTE_SERVICE_KEY" value="foo"/>
     </php>
     <source>
         <include>

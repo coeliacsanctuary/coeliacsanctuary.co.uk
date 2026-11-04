@@ -26,6 +26,11 @@ return [
         'key' => env('IDEAL_POSTCODES_KEY'),
     ],
 
+    'openRouteService' => [
+        'url' => env('OPEN_ROUTE_SERVICE_URL', 'https://api.openrouteservice.org'),
+        'key' => env('OPEN_ROUTE_SERVICE_KEY'),
+    ],
+
     'google' => [
         'maps' => [
             'admin' => env('GOOGLE_MAP_ADMIN'),

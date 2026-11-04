@@ -43,6 +43,8 @@ class GetEateriesPipelineData
         public bool $throwSearchException = true,
         public bool $hydrateFullReviews = false,
         public bool $isMeters = false,
+        public ?TripRoute $route = null,
+        public ?float $routeRadius = null,
     ) {
     }
 }

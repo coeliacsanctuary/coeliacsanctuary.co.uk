@@ -14,6 +14,16 @@ class HttpClientServiceProvider extends ServiceProvider
         $this->registerGetAddress();
         $this->registerIdealPostcodes();
         $this->registerFinanceService();
+        $this->registerOpenRouteService();
+    }
+
+    protected function registerOpenRouteService(): void
+    {
+        Http::macro(
+            'openRouteService',
+            fn () => Http::baseUrl(config()->string('services.openRouteService.url'))
+                ->withHeader('Authorization', config()->string('services.openRouteService.key'))
+        );
     }
 
     protected function registerFinanceService(): void
