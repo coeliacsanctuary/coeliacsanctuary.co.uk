@@ -5,16 +5,43 @@ declare(strict_types=1);
 namespace App\Http\Controllers\EatingOut\TripPlanner;
 
 use App\Http\Response\Inertia;
+use App\Models\EatingOut\EateryTrip;
+use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
+use App\Resources\EatingOut\EateryTripResource;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Inertia\Response;
 
 class ShowController
 {
-    public function __invoke(Inertia $inertia): Response
+    public function __invoke(EateryTrip $eateryTrip, Inertia $inertia, TripEateriesPipeline $tripEateriesPipeline): Response
     {
+        $eateryTrip->recordVisit();
+
+        $start = Arr::first($eateryTrip->points)['label'] ?? '';
+        $end = Arr::last($eateryTrip->points)['label'] ?? '';
+
         return $inertia
-            ->title('Gluten Free Trip Planner')
-            ->metaDescription('Plan your journey and find places to eat that cater to Coeliac and gluten free diets along the way')
-            ->metaTags(['gluten free trip planner', 'gluten free road trip', 'gluten free places to eat', 'eating out uk'])
-            ->render('EatingOut/TripPlanner');
+            ->title("{$start} to {$end} - Trip Planner")
+            ->metaDescription("Places to eat that cater to Coeliac and gluten free diets on the way from {$start} to {$end}")
+            ->doNotTrack()
+            ->render('EatingOut/TripPlanner', [
+                'trip' => [
+                    'key' => $eateryTrip->key,
+                    'points' => $eateryTrip->points,
+                    'distance' => $eateryTrip->distance,
+                    'route' => [
+                        'geometry' => $eateryTrip->geometry,
+                        'distance' => $eateryTrip->route_distance,
+                        'duration' => $eateryTrip->route_duration,
+                    ],
+                ],
+                'eateries' => fn (): Collection => $tripEateriesPipeline->run(
+                    route: $eateryTrip->toTripRoute(),
+                    radius: $eateryTrip->distance,
+                    filters: ['categories' => null, 'features' => null, 'venueTypes' => null],
+                    jsonResource: EateryTripResource::class,
+                ),
+            ]);
     }
 }

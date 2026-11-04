@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { nextTick, onMounted, Ref, ref } from 'vue';
-import { useHttp } from '@inertiajs/vue3';
+import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue';
+import { useForm } from 'laravel-precognition-vue-inertia';
 import Card from '@/Components/Card.vue';
 import Loader from '@/Components/Loader.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
@@ -32,32 +32,46 @@ type TripEatery = EateryBrowseResource & {
   durationAlongRoute: number;
 };
 
-type TripLocation = LatLng & { id: string; label: string };
+type TripLocation = LatLng & { label: string };
 
 type TripRoute = { geometry: string; distance: number; duration: number };
 
-const start: Ref<TripLocation | undefined> = ref();
-const end: Ref<TripLocation | undefined> = ref();
-const startSearch = ref('');
-const endSearch = ref('');
+type Trip = {
+  key: string;
+  points: TripLocation[];
+  distance: number;
+  route: TripRoute;
+};
+
+const props = defineProps<{
+  trip?: Trip;
+  eateries?: TripEatery[];
+}>();
+
+const start: Ref<TripLocation | undefined> = ref(props.trip?.points[0]);
+const end: Ref<TripLocation | undefined> = ref(props.trip?.points.at(-1));
 const startLookup: Ref<{ setValue: (value: string) => void } | undefined> =
   ref();
 const endLookup: Ref<{ setValue: (value: string) => void } | undefined> =
   ref();
 
-const http = useHttp<
-  { points: LatLng[]; distance: number },
-  { route: TripRoute; eateries: TripEatery[] }
->({
-  points: [],
-  distance: 2,
-});
+const form = useForm<{ points: TripLocation[]; distance: number }>(
+  'post',
+  '/wheretoeat/trip-planner',
+  {
+    points: [],
+    distance: props.trip?.distance ?? 2,
+  },
+);
 
-const errorMessage: Ref<string | undefined> = ref();
-const showPlanner = ref(true);
+const showPlanner = ref(!props.trip);
 
-const route: Ref<TripRoute | undefined> = ref();
-const eateries: Ref<TripEatery[]> = ref([]);
+const route = computed((): TripRoute | undefined => props.trip?.route);
+const eateries = computed((): TripEatery[] => props.eateries ?? []);
+
+const errorMessage = computed((): string | undefined =>
+  form.hasErrors ? 'Sorry, there was an error planning your trip...' : undefined,
+);
 
 const mapElement: Ref<HTMLDivElement | undefined> = ref();
 const map: Ref<Map | undefined> = ref();
@@ -70,15 +84,17 @@ const distanceOptions = [1, 2, 3, 5, 10].map((miles) => ({
 }));
 
 const selectLocation = (location: TripLocation, target: 'start' | 'end') => {
+  const { label, lat, lng } = location;
+
   if (target === 'start') {
-    start.value = location;
-    startLookup.value?.setValue(location.label);
+    start.value = { label, lat, lng };
+    startLookup.value?.setValue(label);
 
     return;
   }
 
-  end.value = location;
-  endLookup.value?.setValue(location.label);
+  end.value = { label, lat, lng };
+  endLookup.value?.setValue(label);
 };
 
 const planTrip = () => {
@@ -86,25 +102,12 @@ const planTrip = () => {
     return;
   }
 
-  errorMessage.value = undefined;
+  form.points = [start.value, end.value];
 
-  http.points = [start.value, end.value].map(({ lat, lng }) => ({ lat, lng }));
-
-  const showError = () => {
-    errorMessage.value = 'Sorry, there was an error planning your trip...';
-  };
-
-  http.post('/api/wheretoeat/trip-planner', {
-    onSuccess: (response) => {
-      route.value = response.route;
-      eateries.value = response.eateries;
+  form.submit({
+    onSuccess: () => {
       showPlanner.value = false;
-
-      nextTick(() => drawTrip());
     },
-    onError: showError,
-    onHttpException: showError,
-    onNetworkError: showError,
   });
 };
 
@@ -138,6 +141,11 @@ const drawTrip = () => {
 
   map.value.getView().fit(routeSource.getExtent(), { padding: [30, 30, 30, 30] });
 };
+
+watch(
+  () => props.trip?.key,
+  () => nextTick(() => drawTrip()),
+);
 
 const metersToMiles = (meters: number): string =>
   (meters / 1609.344).toFixed(1);
@@ -173,6 +181,8 @@ onMounted(() => {
       enableRotation: false,
     }),
   });
+
+  drawTrip();
 });
 </script>
 
@@ -184,7 +194,7 @@ onMounted(() => {
       class="z-50"
       size="size-16"
       width="border-8"
-      :display="http.processing"
+      :display="form.processing"
       background
     />
 
@@ -244,7 +254,7 @@ onMounted(() => {
     >
       <FormLookup
         ref="startLookup"
-        v-model="startSearch"
+        :initial-value="start?.label"
         name="start"
         borders
         label="Starting from"
@@ -263,7 +273,7 @@ onMounted(() => {
 
       <FormLookup
         ref="endLookup"
-        v-model="endSearch"
+        :initial-value="end?.label"
         name="end"
         borders
         label="Going to"
@@ -281,7 +291,7 @@ onMounted(() => {
       </FormLookup>
 
       <FormSelect
-        v-model="http.distance"
+        v-model="form.distance"
         name="distance"
         borders
         label="How far off your route?"
@@ -297,7 +307,7 @@ onMounted(() => {
         label="Plan my trip"
         bold
         classes="justify-center"
-        :loading="http.processing"
+        :loading="form.processing"
         :disabled="!start || !end"
       />
 

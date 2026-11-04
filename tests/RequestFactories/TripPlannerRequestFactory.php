@@ -12,8 +12,8 @@ class TripPlannerRequestFactory extends RequestFactory
     {
         return [
             'points' => [
-                ['lat' => 53.1, 'lng' => -2.44],
-                ['lat' => 53.48, 'lng' => -2.24],
+                ['label' => 'Crewe, England, United Kingdom', 'lat' => 53.1, 'lng' => -2.44],
+                ['label' => 'Manchester, England, United Kingdom', 'lat' => 53.48, 'lng' => -2.24],
             ],
             'distance' => 2,
         ];

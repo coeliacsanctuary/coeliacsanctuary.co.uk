@@ -19,7 +19,9 @@ use App\Http\Controllers\EatingOut\ReportEatery\StoreController as ReportEateryS
 use App\Http\Controllers\EatingOut\Review\StoreController as ReviewStoreController;
 use App\Http\Controllers\EatingOut\Search\ShowController as SearchShowController;
 use App\Http\Controllers\EatingOut\Search\StoreController as SearchStoreController;
+use App\Http\Controllers\EatingOut\TripPlanner\IndexController as TripPlannerIndexController;
 use App\Http\Controllers\EatingOut\TripPlanner\ShowController as TripPlannerShowController;
+use App\Http\Controllers\EatingOut\TripPlanner\StoreController as TripPlannerStoreController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
@@ -68,7 +70,9 @@ Route::prefix('wheretoeat')->group(function (): void {
     Route::get('/browse', BrowseShowController::class)->name('eating-out.browse');
     Route::get('/browse/{any}', BrowseShowController::class)->where('any', '.*')->name('eating-out.browse.any');
 
-    Route::get('/trip-planner', TripPlannerShowController::class)->name('eating-out.trip-planner');
+    Route::get('/trip-planner', TripPlannerIndexController::class)->name('eating-out.trip-planner');
+    Route::post('/trip-planner', TripPlannerStoreController::class)->name('eating-out.trip-planner.store');
+    Route::get('/trip-planner/{eateryTrip}', TripPlannerShowController::class)->name('eating-out.trip-planner.show');
 
     Route::get('coeliac-sanctuary-on-the-go', AppShowController::class)->name('eating-out.app');
 

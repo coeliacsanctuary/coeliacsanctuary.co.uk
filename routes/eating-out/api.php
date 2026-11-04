@@ -17,7 +17,6 @@ use App\Http\Controllers\Api\EatingOut\SealiacOverview\GetController as EaterySe
 use App\Http\Controllers\Api\EatingOut\SuggestEdits\IndexController as SuggestEditsIndexController;
 use App\Http\Controllers\Api\EatingOut\SuggestEdits\StoreController as SuggestEditsStoreController;
 use App\Http\Controllers\Api\EatingOut\TripPlanner\Lookup\IndexController as TripPlannerLookupIndexController;
-use App\Http\Controllers\Api\EatingOut\TripPlanner\StoreController as TripPlannerStoreController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('lookup', WhereToEatLookupIndexController::class)->name('api.wheretoeat.lookup.index');
@@ -28,7 +27,6 @@ Route::post('review/image-upload', ReviewImagesStoreController::class)
 
 Route::get('features', FeatureIndexController::class)->name('api.wheretoeat.features');
 
-Route::post('trip-planner', TripPlannerStoreController::class)->name('api.wheretoeat.trip-planner.store');
 Route::post('trip-planner/lookup', TripPlannerLookupIndexController::class)->name('api.wheretoeat.trip-planner.lookup');
 
 Route::get('browse', BrowseIndexController::class)->name('api.wheretoeat.browse');

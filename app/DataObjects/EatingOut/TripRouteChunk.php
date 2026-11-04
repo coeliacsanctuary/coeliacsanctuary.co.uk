@@ -7,7 +7,7 @@ namespace App\DataObjects\EatingOut;
 final readonly class TripRouteChunk
 {
     /**
-     * @param  array<int, array{lat: float, lng: float, along: float, duration: float}>  $points
+     * @param  non-empty-list<array{lat: float, lng: float, along: float, duration: float}>  $points
      * @param  array{min: float, max: float}  $latBounds
      * @param  array{min: float, max: float}  $lngBounds
      */
@@ -18,7 +18,7 @@ final readonly class TripRouteChunk
     ) {
     }
 
-    /** @param  array<int, array{lat: float, lng: float, along: float, duration: float}>  $points */
+    /** @param  non-empty-list<array{lat: float, lng: float, along: float, duration: float}>  $points */
     public static function fromPoints(array $points, float $padding): self
     {
         $lats = array_column($points, 'lat');

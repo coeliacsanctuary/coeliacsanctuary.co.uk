@@ -60,10 +60,11 @@ final readonly class TripRoute
     /** @return array<int, array{lat: float, lng: float, along: float, duration: float}> */
     private function measuredPoints(): array
     {
+        $points = $this->points->values()->all();
         $along = [0.0];
 
-        for ($index = 1, $total = $this->points->count(); $index < $total; $index++) {
-            $along[$index] = $along[$index - 1] + $this->metersBetween($this->points[$index - 1], $this->points[$index]);
+        for ($index = 1, $total = count($points); $index < $total; $index++) {
+            $along[$index] = $along[$index - 1] + $this->metersBetween($points[$index - 1], $points[$index]);
         }
 
         $durations = array_fill(0, count($along), 0.0);
