@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class EateryTripResource extends EateryBrowseResource
 {
     /** @return array<string, mixed> */
-    public function toArray(Request $request)
+    public function toArray(Request $request): array
     {
         return [
             ...parent::toArray($request),

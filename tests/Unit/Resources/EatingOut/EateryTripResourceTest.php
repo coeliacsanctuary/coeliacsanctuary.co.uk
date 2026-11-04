@@ -38,6 +38,6 @@ class EateryTripResourceTest extends TestCase
             'distanceAlongRoute' => 11120.0,
             'distanceFromRoute' => 668.0,
             'durationAlongRoute' => 600.0,
-        ], (new EateryTripResource($pendingEatery))->toArray(new Request()));
+        ], new EateryTripResource($pendingEatery)->toArray(new Request()));
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\EatingOut\TripPlanner;
 
+use Illuminate\Support\Collection;
 use App\Actions\EatingOut\TripPlanner\GetRouteAction;
 use App\DataObjects\EatingOut\LatLng;
 use App\DataObjects\EatingOut\TripRoute;
@@ -38,7 +39,7 @@ class GetRouteActionTest extends TestCase
     }
 
     /** @return \Illuminate\Support\Collection<int, LatLng> */
-    protected function points(): \Illuminate\Support\Collection
+    protected function points(): Collection
     {
         return collect([new LatLng(53.1, -2.44), new LatLng(53.3, -2.3), new LatLng(53.48, -2.24)]);
     }

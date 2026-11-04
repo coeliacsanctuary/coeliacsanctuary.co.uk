@@ -58,7 +58,7 @@ final readonly class TripRoute
     }
 
     /** @return array<int, array{lat: float, lng: float, along: float, duration: float}> */
-    protected function measuredPoints(): array
+    private function measuredPoints(): array
     {
         $along = [0.0];
 
@@ -89,7 +89,7 @@ final readonly class TripRoute
             ->all();
     }
 
-    protected function metersBetween(LatLng $from, LatLng $to): float
+    private function metersBetween(LatLng $from, LatLng $to): float
     {
         $latDelta = deg2rad($to->lat - $from->lat);
         $lngDelta = deg2rad($to->lng - $from->lng);
