@@ -113,3 +113,30 @@ export const searchLocationMarkerStyle = (): Style =>
       color: '#000000',
     }),
   });
+
+const tripPointStyles = new Map<string, Style>();
+
+export const tripPointStyle = (label: string): Style => {
+  const cached = tripPointStyles.get(label);
+
+  if (cached) {
+    return cached;
+  }
+
+  const style = new Style({
+    image: new CircleStyle({
+      radius: 13,
+      fill: new Fill({ color: '#29719f' }),
+      stroke: new Stroke({ color: '#ffffff', width: 3 }),
+    }),
+    text: new Text({
+      text: label,
+      font: 'bold 13px sans-serif',
+      fill: new Fill({ color: '#ffffff' }),
+    }),
+  });
+
+  tripPointStyles.set(label, style);
+
+  return style;
+};

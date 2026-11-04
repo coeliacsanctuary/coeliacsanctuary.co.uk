@@ -10,7 +10,7 @@ trait ValidatesTripPlannerInput
     protected function tripPlannerRules(): array
     {
         return [
-            'points' => ['required', 'array', 'min:2'],
+            'points' => ['required', 'array', 'min:2', 'max:7'],
             'points.*.label' => ['required', 'string'],
             'points.*.lat' => ['required', 'numeric'],
             'points.*.lng' => ['required', 'numeric'],

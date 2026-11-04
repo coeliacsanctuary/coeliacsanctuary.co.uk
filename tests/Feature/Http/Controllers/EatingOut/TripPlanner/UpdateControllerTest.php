@@ -60,6 +60,7 @@ class UpdateControllerTest extends TestCase
         return [
             'points missing' => [['points' => null], 'points'],
             'only one point' => [['points' => [['label' => 'Crewe', 'lat' => 53.1, 'lng' => -2.44]]], 'points'],
+            'more than five via points' => [['points' => array_fill(0, 8, ['label' => 'Crewe', 'lat' => 53.1, 'lng' => -2.44])], 'points'],
             'point without a label' => [['points' => [['lat' => 53.1, 'lng' => -2.44], ['label' => 'Manchester', 'lat' => 53.48, 'lng' => -2.24]]], 'points.0.label'],
             'distance over ten miles' => [['distance' => 11], 'distance'],
         ];
@@ -106,5 +107,24 @@ class UpdateControllerTest extends TestCase
             ->makeRequest()
             ->assertRedirect(route('eating-out.trip-planner.show', ['eateryTrip' => $this->trip->key]))
             ->assertSessionHasErrors(['route' => 'Sorry, there was an error planning your trip, please try again.']);
+    }
+
+    #[Test]
+    public function itUpdatesTheTripThroughEveryViaPointInOrder(): void
+    {
+        $points = [
+            ['label' => 'Crewe, UK', 'lat' => 53.1, 'lng' => -2.44],
+            ['label' => 'Leeds, UK', 'lat' => 53.8, 'lng' => -1.55],
+            ['label' => 'York, UK', 'lat' => 53.96, 'lng' => -1.08],
+            ['label' => 'Whitby, UK', 'lat' => 54.49, 'lng' => -0.61],
+        ];
+
+        $this->expectAction(UpdateTripAction::class, [
+            Mockery::on(fn (EateryTrip $trip): bool => $trip->is($this->trip)),
+            $points,
+            2,
+        ], return: $this->trip);
+
+        $this->makeRequest(['points' => $points]);
     }
 }

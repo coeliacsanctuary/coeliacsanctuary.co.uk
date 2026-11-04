@@ -19,7 +19,8 @@ import { fromLonLat } from 'ol/proj';
 import { Point } from 'ol/geom';
 import Polyline from 'ol/format/Polyline';
 import { Stroke, Style } from 'ol/style';
-import { markerStyle } from '@/support/eating-out/browse/styles';
+import { markerStyle, tripPointStyle } from '@/support/eating-out/browse/styles';
+import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import 'ol/ol.css';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
 
@@ -37,6 +38,12 @@ type TripLocation = LatLng & { label: string };
 
 type TripRoute = { geometry: string; distance: number; duration: number };
 
+type PointRow = {
+  key: string;
+  location?: TripLocation;
+  sessionToken: string;
+};
+
 type Trip = {
   key: string;
   points: TripLocation[];
@@ -50,12 +57,62 @@ const props = defineProps<{
   eateries?: TripEatery[];
 }>();
 
-const start: Ref<TripLocation | undefined> = ref(props.trip?.points[0]);
-const end: Ref<TripLocation | undefined> = ref(props.trip?.points.at(-1));
-const startLookup: Ref<{ setValue: (value: string) => void } | undefined> =
-  ref();
-const endLookup: Ref<{ setValue: (value: string) => void } | undefined> =
-  ref();
+const makeRow = (location?: TripLocation): PointRow => ({
+  key: crypto.randomUUID(),
+  location,
+  sessionToken: crypto.randomUUID(),
+});
+
+const rowsFor = (points?: TripLocation[]): PointRow[] =>
+  points?.length ? points.map((point) => makeRow(point)) : [makeRow(), makeRow()];
+
+const rows: Ref<PointRow[]> = ref(rowsFor(props.trip?.points));
+
+const lookups: Record<string, { setValue: (value: string) => void } | null> =
+  {};
+
+const viaCount = computed((): number => rows.value.length - 2);
+
+const allPointsSelected = computed((): boolean =>
+  rows.value.every((row) => row.location !== undefined),
+);
+
+const isVia = (index: number): boolean =>
+  index > 0 && index < rows.value.length - 1;
+
+const rowLabel = (index: number): string => {
+  if (index === 0) {
+    return 'Starting from';
+  }
+
+  return index === rows.value.length - 1 ? 'Going to' : 'Via';
+};
+
+const addStop = () => {
+  if (viaCount.value >= 5) {
+    return;
+  }
+
+  rows.value.splice(rows.value.length - 1, 0, makeRow());
+};
+
+const moveStop = (index: number, direction: -1 | 1) => {
+  const target = index + direction;
+
+  if (!isVia(index) || !isVia(target)) {
+    return;
+  }
+
+  [rows.value[index], rows.value[target]] = [rows.value[target], rows.value[index]];
+};
+
+const removeStop = (index: number) => {
+  if (!isVia(index)) {
+    return;
+  }
+
+  rows.value.splice(index, 1);
+};
 
 const form = useForm<{ points: TripLocation[]; distance: number }>(
   'post',
@@ -89,8 +146,7 @@ const submitLabel = computed((): string => {
 const openPlanner = (mode: 'new' | 'edit') => {
   const editing = mode === 'edit' && props.trip;
 
-  start.value = editing ? props.trip?.points[0] : undefined;
-  end.value = editing ? props.trip?.points.at(-1) : undefined;
+  rows.value = rowsFor(editing ? props.trip?.points : undefined);
   form.distance = editing ? (props.trip?.distance ?? 2) : 2;
   form.clearErrors();
   lookupError.value = false;
@@ -101,13 +157,8 @@ const openPlanner = (mode: 'new' | 'edit') => {
 const route = computed((): TripRoute | undefined => props.trip?.route);
 const eateries = computed((): TripEatery[] => props.eateries ?? []);
 
-const sessionTokens = ref({
-  start: crypto.randomUUID(),
-  end: crypto.randomUUID(),
-});
-
-const lookupEndpoint = (target: 'start' | 'end'): string =>
-  `/api/wheretoeat/trip-planner/lookup?sessionToken=${sessionTokens.value[target]}`;
+const lookupEndpoint = (row: PointRow): string =>
+  `/api/wheretoeat/trip-planner/lookup?sessionToken=${row.sessionToken}`;
 
 const placeLookup = useHttp<{ sessionToken: string }, LatLng>({
   sessionToken: '',
@@ -128,6 +179,7 @@ const errorMessage = computed((): string | undefined => {
 const mapElement: Ref<HTMLDivElement | undefined> = ref();
 const map: Ref<Map | undefined> = ref();
 const routeSource = new VectorSource();
+const pointSource = new VectorSource();
 const markerSource = new VectorSource();
 
 const distanceOptions = [1, 2, 3, 5, 10].map((miles) => ({
@@ -137,27 +189,18 @@ const distanceOptions = [1, 2, 3, 5, 10].map((miles) => ({
 
 const selectLocation = (
   location: { id: string; label: string },
-  target: 'start' | 'end',
+  row: PointRow,
 ) => {
-  const lookup = target === 'start' ? startLookup : endLookup;
-
-  lookup.value?.setValue(location.label);
+  lookups[row.key]?.setValue(location.label);
   lookupError.value = false;
-  placeLookup.sessionToken = sessionTokens.value[target];
+  placeLookup.sessionToken = row.sessionToken;
 
   placeLookup.get(
     `/api/wheretoeat/trip-planner/lookup/${encodeURIComponent(location.id)}`,
     {
       onSuccess: ({ lat, lng }) => {
-        const selected = { label: location.label, lat, lng };
-
-        if (target === 'start') {
-          start.value = selected;
-        } else {
-          end.value = selected;
-        }
-
-        sessionTokens.value[target] = crypto.randomUUID();
+        row.location = { label: location.label, lat, lng };
+        row.sessionToken = crypto.randomUUID();
       },
       onHttpException: () => {
         lookupError.value = true;
@@ -170,11 +213,11 @@ const selectLocation = (
 };
 
 const planTrip = () => {
-  if (!start.value || !end.value) {
+  if (!allPointsSelected.value) {
     return;
   }
 
-  form.points = [start.value, end.value];
+  form.points = rows.value.map((row) => row.location as TripLocation);
 
   const options = {
     onSuccess: () => {
@@ -197,6 +240,7 @@ const drawTrip = () => {
   }
 
   routeSource.clear();
+  pointSource.clear();
   markerSource.clear();
 
   const routeFeature = new Polyline().readFeature(route.value.geometry, {
@@ -205,6 +249,23 @@ const drawTrip = () => {
   });
 
   routeSource.addFeature(routeFeature);
+
+  const points = props.trip?.points ?? [];
+
+  pointSource.addFeatures(
+    points.map(
+      (point, index) =>
+        new Feature({
+          geometry: new Point(fromLonLat([point.lng, point.lat])),
+          label:
+            index === 0
+              ? 'S'
+              : index === points.length - 1
+                ? 'E'
+                : index.toString(),
+        }),
+    ),
+  );
 
   markerSource.addFeatures(
     eateries.value.map(
@@ -254,6 +315,10 @@ onMounted(() => {
             feature.get('venueTypeId') as number | null,
           ),
       }),
+      new VectorLayer({
+        source: pointSource,
+        style: (feature) => tripPointStyle(feature.get('label') as string),
+      }),
     ],
     view: new View({
       center: fromLonLat([-2.89479, 54.093409]),
@@ -289,6 +354,10 @@ onMounted(() => {
           <p class="text-sm text-grey-dark">
             {{ metersToMiles(route.distance) }} miles &middot;
             {{ formatDuration(route.duration) }} &middot;
+            <template v-if="trip.points.length > 2">
+              via {{ trip.points.length - 2 }}
+              stop{{ trip.points.length > 3 ? 's' : '' }} &middot;
+            </template>
             {{ eateries.length }} places along the way
           </p>
         </template>
@@ -356,43 +425,73 @@ onMounted(() => {
       class="flex flex-col space-y-3 p-4"
       @submit.prevent="planTrip()"
     >
-      <FormLookup
-        ref="startLookup"
-        :initial-value="start?.label"
-        name="start"
-        borders
-        label="Starting from"
-        results-classes="absolute bg-white w-full z-20"
-        placeholder="Town, city or postcode..."
-        :lookup-endpoint="lookupEndpoint('start')"
+      <div
+        v-for="(row, index) in rows"
+        :key="row.key"
+        class="flex items-end gap-2"
       >
-        <template #item="location: { id: string; label: string }">
-          <div
-            class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
-            @click="selectLocation(location, 'start')"
-            v-text="location.label"
-          />
-        </template>
-      </FormLookup>
+        <FormLookup
+          :ref="(el) => (lookups[row.key] = el as { setValue: (value: string) => void } | null)"
+          :initial-value="row.location?.label"
+          :name="`point-${index}`"
+          borders
+          :label="rowLabel(index)"
+          class="flex-1"
+          results-classes="absolute bg-white w-full z-20"
+          placeholder="Address, town or postcode..."
+          :lookup-endpoint="lookupEndpoint(row)"
+        >
+          <template #item="location: { id: string; label: string }">
+            <div
+              class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
+              @click="selectLocation(location, row)"
+              v-text="location.label"
+            />
+          </template>
+        </FormLookup>
 
-      <FormLookup
-        ref="endLookup"
-        :initial-value="end?.label"
-        name="end"
-        borders
-        label="Going to"
-        results-classes="absolute bg-white w-full z-20"
-        placeholder="Town, city or postcode..."
-        :lookup-endpoint="lookupEndpoint('end')"
-      >
-        <template #item="location: { id: string; label: string }">
-          <div
-            class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
-            @click="selectLocation(location, 'end')"
-            v-text="location.label"
-          />
-        </template>
-      </FormLookup>
+        <div
+          v-if="isVia(index)"
+          class="flex gap-1 pb-1"
+        >
+          <button
+            type="button"
+            class="cursor-pointer rounded-md border border-grey-off p-2 disabled:cursor-not-allowed disabled:opacity-40"
+            :disabled="!isVia(index - 1)"
+            @click="moveStop(index, -1)"
+          >
+            <ArrowUpIcon class="size-4" />
+          </button>
+
+          <button
+            type="button"
+            class="cursor-pointer rounded-md border border-grey-off p-2 disabled:cursor-not-allowed disabled:opacity-40"
+            :disabled="!isVia(index + 1)"
+            @click="moveStop(index, 1)"
+          >
+            <ArrowDownIcon class="size-4" />
+          </button>
+
+          <button
+            type="button"
+            class="cursor-pointer rounded-md border border-grey-off p-2"
+            @click="removeStop(index)"
+          >
+            <XMarkIcon class="size-4" />
+          </button>
+        </div>
+      </div>
+
+      <div v-if="viaCount < 5">
+        <CoeliacButton
+          as="button"
+          type="button"
+          theme="light"
+          size="sm"
+          label="Add a stop"
+          @click="addStop()"
+        />
+      </div>
 
       <FormSelect
         v-model="form.distance"
@@ -420,7 +519,7 @@ onMounted(() => {
         bold
         classes="justify-center"
         :loading="form.processing"
-        :disabled="!start || !end"
+        :disabled="!allPointsSelected"
       />
 
       <p
