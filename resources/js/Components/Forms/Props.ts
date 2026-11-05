@@ -195,6 +195,7 @@ export type FormLookupProps = Omit<InputProps, 'type'> & {
   fallbackObject?: object;
   fallbackKey?: string;
   resultsClasses?: string;
+  ignoreAutofill?: boolean;
 };
 
 export const FormLookupPropDefaults = {
@@ -208,6 +209,7 @@ export const FormLookupPropDefaults = {
   fallbackObject: () => ({}),
   fallbackKey: undefined,
   resultsClasses: '',
+  ignoreAutofill: false,
 } satisfies Partial<FormLookupProps>;
 
 export type ProductQuantitySwitcherProps = Omit<

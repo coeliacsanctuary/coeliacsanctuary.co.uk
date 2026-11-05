@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import FormLookup from '@/Components/Forms/FormLookup.vue';
+import CoeliacButton from '@/Components/CoeliacButton.vue';
+import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { ref, watch } from 'vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { MapPinIcon } from '@heroicons/vue/24/solid';
@@ -16,6 +18,18 @@ const lookup = ref<null | { setValue: (value: string) => void; value: string }>(
 );
 const results = ref<LookupResult[]>([]);
 const waitingForResults = ref(false);
+const searchedPlace = ref<(LatLng & { label: string }) | null>(null);
+
+const encodeDestination = (place: LatLng & { label: string }): string => {
+  const bytes = new TextEncoder().encode(
+    JSON.stringify({ label: place.label, lat: place.lat, lng: place.lng }),
+  );
+
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+};
 
 const emits = defineEmits(['loading', 'end-loading', 'navigate-to']);
 
@@ -33,6 +47,7 @@ const goToPlace = (place: LookupResult) => {
     })
     .then((response: AxiosResponse<LatLng>) => {
       sessionToken.value = crypto.randomUUID();
+      searchedPlace.value = { ...response.data, label: place.label };
 
       emits('navigate-to', response.data);
     })
@@ -79,6 +94,8 @@ const handleSearch = () => {
 };
 
 const getLocation = () => {
+  searchedPlace.value = null;
+
   emits('loading');
 
   hasError.value = false;
@@ -126,6 +143,7 @@ watch(hasError, (check) => {
           class="flex-1"
           results-classes="absolute bg-white w-full z-20"
           :lookup-endpoint="`/api/wheretoeat/lookup?sessionToken=${sessionToken}`"
+          ignore-autofill
           @search="handleResults"
           @typed="results = []"
         >
@@ -158,6 +176,35 @@ watch(hasError, (check) => {
           />
         </button>
       </form>
+    </div>
+
+    <div
+      v-if="searchedPlace"
+      class="mt-2 flex w-full max-w-lg items-center gap-3 rounded-md bg-white p-3 shadow-sm"
+    >
+      <p class="flex-1">
+        Heading to
+        <strong v-text="searchedPlace.label.split(',')[0]" />? Plan a gluten
+        free trip there.
+      </p>
+
+      <CoeliacButton
+        :href="`/wheretoeat/trip-planner?to=${encodeDestination(searchedPlace)}`"
+        theme="primary"
+        size="lg"
+        bold
+        label="Plan your trip"
+        classes="shrink-0"
+      />
+
+      <button
+        type="button"
+        class="shrink-0 cursor-pointer rounded-md p-1 text-grey-dark hover:bg-grey-light"
+        aria-label="Dismiss"
+        @click="searchedPlace = null"
+      >
+        <XMarkIcon class="size-5" />
+      </button>
     </div>
 
     <div

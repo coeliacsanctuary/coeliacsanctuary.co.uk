@@ -66,6 +66,7 @@ const props = defineProps<{
   canEdit?: boolean;
   eateries?: TripEatery[];
   stops?: TripStop[];
+  destination?: TripLocation | null;
 }>();
 
 const makeRow = (location?: TripLocation): PointRow => ({
@@ -77,7 +78,11 @@ const makeRow = (location?: TripLocation): PointRow => ({
 const rowsFor = (points?: TripLocation[]): PointRow[] =>
   points?.length ? points.map((point) => makeRow(point)) : [makeRow(), makeRow()];
 
-const rows: Ref<PointRow[]> = ref(rowsFor(props.trip?.points));
+const rows: Ref<PointRow[]> = ref(
+  props.trip || !props.destination
+    ? rowsFor(props.trip?.points)
+    : [makeRow(), makeRow(props.destination)],
+);
 
 const lookups: Record<string, { setValue: (value: string) => void } | null> =
   {};
@@ -644,6 +649,7 @@ onMounted(() => {
           results-classes="absolute bg-white w-full z-20"
           placeholder="Address, town or postcode..."
           :lookup-endpoint="lookupEndpoint(row)"
+          ignore-autofill
         >
           <template #item="location: { id: string; label: string }">
             <div
