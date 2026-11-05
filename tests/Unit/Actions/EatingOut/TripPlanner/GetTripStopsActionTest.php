@@ -12,7 +12,6 @@ use Tests\TestCase;
 
 class GetTripStopsActionTest extends TestCase
 {
-    /** A straight route due north from 53.00,-2.44 with 101 evenly spaced points, taking the given number of seconds. */
     protected function routeTaking(float $seconds): TripRoute
     {
         return new TripRoute(
