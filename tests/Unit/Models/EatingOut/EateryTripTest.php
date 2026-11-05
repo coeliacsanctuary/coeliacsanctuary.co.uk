@@ -108,4 +108,44 @@ class EateryTripTest extends TestCase
 
         $this->assertFalse($trip->canBeEditedWith(null));
     }
+
+    #[Test]
+    public function pruningDeletesTripsLastVisitedMoreThanSixMonthsAgo(): void
+    {
+        $this->freezeSecond();
+
+        $stale = $this->create(EateryTrip::class, ['last_visited_at' => now()->subMonths(7)]);
+        $recent = $this->create(EateryTrip::class, ['last_visited_at' => now()->subMonths(5)]);
+
+        $this->artisan('model:prune', ['--model' => [EateryTrip::class]])->assertSuccessful();
+
+        $this->assertModelMissing($stale);
+        $this->assertModelExists($recent);
+    }
+
+    #[Test]
+    public function pruningDeletesNeverVisitedTripsCreatedMoreThanSixMonthsAgo(): void
+    {
+        $this->freezeSecond();
+
+        $stale = $this->create(EateryTrip::class, ['last_visited_at' => null, 'created_at' => now()->subMonths(7)]);
+        $recent = $this->create(EateryTrip::class, ['last_visited_at' => null, 'created_at' => now()->subWeek()]);
+
+        $this->artisan('model:prune', ['--model' => [EateryTrip::class]])->assertSuccessful();
+
+        $this->assertModelMissing($stale);
+        $this->assertModelExists($recent);
+    }
+
+    #[Test]
+    public function pruningKeepsAnOldTripThatWasVisitedRecently(): void
+    {
+        $this->freezeSecond();
+
+        $trip = $this->create(EateryTrip::class, ['last_visited_at' => now()->subMonth(), 'created_at' => now()->subYear()]);
+
+        $this->artisan('model:prune', ['--model' => [EateryTrip::class]])->assertSuccessful();
+
+        $this->assertModelExists($trip);
+    }
 }

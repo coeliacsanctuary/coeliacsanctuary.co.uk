@@ -8,6 +8,8 @@ use App\Actions\EatingOut\TripPlanner\DecodePolylineAction;
 use App\DataObjects\EatingOut\TripRoute;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -28,6 +30,8 @@ use Illuminate\Support\Str;
 #[Table(name: 'wheretoeat_trips')]
 class EateryTrip extends Model
 {
+    use MassPrunable;
+
     protected static function booted(): void
     {
         static::creating(static function (self $trip): void {
@@ -38,6 +42,16 @@ class EateryTrip extends Model
             $trip->key = $key;
             $trip->edit_token = Str::random(40);
         });
+    }
+
+    /** @return Builder<static> */
+    public function prunable(): Builder
+    {
+        $expiry = now()->minus(months: 6);
+
+        return static::query()->where(fn (Builder $query) => $query
+            ->where('last_visited_at', '<=', $expiry)
+            ->orWhere(fn (Builder $query) => $query->whereNull('last_visited_at')->where('created_at', '<=', $expiry)));
     }
 
     public function canBeEditedWith(?string $token): bool
