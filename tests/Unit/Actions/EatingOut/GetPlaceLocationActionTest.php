@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\EatingOut\TripPlanner;
+namespace Tests\Unit\Actions\EatingOut;
 
-use App\Actions\EatingOut\TripPlanner\GetPlaceLocationAction;
+use App\Actions\EatingOut\GetPlaceLocationAction;
 use App\Models\GooglePlacesDetailsCache;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Controllers\Api\EatingOut\TripPlanner\Lookup;
+namespace Tests\Feature\Http\Controllers\Api\EatingOut\Lookup;
 
-use App\Actions\EatingOut\TripPlanner\GetPlaceLocationAction;
+use App\Actions\EatingOut\GetPlaceLocationAction;
 use App\DataObjects\EatingOut\LatLng;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
 
-class ShowControllerTest extends TestCase
+class GetControllerTest extends TestCase
 {
     protected function makeRequest(?string $sessionToken = 'session-token'): TestResponse
     {
-        return $this->getJson(route('api.wheretoeat.trip-planner.lookup.show', ['placeId' => 'place-1', 'sessionToken' => $sessionToken]));
+        return $this->getJson(route('api.wheretoeat.lookup.get', ['placeId' => 'place-1', 'sessionToken' => $sessionToken]));
     }
 
     #[Test]

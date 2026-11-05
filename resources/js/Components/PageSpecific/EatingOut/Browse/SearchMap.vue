@@ -1,30 +1,39 @@
 <script setup lang="ts">
-import FormInput from '@/Components/Forms/FormInput.vue';
+import FormLookup from '@/Components/Forms/FormLookup.vue';
 import { ref, watch } from 'vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { MapPinIcon } from '@heroicons/vue/24/solid';
 import axios, { AxiosResponse } from 'axios';
 import { LatLng } from '@/types/EateryTypes';
 
-const search = ref('');
+type LookupResult = { id: string; label: string };
+
 const hasError = ref(false);
 const errorMessage = ref('Please insert at least 3 characters...');
+const sessionToken = ref(crypto.randomUUID());
+const lookup = ref<null | { setValue: (value: string) => void; value: string }>(
+  null,
+);
+const results = ref<LookupResult[]>([]);
+const waitingForResults = ref(false);
 
 const emits = defineEmits(['loading', 'end-loading', 'navigate-to']);
 
-const handleSearch = () => {
-  if (search.value.length < 3) {
-    hasError.value = true;
-    return;
-  }
-
+const goToPlace = (place: LookupResult) => {
+  waitingForResults.value = false;
   hasError.value = false;
+
+  lookup.value?.setValue(place.label);
 
   emits('loading');
 
   axios
-    .post('/api/wheretoeat/browse/search', { term: search.value })
+    .get(`/api/wheretoeat/lookup/${encodeURIComponent(place.id)}`, {
+      params: { sessionToken: sessionToken.value },
+    })
     .then((response: AxiosResponse<LatLng>) => {
+      sessionToken.value = crypto.randomUUID();
+
       emits('navigate-to', response.data);
     })
     .catch(() => {
@@ -32,6 +41,41 @@ const handleSearch = () => {
       hasError.value = true;
       emits('end-loading');
     });
+};
+
+const handleResults = (newResults: LookupResult[]) => {
+  results.value = newResults;
+
+  if (!waitingForResults.value) {
+    return;
+  }
+
+  if (!newResults.length) {
+    waitingForResults.value = false;
+    errorMessage.value = 'Location not found...';
+    hasError.value = true;
+
+    return;
+  }
+
+  goToPlace(newResults[0]);
+};
+
+const handleSearch = () => {
+  if (!lookup.value || lookup.value.value.length < 3) {
+    hasError.value = true;
+    return;
+  }
+
+  hasError.value = false;
+
+  if (results.value.length) {
+    goToPlace(results.value[0]);
+
+    return;
+  }
+
+  waitingForResults.value = true;
 };
 
 const getLocation = () => {
@@ -71,17 +115,28 @@ watch(hasError, (check) => {
         :class="hasError ? 'border border-red' : ''"
         @submit.prevent="handleSearch()"
       >
-        <FormInput
-          v-model="search"
-          type="search"
+        <FormLookup
+          ref="lookup"
           label=""
           name="search"
           hide-label
           :borders="false"
-          placeholder="Search..."
+          placeholder="Search for an address, town or postcode..."
           size="large"
           class="flex-1"
-        />
+          results-classes="absolute bg-white w-full z-20"
+          :lookup-endpoint="`/api/wheretoeat/lookup?sessionToken=${sessionToken}`"
+          @search="handleResults"
+          @typed="results = []"
+        >
+          <template #item="place: LookupResult">
+            <div
+              class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
+              @click="goToPlace(place)"
+              v-text="place.label"
+            />
+          </template>
+        </FormLookup>
 
         <button
           class="flex size-6 items-center justify-center rounded-full"

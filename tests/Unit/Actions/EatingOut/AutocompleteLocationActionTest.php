@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\EatingOut\TripPlanner;
+namespace Tests\Unit\Actions\EatingOut;
 
-use App\Actions\EatingOut\TripPlanner\AutocompleteLocationAction;
+use App\Actions\EatingOut\AutocompleteLocationAction;
 use App\Models\GooglePlacesAutocompleteCache;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockClient;

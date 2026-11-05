@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\EatingOut\TripPlanner;
+namespace App\Actions\EatingOut;
 
 use App\Models\GooglePlacesAutocompleteCache;
 use Illuminate\Support\Str;

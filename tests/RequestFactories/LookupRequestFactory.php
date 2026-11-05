@@ -6,7 +6,7 @@ namespace Tests\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 
-class TripPlannerLookupRequestFactory extends RequestFactory
+class LookupRequestFactory extends RequestFactory
 {
     public function definition(): array
     {

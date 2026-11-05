@@ -6,7 +6,7 @@ namespace App\Http\Requests\EatingOut\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TripPlannerLookupShowRequest extends FormRequest
+class LookupGetRequest extends FormRequest
 {
     public function rules(): array
     {

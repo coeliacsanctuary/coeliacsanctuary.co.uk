@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\EatingOut\TripPlanner;
+namespace App\Actions\EatingOut;
 
 use App\DataObjects\EatingOut\LatLng;
 use App\Models\GooglePlacesDetailsCache;

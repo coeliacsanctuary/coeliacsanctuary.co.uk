@@ -296,7 +296,7 @@ const stopIntervalOptions = [
 ];
 
 const lookupEndpoint = (row: PointRow): string =>
-  `/api/wheretoeat/trip-planner/lookup?sessionToken=${row.sessionToken}`;
+  `/api/wheretoeat/lookup?sessionToken=${row.sessionToken}`;
 
 const placeLookup = useHttp<{ sessionToken: string }, LatLng>({
   sessionToken: '',
@@ -344,7 +344,7 @@ const selectLocation = (
   placeLookup.sessionToken = row.sessionToken;
 
   placeLookup.get(
-    `/api/wheretoeat/trip-planner/lookup/${encodeURIComponent(location.id)}`,
+    `/api/wheretoeat/lookup/${encodeURIComponent(location.id)}`,
     {
       onSuccess: ({ lat, lng }) => {
         row.location = { label: location.label, lat, lng };
