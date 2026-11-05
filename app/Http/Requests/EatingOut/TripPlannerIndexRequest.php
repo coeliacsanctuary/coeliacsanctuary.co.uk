@@ -21,7 +21,7 @@ class TripPlannerIndexRequest extends FormRequest
         }
 
         $encoded = strtr($this->string('to')->toString(), '-_', '+/');
-        $decoded = base64_decode(str_pad($encoded, (int) ceil(mb_strlen($encoded) / 4) * 4, '='), true);
+        $decoded = base64_decode(mb_str_pad($encoded, (int) ceil(mb_strlen($encoded) / 4) * 4, '='), true);
 
         /** @var mixed $destination */
         $destination = $decoded !== false ? json_decode($decoded, true) : null;

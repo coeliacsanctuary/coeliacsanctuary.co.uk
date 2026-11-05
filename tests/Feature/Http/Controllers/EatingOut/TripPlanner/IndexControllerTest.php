@@ -19,17 +19,17 @@ class IndexControllerTest extends TestCase
 
     protected function encode(mixed $destination): string
     {
-        return rtrim(strtr(base64_encode((string) json_encode($destination)), '+/', '-_'), '=');
+        return mb_rtrim(strtr(base64_encode((string) json_encode($destination)), '+/', '-_'), '=');
     }
 
     public static function invalidDestinations(): array
     {
         return [
             'not base64' => ['%%%not-base64%%%'],
-            'not json' => [rtrim(strtr(base64_encode('not json'), '+/', '-_'), '=')],
-            'missing a label' => [rtrim(strtr(base64_encode('{"lat":54.48,"lng":-0.61}'), '+/', '-_'), '=')],
-            'non numeric lat' => [rtrim(strtr(base64_encode('{"label":"Whitby","lat":"north","lng":-0.61}'), '+/', '-_'), '=')],
-            'lat out of range' => [rtrim(strtr(base64_encode('{"label":"Whitby","lat":154.48,"lng":-0.61}'), '+/', '-_'), '=')],
+            'not json' => [mb_rtrim(strtr(base64_encode('not json'), '+/', '-_'), '=')],
+            'missing a label' => [mb_rtrim(strtr(base64_encode('{"lat":54.48,"lng":-0.61}'), '+/', '-_'), '=')],
+            'non numeric lat' => [mb_rtrim(strtr(base64_encode('{"label":"Whitby","lat":"north","lng":-0.61}'), '+/', '-_'), '=')],
+            'lat out of range' => [mb_rtrim(strtr(base64_encode('{"label":"Whitby","lat":154.48,"lng":-0.61}'), '+/', '-_'), '=')],
         ];
     }
 
