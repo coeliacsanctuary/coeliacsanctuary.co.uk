@@ -23,6 +23,13 @@ class ShowController
         /** @var string | null $token */
         $token = $request->cookie("trip-planner-{$eateryTrip->key}");
 
+        /** @var array{categories: string[] | null, features: string[] | null, venueTypes: string[] | null} $filters */
+        $filters = [
+            'categories' => $request->filled('categories') ? $request->string('categories')->explode(',')->all() : null,
+            'venueTypes' => $request->filled('venueTypes') ? $request->string('venueTypes')->explode(',')->all() : null,
+            'features' => $request->filled('features') ? $request->string('features')->explode(',')->all() : null,
+        ];
+
         $start = Arr::first($eateryTrip->points)['label'] ?? '';
         $end = Arr::last($eateryTrip->points)['label'] ?? '';
 
@@ -47,7 +54,7 @@ class ShowController
                 'eateries' => fn (): Collection => $tripEateriesPipeline->run(
                     route: $eateryTrip->toTripRoute(),
                     radius: $eateryTrip->distance,
-                    filters: ['categories' => null, 'features' => null, 'venueTypes' => null],
+                    filters: $filters,
                     jsonResource: EateryTripResource::class,
                 ),
             ]);

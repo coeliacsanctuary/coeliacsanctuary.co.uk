@@ -1,14 +1,21 @@
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
-import { useHttp } from '@inertiajs/vue3';
+import { router, useHttp, usePage } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
 import Loader from '@/Components/Loader.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import FormLookup from '@/Components/Forms/FormLookup.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
-import { EateryBrowseResource, LatLng } from '@/types/EateryTypes';
+import FilterMap from '@/Components/PageSpecific/EatingOut/Browse/FilterMap.vue';
+import {
+  EateryBrowseResource,
+  EateryFilterItem,
+  EateryFilterKeys,
+  EateryFilters,
+  LatLng,
+} from '@/types/EateryTypes';
 import { Feature, View } from 'ol';
 import Map from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
@@ -204,6 +211,49 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
   }));
 });
 
+const filterKeys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
+
+const page = usePage();
+
+const currentFilters = computed(
+  (): Partial<{ [T in EateryFilterKeys]: string[] }> => {
+    const query = new URLSearchParams(page.url.split('?')[1] ?? '');
+    const filters: Partial<{ [T in EateryFilterKeys]: string[] }> = {};
+
+    filterKeys.forEach((key) => {
+      const value = query.get(key);
+
+      if (value) {
+        filters[key] = value.split(',');
+      }
+    });
+
+    return filters;
+  },
+);
+
+const handleFiltersChange = ({ filters }: { filters: EateryFilters }) => {
+  const query: Partial<{ [T in EateryFilterKeys]: string }> = {};
+
+  filterKeys.forEach((key) => {
+    const value = (filters[key] as EateryFilterItem[])
+      .filter((item) => item.checked)
+      .map((item) => item.value)
+      .join(',');
+
+    if (value) {
+      query[key] = value;
+    }
+  });
+
+  router.get(page.url.split('?')[0], query, {
+    only: ['eateries'],
+    preserveState: true,
+    preserveScroll: true,
+    replace: true,
+  });
+};
+
 const stopIntervalOptions = [
   { value: '', label: 'No stops' },
   { value: 60, label: 'Every hour' },
@@ -334,6 +384,14 @@ const drawTrip = () => {
     ),
   );
 
+  drawEateries();
+
+  map.value.getView().fit(routeSource.getExtent(), { padding: [30, 30, 30, 30] });
+};
+
+const drawEateries = () => {
+  markerSource.clear();
+
   markerSource.addFeatures(
     eateries.value.map(
       (eatery) =>
@@ -346,9 +404,12 @@ const drawTrip = () => {
         }),
     ),
   );
-
-  map.value.getView().fit(routeSource.getExtent(), { padding: [30, 30, 30, 30] });
 };
+
+watch(
+  () => props.eateries,
+  () => drawEateries(),
+);
 
 watch(
   () => props.trip?.route.geometry,
@@ -530,6 +591,12 @@ onMounted(() => {
         </div>
       </template>
     </Card>
+
+    <FilterMap
+      v-if="trip"
+      :set-filters="currentFilters"
+      @filters-updated="handleFiltersChange"
+    />
 
     <div
       ref="mapElement"

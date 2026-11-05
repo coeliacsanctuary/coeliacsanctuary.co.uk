@@ -26,9 +26,9 @@ class ShowControllerTest extends TestCase
         $this->trip = $this->create(EateryTrip::class);
     }
 
-    protected function visitPage(?string $key = null): TestResponse
+    protected function visitPage(?string $key = null, array $query = []): TestResponse
     {
-        return $this->get(route('eating-out.trip-planner.show', ['eateryTrip' => $key ?? $this->trip->key]));
+        return $this->get(route('eating-out.trip-planner.show', ['eateryTrip' => $key ?? $this->trip->key, ...$query]));
     }
 
     #[Test]
@@ -121,5 +121,33 @@ class ShowControllerTest extends TestCase
         $this->expectAction(GetTripStopsAction::class, [Mockery::any(), 60], return: $stops);
 
         $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->where('stops', $stops)->etc());
+    }
+
+    #[Test]
+    public function itFiltersTheEateriesFromTheQueryString(): void
+    {
+        $this->mock(TripEateriesPipeline::class)
+            ->shouldReceive('run')
+            ->withArgs(fn (...$args): bool => $args[2] === [
+                'categories' => ['wte', 'att'],
+                'venueTypes' => ['cafe'],
+                'features' => ['takeaway'],
+            ])
+            ->once()
+            ->andReturn(collect());
+
+        $this->visitPage(query: ['categories' => 'wte,att', 'venueTypes' => 'cafe', 'features' => 'takeaway'])->assertOk();
+    }
+
+    #[Test]
+    public function itDoesNotFilterTheEateriesWithoutAQueryString(): void
+    {
+        $this->mock(TripEateriesPipeline::class)
+            ->shouldReceive('run')
+            ->withArgs(fn (...$args): bool => $args[2] === ['categories' => null, 'venueTypes' => null, 'features' => null])
+            ->once()
+            ->andReturn(collect());
+
+        $this->visitPage()->assertOk();
     }
 }
