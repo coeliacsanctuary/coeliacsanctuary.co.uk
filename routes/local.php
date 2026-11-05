@@ -11,6 +11,7 @@ use App\DataObjects\NotificationRelatedObject;
 use App\Enums\EatingOut\EateryType;
 use App\Enums\Shop\OrderState;
 use App\Mailables\EatingOut\EateryRecommendationAddedMailable;
+use App\Mailables\EatingOut\TripPlannerTripMailable;
 use App\Models\Blogs\Blog;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
@@ -19,6 +20,7 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
+use App\Models\EatingOut\EateryTrip;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\Recipes\Recipe;
 use App\Models\Shop\ShopOrder;
@@ -353,6 +355,19 @@ Route::get('/mail/eating-out/recommendation-added/{id?}', function (?int $id = n
         'nearbyEateries' => $mailable->nearbyEateries(),
         ...$mailable->relatedItems(),
     ])->render();
+
+    return Mjml::new()->sidecar()->toHtml($content);
+});
+
+Route::get('/mail/eating-out/trip-planner/{key?}', function (?string $key = null): string {
+    $trip = EateryTrip::query()
+        ->when($key, fn (Builder $builder) => $builder->where('key', $key))
+        ->latest()
+        ->firstOrFail();
+
+    $message = TripPlannerTripMailable::make($trip, true, 'me@example.com', 'foo');
+
+    $content = view($message->mjml, $message->data())->render();
 
     return Mjml::new()->sidecar()->toHtml($content);
 });

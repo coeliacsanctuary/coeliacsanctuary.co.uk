@@ -12,6 +12,7 @@ import {
   ArrowLeftIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  ShareIcon,
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps<{
@@ -23,7 +24,7 @@ const props = defineProps<{
   scrollToHovered?: boolean;
 }>();
 
-const emits = defineEmits(['edit', 'new', 'select', 'back', 'hover']);
+const emits = defineEmits(['edit', 'new', 'select', 'back', 'hover', 'share']);
 
 const expanded = ref(false);
 const body: Ref<HTMLDivElement | undefined> = ref();
@@ -107,10 +108,21 @@ watch(
 
     <div class="flex flex-col gap-2 border-b border-grey-off p-3">
       <template v-if="trip">
-        <p
-          class="font-semibold"
-          v-text="title"
-        />
+        <div class="flex items-start justify-between gap-2">
+          <p
+            class="font-semibold"
+            v-text="title"
+          />
+
+          <button
+            type="button"
+            class="shrink-0 cursor-pointer rounded-md p-1 text-grey-dark transition hover:bg-grey-light hover:text-primary-dark"
+            aria-label="Share your trip"
+            @click="$emit('share')"
+          >
+            <ShareIcon class="size-5" />
+          </button>
+        </div>
 
         <p class="text-sm text-grey-dark">
           {{ metersToMiles(trip.route.distance) }} miles &middot;

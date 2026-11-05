@@ -18,6 +18,7 @@ import FormLookup from '@/Components/Forms/FormLookup.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import FilterMap from '@/Components/PageSpecific/EatingOut/Browse/FilterMap.vue';
 import TripPanel from '@/Components/PageSpecific/EatingOut/TripPlanner/TripPanel.vue';
+import ShareTripModal from '@/Components/PageSpecific/EatingOut/TripPlanner/ShareTripModal.vue';
 import {
   EateryFilterItem,
   EateryFilterKeys,
@@ -167,6 +168,13 @@ const stops = computed((): TripStop[] => props.stops ?? []);
 const selectedEatery: Ref<TripEatery | undefined> = ref();
 const hoveredEatery: Ref<TripEatery | undefined> = ref();
 const hoveredFromMap = ref(false);
+const showShare = ref(false);
+
+const shareTitle = computed((): string =>
+  [props.trip?.points[0], props.trip?.points.at(-1)]
+    .map((point) => point?.label.split(',')[0] ?? '')
+    .join(' to '),
+);
 
 const hoverFromList = (eatery?: TripEatery) => {
   hoveredFromMap.value = false;
@@ -560,6 +568,7 @@ onMounted(() => {
       :hovered-key="hoveredEatery?.key"
       :scroll-to-hovered="hoveredFromMap"
       @hover="hoverFromList"
+      @share="showShare = true"
     />
 
     <div class="relative flex-1 md:ml-[28rem]">
@@ -586,6 +595,16 @@ onMounted(() => {
       </div>
     </div>
   </div>
+
+  <ShareTripModal
+    v-if="trip"
+    :key="trip.key"
+    :open="showShare"
+    :trip-key="trip.key"
+    :title="`Gluten free places from ${shareTitle}`"
+    :can-edit="!!canEdit"
+    @close="showShare = false"
+  />
 
   <Modal
     :open="plannerMode !== undefined"
