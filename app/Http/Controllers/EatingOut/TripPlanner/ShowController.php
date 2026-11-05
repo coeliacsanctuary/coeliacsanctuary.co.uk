@@ -8,7 +8,6 @@ use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryTrip;
 use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
-use App\Resources\EatingOut\EateryTripResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -55,7 +54,6 @@ class ShowController
                     route: $eateryTrip->toTripRoute(),
                     radius: $eateryTrip->distance,
                     filters: $filters,
-                    jsonResource: EateryTripResource::class,
                 ),
             ]);
     }

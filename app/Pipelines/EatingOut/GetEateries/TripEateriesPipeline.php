@@ -8,9 +8,9 @@ use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\TripRoute;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesAlongRouteAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesAlongRouteAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\SerialiseBrowseResultsAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\HydrateTripEateriesAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\SerialiseTripResultsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\SortPendingEateriesAction;
-use App\Resources\EatingOut\EateryBrowseResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
@@ -19,22 +19,21 @@ class TripEateriesPipeline
 {
     /**
      * @param  array{categories: string[] | null, features: string[] | null, venueTypes: string [] | null}  $filters
-     * @param  class-string<JsonResource>  $jsonResource
      * @return Collection<int, JsonResource>
      */
-    public function run(TripRoute $route, float $radius, array $filters, string $jsonResource = EateryBrowseResource::class): Collection
+    public function run(TripRoute $route, float $radius, array $filters): Collection
     {
         $pipes = [
             GetEateriesAlongRouteAction::class,
             GetNationwideBranchesAlongRouteAction::class,
             SortPendingEateriesAction::class,
-            SerialiseBrowseResultsAction::class,
+            HydrateTripEateriesAction::class,
+            SerialiseTripResultsAction::class,
         ];
 
         $pipelineData = new GetEateriesPipelineData(
             filters: $filters,
             sort: 'distance',
-            jsonResource: $jsonResource,
             route: $route,
             routeRadius: $radius,
         );

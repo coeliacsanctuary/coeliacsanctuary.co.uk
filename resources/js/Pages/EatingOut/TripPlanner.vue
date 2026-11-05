@@ -1,22 +1,30 @@
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  Ref,
+  ref,
+  shallowRef,
+  ShallowRef,
+  watch,
+} from 'vue';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { router, useHttp, usePage } from '@inertiajs/vue3';
-import Card from '@/Components/Card.vue';
 import Loader from '@/Components/Loader.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import FormLookup from '@/Components/Forms/FormLookup.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import FilterMap from '@/Components/PageSpecific/EatingOut/Browse/FilterMap.vue';
+import TripPanel from '@/Components/PageSpecific/EatingOut/TripPlanner/TripPanel.vue';
 import {
-  EateryBrowseResource,
   EateryFilterItem,
   EateryFilterKeys,
   EateryFilters,
   LatLng,
 } from '@/types/EateryTypes';
-import { Feature, View } from 'ol';
+import { Feature, Overlay, View } from 'ol';
 import Map from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
@@ -34,41 +42,22 @@ import {
 import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import 'ol/ol.css';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
+import {
+  Trip,
+  TripEatery,
+  TripLocation,
+  TripRoute,
+  TripStop,
+} from '@/types/TripPlannerTypes';
 
 defineOptions({
   layout: CoeliacCompact,
 });
 
-type TripEatery = EateryBrowseResource & {
-  distanceAlongRoute: number;
-  distanceFromRoute: number;
-  durationAlongRoute: number;
-};
-
-type TripLocation = LatLng & { label: string };
-
-type TripRoute = { geometry: string; distance: number; duration: number };
-
 type PointRow = {
   key: string;
   location?: TripLocation;
   sessionToken: string;
-};
-
-type Trip = {
-  key: string;
-  points: TripLocation[];
-  distance: number;
-  stopInterval: number | null;
-  route: TripRoute;
-};
-
-type TripStop = {
-  number: number;
-  duration: number;
-  distanceAlongRoute: number;
-  lat: number;
-  lng: number;
 };
 
 const props = defineProps<{
@@ -149,12 +138,6 @@ const plannerMode: Ref<'new' | 'edit' | undefined> = ref(
   props.trip ? undefined : 'new',
 );
 
-const tripTitle = computed((): string =>
-  [props.trip?.points[0], props.trip?.points.at(-1)]
-    .map((point) => point?.label.split(',')[0] ?? '')
-    .join(' → '),
-);
-
 const isEditing = computed((): boolean => plannerMode.value === 'edit');
 
 const submitLabel = computed((): string => {
@@ -181,35 +164,77 @@ const route = computed((): TripRoute | undefined => props.trip?.route);
 const eateries = computed((): TripEatery[] => props.eateries ?? []);
 const stops = computed((): TripStop[] => props.stops ?? []);
 
-const nearbyEateries = (stop: TripStop): TripEatery[] =>
-  eateries.value
-    .filter(
-      (eatery) => Math.abs(eatery.durationAlongRoute - stop.duration) <= 1800,
-    )
-    .sort(
-      (a, b) =>
-        Math.abs(a.durationAlongRoute - stop.duration) -
-        Math.abs(b.durationAlongRoute - stop.duration),
-    )
-    .slice(0, 5);
+const selectedEatery: Ref<TripEatery | undefined> = ref();
+const hoveredEatery: Ref<TripEatery | undefined> = ref();
+const hoveredFromMap = ref(false);
 
-const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
-  const boundaries = [0, ...stops.value.map((stop) => stop.duration), Infinity];
-
-  return boundaries.slice(0, -1).map((from, index) => ({
-    title:
-      index === 0
-        ? 'Before stop 1'
-        : index === stops.value.length
-          ? 'After the last stop'
-          : `Stop ${index} to stop ${index + 1}`,
-    eateries: eateries.value.filter(
-      (eatery) =>
-        eatery.durationAlongRoute >= from &&
-        eatery.durationAlongRoute < boundaries[index + 1],
-    ),
-  }));
+const hoverFromList = (eatery?: TripEatery) => {
+  hoveredFromMap.value = false;
+  hoveredEatery.value = eatery;
+};
+const pulseElement: Ref<HTMLDivElement | undefined> = ref();
+const pulseOverlay = new Overlay({
+  positioning: 'center-center',
+  stopEvent: false,
 });
+
+watch(hoveredEatery, (eatery) => {
+  pulseOverlay.setPosition(
+    eatery ? fromLonLat([eatery.location.lng, eatery.location.lat]) : undefined,
+  );
+
+  markerLayer.changed();
+});
+
+const tripPanel: Ref<{ $el: HTMLElement } | undefined> = ref();
+
+const panelCoversMap = (): boolean => {
+  const mapBounds = mapElement.value?.getBoundingClientRect();
+  const panelBounds = tripPanel.value?.$el.getBoundingClientRect();
+
+  if (!mapBounds || !panelBounds) {
+    return false;
+  }
+
+  return panelBounds.left < mapBounds.right && panelBounds.right > mapBounds.left;
+};
+
+const panToEatery = (eatery: TripEatery) => {
+  const view = map.value?.getView();
+  const size = map.value?.getSize();
+  const mapBounds = mapElement.value?.getBoundingClientRect();
+  const panelBounds = tripPanel.value?.$el.getBoundingClientRect();
+  const resolution = view?.getResolution();
+
+  if (!view || !size || !mapBounds || !panelBounds || !resolution) {
+    return;
+  }
+
+  const coordinate = fromLonLat([eatery.location.lng, eatery.location.lat]);
+  const visibleHeight = panelCoversMap()
+    ? Math.max(panelBounds.top - mapBounds.top, 0)
+    : size[1];
+
+  view.animate({
+    center: [
+      coordinate[0],
+      coordinate[1] - (size[1] / 2 - visibleHeight / 2) * resolution,
+    ],
+    duration: 300,
+  });
+};
+
+const selectEatery = (eatery: TripEatery) => {
+  selectedEatery.value = eatery;
+
+  if (!panelCoversMap()) {
+    panToEatery(eatery);
+
+    return;
+  }
+
+  window.setTimeout(() => panToEatery(eatery), 320);
+};
 
 const filterKeys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
 
@@ -282,11 +307,20 @@ const errorMessage = computed((): string | undefined => {
 });
 
 const mapElement: Ref<HTMLDivElement | undefined> = ref();
-const map: Ref<Map | undefined> = ref();
+const map: ShallowRef<Map | undefined> = shallowRef();
 const routeSource = new VectorSource();
 const pointSource = new VectorSource();
 const stopSource = new VectorSource();
 const markerSource = new VectorSource();
+const markerLayer = new VectorLayer({
+  source: markerSource,
+  style: (feature) =>
+    markerStyle(
+      feature.get('typeId') as number,
+      feature.get('venueTypeId') as number | null,
+      (feature.get('eatery') as TripEatery).key === hoveredEatery.value?.key,
+    ),
+});
 
 const distanceOptions = [1, 2, 3, 5, 10].map((miles) => ({
   value: miles,
@@ -347,7 +381,6 @@ const drawTrip = () => {
 
   routeSource.clear();
   pointSource.clear();
-  stopSource.clear();
   markerSource.clear();
 
   const routeFeature = new Polyline().readFeature(route.value.geometry, {
@@ -357,15 +390,7 @@ const drawTrip = () => {
 
   routeSource.addFeature(routeFeature);
 
-  stopSource.addFeatures(
-    stops.value.map(
-      (stop) =>
-        new Feature({
-          geometry: new Point(fromLonLat([stop.lng, stop.lat])),
-          number: stop.number,
-        }),
-    ),
-  );
+  drawStops();
 
   const points = props.trip?.points ?? [];
 
@@ -389,6 +414,20 @@ const drawTrip = () => {
   map.value.getView().fit(routeSource.getExtent(), { padding: [30, 30, 30, 30] });
 };
 
+const drawStops = () => {
+  stopSource.clear();
+
+  stopSource.addFeatures(
+    stops.value.map(
+      (stop) =>
+        new Feature({
+          geometry: new Point(fromLonLat([stop.lng, stop.lat])),
+          number: stop.number,
+        }),
+    ),
+  );
+};
+
 const drawEateries = () => {
   markerSource.clear();
 
@@ -401,6 +440,7 @@ const drawEateries = () => {
           ),
           typeId: eatery.typeId,
           venueTypeId: eatery.venueTypeId,
+          eatery,
         }),
     ),
   );
@@ -412,19 +452,18 @@ watch(
 );
 
 watch(
-  () => props.trip?.route.geometry,
-  () => nextTick(() => drawTrip()),
+  () => props.stops,
+  () => drawStops(),
 );
 
-const metersToMiles = (meters: number): string =>
-  (meters / 1609.344).toFixed(1);
+watch(
+  () => props.trip?.route.geometry,
+  () => {
+    selectedEatery.value = undefined;
 
-const formatDuration = (seconds: number): string => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
-
-  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-};
+    void nextTick(() => drawTrip());
+  },
+);
 
 onMounted(() => {
   map.value = new Map({
@@ -435,14 +474,7 @@ onMounted(() => {
         source: routeSource,
         style: new Style({ stroke: new Stroke({ color: '#29719f', width: 5 }) }),
       }),
-      new VectorLayer({
-        source: markerSource,
-        style: (feature) =>
-          markerStyle(
-            feature.get('typeId') as number,
-            feature.get('venueTypeId') as number | null,
-          ),
-      }),
+      markerLayer,
       new VectorLayer({
         source: stopSource,
         style: (feature) => tripStopStyle(feature.get('number') as number),
@@ -459,13 +491,53 @@ onMounted(() => {
     }),
   });
 
+  if (pulseElement.value) {
+    pulseOverlay.setElement(pulseElement.value);
+    map.value.addOverlay(pulseOverlay);
+  }
+
+  map.value.on('pointermove', (event) => {
+    if (event.dragging) {
+      return;
+    }
+
+    const eatery = map.value?.forEachFeatureAtPixel(
+      event.pixel,
+      (feature) => feature.get('eatery') as TripEatery | undefined,
+      { layerFilter: (layer) => layer === markerLayer },
+    );
+
+    map.value
+      ?.getTargetElement()
+      .style.setProperty('cursor', eatery ? 'pointer' : '');
+
+    if (eatery?.key === hoveredEatery.value?.key) {
+      return;
+    }
+
+    hoveredFromMap.value = true;
+    hoveredEatery.value = eatery;
+  });
+
+  map.value.on('singleclick', (event) => {
+    const eatery = map.value?.forEachFeatureAtPixel(
+      event.pixel,
+      (feature) => feature.get('eatery') as TripEatery | undefined,
+      { layerFilter: (layer) => layer === markerLayer },
+    );
+
+    if (eatery) {
+      selectEatery(eatery);
+    }
+  });
+
   drawTrip();
 });
 </script>
 
 <template>
   <div
-    class="map-container relative -mb-3 flex max-h-full min-h-[500px] flex-1 overflow-hidden"
+    class="map-container relative -mb-3 flex max-h-full min-h-[500px] flex-1 flex-col overflow-hidden md:flex-row"
   >
     <Loader
       class="z-50"
@@ -475,133 +547,44 @@ onMounted(() => {
       background
     />
 
-    <div class="absolute top-0 left-0 z-10 w-[calc(100%-40px)] max-w-lg p-2">
-      <div class="flex flex-col gap-2 rounded-md bg-white p-3 shadow-sm">
-        <template v-if="trip && route">
-          <p
-            class="font-semibold"
-            v-text="tripTitle"
-          />
+    <TripPanel
+      ref="tripPanel"
+      :trip="trip"
+      :eateries="eateries"
+      :stops="stops"
+      :selected="selectedEatery"
+      @edit="openPlanner('edit')"
+      @new="openPlanner('new')"
+      @select="selectEatery"
+      @back="selectedEatery = undefined"
+      :hovered-key="hoveredEatery?.key"
+      :scroll-to-hovered="hoveredFromMap"
+      @hover="hoverFromList"
+    />
 
-          <p class="text-sm text-grey-dark">
-            {{ metersToMiles(route.distance) }} miles &middot;
-            {{ formatDuration(route.duration) }} &middot;
-            <template v-if="stops.length">
-              {{ stops.length }} suggested stop{{ stops.length > 1 ? 's' : '' }}
-              &middot;
-            </template>
-            <template v-if="trip.points.length > 2">
-              via {{ trip.points.length - 2 }}
-              stop{{ trip.points.length > 3 ? 's' : '' }} &middot;
-            </template>
-            {{ eateries.length }} places along the way
-          </p>
-        </template>
+    <div class="relative flex-1 md:ml-[28rem]">
+      <div class="absolute right-0 bottom-32 z-10 size-28 md:bottom-0">
+        <FilterMap
+          v-if="trip"
+          :set-filters="currentFilters"
+          @filters-updated="handleFiltersChange"
+        />
+      </div>
 
-        <div class="flex justify-end gap-2">
-          <CoeliacButton
-            v-if="trip"
-            as="button"
-            type="button"
-            theme="secondary"
-            label="Edit trip"
-            @click="openPlanner('edit')"
-          />
+      <div
+        ref="mapElement"
+        class="size-full"
+      />
 
-          <CoeliacButton
-            as="button"
-            type="button"
-            theme="primary"
-            :label="trip ? 'New trip' : 'Plan a trip'"
-            @click="openPlanner('new')"
-          />
-        </div>
+      <div
+        ref="pulseElement"
+        class="pointer-events-none relative size-12"
+      >
+        <span
+          class="absolute inset-0 animate-ping rounded-full bg-primary-dark/40"
+        />
       </div>
     </div>
-
-    <Card
-      v-if="route"
-      class="absolute bottom-2 left-2 z-10 flex max-h-[40%] w-[calc(100%-1rem)] max-w-md flex-col space-y-2 overflow-y-auto"
-    >
-      <ol
-        v-if="!stops.length"
-        class="list-decimal pl-6"
-      >
-        <li
-          v-for="eatery in eateries"
-          :key="eatery.key"
-        >
-          {{ formatDuration(eatery.durationAlongRoute) }} in,
-          {{ metersToMiles(eatery.distanceAlongRoute) }} miles along,
-          {{ metersToMiles(eatery.distanceFromRoute) }} miles off route
-          <span v-if="eatery.isNationwideBranch">(nationwide branch)</span>
-        </li>
-      </ol>
-
-      <template v-else>
-        <div
-          v-for="stop in stops"
-          :key="`stop-${stop.number}`"
-          class="flex flex-col"
-        >
-          <p
-            class="font-semibold"
-            v-text="`Stop ${stop.number}, about ${formatDuration(stop.duration)} in`"
-          />
-
-          <p
-            v-if="!nearbyEateries(stop).length"
-            class="text-sm text-grey-dark"
-          >
-            No places within half an hour of this stop.
-          </p>
-
-          <ol class="list-decimal pl-6">
-            <li
-              v-for="eatery in nearbyEateries(stop)"
-              :key="eatery.key"
-            >
-              {{ formatDuration(eatery.durationAlongRoute) }} in,
-              {{ metersToMiles(eatery.distanceFromRoute) }} miles off route
-              <span v-if="eatery.isNationwideBranch">(nationwide branch)</span>
-            </li>
-          </ol>
-        </div>
-
-        <div
-          v-for="leg in legs"
-          :key="leg.title"
-          class="flex flex-col"
-        >
-          <p
-            class="font-semibold"
-            v-text="`${leg.title} (${leg.eateries.length})`"
-          />
-
-          <ol class="list-decimal pl-6">
-            <li
-              v-for="eatery in leg.eateries"
-              :key="eatery.key"
-            >
-              {{ formatDuration(eatery.durationAlongRoute) }} in,
-              {{ metersToMiles(eatery.distanceFromRoute) }} miles off route
-              <span v-if="eatery.isNationwideBranch">(nationwide branch)</span>
-            </li>
-          </ol>
-        </div>
-      </template>
-    </Card>
-
-    <FilterMap
-      v-if="trip"
-      :set-filters="currentFilters"
-      @filters-updated="handleFiltersChange"
-    />
-
-    <div
-      ref="mapElement"
-      class="w-full"
-    />
   </div>
 
   <Modal

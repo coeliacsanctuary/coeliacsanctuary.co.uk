@@ -83,8 +83,9 @@ const markerStyles = new Map<string, Style>();
 export const markerStyle = (
   typeId: number,
   venueTypeId: number | null,
+  highlighted: boolean = false,
 ): Style => {
-  const key = `${typeId}-${venueTypeId ?? ''}`;
+  const key = `${typeId}-${venueTypeId ?? ''}${highlighted ? '-highlighted' : ''}`;
   const cached = markerStyles.get(key);
 
   if (cached) {
@@ -92,8 +93,9 @@ export const markerStyle = (
   }
 
   const style = new Style({
+    zIndex: highlighted ? 10 : 0,
     image: new Icon({
-      scale: 0.36,
+      scale: highlighted ? 0.5 : 0.36,
       /** The pin's point, rather than its middle, sits on the coordinate. */
       anchor: [0.5, 1],
       src: `/api/wheretoeat/marker/${typeId}${venueTypeId ? `/${venueTypeId}` : ''}`,

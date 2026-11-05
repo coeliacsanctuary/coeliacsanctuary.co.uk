@@ -9,7 +9,8 @@ use App\DataObjects\EatingOut\TripRoute;
 use App\Models\EatingOut\Eatery;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetEateriesAlongRouteAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\GetNationwideBranchesAlongRouteAction;
-use App\Pipelines\EatingOut\GetEateries\Steps\SerialiseBrowseResultsAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\HydrateTripEateriesAction;
+use App\Pipelines\EatingOut\GetEateries\Steps\SerialiseTripResultsAction;
 use App\Pipelines\EatingOut\GetEateries\Steps\SortPendingEateriesAction;
 use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
 use App\Resources\EatingOut\EateryTripResource;
@@ -43,7 +44,8 @@ class TripEateriesPipelineTest extends TestCase
         $this->expectPipelineToExecute(GetEateriesAlongRouteAction::class);
         $this->expectPipelineToExecute(GetNationwideBranchesAlongRouteAction::class);
         $this->expectPipelineToExecute(SortPendingEateriesAction::class);
-        $this->expectPipelineToExecute(SerialiseBrowseResultsAction::class);
+        $this->expectPipelineToExecute(HydrateTripEateriesAction::class);
+        $this->expectPipelineToExecute(SerialiseTripResultsAction::class);
 
         $this->runPipeline(TripEateriesPipeline::class, $this->makeRoute(), 1, []);
     }
@@ -55,7 +57,7 @@ class TripEateriesPipelineTest extends TestCase
         $first = $this->create(Eatery::class, ['lat' => 53.02, 'lng' => -2.45]);
         $middle = $this->create(Eatery::class, ['lat' => 53.1, 'lng' => -2.43]);
 
-        $results = $this->runPipeline(TripEateriesPipeline::class, $this->makeRoute(), 1, [], EateryTripResource::class);
+        $results = $this->runPipeline(TripEateriesPipeline::class, $this->makeRoute(), 1, []);
 
         $this->assertSame([$first->id, $middle->id, $last->id], $results->map(fn (EateryTripResource $resource): int => $resource->resource->id)->all());
     }
