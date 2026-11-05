@@ -24,7 +24,7 @@ class GetEateriesPipelineData
      * @param  null | Collection<int, Eatery>  $hydrated
      * @param  null | Collection<int, NationwideBranch>  $hydratedBranches
      * @param  class-string<JsonResource>  $jsonResource,
-     * @param  null | LengthAwarePaginator<int, JsonResource> | Collection<int, JsonResource>  $serialisedEateries
+     * @param  null | LengthAwarePaginator<int, covariant JsonResource> | Collection<int, covariant JsonResource>  $serialisedEateries
      */
     public function __construct(
         public array $filters,

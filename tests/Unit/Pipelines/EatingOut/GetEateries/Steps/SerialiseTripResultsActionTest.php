@@ -21,6 +21,7 @@ class SerialiseTripResultsActionTest extends TestCase
     {
         $eatery = new Eatery()->forceFill(['id' => 1, 'name' => 'Independent Cafe']);
         $branch = new NationwideBranch()->forceFill(['id' => 20, 'wheretoeat_id' => 2, 'name' => 'Chain Branch']);
+        $branch->setRelation('eatery', new Eatery()->forceFill(['id' => 2, 'name' => 'Chain Restaurant']));
 
         $pipelineData = new GetEateriesPipelineData(
             filters: [],

@@ -23,7 +23,7 @@ class EateryTripResource extends EateryBrowseResource
         /** @var float | string | null $averageRating */
         $averageRating = $this->model?->getAttribute('reviews_avg_rating');
 
-        $chain = $this->model instanceof NationwideBranch ? $this->model->eatery?->name : null;
+        $chain = $this->model instanceof NationwideBranch ? $this->model->eatery->name : null;
 
         return [
             ...parent::toArray($request),
