@@ -19,7 +19,11 @@ import { fromLonLat } from 'ol/proj';
 import { Point } from 'ol/geom';
 import Polyline from 'ol/format/Polyline';
 import { Stroke, Style } from 'ol/style';
-import { markerStyle, tripPointStyle } from '@/support/eating-out/browse/styles';
+import {
+  markerStyle,
+  tripPointStyle,
+  tripStopStyle,
+} from '@/support/eating-out/browse/styles';
 import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import 'ol/ol.css';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
@@ -48,13 +52,23 @@ type Trip = {
   key: string;
   points: TripLocation[];
   distance: number;
+  stopInterval: number | null;
   route: TripRoute;
+};
+
+type TripStop = {
+  number: number;
+  duration: number;
+  distanceAlongRoute: number;
+  lat: number;
+  lng: number;
 };
 
 const props = defineProps<{
   trip?: Trip;
   canEdit?: boolean;
   eateries?: TripEatery[];
+  stops?: TripStop[];
 }>();
 
 const makeRow = (location?: TripLocation): PointRow => ({
@@ -114,14 +128,15 @@ const removeStop = (index: number) => {
   rows.value.splice(index, 1);
 };
 
-const form = useForm<{ points: TripLocation[]; distance: number }>(
-  'post',
-  '/wheretoeat/trip-planner',
-  {
-    points: [],
-    distance: props.trip?.distance ?? 2,
-  },
-);
+const form = useForm<{
+  points: TripLocation[];
+  distance: number;
+  stop_interval: number | '';
+}>('post', '/wheretoeat/trip-planner', {
+  points: [],
+  distance: props.trip?.distance ?? 2,
+  stop_interval: props.trip?.stopInterval ?? '',
+});
 
 const plannerMode: Ref<'new' | 'edit' | undefined> = ref(
   props.trip ? undefined : 'new',
@@ -148,6 +163,7 @@ const openPlanner = (mode: 'new' | 'edit') => {
 
   rows.value = rowsFor(editing ? props.trip?.points : undefined);
   form.distance = editing ? (props.trip?.distance ?? 2) : 2;
+  form.stop_interval = editing ? (props.trip?.stopInterval ?? '') : '';
   form.clearErrors();
   lookupError.value = false;
 
@@ -156,6 +172,45 @@ const openPlanner = (mode: 'new' | 'edit') => {
 
 const route = computed((): TripRoute | undefined => props.trip?.route);
 const eateries = computed((): TripEatery[] => props.eateries ?? []);
+const stops = computed((): TripStop[] => props.stops ?? []);
+
+const nearbyEateries = (stop: TripStop): TripEatery[] =>
+  eateries.value
+    .filter(
+      (eatery) => Math.abs(eatery.durationAlongRoute - stop.duration) <= 1800,
+    )
+    .sort(
+      (a, b) =>
+        Math.abs(a.durationAlongRoute - stop.duration) -
+        Math.abs(b.durationAlongRoute - stop.duration),
+    )
+    .slice(0, 5);
+
+const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
+  const boundaries = [0, ...stops.value.map((stop) => stop.duration), Infinity];
+
+  return boundaries.slice(0, -1).map((from, index) => ({
+    title:
+      index === 0
+        ? 'Before stop 1'
+        : index === stops.value.length
+          ? 'After the last stop'
+          : `Stop ${index} to stop ${index + 1}`,
+    eateries: eateries.value.filter(
+      (eatery) =>
+        eatery.durationAlongRoute >= from &&
+        eatery.durationAlongRoute < boundaries[index + 1],
+    ),
+  }));
+});
+
+const stopIntervalOptions = [
+  { value: '', label: 'No stops' },
+  { value: 60, label: 'Every hour' },
+  { value: 90, label: 'Every 1½ hours' },
+  { value: 120, label: 'Every 2 hours' },
+  { value: 180, label: 'Every 3 hours' },
+];
 
 const lookupEndpoint = (row: PointRow): string =>
   `/api/wheretoeat/trip-planner/lookup?sessionToken=${row.sessionToken}`;
@@ -180,6 +235,7 @@ const mapElement: Ref<HTMLDivElement | undefined> = ref();
 const map: Ref<Map | undefined> = ref();
 const routeSource = new VectorSource();
 const pointSource = new VectorSource();
+const stopSource = new VectorSource();
 const markerSource = new VectorSource();
 
 const distanceOptions = [1, 2, 3, 5, 10].map((miles) => ({
@@ -241,6 +297,7 @@ const drawTrip = () => {
 
   routeSource.clear();
   pointSource.clear();
+  stopSource.clear();
   markerSource.clear();
 
   const routeFeature = new Polyline().readFeature(route.value.geometry, {
@@ -249,6 +306,16 @@ const drawTrip = () => {
   });
 
   routeSource.addFeature(routeFeature);
+
+  stopSource.addFeatures(
+    stops.value.map(
+      (stop) =>
+        new Feature({
+          geometry: new Point(fromLonLat([stop.lng, stop.lat])),
+          number: stop.number,
+        }),
+    ),
+  );
 
   const points = props.trip?.points ?? [];
 
@@ -316,6 +383,10 @@ onMounted(() => {
           ),
       }),
       new VectorLayer({
+        source: stopSource,
+        style: (feature) => tripStopStyle(feature.get('number') as number),
+      }),
+      new VectorLayer({
         source: pointSource,
         style: (feature) => tripPointStyle(feature.get('label') as string),
       }),
@@ -354,6 +425,10 @@ onMounted(() => {
           <p class="text-sm text-grey-dark">
             {{ metersToMiles(route.distance) }} miles &middot;
             {{ formatDuration(route.duration) }} &middot;
+            <template v-if="stops.length">
+              {{ stops.length }} suggested stop{{ stops.length > 1 ? 's' : '' }}
+              &middot;
+            </template>
             <template v-if="trip.points.length > 2">
               via {{ trip.points.length - 2 }}
               stop{{ trip.points.length > 3 ? 's' : '' }} &middot;
@@ -387,7 +462,10 @@ onMounted(() => {
       v-if="route"
       class="absolute bottom-2 left-2 z-10 flex max-h-[40%] w-[calc(100%-1rem)] max-w-md flex-col space-y-2 overflow-y-auto"
     >
-      <ol class="list-decimal pl-6">
+      <ol
+        v-if="!stops.length"
+        class="list-decimal pl-6"
+      >
         <li
           v-for="eatery in eateries"
           :key="eatery.key"
@@ -398,6 +476,59 @@ onMounted(() => {
           <span v-if="eatery.isNationwideBranch">(nationwide branch)</span>
         </li>
       </ol>
+
+      <template v-else>
+        <div
+          v-for="stop in stops"
+          :key="`stop-${stop.number}`"
+          class="flex flex-col"
+        >
+          <p
+            class="font-semibold"
+            v-text="`Stop ${stop.number}, about ${formatDuration(stop.duration)} in`"
+          />
+
+          <p
+            v-if="!nearbyEateries(stop).length"
+            class="text-sm text-grey-dark"
+          >
+            No places within half an hour of this stop.
+          </p>
+
+          <ol class="list-decimal pl-6">
+            <li
+              v-for="eatery in nearbyEateries(stop)"
+              :key="eatery.key"
+            >
+              {{ formatDuration(eatery.durationAlongRoute) }} in,
+              {{ metersToMiles(eatery.distanceFromRoute) }} miles off route
+              <span v-if="eatery.isNationwideBranch">(nationwide branch)</span>
+            </li>
+          </ol>
+        </div>
+
+        <div
+          v-for="leg in legs"
+          :key="leg.title"
+          class="flex flex-col"
+        >
+          <p
+            class="font-semibold"
+            v-text="`${leg.title} (${leg.eateries.length})`"
+          />
+
+          <ol class="list-decimal pl-6">
+            <li
+              v-for="eatery in leg.eateries"
+              :key="eatery.key"
+            >
+              {{ formatDuration(eatery.durationAlongRoute) }} in,
+              {{ metersToMiles(eatery.distanceFromRoute) }} miles off route
+              <span v-if="eatery.isNationwideBranch">(nationwide branch)</span>
+            </li>
+          </ol>
+        </div>
+      </template>
     </Card>
 
     <div
@@ -500,6 +631,16 @@ onMounted(() => {
         label="How far off your route?"
         help-text="How far from your route should I look for places to eat?"
         :options="distanceOptions"
+      />
+
+      <FormSelect
+        v-model="form.stop_interval"
+        name="stop_interval"
+        borders
+        label="Suggest stops"
+        placeholder=""
+        help-text="I'll suggest places to stop and eat at this interval."
+        :options="stopIntervalOptions"
       />
 
       <p

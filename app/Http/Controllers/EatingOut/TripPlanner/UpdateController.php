@@ -15,7 +15,7 @@ class UpdateController
     public function __invoke(EateryTrip $eateryTrip, TripPlannerUpdateRequest $request, UpdateTripAction $updateTripAction): RedirectResponse
     {
         try {
-            $updateTripAction->handle($eateryTrip, $request->points(), $request->integer('distance'));
+            $updateTripAction->handle($eateryTrip, $request->points(), $request->integer('distance'), $request->stopInterval());
         } catch (RequestException) {
             return redirect()
                 ->back()

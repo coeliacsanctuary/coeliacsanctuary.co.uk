@@ -63,6 +63,7 @@ class UpdateControllerTest extends TestCase
             'more than five via points' => [['points' => array_fill(0, 8, ['label' => 'Crewe', 'lat' => 53.1, 'lng' => -2.44])], 'points'],
             'point without a label' => [['points' => [['lat' => 53.1, 'lng' => -2.44], ['label' => 'Manchester', 'lat' => 53.48, 'lng' => -2.24]]], 'points.0.label'],
             'distance over ten miles' => [['distance' => 11], 'distance'],
+            'stop interval not on the list' => [['stop_interval' => 45], 'stop_interval'],
         ];
     }
 
@@ -85,6 +86,7 @@ class UpdateControllerTest extends TestCase
                 ['label' => 'Manchester, England, United Kingdom', 'lat' => 53.48, 'lng' => -2.24],
             ],
             3,
+            null,
         ], return: $this->trip);
 
         $this->makeRequest(['distance' => 3]);
@@ -123,8 +125,22 @@ class UpdateControllerTest extends TestCase
             Mockery::on(fn (EateryTrip $trip): bool => $trip->is($this->trip)),
             $points,
             2,
+            null,
         ], return: $this->trip);
 
         $this->makeRequest(['points' => $points]);
+    }
+
+    #[Test]
+    public function itUpdatesTheTripWithTheStopInterval(): void
+    {
+        $this->expectAction(UpdateTripAction::class, [
+            Mockery::on(fn (EateryTrip $trip): bool => $trip->is($this->trip)),
+            Mockery::any(),
+            2,
+            90,
+        ], return: $this->trip);
+
+        $this->makeRequest(['stop_interval' => 90]);
     }
 }

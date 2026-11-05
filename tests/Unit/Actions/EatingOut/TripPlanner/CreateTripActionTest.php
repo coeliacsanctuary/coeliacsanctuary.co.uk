@@ -67,4 +67,14 @@ class CreateTripActionTest extends TestCase
             collect($trip->timings)->map(fn (array $timing): array => [$timing['from'], $timing['to'], $timing['distance'], $timing['duration']])->all(),
         );
     }
+
+    #[Test]
+    public function itStoresTheStopInterval(): void
+    {
+        $this->expectAction(GetRouteAction::class, return: $this->route());
+
+        $trip = $this->callAction(CreateTripAction::class, $this->points(), 3, 120);
+
+        $this->assertSame(120, EateryTrip::query()->findOrFail($trip->id)->stop_interval);
+    }
 }

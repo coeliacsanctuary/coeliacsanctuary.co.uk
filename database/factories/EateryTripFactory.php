@@ -21,6 +21,7 @@ class EateryTripFactory extends Factory
                 ['label' => 'Manchester, England, United Kingdom', 'lat' => 53.48, 'lng' => -2.24],
             ],
             'distance' => 2,
+            'stop_interval' => null,
             'geometry' => '_p~iF~ps|U_ulLnnqC_mqNvxq`@',
             'route_distance' => 57381.5,
             'route_duration' => 3222.9,

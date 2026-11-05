@@ -15,7 +15,7 @@ class StoreController
     public function __invoke(TripPlannerCreateRequest $request, CreateTripAction $createTripAction): RedirectResponse
     {
         try {
-            $trip = $createTripAction->handle($request->points(), $request->integer('distance'));
+            $trip = $createTripAction->handle($request->points(), $request->integer('distance'), $request->stopInterval());
         } catch (RequestException) {
             return redirect()
                 ->back()

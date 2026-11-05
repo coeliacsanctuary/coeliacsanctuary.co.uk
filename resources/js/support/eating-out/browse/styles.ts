@@ -140,3 +140,30 @@ export const tripPointStyle = (label: string): Style => {
 
   return style;
 };
+
+const tripStopStyles = new Map<number, Style>();
+
+export const tripStopStyle = (number: number): Style => {
+  const cached = tripStopStyles.get(number);
+
+  if (cached) {
+    return cached;
+  }
+
+  const style = new Style({
+    image: new CircleStyle({
+      radius: 13,
+      fill: new Fill({ color: '#DBBC25' }),
+      stroke: new Stroke({ color: '#ffffff', width: 3 }),
+    }),
+    text: new Text({
+      text: number.toString(),
+      font: 'bold 13px sans-serif',
+      fill: new Fill({ color: '#000000' }),
+    }),
+  });
+
+  tripStopStyles.set(number, style);
+
+  return style;
+};

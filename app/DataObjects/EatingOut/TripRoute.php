@@ -57,6 +57,35 @@ final readonly class TripRoute
         return $closest;
     }
 
+    /** @return array{lat: float, lng: float, along: float, duration: float} */
+    public function pointAtDuration(float $seconds): array
+    {
+        $measured = $this->measuredPoints();
+        $previous = $measured[0];
+
+        if ($seconds <= $previous['duration']) {
+            return $previous;
+        }
+
+        foreach ($measured as $point) {
+            if ($point['duration'] >= $seconds) {
+                $span = $point['duration'] - $previous['duration'];
+                $progress = $span > 0 ? ($seconds - $previous['duration']) / $span : 0;
+
+                return [
+                    'lat' => $previous['lat'] + (($point['lat'] - $previous['lat']) * $progress),
+                    'lng' => $previous['lng'] + (($point['lng'] - $previous['lng']) * $progress),
+                    'along' => $previous['along'] + (($point['along'] - $previous['along']) * $progress),
+                    'duration' => $seconds,
+                ];
+            }
+
+            $previous = $point;
+        }
+
+        return $previous;
+    }
+
     /** @return array<int, array{lat: float, lng: float, along: float, duration: float}> */
     private function measuredPoints(): array
     {

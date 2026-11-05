@@ -96,4 +96,32 @@ class TripRouteTest extends TestCase
 
         $this->assertSame(INF, $route->locate($route->chunks(padding: 1000), 54.0, -2.44)['distance']);
     }
+
+    #[Test]
+    public function itGivesTheStartOfTheRouteForAPointAtTheBeginning(): void
+    {
+        $point = $this->makeRoute()->pointAtDuration(0);
+
+        $this->assertSame([53.0, -2.44, 0.0], [$point['lat'], $point['lng'], $point['along']]);
+    }
+
+    #[Test]
+    public function itGivesTheEndOfTheRouteForAPointAtOrBeyondTheFullDuration(): void
+    {
+        $route = $this->makeRoute();
+
+        $this->assertEqualsWithDelta(53.2, $route->pointAtDuration(1200)['lat'], 0.0001);
+        $this->assertEqualsWithDelta(53.2, $route->pointAtDuration(5000)['lat'], 0.0001);
+    }
+
+    #[Test]
+    public function itInterpolatesAPointPartWayAlongTheRoute(): void
+    {
+        $point = $this->makeRoute()->pointAtDuration(630);
+
+        $this->assertEqualsWithDelta(53.105, $point['lat'], 0.0001);
+        $this->assertSame(-2.44, $point['lng']);
+        $this->assertEqualsWithDelta(11675, $point['along'], 5);
+        $this->assertSame(630.0, $point['duration']);
+    }
 }

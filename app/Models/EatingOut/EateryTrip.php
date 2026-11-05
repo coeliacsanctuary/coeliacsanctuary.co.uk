@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
  * @property array<int, array{label: string, lat: float, lng: float}> $points
  * @property array<int, array{from: int, to: int, distance: float, duration: float}> $timings
  * @property int $distance
+ * @property int | null $stop_interval
  * @property string $geometry
  * @property float $route_distance
  * @property float $route_duration
@@ -74,6 +75,7 @@ class EateryTrip extends Model
             'points' => 'array',
             'timings' => 'array',
             'distance' => 'int',
+            'stop_interval' => 'int',
             'route_distance' => 'float',
             'route_duration' => 'float',
             'last_visited_at' => 'datetime',

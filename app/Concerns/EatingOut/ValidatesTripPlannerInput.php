@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Concerns\EatingOut;
 
+use Illuminate\Validation\Rule;
+
 /** @mixin \Illuminate\Foundation\Http\FormRequest */
 trait ValidatesTripPlannerInput
 {
@@ -15,7 +17,13 @@ trait ValidatesTripPlannerInput
             'points.*.lat' => ['required', 'numeric'],
             'points.*.lng' => ['required', 'numeric'],
             'distance' => ['required', 'numeric', 'min:1', 'max:10'],
+            'stop_interval' => ['nullable', 'integer', Rule::in([60, 90, 120, 180])],
         ];
+    }
+
+    public function stopInterval(): ?int
+    {
+        return $this->filled('stop_interval') ? $this->integer('stop_interval') : null;
     }
 
     /** @return array<int, array{label: string, lat: float, lng: float}> */

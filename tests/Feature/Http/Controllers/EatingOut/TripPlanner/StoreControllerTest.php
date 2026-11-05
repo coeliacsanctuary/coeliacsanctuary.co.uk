@@ -10,6 +10,7 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Testing\TestResponse;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\RequestFactories\TripPlannerRequestFactory;
@@ -34,6 +35,7 @@ class StoreControllerTest extends TestCase
             'distance missing' => [['distance' => null], 'distance'],
             'distance under a mile' => [['distance' => 0.5], 'distance'],
             'distance over ten miles' => [['distance' => 11], 'distance'],
+            'stop interval not on the list' => [['stop_interval' => 45], 'stop_interval'],
         ];
     }
 
@@ -55,6 +57,7 @@ class StoreControllerTest extends TestCase
                 ['label' => 'Manchester, England, United Kingdom', 'lat' => 53.48, 'lng' => -2.24],
             ],
             2,
+            null,
         ], return: $this->create(EateryTrip::class));
 
         $this->makeRequest();
@@ -104,8 +107,21 @@ class StoreControllerTest extends TestCase
         $this->expectAction(CreateTripAction::class, [
             $points,
             2,
+            null,
         ], return: $this->create(EateryTrip::class));
 
         $this->makeRequest(['points' => $points]);
+    }
+
+    #[Test]
+    public function itCreatesTheTripWithTheStopInterval(): void
+    {
+        $this->expectAction(CreateTripAction::class, [
+            Mockery::any(),
+            2,
+            90,
+        ], return: $this->create(EateryTrip::class));
+
+        $this->makeRequest(['stop_interval' => 90]);
     }
 }

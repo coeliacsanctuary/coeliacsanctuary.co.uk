@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\TripPlanner;
 
+use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryTrip;
 use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
@@ -15,7 +16,7 @@ use Inertia\Response;
 
 class ShowController
 {
-    public function __invoke(EateryTrip $eateryTrip, Request $request, Inertia $inertia, TripEateriesPipeline $tripEateriesPipeline): Response
+    public function __invoke(EateryTrip $eateryTrip, Request $request, Inertia $inertia, TripEateriesPipeline $tripEateriesPipeline, GetTripStopsAction $getTripStopsAction): Response
     {
         $eateryTrip->recordVisit();
 
@@ -34,12 +35,14 @@ class ShowController
                     'key' => $eateryTrip->key,
                     'points' => $eateryTrip->points,
                     'distance' => $eateryTrip->distance,
+                    'stopInterval' => $eateryTrip->stop_interval,
                     'route' => [
                         'geometry' => $eateryTrip->geometry,
                         'distance' => $eateryTrip->route_distance,
                         'duration' => $eateryTrip->route_duration,
                     ],
                 ],
+                'stops' => fn (): array => $getTripStopsAction->handle($eateryTrip->toTripRoute(), $eateryTrip->stop_interval),
                 'canEdit' => $eateryTrip->canBeEditedWith($token),
                 'eateries' => fn (): Collection => $tripEateriesPipeline->run(
                     route: $eateryTrip->toTripRoute(),

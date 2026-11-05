@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\TripPlanner;
 
+use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
 use App\Models\EatingOut\EateryTrip;
 use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Testing\TestResponse;
+use Mockery;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -99,5 +101,25 @@ class ShowControllerTest extends TestCase
     public function itDoesNotLetTheTripBeEditedWithoutTheEditTokenCookie(): void
     {
         $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->where('canEdit', false)->etc());
+    }
+
+    #[Test]
+    public function itIncludesTheTripsStopInterval(): void
+    {
+        $this->trip->update(['stop_interval' => 120]);
+
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->where('trip.stopInterval', 120)->etc());
+    }
+
+    #[Test]
+    public function itIncludesTheSuggestedStopsForTheTrip(): void
+    {
+        $this->trip->update(['stop_interval' => 60]);
+
+        $stops = [['number' => 1, 'duration' => 3600.5, 'distanceAlongRoute' => 90000.5, 'lat' => 53.5, 'lng' => -2.3]];
+
+        $this->expectAction(GetTripStopsAction::class, [Mockery::any(), 60], return: $stops);
+
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->where('stops', $stops)->etc());
     }
 }

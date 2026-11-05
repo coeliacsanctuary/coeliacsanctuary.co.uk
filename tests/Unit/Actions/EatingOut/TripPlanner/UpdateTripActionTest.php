@@ -104,4 +104,16 @@ class UpdateTripActionTest extends TestCase
 
         $this->assertSame('2026-02-01 12:00:00', $trip->refresh()->updated_at?->toDateTimeString());
     }
+
+    #[Test]
+    public function itStoresTheStopInterval(): void
+    {
+        $trip = $this->create(EateryTrip::class);
+
+        $this->expectAction(GetRouteAction::class, return: $this->route());
+
+        $this->callAction(UpdateTripAction::class, $trip, $this->points(), 5, 180);
+
+        $this->assertSame(180, $trip->refresh()->stop_interval);
+    }
 }
