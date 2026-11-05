@@ -556,6 +556,7 @@ onMounted(() => {
     />
 
     <TripPanel
+      v-if="trip"
       ref="tripPanel"
       :trip="trip"
       :eateries="eateries"
@@ -571,7 +572,10 @@ onMounted(() => {
       @share="showShare = true"
     />
 
-    <div class="relative flex-1 md:ml-[28rem]">
+    <div
+      class="relative flex-1"
+      :class="{ 'md:ml-[28rem]': trip }"
+    >
       <div class="absolute right-0 bottom-32 z-10 size-28 md:bottom-0">
         <FilterMap
           v-if="trip"
