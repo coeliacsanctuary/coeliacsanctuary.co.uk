@@ -20,8 +20,8 @@
         <mj-column>
             <mj-text mj-class="inner">Hey there</mj-text>
             <mj-text mj-class="inner">
-                Here's the link to your trip from <strong>{{ $start }}</strong> to <strong>{{ $end }}</strong>, with
-                all of the gluten free places to eat along the way.
+                Here's the link to your trip from <strong>{{ $start }}</strong> to <strong>{{ $end }}</strong>, with all
+                of the gluten free places to eat along the way.
             </mj-text>
             <mj-text mj-class="inner" padding-top="10px"> Thanks, Alison - Coeliac Sanctuary </mj-text>
         </mj-column>
@@ -65,7 +65,8 @@
     <mj-section>
         <mj-column>
             <mj-button href="{{ $viewUrl }}">View your trip</mj-button>
-            <mj-text mj-class="inner" align="center">You can share this link with anyone you're travelling with.</mj-text>
+            <mj-text mj-class="inner" align="center"
+                >You can share this link with anyone you're travelling with.</mj-text>
         </mj-column>
     </mj-section>
 
