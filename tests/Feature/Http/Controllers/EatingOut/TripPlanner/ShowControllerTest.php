@@ -46,13 +46,13 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itRunsTheTripEateriesPipelineWithoutCallingOpenRouteService(): void
     {
-        Http::fake(['api.openrouteservice.org/*' => Http::response(status: 500)]);
+        Http::fake(['api.heigit.org/*' => Http::response(status: 500)]);
 
         $this->expectPipelineToRun(TripEateriesPipeline::class, collect());
 
         $this->visitPage()->assertOk();
 
-        Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), 'api.openrouteservice.org'));
+        Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), 'api.heigit.org'));
     }
 
     #[Test]

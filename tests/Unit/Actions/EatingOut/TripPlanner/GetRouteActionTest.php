@@ -21,7 +21,7 @@ class GetRouteActionTest extends TestCase
         Http::preventStrayRequests();
 
         Http::fake([
-            'api.openrouteservice.org/v2/directions/driving-car' => Http::response([
+            'api.heigit.org/openrouteservice/v2/directions/driving-car' => Http::response([
                 'routes' => [[
                     'summary' => ['distance' => 1500.5, 'duration' => 120.5],
                     'geometry' => '_p~iF~ps|U_ulLnnqC_mqNvxq`@',
@@ -100,7 +100,7 @@ class GetRouteActionTest extends TestCase
         Http::preventStrayRequests();
 
         Http::fake([
-            'api.openrouteservice.org/v2/directions/driving-car' => Http::response(['error' => 'bad'], 500),
+            'api.heigit.org/openrouteservice/v2/directions/driving-car' => Http::response(['error' => 'bad'], 500),
         ]);
 
         $this->expectException(RequestException::class);

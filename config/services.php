@@ -22,7 +22,7 @@ return [
     ],
 
     'openRouteService' => [
-        'url' => env('OPEN_ROUTE_SERVICE_URL', 'https://api.openrouteservice.org'),
+        'url' => env('OPEN_ROUTE_SERVICE_URL', 'https://api.heigit.org/openrouteservice'),
         'key' => env('OPEN_ROUTE_SERVICE_KEY'),
     ],
 
