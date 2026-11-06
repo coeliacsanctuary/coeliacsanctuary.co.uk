@@ -6,7 +6,6 @@ import StarRating from '@/Components/StarRating.vue';
 import axios, { AxiosResponse } from 'axios';
 import { LinkIcon } from '@heroicons/vue/24/solid';
 import { pluralise } from '@/helpers';
-import { Link } from '@inertiajs/vue3';
 import Icon from '@/Components/Icon.vue';
 import FacebookIcon from '@/Icons/FacebookIcon.vue';
 import InstagramIcon from '@/Icons/InstagramIcon.vue';
@@ -201,10 +200,9 @@ const icon = computed((): string => {
           <div
             class="mt-8! rounded-sm bg-linear-to-br from-primary/30 to-primary-light/30 text-center transition duration-500 hover:from-primary/50 hover:to-primary-light/50 md:p-4 md:text-lg"
           >
-            <Link
+            <a
               :href="placeDetails.link"
               class="block p-2"
-              prefetch
             >
               Read more about <strong v-text="placeDetails.name" />
               {{
@@ -213,7 +211,7 @@ const icon = computed((): string => {
                   : ''
               }}
               and leave your review.
-            </Link>
+            </a>
           </div>
         </div>
       </div>

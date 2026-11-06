@@ -7,8 +7,8 @@ import UseGoogleEvents from '@/composables/useGoogleEvents';
 const emit = defineEmits(['close']);
 
 const props = withDefaults(
-  defineProps<{ open: boolean; urlPrefix?: string }>(),
-  { urlPrefix: '' },
+  defineProps<{ open: boolean; urlPrefix?: string; plainLinks?: boolean }>(),
+  { urlPrefix: '', plainLinks: false },
 );
 
 const close = () => emit('close');
@@ -59,7 +59,7 @@ watch(
             :key="index"
           >
             <component
-              :is="urlPrefix ? 'a' : Link"
+              :is="urlPrefix || plainLinks ? 'a' : Link"
               :href="link.href"
               class="block w-full px-2"
               prefetch
