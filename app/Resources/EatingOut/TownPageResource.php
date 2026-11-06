@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Resources\EatingOut;
 
 use App\Concerns\FormatsMarkdown;
+use App\DataObjects\EatingOut\LatLng;
+use App\DataObjects\EatingOut\TripDestination;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
@@ -33,6 +35,18 @@ class TownPageResource extends JsonResource
             'image' => $this->image ?? $county->image ?? $country->image,
             'latlng' => $this->latlng,
             'county' => new TownCountyResource($county),
+            'tripPlannerUrl' => $this->tripPlannerUrl("{$this->town}, {$county->county}"),
         ];
+    }
+
+    protected function tripPlannerUrl(string $label): ?string
+    {
+        if ( ! $this->latlng) {
+            return null;
+        }
+
+        $latLng = LatLng::fromString($this->latlng);
+
+        return new TripDestination($label, $latLng->lat, $latLng->lng)->url();
     }
 }

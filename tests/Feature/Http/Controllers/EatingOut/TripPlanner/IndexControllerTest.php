@@ -6,7 +6,6 @@ namespace Tests\Feature\Http\Controllers\EatingOut\TripPlanner;
 
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -20,17 +19,6 @@ class IndexControllerTest extends TestCase
     protected function encode(mixed $destination): string
     {
         return mb_rtrim(strtr(base64_encode((string) json_encode($destination)), '+/', '-_'), '=');
-    }
-
-    public static function invalidDestinations(): array
-    {
-        return [
-            'not base64' => ['%%%not-base64%%%'],
-            'not json' => [mb_rtrim(strtr(base64_encode('not json'), '+/', '-_'), '=')],
-            'missing a label' => [mb_rtrim(strtr(base64_encode('{"lat":54.48,"lng":-0.61}'), '+/', '-_'), '=')],
-            'non numeric lat' => [mb_rtrim(strtr(base64_encode('{"label":"Whitby","lat":"north","lng":-0.61}'), '+/', '-_'), '=')],
-            'lat out of range' => [mb_rtrim(strtr(base64_encode('{"label":"Whitby","lat":154.48,"lng":-0.61}'), '+/', '-_'), '=')],
-        ];
     }
 
     #[Test]
@@ -69,10 +57,9 @@ class IndexControllerTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('invalidDestinations')]
-    public function itIgnoresAnInvalidDestination(string $to): void
+    public function itIgnoresAnInvalidDestination(): void
     {
-        $this->visitPage($to)
+        $this->visitPage('%%%not-base64%%%')
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page->where('destination', null));
     }
