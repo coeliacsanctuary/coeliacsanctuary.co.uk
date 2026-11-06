@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\TripPlanner;
 
+use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
@@ -62,5 +63,15 @@ class IndexControllerTest extends TestCase
         $this->visitPage('%%%not-base64%%%')
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page->where('destination', null));
+    }
+
+    #[Test]
+    public function itUsesTheTripPlannerOpenGraphImage(): void
+    {
+        $this->expectAction(GetOpenGraphImageForRouteAction::class, [
+            static fn (string $route, mixed $alterUrl = null): bool => $route === 'eatery-trip-planner',
+        ]);
+
+        $this->visitPage();
     }
 }

@@ -9,21 +9,20 @@ import {
   ShallowRef,
   watch,
 } from 'vue';
-import { useForm } from 'laravel-precognition-vue-inertia';
-import { router, useHttp, usePage } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import Loader from '@/Components/Loader.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
-import CoeliacButton from '@/Components/CoeliacButton.vue';
-import FormLookup from '@/Components/Forms/FormLookup.vue';
-import FormSelect from '@/Components/Forms/FormSelect.vue';
+import Card from '@/Components/Card.vue';
+import Heading from '@/Components/Heading.vue';
+import SubHeading from '@/Components/SubHeading.vue';
 import FilterMap from '@/Components/PageSpecific/EatingOut/Browse/FilterMap.vue';
 import TripPanel from '@/Components/PageSpecific/EatingOut/TripPlanner/TripPanel.vue';
 import ShareTripModal from '@/Components/PageSpecific/EatingOut/TripPlanner/ShareTripModal.vue';
+import TripPlannerForm from '@/Components/PageSpecific/EatingOut/TripPlanner/TripPlannerForm.vue';
 import {
   EateryFilterItem,
   EateryFilterKeys,
   EateryFilters,
-  LatLng,
 } from '@/types/EateryTypes';
 import { Feature, Overlay, View } from 'ol';
 import Map from 'ol/Map';
@@ -40,7 +39,6 @@ import {
   tripPointStyle,
   tripStopStyle,
 } from '@/support/eating-out/browse/styles';
-import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import 'ol/ol.css';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
 import {
@@ -55,12 +53,6 @@ defineOptions({
   layout: CoeliacCompact,
 });
 
-type PointRow = {
-  key: string;
-  location?: TripLocation;
-  sessionToken: string;
-};
-
 const props = defineProps<{
   trip?: Trip;
   canEdit?: boolean;
@@ -69,100 +61,12 @@ const props = defineProps<{
   destination?: TripLocation | null;
 }>();
 
-const makeRow = (location?: TripLocation): PointRow => ({
-  key: crypto.randomUUID(),
-  location,
-  sessionToken: crypto.randomUUID(),
-});
-
-const rowsFor = (points?: TripLocation[]): PointRow[] =>
-  points?.length ? points.map((point) => makeRow(point)) : [makeRow(), makeRow()];
-
-const rows: Ref<PointRow[]> = ref(
-  props.trip || !props.destination
-    ? rowsFor(props.trip?.points)
-    : [makeRow(), makeRow(props.destination)],
-);
-
-const lookups: Record<string, { setValue: (value: string) => void } | null> =
-  {};
-
-const viaCount = computed((): number => rows.value.length - 2);
-
-const allPointsSelected = computed((): boolean =>
-  rows.value.every((row) => row.location !== undefined),
-);
-
-const isVia = (index: number): boolean =>
-  index > 0 && index < rows.value.length - 1;
-
-const rowLabel = (index: number): string => {
-  if (index === 0) {
-    return 'Starting from';
-  }
-
-  return index === rows.value.length - 1 ? 'Going to' : 'Via';
-};
-
-const addStop = () => {
-  if (viaCount.value >= 5) {
-    return;
-  }
-
-  rows.value.splice(rows.value.length - 1, 0, makeRow());
-};
-
-const moveStop = (index: number, direction: -1 | 1) => {
-  const target = index + direction;
-
-  if (!isVia(index) || !isVia(target)) {
-    return;
-  }
-
-  [rows.value[index], rows.value[target]] = [rows.value[target], rows.value[index]];
-};
-
-const removeStop = (index: number) => {
-  if (!isVia(index)) {
-    return;
-  }
-
-  rows.value.splice(index, 1);
-};
-
-const form = useForm<{
-  points: TripLocation[];
-  distance: number;
-  stop_interval: number | '';
-}>('post', '/wheretoeat/trip-planner', {
-  points: [],
-  distance: props.trip?.distance ?? 2,
-  stop_interval: props.trip?.stopInterval ?? '',
-});
-
-const plannerMode: Ref<'new' | 'edit' | undefined> = ref(
-  props.trip ? undefined : 'new',
-);
+const plannerMode: Ref<'new' | 'edit' | undefined> = ref();
+const processing = ref(false);
 
 const isEditing = computed((): boolean => plannerMode.value === 'edit');
 
-const submitLabel = computed((): string => {
-  if (!isEditing.value) {
-    return 'Plan my trip';
-  }
-
-  return props.canEdit ? 'Update this trip' : 'Save as my own copy';
-});
-
 const openPlanner = (mode: 'new' | 'edit') => {
-  const editing = mode === 'edit' && props.trip;
-
-  rows.value = rowsFor(editing ? props.trip?.points : undefined);
-  form.distance = editing ? (props.trip?.distance ?? 2) : 2;
-  form.stop_interval = editing ? (props.trip?.stopInterval ?? '') : '';
-  form.clearErrors();
-  lookupError.value = false;
-
   plannerMode.value = mode;
 };
 
@@ -292,33 +196,6 @@ const handleFiltersChange = ({ filters }: { filters: EateryFilters }) => {
   });
 };
 
-const stopIntervalOptions = [
-  { value: '', label: 'No stops' },
-  { value: 60, label: 'Every hour' },
-  { value: 90, label: 'Every 1½ hours' },
-  { value: 120, label: 'Every 2 hours' },
-  { value: 180, label: 'Every 3 hours' },
-];
-
-const lookupEndpoint = (row: PointRow): string =>
-  `/api/wheretoeat/lookup?sessionToken=${row.sessionToken}`;
-
-const placeLookup = useHttp<{ sessionToken: string }, LatLng>({
-  sessionToken: '',
-});
-
-const lookupError = ref(false);
-
-const errorMessage = computed((): string | undefined => {
-  if (lookupError.value) {
-    return "Sorry, I couldn't find that location...";
-  }
-
-  return form.hasErrors
-    ? 'Sorry, there was an error planning your trip...'
-    : undefined;
-});
-
 const mapElement: Ref<HTMLDivElement | undefined> = ref();
 const map: ShallowRef<Map | undefined> = shallowRef();
 const routeSource = new VectorSource();
@@ -334,58 +211,6 @@ const markerLayer = new VectorLayer({
       (feature.get('eatery') as TripEatery).key === hoveredEatery.value?.key,
     ),
 });
-
-const distanceOptions = [1, 2, 3, 5, 10].map((miles) => ({
-  value: miles,
-  label: `Within ${miles} mile${miles > 1 ? 's' : ''} of my route`,
-}));
-
-const selectLocation = (
-  location: { id: string; label: string },
-  row: PointRow,
-) => {
-  lookups[row.key]?.setValue(location.label);
-  lookupError.value = false;
-  placeLookup.sessionToken = row.sessionToken;
-
-  placeLookup.get(
-    `/api/wheretoeat/lookup/${encodeURIComponent(location.id)}`,
-    {
-      onSuccess: ({ lat, lng }) => {
-        row.location = { label: location.label, lat, lng };
-        row.sessionToken = crypto.randomUUID();
-      },
-      onHttpException: () => {
-        lookupError.value = true;
-      },
-      onNetworkError: () => {
-        lookupError.value = true;
-      },
-    },
-  );
-};
-
-const planTrip = () => {
-  if (!allPointsSelected.value) {
-    return;
-  }
-
-  form.points = rows.value.map((row) => row.location as TripLocation);
-
-  const options = {
-    onSuccess: () => {
-      plannerMode.value = undefined;
-    },
-  };
-
-  if (isEditing.value && props.canEdit && props.trip) {
-    form.submit('patch', `/wheretoeat/trip-planner/${props.trip.key}`, options);
-
-    return;
-  }
-
-  form.submit('post', '/wheretoeat/trip-planner', options);
-};
 
 const drawTrip = () => {
   if (!map.value || !route.value) {
@@ -473,6 +298,7 @@ watch(
   () => props.trip?.route.geometry,
   () => {
     selectedEatery.value = undefined;
+    processing.value = false;
 
     void nextTick(() => drawTrip());
   },
@@ -556,7 +382,7 @@ onMounted(() => {
       class="z-50"
       size="size-16"
       width="border-8"
-      :display="form.processing"
+      :display="processing"
       background
     />
 
@@ -595,6 +421,54 @@ onMounted(() => {
       />
 
       <div
+        v-if="!trip"
+        class="absolute inset-0 z-20 flex justify-center overflow-y-auto bg-white/30 p-4 backdrop-blur-[2px]"
+      >
+        <Card class="my-auto flex h-fit w-full max-w-5xl flex-col space-y-4">
+          <div class="flex flex-col space-y-2">
+            <Heading :border="false">Gluten Free Trip Planner</Heading>
+
+            <p class="prose max-w-none md:prose-lg">
+              Planning a road trip, a day out or a long drive? Tell me where
+              you're starting from and where you're going, and I'll find the
+              gluten free places to eat along your route.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+            <TripPlannerForm
+              mode="new"
+              :destination="destination"
+              @processing="processing = $event"
+            />
+
+            <div
+              class="flex flex-col space-y-3 border-t border-grey-off pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-8"
+            >
+              <SubHeading classes="mb-2!">How the trip planner works</SubHeading>
+
+              <p class="prose max-w-none">
+                Every place in my eating out guide that's within your chosen
+                distance of the route is shown on the map and listed in journey
+                order, so you can see what's coming up as you travel. Add up to
+                five stops along the way, and I'll suggest places to stop and
+                eat every hour, hour and a half, two hours or three hours of
+                driving.
+              </p>
+
+              <p class="prose max-w-none">
+                Your trip is saved with its own link, so you can share it with
+                whoever you're travelling with, or email it to yourself and pick
+                it up again on another device. Filter the results to just cafes,
+                restaurants or places with the features you need, and tap any
+                place to see its details and reviews.
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <div
         ref="pulseElement"
         class="pointer-events-none relative size-12"
       >
@@ -617,7 +491,7 @@ onMounted(() => {
 
   <Modal
     :open="plannerMode !== undefined"
-    :closeable="!!trip"
+    closeable
     size="relaxed"
     width="w-full"
     no-padding
@@ -630,124 +504,20 @@ onMounted(() => {
       />
     </template>
 
-    <form
-      class="flex flex-col space-y-3 p-4"
-      @submit.prevent="planTrip()"
-    >
-      <div
-        v-for="(row, index) in rows"
-        :key="row.key"
-        class="flex items-end gap-2"
-      >
-        <FormLookup
-          :ref="(el) => (lookups[row.key] = el as { setValue: (value: string) => void } | null)"
-          :initial-value="row.location?.label"
-          :name="`point-${index}`"
-          borders
-          :label="rowLabel(index)"
-          class="flex-1"
-          results-classes="absolute bg-white w-full z-20"
-          placeholder="Address, town or postcode..."
-          :lookup-endpoint="lookupEndpoint(row)"
-          ignore-autofill
-        >
-          <template #item="location: { id: string; label: string }">
-            <div
-              class="cursor-pointer border-b border-grey-off p-2 transition hover:bg-grey-lightest"
-              @click="selectLocation(location, row)"
-              v-text="location.label"
-            />
-          </template>
-        </FormLookup>
-
-        <div
-          v-if="isVia(index)"
-          class="flex gap-1 pb-1"
-        >
-          <button
-            type="button"
-            class="cursor-pointer rounded-md border border-grey-off p-2 disabled:cursor-not-allowed disabled:opacity-40"
-            :disabled="!isVia(index - 1)"
-            @click="moveStop(index, -1)"
-          >
-            <ArrowUpIcon class="size-4" />
-          </button>
-
-          <button
-            type="button"
-            class="cursor-pointer rounded-md border border-grey-off p-2 disabled:cursor-not-allowed disabled:opacity-40"
-            :disabled="!isVia(index + 1)"
-            @click="moveStop(index, 1)"
-          >
-            <ArrowDownIcon class="size-4" />
-          </button>
-
-          <button
-            type="button"
-            class="cursor-pointer rounded-md border border-grey-off p-2"
-            @click="removeStop(index)"
-          >
-            <XMarkIcon class="size-4" />
-          </button>
-        </div>
-      </div>
-
-      <div v-if="viaCount < 5">
-        <CoeliacButton
-          as="button"
-          type="button"
-          theme="light"
-          size="sm"
-          label="Add a stop"
-          @click="addStop()"
-        />
-      </div>
-
-      <FormSelect
-        v-model="form.distance"
-        name="distance"
-        borders
-        label="How far off your route?"
-        help-text="How far from your route should I look for places to eat?"
-        :options="distanceOptions"
+    <div class="p-4">
+      <TripPlannerForm
+        v-if="plannerMode"
+        :key="plannerMode"
+        :mode="plannerMode"
+        :trip="trip"
+        :can-edit="canEdit"
+        @processing="processing = $event"
+        @success="
+          plannerMode = undefined;
+          processing = false;
+        "
       />
-
-      <FormSelect
-        v-model="form.stop_interval"
-        name="stop_interval"
-        borders
-        label="Suggest stops"
-        placeholder=""
-        help-text="I'll suggest places to stop and eat at this interval."
-        :options="stopIntervalOptions"
-      />
-
-      <p
-        v-if="isEditing && !canEdit"
-        class="text-grey-dark"
-      >
-        This trip was shared with you, so any changes will be saved as your own
-        copy.
-      </p>
-
-      <CoeliacButton
-        theme="primary"
-        size="lg"
-        as="button"
-        type="submit"
-        :label="submitLabel"
-        bold
-        classes="justify-center"
-        :loading="form.processing"
-        :disabled="!allPointsSelected"
-      />
-
-      <p
-        v-if="errorMessage"
-        class="text-red"
-        v-text="errorMessage"
-      />
-    </form>
+    </div>
   </Modal>
 </template>
 

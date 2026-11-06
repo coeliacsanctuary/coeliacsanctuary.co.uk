@@ -9,6 +9,7 @@ use App\Models\EatingOut\EateryTrip;
 use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use Illuminate\Testing\TestResponse;
 use Mockery;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -149,5 +150,15 @@ class ShowControllerTest extends TestCase
             ->andReturn(collect());
 
         $this->visitPage()->assertOk();
+    }
+
+    #[Test]
+    public function itUsesTheTripPlannerOpenGraphImage(): void
+    {
+        $this->expectAction(GetOpenGraphImageForRouteAction::class, [
+            static fn (string $route, mixed $alterUrl = null): bool => $route === 'eatery-trip-planner',
+        ]);
+
+        $this->visitPage();
     }
 }

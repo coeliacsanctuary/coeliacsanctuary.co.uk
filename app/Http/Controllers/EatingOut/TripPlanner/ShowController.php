@@ -5,18 +5,27 @@ declare(strict_types=1);
 namespace App\Http\Controllers\EatingOut\TripPlanner;
 
 use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
+use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryTrip;
+use App\Models\OpenGraphImage;
 use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 use Inertia\Response;
 
 class ShowController
 {
-    public function __invoke(EateryTrip $eateryTrip, Request $request, Inertia $inertia, TripEateriesPipeline $tripEateriesPipeline, GetTripStopsAction $getTripStopsAction): Response
+    public function __invoke(EateryTrip $eateryTrip, Request $request, Inertia $inertia, TripEateriesPipeline $tripEateriesPipeline, GetTripStopsAction $getTripStopsAction, GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction): Response
     {
+        $ogImage = $getOpenGraphImageForRouteAction->handle('eatery-trip-planner', function (string $url, OpenGraphImage $image) {
+            $timestamp = $image->updated_at->timestamp;
+
+            return URL::query($url, ['cache' => $timestamp]);
+        });
+
         $eateryTrip->recordVisit();
 
         /** @var string | null $token */
@@ -35,6 +44,7 @@ class ShowController
         return $inertia
             ->title("{$start} to {$end} - Trip Planner")
             ->metaDescription("Places to eat that cater to Coeliac and gluten free diets on the way from {$start} to {$end}")
+            ->metaImage($ogImage)
             ->doNotTrack()
             ->render('EatingOut/TripPlanner', [
                 'trip' => [
