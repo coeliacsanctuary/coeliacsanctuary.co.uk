@@ -3,11 +3,18 @@ import Card from '@/Components/Card.vue';
 import SubHeading from '@/Components/SubHeading.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import { ArrowRightIcon } from '@heroicons/vue/24/outline';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
-defineProps<{
+const props = defineProps<{
   place: string;
   href: string;
 }>();
+
+const logClick = (): void => {
+  useJourneyTracking().logEvent('clicked', 'TripPlannerCta', {
+    title: props.place,
+  });
+};
 </script>
 
 <template>
@@ -40,6 +47,7 @@ defineProps<{
         icon-position="right"
         :icon="ArrowRightIcon"
         classes="justify-center"
+        @click="logClick"
       />
     </div>
   </Card>

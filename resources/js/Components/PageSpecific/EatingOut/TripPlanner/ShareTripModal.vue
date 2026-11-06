@@ -4,6 +4,7 @@ import { useForm } from 'laravel-precognition-vue-inertia';
 import Modal from '@/Components/Overlays/Modal.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 
 const props = defineProps<{
   open: boolean;
@@ -28,10 +29,18 @@ onMounted(() => {
 });
 
 const share = () => {
+  useJourneyTracking().logEvent('clicked', 'TripPlanner/Share', {
+    method: 'share',
+  });
+
   void navigator.share({ title: props.title, url: url.value }).catch(() => {});
 };
 
 const copyLink = () => {
+  useJourneyTracking().logEvent('clicked', 'TripPlanner/Share', {
+    method: 'copy',
+  });
+
   void navigator.clipboard.writeText(url.value).then(() => {
     copied.value = true;
 

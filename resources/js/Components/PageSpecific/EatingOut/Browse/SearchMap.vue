@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FormLookup from '@/Components/Forms/FormLookup.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { ref, watch } from 'vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
@@ -195,6 +196,11 @@ watch(hasError, (check) => {
         bold
         label="Plan your trip"
         classes="shrink-0"
+        @click="
+          useJourneyTracking().logEvent('clicked', 'WhereToEatMap/PlanTripCta', {
+            title: searchedPlace.label,
+          })
+        "
       />
 
       <button

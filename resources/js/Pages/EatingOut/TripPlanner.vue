@@ -41,6 +41,7 @@ import {
 } from '@/support/eating-out/browse/styles';
 import 'ol/ol.css';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
+import useJourneyTracking from '@/composables/useJourneyTracking';
 import {
   Trip,
   TripEatery,
@@ -141,8 +142,15 @@ const panToEatery = (eatery: TripEatery) => {
   });
 };
 
-const selectEatery = (eatery: TripEatery) => {
+const selectEatery = (eatery: TripEatery, source: 'list' | 'map' = 'list') => {
   selectedEatery.value = eatery;
+
+  useJourneyTracking().logEvent('clicked', 'TripPlanner/Place', {
+    eateryId: eatery.id,
+    branchId: eatery.branchId,
+    source,
+    title: eatery.name,
+  });
 
   if (!panelCoversMap()) {
     panToEatery(eatery);
@@ -187,6 +195,8 @@ const handleFiltersChange = ({ filters }: { filters: EateryFilters }) => {
       query[key] = value;
     }
   });
+
+  useJourneyTracking().logEvent('other', 'TripPlanner/Filter', query);
 
   router.get(page.url.split('?')[0], query, {
     only: ['eateries'],
@@ -366,7 +376,7 @@ onMounted(() => {
     );
 
     if (eatery) {
-      selectEatery(eatery);
+      selectEatery(eatery, 'map');
     }
   });
 
@@ -395,7 +405,7 @@ onMounted(() => {
       :selected="selectedEatery"
       @edit="openPlanner('edit')"
       @new="openPlanner('new')"
-      @select="selectEatery"
+      @select="selectEatery($event, 'list')"
       @back="selectedEatery = undefined"
       :hovered-key="hoveredEatery?.key"
       :scroll-to-hovered="hoveredFromMap"
