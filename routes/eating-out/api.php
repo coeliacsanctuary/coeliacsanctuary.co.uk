@@ -19,12 +19,13 @@ use App\Http\Controllers\Api\EatingOut\SuggestEdits\StoreController as SuggestEd
 use Illuminate\Support\Facades\Route;
 
 Route::post('lookup', WhereToEatLookupIndexController::class)->name('api.wheretoeat.lookup.index');
-Route::get('lookup/{id}', WhereToEatLookupGetController::class)->name('api.wheretoeat.lookup.get');
+Route::get('lookup/{placeId}', WhereToEatLookupGetController::class)->name('api.wheretoeat.lookup.get');
 
 Route::post('review/image-upload', ReviewImagesStoreController::class)
     ->name('api.wheretoeat.review.image-upload');
 
 Route::get('features', FeatureIndexController::class)->name('api.wheretoeat.features');
+
 
 Route::get('browse', BrowseIndexController::class)->name('api.wheretoeat.browse');
 

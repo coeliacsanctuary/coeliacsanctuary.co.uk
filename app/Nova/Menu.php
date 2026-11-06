@@ -24,6 +24,7 @@ use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EateryCuisines;
 use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
+use App\Nova\Resources\EatingOut\EateryTrips;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideEateries;
 use App\Nova\Resources\EatingOut\PlaceRecommendations;
@@ -141,6 +142,10 @@ class Menu
 
                 MenuGroup::make('Search', [
                     MenuItem::resource(EaterySearch::class),
+                ]),
+
+                MenuGroup::make('Trip Planner', [
+                    MenuItem::resource(EateryTrips::class),
                 ]),
 
                 MenuGroup::make('Misc', [

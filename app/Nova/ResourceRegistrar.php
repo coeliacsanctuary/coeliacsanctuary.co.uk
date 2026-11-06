@@ -17,6 +17,7 @@ use App\Nova\Resources\EatingOut\EateryCuisines;
 use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
+use App\Nova\Resources\EatingOut\EateryTrips;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideBranches;
 use App\Nova\Resources\EatingOut\NationwideEateries;
@@ -113,6 +114,7 @@ class ResourceRegistrar
             SuggestedEdits::class,
             EaterySearch::class,
             EaterySearchHistory::class,
+            EateryTrips::class,
             SealiacOverviews::class,
             EateryAiDescriptionResource::class,
             EateryAttractionRestaurantResource::class,

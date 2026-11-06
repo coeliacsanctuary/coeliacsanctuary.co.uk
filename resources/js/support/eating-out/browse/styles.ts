@@ -83,8 +83,9 @@ const markerStyles = new Map<string, Style>();
 export const markerStyle = (
   typeId: number,
   venueTypeId: number | null,
+  highlighted: boolean = false,
 ): Style => {
-  const key = `${typeId}-${venueTypeId ?? ''}`;
+  const key = `${typeId}-${venueTypeId ?? ''}${highlighted ? '-highlighted' : ''}`;
   const cached = markerStyles.get(key);
 
   if (cached) {
@@ -92,8 +93,9 @@ export const markerStyle = (
   }
 
   const style = new Style({
+    zIndex: highlighted ? 10 : 0,
     image: new Icon({
-      scale: 0.36,
+      scale: highlighted ? 0.5 : 0.36,
       /** The pin's point, rather than its middle, sits on the coordinate. */
       anchor: [0.5, 1],
       src: `/api/wheretoeat/marker/${typeId}${venueTypeId ? `/${venueTypeId}` : ''}`,
@@ -113,3 +115,57 @@ export const searchLocationMarkerStyle = (): Style =>
       color: '#000000',
     }),
   });
+
+const tripPointStyles = new Map<string, Style>();
+
+export const tripPointStyle = (label: string): Style => {
+  const cached = tripPointStyles.get(label);
+
+  if (cached) {
+    return cached;
+  }
+
+  const style = new Style({
+    image: new CircleStyle({
+      radius: 13,
+      fill: new Fill({ color: '#29719f' }),
+      stroke: new Stroke({ color: '#ffffff', width: 3 }),
+    }),
+    text: new Text({
+      text: label,
+      font: 'bold 13px sans-serif',
+      fill: new Fill({ color: '#ffffff' }),
+    }),
+  });
+
+  tripPointStyles.set(label, style);
+
+  return style;
+};
+
+const tripStopStyles = new Map<number, Style>();
+
+export const tripStopStyle = (number: number): Style => {
+  const cached = tripStopStyles.get(number);
+
+  if (cached) {
+    return cached;
+  }
+
+  const style = new Style({
+    image: new CircleStyle({
+      radius: 13,
+      fill: new Fill({ color: '#DBBC25' }),
+      stroke: new Stroke({ color: '#ffffff', width: 3 }),
+    }),
+    text: new Text({
+      text: number.toString(),
+      font: 'bold 13px sans-serif',
+      fill: new Fill({ color: '#000000' }),
+    }),
+  });
+
+  tripStopStyles.set(number, style);
+
+  return style;
+};

@@ -24,6 +24,7 @@ import useJourneyTracking from '@/composables/useJourneyTracking';
 import SubHeading from '@/Components/SubHeading.vue';
 import SidebarLayout from '@/Components/SidebarLayout.vue';
 import NearbyTowns from '@/Components/PageSpecific/EatingOut/Town/NearbyTowns.vue';
+import TripPlannerCta from '@/Components/PageSpecific/EatingOut/Shared/TripPlannerCta.vue';
 
 type AlternateArea = {
   borough: string;
@@ -136,6 +137,12 @@ useJourneyTracking().logWhenVisible(
         class="order-1 xmd:order-0"
         heading="Other areas nearby"
         :towns="nearby"
+      />
+
+      <TripPlannerCta
+        v-if="area.tripPlannerUrl"
+        :place="area.name"
+        :href="area.tripPlannerUrl"
       />
 
       <TownFilterSidebar

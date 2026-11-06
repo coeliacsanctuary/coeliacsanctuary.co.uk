@@ -11,6 +11,7 @@ use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateRecipeIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateShopIndexPageOpenGraphImageJob;
+use App\Jobs\OpenGraphImages\CreateTripPlannerPageOpenGraphImageJob;
 use App\Models\OpenGraphImage;
 
 class GetOpenGraphImageForRouteAction
@@ -42,6 +43,7 @@ class GetOpenGraphImageForRouteAction
             'shop' => CreateShopIndexPageOpenGraphImageJob::dispatch(),
             'eatery', 'eatery-map' => CreateEateryIndexPageOpenGraphImageJob::dispatch(),
             'eatery-app' => CreateEateryAppPageOpenGraphImageJob::dispatch(),
+            'eatery-trip-planner' => CreateTripPlannerPageOpenGraphImageJob::dispatch(),
             default => CreateHomePageOpenGraphImageJob::dispatch(),
         };
 
