@@ -40,6 +40,7 @@ class FindNearestTownActionTest extends TestCase
 
         $this->assertSame('Stafford', $town?->town);
         $this->assertTrue($town->relationLoaded('county'));
+        $this->assertSame("/wheretoeat/{$this->county->slug}/{$town->slug}", $town->link());
     }
 
     #[Test]

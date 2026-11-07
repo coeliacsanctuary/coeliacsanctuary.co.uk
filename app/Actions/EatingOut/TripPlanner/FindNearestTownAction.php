@@ -20,7 +20,7 @@ class FindNearestTownAction
                           * sin( radians( CAST(SUBSTRING_INDEX(latlng, \',\', 1) AS DECIMAL(10,7)) ) )
                         )
                      ) AS distance', [$lat, $lng, $lat])
-            ->addSelect(['id', 'town', 'county_id'])
+            ->addSelect(['id', 'town', 'slug', 'county_id'])
             ->with('county')
             ->whereNotNull('latlng')
             ->whereNot('town', 'nationwide')

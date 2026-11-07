@@ -31,6 +31,8 @@ export type Trip = {
 
 export type TripStop = {
   number: number;
+  type: 'via' | 'suggested';
+  label: string | null;
   duration: number;
   distanceAlongRoute: number;
   lat: number;
@@ -41,4 +43,9 @@ export type TripSummary = {
   status: 'pending' | 'ready' | 'failed' | null;
   overview: string | null;
   stops: Record<number, string>;
+};
+
+export type TripTown = {
+  name: string;
+  link: string;
 };

@@ -17,6 +17,7 @@ use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Bus;
 use Laravel\Ai\Prompts\AgentPrompt;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -59,10 +60,10 @@ class GenerateTripSummaryJobTest extends TestCase
         $this->expectPipelineToRun(TripEateriesPipeline::class, collect($eateries));
     }
 
-    protected function expectStops(): void
+    protected function expectStops(string $type = 'suggested', ?string $label = null): void
     {
-        $this->expectAction(GetTripStopsAction::class, return: [
-            ['number' => 1, 'duration' => 3600.0, 'distanceAlongRoute' => 80467.2, 'lat' => 52.85, 'lng' => -2.15],
+        $this->expectAction(GetTripStopsAction::class, [Mockery::any(), $this->trip->points, 60], return: [
+            ['number' => 1, 'type' => $type, 'label' => $label, 'duration' => 3600.0, 'distanceAlongRoute' => 80467.2, 'lat' => 52.85, 'lng' => -2.15],
         ]);
     }
 
@@ -106,6 +107,30 @@ class GenerateTripSummaryJobTest extends TestCase
                 && $stop->contains('Near The Stop')
                 && $stop->doesntContain('Far Away');
         });
+    }
+
+    #[Test]
+    public function itTellsTheAgentWhichStopsAreSuggested(): void
+    {
+        $this->expectEateries($this->eatery());
+        $this->expectStops();
+        $this->fakeSummary();
+
+        app()->call([new GenerateTripSummaryJob($this->trip), 'handle']);
+
+        TripSummaryAgent::assertPrompted(fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, "Stop 1\nType: Suggested stop"));
+    }
+
+    #[Test]
+    public function itTellsTheAgentWhichStopsAreViaPointsTheUserChose(): void
+    {
+        $this->expectEateries($this->eatery());
+        $this->expectStops('via', 'Llangollen, Wales, United Kingdom');
+        $this->fakeSummary();
+
+        app()->call([new GenerateTripSummaryJob($this->trip), 'handle']);
+
+        TripSummaryAgent::assertPrompted(fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, "Stop 1\nType: Via point chosen by the user (Llangollen, Wales, United Kingdom)"));
     }
 
     #[Test]

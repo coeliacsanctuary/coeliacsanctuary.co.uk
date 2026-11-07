@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\TripPlanner;
 
+use App\Models\EatingOut\EateryTown;
+use App\Actions\EatingOut\TripPlanner\FindNearestTownAction;
 use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Concerns\FormatsMarkdown;
@@ -21,8 +23,15 @@ class ShowController
 {
     use FormatsMarkdown;
 
-    public function __invoke(EateryTrip $eateryTrip, Request $request, Inertia $inertia, TripEateriesPipeline $tripEateriesPipeline, GetTripStopsAction $getTripStopsAction, GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction): Response
-    {
+    public function __invoke(
+        EateryTrip $eateryTrip,
+        Request $request,
+        Inertia $inertia,
+        TripEateriesPipeline $tripEateriesPipeline,
+        GetTripStopsAction $getTripStopsAction,
+        FindNearestTownAction $findNearestTownAction,
+        GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction,
+    ): Response {
         $ogImage = $getOpenGraphImageForRouteAction->handle('eatery-trip-planner', function (string $url, OpenGraphImage $image) {
             $timestamp = $image->updated_at->timestamp;
 
@@ -61,7 +70,7 @@ class ShowController
                         'duration' => $eateryTrip->route_duration,
                     ],
                 ],
-                'stops' => fn (): array => $getTripStopsAction->handle($eateryTrip->toTripRoute(), $eateryTrip->stop_interval),
+                'stops' => fn (): array => $getTripStopsAction->handle($eateryTrip->toTripRoute(), $eateryTrip->points, $eateryTrip->stop_interval),
                 'summary' => fn (): array => [
                     'status' => $eateryTrip->ai_summary_status?->value,
                     'overview' => $eateryTrip->ai_summary ? (string) $this->formatMarkdown($eateryTrip->ai_summary['overview']) : null,
@@ -69,6 +78,21 @@ class ShowController
                         ->mapWithKeys(fn (array $stop): array => [$stop['number'] => (string) $this->formatMarkdown($stop['summary'])])
                         ->all(),
                 ],
+                'towns' => fn (): array => collect($eateryTrip->points)
+                    ->map(function (array $point, int $index) use ($findNearestTownAction): ?array {
+                        if ($index === 0) {
+                            return null;
+                        }
+
+                        $town = $findNearestTownAction->handle($point['lat'], $point['lng']);
+
+                        if ( ! $town instanceof EateryTown || (float) $town->getAttribute('distance') > 8046.72) {
+                            return null;
+                        }
+
+                        return ['name' => $town->town, 'link' => $town->link()];
+                    })
+                    ->all(),
                 'canEdit' => $eateryTrip->canBeEditedWith($token),
                 'eateries' => fn (): Collection => $tripEateriesPipeline->run(
                     route: $eateryTrip->toTripRoute(),

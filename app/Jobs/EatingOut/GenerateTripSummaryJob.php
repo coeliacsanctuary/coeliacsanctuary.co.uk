@@ -53,7 +53,7 @@ class GenerateTripSummaryJob implements ShouldQueue
             )
             ->map(fn (JsonResource $eatery): array => $eatery->resolve());
 
-        $stops = $getTripStopsAction->handle($this->trip->toTripRoute(), $this->trip->stop_interval);
+        $stops = $getTripStopsAction->handle($this->trip->toTripRoute(), $this->trip->points, $this->trip->stop_interval);
 
         $response = TripSummaryAgent::make()->prompt($this->buildPrompt($eateries, $stops, $findNearestTownAction));
 
@@ -102,7 +102,7 @@ class GenerateTripSummaryJob implements ShouldQueue
 
     /**
      * @param  Collection<int, array<string, mixed>>  $eateries
-     * @param  array<int, array{number: int, duration: float, distanceAlongRoute: float, lat: float, lng: float}>  $stops
+     * @param  array<int, array{number: int, type: 'via' | 'suggested', label: string | null, duration: float, distanceAlongRoute: float, lat: float, lng: float}>  $stops
      */
     protected function buildPrompt(Collection $eateries, array $stops, FindNearestTownAction $findNearestTownAction): string
     {
@@ -143,8 +143,11 @@ class GenerateTripSummaryJob implements ShouldQueue
                     ->take(10),
             );
 
+            $type = $stop['type'] === 'via' ? "Via point chosen by the user ({$stop['label']})" : 'Suggested stop';
+
             return <<<PROMPT
             Stop {$stop['number']}
+            Type: {$type}
             Nearest town: {$location}
             Into the drive: {$into}
             Places to eat within half an hour of this stop:

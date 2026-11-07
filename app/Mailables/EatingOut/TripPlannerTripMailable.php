@@ -30,7 +30,7 @@ class TripPlannerTripMailable extends BaseMailable
                 'miles' => round($this->trip->route_distance / 1609.344, 1),
                 'hours' => intdiv((int) $this->trip->route_duration, 3600),
                 'minutes' => (int) round(((int) $this->trip->route_duration % 3600) / 60),
-                'stops' => count(app(GetTripStopsAction::class)->handle($this->trip->toTripRoute(), $this->trip->stop_interval)),
+                'stops' => collect(app(GetTripStopsAction::class)->handle($this->trip->toTripRoute(), $this->trip->points, $this->trip->stop_interval))->where('type', 'suggested')->count(),
                 'viewUrl' => route('eating-out.trip-planner.show', ['eateryTrip' => $this->trip]),
                 'editUrl' => $this->includeEditLink ? route('eating-out.trip-planner.edit', ['eateryTrip' => $this->trip, 'token' => $this->trip->edit_token]) : null,
                 'reason' => 'because you asked for a link to your trip',

@@ -38,6 +38,7 @@ import {
 import 'ol/ol.css';
 import CoeliacCompact from '@/Layouts/CoeliacCompact.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import { suggestedStops } from '@/support/eating-out/trip-planner/format';
 import {
   Trip,
   TripEatery,
@@ -45,6 +46,7 @@ import {
   TripRoute,
   TripStop,
   TripSummary,
+  TripTown,
 } from '@/types/TripPlannerTypes';
 
 defineOptions({
@@ -57,6 +59,7 @@ const props = defineProps<{
   eateries?: TripEatery[];
   stops?: TripStop[];
   summary?: TripSummary;
+  towns?: (TripTown | null)[];
   destination?: TripLocation | null;
 }>();
 
@@ -289,11 +292,11 @@ const drawStops = () => {
   stopSource.clear();
 
   stopSource.addFeatures(
-    stops.value.map(
-      (stop) =>
+    suggestedStops(stops.value).map(
+      (stop, index) =>
         new Feature({
           geometry: new Point(fromLonLat([stop.lng, stop.lat])),
-          number: stop.number,
+          number: index + 1,
         }),
     ),
   );
@@ -430,6 +433,7 @@ onMounted(() => {
       :eateries="eateries"
       :stops="stops"
       :summary="summary"
+      :towns="towns"
       :selected="selectedEatery"
       :hovered-key="hoveredEatery?.key"
       :scroll-to-hovered="hoveredFromMap"

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Mailables\EatingOut;
 
+use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
 use App\Infrastructure\MjmlMessage;
 use App\Mailables\EatingOut\TripPlannerTripMailable;
 use App\Models\EatingOut\EateryTrip;
@@ -46,6 +47,19 @@ class TripPlannerTripMailableTest extends TestCase
         $this->assertSame(0, $data['stops']);
         $this->assertSame('me@example.com', $data['email']);
         $this->assertSame('because you asked for a link to your trip', $data['reason']);
+    }
+
+    #[Test]
+    public function itOnlyCountsTheSuggestedStops(): void
+    {
+        $this->expectAction(GetTripStopsAction::class, return: [
+            ['number' => 1, 'type' => 'via', 'label' => 'Llangollen', 'duration' => 1800.0, 'distanceAlongRoute' => 1000.0, 'lat' => 53.0, 'lng' => -2.0],
+            ['number' => 2, 'type' => 'suggested', 'label' => null, 'duration' => 3600.0, 'distanceAlongRoute' => 2000.0, 'lat' => 53.1, 'lng' => -2.1],
+        ]);
+
+        $data = TripPlannerTripMailable::make($this->create(EateryTrip::class), false, 'me@example.com', 'foo')->data();
+
+        $this->assertSame(1, $data['stops']);
     }
 
     #[Test]

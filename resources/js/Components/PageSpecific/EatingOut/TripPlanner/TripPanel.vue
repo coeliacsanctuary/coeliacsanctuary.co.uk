@@ -5,10 +5,12 @@ import {
   TripEatery,
   TripStop,
   TripSummary,
+  TripTown,
 } from '@/types/TripPlannerTypes';
 import {
   formatDuration,
   metersToMiles,
+  suggestedStops,
 } from '@/support/eating-out/trip-planner/format';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import PlaceDetailsContent from '@/Components/PageSpecific/EatingOut/Browse/PlaceDetailsContent.vue';
@@ -25,12 +27,17 @@ const props = defineProps<{
   eateries: TripEatery[];
   stops: TripStop[];
   summary?: TripSummary;
+  towns?: (TripTown | null)[];
   selected?: TripEatery;
   hoveredKey?: string;
   scrollToHovered?: boolean;
 }>();
 
 const emits = defineEmits(['edit', 'new', 'select', 'back', 'hover', 'share']);
+
+const suggestedStopCount = computed(
+  (): number => suggestedStops(props.stops).length,
+);
 
 const expanded = ref(false);
 const body: Ref<HTMLDivElement | undefined> = ref();
@@ -136,8 +143,10 @@ watch(
         <p class="text-sm text-grey-dark">
           {{ metersToMiles(trip.route.distance) }} miles &middot;
           {{ formatDuration(trip.route.duration) }} &middot;
-          <template v-if="stops.length">
-            {{ stops.length }} suggested stop{{ stops.length > 1 ? 's' : '' }}
+          <template v-if="suggestedStopCount">
+            {{ suggestedStopCount }} suggested stop{{
+              suggestedStopCount > 1 ? 's' : ''
+            }}
             &middot;
           </template>
           <template v-if="trip.points.length > 2">
@@ -197,6 +206,7 @@ watch(
         :eateries="eateries"
         :stops="stops"
         :summary="summary"
+        :towns="towns"
         :hovered-key="hoveredKey"
         @select="select"
         @hover="$emit('hover', $event)"

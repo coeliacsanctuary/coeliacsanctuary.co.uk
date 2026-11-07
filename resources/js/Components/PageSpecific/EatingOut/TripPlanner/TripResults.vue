@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { TripEatery, TripStop, TripSummary } from '@/types/TripPlannerTypes';
-import { formatDuration } from '@/support/eating-out/trip-planner/format';
+import {
+  TripEatery,
+  TripStop,
+  TripSummary,
+  TripTown,
+} from '@/types/TripPlannerTypes';
+import {
+  formatDuration,
+  stopName,
+} from '@/support/eating-out/trip-planner/format';
+import TripTownLink from '@/Components/PageSpecific/EatingOut/TripPlanner/TripTownLink.vue';
 import TripEateryRow from '@/Components/PageSpecific/EatingOut/TripPlanner/TripEateryRow.vue';
 import TripSummaryText from '@/Components/PageSpecific/EatingOut/TripPlanner/TripSummaryText.vue';
 
@@ -9,8 +18,25 @@ const props = defineProps<{
   eateries: TripEatery[];
   stops: TripStop[];
   summary?: TripSummary;
+  towns?: (TripTown | null)[];
   hoveredKey?: string;
 }>();
+
+const viaTown = (stop: TripStop): TripTown | null => {
+  if (stop.type !== 'via') {
+    return null;
+  }
+
+  const viaIndex = props.stops
+    .filter((item) => item.type === 'via')
+    .indexOf(stop);
+
+  return props.towns?.[viaIndex + 1] ?? null;
+};
+
+const destinationTown = computed(
+  (): TripTown | null => props.towns?.[props.towns.length - 1] ?? null,
+);
 
 const summaryPending = computed(
   (): boolean => props.summary?.status === 'pending',
@@ -36,10 +62,10 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
   return boundaries.slice(0, -1).map((from, index) => ({
     title:
       index === 0
-        ? 'Before stop 1'
+        ? `Before ${stopName(props.stops[0], props.stops)}`
         : index === props.stops.length
-          ? 'After the last stop'
-          : `Stop ${index} to stop ${index + 1}`,
+          ? `After ${stopName(props.stops[index - 1], props.stops)}`
+          : `${stopName(props.stops[index - 1], props.stops)} to ${stopName(props.stops[index], props.stops)}`,
     eateries: props.eateries.filter(
       (eatery) =>
         eatery.durationAlongRoute >= from &&
@@ -84,7 +110,7 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
         <p
           class="bg-secondary/20 p-2 font-semibold"
           v-text="
-            `Stop ${stop.number}, about ${formatDuration(stop.duration)} in`
+            `${stopName(stop, stops)}, about ${formatDuration(stop.duration)} in`
           "
         />
 
@@ -108,6 +134,11 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
         >
           No places within half an hour of this stop.
         </p>
+
+        <TripTownLink
+          v-if="viaTown(stop)"
+          :town="viaTown(stop) as TripTown"
+        />
       </div>
 
       <p
@@ -141,5 +172,11 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
         />
       </div>
     </template>
+
+    <TripTownLink
+      v-if="destinationTown"
+      :town="destinationTown"
+      class="border-t border-grey-off"
+    />
   </div>
 </template>

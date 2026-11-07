@@ -124,4 +124,20 @@ class TripRouteTest extends TestCase
         $this->assertEqualsWithDelta(11675, $point['along'], 5);
         $this->assertSame(630.0, $point['duration']);
     }
+
+    #[Test]
+    public function itLocatesPointsInOrderOnARouteThatDoublesBack(): void
+    {
+        $route = new TripRoute(
+            geometry: '',
+            points: collect([...range(0, 20), ...range(19, 0)])->map(fn (int $index): LatLng => new LatLng(53 + ($index / 100), -2.44)),
+            distance: 44478,
+            duration: 2400,
+            timings: [['from' => 0, 'to' => 40, 'distance' => 44478, 'duration' => 2400]],
+        );
+
+        $located = $route->locatePoints([['lat' => 53.2, 'lng' => -2.44], ['lat' => 53.1, 'lng' => -2.44]]);
+
+        $this->assertEqualsWithDelta([1200, 1800], array_column($located, 'duration'), 0.01);
+    }
 }

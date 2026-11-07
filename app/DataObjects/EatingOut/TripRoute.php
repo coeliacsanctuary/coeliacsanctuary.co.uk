@@ -86,6 +86,37 @@ final readonly class TripRoute
         return $previous;
     }
 
+    /**
+     * @param  array<int, array{lat: float, lng: float}>  $points
+     * @return array<int, array{lat: float, lng: float, along: float, duration: float}>
+     */
+    public function locatePoints(array $points): array
+    {
+        $measured = $this->measuredPoints();
+        $searchFrom = 0;
+        $located = [];
+
+        foreach (array_values($points) as $point) {
+            $target = new LatLng($point['lat'], $point['lng']);
+            $closest = $searchFrom;
+            $closestDistance = INF;
+
+            for ($index = $searchFrom, $total = count($measured); $index < $total; $index++) {
+                $distance = $this->metersBetween($target, new LatLng($measured[$index]['lat'], $measured[$index]['lng']));
+
+                if ($distance < $closestDistance) {
+                    $closest = $index;
+                    $closestDistance = $distance;
+                }
+            }
+
+            $located[] = $measured[$closest];
+            $searchFrom = $closest;
+        }
+
+        return $located;
+    }
+
     /** @return array<int, array{lat: float, lng: float, along: float, duration: float}> */
     private function measuredPoints(): array
     {

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers\EatingOut\TripPlanner;
 
+use App\Actions\EatingOut\TripPlanner\FindNearestTownAction;
 use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
 use App\Enums\EatingOut\TripSummaryStatus;
+use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryTrip;
 use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
 use Illuminate\Http\Client\Request;
@@ -118,9 +121,9 @@ class ShowControllerTest extends TestCase
     {
         $this->trip->update(['stop_interval' => 60]);
 
-        $stops = [['number' => 1, 'duration' => 3600.5, 'distanceAlongRoute' => 90000.5, 'lat' => 53.5, 'lng' => -2.3]];
+        $stops = [['number' => 1, 'type' => 'suggested', 'label' => null, 'duration' => 3600.5, 'distanceAlongRoute' => 90000.5, 'lat' => 53.5, 'lng' => -2.3]];
 
-        $this->expectAction(GetTripStopsAction::class, [Mockery::any(), 60], return: $stops);
+        $this->expectAction(GetTripStopsAction::class, [Mockery::any(), $this->trip->points, 60], return: $stops);
 
         $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->where('stops', $stops)->etc());
     }
@@ -151,6 +154,43 @@ class ShowControllerTest extends TestCase
             ->where('summary.overview', "<p>A <strong>lovely</strong> drive.</p>\n")
             ->where('summary.stops.2', "<p>Stop two.</p>\n")
             ->etc());
+    }
+
+    protected function townAtDistance(float $metres): EateryTown
+    {
+        $county = $this->create(EateryCounty::class, ['slug' => 'denbighshire']);
+
+        return $this->create(EateryTown::class, ['town' => 'Llangollen', 'slug' => 'llangollen', 'county_id' => $county->id])
+            ->setRelation('county', $county)
+            ->setAttribute('distance', $metres);
+    }
+
+    #[Test]
+    public function itLinksEachPointAfterTheStartToItsNearestTown(): void
+    {
+        $this->trip->update(['points' => [
+            ['label' => 'Crewe', 'lat' => 53.1, 'lng' => -2.44],
+            ['label' => 'Llangollen', 'lat' => 52.97, 'lng' => -3.17],
+            ['label' => 'Llandudno', 'lat' => 53.32, 'lng' => -3.83],
+        ]]);
+
+        $town = $this->townAtDistance(1000);
+
+        $this->expectAction(FindNearestTownAction::class, once: false, then: fn ($mock) => $mock
+            ->twice()
+            ->andReturnUsing(fn (float $lat, float $lng): ?EateryTown => [$lat, $lng] === [52.97, -3.17] ? $town : null));
+
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page
+            ->where('towns', [null, ['name' => 'Llangollen', 'link' => '/wheretoeat/denbighshire/llangollen'], null])
+            ->etc());
+    }
+
+    #[Test]
+    public function itDoesntLinkATownMoreThanFiveMilesFromThePoint(): void
+    {
+        $this->expectAction(FindNearestTownAction::class, return: $this->townAtDistance(8100));
+
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->where('towns', [null, null])->etc());
     }
 
     #[Test]
