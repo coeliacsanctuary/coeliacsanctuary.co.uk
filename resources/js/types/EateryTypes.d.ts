@@ -134,6 +134,7 @@ export type TownPage = Town & {
   latlng: string;
   link: string;
   image?: string;
+  tripPlannerUrl?: string | null;
 };
 
 export type LondonBoroughPage = TownPage & {

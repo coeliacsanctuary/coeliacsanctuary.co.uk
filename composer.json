@@ -62,6 +62,7 @@
         "nesbot/carbon": "^3.15.1",
         "outl1ne/nova-sortable": "^4.0.4",
         "saintsystems/nova-linkable-metrics": "^5.0.1",
+        "skagarwal/google-places-api": "^3.2",
         "spatie/browsershot": "^5.4.2",
         "spatie/eloquent-sortable": "^5.0.1",
         "spatie/geocoder": "^4.1",

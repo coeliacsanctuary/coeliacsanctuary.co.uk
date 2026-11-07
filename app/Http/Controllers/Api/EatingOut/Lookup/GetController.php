@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\EatingOut\Lookup;
 
+use App\Actions\EatingOut\GetPlaceLocationAction;
+use App\Http\Requests\EatingOut\Api\LookupGetRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
+use RuntimeException;
 
 class GetController
 {
-    public function __invoke(string $id): JsonResponse
+    public function __invoke(string $placeId, LookupGetRequest $request, GetPlaceLocationAction $getPlaceLocationAction): JsonResponse
     {
-        $response = Http::getAddress()->get("get-location/{$id}");
+        try {
+            $latLng = $getPlaceLocationAction->handle($placeId, $request->string('sessionToken')->toString());
+        } catch (RuntimeException) {
+            abort(404);
+        }
 
-        abort_unless($response->successful(), 404);
-
-        /** @var array{latitude: float, longitude: float} $location */
-        $location = $response->json();
-
-        return response()->json([
-            'lat' => $location['latitude'],
-            'lng' => $location['longitude'],
-        ]);
+        return new JsonResponse($latLng->toLatLng());
     }
 }

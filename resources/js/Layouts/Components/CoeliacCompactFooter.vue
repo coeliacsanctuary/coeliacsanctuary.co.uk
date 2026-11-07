@@ -6,6 +6,8 @@ import { Link } from '@inertiajs/vue3';
 import BlueskyIcon from '@/Icons/BlueskyIcon.vue';
 import TiktokIcon from '@/Icons/TiktokIcon.vue';
 
+defineProps<{ plainLinks?: boolean }>();
+
 const year = new Date().getFullYear();
 
 const navigation: { links: { label: string; url: string }[] } = {
@@ -29,12 +31,13 @@ const navigation: { links: { label: string; url: string }[] } = {
           v-for="item in navigation.links"
           :key="item.label"
         >
-          <Link
+          <component
+            :is="plainLinks ? 'a' : Link"
             :href="item.url"
             class="hover:text-gray-900"
           >
             {{ item.label }}
-          </Link>
+          </component>
         </li>
       </ul>
 

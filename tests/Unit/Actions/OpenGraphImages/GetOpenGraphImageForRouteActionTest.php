@@ -13,6 +13,7 @@ use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateRecipeIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateShopIndexPageOpenGraphImageJob;
+use App\Jobs\OpenGraphImages\CreateTripPlannerPageOpenGraphImageJob;
 use App\Models\OpenGraphImage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
@@ -60,6 +61,7 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
             'eatery' => CreateEateryIndexPageOpenGraphImageJob::class,
             'eatery-app' => CreateEateryAppPageOpenGraphImageJob::class,
             'eatery-map' => CreateEateryIndexPageOpenGraphImageJob::class,
+            'eatery-trip-planner' => CreateTripPlannerPageOpenGraphImageJob::class,
         ];
 
         foreach ($jobs as $route => $job) {

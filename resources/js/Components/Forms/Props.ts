@@ -129,6 +129,7 @@ export type FormSelectProps = BaseFormProps & {
   options: FormSelectOption[] | FormSelectGroup[];
   placeholder?: string;
   hideLabel?: boolean;
+  helpText?: string;
   error?: string;
   size?: 'small' | 'default' | 'large';
   inputClasses?: string;
@@ -140,6 +141,7 @@ export const FormSelectPropsDefaults = {
   label: undefined,
   placeholder: 'Select an option',
   hideLabel: false,
+  helpText: undefined,
   error: undefined,
   size: 'default',
   inputClasses: '',
@@ -193,6 +195,7 @@ export type FormLookupProps = Omit<InputProps, 'type'> & {
   fallbackObject?: object;
   fallbackKey?: string;
   resultsClasses?: string;
+  ignoreAutofill?: boolean;
 };
 
 export const FormLookupPropDefaults = {
@@ -206,6 +209,7 @@ export const FormLookupPropDefaults = {
   fallbackObject: () => ({}),
   fallbackKey: undefined,
   resultsClasses: '',
+  ignoreAutofill: false,
 } satisfies Partial<FormLookupProps>;
 
 export type ProductQuantitySwitcherProps = Omit<

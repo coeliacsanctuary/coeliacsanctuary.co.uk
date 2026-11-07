@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { HeadingBackLink, HeadingCustomLink } from '@/types/Types';
 import { Link } from '@inertiajs/vue3';
+import { needsFullPageLoad } from '@/helpers';
 import { ArrowUturnLeftIcon } from '@heroicons/vue/20/solid';
 
 withDefaults(
@@ -26,7 +27,8 @@ withDefaults(
     :class="{ 'border-gray-light border-b pb-2': border }"
     class="flex flex-col"
   >
-    <Link
+    <component
+      :is="needsFullPageLoad(backLink?.href) ? 'a' : Link"
       v-if="backLink && backLink.position === 'top'"
       :href="backLink.href"
       class="mb-4 inline-flex items-center font-medium text-gray-500 hover:text-primary-dark xl:text-lg"
@@ -40,7 +42,7 @@ withDefaults(
       <ArrowUturnLeftIcon class="h-6 w-6 pr-2 xl:h-8 xl:w-8" />
 
       <span v-html="backLink.label" />
-    </Link>
+    </component>
 
     <a
       v-else-if="customLink && customLink.position === 'top'"
@@ -80,7 +82,8 @@ withDefaults(
       <slot />
     </component>
 
-    <Link
+    <component
+      :is="needsFullPageLoad(backLink?.href) ? 'a' : Link"
       v-if="backLink && backLink.position !== 'top'"
       :href="backLink.href"
       class="mt-4 inline-flex items-center justify-center font-medium text-gray-500 hover:text-primary-dark xl:text-lg"
@@ -90,12 +93,11 @@ withDefaults(
         'justify-start': backLink.direction === 'left',
         'justify-end': backLink.direction === 'right',
       }"
-      xe
     >
       <ArrowUturnLeftIcon class="h-6 w-6 pr-2 xl:h-8 xl:w-8" />
 
       <span v-html="backLink.label" />
-    </Link>
+    </component>
 
     <a
       v-else-if="customLink && customLink.position === 'bottom'"

@@ -81,3 +81,15 @@ export const getTitle = (title: string | undefined): string => {
 
   return `${title} - ${appName}`;
 };
+
+const fullPageLoadPaths = ['/wheretoeat/browse', '/wheretoeat/trip-planner'];
+
+export const needsFullPageLoad = (href: string | undefined): boolean => {
+  if (!href) {
+    return false;
+  }
+
+  const path = new URL(href, 'https://www.coeliacsanctuary.co.uk').pathname;
+
+  return fullPageLoadPaths.some((prefix) => path.startsWith(prefix));
+};

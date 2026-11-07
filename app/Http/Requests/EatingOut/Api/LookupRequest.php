@@ -12,6 +12,7 @@ class LookupRequest extends FormRequest
     {
         return [
             'term' => ['required', 'string'],
+            'sessionToken' => ['required', 'string'],
         ];
     }
 }

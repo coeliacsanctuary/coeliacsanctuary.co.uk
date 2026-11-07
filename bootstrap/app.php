@@ -18,6 +18,7 @@ use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Response\Inertia;
 use App\Jobs\Metrics\Orchestrators\BaseOrchestratorJob;
+use App\Models\EatingOut\EateryTrip;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -126,6 +127,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(SummariseAskSealiacChatsCommand::class)->everyMinute();
         $schedule->command(ProcessEateryWebsiteChecksCommand::class)->daily();
         $schedule->command(CleanUpNovaPreviewsCommand::class)->daily();
+        $schedule->command('model:prune', ['--model' => [EateryTrip::class]])->daily();
 
         BaseOrchestratorJob::scheduleAll($schedule);
 
