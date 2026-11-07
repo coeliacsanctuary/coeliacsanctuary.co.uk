@@ -173,7 +173,7 @@ class GenerateTripSummaryJobTest extends TestCase
 
         TripSummaryAgent::fake()->preventStrayPrompts();
 
-        app()->call([$job, 'handle']);
+        app()->call($job->handle(...));
 
         TripSummaryAgent::assertNeverPrompted();
         $this->assertSame(TripSummaryStatus::PENDING, $this->trip->refresh()->ai_summary_status);

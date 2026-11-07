@@ -106,7 +106,7 @@ class CreateTripActionTest extends TestCase
     {
         $this->expectAction(GetRouteAction::class, return: $this->route());
 
-        $trip = $this->callAction(CreateTripAction::class, $this->points(), 5);
+        $this->callAction(CreateTripAction::class, $this->points(), 5);
 
         Bus::assertDispatched(GenerateTripSummaryJob::class);
     }

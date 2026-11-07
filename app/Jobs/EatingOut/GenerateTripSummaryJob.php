@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use App\Models\EatingOut\EateryTown;
 use App\Actions\EatingOut\TripPlanner\FindNearestTownAction;
 use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
 use App\Ai\Agents\TripSummaryAgent;
@@ -132,7 +133,7 @@ class GenerateTripSummaryJob implements ShouldQueue
 
         $stopSections = collect($stops)->map(function (array $stop) use ($eateries, $findNearestTownAction): string {
             $town = $findNearestTownAction->handle($stop['lat'], $stop['lng']);
-            $location = $town ? "{$town->town}, {$town->county?->county}" : 'Unknown';
+            $location = $town instanceof EateryTown ? "{$town->town}, {$town->county?->county}" : 'Unknown';
             $into = "{$this->duration($stop['duration'])}, {$this->miles($stop['distanceAlongRoute'])}";
 
             $nearby = $this->listEateries(
