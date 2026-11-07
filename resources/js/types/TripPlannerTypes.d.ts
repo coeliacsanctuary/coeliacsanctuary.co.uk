@@ -15,7 +15,11 @@ export type TripEatery = EateryBrowseResource & {
 
 export type TripLocation = LatLng & { label: string };
 
-export type TripRoute = { geometry: string; distance: number; duration: number };
+export type TripRoute = {
+  geometry: string;
+  distance: number;
+  duration: number;
+};
 
 export type Trip = {
   key: string;

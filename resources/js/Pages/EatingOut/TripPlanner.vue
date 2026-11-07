@@ -19,10 +19,7 @@ import FilterMap from '@/Components/PageSpecific/EatingOut/Browse/FilterMap.vue'
 import TripPanel from '@/Components/PageSpecific/EatingOut/TripPlanner/TripPanel.vue';
 import ShareTripModal from '@/Components/PageSpecific/EatingOut/TripPlanner/ShareTripModal.vue';
 import TripPlannerForm from '@/Components/PageSpecific/EatingOut/TripPlanner/TripPlannerForm.vue';
-import {
-  EateryFilterKeys,
-  EateryFilters,
-} from '@/types/EateryTypes';
+import { EateryFilterKeys, EateryFilters } from '@/types/EateryTypes';
 import { Feature, Overlay, View } from 'ol';
 import Map from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
@@ -113,7 +110,9 @@ const panelCoversMap = (): boolean => {
     return false;
   }
 
-  return panelBounds.left < mapBounds.right && panelBounds.right > mapBounds.left;
+  return (
+    panelBounds.left < mapBounds.right && panelBounds.right > mapBounds.left
+  );
 };
 
 const panToEatery = (eatery: TripEatery) => {
@@ -258,7 +257,9 @@ const drawTrip = () => {
 
   drawEateries();
 
-  map.value.getView().fit(routeSource.getExtent(), { padding: [30, 30, 30, 30] });
+  map.value
+    .getView()
+    .fit(routeSource.getExtent(), { padding: [30, 30, 30, 30] });
 };
 
 const drawStops = () => {
@@ -320,7 +321,9 @@ onMounted(() => {
       new TileLayer({ source: new OSM() }),
       new VectorLayer({
         source: routeSource,
-        style: new Style({ stroke: new Stroke({ color: '#29719f', width: 5 }) }),
+        style: new Style({
+          stroke: new Stroke({ color: '#29719f', width: 5 }),
+        }),
       }),
       markerLayer,
       new VectorLayer({
@@ -454,7 +457,9 @@ onMounted(() => {
             <div
               class="flex flex-col space-y-3 border-t border-grey-off pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-8"
             >
-              <SubHeading classes="mb-2!">How the trip planner works</SubHeading>
+              <SubHeading classes="mb-2!">
+                  How the trip planner works
+              </SubHeading>
 
               <p class="prose max-w-none">
                 Every place in my eating out guide that's within your chosen

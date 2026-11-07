@@ -115,8 +115,7 @@ const classes = computed((): string[] => {
 const emits = defineEmits(['click']);
 
 const element = computed(() => {
-  const isInertiaLink =
-    props.as instanceof Object && props.as?.name === 'Link';
+  const isInertiaLink = props.as instanceof Object && props.as?.name === 'Link';
 
   return isInertiaLink && needsFullPageLoad(props.href) ? 'a' : props.as;
 });

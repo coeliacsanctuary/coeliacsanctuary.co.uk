@@ -59,7 +59,10 @@ watch(
       const rowBounds = row.getBoundingClientRect();
       const bodyBounds = body.value.getBoundingClientRect();
 
-      if (rowBounds.top >= bodyBounds.top && rowBounds.bottom <= bodyBounds.bottom) {
+      if (
+        rowBounds.top >= bodyBounds.top &&
+        rowBounds.bottom <= bodyBounds.bottom
+      ) {
         return;
       }
 
@@ -132,8 +135,10 @@ watch(
             &middot;
           </template>
           <template v-if="trip.points.length > 2">
-            via {{ trip.points.length - 2 }}
-            stop{{ trip.points.length > 3 ? 's' : '' }} &middot;
+            via {{ trip.points.length - 2 }} stop{{
+              trip.points.length > 3 ? 's' : ''
+            }}
+            &middot;
           </template>
           {{ eateries.length }} places along the way
         </p>

@@ -6,7 +6,11 @@ import CoeliacButton from '@/Components/CoeliacButton.vue';
 import FormLookup from '@/Components/Forms/FormLookup.vue';
 import FormSelect from '@/Components/Forms/FormSelect.vue';
 import { LatLng } from '@/types/EateryTypes';
-import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@heroicons/vue/24/outline';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  XMarkIcon,
+} from '@heroicons/vue/24/outline';
 import { Trip, TripLocation } from '@/types/TripPlannerTypes';
 
 type PointRow = {
@@ -77,7 +81,10 @@ const moveStop = (index: number, direction: -1 | 1) => {
     return;
   }
 
-  [rows.value[index], rows.value[target]] = [rows.value[target], rows.value[index]];
+  [rows.value[index], rows.value[target]] = [
+    rows.value[target],
+    rows.value[index],
+  ];
 };
 
 const removeStop = (index: number) => {
@@ -151,21 +158,18 @@ const selectLocation = (
   lookupError.value = false;
   placeLookup.sessionToken = row.sessionToken;
 
-  placeLookup.get(
-    `/api/wheretoeat/lookup/${encodeURIComponent(location.id)}`,
-    {
-      onSuccess: ({ lat, lng }) => {
-        row.location = { label: location.label, lat, lng };
-        row.sessionToken = crypto.randomUUID();
-      },
-      onHttpException: () => {
-        lookupError.value = true;
-      },
-      onNetworkError: () => {
-        lookupError.value = true;
-      },
+  placeLookup.get(`/api/wheretoeat/lookup/${encodeURIComponent(location.id)}`, {
+    onSuccess: ({ lat, lng }) => {
+      row.location = { label: location.label, lat, lng };
+      row.sessionToken = crypto.randomUUID();
     },
-  );
+    onHttpException: () => {
+      lookupError.value = true;
+    },
+    onNetworkError: () => {
+      lookupError.value = true;
+    },
+  });
 };
 
 const planTrip = () => {
@@ -200,7 +204,12 @@ const planTrip = () => {
       class="flex items-end gap-2"
     >
       <FormLookup
-        :ref="(el) => (lookups[row.key] = el as { setValue: (value: string) => void } | null)"
+        :ref="
+          (el) =>
+            (lookups[row.key] = el as {
+              setValue: (value: string) => void;
+            } | null)
+        "
         :initial-value="row.location?.label"
         :name="`point-${index}`"
         borders

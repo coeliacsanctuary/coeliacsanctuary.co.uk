@@ -71,7 +71,9 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
       >
         <p
           class="bg-secondary/20 p-2 font-semibold"
-          v-text="`Stop ${stop.number}, about ${formatDuration(stop.duration)} in`"
+          v-text="
+            `Stop ${stop.number}, about ${formatDuration(stop.duration)} in`
+          "
         />
 
         <TripEateryRow

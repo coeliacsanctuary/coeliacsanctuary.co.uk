@@ -197,9 +197,13 @@ watch(hasError, (check) => {
         label="Plan your trip"
         classes="shrink-0"
         @click="
-          useJourneyTracking().logEvent('clicked', 'WhereToEatMap/PlanTripCta', {
-            title: searchedPlace.label,
-          })
+          useJourneyTracking().logEvent(
+            'clicked',
+            'WhereToEatMap/PlanTripCta',
+            {
+              title: searchedPlace.label,
+            },
+          )
         "
       />
 
