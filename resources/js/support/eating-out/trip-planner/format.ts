@@ -2,8 +2,13 @@ export const metersToMiles = (meters: number): string =>
   (meters / 1609.344).toFixed(1);
 
 export const formatDuration = (seconds: number): string => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
+  const totalMinutes = Math.round(seconds / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
 
-  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+
+  return `${minutes} min${minutes === 1 ? '' : 's'}`;
 };
