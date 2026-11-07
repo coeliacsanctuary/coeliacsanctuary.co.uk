@@ -36,3 +36,9 @@ export type TripStop = {
   lat: number;
   lng: number;
 };
+
+export type TripSummary = {
+  status: 'pending' | 'ready' | 'failed' | null;
+  overview: string | null;
+  stops: Record<number, string>;
+};

@@ -6,6 +6,7 @@ namespace App\Models\EatingOut;
 
 use App\Actions\EatingOut\TripPlanner\DecodePolylineAction;
 use App\DataObjects\EatingOut\TripRoute;
+use App\Enums\EatingOut\TripSummaryStatus;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,6 +25,8 @@ use Illuminate\Support\Str;
  * @property string $geometry
  * @property float $route_distance
  * @property float $route_duration
+ * @property array{overview: string, stops: array<int, array{number: int, summary: string}>} | null $ai_summary
+ * @property TripSummaryStatus | null $ai_summary_status
  * @property Carbon | null $last_visited_at
  */
 #[RouteKey('key')]
@@ -88,6 +91,8 @@ class EateryTrip extends Model
         return [
             'points' => 'array',
             'timings' => 'array',
+            'ai_summary' => 'array',
+            'ai_summary_status' => TripSummaryStatus::class,
             'distance' => 'int',
             'stop_interval' => 'int',
             'route_distance' => 'float',

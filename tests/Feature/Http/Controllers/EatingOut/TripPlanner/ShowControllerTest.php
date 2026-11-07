@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\EatingOut\TripPlanner;
 
 use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
+use App\Enums\EatingOut\TripSummaryStatus;
 use App\Models\EatingOut\EateryTrip;
 use App\Pipelines\EatingOut\GetEateries\TripEateriesPipeline;
 use Illuminate\Http\Client\Request;
@@ -122,6 +123,34 @@ class ShowControllerTest extends TestCase
         $this->expectAction(GetTripStopsAction::class, [Mockery::any(), 60], return: $stops);
 
         $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->where('stops', $stops)->etc());
+    }
+
+    #[Test]
+    public function itIncludesAPendingSummaryWithoutAnyContent(): void
+    {
+        $this->trip->update(['ai_summary_status' => TripSummaryStatus::PENDING]);
+
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page
+            ->where('summary', ['status' => 'pending', 'overview' => null, 'stops' => []])
+            ->etc());
+    }
+
+    #[Test]
+    public function itIncludesTheSummaryAsHtmlWithTheStopsKeyedByNumber(): void
+    {
+        $this->trip->update([
+            'ai_summary' => [
+                'overview' => 'A **lovely** drive.',
+                'stops' => [['number' => 2, 'summary' => 'Stop two.']],
+            ],
+            'ai_summary_status' => TripSummaryStatus::READY,
+        ]);
+
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page
+            ->where('summary.status', 'ready')
+            ->where('summary.overview', "<p>A <strong>lovely</strong> drive.</p>\n")
+            ->where('summary.stops.2', "<p>Stop two.</p>\n")
+            ->etc());
     }
 
     #[Test]

@@ -9,7 +9,7 @@ import {
   ShallowRef,
   watch,
 } from 'vue';
-import { router, usePage } from '@inertiajs/vue3';
+import { router, usePage, usePoll } from '@inertiajs/vue3';
 import Loader from '@/Components/Loader.vue';
 import Modal from '@/Components/Overlays/Modal.vue';
 import Card from '@/Components/Card.vue';
@@ -44,6 +44,7 @@ import {
   TripLocation,
   TripRoute,
   TripStop,
+  TripSummary,
 } from '@/types/TripPlannerTypes';
 
 defineOptions({
@@ -55,6 +56,7 @@ const props = defineProps<{
   canEdit?: boolean;
   eateries?: TripEatery[];
   stops?: TripStop[];
+  summary?: TripSummary;
   destination?: TripLocation | null;
 }>();
 
@@ -70,6 +72,27 @@ const openPlanner = (mode: 'new' | 'edit') => {
 const route = computed((): TripRoute | undefined => props.trip?.route);
 const eateries = computed((): TripEatery[] => props.eateries ?? []);
 const stops = computed((): TripStop[] => props.stops ?? []);
+
+const { start: startSummaryPoll, stop: stopSummaryPoll } = usePoll(
+  3000,
+  { only: ['summary'] },
+  { autoStart: false, background: 'pause' },
+);
+
+const pollForSummary = () => {
+  if (props.summary?.status === 'pending') {
+    startSummaryPoll();
+
+    return;
+  }
+
+  stopSummaryPoll();
+};
+
+watch(
+  () => props.summary?.status,
+  () => pollForSummary(),
+);
 
 const selectedEatery: Ref<TripEatery | undefined> = ref();
 const hoveredEatery: Ref<TripEatery | undefined> = ref();
@@ -315,6 +338,8 @@ watch(
 );
 
 onMounted(() => {
+  pollForSummary();
+
   map.value = new Map({
     target: mapElement.value,
     layers: [
@@ -404,6 +429,7 @@ onMounted(() => {
       :trip="trip"
       :eateries="eateries"
       :stops="stops"
+      :summary="summary"
       :selected="selectedEatery"
       :hovered-key="hoveredEatery?.key"
       :scroll-to-hovered="hoveredFromMap"

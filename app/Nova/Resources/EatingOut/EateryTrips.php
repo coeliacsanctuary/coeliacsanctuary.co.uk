@@ -89,6 +89,8 @@ class EateryTrips extends Resource
 
             Text::make('Driving Time', fn (EateryTrip $trip): string => intdiv((int) $trip->route_duration, 3600) . 'h ' . (int) round(((int) $trip->route_duration % 3600) / 60) . 'm'),
 
+            Text::make('Summary', fn (EateryTrip $trip): string => $trip->ai_summary_status?->name() ?? '-'),
+
             URL::make('View', fn (EateryTrip $trip): string => route('eating-out.trip-planner.show', ['eateryTrip' => $trip]))
                 ->displayUsing(fn (): string => 'Open trip'),
 

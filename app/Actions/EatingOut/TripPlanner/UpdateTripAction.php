@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Actions\EatingOut\TripPlanner;
 
 use App\DataObjects\EatingOut\LatLng;
+use App\Enums\EatingOut\TripSummaryStatus;
+use App\Jobs\EatingOut\GenerateTripSummaryJob;
 use App\Models\EatingOut\EateryTrip;
 
 class UpdateTripAction
@@ -24,7 +26,11 @@ class UpdateTripAction
             'route_distance' => $route->distance,
             'route_duration' => $route->duration,
             'timings' => $route->timings,
+            'ai_summary' => null,
+            'ai_summary_status' => TripSummaryStatus::PENDING,
         ]);
+
+        GenerateTripSummaryJob::dispatch($trip);
 
         return $trip;
     }

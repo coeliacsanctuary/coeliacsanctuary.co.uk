@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, Ref, ref, watch } from 'vue';
-import { Trip, TripEatery, TripStop } from '@/types/TripPlannerTypes';
+import {
+  Trip,
+  TripEatery,
+  TripStop,
+  TripSummary,
+} from '@/types/TripPlannerTypes';
 import {
   formatDuration,
   metersToMiles,
@@ -19,6 +24,7 @@ const props = defineProps<{
   trip?: Trip;
   eateries: TripEatery[];
   stops: TripStop[];
+  summary?: TripSummary;
   selected?: TripEatery;
   hoveredKey?: string;
   scrollToHovered?: boolean;
@@ -190,6 +196,7 @@ watch(
         v-else
         :eateries="eateries"
         :stops="stops"
+        :summary="summary"
         :hovered-key="hoveredKey"
         @select="select"
         @hover="$emit('hover', $event)"

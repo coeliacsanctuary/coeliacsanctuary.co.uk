@@ -8,13 +8,23 @@ use App\Actions\EatingOut\TripPlanner\GetRouteAction;
 use App\Actions\EatingOut\TripPlanner\UpdateTripAction;
 use App\DataObjects\EatingOut\LatLng;
 use App\DataObjects\EatingOut\TripRoute;
+use App\Enums\EatingOut\TripSummaryStatus;
+use App\Jobs\EatingOut\GenerateTripSummaryJob;
 use App\Models\EatingOut\EateryTrip;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class UpdateTripActionTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Bus::fake();
+    }
+
     protected function points(): array
     {
         return [
@@ -115,5 +125,32 @@ class UpdateTripActionTest extends TestCase
         $this->callAction(UpdateTripAction::class, $trip, $this->points(), 5, 180);
 
         $this->assertSame(180, $trip->refresh()->stop_interval);
+    }
+
+    #[Test]
+    public function itResetsTheSummaryToPending(): void
+    {
+        $trip = $this->build(EateryTrip::class)->withSummary()->create();
+
+        $this->expectAction(GetRouteAction::class, return: $this->route());
+
+        $this->callAction(UpdateTripAction::class, $trip, $this->points(), 5);
+
+        $trip->refresh();
+
+        $this->assertNull($trip->ai_summary);
+        $this->assertSame(TripSummaryStatus::PENDING, $trip->ai_summary_status);
+    }
+
+    #[Test]
+    public function itDispatchesTheJobToGenerateTheSummary(): void
+    {
+        $trip = $this->build(EateryTrip::class)->withSummary()->create();
+
+        $this->expectAction(GetRouteAction::class, return: $this->route());
+
+        $this->callAction(UpdateTripAction::class, $trip, $this->points(), 5);
+
+        Bus::assertDispatched(GenerateTripSummaryJob::class);
     }
 }

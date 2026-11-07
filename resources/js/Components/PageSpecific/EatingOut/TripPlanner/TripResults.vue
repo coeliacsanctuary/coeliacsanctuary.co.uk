@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { TripEatery, TripStop } from '@/types/TripPlannerTypes';
+import { TripEatery, TripStop, TripSummary } from '@/types/TripPlannerTypes';
 import { formatDuration } from '@/support/eating-out/trip-planner/format';
 import TripEateryRow from '@/Components/PageSpecific/EatingOut/TripPlanner/TripEateryRow.vue';
+import TripSummaryText from '@/Components/PageSpecific/EatingOut/TripPlanner/TripSummaryText.vue';
 
 const props = defineProps<{
   eateries: TripEatery[];
   stops: TripStop[];
+  summary?: TripSummary;
   hoveredKey?: string;
 }>();
+
+const summaryPending = computed(
+  (): boolean => props.summary?.status === 'pending',
+);
 
 defineEmits(['select', 'hover']);
 
@@ -46,6 +52,12 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
 <template>
   <div class="flex flex-col">
     <template v-if="!stops.length">
+      <TripSummaryText
+        :pending="summaryPending"
+        :html="summary?.overview"
+        label="About this trip"
+      />
+
       <TripEateryRow
         v-for="eatery in eateries"
         :key="eatery.key"
@@ -76,6 +88,11 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
           "
         />
 
+        <TripSummaryText
+          :pending="summaryPending"
+          :html="summary?.stops[stop.number]"
+        />
+
         <TripEateryRow
           v-for="eatery in nearbyEateries(stop)"
           :key="`${stop.number}-${eatery.key}`"
@@ -96,6 +113,12 @@ const legs = computed((): { title: string; eateries: TripEatery[] }[] => {
       <p
         class="bg-grey-light p-2 font-semibold"
         v-text="`All places (${eateries.length})`"
+      />
+
+      <TripSummaryText
+        :pending="summaryPending"
+        :html="summary?.overview"
+        label="About this trip"
       />
 
       <div

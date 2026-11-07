@@ -6,6 +6,7 @@ namespace App\Http\Controllers\EatingOut\TripPlanner;
 
 use App\Actions\EatingOut\TripPlanner\GetTripStopsAction;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
+use App\Concerns\FormatsMarkdown;
 use App\Http\Response\Inertia;
 use App\Models\EatingOut\EateryTrip;
 use App\Models\OpenGraphImage;
@@ -18,6 +19,8 @@ use Inertia\Response;
 
 class ShowController
 {
+    use FormatsMarkdown;
+
     public function __invoke(EateryTrip $eateryTrip, Request $request, Inertia $inertia, TripEateriesPipeline $tripEateriesPipeline, GetTripStopsAction $getTripStopsAction, GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction): Response
     {
         $ogImage = $getOpenGraphImageForRouteAction->handle('eatery-trip-planner', function (string $url, OpenGraphImage $image) {
@@ -59,6 +62,13 @@ class ShowController
                     ],
                 ],
                 'stops' => fn (): array => $getTripStopsAction->handle($eateryTrip->toTripRoute(), $eateryTrip->stop_interval),
+                'summary' => fn (): array => [
+                    'status' => $eateryTrip->ai_summary_status?->value,
+                    'overview' => $eateryTrip->ai_summary ? (string) $this->formatMarkdown($eateryTrip->ai_summary['overview']) : null,
+                    'stops' => collect($eateryTrip->ai_summary['stops'] ?? [])
+                        ->mapWithKeys(fn (array $stop): array => [$stop['number'] => (string) $this->formatMarkdown($stop['summary'])])
+                        ->all(),
+                ],
                 'canEdit' => $eateryTrip->canBeEditedWith($token),
                 'eateries' => fn (): Collection => $tripEateriesPipeline->run(
                     route: $eateryTrip->toTripRoute(),
