@@ -31,7 +31,7 @@ const body: Ref<HTMLDivElement | undefined> = ref();
 const listScrollTop = ref(0);
 
 const title = computed((): string =>
-  [props.trip?.points[0], props.trip?.points.at(-1)]
+  [props.trip?.points[0], props.trip?.points[props.trip.points.length - 1]]
     .map((point) => point?.label.split(',')[0] ?? '')
     .join(' → '),
 );

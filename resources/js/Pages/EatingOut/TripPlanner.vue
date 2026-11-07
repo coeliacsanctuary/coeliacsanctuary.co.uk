@@ -20,7 +20,6 @@ import TripPanel from '@/Components/PageSpecific/EatingOut/TripPlanner/TripPanel
 import ShareTripModal from '@/Components/PageSpecific/EatingOut/TripPlanner/ShareTripModal.vue';
 import TripPlannerForm from '@/Components/PageSpecific/EatingOut/TripPlanner/TripPlannerForm.vue';
 import {
-  EateryFilterItem,
   EateryFilterKeys,
   EateryFilters,
 } from '@/types/EateryTypes';
@@ -81,7 +80,7 @@ const hoveredFromMap = ref(false);
 const showShare = ref(false);
 
 const shareTitle = computed((): string =>
-  [props.trip?.points[0], props.trip?.points.at(-1)]
+  [props.trip?.points[0], props.trip?.points[props.trip.points.length - 1]]
     .map((point) => point?.label.split(',')[0] ?? '')
     .join(' to '),
 );
@@ -186,7 +185,7 @@ const handleFiltersChange = ({ filters }: { filters: EateryFilters }) => {
   const query: Partial<{ [T in EateryFilterKeys]: string }> = {};
 
   filterKeys.forEach((key) => {
-    const value = (filters[key] as EateryFilterItem[])
+    const value = filters[key]
       .filter((item) => item.checked)
       .map((item) => item.value)
       .join(',');
@@ -403,12 +402,12 @@ onMounted(() => {
       :eateries="eateries"
       :stops="stops"
       :selected="selectedEatery"
+      :hovered-key="hoveredEatery?.key"
+      :scroll-to-hovered="hoveredFromMap"
       @edit="openPlanner('edit')"
       @new="openPlanner('new')"
       @select="selectEatery($event, 'list')"
       @back="selectedEatery = undefined"
-      :hovered-key="hoveredEatery?.key"
-      :scroll-to-hovered="hoveredFromMap"
       @hover="hoverFromList"
       @share="showShare = true"
     />
