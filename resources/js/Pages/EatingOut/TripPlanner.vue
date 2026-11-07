@@ -458,7 +458,7 @@ onMounted(() => {
               class="flex flex-col space-y-3 border-t border-grey-off pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-8"
             >
               <SubHeading classes="mb-2!">
-                  How the trip planner works
+                How the trip planner works
               </SubHeading>
 
               <p class="prose max-w-none">
