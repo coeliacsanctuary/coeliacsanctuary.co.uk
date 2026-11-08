@@ -78,7 +78,15 @@ return [
      * When urls to files get generated, this class will be called. Use the default
      * if your files are stored locally above the site root or on s3.
      */
-    'url_generator' => Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator::class,
+    'url_generator' => env('STORAGE_FALLBACK_PREFIX')
+        ? App\Media\FallbackUrlGenerator::class
+        : Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator::class,
+
+    /*
+     * The bucket environment prefix to copy missing files from, eg 'prod' reads
+     * missing files from prod-coeliac-media. Leave unset in production.
+     */
+    'fallback_prefix' => env('STORAGE_FALLBACK_PREFIX'),
 
     /*
      * Moves media on updating to keep path consistent. Enable it only with a custom

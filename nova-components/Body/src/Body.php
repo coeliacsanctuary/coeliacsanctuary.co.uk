@@ -108,7 +108,15 @@ class Body extends Field
         if ($this->canHaveImages) {
             /** @var HasMedia $resource */
             $resource->getMedia('body')->each(function (Media $media) use (&$rawContents): void {
-                $rawContents = str_replace($media->getUrl(), $media->file_name, $rawContents);
+                $bucket = config("filesystems.disks.{$media->disk}.bucket");
+
+                $urlInAnyBucket = str_replace(
+                    preg_quote($bucket, '~'),
+                    '[a-z0-9-]+',
+                    preg_quote($media->getUrl(), '~'),
+                );
+
+                $rawContents = preg_replace("~{$urlInAnyBucket}~", $media->file_name, $rawContents);
             });
         }
 
