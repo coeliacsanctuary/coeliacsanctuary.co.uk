@@ -16,10 +16,10 @@ class FallbackUrlGenerator extends DefaultUrlGenerator
         $path = $this->getPathRelativeToRoot();
 
         if ( ! $this->getDisk()->exists($path)) {
-            $fallbackDisk = $this->getFallbackDisk();
+            $stream = $this->getFallbackDisk()->readStream($path);
 
-            if ($fallbackDisk->exists($path)) {
-                $this->getDisk()->writeStream($path, $fallbackDisk->readStream($path));
+            if ($stream) {
+                $this->getDisk()->writeStream($path, $stream);
             }
         }
 

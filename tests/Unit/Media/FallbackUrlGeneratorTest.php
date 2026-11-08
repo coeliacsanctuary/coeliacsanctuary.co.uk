@@ -43,7 +43,7 @@ class FallbackUrlGeneratorTest extends TestCase
         Storage::swap(
             Mockery::mock(Storage::getFacadeRoot())
                 ->shouldReceive('build')
-                ->with(Mockery::on(fn (array $config) => $config['bucket'] === 'prod-coeliac-media'))
+                ->with(Mockery::on(fn (array $config): bool => $config['bucket'] === 'prod-coeliac-media'))
                 ->andReturn($this->fallbackDisk)
                 ->getMock()
         );
