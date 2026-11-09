@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9248c6a5427ffbd4ea2af3e606d171d",
+    "content-hash": "a3b3e3151baf2d57cbef8573e958253d",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2954,7 +2954,7 @@
         },
         {
             "name": "jpeters8889/address-field",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/AddressField",
@@ -2990,7 +2990,7 @@
         },
         {
             "name": "jpeters8889/apex-charts",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ApexCharts",
@@ -3026,7 +3026,7 @@
         },
         {
             "name": "jpeters8889/body",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Body",
@@ -3062,7 +3062,7 @@
         },
         {
             "name": "jpeters8889/collection-builder",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CollectionBuilder",
@@ -3103,7 +3103,7 @@
         },
         {
             "name": "jpeters8889/collection-item-search",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CollectionItemSearch",
@@ -3144,7 +3144,7 @@
         },
         {
             "name": "jpeters8889/country-icon",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CountryIcon",
@@ -3180,7 +3180,7 @@
         },
         {
             "name": "jpeters8889/custom-styles",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/CustomStyles",
@@ -3216,7 +3216,7 @@
         },
         {
             "name": "jpeters8889/eatery-collections-query-builder",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryCollectionsQueryBuilder",
@@ -3257,7 +3257,7 @@
         },
         {
             "name": "jpeters8889/eatery-location-search",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryLocationSearch",
@@ -3298,7 +3298,7 @@
         },
         {
             "name": "jpeters8889/eatery-opening-times",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryOpeningTimes",
@@ -3334,7 +3334,7 @@
         },
         {
             "name": "jpeters8889/eatery-recommendation-ai-status",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryRecommendationAiStatus",
@@ -3375,7 +3375,7 @@
         },
         {
             "name": "jpeters8889/eatery-recommendation-eligibility",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EateryRecommendationEligibility",
@@ -3416,7 +3416,7 @@
         },
         {
             "name": "jpeters8889/hidden-writable-field",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/HiddenWritableField",
@@ -3457,7 +3457,7 @@
         },
         {
             "name": "jpeters8889/order-dispatch-slip",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/OrderDispatchSlip",
@@ -3493,7 +3493,7 @@
         },
         {
             "name": "jpeters8889/polymorphic-panel",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PolymorphicPanel",
@@ -3529,7 +3529,7 @@
         },
         {
             "name": "jpeters8889/preview-button",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PreviewButton",
@@ -3566,7 +3566,7 @@
         },
         {
             "name": "jpeters8889/print-all-orders",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/PrintAllOrders",
@@ -3602,7 +3602,7 @@
         },
         {
             "name": "jpeters8889/refresh-ads-txt",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/RefreshAdsTxt",
@@ -3643,7 +3643,7 @@
         },
         {
             "name": "jpeters8889/related-recipes-search",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/RelatedRecipesSearch",
@@ -3684,7 +3684,7 @@
         },
         {
             "name": "jpeters8889/shop-daily-stock",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopDailyStock",
@@ -3720,7 +3720,7 @@
         },
         {
             "name": "jpeters8889/shop-generate-resend-slip-button",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopGenerateResendSlipButton",
@@ -3761,7 +3761,7 @@
         },
         {
             "name": "jpeters8889/shop-order-open-dispatch-slip",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderOpenDispatchSlip",
@@ -3797,7 +3797,7 @@
         },
         {
             "name": "jpeters8889/shop-order-shipping-action",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ShopOrderShippingAction",
@@ -3833,7 +3833,7 @@
         },
         {
             "name": "jpeters8889/view-ai-recommendation-data",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ViewAiRecommendationData",
@@ -3874,7 +3874,7 @@
         },
         {
             "name": "jpeters8889/wte-nationwide-branch-import",
-            "version": "dev-feature/trip-planner",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/WteNationwideBranchImport",
@@ -14776,16 +14776,16 @@
         },
         {
             "name": "wnx/sidecar-browsershot",
-            "version": "v2.9.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stefanzweifel/sidecar-browsershot.git",
-                "reference": "352083995009bec142ff0c7ae4b2883831be0685"
+                "reference": "25a597f1fb63afdb36960a2743e23c267f2af190"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stefanzweifel/sidecar-browsershot/zipball/352083995009bec142ff0c7ae4b2883831be0685",
-                "reference": "352083995009bec142ff0c7ae4b2883831be0685",
+                "url": "https://api.github.com/repos/stefanzweifel/sidecar-browsershot/zipball/25a597f1fb63afdb36960a2743e23c267f2af190",
+                "reference": "25a597f1fb63afdb36960a2743e23c267f2af190",
                 "shasum": ""
             },
             "require": {
@@ -14797,16 +14797,17 @@
             },
             "require-dev": {
                 "ext-imagick": "*",
+                "larastan/larastan": "^3.9",
                 "laravel/pint": "^1.13",
                 "league/flysystem-aws-s3-v3": "^1.0|^2.0|^3.0",
                 "nunomaduro/collision": "^7.0|^8.0",
                 "orchestra/testbench": "^10.0 | ^11.0",
-                "pestphp/pest": "^3.0|^4.0",
-                "pestphp/pest-plugin-laravel": "^3.0|^4.0",
+                "pestphp/pest": "^3.0 | ^4.0 | ^5.0",
+                "pestphp/pest-plugin-laravel": "^3.0 | ^4.0 | ^5.0",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan-deprecation-rules": "^1.0|^2.0",
                 "phpstan/phpstan-phpunit": "^1.0|^2.0",
-                "phpunit/phpunit": "^11.0 | ^12.0",
+                "phpunit/phpunit": "^11.0 | ^12.0 | ^13.0",
                 "spatie/image": "^3.3",
                 "spatie/pixelmatch-php": "^1.2"
             },
@@ -14850,7 +14851,7 @@
             ],
             "support": {
                 "issues": "https://github.com/stefanzweifel/sidecar-browsershot/issues",
-                "source": "https://github.com/stefanzweifel/sidecar-browsershot/tree/v2.9.0"
+                "source": "https://github.com/stefanzweifel/sidecar-browsershot/tree/v3.2.1"
             },
             "funding": [
                 {
@@ -14858,7 +14859,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-13T20:12:58+00:00"
+            "time": "2026-10-29T07:40:39+00:00"
         },
         {
             "name": "ziffmedia/nova-select-plus",
