@@ -1,106 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-
-    <meta data-rh="true" name="theme-color" content="#80CCFC" />
-
-    <meta name="author" content="Coeliac Sanctuary" />
-
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-    <meta name="google-site-verification" content="MkXdbyO1KF2xCS7VFkP7v5ZaWw3WObMUJDFxX0z7_4w" />
-
-    <meta property="article:publisher" content="https://www.facebook.com/CoeliacSanctuary" />
-
-    <meta property="og:updated_time" content="{{ date('c') }}" />
-
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="Coeliac Sanctuary" />
-    <link rel="manifest" href="/site.webmanifest" />
+    @include('partials.app-head')
 
     @googlefonts
     @preloadImage
 
-    @if ( ! app()->isLocal())
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PWV6VHY13"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-
-            gtag('config', 'G-5PWV6VHY13');
-        </script>
+    @if (app()->isProduction())
+        @include('partials.google-analytics')
     @endif
 
-    @if (config('coeliac.show_ads'))
-        <script
-            type="text/javascript"
-            async="async"
-            data-noptimize="1"
-            data-cfasync="false"
-            src="//scripts.mediavine.com/tags/8b9074d5-fb27-4c85-a1ca-f79af2899f37.js"
-        ></script>
+    @if (app()->isProduction() && config('coeliac.show_ads'))
+        @include('partials.mediavine')
     @endif
 
     @vite('resources/js/app.ts')
+
     @inertiaHead
 </head>
 <body class="mb-0 {{ data_get($page, 'props.meta.bodyClass') }}">
     @inertia
-    @if (app()->isLocal())
-        <div class="bg-red fixed right-0 bottom-0 p-2 text-xs leading-0 font-semibold text-white">
-            <span class="xxs:hidden">xxxs</span>
-            <span class="xxs:max-xs:block hidden">xxs</span>
-            <span class="xs:max-sm:block hidden">xs</span>
-            <span class="hidden sm:max-md:block">sm</span>
-            <span class="md:max-xmd:block hidden">md</span>
-            <span class="xmd:max-lg:block hidden">xmd</span>
-            <span class="hidden lg:max-xl:block">lg</span>
-            <span class="hidden xl:max-2xl:block">xl</span>
-            <span class="hidden 2xl:block">2xl</span>
-        </div>
+
+    @if ( ! app()->isProduction())
+        @include('partials.debug')
     @endif
 
-    <noscript>
-        <img
-            alt=""
-            height="1"
-            width="1"
-            style="display: none"
-            src="https://www.facebook.com/tr?id=376206517120953&ev=PageView&noscript=1"
-        />
-    </noscript>
-
-    <script>
-        setTimeout(() => {
-            !(function (f, b, e, v, n, t, s) {
-                if (f.fbq) return;
-                n = f.fbq = function () {
-                    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-                };
-                if (!f._fbq) f._fbq = n;
-                n.push = n;
-                n.loaded = !0;
-                n.version = '2.0';
-                n.queue = [];
-                t = b.createElement(e);
-                t.async = !0;
-                t.src = v;
-                s = b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t, s);
-            })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '376206517120953');
-            fbq('track', 'PageView');
-        }, 5000);
-    </script>
+    @if (app()->isProduction())
+        @include('partials.facebook-pixel')
+    @endif
 
     @journeyTracker
 </body>
