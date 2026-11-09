@@ -8,6 +8,7 @@ use App\Events\ContactFormSubmittedEvent;
 use App\Events\Shop\OrderCancelledEvent;
 use App\Events\Shop\OrderPaidEvent;
 use App\Events\Shop\OrderShippedEvent;
+use App\Listeners\RestrictNonProductionMailListener;
 use App\Listeners\SendContactFormListener;
 use App\Listeners\Shop\SendMyTravelCardsInvitationIfRequired;
 use App\Listeners\Shop\SendOrderCancellationNotification;
@@ -17,6 +18,7 @@ use App\Listeners\Shop\SendOrderToFinanceService;
 use App\Listeners\Shop\SubscribeToNewsletterIfRequired;
 use App\Listeners\Shop\SyncProductsToGoogleMerchantOnOrderPaid;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Mail\Events\MessageSending;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -31,5 +33,6 @@ class EventServiceProvider extends ServiceProvider
         OrderShippedEvent::class => [SendOrderShippedNotification::class],
         OrderCancelledEvent::class => [SendOrderCancellationNotification::class],
         ContactFormSubmittedEvent::class => [SendContactFormListener::class],
+        MessageSending::class => [RestrictNonProductionMailListener::class],
     ];
 }
