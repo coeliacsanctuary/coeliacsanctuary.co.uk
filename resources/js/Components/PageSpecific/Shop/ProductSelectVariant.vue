@@ -66,7 +66,7 @@ const hasDescriptions = computed(() => {
                 class="flex items-center space-x-2 text-base leading-none text-gray-900"
               >
                 <Icon
-                  v-if="variant.icon && variant.icon !== []"
+                  v-if="variant.icon"
                   :name="variant.icon.component"
                   :style="{ color: variant.icon.color }"
                 />

@@ -14,6 +14,7 @@ use App\Pipelines\EatingOut\GetEateries\GetEateriesInLondonAreaPipeline;
 use App\Services\EatingOut\Filters\GetFiltersForLondonArea;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Facades\Bus;
+use App\DataObjects\EatingOut\TripDestination;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
@@ -99,12 +100,29 @@ class ShowControllerTest extends TestCase
     {
         $this->visitArea()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/LondonArea')
                     ->has('area')
                     ->where('area.name', $this->area->area)
                     ->etc()
             );
+    }
+
+    #[Test]
+    public function itLinksToTheTripPlannerWithTheAreaAsTheDestination(): void
+    {
+        $this->area->updateQuietly(['latlng' => '54.4858,-0.6206']);
+
+        $this->visitArea()->assertInertia(function (Assert $page): Assert {
+            parse_str((string) parse_url((string) $page->toArray()['props']['area']['tripPlannerUrl'], PHP_URL_QUERY), $query);
+
+            $this->assertSame(
+                ['label' => "{$this->area->area}, London", 'lat' => 54.4858, 'lng' => -0.6206],
+                TripDestination::fromQueryValue($query['to'])?->toArray(),
+            );
+
+            return $page;
+        });
     }
 
     protected function visitArea(): TestResponse

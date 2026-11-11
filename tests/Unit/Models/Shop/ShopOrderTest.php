@@ -9,17 +9,20 @@ use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopDiscountCodesUsed;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderDigitalItem;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopOrderReview;
 use App\Models\Shop\ShopOrderReviewInvitation;
 use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopOrderState;
 use App\Models\Shop\ShopPayment;
+use App\Models\Shop\ShopPaymentRefund;
 use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopShippingAddress;
 use App\Models\Shop\ShopSource;
 use Database\Seeders\ShopScaffoldingSeeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -110,6 +113,22 @@ class ShopOrderTest extends TestCase
     }
 
     #[Test]
+    public function itHasRefunds(): void
+    {
+        $order = $this->build(ShopOrder::class)
+            ->asPaid()
+            ->create();
+
+        $this->create(ShopPaymentRefund::class, [
+            'order_id' => $order->id,
+            'payment_id' => $order->payment->id,
+        ]);
+
+        $this->assertInstanceOf(Collection::class, $order->refresh()->refunds);
+        $this->assertInstanceOf(ShopPaymentRefund::class, $order->refunds->first());
+    }
+
+    #[Test]
     public function itHasItems(): void
     {
         $order = $this->create(ShopOrder::class);
@@ -122,6 +141,22 @@ class ShopOrderTest extends TestCase
         $order->refresh();
 
         $this->assertCount(5, $order->items);
+    }
+
+    #[Test]
+    public function itHasDigitalItems(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        $this->build(ShopOrderDigitalItem::class)
+            ->inOrder($order)
+            ->count(3)
+            ->create();
+
+        $order->refresh();
+
+        $this->assertCount(3, $order->digitalItems);
+        $this->assertInstanceOf(ShopOrderDigitalItem::class, $order->digitalItems->first());
     }
 
     #[Test]
@@ -200,32 +235,84 @@ class ShopOrderTest extends TestCase
     }
 
     #[Test]
-    public function itCanIdentifyWhenAnOrderHasAnyAdOns(): void
+    public function itKnowsWhenAnOrderHasNoItemsAtAll(): void
     {
         $order = $this->create(ShopOrder::class);
-        $item = $this->build(ShopOrderItem::class)
-            ->inOrder($order)
-            ->create();
 
-        $this->assertFalse($order->has_add_ons);
-
-        $item->update(['product_add_on_id' => 123]);
-
-        $this->assertTrue($order->refresh()->has_add_ons);
+        $this->assertFalse($order->hasAnyItems());
     }
 
     #[Test]
-    public function itCanTheTotalPriceOfAnyAddOns(): void
+    public function itKnowsWhenAnOrderHasPhysicalItems(): void
     {
         $order = $this->create(ShopOrder::class);
-        $item = $this->build(ShopOrderItem::class)
+
+        $this->build(ShopOrderItem::class)
             ->inOrder($order)
             ->create();
 
-        $this->assertFalse($order->has_add_ons);
+        $this->assertTrue($order->hasAnyItems());
+    }
 
-        $item->update(['product_add_on_id' => 123, 'product_add_on_price' => 50]);
+    #[Test]
+    public function itKnowsWhenAnOrderHasDigitalItems(): void
+    {
+        $order = $this->create(ShopOrder::class);
 
-        $this->assertEquals(50, $order->add_on_total);
+        $this->build(ShopOrderDigitalItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $this->assertTrue($order->hasAnyItems());
+    }
+
+    #[Test]
+    public function itIdentifiesItemsFromTheLoadedItemsRelation(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        $this->build(ShopOrderItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $order->load('items');
+
+        DB::enableQueryLog();
+
+        $this->assertTrue($order->hasAnyItems());
+
+        $this->assertEmpty(DB::getQueryLog());
+    }
+
+    #[Test]
+    public function itIdentifiesItemsFromTheLoadedDigitalItemsRelation(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        $this->build(ShopOrderDigitalItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $order->load('digitalItems');
+
+        DB::enableQueryLog();
+
+        $this->assertTrue($order->hasAnyItems());
+
+        $this->assertEmpty(DB::getQueryLog());
+    }
+
+    #[Test]
+    public function itFallsBackToTheDatabaseWhenTheLoadedRelationsAreEmpty(): void
+    {
+        $order = $this->create(ShopOrder::class);
+
+        $order->load(['items', 'digitalItems']);
+
+        $this->build(ShopOrderDigitalItem::class)
+            ->inOrder($order)
+            ->create();
+
+        $this->assertTrue($order->hasAnyItems());
     }
 }

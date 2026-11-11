@@ -63,7 +63,7 @@ const refreshPage = (
         : undefined),
     },
     {
-      only: ['recipes', 'features', 'meals', 'freeFrom', 'setFilters'],
+      only: ['recipes', 'features', 'meals', 'freeFrom', 'setFilters', 'meta'],
       preserveState: true,
       preserveScroll,
       onStart: () => (isLoading.value = true),

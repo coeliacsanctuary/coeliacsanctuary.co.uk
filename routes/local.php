@@ -6,10 +6,12 @@ use App\Actions\OpenGraphImages\GenerateCountyOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateEateryOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateNationwideBranchOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateTownOpenGraphImageAction;
+use App\Actions\Shop\GetActiveShopHolidayAction;
 use App\DataObjects\NotificationRelatedObject;
 use App\Enums\EatingOut\EateryType;
 use App\Enums\Shop\OrderState;
 use App\Mailables\EatingOut\EateryRecommendationAddedMailable;
+use App\Mailables\EatingOut\TripPlannerTripMailable;
 use App\Models\Blogs\Blog;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
@@ -18,6 +20,7 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
+use App\Models\EatingOut\EateryTrip;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\Recipes\Recipe;
 use App\Models\Shop\ShopOrder;
@@ -26,7 +29,9 @@ use App\Models\Shop\ShopPaymentRefund;
 use App\Models\Shop\ShopProduct;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
@@ -47,6 +52,7 @@ Route::get('/mail/shop/order-confirmed/{orderId?}', function (?int $orderId = nu
         'date' => now(),
         'order' => $order,
         'reason' => 'as confirmation to an order placed in the Coeliac Sanctuary Shop.',
+        'holidayNotice' => app(GetActiveShopHolidayAction::class)->handle()?->notice,
         'notifiable' => $order->customer,
         'relatedTitle' => 'products',
         'relatedItems' => ShopProduct::query()->take(3)->inRandomOrder()->get()->map(fn (ShopProduct $product) => new NotificationRelatedObject(
@@ -251,22 +257,36 @@ Route::get('/mail/shop/abandoned-cart/{orderId?}', function (?int $basketId = nu
     return Mjml::new()->sidecar()->toHtml($content);
 });
 
-Route::get('/mail/shop/review-invitation/{orderId?}', function (?int $orderId = null): string {
+Route::get('/mail/shop/review-invitation/{orderId?}', function (Request $request, ?int $orderId = null): string {
     $order = ShopOrder::query()
         ->where('state_id', OrderState::SHIPPED)
         ->with(['items', 'items.product.media', 'payment', 'customer', 'address', 'reviewInvitation'])
         ->whereHas('reviewInvitation')
+        ->when($request->boolean('reset') === false, fn (Builder $builder) => $builder->whereDoesntHave('reviewInvitation.review'))
+        ->when($request->has('items'), fn (Builder $builder) => $builder->has('items', '>=', max($request->integer('items', 2), 2)))
+        ->when($request->boolean('variants'), fn (Builder $builder) => $builder->whereIn(
+            'id',
+            DB::table('shop_order_items')
+                ->select('order_id')
+                ->groupBy('order_id', 'product_id')
+                ->havingRaw('COUNT(*) > 1'),
+        ))
         ->when(
             $orderId,
             fn (Builder $builder) => $builder->findOrFail($orderId),
-            fn (Builder $builder) => $builder->latest()->first(),
+            fn (Builder $builder) => $builder->latest()->firstOrFail(),
         );
+
+    if ($request->boolean('reset')) {
+        $order->reviewedItems()->delete();
+        $order->reviewInvitation?->review()->delete();
+    }
 
     $content = view('mailables.mjml.shop.static.review-invitation', [
         'key' => 'foo',
         'date' => now(),
         'order' => $order,
-        'reason' => 'mailables.mjml.shop.static.review-invitation',
+        'reason' => 'as an invitation to review your order',
         'delayText' => '10 days',
         'reviewLink' => URL::temporarySignedRoute(
             'shop.review-order',
@@ -335,6 +355,19 @@ Route::get('/mail/eating-out/recommendation-added/{id?}', function (?int $id = n
         'nearbyEateries' => $mailable->nearbyEateries(),
         ...$mailable->relatedItems(),
     ])->render();
+
+    return Mjml::new()->sidecar()->toHtml($content);
+});
+
+Route::get('/mail/eating-out/trip-planner/{key?}', function (?string $key = null): string {
+    $trip = EateryTrip::query()
+        ->when($key, fn (Builder $builder) => $builder->where('key', $key))
+        ->latest()
+        ->firstOrFail();
+
+    $message = TripPlannerTripMailable::make($trip, true, 'me@example.com', 'foo');
+
+    $content = view($message->mjml, $message->data())->render();
 
     return Mjml::new()->sidecar()->toHtml($content);
 });
@@ -446,11 +479,6 @@ Route::get('og/generic/shop', function () {
         ->where('title', 'like', 'spanish and italian%')
         ->firstOrFail();
 
-    //    $stickers = ShopProduct::query()
-    //        ->with(['media'])
-    //        ->where('title', 'like', '%stickers%')
-    //        ->firstOrFail();
-
     $otherAllergyCard = ShopProduct::query()
         ->with(['media'])
         ->where('title', 'like', '%coeliac+%')
@@ -458,7 +486,6 @@ Route::get('og/generic/shop', function () {
 
     return view('og-images.shop', [
         'spanishCard' => $spanishCard,
-        //        'stickers' => $stickers,
         'otherAllergyCard' => $otherAllergyCard,
     ]);
 });

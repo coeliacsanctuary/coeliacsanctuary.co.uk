@@ -16,15 +16,15 @@ class SuggestedEditRequestTest extends TestCase
     #[Test]
     public function itReturnsTheAvailableEditableFieldsAsAnInRule(): void
     {
-        $rules = (new SuggestEditRequest())->rules();
+        $rules = new SuggestEditRequest()->rules();
 
         $this->assertArrayHasInstanceOf(In::class, $rules['field']);
 
         /** @var In $inRule */
-        $inRule = Arr::first($rules['field'], fn ($value) => $value instanceof In);
+        $inRule = Arr::first($rules['field'], fn ($value): bool => $value instanceof In);
 
         $expectedKeys = collect(array_keys(EaterySuggestedEdit::processorMaps()))
-            ->map(fn ($key) => '"' . $key . '"')
+            ->map(fn ($key): string => '"' . $key . '"')
             ->join(',');
 
         $this->assertEquals("in:{$expectedKeys}", $inRule->__toString());
@@ -36,7 +36,7 @@ class SuggestedEditRequestTest extends TestCase
         $mock = $this->partialMock(SuggestEditRequest::class);
 
         $class = new class () {
-            public static function validationRules()
+            public static function validationRules(): array
             {
                 return ['foo', 'bar'];
             }
@@ -58,7 +58,7 @@ class SuggestedEditRequestTest extends TestCase
         $mock = $this->partialMock(SuggestEditRequest::class);
 
         $class = new class () {
-            public static function validationRules()
+            public static function validationRules(): array
             {
                 return [
                     'value' => ['required', 'array'],

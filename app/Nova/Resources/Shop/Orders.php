@@ -9,7 +9,6 @@ use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopProduct;
 use App\Nova\Actions\Shop\OpenDispatchSlip;
 use App\Nova\Actions\Shop\RefundOrder;
-use App\Nova\Actions\Shop\ResendDownloadLink;
 use App\Nova\Actions\Shop\ResendOrder;
 use App\Nova\Actions\Shop\ResetPrintStatus;
 use App\Nova\Actions\Shop\ShipOrder;
@@ -25,7 +24,6 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\HasOneThrough;
 use Laravel\Nova\Fields\ID;
@@ -33,7 +31,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/** @extends Resource<ShopProduct> */
+/** @extends resource<ShopProduct> */
 /**
  * @codeCoverageIgnore
  */
@@ -57,7 +55,7 @@ class Orders extends Resource
 
             DateTime::make('Order Date', fn (ShopOrder $order) => $order->payment->created_at),
 
-            Text::make('Address', fn (ShopOrder $order) => nl2br($order->address->formatted_address ?? ''))->asHtml(),
+            Text::make('Address', fn (ShopOrder $order): string => nl2br($order->address->formatted_address ?? ''))->asHtml(),
 
             Number::make('Items', fn (ShopOrder $order) => $order->items->sum('quantity')),
 
@@ -67,18 +65,18 @@ class Orders extends Resource
 
             Currency::make('Total', fn (ShopOrder $order) => $order->payment->total)->asMinorUnits(),
 
-            Boolean::make('Has Digital Add Ons', 'has_add_ons')->exceptOnForms(),
+            Boolean::make('Has Digital Cards', 'has_digital_items'),
 
             Text::make('Payment Method', fn (ShopOrder $order) => $order->payment->payment_type_id),
 
             Currency::make('Processing Fee', fn (ShopOrder $order) => $order->payment->fee)->asMinorUnits(),
 
-            CountryIcon::make('Country', fn (ShopOrder $order) => [
+            CountryIcon::make('Country', fn (ShopOrder $order): array => [
                 'name' => $order->postageCountry->country,
                 'code' => $order->postageCountry->iso_code,
             ]),
 
-            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order) => [
+            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order): array => [
                 'parent_id' => $order->id,
                 'state_id' => $order->state_id->value,
                 'shipped_at' => $order->shipped_at?->format('jS M y'),
@@ -90,23 +88,21 @@ class Orders extends Resource
         ];
     }
 
-    public function fieldsForDetail(NovaRequest $request)
+    public function fieldsForDetail(NovaRequest $request): array
     {
         return [
             Text::make('Order ID', 'order_key'),
 
             DateTime::make('Order Date', fn (ShopOrder $order) => $order->payment->created_at),
 
-            Boolean::make('Has Digital Add Ons', 'has_add_ons')->exceptOnForms(),
+            Boolean::make('Has Digital Cards', 'has_digital_items'),
 
-            DateTime::make('Add Ons Set At', 'add_ons_sent_at')->exceptOnForms(),
-
-            CountryIcon::make('Country', fn (ShopOrder $order) => [
+            CountryIcon::make('Country', fn (ShopOrder $order): array => [
                 'name' => $order->postageCountry->country,
                 'code' => $order->postageCountry->iso_code,
             ])->withLabel(),
 
-            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order) => [
+            ShopOrderShippingAction::make('Shipped', fn (ShopOrder $order): array => [
                 'parent_id' => $order->id,
                 'state_id' => $order->state_id->value,
                 'shipped_at' => $order->shipped_at?->format('jS M y'),
@@ -116,7 +112,7 @@ class Orders extends Resource
 
             HasMany::make('Items', resource: OrderItem::class),
 
-            HasManyThrough::make('Add Ons', resource: ProductAddOn::class),
+            HasMany::make('Digital Items', resource: OrderDigitalItem::class),
 
             HasOne::make('Customer', resource: Customer::class),
 
@@ -155,25 +151,20 @@ class Orders extends Resource
             ShipOrder::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::READY),
+                ->canRun(fn ($request, ShopOrder $order): bool => $order->state_id === OrderState::READY),
 
             ResendOrder::make()
                 ->sole()
                 ->confirmButtonText('Resend Order')
-                ->canRun(fn ($request, ShopOrder $order) => $order->state_id === OrderState::SHIPPED),
-
-            ResendDownloadLink::make()
-                ->sole()
-                ->confirmButtonText('Send new Download Link')
-                ->canRun(fn ($request, ShopOrder $order) => $order->has_add_ons),
+                ->canRun(fn ($request, ShopOrder $order): bool => $order->state_id === OrderState::SHIPPED),
         ];
     }
 
     public function cards(NovaRequest $request): array
     {
         return [
-            ShopDailySales::make()->refreshWhenActionsRun()->width('1/2'),
-            ShopIncome::make()->refreshWhenActionsRun()->width('1/2')->help('Including Postage'),
+            ShopDailySales::make()->excludeDigital()->refreshWhenActionsRun()->width('1/2'),
+            ShopIncome::make()->excludeDigital()->refreshWhenActionsRun()->width('1/2')->help('Including Postage'),
             PrintAllOrders::make(),
         ];
     }
@@ -182,8 +173,9 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items'])
+            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items', 'digitalItems'])
             ->withCount(['items'])
+            ->where('is_digital_only', false)
             ->whereNotIn('state_id', [
                 OrderState::BASKET,
                 OrderState::PENDING,
@@ -195,7 +187,7 @@ class Orders extends Resource
     {
         return $query
             ->withoutGlobalScopes()
-            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items']);
+            ->with(['postageCountry', 'payment', 'payment.response', 'address', 'items', 'digitalItems']);
     }
 
     public function authorizedToView(Request $request): bool

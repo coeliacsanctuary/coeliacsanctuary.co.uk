@@ -16,9 +16,7 @@ class IndexController
 {
     public function __invoke(Eatery $eatery, Request $request): array
     {
-        if ($eatery->county_id !== 1) {
-            abort(404);
-        }
+        abort_if($eatery->county_id !== 1, 404);
 
         $relations = ['country', 'county', 'town', 'town.county', 'area', 'area.town'];
 
@@ -47,14 +45,17 @@ class IndexController
             ->groupBy(fn (NationwideBranch $branch) => $branch->country->country)            /** @phpstan-ignore-line */
             ->sortKeys()
             ->map(
+                /** @phpstan-ignore argument.type */
                 fn (Collection $branches) => $branches
                     ->groupBy(fn (NationwideBranch $branch) => $branch->county->county)                    /** @phpstan-ignore-line */
                     ->sortKeys()
                     ->map(
+                        /** @phpstan-ignore argument.type */
                         fn (Collection $branches) => $branches
                             ->groupBy(fn (NationwideBranch $branch) => $branch->town->town)                            /** @phpstan-ignore-line */
                             ->sortKeys()
                             ->map(
+                                /** @phpstan-ignore argument.type */
                                 fn (Collection $branches) => $branches
                                     ->groupBy(fn (NationwideBranch $branch) => $branch->area?->area ?? '_')                                    /** @phpstan-ignore-line */
                                     ->sortKeys()

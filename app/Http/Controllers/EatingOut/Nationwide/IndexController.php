@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\Nationwide;
 
+use Illuminate\Support\Collection;
 use App\Actions\EatingOut\GetMostRatedPlacesInCountyAction;
 use App\Actions\EatingOut\GetTopRatedPlacesInCountyAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
@@ -49,10 +50,10 @@ class IndexController
                 new BreadcrumbItemData('Nationwide Chains'),
             ]))
             ->render('EatingOut/Nationwide', [
-                'county' => fn () => (new NationwidePageResource($county))->withFilters($filters),
-                'filters' => fn () => $getFiltersForNationwide->setCounty($county)->handle($filters),
-                'topRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
-                'mostRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
+                'county' => fn (): NationwidePageResource => new NationwidePageResource($county)->withFilters($filters),
+                'filters' => fn (): array => $getFiltersForNationwide->setCounty($county)->handle($filters),
+                'topRated' => fn (): Collection => $getTopRatedPlacesInCounty->handle($county),
+                'mostRated' => fn (): Collection => $getMostRatedPlacesInCounty->handle($county),
             ]);
     }
 }

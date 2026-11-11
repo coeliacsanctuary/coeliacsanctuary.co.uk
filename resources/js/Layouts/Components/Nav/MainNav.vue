@@ -6,10 +6,15 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 
 const isSticky = ref(false);
 
+defineProps<{ plainLinks?: boolean }>();
+
 defineEmits(['open-search']);
 
 onMounted(() => {
-  if (typeof document !== 'undefined' && document.getElementById('header')) {
+  const header =
+    typeof document === 'undefined' ? null : document.getElementById('header');
+
+  if (header) {
     new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -20,7 +25,7 @@ onMounted(() => {
         threshold: 0.5,
         rootMargin: '0px',
       },
-    ).observe(document.getElementById('header'));
+    ).observe(header);
   }
 });
 
@@ -43,24 +48,28 @@ watch(isSticky, () => {
       :class="isSticky ? 'h-12' : 'h-14'"
     >
       <NavItem
+        :plain="plainLinks"
         label="Home"
         href="/"
         :active="$page.component === 'Home'"
       />
 
       <NavItem
+        :plain="plainLinks"
         label="Shop"
         href="/shop"
         :active="$page.url.startsWith('/shop')"
       />
 
       <NavItem
+        :plain="plainLinks"
         label="Blogs"
         href="/blog"
         :active="$page.url.startsWith('/blog')"
       />
 
       <NavItem
+        :plain="plainLinks"
         label="Eating Out"
         href="/eating-out"
         :active="
@@ -70,18 +79,21 @@ watch(isSticky, () => {
       />
 
       <NavItem
+        :plain="plainLinks"
         label="Recipes"
         href="/recipe"
         :active="$page.url.startsWith('/recipe')"
       />
 
       <NavItem
+        :plain="plainLinks"
         label="Collections"
         href="/collection"
         :active="$page.url.startsWith('/collection')"
       />
 
       <NavItem
+        :plain="plainLinks"
         label="About Us"
         href="/about"
         :active="$page.url.startsWith('/about')"

@@ -14,6 +14,7 @@ const props = defineProps<{
   reviews: PaginatedResponse<ShopProductReview>;
   rating: ShopProductRating;
   filteredOn?: StarRatingType;
+  digitalOnly?: boolean;
 }>();
 
 const loading = ref(false);
@@ -43,30 +44,39 @@ const setRatingFilter = (filter: StarRatingType | undefined) => {
       filterable
       @filter="setRatingFilter"
     >
-      Have you used our <strong v-text="productName" />? Share your thoughts
-      with other customers!
+      Have you used my <strong v-text="productName" />? Share your thoughts with
+      other customers!
     </RatingsBreakdown>
 
     <div class="mt-8 md:mt-0 md:max-xl:col-span-2 xl:col-span-3">
       <Info class="mb-4">
-        <p class="text-sm">
-          All reviews are from verified purchases, customers are invited to
-          leave a review 10 days* after their order has been shipped.
-        </p>
+        <template v-if="!digitalOnly">
+          <p class="text-sm">
+            All reviews are from verified purchases — customers are invited to
+            leave a review 10 days* after their order has been shipped.
+          </p>
 
-        <small class="mt-4 text-xs">* 10 days is for UK orders only.</small>
+          <small class="mt-4 text-xs">* 10 days is for UK orders only.</small>
+        </template>
+        <p
+          v-else
+          class="text-sm"
+        >
+          All reviews are from verified purchases — customers are invited to
+          leave a review 5 days after their order has been completed.
+        </p>
       </Info>
 
       <div class="flow-root">
         <div class="-my-6 divide-y divide-gray-200">
           <div
             v-for="review in reviews.data"
-            :key="review.name"
+            :key="`${review.name}-${review.date}`"
             class="py-6"
           >
             <div class="flex items-center justify-between">
               <div class="flex flex-col">
-                <h4
+                <h3
                   class="font-bold lg:text-xl"
                   v-text="review.name || 'Anonymous'"
                 />
@@ -95,20 +105,27 @@ const setRatingFilter = (filter: StarRatingType | undefined) => {
               "
             />
           </div>
-
-          <CoeliacButton
-            v-if="reviews.links.next"
-            label="Load more reviews..."
-            size="xl"
-            theme="light"
-            :loading="loading"
-            as="a"
-            @click="
-              loading = true;
-              $emit('load-more');
-            "
-          />
         </div>
+      </div>
+
+      <div
+        v-if="reviews.links.next"
+        class="mt-10 flex"
+      >
+        <CoeliacButton
+          as="button"
+          type="button"
+          theme="light"
+          size="xl"
+          label="Load more reviews..."
+          class="h-full w-full flex-1 justify-center !text-xl"
+          bold
+          :loading="loading"
+          @click="
+            loading = true;
+            $emit('load-more');
+          "
+        />
       </div>
     </div>
   </div>

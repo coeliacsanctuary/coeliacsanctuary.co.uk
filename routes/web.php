@@ -23,6 +23,9 @@ use App\Http\Controllers\TermsOfUse\IndexController as TermsOfUseIndexController
 use App\Http\Controllers\WorkWithUs\IndexController as WorkWithUsIndexController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+
+$root = Str::after(config()->string('app.url'), 'www.');
 
 Route::prefix('blog')->group(base_path('routes/blogs/web.php'));
 Route::prefix('collection')->group(base_path('routes/collections/web.php'));
@@ -30,6 +33,7 @@ Route::prefix('recipe')->group(base_path('routes/recipes/web.php'));
 Route::prefix('search')->group(base_path('routes/search/web.php'));
 Route::prefix('shop')->group(base_path('routes/shop/web.php'));
 Route::prefix('')->group(base_path('routes/eating-out/web.php'));
+Route::domain("my-travel-cards.{$root}")->group(base_path('routes/my-travel-cards/web.php'));
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -70,5 +74,7 @@ Route::view('cs-adm/preview-button', 'static.button-preview');
 Route::middleware(['auth'])
     ->get('preview/{token}', PreviewController::class)
     ->name('nova-preview.show');
+
+Route::mobilePass();
 
 Route::fallback(FallbackController::class)->name('fallback');

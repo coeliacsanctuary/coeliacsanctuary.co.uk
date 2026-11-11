@@ -8,6 +8,9 @@ use App\Models\TemporaryFileUpload;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TemporaryFileUpload>
+ */
 class TemporaryFileUploadFactory extends Factory
 {
     protected $model = TemporaryFileUpload::class;
@@ -15,7 +18,7 @@ class TemporaryFileUploadFactory extends Factory
     public function definition(): array
     {
         return [
-            'filename' => $this->faker->uuid,
+            'filename' => $this->faker->uuid(),
             'path' => '/',
             'source' => 'uploads',
             'filesize' => $this->faker->numberBetween(1, 1000),

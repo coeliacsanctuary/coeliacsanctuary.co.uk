@@ -12,19 +12,18 @@ class ShopCompleteOrderRequestFactory extends RequestFactory
     {
         return [
             'contact' => [
-                'name' => $this->faker->name,
-                'email' => $email = $this->faker->email,
-                'email_confirmation' => $email,
-                'phone' => $this->faker->phoneNumber,
+                'name' => $this->faker->name(),
+                'email' => $this->faker->email(),
+                'phone' => $this->faker->phoneNumber(),
                 'subscribeToNewsletter' => false,
             ],
 
             'shipping' => [
-                'address_1' => $this->faker->streetAddress,
-                'address_2' => $this->faker->word,
-                'address_3' => $this->faker->word,
-                'town' => $this->faker->city,
-                'county' => $this->faker->state,
+                'address_1' => $this->faker->streetAddress(),
+                'address_2' => $this->faker->word(),
+                'address_3' => $this->faker->word(),
+                'town' => $this->faker->city(),
+                'county' => $this->faker->state(),
                 'postcode' => 'a12bc',
             ],
         ];

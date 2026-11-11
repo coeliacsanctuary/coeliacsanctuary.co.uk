@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Component, computed, ComputedRef, onMounted, Ref, ref } from 'vue';
+import { computed, ComputedRef, onMounted, Ref, ref } from 'vue';
 import SearchMap from '@/Components/PageSpecific/EatingOut/Browse/SearchMap.vue';
 import axios, { AxiosResponse } from 'axios';
 import {
@@ -33,7 +33,7 @@ type FilterKeys = 'category' | 'venueType' | 'feature';
 type UrlFilter = { [T in FilterKeys]?: string };
 
 defineOptions({
-  layout: CoeliacCompact as Component,
+  layout: CoeliacCompact,
 });
 
 const filterKeys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];

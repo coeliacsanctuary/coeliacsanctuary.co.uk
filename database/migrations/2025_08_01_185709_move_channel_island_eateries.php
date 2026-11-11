@@ -32,7 +32,7 @@ return new class () extends Migration {
                 'town' => 'St Anne',
             ],
             [
-                'name' => 'L\'Horizon Hotel',
+                'name' => "L'Horizon Hotel",
                 'county' => 'Jersey',
                 'town' => 'St Brelade',
             ],

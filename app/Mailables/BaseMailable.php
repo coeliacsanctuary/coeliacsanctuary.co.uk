@@ -25,7 +25,7 @@ abstract class BaseMailable
     public static function make(mixed ...$args): MjmlMessage
     {
         /** @phpstan-ignore-next-line  */
-        return (new static(...$args))->toMail();
+        return new static(...$args)->toMail();
     }
 
     protected function baseData(array $data = []): array
@@ -51,7 +51,7 @@ abstract class BaseMailable
                     ->inRandomOrder()
                     ->with(['media'])
                     ->get()
-                    ->map(fn (Blog $blog) => new NotificationRelatedObject(
+                    ->map(fn (Blog $blog): NotificationRelatedObject => new NotificationRelatedObject(
                         title: $blog->title,
                         image: $blog->main_image,
                         link: $blog->absolute_link,
@@ -64,7 +64,7 @@ abstract class BaseMailable
                     ->inRandomOrder()
                     ->with(['media'])
                     ->get()
-                    ->map(fn (Recipe $recipe) => new NotificationRelatedObject(
+                    ->map(fn (Recipe $recipe): NotificationRelatedObject => new NotificationRelatedObject(
                         title: $recipe->title,
                         image: $recipe->square_image ?? $recipe->main_image,
                         link: $recipe->absolute_link,
@@ -77,7 +77,7 @@ abstract class BaseMailable
                     ->inRandomOrder()
                     ->with(['media'])
                     ->get()
-                    ->map(fn (ShopProduct $product) => new NotificationRelatedObject(
+                    ->map(fn (ShopProduct $product): NotificationRelatedObject => new NotificationRelatedObject(
                         title: $product->title,
                         image: $product->main_image,
                         link: $product->absolute_link,

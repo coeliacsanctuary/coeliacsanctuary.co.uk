@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Redirect;
 use Illuminate\Http\Response;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Redirect>
+ */
 class RedirectFactory extends Factory
 {
     protected $model = Redirect::class;
@@ -14,8 +17,8 @@ class RedirectFactory extends Factory
     public function definition()
     {
         return [
-            'from' => $this->faker->slug,
-            'to' => $this->faker->slug,
+            'from' => $this->faker->slug(),
+            'to' => $this->faker->slug(),
             'status' => Response::HTTP_PERMANENTLY_REDIRECT,
             'hits' => 0,
         ];

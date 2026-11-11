@@ -20,14 +20,14 @@ class IdentifySearchAreasWithAiAction
 
         try {
             /** @var StructuredAgentResponse $response */
-            $response = (new SearchAreasAgent())->prompt($search->term);
+            $response = new SearchAreasAgent()->prompt($search->term);
 
             $aiResponse = SearchAiResponse::fromResponse($response->toArray());
 
             $search->aiResponse()->create($aiResponse->toModel());
 
             return $aiResponse;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }

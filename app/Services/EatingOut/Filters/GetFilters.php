@@ -51,7 +51,6 @@ class GetFilters
 
     /**
      * @template T of EateryType|EateryVenueType|EateryFeature|EateryTown|EateryCounty
-     *
      * @param  class-string<T>  $filterable
      * @param  null | callable(T $filterable): array  $mergeWithMap
      * @return Collection<int, non-empty-array>
@@ -94,9 +93,9 @@ class GetFilters
                 'venue_type',
                 'venue_type',
                 'slug',
-                fn (EateryVenueType $filterable) => ['groupBy' => Str::of(EateryTypeEnum::from($filterable->type_id)->name)->title()->plural()],
+                fn (EateryVenueType $filterable): array => ['groupBy' => Str::of(EateryTypeEnum::from($filterable->type_id)->name)->title()->plural()],
             )
-            ->sortBy(function (array $filterable) {
+            ->sortBy(function (array $filterable): int {
                 if ($filterable['groupBy'] === 'Eatery') {
                     return 0;
                 }

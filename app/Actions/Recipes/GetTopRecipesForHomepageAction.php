@@ -28,7 +28,7 @@ class GetTopRecipesForHomepageAction
                 )
                 ->take(4)
                 ->orderBy('metrics_sum_page_views', 'desc')
-                ->with(['media'])
+                ->with(['media', 'nutrition'])
                 ->get())
         );
 

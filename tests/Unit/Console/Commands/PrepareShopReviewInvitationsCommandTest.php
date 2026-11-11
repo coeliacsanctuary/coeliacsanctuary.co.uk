@@ -16,13 +16,13 @@ use Tests\TestCase;
 
 class PrepareShopReviewInvitationsCommandTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->seed(ShopScaffoldingSeeder::class);
 
-        Carbon::setTestNow('2024-04-15');
+        $this->travelTo('2024-04-15');
 
         Bus::fake();
     }
@@ -79,6 +79,26 @@ class PrepareShopReviewInvitationsCommandTest extends TestCase
     {
         $this->build(ShopOrder::class)->asShipped(shippedAt: Carbon::now()->subDays(10))->create([
             'postage_country_id' => 1,
+        ]);
+
+        $this->artisan(PrepareShopReviewInvitationsCommand::class);
+
+        Bus::assertDispatched(SendReviewInvitationJob::class);
+    }
+
+    #[Test]
+    public function itDispatchesDigitalOnlyOrdersAfterTheRelevantPeriod(): void
+    {
+        $this->build(ShopOrder::class)->asShipped(shippedAt: Carbon::now()->subDays(4))->create([
+            'is_digital_only' => true,
+        ]);
+
+        $this->artisan(PrepareShopReviewInvitationsCommand::class);
+
+        Bus::assertNothingDispatched();
+
+        $this->build(ShopOrder::class)->asShipped(shippedAt: Carbon::now()->subDays(5))->create([
+            'is_digital_only' => true,
         ]);
 
         $this->artisan(PrepareShopReviewInvitationsCommand::class);

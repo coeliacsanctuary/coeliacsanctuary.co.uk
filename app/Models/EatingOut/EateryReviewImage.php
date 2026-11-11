@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Str;
 
+#[Table(name: 'wheretoeat_review_images', keyType: 'string')]
+#[WithoutIncrementing]
 class EateryReviewImage extends Model
 {
-    protected $table = 'wheretoeat_review_images';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
     protected static function booted(): void
     {
-        self::creating(function (self $model) {
+        self::creating(function (self $model): EateryReviewImage {
             $model->id ??= Str::uuid()->toString();
 
             return $model;
@@ -42,25 +40,25 @@ class EateryReviewImage extends Model
     /** @return Attribute<string, never> */
     public function thumb(): Attribute
     {
-        return Attribute::get(fn () => $this->imageUrl($this->attributes['thumb']));
+        return Attribute::get(fn (): string => $this->imageUrl($this->attributes['thumb']));
     }
 
     /** @return Attribute<string, never> */
     public function path(): Attribute
     {
-        return Attribute::get(fn () => $this->imageUrl($this->attributes['path']));
+        return Attribute::get(fn (): string => $this->imageUrl($this->attributes['path']));
     }
 
     /** @return Attribute<string, never> */
     public function rawThumb(): Attribute
     {
-        return Attribute::get(fn () => $this->attributes['thumb']);
+        return Attribute::get(fn (): mixed => $this->attributes['thumb']);
     }
 
     /** @return Attribute<string, never> */
     public function rawPath(): Attribute
     {
-        return Attribute::get(fn () => $this->attributes['path']);
+        return Attribute::get(fn (): mixed => $this->attributes['path']);
     }
 
     protected function imageUrl(string $file): string

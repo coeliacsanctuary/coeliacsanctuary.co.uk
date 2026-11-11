@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * @template T of Model
- *
  * @mixin Model
  */
 trait HasOpenGraphImage

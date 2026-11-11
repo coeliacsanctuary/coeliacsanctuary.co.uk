@@ -10,7 +10,6 @@ use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,7 +19,6 @@ use Illuminate\Support\Stringable;
 
 /**
  * @mixin Model
- *
  * @property string $full_location
  * @property string $short_location
  * @property null|string $slug
@@ -101,13 +99,13 @@ trait HasEateryDetails
     /** @return Attribute<string, never> */
     public function formattedAddress(): Attribute
     {
-        return Attribute::get(fn () => Str::of($this->address)->explode("\n")->map(fn (string $line) => mb_trim($line))->join(', '));
+        return Attribute::get(fn () => Str::of($this->address)->explode("\n")->map(fn (string $line): string => mb_trim($line))->join(', '));
     }
 
     /** @return Attribute<string | null, never> */
     public function fullLocation(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?string {
             if ( ! $this->relationLoaded('town') || ! $this->relationLoaded('county') || ! $this->relationLoaded('country') || ! $this->town || ! $this->county || ! $this->country) {
                 return null;
             }
@@ -128,7 +126,7 @@ trait HasEateryDetails
     /** @return Attribute<string | null, never> */
     public function shortLocation(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?string {
             if ( ! $this->relationLoaded('town') || ! $this->relationLoaded('county') || ! $this->town || ! $this->county) {
                 return null;
             }
@@ -148,18 +146,22 @@ trait HasEateryDetails
     /** @return Attribute<array{value: string, label: string} | null, never> */
     public function averageExpense(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?array {
             if ( ! $this->relationLoaded('reviews')) {
                 return null;
             }
 
+            /** @var int[] $reviewsWithHowExpense */
             $reviewsWithHowExpense = array_filter($this->reviews->flatten()->pluck('how_expensive')->toArray());
 
             if (count($reviewsWithHowExpense) === 0) {
                 return null;
             }
 
-            $average = round(Arr::average($reviewsWithHowExpense));
+            /** @var int|float $rawAverage */
+            $rawAverage = Arr::average($reviewsWithHowExpense);
+
+            $average = round($rawAverage);
 
             return [
                 'value' => (string) $average,
@@ -168,33 +170,15 @@ trait HasEateryDetails
         });
     }
 
-    /** @return Attribute<string | null, never> */
+    /** @return Attribute<''|(numeric-string&uppercase-string)|null, never> */
     public function averageRating(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?string {
             if ( ! $this->relationLoaded('reviews')) {
                 return null;
             }
 
             return (string) Arr::average($this->reviews->pluck('rating')->toArray());
         });
-    }
-
-    /**
-     * @param  Builder<$this>  $query
-     * @return Builder<$this>
-     */
-    public function scopeNationwide(Builder $query): Builder
-    {
-        return $query->where('county_id', 1);
-    }
-
-    /**
-     * @param  Builder<$this>  $query
-     * @return Builder<$this>
-     */
-    public function scopeNotNationwide(Builder $query): Builder
-    {
-        return $query->where('county_id', '!=', 1);
     }
 }

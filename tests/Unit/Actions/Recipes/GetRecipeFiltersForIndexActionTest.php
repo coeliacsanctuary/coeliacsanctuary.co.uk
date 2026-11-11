@@ -130,4 +130,16 @@ class GetRecipeFiltersForIndexActionTest extends TestCase
         $this->assertCount(1, $freeFroms);
         $this->assertEquals(1, data_get($freeFroms, '0.recipes_count'));
     }
+
+    #[Test]
+    public function itDoesntReturnTheGlutenAllergenAsAFreeFromOption(): void
+    {
+        $this->create(RecipeAllergen::class, ['allergen' => 'Gluten', 'slug' => 'gluten']);
+        $this->create(RecipeAllergen::class, ['allergen' => 'Dairy', 'slug' => 'dairy']);
+
+        $allergens = $this->callAction(GetRecipeFiltersForIndexAction::class, RecipeAllergen::class);
+
+        $this->assertCount(1, $allergens);
+        $this->assertSame('Dairy', $allergens->first()['allergen']);
+    }
 }

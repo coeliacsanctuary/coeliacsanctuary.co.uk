@@ -20,7 +20,7 @@ class EateryFeatureListTest extends TestCase
         $this->create(EateryFeature::class, ['feature' => 'Afternoon Tea']);
         $this->create(EateryFeature::class, ['feature' => 'Gluten Free Menu']);
 
-        $result = json_decode((string) (new EateryFeatureList())->handle(new Request()), true);
+        $result = json_decode((string) new EateryFeatureList()->handle(new Request()), true);
 
         $this->assertEquals(['Afternoon Tea', 'Gluten Free Menu', 'Parking'], $result);
     }
@@ -28,7 +28,7 @@ class EateryFeatureListTest extends TestCase
     #[Test]
     public function itReturnsEmptyWhenNoFeaturesExist(): void
     {
-        $result = json_decode((string) (new EateryFeatureList())->handle(new Request()), true);
+        $result = json_decode((string) new EateryFeatureList()->handle(new Request()), true);
 
         $this->assertEmpty($result);
     }
@@ -36,6 +36,6 @@ class EateryFeatureListTest extends TestCase
     #[Test]
     public function itHasAnEmptySchema(): void
     {
-        $this->assertEmpty((new EateryFeatureList())->schema(new JsonSchemaTypeFactory()));
+        $this->assertEmpty(new EateryFeatureList()->schema(new JsonSchemaTypeFactory()));
     }
 }

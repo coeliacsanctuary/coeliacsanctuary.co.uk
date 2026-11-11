@@ -6,6 +6,7 @@ namespace Tests\Unit\Console\Commands;
 
 use App\Console\Commands\RemoveCollectionsFromHomepageCommand;
 use App\Models\Collections\Collection;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -45,5 +46,35 @@ class RemoveCollectionsFromHomepageCommandTest extends TestCase
 
         $this->assertFalse($collection->display_on_homepage);
         $this->assertNull($collection->remove_from_homepage);
+    }
+
+    #[Test]
+    public function itClearsTheHomepageCollectionsCacheWhenRemovingACollection(): void
+    {
+        $this->build(Collection::class)->displayedOnHomepage(now()->subDay())->create();
+
+        /** @var string $key */
+        $key = config('coeliac.cacheable.collections.home');
+
+        Cache::forever($key, 'foo');
+
+        $this->artisan(RemoveCollectionsFromHomepageCommand::class);
+
+        $this->assertFalse(Cache::has($key));
+    }
+
+    #[Test]
+    public function itDoesntClearTheHomepageCollectionsCacheWhenNothingIsRemoved(): void
+    {
+        $this->build(Collection::class)->displayedOnHomepage(now()->addDay())->create();
+
+        /** @var string $key */
+        $key = config('coeliac.cacheable.collections.home');
+
+        Cache::forever($key, 'foo');
+
+        $this->artisan(RemoveCollectionsFromHomepageCommand::class);
+
+        $this->assertTrue(Cache::has($key));
     }
 }

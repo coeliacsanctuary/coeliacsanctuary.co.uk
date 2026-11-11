@@ -8,6 +8,9 @@ use App\Contracts\Comments\HasComments;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Comments\CommentReply>
+ */
 class CommentReplyFactory extends Factory
 {
     protected $model = CommentReply::class;
@@ -15,7 +18,7 @@ class CommentReplyFactory extends Factory
     public function definition()
     {
         return [
-            'comment_reply' => $this->faker->paragraph,
+            'comment_reply' => $this->faker->paragraph(),
             'comment_id' => static::factoryForModel(Comment::class),
         ];
     }

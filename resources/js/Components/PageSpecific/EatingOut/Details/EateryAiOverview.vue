@@ -9,7 +9,7 @@ const props = defineProps<{
   branchId?: number;
 }>();
 
-const emit = defineEmits(['onError']);
+defineEmits(['onError']);
 
 const getEndpoint = (): string => {
   let url = `/api/wheretoeat/${props.eateryId}/sealiac`;

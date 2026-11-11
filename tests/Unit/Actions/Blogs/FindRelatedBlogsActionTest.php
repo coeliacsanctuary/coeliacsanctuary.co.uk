@@ -7,11 +7,20 @@ namespace Tests\Unit\Actions\Blogs;
 use App\Actions\Blogs\FindRelatedBlogsAction;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
+use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FindRelatedBlogsActionTest extends TestCase
 {
+    /**
+     * @return Collection<int, Blog>
+     */
+    protected function findRelatedBlogs(Blog $blog, int $limit = 10): Collection
+    {
+        return app(FindRelatedBlogsAction::class)->handle($blog->tags()->get(), $blog->primaryTag, $blog->id, $limit);
+    }
+
     #[Test]
     public function itUsesThePrimaryTagIfSet(): void
     {
@@ -24,7 +33,7 @@ class FindRelatedBlogsActionTest extends TestCase
         $otherBlog = $this->create(Blog::class);
         $otherBlog->tags()->attach($blog->tags->first());
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+        $relatedBlogs = $this->findRelatedBlogs($blog);
 
         $this->assertNotEmpty($relatedBlogs);
     }
@@ -38,7 +47,7 @@ class FindRelatedBlogsActionTest extends TestCase
 
         $blog->update(['primary_tag_id' => $blog->tags->first()->id]);
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+        $relatedBlogs = $this->findRelatedBlogs($blog);
 
         $this->assertEmpty($relatedBlogs);
     }
@@ -50,7 +59,7 @@ class FindRelatedBlogsActionTest extends TestCase
             ->hasAttached($this->build(BlogTag::class), relationship: 'tags')
             ->create();
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+        $relatedBlogs = $this->findRelatedBlogs($blog);
 
         $this->assertEmpty($relatedBlogs);
     }
@@ -65,7 +74,7 @@ class FindRelatedBlogsActionTest extends TestCase
             ->hasAttached($tag, relationship: 'tags')
             ->create();
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blogs->first());
+        $relatedBlogs = $this->findRelatedBlogs($blogs->first());
 
         $this->assertCount(1, $relatedBlogs);
         $this->assertTrue($relatedBlogs->contains('id', $blogs->last()->id));
@@ -83,7 +92,7 @@ class FindRelatedBlogsActionTest extends TestCase
 
         $blogs->first()->update(['primary_tag_id' => $tag->id]);
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blogs->first());
+        $relatedBlogs = $this->findRelatedBlogs($blogs->first());
 
         $this->assertCount(1, $relatedBlogs);
         $this->assertTrue($relatedBlogs->contains('id', $blogs->last()->id));
@@ -96,11 +105,11 @@ class FindRelatedBlogsActionTest extends TestCase
             ->hasAttached($this->build(BlogTag::class), relationship: 'tags')
             ->create();
 
-        $otherBlog = $this->build(Blog::class)
+        $this->build(Blog::class)
             ->hasAttached($this->build(BlogTag::class), relationship: 'tags')
             ->create();
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+        $relatedBlogs = $this->findRelatedBlogs($blog);
 
         $this->assertEmpty($relatedBlogs);
     }
@@ -115,7 +124,7 @@ class FindRelatedBlogsActionTest extends TestCase
             ->hasAttached($tag, relationship: 'tags')
             ->create();
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blogs->first(), 5);
+        $relatedBlogs = $this->findRelatedBlogs($blogs->first(), 5);
 
         $this->assertCount(5, $relatedBlogs);
     }
@@ -140,7 +149,7 @@ class FindRelatedBlogsActionTest extends TestCase
         $blog = $firstBlogs->first();
         $blog->tags()->attach($secondTag);
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+        $relatedBlogs = $this->findRelatedBlogs($blog);
 
         $this->assertCount(9, $relatedBlogs);
         $this->assertTrue($relatedBlogs->contains('id', $secondBlogs->first()->id));
@@ -156,7 +165,7 @@ class FindRelatedBlogsActionTest extends TestCase
             ->hasAttached($tag, relationship: 'tags')
             ->create();
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blogs->first());
+        $relatedBlogs = $this->findRelatedBlogs($blogs->first());
 
         /** @var Blog $blog */
         $blog = $relatedBlogs->first();
@@ -174,14 +183,12 @@ class FindRelatedBlogsActionTest extends TestCase
         $primaryTag = $this->create(BlogTag::class);
         $otherTag = $this->create(BlogTag::class);
 
-        // Create 3 blogs with the primary tag (less than the default limit of 10)
         $primaryTagBlogs = $this->build(Blog::class)
             ->count(3)
             ->hasAttached($primaryTag, relationship: 'tags')
             ->create();
 
-        // Create blogs with a different tag
-        $otherTagBlogs = $this->build(Blog::class)
+        $this->build(Blog::class)
             ->count(3)
             ->hasAttached($otherTag, relationship: 'tags')
             ->create();
@@ -190,9 +197,8 @@ class FindRelatedBlogsActionTest extends TestCase
         $blog->update(['primary_tag_id' => $primaryTag->id]);
         $blog->tags()->attach($otherTag);
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+        $relatedBlogs = $this->findRelatedBlogs($blog);
 
-        // Should have 2 from primary tag + 3 from other tag = 5 total
         $this->assertCount(5, $relatedBlogs);
     }
 
@@ -216,9 +222,44 @@ class FindRelatedBlogsActionTest extends TestCase
         $blog->tags()->attach($secondTag);
         $secondBlog->tags()->attach($firstTag);
 
-        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle($blog);
+        $relatedBlogs = $this->findRelatedBlogs($blog);
 
         $this->assertCount(2, $relatedBlogs);
         $this->assertNotNull($relatedBlogs->sole('id', $secondBlog->id));
+    }
+
+    #[Test]
+    public function withoutABlogToExcludeItReturnsEveryBlogForTheGivenTags(): void
+    {
+        $tag = $this->create(BlogTag::class);
+
+        $blogs = $this->build(Blog::class)
+            ->count(2)
+            ->hasAttached($tag, relationship: 'tags')
+            ->create();
+
+        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle(collect([$tag]));
+
+        $this->assertCount(2, $relatedBlogs);
+        $this->assertTrue($relatedBlogs->contains('id', $blogs->first()->id));
+        $this->assertTrue($relatedBlogs->contains('id', $blogs->last()->id));
+    }
+
+    #[Test]
+    public function withoutAPrimaryTagItStillGroupsByEachTag(): void
+    {
+        $firstTag = $this->create(BlogTag::class);
+        $secondTag = $this->create(BlogTag::class);
+
+        $this->build(Blog::class)->hasAttached($firstTag, relationship: 'tags')->create();
+        $this->build(Blog::class)->hasAttached($secondTag, relationship: 'tags')->create();
+
+        $relatedBlogs = app(FindRelatedBlogsAction::class)->handle(collect([$firstTag, $secondTag]));
+
+        $this->assertCount(2, $relatedBlogs);
+        $this->assertEquals(
+            [$firstTag->tag, $secondTag->tag],
+            $relatedBlogs->pluck('related_tag')->all()
+        );
     }
 }

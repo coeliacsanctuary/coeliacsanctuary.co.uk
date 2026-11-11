@@ -70,7 +70,7 @@ class StoreControllerTest extends TestCase
         $this->mock(UploadTemporaryFilePipeline::class)
             ->shouldReceive('run')
             ->twice()
-            ->withArgs(function ($file) use ($images) {
+            ->withArgs(function ($file) use ($images): true {
                 $this->assertContains($file, $images);
 
                 return true;

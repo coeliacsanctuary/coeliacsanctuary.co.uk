@@ -24,24 +24,19 @@ class ResendOrder extends Action
     use InteractsWithQueue;
     use Queueable;
 
-    /**
-     * Perform the action on the given models.
-     *
-     * @return mixed
-     */
     public function handle(ActionFields $fields, Collection $models): void
     {
         /** @var ShopOrder $order */
         $order = $models->first();
 
         $overrides = $fields->collect()
-            ->reject(fn ($item) => $item === null)
-            ->mapwithKeys(fn ($quantity, $key) => [
+            ->reject(fn ($item): bool => $item === null)
+            ->mapwithKeys(fn ($quantity, $key): array => [
                 (int) Str::before($key, '-') => (int) $quantity,
             ]);
 
         $order->items
-            ->filter(fn (ShopOrderItem $item) => $overrides->keys()->contains($item->id) && $overrides->get($item->id) > 0)
+            ->filter(fn (ShopOrderItem $item): bool => $overrides->keys()->contains($item->id) && $overrides->get($item->id) > 0)
             ->each(function (ShopOrderItem $item) use ($overrides): void {
                 $item->variant()->decrement('quantity', $overrides->get($item->id));
             });
@@ -50,8 +45,6 @@ class ResendOrder extends Action
     }
 
     /**
-     * Get the fields available on the action.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field>
      */
     public function fields(NovaRequest $request): array
@@ -60,7 +53,7 @@ class ResendOrder extends Action
         $order = $this->resource;
 
         if ( ! $order && $request->has('resources')) {
-            $order = ShopOrder::query()->find($request->get('resources')[0]);
+            $order = ShopOrder::query()->find($request->input('resources')[0]);
         }
 
         if ( ! $order) {
@@ -70,7 +63,7 @@ class ResendOrder extends Action
         return [
             ...$order
                 ->items
-                ->map(fn (ShopOrderItem $item) => [
+                ->map(fn (ShopOrderItem $item): array => [
                     Heading::make($item->product_title),
                     Number::make('Quantity', "{$item->id}-quantity")
                         ->max($item->quantity)
@@ -83,11 +76,11 @@ class ResendOrder extends Action
             ShopGenerateResendSlipButton::make('button')
                 ->orderId($order->id)
                 ->dependsOn(
-                    $order->items->map(fn (ShopOrderItem $item) => "{$item->id}-quantity")->toArray(),
+                    $order->items->map(fn (ShopOrderItem $item): string => "{$item->id}-quantity")->toArray(),
                     function (ShopGenerateResendSlipButton $field, NovaRequest $request, FormData $data): void {
                         $items = $data->collect()
-                            ->reject(fn ($item) => $item === null)
-                            ->map(fn ($item) => (int) $item)
+                            ->reject(fn ($item): bool => $item === null)
+                            ->map(fn ($item): int => (int) $item)
                             ->toArray();
 
                         $field->withOptions($items);

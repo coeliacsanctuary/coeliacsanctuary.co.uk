@@ -115,11 +115,10 @@ class GetTopRecipesForHomePageActionTest extends TestCase
 
         $this->callAction(GetTopRecipesForHomepageAction::class);
 
-        // Recipes (with metrics sum subquery) and media relation
-        $this->assertCount(2, DB::getQueryLog());
+        $this->assertCount(3, DB::getQueryLog());
 
         $this->callAction(GetTopRecipesForHomepageAction::class);
 
-        $this->assertCount(2, DB::getQueryLog());
+        $this->assertCount(3, DB::getQueryLog());
     }
 }

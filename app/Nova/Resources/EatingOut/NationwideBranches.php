@@ -45,7 +45,7 @@ class NationwideBranches extends Resource
 
     public static $search = ['id', 'name', 'address', 'area.area', 'town.town', 'county.county'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -73,7 +73,7 @@ class NationwideBranches extends Resource
             Boolean::make('Live')->filterable(),
 
             Panel::make('Location', [
-                EateryLocationSearch::make('Location Search', 'location', fn () => null)
+                EateryLocationSearch::make('Location Search', 'location', fn (): null => null)
                     ->fullWidth()
                     ->onlyOnForms(),
 
@@ -96,7 +96,7 @@ class NationwideBranches extends Resource
                         $field->show();
 
                         /** @var EateryCounty | null $county */
-                        $county = EateryCounty::withoutGlobalScopes()->find($request->county);
+                        $county = EateryCounty::query()->withoutGlobalScopes()->find($request->county);
 
                         if ($county) {
                             $field->setValue($county->country_id);
@@ -125,7 +125,7 @@ class NationwideBranches extends Resource
                         $field->show();
 
                         /** @var EateryTown $town */
-                        $town = EateryTown::withoutGlobalScopes()->find($request->town);
+                        $town = EateryTown::query()->withoutGlobalScopes()->find($request->town);
 
                         if ($town) {
                             $field->setValue($town->county_id);
@@ -177,7 +177,7 @@ class NationwideBranches extends Resource
                     })
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $countyId = $request->input('county');
-                        $county = EateryCounty::withoutGlobalScopes()->where('id', $countyId)->first();
+                        $county = EateryCounty::query()->withoutGlobalScopes()->where('id', $countyId)->first();
 
                         if ($county?->slug === 'london') {
                             $field->show();
@@ -234,7 +234,7 @@ class NationwideBranches extends Resource
         return EateryVenueType::query()
             ->when($typeId, fn (Builder $query) => $query->where('type_id', $typeId))
             ->get()
-            ->mapWithKeys(fn (EateryVenueType $venueType) => [$venueType->id => $venueType->venue_type])
+            ->mapWithKeys(fn (EateryVenueType $venueType): array => [$venueType->id => $venueType->venue_type])
             ->toArray();
     }
 
@@ -242,7 +242,7 @@ class NationwideBranches extends Resource
     {
         return EateryCuisine::query()
             ->get()
-            ->mapWithKeys(fn (EateryCuisine $cuisine) => [$cuisine->id => $cuisine->cuisine])
+            ->mapWithKeys(fn (EateryCuisine $cuisine): array => [$cuisine->id => $cuisine->cuisine])
             ->toArray();
     }
 
@@ -261,7 +261,7 @@ class NationwideBranches extends Resource
         return [
             GenerateSealiacOverview::make()
                 ->showInline()
-                ->canRun(function (NovaRequest $request, NationwideBranch $model) {
+                ->canRun(function (NovaRequest $request, NationwideBranch $model): bool {
                     $model->reviews_count ?: $model->loadCount('reviews');
 
                     return $model->live === true && $model->reviews_count > 0;
@@ -284,12 +284,12 @@ class NationwideBranches extends Resource
         return false;
     }
 
-    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    public static function redirectAfterCreate(NovaRequest $request, $resource): string
     {
         return '/resources/' . NationwideEateries::uriKey() . '/' . $resource->resource->wheretoeat_id;
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return '/resources/' . NationwideEateries::uriKey() . '/' . $resource->resource->wheretoeat_id;
     }

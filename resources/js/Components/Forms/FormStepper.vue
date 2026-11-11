@@ -69,7 +69,7 @@ const isSelected = (index: number): boolean => {
       >
         <template
           v-for="(option, index) in options"
-          :key="option.value"
+          :key="option.value.toString()"
         >
           <span
             class="cursor-pointer"

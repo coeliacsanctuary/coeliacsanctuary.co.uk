@@ -4,21 +4,15 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Models\OpenGraphImage;
 use App\Models\Shop\ShopProduct;
 use App\Services\RenderOpenGraphImage;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class CreateShopIndexPageOpenGraphImageJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $tries = 2;
 
@@ -30,22 +24,16 @@ class CreateShopIndexPageOpenGraphImageJob implements ShouldQueue
 
         $spanishCard = ShopProduct::query()
             ->with(['media'])
-            ->where('title', 'like', 'spanish and italian%')
+            ->whereLike('title', 'spanish and italian%')
             ->firstOrFail();
-
-        //        $stickers = ShopProduct::query()
-        //            ->with(['media'])
-        //            ->where('title', 'like', '%stickers%')
-        //            ->firstOrFail();
 
         $otherAllergyCard = ShopProduct::query()
             ->with(['media'])
-            ->where('title', 'like', '%coeliac+%')
+            ->whereLike('title', '%coeliac+%')
             ->firstOrFail();
 
         $base64Image = $renderOpenGraphImage->handle(view('og-images.shop', [
             'spanishCard' => $spanishCard,
-            //            'stickers' => $stickers,
             'otherAllergyCard' => $otherAllergyCard,
         ])->render());
 

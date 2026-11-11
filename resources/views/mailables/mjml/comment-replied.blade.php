@@ -1,8 +1,10 @@
 @php
-    use App\Models\Comments\Comment;use App\Models\EatingOut\EateryReview;
+    use App\Models\Comments\Comment;
+    use App\Models\EatingOut\EateryReview;
     use App\Support\Helpers;
     use Illuminate\Support\Str;
     use Money\Money;
+
     /** @var Comment $comment */
 @endphp
 
@@ -10,7 +12,8 @@
 
 @push('head')
     <mj-style>
-        @media only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
+        @media
+        only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
     </mj-style>
 @endpush
 
@@ -23,11 +26,10 @@
         <mj-column>
             <mj-text mj-class="inner">Hey {{ $reply->comment->name }}</mj-text>
             <mj-text mj-class="inner">
-                I have just replied to your recent comment on my {{ strtolower(class_basename($reply->comment->commentable_type)) }} <strong>{{ $reply->comment->commentable->title }}</strong>!
+                I have just replied to your recent comment on my {{ strtolower(class_basename($reply->comment->commentable_type)) }}
+                <strong>{{ $reply->comment->commentable->title }}</strong>!
             </mj-text>
-            <mj-text mj-class="inner" padding-top="10px">
-                Thanks, Alison - Coeliac Sanctuary
-            </mj-text>
+            <mj-text mj-class="inner" padding-top="10px"> Thanks, Alison - Coeliac Sanctuary </mj-text>
         </mj-column>
     </mj-section>
 
@@ -41,9 +43,7 @@
 
     <mj-section mj-class="light-blue" padding="0 25px 0 25px">
         <mj-column padding="25px">
-            <mj-text mj-class="inner">
-                {{ $reply->comment_reply }}
-            </mj-text>
+            <mj-text mj-class="inner"> {{ $reply->comment_reply }} </mj-text>
         </mj-column>
     </mj-section>
 
@@ -57,9 +57,7 @@
 
     <mj-section mj-class="light-section" padding="0 25px 0 25px">
         <mj-column padding="25px">
-            <mj-text mj-class="inner">
-                {{ $reply->comment->comment }}
-            </mj-text>
+            <mj-text mj-class="inner"> {{ $reply->comment->comment }} </mj-text>
         </mj-column>
     </mj-section>
 

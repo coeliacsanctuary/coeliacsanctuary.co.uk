@@ -47,9 +47,9 @@ const eateryName = (eatery: TownEatery): string => {
   </Card>
 
   <Card
-    class="flex flex-col space-y-4"
     v-for="eatery in eateries"
     :key="eatery.key"
+    class="flex flex-col space-y-4"
   >
     <Heading classes="text-left">{{ eateryName(eatery.details) }}</Heading>
 
@@ -59,7 +59,9 @@ const eateryName = (eatery: TownEatery): string => {
         v-html="eatery.info"
       />
 
-      <div class="flex-shrink-none w-full md:max-w-16 xmd:max-w-20 lg:max-w-22">
+      <div
+        class="flex-shrink-none w-full md:max-w-3xs xmd:max-w-xs lg:max-w-sm"
+      >
         <Card
           theme="primary-light"
           faded
@@ -97,9 +99,9 @@ const eateryName = (eatery: TownEatery): string => {
           >
             <a
               :href="eatery.details.website"
-              v-text="eatery.details.website"
               target="_blank"
               class="block w-full truncate hover:underline"
+              v-text="eatery.details.website"
             />
           </p>
         </Card>

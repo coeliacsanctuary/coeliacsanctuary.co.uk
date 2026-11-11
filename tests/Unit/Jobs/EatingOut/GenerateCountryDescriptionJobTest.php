@@ -61,10 +61,10 @@ class GenerateCountryDescriptionJobTest extends TestCase
     {
         EateryCountryDescriptionAgent::fake();
 
-        (new GenerateCountryDescriptionJob($this->country))->handle();
+        new GenerateCountryDescriptionJob($this->country)->handle();
 
         EateryCountryDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Country: Wales')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Country: Wales')
         );
     }
 
@@ -73,10 +73,10 @@ class GenerateCountryDescriptionJobTest extends TestCase
     {
         EateryCountryDescriptionAgent::fake();
 
-        (new GenerateCountryDescriptionJob($this->country))->handle();
+        new GenerateCountryDescriptionJob($this->country)->handle();
 
         EateryCountryDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Counties: 3')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Counties: 3')
         );
     }
 
@@ -85,10 +85,10 @@ class GenerateCountryDescriptionJobTest extends TestCase
     {
         EateryCountryDescriptionAgent::fake();
 
-        (new GenerateCountryDescriptionJob($this->country))->handle();
+        new GenerateCountryDescriptionJob($this->country)->handle();
 
         EateryCountryDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -104,10 +104,10 @@ class GenerateCountryDescriptionJobTest extends TestCase
                 ->create(['rating' => 4]);
         });
 
-        (new GenerateCountryDescriptionJob($this->country))->handle();
+        new GenerateCountryDescriptionJob($this->country)->handle();
 
         EateryCountryDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
         );
     }
 
@@ -116,7 +116,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
     {
         EateryCountryDescriptionAgent::fake(['AI generated description']);
 
-        (new GenerateCountryDescriptionJob($this->country))->handle();
+        new GenerateCountryDescriptionJob($this->country)->handle();
 
         $this->assertEquals('AI generated description', $this->country->refresh()->description);
     }
@@ -130,7 +130,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
 
         Cache::put($key, 'foo');
 
-        (new GenerateCountryDescriptionJob($this->country))->handle();
+        new GenerateCountryDescriptionJob($this->country)->handle();
 
         $this->assertFalse(Cache::has($key));
     }
@@ -142,7 +142,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
 
         $nationwide = $this->create(EateryCountry::class, ['country' => 'Nationwide']);
 
-        (new GenerateCountryDescriptionJob($nationwide))->handle();
+        new GenerateCountryDescriptionJob($nationwide)->handle();
 
         EateryCountryDescriptionAgent::assertNeverPrompted();
     }
@@ -154,7 +154,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
 
         $nationwide = $this->create(EateryCountry::class, ['country' => 'Nationwide', 'description' => null]);
 
-        (new GenerateCountryDescriptionJob($nationwide))->handle();
+        new GenerateCountryDescriptionJob($nationwide)->handle();
 
         $this->assertNull($nationwide->refresh()->description);
     }
@@ -164,7 +164,7 @@ class GenerateCountryDescriptionJobTest extends TestCase
     {
         $this->assertEquals(
             $this->country->id,
-            (new GenerateCountryDescriptionJob($this->country))->uniqueId()
+            new GenerateCountryDescriptionJob($this->country)->uniqueId()
         );
     }
 

@@ -67,7 +67,7 @@ const numberOfSetFilters = computed<number>(() => {
   const keys: EateryFilterKeys[] = ['categories', 'venueTypes', 'features'];
 
   keys.forEach((key) => {
-    total += props.setFilters[key]?.length;
+    total += props.setFilters[key]?.length ?? 0;
   });
 
   return total;

@@ -3,7 +3,6 @@ import {
   ProductQuantitySwitcherPropDefaults,
   ProductQuantitySwitcherProps,
 } from '@/Components/Forms/Props';
-import { defineModel } from 'vue';
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/vue/20/solid';
 
 const props = withDefaults(
@@ -100,7 +99,8 @@ const onlyAllowDigits = (e: KeyboardEvent) => {
         <PlusCircleIcon
           class="size-6 cursor-pointer transition"
           :class="{
-            'text-primary/30': value >= props.max || disabled,
+            'text-primary/30':
+              (props.max !== undefined && value >= props.max) || disabled,
             'text-primary hover:text-primary-dark':
               (!props.max || value < props.max) && !disabled,
             '!cursor-not-allowed': disabled,

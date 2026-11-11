@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Shop;
 
+use App\Rules\Shop\ReviewProductIsDistinctRule;
 use App\Rules\Shop\ReviewProductIsInOrderRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -13,13 +14,14 @@ class ReviewMyOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string'],
+            'name' => ['nullable', 'string', 'max:255'],
             'whereHeard' => ['array'],
-            'whereHeard.*' => ['string'],
+            'whereHeard.*' => ['string', 'max:255'],
             'products' => ['required', 'array'],
-            'products.*.id' => ['required', 'int', 'bail', 'exists:shop_products,id', new ReviewProductIsInOrderRule()],
+            'products.*.id' => ['required', 'int', 'bail', new ReviewProductIsDistinctRule(), new ReviewProductIsInOrderRule()],
             'products.*.rating' => ['required', 'numeric', Rule::in(range(1, 5))],
-            'products.*.review' => ['string', 'nullable'],
+            'products.*.review' => ['nullable', 'string', 'max:1000'],
+            'products.*.type' => ['required', Rule::in(['physical', 'digital'])],
         ];
     }
 }

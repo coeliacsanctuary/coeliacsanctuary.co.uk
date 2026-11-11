@@ -15,6 +15,7 @@ class PendingEatery
         public null|int|float $distance = null,
         public ?int $typeId = null,
         public ?int $venueTypeId = null,
+        public ?float $durationAlongRoute = null,
     ) {
     }
 }

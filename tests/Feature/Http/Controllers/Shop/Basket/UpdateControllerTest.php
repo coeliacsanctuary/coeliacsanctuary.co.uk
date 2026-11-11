@@ -304,14 +304,14 @@ class UpdateControllerTest extends TestCase
     }
 
     #[Test]
-    public function itErrorsIfContactEmailIsNotConfirmed(): void
+    public function itErrorsIfContactNameIsMissing(): void
     {
         $this
             ->withCookie('basket_token', $this->order->token)
             ->patch(route('shop.basket.patch'), [
                 'contact' => ['email' => 'foo@bar.com'],
             ])
-            ->assertSessionHasErrors('contact.email');
+            ->assertSessionHasErrors('contact.name');
     }
 
     #[Test]
@@ -325,7 +325,6 @@ class UpdateControllerTest extends TestCase
                 'contact' => [
                     'name' => 'foo',
                     'email' => 'foo@bar.com',
-                    'email_confirmation' => 'foo@bar.com',
                 ],
             ]);
     }
@@ -345,7 +344,6 @@ class UpdateControllerTest extends TestCase
                 'contact' => [
                     'name' => 'foo',
                     'email' => 'foo@bar.com',
-                    'email_confirmation' => 'foo@bar.com',
                 ],
             ]);
 

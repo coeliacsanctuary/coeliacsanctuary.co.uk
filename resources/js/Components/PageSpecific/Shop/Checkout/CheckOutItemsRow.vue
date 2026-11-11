@@ -2,20 +2,18 @@
 import { ShopBasketItem } from '@/types/Shop';
 import { TrashIcon } from '@heroicons/vue/24/outline';
 import Loader from '@/Components/Loader.vue';
-import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
 import { Link, router } from '@inertiajs/vue3';
 import QuantitySwitcher from '@/Components/PageSpecific/Shop/Checkout/QuantitySwitcher.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import eventBus from '@/eventBus';
+import CheckOutItemsDigitalUpsellRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsDigitalUpsellRow.vue';
 
 const props = defineProps<{ item: ShopBasketItem }>();
 
 const isLoading = ref(false);
 const hasError = ref(false);
 const isDeletingItem = ref(false);
-const isRemovingAddon = ref(false);
-const includeAddOn = ref(props.item.add_on?.in_basket ?? false);
 
 const alterQuantity = (action: 'increase' | 'decrease') => {
   isLoading.value = true;
@@ -54,50 +52,6 @@ const removeItem = () => {
     },
   });
 };
-
-const removeAddOn = () => {
-  if (!props.item.add_on) {
-    return;
-  }
-
-  isLoading.value = true;
-
-  router.delete(`/shop/basket/${props.item.id}/add-on`, {
-    preserveScroll: true,
-    onFinish: () => {
-      isLoading.value = false;
-    },
-  });
-};
-
-const addAddOn = () => {
-  if (!props.item.add_on) {
-    return;
-  }
-
-  isLoading.value = true;
-
-  router.post(
-    `/shop/basket/${props.item.id}/add-on`,
-    {},
-    {
-      preserveScroll: true,
-      onFinish: () => {
-        isLoading.value = false;
-      },
-    },
-  );
-};
-
-watch(includeAddOn, () => {
-  if (includeAddOn.value) {
-    addAddOn();
-
-    return;
-  }
-
-  removeAddOn();
-});
 </script>
 
 <template>
@@ -112,9 +66,9 @@ watch(includeAddOn, () => {
       width="border-8"
     />
 
-    <div class="flex space-x-3 py-3">
+    <div class="flex gap-3 py-4 sm:gap-4">
       <div
-        class="h-17 w-17 shrink-0 overflow-hidden rounded-md border border-gray-200 xs:h-20 xs:w-20 sm:h-24 sm:w-24"
+        class="size-20 shrink-0 overflow-hidden rounded-lg border border-primary-light/60 sm:size-24"
       >
         <img
           :src="item.image"
@@ -123,9 +77,9 @@ watch(includeAddOn, () => {
         />
       </div>
 
-      <div class="flex flex-1 flex-col">
+      <div class="flex flex-1 flex-col gap-2">
         <div>
-          <div class="flex justify-between text-base">
+          <div class="flex justify-between gap-3 text-base">
             <h3>
               <Link
                 :href="item.link"
@@ -138,36 +92,33 @@ watch(includeAddOn, () => {
               </Link>
             </h3>
             <p
-              class="ml-4 text-xl font-semibold"
+              class="shrink-0 text-xl font-semibold"
               v-text="item.line_price"
             />
           </div>
 
           <p
             v-if="item.description"
-            class="mt-1 text-sm text-gray-500"
+            class="mt-1 text-sm text-grey-dark"
             v-text="item.description"
           />
         </div>
 
-        <div class="flex flex-1 items-center justify-between">
-          <div class="flex flex-1 items-center space-x-1">
-            <p>Quantity</p>
-
-            <QuantitySwitcher
-              :quantity="item.quantity"
-              @alter="(mode) => alterQuantity(mode)"
-            />
-          </div>
+        <div class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2">
+          <QuantitySwitcher
+            size="lg"
+            :quantity="item.quantity"
+            @alter="(mode) => alterQuantity(mode)"
+          />
 
           <CoeliacButton
             theme="faded"
             icon-only
             :icon="TrashIcon"
-            size="xxl"
             as="button"
             type="button"
-            classes="p-1! hover:text-primary-dark !shadow-none"
+            size="lg"
+            classes="ml-auto p-1! text-grey-dark hover:text-primary-dark shadow-none!"
             :loading="isDeletingItem"
             @click="removeItem()"
           />
@@ -182,42 +133,17 @@ watch(includeAddOn, () => {
       </div>
     </div>
 
-    <div
-      v-if="item.add_on"
-      class="-my-2 flex space-x-3 pb-3"
+    <ul
+      v-if="item.digitalCards?.length"
+      class="-mt-3"
     >
-      <div
-        class="flex w-17 shrink-0 items-baseline justify-end xs:w-20 sm:w-24"
-      >
-        <FormCheckbox
-          v-model="includeAddOn"
-          name="include_add_on"
-          class="py-0!"
-          label=""
-          hide-label
-          xl
-        />
-      </div>
+      <li class="my-2 font-semibold text-primary-dark">Digital Card Add Ons</li>
 
-      <div class="flex flex-1 flex-col">
-        <div>
-          <div class="flex justify-between text-base">
-            <div class="flex flex-col">
-              <h3 v-text="item.add_on.title" />
-              <p
-                class="text-sm"
-                v-text="item.add_on.description"
-              />
-            </div>
-
-            <p
-              class="ml-4 flex-shrink-0"
-              :class="includeAddOn ? 'text-xl font-semibold' : 'text-sm'"
-              v-text="`+${item.add_on.price}`"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+      <CheckOutItemsDigitalUpsellRow
+        v-for="digitalCard in item.digitalCards"
+        :key="digitalCard.id"
+        :item="digitalCard"
+      />
+    </ul>
   </li>
 </template>

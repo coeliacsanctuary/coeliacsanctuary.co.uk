@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Blogs;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\CanBePublished;
 use App\Concerns\ClearsCache;
 use App\Concerns\Comments\Commentable;
@@ -20,7 +21,9 @@ use App\Models\Media;
 use App\Scopes\LiveScope;
 use App\Support\Collections\CanBeCollected;
 use App\Support\Collections\Collectable;
+use App\Support\Helpers;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -29,14 +32,16 @@ use Illuminate\Http\Request;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\SchemaOrg\Blog as BlogSchema;
+use Spatie\SchemaOrg\BlogPosting as BlogPostingSchema;
 use Spatie\SchemaOrg\Schema;
 
 /**
+ * @property int<1, max> $reading_time
  * @implements Collectable<$this>
  * @implements HasComments<$this>
  * @implements HasFaqs<$this>
  */
+#[RouteKey('slug')]
 class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -74,11 +79,6 @@ class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia,
         });
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
     /** @param Builder<static> $query */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
@@ -102,7 +102,7 @@ class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia,
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -111,6 +111,12 @@ class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia,
             ->performOnCollections('primary')
             ->nonQueued()
             ->format('webp');
+    }
+
+    /** @return Attribute<int<1, max>, never> */
+    public function readingTime(): Attribute
+    {
+        return Attribute::get(fn (): int => Helpers::readingTime($this->body));
     }
 
     /** @return BelongsToMany<BlogTag, $this> */
@@ -141,19 +147,19 @@ class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia,
         return 'blog';
     }
 
-    public function schema(): BlogSchema
+    public function schema(): BlogPostingSchema
     {
         /** @var string $url */
         $url = config('app.url');
 
-        return Schema::blog()
+        return Schema::blogPosting()
             ->author(Schema::person()->name('Alison Peters'))
             ->dateModified($this->updated_at)
             ->datePublished($this->created_at)
             ->description($this->meta_description)
             ->headline($this->title)
             ->image($this->main_image)
-            ->mainEntityOfPage(Schema::webPage()->identifier($url))
+            ->mainEntityOfPage(Schema::webPage()->identifier($this->absolute_link))
             ->publisher(
                 Schema::organization()
                     ->name('Coeliac Sanctuary')

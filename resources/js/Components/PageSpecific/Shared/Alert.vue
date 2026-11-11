@@ -86,7 +86,7 @@ const titleLabel = computed<string>(() => {
         </div>
 
         <div
-          v-if="actions.length"
+          v-if="actions?.length"
           class="flex justify-end space-x-2"
         >
           <CoeliacButton

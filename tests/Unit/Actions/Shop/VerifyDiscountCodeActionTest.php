@@ -41,6 +41,38 @@ class VerifyDiscountCodeActionTest extends TestCase
     }
 
     #[Test]
+    public function itErrorsIfTheDiscountCodeHasExpired(): void
+    {
+        $code = $this->build(ShopDiscountCode::class)->expired()->create(['code' => 'foobar']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This discount code is not currently active');
+
+        app(VerifyDiscountCodeAction::class)->handle($code, $this->order->token);
+    }
+
+    #[Test]
+    public function itErrorsIfTheDiscountCodeHasntStartedYet(): void
+    {
+        $code = $this->build(ShopDiscountCode::class)->startsTomorrow()->create(['code' => 'foobar']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This discount code is not currently active');
+
+        app(VerifyDiscountCodeAction::class)->handle($code, $this->order->token);
+    }
+
+    #[Test]
+    public function itDoesntErrorForACodeInsideItsDateWindow(): void
+    {
+        $code = $this->create(ShopDiscountCode::class, ['code' => 'foobar', 'min_spend' => 1]);
+
+        app(VerifyDiscountCodeAction::class)->handle($code, $this->order->token);
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    #[Test]
     public function itErrorsIfTheDiscountCodeIsValidButHasHadTooManyClaims(): void
     {
         $code = $this->create(ShopDiscountCode::class, [

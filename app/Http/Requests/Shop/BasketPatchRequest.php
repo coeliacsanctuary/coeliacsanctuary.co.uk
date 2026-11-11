@@ -33,7 +33,7 @@ class BasketPatchRequest extends FormRequest
             )],
             'contact' => ['array'],
             'contact.name' => ['required_with:contact', 'string'],
-            'contact.email' => ['required_with:contact', 'string', 'email', 'confirmed'],
+            'contact.email' => ['required_with:contact', 'string', 'email'],
             'contact.phone' => ['nullable'],
             'contact.subscribeToNewsletter' => ['nullable', 'boolean'],
         ];

@@ -15,7 +15,7 @@ class GetCountyListAction
 {
     use FormatsMarkdown;
 
-    /** @return Collection<int, array{name: string, image: string, description: string, list: Collection<int, array>, counties: int<0, max>, eateries: mixed, top_counties: Collection<int,array>}> */
+    /** @return Collection<int, array{name: string, image: string, description: string, list: Collection<int, array>, counties: int, eateries: mixed, top_counties: Collection<int,array>}> */
     public function handle(bool $force = false): Collection
     {
         $key = config('coeliac.cacheable.eating-out.index-counts');
@@ -45,7 +45,7 @@ class GetCountyListAction
                 ->orderByDesc('total_eateries_count')
                 ->whereNot('country', 'Nationwide')
                 ->get()
-                ->map(fn (EateryCountry $country) => [
+                ->map(fn (EateryCountry $country): array => [
                     'name' => $country->country,
                     'image' => $country->image,
                     'description' => (string) $this->formatMarkdown((string) $country->description),
@@ -53,8 +53,8 @@ class GetCountyListAction
                     'counties' => $country->counties->count(),
                     'eateries' => $country->getAttribute('total_eateries_count'),
                     'top_counties' => $country->counties
-                        ->filter(fn (EateryCounty $county) => (int) $county->getAttribute('review_count') > 0)
-                        ->sortByDesc(fn (EateryCounty $county) => $this->bayesianScore($county))
+                        ->filter(fn (EateryCounty $county): bool => (int) $county->getAttribute('review_count') > 0)
+                        ->sortByDesc(fn (EateryCounty $county): float => $this->bayesianScore($county))
                         ->take(3)
                         ->map($this->formatCounty(...))
                         ->values(),

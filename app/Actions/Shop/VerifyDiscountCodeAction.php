@@ -18,11 +18,11 @@ class VerifyDiscountCodeAction
 {
     public function handle(ShopDiscountCode $discountCode, string $basketToken): void
     {
+        throw_if($discountCode->start_at->isFuture() || $discountCode->end_at->isPast(), new RuntimeException('This discount code is not currently active'));
+
         $discountCode->loadCount('used');
 
-        if ($discountCode->max_claims > 0 && $discountCode->used_count >= $discountCode->max_claims) {
-            throw new RuntimeException('Discount Code has had too many claims');
-        }
+        throw_if($discountCode->max_claims > 0 && $discountCode->used_count >= $discountCode->max_claims, new RuntimeException('Discount Code has had too many claims'));
 
         /** @var int $runningSubtotal */
         $runningSubtotal = ShopOrderItem::query()

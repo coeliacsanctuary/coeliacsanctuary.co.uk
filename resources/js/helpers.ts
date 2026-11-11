@@ -10,9 +10,9 @@ export const formatDate = (
   return dayjs(date).format(format);
 };
 
-export const loadScript = (script: string) => {
+export const loadScript = (script: string): Promise<unknown> => {
   if (typeof document === 'undefined') {
-    return;
+    return new Promise(() => {});
   }
 
   return new Promise((resolve) => {
@@ -75,7 +75,21 @@ export const distanceInMiles = (from: LatLng, to: LatLng): number => {
 export const getTitle = (title: string | undefined): string => {
   const appName = 'Coeliac Sanctuary';
 
-  return title && title !== '' && title !== appName
-    ? `${title} - ${appName}`
-    : 'Coeliac Sanctuary - Coeliac Blog, Gluten Free Places to Eat, Reviews, and more!';
+  if (!title || title === '' || title === appName) {
+    title = 'Gluten Free Recipes, Blog & UK Places to Eat';
+  }
+
+  return `${title} - ${appName}`;
+};
+
+const fullPageLoadPaths = ['/wheretoeat/browse', '/wheretoeat/trip-planner'];
+
+export const needsFullPageLoad = (href: string | undefined): boolean => {
+  if (!href) {
+    return false;
+  }
+
+  const path = new URL(href, 'https://www.coeliacsanctuary.co.uk').pathname;
+
+  return fullPageLoadPaths.some((prefix) => path.startsWith(prefix));
 };

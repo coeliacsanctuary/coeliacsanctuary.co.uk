@@ -44,11 +44,22 @@ class ShopCategoryTest extends TestCase
     }
 
     #[Test]
+    public function itResolvesItsRouteKeyToTheSlug(): void
+    {
+        $category = $this->create(ShopCategory::class, [
+            'slug' => 'test-category',
+        ]);
+
+        $this->assertEquals('test-category', $category->getRouteKey());
+        $this->assertEquals(route('shop.category', 'test-category'), route('shop.category', $category));
+    }
+
+    #[Test]
     public function itHasManyProducts(): void
     {
-        ShopCategory::withoutGlobalScopes();
-        ShopProduct::withoutGlobalScopes();
-        ShopProductVariant::withoutGlobalScopes();
+        ShopCategory::query()->withoutGlobalScopes();
+        ShopProduct::query()->withoutGlobalScopes();
+        ShopProductVariant::query()->withoutGlobalScopes();
 
         $category = $this->create(ShopCategory::class);
 

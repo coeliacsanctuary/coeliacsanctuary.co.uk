@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Actions\EatingOut;
 
+use Laravel\Nova\Actions\ActionResponse;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
@@ -23,7 +24,7 @@ use Laravel\Nova\Fields\ActionFields;
  */
 class ConvertRecommendationToEatery extends Action
 {
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): Action|ActionResponse
     {
         /** @var EateryRecommendation $recommendation */
         $recommendation = $models->first();
@@ -52,7 +53,7 @@ class ConvertRecommendationToEatery extends Action
             'features' => $aiData?->features,
             'isEligible' => $aiData?->is_eligible,
             'explanation' => $aiData?->explanation,
-        ], fn ($value) => $value !== null), now()->addMinute());
+        ], fn ($value): bool => $value !== null), now()->addMinute());
 
         return Action::openInNewTab('/cs-adm/resources/eateries/new');
     }

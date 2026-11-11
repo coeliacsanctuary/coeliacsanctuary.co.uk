@@ -116,7 +116,6 @@ class GetLatestCollectionsForHomePageActionTest extends TestCase
         DB::enableQueryLog();
 
         $this->callAction(GetLatestCollectionsForHomepageAction::class);
-        // collections, groups, group items, and media relations
         $this->assertCount(4, DB::getQueryLog());
 
         $this->callAction(GetLatestCollectionsForHomepageAction::class);

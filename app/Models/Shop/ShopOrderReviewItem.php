@@ -4,19 +4,34 @@ declare(strict_types=1);
 
 namespace App\Models\Shop;
 
+use App\Concerns\ClearsCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\DB;
 
 class ShopOrderReviewItem extends Model
 {
-    protected $casts = [
-        'rating' => 'float',
-    ];
+    use ClearsCache;
 
-    /** @return BelongsTo<ShopProduct, $this> */
-    public function product(): BelongsTo
+    public static function deduplicatedIds(): QueryBuilder
     {
-        return $this->belongsTo(ShopProduct::class, 'product_id');
+        return DB::query()
+            ->select('id')
+            ->fromSub(
+                DB::table('shop_order_review_items')
+                    ->select('id')
+                    ->selectRaw("ROW_NUMBER() OVER (PARTITION BY review_id, product_type, product_id ORDER BY (review IS NULL OR review = '') ASC, id ASC) AS rn"),
+                'ranked'
+            )
+            ->where('rn', 1);
+    }
+
+    /** @return MorphTo<Model, $this> */
+    public function product(): MorphTo
+    {
+        return $this->morphTo();
     }
 
     /** @return BelongsTo<ShopOrderReview, $this> */
@@ -29,5 +44,17 @@ class ShopOrderReviewItem extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(ShopOrder::class, 'order_id');
+    }
+
+    protected function cacheKey(): string
+    {
+        return 'shop-reviews';
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'rating' => 'float',
+        ];
     }
 }

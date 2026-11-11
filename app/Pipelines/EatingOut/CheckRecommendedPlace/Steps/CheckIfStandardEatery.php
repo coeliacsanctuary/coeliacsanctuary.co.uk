@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\CheckRecommendedPlace\Steps;
 
+use App\Builders\EatingOut\EateryBuilder;
 use App\DataObjects\EatingOut\RecommendAPlaceExistsCheckData;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryTown;
@@ -24,7 +25,7 @@ class CheckIfStandardEatery extends AbstractStepAction
         $locations = Str::explode($data->location);
 
         /** @var Collection<int, string> $locations */
-        $locations = $locations->map(fn (string $line) => mb_trim($line, ',.-'))
+        $locations = $locations->map(fn (string $line): string => mb_trim($line, ',.-'))
             ->filter()
             ->values();
 
@@ -32,7 +33,7 @@ class CheckIfStandardEatery extends AbstractStepAction
             ->where(function (Builder $query) use ($locations): void {
                 $locations->each(
                     fn (string $location) => $query
-                        ->orWhere('town', 'like', "%{$location}%")
+                        ->orWhereLike('town', "%{$location}%")
                 );
             })
             ->pluck('id');
@@ -42,17 +43,14 @@ class CheckIfStandardEatery extends AbstractStepAction
         $eatery = Eatery::query()
             ->notNationwide()
             ->where(DB::raw('replace(name, "\'", "")'), 'like', "%{$name}%")
-            ->where(function (Builder $builder) use ($towns, $locations) {
-                /** @var Builder<Eatery> $builder */
-                return $builder
-                    ->whereIn('town_id', $towns)
-                    ->orWhere(function (Builder $query) use ($locations): void {
-                        $locations->each(
-                            fn (string $location) => $query
-                                ->orWhere('address', 'like', "%{$location}%")
-                        );
-                    });
-            })
+            ->where(fn (EateryBuilder $builder) => $builder
+                ->whereIn('town_id', $towns)
+                ->orWhere(function (Builder $query) use ($locations): void {
+                    $locations->each(
+                        fn (string $location) => $query
+                            ->orWhereLike('address', "%{$location}%")
+                    );
+                }))
             ->with(['town', 'county'])
             ->first();
 

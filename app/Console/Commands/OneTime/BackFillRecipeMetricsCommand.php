@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\OneTime;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeMetric;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Jpeters8889\JourneyTrackerLaravel\Enums\EventType;
-use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
-use Jpeters8889\JourneyTrackerLaravel\Query\EventFilter;
-use Jpeters8889\JourneyTrackerLaravel\Query\PageFilter;
-use Jpeters8889\JourneyTrackerLaravel\Query\QueryDescriptor;
+use JourneyTracker\JourneyTrackerLaravel\Enums\EventType;
+use JourneyTracker\JourneyTrackerLaravel\Facades\JourneyTracker;
+use JourneyTracker\JourneyTrackerLaravel\Query\EventFilter;
+use JourneyTracker\JourneyTrackerLaravel\Query\PageFilter;
+use JourneyTracker\JourneyTrackerLaravel\Query\QueryDescriptor;
 
+#[Signature('coeliac:one-time:back-fill-recipe-metrics')]
 class BackFillRecipeMetricsCommand extends Command
 {
-    protected $signature = 'coeliac:one-time:back-fill-recipe-metrics';
-
     public function handle(): void
     {
         Recipe::query()
@@ -36,14 +36,14 @@ class BackFillRecipeMetricsCommand extends Command
                         ->daily()
                         ->count(
                             'views',
-                            fn (QueryDescriptor $query) => $query
-                                ->withPage(fn (PageFilter $page) => $page->path(mb_trim($recipe->link, '/')))
+                            fn (QueryDescriptor $query): QueryDescriptor => $query
+                                ->withPage(fn (PageFilter $page): PageFilter => $page->path(mb_trim($recipe->link, '/')))
                         )
                         ->count(
                             'comment_views',
-                            fn (QueryDescriptor $query) => $query
+                            fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
-                                    fn (EventFilter $event) => $event
+                                    fn (EventFilter $event): EventFilter => $event
                                         ->type(EventType::SCROLLED_INTO_VIEW)
                                         ->identifier('CommentsCard')
                                         ->withParameters([
@@ -54,9 +54,9 @@ class BackFillRecipeMetricsCommand extends Command
                         )
                         ->count(
                             'detail_card_views',
-                            fn (QueryDescriptor $query) => $query
+                            fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
-                                    fn (EventFilter $event) => $event
+                                    fn (EventFilter $event): EventFilter => $event
                                         ->type(EventType::SCROLLED_INTO_VIEW)
                                         ->identifier('RecipeDetailCard')
                                         ->withParameters([
@@ -66,9 +66,9 @@ class BackFillRecipeMetricsCommand extends Command
                         )
                         ->count(
                             'collection_card_views',
-                            fn (QueryDescriptor $query) => $query
+                            fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
-                                    fn (EventFilter $event) => $event
+                                    fn (EventFilter $event): EventFilter => $event
                                         ->type(EventType::SCROLLED_INTO_VIEW)
                                         ->identifier('CollectionItemCard')
                                         ->withParameters([
@@ -81,7 +81,7 @@ class BackFillRecipeMetricsCommand extends Command
 
                     RecipeMetric::query()->upsert(
                         /** @phpstan-ignore-next-line */
-                        collect($metrics->all())->map(fn (array $metric) => [
+                        collect($metrics->all())->map(fn (array $metric): array => [
                             'recipe_id' => $recipe->id,
                             'date' => data_get($metric, 'date'),
                             'page_views' => data_get($metric, 'views'),

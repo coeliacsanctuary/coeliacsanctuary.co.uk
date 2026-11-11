@@ -25,10 +25,10 @@ class ContactFormMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "New Contact Form - {$this->contactFormData->subject}",
             replyTo: [
                 new Address($this->contactFormData->email, $this->contactFormData->name),
             ],
+            subject: "New Contact Form - {$this->contactFormData->subject}",
         );
     }
 

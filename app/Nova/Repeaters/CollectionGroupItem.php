@@ -20,8 +20,6 @@ class CollectionGroupItem extends Repeatable
     public static $model = \App\Models\Collections\CollectionGroupItem::class;
 
     /**
-     * Get the fields displayed by the repeatable.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field>
      */
     public function fields(NovaRequest $request): array

@@ -13,11 +13,6 @@ class ShopOrderReviewInvitation extends Model
 {
     use HasUuids;
 
-    protected $casts = [
-        'sent' => 'bool',
-        'sent_at' => 'datetime',
-    ];
-
     /** @return BelongsTo<ShopOrder, $this> */
     public function order(): BelongsTo
     {
@@ -28,5 +23,13 @@ class ShopOrderReviewInvitation extends Model
     public function review(): HasOne
     {
         return $this->hasOne(ShopOrderReview::class, 'invitation_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'sent' => 'bool',
+            'sent_at' => 'datetime',
+        ];
     }
 }

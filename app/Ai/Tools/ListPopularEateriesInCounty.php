@@ -13,17 +13,11 @@ use Stringable;
 
 class ListPopularEateriesInCounty implements Tool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'List the most popular eateries, by rating, in our database, for a given county.';
     }
 
-    /**
-     * Execute the tool.
-     */
     public function handle(Request $request): Stringable|string
     {
         $places = EateryCounty::query()
@@ -39,7 +33,7 @@ class ListPopularEateriesInCounty implements Tool
             ->orderBy('reviews_count', 'desc')
             ->take(5)
             ->get()
-            ->map(fn (Eatery $eatery) => [
+            ->map(fn (Eatery $eatery): array => [
                 'name' => $eatery->name,
                 'town' => $eatery->town?->town,
                 'address' => $eatery->address,
@@ -51,9 +45,6 @@ class ListPopularEateriesInCounty implements Tool
         return (string) json_encode($places);
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

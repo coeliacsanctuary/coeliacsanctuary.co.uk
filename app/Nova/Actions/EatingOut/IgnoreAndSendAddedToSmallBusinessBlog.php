@@ -23,7 +23,7 @@ class IgnoreAndSendAddedToSmallBusinessBlog extends Action
     public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (EateryRecommendation $model): void {
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $model->email)
                 ->notify(new EateryRecommendationAddedSmallBusinessNotification($model));
 

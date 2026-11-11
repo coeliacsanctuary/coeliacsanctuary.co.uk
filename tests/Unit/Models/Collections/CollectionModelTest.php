@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\CanBePublishedTestTrait;
+use Tests\Concerns\DisplaysDatesTestTrait;
 use Tests\Concerns\DisplaysMediaTestTrait;
 use Tests\Concerns\LinkableModelTestTrait;
 use Tests\TestCase;
@@ -19,6 +20,7 @@ use Tests\TestCase;
 class CollectionModelTest extends TestCase
 {
     use CanBePublishedTestTrait;
+    use DisplaysDatesTestTrait;
     use DisplaysMediaTestTrait;
     use LinkableModelTestTrait;
 
@@ -37,6 +39,8 @@ class CollectionModelTest extends TestCase
         $this->setUpLinkableModelTest(fn (array $params) => $this->create(Collection::class, $params));
 
         $this->setUpCanBePublishedModelTest(fn (array $params = []) => $this->create(Collection::class, $params));
+
+        $this->setUpDisplaysDatesTest(fn (array $params = []) => $this->create(Collection::class, $params));
     }
 
     #[Test]

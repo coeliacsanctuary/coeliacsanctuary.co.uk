@@ -41,7 +41,7 @@ class SimpleEateryResource extends JsonResource
                 'link' => $resource->town?->link(),
             ],
             'address' => collect(explode("\n", $resource->address))
-                ->map(fn (string $line) => mb_trim($line))
+                ->map(fn (string $line): string => mb_trim($line))
                 ->join(', '),
             'created_at' => $resource->created_at?->diffForHumans(),
         ];

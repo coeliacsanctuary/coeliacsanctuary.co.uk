@@ -84,11 +84,10 @@ class GetLatestRecipesForHomePageActionTest extends TestCase
 
         $this->callAction(GetLatestRecipesForHomepageAction::class);
 
-        // Recipes and media relation;
-        $this->assertCount(2, DB::getQueryLog());
+        $this->assertCount(3, DB::getQueryLog());
 
         $this->callAction(GetLatestRecipesForHomepageAction::class);
 
-        $this->assertCount(2, DB::getQueryLog());
+        $this->assertCount(3, DB::getQueryLog());
     }
 }

@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class SendReviewInvitationJobTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -30,7 +30,7 @@ class SendReviewInvitationJobTest extends TestCase
         $this->assertDatabaseEmpty(ShopOrderReviewInvitation::class);
         $this->assertNull($order->reviewInvitation);
 
-        (new SendReviewInvitationJob($order, 'foo'))->handle();
+        new SendReviewInvitationJob($order, 'foo')->handle();
 
         $this->assertDatabaseCount(ShopOrderReviewInvitation::class, 1);
         $this->assertNotNull($order->refresh()->reviewInvitation);
@@ -42,7 +42,7 @@ class SendReviewInvitationJobTest extends TestCase
         /** @var ShopOrder $order */
         $order = $this->build(ShopOrder::class)->asPaid()->create();
 
-        (new SendReviewInvitationJob($order, 'foo'))->handle();
+        new SendReviewInvitationJob($order, 'foo')->handle();
 
         Notification::assertSentTo($order->customer, ReviewOrderInvitationNotification::class);
     }
@@ -53,7 +53,7 @@ class SendReviewInvitationJobTest extends TestCase
         /** @var ShopOrder $order */
         $order = $this->build(ShopOrder::class)->asPaid()->create();
 
-        (new SendReviewInvitationJob($order, 'foo'))->handle();
+        new SendReviewInvitationJob($order, 'foo')->handle();
 
         $this->assertTrue($order->reviewInvitation->sent);
     }

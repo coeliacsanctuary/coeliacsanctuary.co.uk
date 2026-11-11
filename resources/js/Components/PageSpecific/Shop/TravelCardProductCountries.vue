@@ -14,83 +14,85 @@ const viewAll = ref([false, false]);
 </script>
 
 <template>
-  <div class="relative -mt-1 flex flex-col space-y-3 px-3">
-    <Card>
-      <p class="prose prose-lg max-w-none">
-        Wondering where our <strong v-text="product" /> card could be useful?
-        We've pulled together a list of countries where the languages on this
-        card are commonly spoken or understood. That includes places where it’s
-        the official language, as well as destinations where it’s widely used in
-        restaurants, tourism, or everyday life. It's a great way to help explain
-        your dietary needs clearly while travelling, even if you're not fluent
-        yourself.
-      </p>
-    </Card>
+  <Card class="space-y-4">
+    <SubHeading classes="text-primary-dark">
+      Where can I use this travel card?
+    </SubHeading>
+
+    <p class="prose max-w-none md:prose-lg">
+      Here's where my <strong v-text="product" /> card could come in handy —
+      countries where the languages on it are commonly spoken or understood.
+      That includes places where it's the official language, as well as
+      destinations where it's widely used in restaurants and tourism. It's a
+      good way to explain your dietary needs clearly while travelling, even if
+      you don't speak a word of it yourself.
+    </p>
 
     <div
-      class="grid gap-3 md:gap-5 xl:gap-10"
+      class="grid gap-4"
       :class="{ 'md:grid-cols-2': countries.length > 1 }"
     >
-      <Card
+      <div
         v-for="(country, index) in countries"
         :key="country.language"
+        class="rounded-sm border border-primary-light/60 bg-primary-lightest/40 p-4"
       >
         <template v-if="country.language">
-          <SubHeading>
-            {{ country.language }}
-          </SubHeading>
+          <h3
+            class="font-coeliac text-xl font-semibold text-primary-dark"
+            v-text="country.language"
+          />
 
-          <div class="my-4 h-[2px] w-full bg-primary-light/50" />
+          <div class="my-3 h-px w-full bg-primary-light/60" />
         </template>
-        <div>
-          <ul
-            :class="{
-              'grid gap-3 md:grid-cols-3 md:gap-x-10': countries.length === 1,
-              'flex flex-col space-y-2': countries.length > 1,
-            }"
-          >
-            <template v-for="(usableCountry, item) in country.countries">
-              <li
-                v-if="item < 6 || viewAll[index] === true"
-                :key="usableCountry.code"
-                class="inline-flex items-center space-x-3 text-lg"
-              >
-                <div>
-                  <img
-                    :src="
-                      usableCountry.code
-                        ? `https://flagcdn.com/24x18/${usableCountry.code}.png`
-                        : '/images/misc/flag-fallback.png'
-                    "
-                    :alt="usableCountry.country"
-                  />
-                </div>
-                <span v-text="usableCountry.country" />
-              </li>
-            </template>
+
+        <ul
+          :class="{
+            'grid gap-2 sm:grid-cols-2 lg:grid-cols-3': countries.length === 1,
+            'flex flex-col space-y-2': countries.length > 1,
+          }"
+        >
+          <template v-for="(usableCountry, item) in country.countries">
             <li
-              v-if="countries.length === 1 && country.countries.length > 6"
-              class="col-span-1"
-            />
-            <li
-              v-if="country.countries.length > 6"
-              class="mt-3"
-              :class="{
-                'md:col-start-2': countries.length === 1,
-              }"
+              v-if="item < 6 || viewAll[index]"
+              :key="usableCountry.country"
+              class="inline-flex items-center space-x-3"
             >
-              <CoeliacButton
-                :label="`${viewAll[index] ? 'Hide' : 'Show'} ${country.countries.length - 6} more...`"
-                size="lg"
-                as="button"
-                classes="w-full !justify-center !text-xl"
-                bold
-                @click="viewAll[index] = !viewAll[index]"
+              <img
+                :src="
+                  usableCountry.code
+                    ? `https://flagcdn.com/24x18/${usableCountry.code}.png`
+                    : '/images/misc/flag-fallback.png'
+                "
+                :alt="`${usableCountry.country} flag`"
+                width="24"
+                height="18"
+                loading="lazy"
+                class="h-[18px] w-6 shrink-0 object-cover"
               />
+
+              <span v-text="usableCountry.country" />
             </li>
-          </ul>
-        </div>
-      </Card>
+          </template>
+        </ul>
+
+        <CoeliacButton
+          v-if="country.countries.length > 6"
+          as="button"
+          type="button"
+          theme="light"
+          size="lg"
+          class="mt-4"
+          classes="w-full justify-center text-center"
+          :label="
+            viewAll[index]
+              ? 'Show fewer'
+              : `Show ${country.countries.length - 6} more...`
+          "
+          bold
+          @click="viewAll[index] = !viewAll[index]"
+        />
+      </div>
     </div>
-  </div>
+  </Card>
 </template>

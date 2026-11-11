@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '20.4.x'
+          node-version: '22.18.x'
 
       - uses: actions/cache@v3
         id: npm-cache
@@ -31,6 +31,19 @@ jobs:
       - name: Install JavaScript Dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Prettier
+        run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - uses: actions/cache@v3
+        with:
+          path: .eslintcache
+          key: eslint-${{ hashFiles('.eslintrc.cjs', 'package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            eslint-${{ hashFiles('.eslintrc.cjs', 'package-lock.json') }}-
 
       - name: ESLint
         run: npm run lint

@@ -7,13 +7,16 @@ namespace Database\Factories;
 use App\Models\EatingOut\EateryArea;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryArea>
+ */
 class EateryAreaFactory extends Factory
 {
     protected $model = EateryArea::class;
 
     public function definition()
     {
-        $area = $this->faker->city;
+        $area = $this->faker->city();
 
         return [
             'town_id' => 1,

@@ -13,35 +13,40 @@ use App\Ai\Tools\PrepareRecommendedEatery\SearchArea;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchCounty;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchTown;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Ai;
 use Laravel\Ai\Attributes\Model;
-use Laravel\Ai\Attributes\Provider;
 use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasProviderOptions;
 use Laravel\Ai\Contracts\HasStructuredOutput;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Promptable;
+use Laravel\Ai\Providers\Provider;
 use Laravel\Ai\Providers\Tools\WebFetch;
 use Laravel\Ai\Providers\Tools\WebSearch;
 use Stringable;
 
-#[Provider(Lab::Anthropic)]
 #[Model('claude-opus-4-6')]
-class PrepareRecommendedEatery implements Agent, HasStructuredOutput, HasTools
+class PrepareRecommendedEatery implements Agent, HasProviderOptions, HasStructuredOutput, HasTools
 {
     use Promptable;
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
+    public function provider(): Provider
+    {
+        return Ai::build([
+            'driver' => 'anthropic',
+            'key' => config('ai.providers.anthropic.key'),
+            'use_native_structured_output' => false,
+        ]);
+    }
+
     public function instructions(): Stringable|string
     {
         return view('prompts.prepare-recommended-eatery-base-instructions')->render();
     }
 
     /**
-     * Get the tools available to the agent.
-     *
      * @return iterable<Tool>
      */
     public function tools(): iterable
@@ -63,16 +68,13 @@ class PrepareRecommendedEatery implements Agent, HasStructuredOutput, HasTools
         return $tools;
     }
 
-    /**
-     * Get the agent's structured output schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [
-            'data' => $schema->object(fn (JsonSchema $schema) => [
+            'data' => $schema->object(fn (JsonSchema $schema): array => [
                 'place_name' => $schema->string()->required()->nullable(),
                 'place_address' => $schema->string()->required()->nullable(),
-                'place_country' => $schema->string()->enum(['England', 'Scotland', 'Wales', 'Northern Ireland', 'Republic of Ireland', 'Isle of Man', 'Chanel Islands'])->required()->nullable(),
+                'place_country' => $schema->string()->enum(['England', 'Scotland', 'Wales', 'Northern Ireland', 'Republic of Ireland', 'Isle of Man', 'Channel Islands'])->required()->nullable(),
                 'place_county' => $schema->string()->required()->nullable(),
                 'place_town' => $schema->string()->required()->nullable(),
                 'place_area' => $schema->string()->required()->nullable(),
@@ -80,16 +82,26 @@ class PrepareRecommendedEatery implements Agent, HasStructuredOutput, HasTools
                 'longitude' => $schema->number()->required()->nullable(),
                 'phone_number' => $schema->string()->required()->nullable(),
                 'website' => $schema->string()->required()->nullable(),
-                'facebook' => $schema->string()->required()->nullable(),
-                'instagram' => $schema->string()->required()->nullable(),
+                'facebook' => $schema->string()->required()->description('Use an empty string if no Facebook page was found.'),
+                'instagram' => $schema->string()->required()->description('Use an empty string if no Instagram account was found.'),
                 'eatery_Type' => $schema->string()->enum(['Eatery', 'Attraction', 'Hotel'])->required()->nullable(),
                 'venue_type' => $schema->string()->required()->nullable(),
                 'cuisine' => $schema->string()->required()->nullable(),
                 'info' => $schema->string()->required()->nullable(),
                 'features' => $schema->array()->items($schema->string())->required()->nullable(),
-            ])->required()->nullable(),
+            ])->required(),
             'explanation' => $schema->string()->required()->description('Please include your reasoning, sources, etc that lead you to build the data out.'),
             'is_eligible' => $schema->boolean()->required()->description('Whether the recommendation is eligible for adding to the website, if you found no proof that it does gluten free, then this would be a false.'),
         ];
+    }
+
+    public function providerOptions(Lab|string $provider): array
+    {
+        return match ($provider) {
+            Lab::Anthropic => [
+                'cache_control' => ['type' => 'ephemeral'],
+            ],
+            default => [],
+        };
     }
 }

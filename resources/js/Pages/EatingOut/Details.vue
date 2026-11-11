@@ -135,7 +135,7 @@ const shouldShowAiOverview = ref(true);
     />
 
     <EateryVisitorPhotos
-      v-if="eatery.reviews?.images?.length > 0"
+      v-if="eatery.reviews?.images?.length"
       class="order-6"
       :eatery="eatery"
     />

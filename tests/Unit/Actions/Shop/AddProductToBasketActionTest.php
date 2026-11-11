@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Shop;
 
-use App\Models\Shop\ShopPrice;
-use App\Models\Shop\ShopProductAddOn;
-use PHPUnit\Framework\Attributes\Test;
 use App\Actions\Shop\AddProductToBasketAction;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AddProductToBasketActionTest extends TestCase
@@ -70,25 +68,62 @@ class AddProductToBasketActionTest extends TestCase
     }
 
     #[Test]
-    public function itAssociatesTheAddOnWithTheOrderItemRowIfRequired(): void
+    public function itDoesntUpdateTheQuantityOfAnExistingBasketItemIfItShouldntIncreaseTheQuantity(): void
     {
-        $addOn = $this->build(ShopProductAddOn::class)
-            ->forProduct($this->product)
-            ->has($this->build(ShopPrice::class), 'prices')
-            ->create();
+        $item = $this->order->items()->create([
+            'product_id' => $this->product->id,
+            'product_title' => $this->product->title,
+            'product_variant_id' => $this->variant->id,
+            'product_price' => $this->product->current_price,
+            'quantity' => 1,
+        ]);
 
-        $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1, true);
+        $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1, shouldIncreaseQuantity: false);
 
-        /** @var ShopOrderItem $item */
+        $this->assertDatabaseCount(ShopOrderItem::class, 1);
+
+        $item->refresh();
+
+        $this->assertEquals(1, $item->quantity);
+    }
+
+    #[Test]
+    public function itStillCreatesTheBasketItemIfItShouldntIncreaseTheQuantityAndTheProductIsntInTheBasket(): void
+    {
+        $this->assertDatabaseEmpty(ShopOrderItem::class);
+
+        $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 2, shouldIncreaseQuantity: false);
+
+        $this->assertDatabaseCount(ShopOrderItem::class, 1);
+
         $item = ShopOrderItem::query()->first();
 
-        $this->assertNotNull($item->product_add_on_id);
-        $this->assertNotNull($item->product_add_on_title);
-        $this->assertNotNull($item->product_add_on_price);
+        $this->assertEquals(2, $item->quantity);
+    }
 
-        $this->assertTrue($item->addOn->is($addOn));
-        $this->assertEquals($addOn->name, $item->product_add_on_title);
-        $this->assertEquals($addOn->currentPrice, $item->product_add_on_price);
+
+    #[Test]
+    public function itReturnsTheOrderItem(): void
+    {
+        $item = $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1);
+
+        $this->assertInstanceOf(ShopOrderItem::class, $item);
+        $this->assertTrue(ShopOrderItem::query()->first()->is($item));
+    }
+
+    #[Test]
+    public function itReturnsTheExistingOrderItemIfTheProductIsAlreadyInTheBasket(): void
+    {
+        $existingItem = $this->build(ShopOrderItem::class)
+            ->inOrder($this->order)
+            ->inProduct($this->product)
+            ->inVariant($this->variant)
+            ->create();
+
+        $item = $this->callAction(AddProductToBasketAction::class, $this->order, $this->product, $this->variant, 1);
+
+        $this->assertDatabaseCount(ShopOrderItem::class, 1);
+        $this->assertTrue($existingItem->is($item));
     }
 
     #[Test]

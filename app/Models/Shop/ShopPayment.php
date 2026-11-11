@@ -9,12 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property ShopPaymentResponse $response
+ */
 class ShopPayment extends Model
 {
-    protected $casts = [
-        'fees_breakdown' => 'array',
-    ];
-
     /** @return BelongsTo<ShopOrder, $this> */
     public function order(): BelongsTo
     {
@@ -37,5 +36,12 @@ class ShopPayment extends Model
     public function refunds(): HasMany
     {
         return $this->hasMany(ShopPaymentRefund::class, 'payment_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'fees_breakdown' => 'array',
+        ];
     }
 }

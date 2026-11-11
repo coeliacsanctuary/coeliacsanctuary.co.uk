@@ -84,6 +84,26 @@ class GoogleMerchantClientTest extends TestCase
     }
 
     #[Test]
+    public function itBuildsAnAuthenticatedClientFromABase64EncodedKey(): void
+    {
+        $key = base64_encode((string) json_encode([
+            'type' => 'service_account',
+            'project_id' => 'test-project',
+            'private_key_id' => 'key-id',
+            'private_key' => "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA2a2rwplBQLzHPZe5TNJNV8E6YOoGMV4HHbJ9nMb/uPzqCzCt\ntest\n-----END RSA PRIVATE KEY-----\n",
+            'client_email' => 'test@test-project.iam.gserviceaccount.com',
+            'client_id' => '123456789',
+            'auth_uri' => 'https://accounts.google.com/o/oauth2/auth',
+            'token_uri' => 'https://oauth2.googleapis.com/token',
+        ]));
+
+        $client = $this->makeClient(keyPath: $key)->client();
+
+        $this->assertInstanceOf(ServiceAccountCredentials::class, $client);
+        $this->assertSame('test@test-project.iam.gserviceaccount.com', $client->getClientName());
+    }
+
+    #[Test]
     public function itIsResolvableFromTheContainer(): void
     {
         $client = app(GoogleMerchantClient::class);

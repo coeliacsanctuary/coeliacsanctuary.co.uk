@@ -30,7 +30,7 @@ class SearchBlogs
             $searchPipelineData
                 ->results
                 ->blogs
-                ->push(...$results->map(fn (Blog $blog) => SearchResultItem::fromSearchableResult($blog))->all());
+                ->push(...$results->map(fn (Blog $blog): SearchResultItem => SearchResultItem::fromSearchableResult($blog))->all());
         }
 
         return $next($searchPipelineData);

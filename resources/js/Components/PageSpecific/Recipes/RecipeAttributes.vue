@@ -15,7 +15,9 @@ defineProps<{
       v-if="features.length"
       class="flex flex-col gap-2"
     >
-      <h2 class="text-sm font-semibold tracking-wide text-primary-dark uppercase">
+      <h2
+        class="text-sm font-semibold tracking-wide text-primary-dark uppercase"
+      >
         This recipe is
       </h2>
 

@@ -16,6 +16,7 @@ class MostReviewsInUkQuery
     public function __invoke(string $rating): Collection
     {
         return Eatery::query()
+            ->notNationwide()
             ->whereHas('reviews')
             ->where('closed_down', false)
             ->leftJoin('wheretoeat_reviews', fn (JoinClause $join) => $join->on('wheretoeat_reviews.wheretoeat_id', 'wheretoeat.id')->where('approved', true))
@@ -28,11 +29,11 @@ class MostReviewsInUkQuery
             ->orderByRaw($rating)
             ->take(3)
             ->get()
-            ->map(function (Eatery $eatery) {
+            ->map(function (Eatery $eatery): Eatery {
                 $eatery->town?->setRelation('county', $eatery->county);
 
                 return $eatery;
             })
-            ->map(fn (Eatery $eatery) => new CountyEateryResource($eatery));
+            ->map(fn (Eatery $eatery): CountyEateryResource => new CountyEateryResource($eatery));
     }
 }

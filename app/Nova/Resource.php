@@ -8,17 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Resource as NovaResource;
 
 /**
  * @template TModel of Model
- *
  * @mixin TModel
- *
  * @method mixed getKey()
- *
  * @extends NovaResource<TModel>
  */
 abstract class Resource extends NovaResource
@@ -84,7 +82,19 @@ abstract class Resource extends NovaResource
             });
 
             foreach (self::$createdRelations as $relation) {
-                $relation->save();
+                $shouldSave = false;
+
+                self::$deferrableFields->each(function (Field $field) use ($relation, &$shouldSave): void {
+                    $attribute = Str::afterLast($field->attribute, '.');
+
+                    if ($relation->$attribute) {
+                        $shouldSave = true;
+                    }
+                });
+
+                if ($shouldSave) {
+                    $relation->save();
+                }
             }
 
             self::deferredRelationAfterSave();
@@ -106,8 +116,20 @@ abstract class Resource extends NovaResource
 
                     foreach ($bits as $index => $bit) {
                         if ($index + 1 === count($bits)) {
-                            $field->fillInto($request, $currentModel, $bit, str_replace('.', '_', $field->attribute));
-                            $currentModel->save();
+                            $shouldSave = false;
+
+                            self::$deferrableFields->each(function (Field $field) use ($currentModel, &$shouldSave): void {
+                                $attribute = Str::afterLast($field->attribute, '.');
+
+                                if ($currentModel && $currentModel->$attribute) {
+                                    $shouldSave = true;
+                                }
+                            });
+
+                            if ($shouldSave) {
+                                $field->fillInto($request, $currentModel, $bit, str_replace('.', '_', $field->attribute));
+                                $currentModel->save();
+                            }
 
                             continue;
                         }
@@ -129,11 +151,11 @@ abstract class Resource extends NovaResource
 
     protected static function fillFields(NovaRequest $request, $model, $fields): array
     {
-        if ( ! self::$deferrableFields || self::$deferrableFields->isEmpty()) {
-            self::$deferrableFields = $fields->filter(fn ($field) => property_exists($field, 'deferrable') && $field->deferrable);
+        if ( ! self::$deferrableFields instanceof Collection || self::$deferrableFields->isEmpty()) {
+            self::$deferrableFields = $fields->filter(fn ($field): bool => property_exists($field, 'deferrable') && $field->deferrable);
         }
 
-        $fields = $fields->reject(fn ($field) => property_exists($field, 'deferrable') && $field->deferrable);
+        $fields = $fields->reject(fn ($field): bool => property_exists($field, 'deferrable') && $field->deferrable);
 
         return parent::fillFields($request, $model, $fields);
     }

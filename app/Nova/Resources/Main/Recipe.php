@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nova\Resources\Main;
 
 use App\Models\Recipes\Recipe as RecipeModel;
+use App\Models\Collections\Collection as CollectionModel;
 use App\Nova\Chartables\Metrics\Recipes\CollectionCardViews;
 use App\Nova\Chartables\Metrics\Recipes\CommentViews;
 use App\Nova\Chartables\Metrics\Recipes\DetailCardViews;
@@ -26,6 +27,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use App\Nova\FieldOverrides\Repeater;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -46,7 +48,7 @@ class Recipe extends Resource
 
     public static $search = ['id', 'title'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -81,6 +83,31 @@ class Recipe extends Resource
             ]),
 
             VisibilityPanel::make(),
+
+            new Panel('Collection', [
+                Select::make('Add to Collection', '_collection')
+                    ->options(fn () => CollectionModel::query()->orderBy('title')->pluck('title', 'id'))
+                    ->displayUsingLabels()
+                    ->fullWidth()
+                    ->nullable()
+                    ->onlyOnForms()
+                    ->hideWhenUpdating()
+                    ->deferrable()
+                    ->help('Optional, adds this recipe to the end of the chosen collection, it will appear there once published.')
+                    ->fillUsing(function (NovaRequest $request, RecipeModel $recipe, string $attribute, string $requestAttribute): void {
+                        if ( ! $request->filled($requestAttribute)) {
+                            return;
+                        }
+
+                        $group = CollectionModel::query()->find($request->input($requestAttribute))?->groups->last();
+
+                        if ( ! $group) {
+                            return;
+                        }
+
+                        $recipe->associatedCollectionGroups()->create(['collection_group_id' => $group->id]);
+                    }),
+            ]),
 
             new Panel('Metas', [
                 Text::make('Meta Tags')->onlyOnForms()->fullWidth()->rules(['required']),
@@ -157,9 +184,9 @@ class Recipe extends Resource
 
             HasOne::make('Nutritional Information', 'nutrition', RecipeNutritionalInformation::class)->onlyOnForms()->fullWidth(),
 
-            (new Panel('Allergens', [
+            new Panel('Allergens', [
                 PolymorphicPanel::make('Allergens', new RecipeAllergenPanel())->display('row'),
-            ]))->help('Tick the allergens that apply to this recipe.'),
+            ])->help('Tick the allergens that apply to this recipe.'),
 
             new Panel('Meals', [
                 PolymorphicPanel::make('Meals', new RecipeMealPanel())->display('row'),
@@ -214,14 +241,14 @@ class Recipe extends Resource
             $metrics = [Views::class, CommentViews::class, DetailCardViews::class, CollectionCardViews::class];
 
             return array_map(
-                fn ($metric) => ApexChart::make($metric)
+                fn (string $metric) => ApexChart::make($metric)
                     ->withParams(['recipeId' => $recipeId])
                     ->onlyOnDetail()
                     ->fixedHeight()
                     ->fullWidth(),
                 $metrics
             );
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return [];
         }
     }

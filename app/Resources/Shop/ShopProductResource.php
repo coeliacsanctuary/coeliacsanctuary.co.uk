@@ -7,6 +7,7 @@ namespace App\Resources\Shop;
 use App\Models\Media;
 use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
+use App\Resources\Faqs\FaqResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -26,14 +27,14 @@ class ShopProductResource extends JsonResource
                 ],
             ]),
             'image' => $this->main_image_as_webp ?? $this->main_image,
-            'additional_images' => $this->getMedia('additional')->map(fn (Media $media) => $media->getUrl('webp')),
+            'additional_images' => $this->getMedia('additional')->map(fn (Media $media): string => $media->getUrl('webp')),
             'prices' => $this->price,
-            'rating' => $this->whenLoaded('reviews', [
+            'rating' => $this->whenLoaded('reviews', fn (): array => [
                 'average' => $this->averageRating,
                 'count' => $this->reviews->count(),
-                'breakdown' => collect(range(5, 1))->map(fn ($rating) => [
+                'breakdown' => collect(range(5, 1))->map(fn ($rating): array => [
                     'rating' => $rating,
-                    'count' => $this->reviews->filter(fn (ShopOrderReviewItem $reviewItem) => (int) $reviewItem->rating === $rating)->count(),
+                    'count' => $this->reviews->filter(fn (ShopOrderReviewItem $reviewItem): bool => (int) $reviewItem->rating === $rating)->count(),
                 ]),
             ]),
             'category' => $this->whenLoaded('categories', [
@@ -42,11 +43,7 @@ class ShopProductResource extends JsonResource
             ]),
             'variant_title' => $this->variant_title,
             'variants' => ShopProductVariantResource::collection($this->variants),
-            'add_ons' => $this->whenLoaded('addOns', [
-                'name' => $this->addOns?->name,
-                'description' => $this->addOns?->description,
-                'price' => $this->addOns?->price,
-            ]),
+            'faqs' => $this->faqs->isNotEmpty() ? FaqResource::collection($this->faqs) : null,
         ];
     }
 }

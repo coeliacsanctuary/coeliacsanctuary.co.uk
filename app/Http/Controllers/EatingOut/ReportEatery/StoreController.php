@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\ReportEatery;
 
+use App\Models\EatingOut\NationwideBranch;
 use App\Actions\EatingOut\CreateEateryReportAction;
 use App\Http\Requests\EatingOut\EateryCreateReportRequest;
 use App\Models\EatingOut\Eatery;
@@ -31,7 +32,7 @@ class StoreController
                 $request->string('branch_name')->toString(),
             );
 
-            if ($branch) {
+            if ($branch instanceof NationwideBranch) {
                 $request->merge(['branch_id' => $branch->id]);
             }
         }

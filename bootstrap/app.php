@@ -2,140 +2,26 @@
 
 declare(strict_types=1);
 
-use App\Console\Commands\ApplyMassDiscountsCommand;
-use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
-use App\Console\Commands\CleanUpNovaPreviewsCommand;
-use App\Console\Commands\CloseBasketsCommand;
-use App\Console\Commands\PrepareShopReviewInvitationsCommand;
-use App\Console\Commands\ProcessEateryWebsiteChecksCommand;
-use App\Console\Commands\PublishItemsCommand;
-use App\Console\Commands\RemoveCollectionsFromHomepageCommand;
-use App\Console\Commands\SendAbandonedBasketEmailCommand;
-use App\Console\Commands\SummariseAskSealiacChatsCommand;
-use App\Http\Api\V1\Middleware\ExternalApiSourceMiddleware;
-use App\Http\Middleware\AddRouteModelBindingFallbacksMiddleware;
-use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Response\Inertia;
-use App\Jobs\Metrics\Orchestrators\BaseOrchestratorJob;
-use App\Models\Shop\ShopOrderDownloadLink;
-use Illuminate\Console\Scheduling\Schedule;
+use App\Bootstrappers\RegisterExceptionHandler;
+use App\Bootstrappers\RegisterExternalApiRoutes;
+use App\Bootstrappers\RegisterLocalDevRoutes;
+use App\Bootstrappers\RegisterMiddlewareConfiguration;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Exceptions\InvalidSignatureException;
-use Illuminate\Support\Facades\Route;
-use Jpeters8889\JourneyTrackerLaravel\Http\Middleware\LogPageViewMiddleware;
-use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        api: __DIR__ . '/../routes/api.php',
         web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         then: function (): void {
-            Route::middleware(['api', ExternalApiSourceMiddleware::class])
-                ->prefix('api/v1')
-                ->name('api.v1.')
-                ->group(base_path('routes/api/v1.php'));
+            RegisterExternalApiRoutes::handle();
 
             if (config('app.env') === 'local') {
-                Route::middleware('web')
-                    ->prefix('__dev')
-                    ->group(base_path('routes/local.php'));
+                RegisterLocalDevRoutes::handle();
             }
         }
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(
-            prepend: AddRouteModelBindingFallbacksMiddleware::class,
-            append: [
-                HandleInertiaRequests::class,
-                LogPageViewMiddleware::class,
-            ]
-        );
-
-        $middleware->redirectGuestsTo(fn () => route('nova.pages.login'));
-    })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (InvalidSignatureException $exception, Request $request) {
-            if ($request->routeIs('shop.download-my-products')) {
-                /** @var ?ShopOrderDownloadLink $downloadLink */
-                $downloadLink = $request->route('downloadLink');
-
-                if ($downloadLink?->expires_at->isPast()) {
-                    return app(Inertia::class)
-                        ->title('Link expired')
-                        ->metaTags([], false)
-                        ->doNotTrack()
-                        ->render('Shop/DownloadMyProducts/Error')
-                        ->toResponse($request)
-                        ->setStatusCode(Response::HTTP_FORBIDDEN);
-                }
-            }
-
-            return null;
-        });
-
-        $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
-            $errorStatusCodes = [
-                Response::HTTP_INTERNAL_SERVER_ERROR,
-                Response::HTTP_SERVICE_UNAVAILABLE,
-                Response::HTTP_NOT_FOUND,
-                Response::HTTP_FORBIDDEN,
-            ];
-
-            if ( ! app()->environment(['local', 'testing']) && in_array($response->getStatusCode(), $errorStatusCodes)) {
-                $title = match ($response->getStatusCode()) {
-                    Response::HTTP_NOT_FOUND, Response::HTTP_FORBIDDEN => 'Page not found',
-                    default => 'Something went wrong',
-                };
-
-                $description = match ($response->getStatusCode()) {
-                    Response::HTTP_NOT_FOUND => 'Sorry, the page you are looking for could not be found.',
-                    default => 'Sorry, something has gone wrong and this page has been contaminated with gluten! We\'re doing our best to fix it!',
-                };
-
-                return app(Inertia::class)
-                    ->title($title)
-                    ->metaTags([], false)
-                    ->doNotTrack()
-                    ->render('Error', [
-                        'title' => $title,
-                        'description' => $description,
-                    ])
-                    ->toResponse($request)
-                    ->setStatusCode($response->getStatusCode());
-            }
-
-            if ($response->getStatusCode() === 419) {
-                return back()->with([
-                    'message' => 'The page expired, please try again.',
-                ]);
-            }
-
-            return $response;
-        });
-    })
-    ->withSchedule(function (Schedule $schedule): void {
-        $schedule->command(CloseBasketsCommand::class)->everyMinute();
-        $schedule->command(SendAbandonedBasketEmailCommand::class)->everyMinute();
-        $schedule->command(ApplyMassDiscountsCommand::class)->everyMinute();
-        $schedule->command(PrepareShopReviewInvitationsCommand::class)->everyMinute();
-        $schedule->command(PublishItemsCommand::class)->everyMinute();
-        $schedule->command(RemoveCollectionsFromHomepageCommand::class)->everyMinute();
-        $schedule->command(CheckForMailcoachScheduledEmailsCommand::class)->everyMinute();
-        $schedule->command(SummariseAskSealiacChatsCommand::class)->everyMinute();
-        $schedule->command(ProcessEateryWebsiteChecksCommand::class)->daily();
-        $schedule->command(CleanUpNovaPreviewsCommand::class)->daily();
-
-        BaseOrchestratorJob::scheduleAll($schedule);
-
-        if (app()->environment('production')) {
-            $schedule->command('about')->thenPing('http://beats.envoyer.io/heartbeat/oKkQ7etgPUsSnOW');
-
-            $schedule->command('backup:run')->hourly();
-            $schedule->command('backup:clean')->daily()->at('02:00');
-        }
-    })
+    ->withMiddleware(RegisterMiddlewareConfiguration::handle(...))
+    ->withExceptions(RegisterExceptionHandler::handle(...))
     ->create();

@@ -14,7 +14,6 @@ const hasSignedUpToNewsletter = ref(false);
   <Card
     theme="primary-light"
     faded
-    class="mx-4 rounded-xl shadow-lg"
   >
     <div
       v-if="!hasSignedUpToNewsletter"

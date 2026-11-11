@@ -11,8 +11,28 @@ class HttpClientServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->registerGetAddress();
         $this->registerIdealPostcodes();
+        $this->registerFinanceService();
+        $this->registerOpenRouteService();
+    }
+
+    protected function registerOpenRouteService(): void
+    {
+        Http::macro(
+            'openRouteService',
+            fn () => Http::baseUrl(config()->string('services.openRouteService.url'))
+                ->withHeader('Authorization', config()->string('services.openRouteService.key'))
+        );
+    }
+
+    protected function registerFinanceService(): void
+    {
+        Http::macro(
+            'financeService',
+            fn () => Http::baseUrl(config()->string('services.finance.url'))
+                ->withToken(config()->string('services.finance.key'))
+                ->throw()
+        );
     }
 
     protected function registerIdealPostcodes(): void
@@ -26,14 +46,4 @@ class HttpClientServiceProvider extends ServiceProvider
         Http::macro('idealPostcodes', fn () => Http::baseUrl($url)->withHeader('Authorization', "IDEALPOSTCODES api_key=\"{$apiKey}\""));
     }
 
-    protected function registerGetAddress(): void
-    {
-        /** @var string $url */
-        $url = config('services.getAddress.url');
-
-        /** @var string $apiKey */
-        $apiKey = config('services.getAddress.key');
-
-        Http::macro('getAddress', fn () => Http::baseUrl($url)->withBasicAuth('http', $apiKey));
-    }
 }

@@ -33,9 +33,7 @@ class GetFiltersForLondonArea extends GetFilters
 
     protected function withWhereClause(Builder $builder): Builder
     {
-        if ( ! $this->area) {
-            throw new RuntimeException('Area not set');
-        }
+        throw_unless($this->area instanceof EateryArea, new RuntimeException('Area not set'));
 
         return $builder
             ->select('*')

@@ -24,6 +24,7 @@ use App\Nova\Resources\EatingOut\EateryAlerts;
 use App\Nova\Resources\EatingOut\EateryCuisines;
 use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
+use App\Nova\Resources\EatingOut\EateryTrips;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideEateries;
 use App\Nova\Resources\EatingOut\PlaceRecommendations;
@@ -43,7 +44,11 @@ use App\Nova\Resources\Search\SearchResource;
 use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\CustomsFee;
+use App\Nova\Resources\Shop\DigitalCardResource;
+use App\Nova\Resources\Shop\DigitalCardTypeResource;
+use App\Nova\Resources\Shop\DigitalOrders;
 use App\Nova\Resources\Shop\DiscountCode;
+use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
 use App\Nova\Resources\Shop\OrderReviews;
 use App\Nova\Resources\Shop\Orders;
@@ -66,8 +71,8 @@ class Menu
 {
     public static function build(): void
     {
-        $commentsCount = Comment::withoutGlobalScopes()->where('approved', false)->count();
-        $reviewCount = EateryReview::withoutGlobalScopes()->where('approved', false)->count();
+        $commentsCount = Comment::query()->withoutGlobalScopes()->where('approved', false)->count();
+        $reviewCount = EateryReview::query()->withoutGlobalScopes()->where('approved', false)->count();
         $alertsCount = EateryAlert::query()->where('completed', false)->where('ignored', false)->count();
         $reportsCount = EateryReport::query()->where('completed', false)->where('ignored', false)->count();
         $myPlacesCount = EateryRecommendation::query()->where('email', 'alisondwheatley@gmail.com')->where('completed', false)->where('ignored', false)->count();
@@ -78,7 +83,7 @@ class Menu
         $basketsCount = ShopOrder::query()->where('state_id', OrderState::BASKET)->count();
         $ordersCount = ShopOrder::query()->whereIn('state_id', [OrderState::PAID, OrderState::READY])->count();
 
-        Nova::mainMenu(fn (Request $request) => [
+        Nova::mainMenu(fn (Request $request): array => [
             MenuSection::make('Dashboards', [
                 MenuItem::dashboard(Main::class),
                 MenuItem::dashboard(Shop::class),
@@ -90,7 +95,7 @@ class Menu
                 MenuItem::resource(Blog::class),
                 MenuItem::resource(Recipe::class),
                 MenuItem::resource(Collection::class),
-                MenuItem::resource(Comments::class)->withBadgeIf(fn () => (string) $commentsCount, 'danger', fn () => $commentsCount > 0),
+                MenuItem::resource(Comments::class)->withBadgeIf(fn (): string => (string) $commentsCount, 'danger', fn (): bool => $commentsCount > 0),
                 MenuItem::resource(PopupResource::class),
                 MenuItem::resource(AnnouncementResource::class),
                 MenuItem::resource(RedirectResource::class),
@@ -124,23 +129,27 @@ class Menu
                 ]),
 
                 MenuGroup::make('Feedback', [
-                    MenuItem::resource(Reviews::class)->withBadgeIf(fn () => (string) $reviewCount, 'danger', fn () => $reviewCount > 0),
-                    MenuItem::resource(EateryAlerts::class)->withBadgeIf(fn () => (string) $alertsCount, 'danger', fn () => $alertsCount > 0),
-                    MenuItem::resource(PlaceReports::class)->withBadgeIf(fn () => (string) $reportsCount, 'danger', fn () => $reportsCount > 0),
-                    MenuItem::resource(SuggestedEdits::class)->withBadgeIf(fn () => (string) $suggestedEditsCount, 'danger', fn () => $suggestedEditsCount > 0),
+                    MenuItem::resource(Reviews::class)->withBadgeIf(fn (): string => (string) $reviewCount, 'danger', fn (): bool => $reviewCount > 0),
+                    MenuItem::resource(EateryAlerts::class)->withBadgeIf(fn (): string => (string) $alertsCount, 'danger', fn (): bool => $alertsCount > 0),
+                    MenuItem::resource(PlaceReports::class)->withBadgeIf(fn (): string => (string) $reportsCount, 'danger', fn (): bool => $reportsCount > 0),
+                    MenuItem::resource(SuggestedEdits::class)->withBadgeIf(fn (): string => (string) $suggestedEditsCount, 'danger', fn (): bool => $suggestedEditsCount > 0),
                 ]),
 
                 MenuGroup::make('Recommendations', [
-                    MenuItem::resource(MyPlaces::class)->withBadgeIf(fn () => (string) $myPlacesCount, 'danger', fn () => $myPlacesCount > 0),
-                    MenuItem::resource(PlaceRecommendations::class)->withBadgeIf(fn () => (string) $recommendationsCount, 'danger', fn () => $recommendationsCount > 0),
+                    MenuItem::resource(MyPlaces::class)->withBadgeIf(fn (): string => (string) $myPlacesCount, 'danger', fn (): bool => $myPlacesCount > 0),
+                    MenuItem::resource(PlaceRecommendations::class)->withBadgeIf(fn (): string => (string) $recommendationsCount, 'danger', fn (): bool => $recommendationsCount > 0),
                 ]),
 
                 MenuGroup::make('Search', [
                     MenuItem::resource(EaterySearch::class),
                 ]),
 
+                MenuGroup::make('Trip Planner', [
+                    MenuItem::resource(EateryTrips::class),
+                ]),
+
                 MenuGroup::make('Misc', [
-                    MenuItem::resource(EateryAiDescriptionResource::class)->withBadgeIf(fn () => (string) $eateryAiDescriptionsCount, 'danger', fn () => $eateryAiDescriptionsCount > 0),
+                    MenuItem::resource(EateryAiDescriptionResource::class)->withBadgeIf(fn (): string => (string) $eateryAiDescriptionsCount, 'danger', fn (): bool => $eateryAiDescriptionsCount > 0),
                 ]),
 
                 MenuGroup::make('Imports', [
@@ -154,15 +163,21 @@ class Menu
 
             MenuSection::make('Shop', [
                 MenuGroup::make('Sales', [
-                    MenuItem::resource(Baskets::class)->withBadgeIf(fn () => (string) $basketsCount, 'danger', fn () => $basketsCount > 0),
-                    MenuItem::resource(Orders::class)->withBadgeIf(fn () => (string) $ordersCount, 'danger', fn () => $ordersCount > 0),
+                    MenuItem::resource(Baskets::class)->withBadgeIf(fn (): string => (string) $basketsCount, 'danger', fn (): bool => $basketsCount > 0),
+                    MenuItem::resource(Orders::class)->withBadgeIf(fn (): string => (string) $ordersCount, 'danger', fn (): bool => $ordersCount > 0),
+                    MenuItem::resource(DigitalOrders::class),
                     MenuItem::make('Daily Stock')->path('/shop-daily-stock'),
                     MenuItem::resource(OrderReviews::class),
                 ]),
 
-                MenuGroup::make('Inventory', [
+                MenuGroup::make('Physical Inventory', [
                     MenuItem::resource(Categories::class),
                     MenuItem::resource(Products::class),
+                ]),
+
+                MenuGroup::make('Digital Products', [
+                    MenuItem::resource(DigitalCardResource::class),
+                    MenuItem::resource(DigitalCardTypeResource::class),
                 ]),
 
                 MenuGroup::make('Admin', [
@@ -171,6 +186,7 @@ class Menu
                     MenuItem::resource(PostagePrice::class),
                     MenuItem::resource(CustomsFee::class),
                     MenuItem::resource(MassDiscount::class),
+                    MenuItem::resource(Holidays::class),
                     MenuItem::resource(OrderSourcesResource::class),
                 ]),
 

@@ -22,7 +22,7 @@ class CollectionShowResource extends JsonResource
             'header_image_alt_text' => $this->header_image_alt_text,
             'display_type' => $this->display_type,
             'published' => $this->published,
-            'updated' => $this->lastUpdated === $this->published ? null : $this->lastUpdated,
+            'updated' => $this->lastUpdated,
             'description' => $this->description,
             'body' => Str::of($this->body)
                 ->replace('&quot;', '"')

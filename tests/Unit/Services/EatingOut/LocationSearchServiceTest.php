@@ -19,7 +19,7 @@ class LocationSearchServiceTest extends TestCase
 
         $this->mock(Geocoder::class)
             ->shouldReceive('getAllCoordinatesForAddress')
-            ->withArgs(function (string $term) {
+            ->withArgs(function (string $term): true {
                 $this->assertEquals('London', $term);
 
                 return true;
@@ -82,7 +82,7 @@ class LocationSearchServiceTest extends TestCase
 
         $this->mock(Geocoder::class)
             ->shouldReceive('getAllCoordinatesForAddress')
-            ->withArgs(function (string $term) {
+            ->withArgs(function (string $term): true {
                 $this->assertEquals('London', $term);
 
                 return true;

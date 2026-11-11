@@ -8,6 +8,7 @@ use Jpeters8889\AddressField\FieldServiceProvider as AddressFieldServiceProvider
 use Jpeters8889\RelatedRecipesSearch\FieldServiceProvider as RelatedRecipesSearchFieldServiceProvider;
 use Jpeters8889\AdvancedNovaMediaLibrary\AdvancedNovaMediaLibraryServiceProvider;
 use Jpeters8889\Body\FieldServiceProvider as BodyFieldServiceProvider;
+use Jpeters8889\CollectionBuilder\FieldServiceProvider as CollectionBuilderFieldServiceProvider;
 use Jpeters8889\CollectionItemSearch\FieldServiceProvider as CollectionItemSearchFieldServiceProvider;
 use Jpeters8889\CountryIcon\FieldServiceProvider as CountryFieldServiceProvider;
 use Jpeters8889\EateryLocationSearch\FieldServiceProvider as EateryLocationSearchFieldServiceProvider;
@@ -40,6 +41,7 @@ class FieldRegistrar
             ShopGenerateResendSlipButtonFieldServiceProvider::class,
             HiddenWritableFieldServiceProvider::class,
             CollectionItemSearchFieldServiceProvider::class,
+            CollectionBuilderFieldServiceProvider::class,
             EateryLocationSearchFieldServiceProvider::class,
             EateryRecommendationAiStatusFieldServiceProvider::class,
             EateryRecommendationEligibilityFieldServiceProvider::class,

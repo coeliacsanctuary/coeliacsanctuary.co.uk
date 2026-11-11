@@ -30,7 +30,7 @@ class SearchShop
             $searchPipelineData
                 ->results
                 ->shop
-                ->push(...$results->map(fn (ShopProduct $product) => SearchResultItem::fromSearchableResult($product))->all());
+                ->push(...$results->map(fn (ShopProduct $product): SearchResultItem => SearchResultItem::fromSearchableResult($product))->all());
         }
 
         return $next($searchPipelineData);

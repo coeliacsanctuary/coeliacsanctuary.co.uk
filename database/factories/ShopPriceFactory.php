@@ -8,6 +8,9 @@ use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopPrice;
 use Carbon\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopPrice>
+ */
 class ShopPriceFactory extends Factory
 {
     protected $model = ShopPrice::class;
@@ -25,7 +28,7 @@ class ShopPriceFactory extends Factory
 
     public function forProduct(ShopProduct $product): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'purchasable_type' => ShopProduct::class,
             'purchasable_id' => $product->id,
         ]);
@@ -33,14 +36,14 @@ class ShopPriceFactory extends Factory
 
     public function onSale()
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'sale_price' => true,
         ]);
     }
 
     public function ended()
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'end_at' => Carbon::now()->subDay(),
         ]);
     }

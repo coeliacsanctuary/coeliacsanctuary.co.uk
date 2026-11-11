@@ -1,9 +1,18 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
-import { CheckoutForm, CheckoutFormErrors, ShopBasketItem } from '@/types/Shop';
+import {
+  CheckoutForm,
+  CheckoutFormErrors,
+  ShopBasketDigitalItem,
+  ShopBasketItem,
+  ShopPopularProduct,
+} from '@/types/Shop';
 import Heading from '@/Components/Heading.vue';
-import CheckoutItems from '@/Components/PageSpecific/Shop/Checkout/CheckoutItems.vue';
 import CheckoutTotals from '@/Components/PageSpecific/Shop/Checkout/CheckoutTotals.vue';
+import CheckoutDeliveryCountry from '@/Components/PageSpecific/Shop/Checkout/CheckoutDeliveryCountry.vue';
+import ShopPopularProducts from '@/Components/PageSpecific/Shop/ShopPopularProducts.vue';
+import { ArrowUturnLeftIcon } from '@heroicons/vue/20/solid';
+import { ShoppingBagIcon } from '@heroicons/vue/24/outline';
 import { FormSelectOption } from '@/Components/Forms/Props';
 import ContactDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ContactDetails.vue';
 import { computed, nextTick, reactive, Ref, ref, watch, onMounted } from 'vue';
@@ -24,9 +33,9 @@ import useGoogleEvents from '@/composables/useGoogleEvents';
 import pkg from 'i18n-iso-countries';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import Alert from '@/Components/PageSpecific/Shared/Alert.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import CheckOutItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsRow.vue';
+import CheckOutDigitalItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutDigitalItemsRow.vue';
 const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
@@ -43,6 +52,7 @@ type SectionComponent = {
   key: SectionKeys;
   next: SectionKeys;
   additionalProps: Record<string, unknown>;
+  required: boolean;
 };
 
 type NoBasketProps = {
@@ -51,19 +61,23 @@ type NoBasketProps = {
   basket: undefined;
   payment_intent: undefined;
   warnings: undefined;
+  popularProducts: ShopPopularProduct[];
 };
 
 type BasketProps = {
   has_basket: true;
+  popularProducts: undefined;
   countries: FormSelectOption[];
   basket: {
     items: ShopBasketItem[];
+    digital_items: ShopBasketDigitalItem[];
+    digital_only: boolean;
     selected_country: number;
     delivery_timescale: string;
     subtotal: string;
     postage: string;
     fees: { fee: string; description?: string }[];
-    totalFees: string;
+    total_fees: string;
     discount?: string;
     total: string;
   };
@@ -145,7 +159,7 @@ const submitPendingOrder = async (payload: CheckoutForm): Promise<boolean> => {
   }
 };
 
-const stripePayload = (payload: CheckoutForm): Partial<ConfirmPaymentData> => ({
+const stripePayload = (payload: CheckoutForm): ConfirmPaymentData => ({
   return_url: useUrl().generateUrl('done'),
   payment_method_data: {
     billing_details: {
@@ -180,6 +194,9 @@ const prepareOrder = async () => {
     const payload = store.toForm;
 
     if (!(await submitPendingOrder(payload))) {
+      showLoader.value = false;
+      eventBus.$emit('payment-failed');
+
       return;
     }
 
@@ -275,6 +292,12 @@ const completeSection = async (section: SectionKeys, next: SectionKeys) => {
 
   putInLocalStorage('checkout-steps', sections);
   putInLocalStorage('checkout-active-section', next);
+
+  void nextTick(() => {
+    document
+      .getElementById(`checkout-step-${next}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 };
 
 const toggleSection = (section: SectionKeys) => {
@@ -283,16 +306,15 @@ const toggleSection = (section: SectionKeys) => {
 };
 
 watch(
-  () => errors,
+  errors,
   () => {
-    store.setErrors(errors.value);
-
     sections.details.error = !!errors.value?.contact;
     sections.shipping.error = !!errors.value?.shipping;
 
     if (sections.details.error) {
       sections.details.active = true;
       sections.payment.active = false;
+      activeSection.value = 'details';
 
       return;
     }
@@ -300,21 +322,27 @@ watch(
     if (sections.shipping.error) {
       sections.shipping.active = true;
       sections.payment.active = false;
+      activeSection.value = 'shipping';
     }
   },
+  { deep: true },
 );
 
-const sectionComponents: SectionComponent[] = [
+const sectionComponents = computed((): SectionComponent[] => [
   {
     component: ContactDetails as Component,
     key: 'details',
-    next: 'shipping',
-    additionalProps: {},
+    next: props.basket?.digital_only ? 'payment' : 'shipping',
+    required: true,
+    additionalProps: {
+      hasDigitalItems: props.basket?.digital_items.length,
+    },
   },
   {
     component: ShippingDetails as Component,
     key: 'shipping',
     next: 'payment',
+    required: props.basket?.digital_only === false,
     additionalProps: {
       canLookupPostcode: props.basket?.selected_country === 1,
     },
@@ -323,35 +351,37 @@ const sectionComponents: SectionComponent[] = [
     component: PaymentDetails as Component,
     key: 'payment',
     next: '_complete',
+    required: true,
     additionalProps: {
       paymentToken: props.payment_intent,
+      requiredShipping: props.basket?.digital_only === false,
     },
   },
-];
-
-const showWarningModal = ref(true);
+]);
 
 onMounted(() => {
   useGoogleEvents().googleEvent('event', 'begin_checkout', {
-    items: props.basket?.items.map((item: ShopBasketItem) => ({
-      id: item.id,
-      name: item.title,
-      variant: item.variant ?? '',
-      quantity: item.quantity,
-      price: item.line_price,
-    })),
+    items: [
+      ...(props.basket?.items.map((item: ShopBasketItem) => ({
+        id: item.id,
+        name: item.title,
+        variant: item.variant ?? '',
+        quantity: item.quantity,
+        price: item.line_price,
+      })) ?? []),
+      ...(props.basket?.digital_items.map((item: ShopBasketDigitalItem) => ({
+        id: item.id,
+        name: item.title,
+        price: item.item_price,
+      })) ?? []),
+    ],
   });
 });
 </script>
 
 <template>
   <Card class="mt-3 flex flex-col space-y-4">
-    <Heading
-      :back-link="{ href: '/shop', label: 'Continue shopping.' }"
-      :border="false"
-    >
-      Complete your order
-    </Heading>
+    <Heading :border="false"> Complete your order </Heading>
   </Card>
 
   <template v-if="has_basket && basket">
@@ -366,51 +396,26 @@ onMounted(() => {
       :absolute="false"
     />
 
-    <div
-      class="grid grid-cols-1 gap-x-4 gap-y-4 lg:max-xl:grid-cols-2 xl:grid-cols-3"
-    >
-      <Card
-        theme="primary-light"
-        class="bg-primary-light/20!"
-      >
-        <div class="flow-root">
-          <ul class="-my-3 divide-y divide-primary-dark/30">
-            <CheckOutItemsRow
-              v-for="item in basket.items"
-              :key="item.id"
-              :item="item"
-            />
-          </ul>
-        </div>
-
-        <CheckoutTotals
-          :countries="countries as FormSelectOption[]"
-          :selected-country="basket.selected_country"
-          :delivery-timescale="basket.delivery_timescale"
-          :postage="basket.postage"
-          :discount="basket.discount"
-          :fees="basket.fees"
-          :total-fees="basket.totalFees"
-          :total="basket.total"
-          :subtotal="basket.subtotal"
-        />
-
-        <TestModeDetails />
-      </Card>
-
-      <Card class="xl:col-span-2">
-        <div class="flex flex-col gap-5 divide-y divide-grey-off-light">
-          <component
-            :is="section.component"
+    <div class="mt-3 grid grid-cols-1 gap-4 lg:grid-cols-5">
+      <Card class="lg:col-span-3">
+        <div class="flex flex-col gap-6 divide-y divide-grey-off-light">
+          <div
             v-for="section in sectionComponents"
+            :id="`checkout-step-${section.key}`"
             :key="section.key"
-            :show="sections[section.key].active"
-            :completed="sections[section.key].complete"
-            :error="sections[section.key].error"
-            v-bind="section.additionalProps"
-            @continue="completeSection(section.key, section.next)"
-            @toggle="toggleSection(section.key)"
-          />
+            class="scroll-mt-20 md:scroll-mt-32"
+          >
+            <component
+              :is="section.component"
+              v-if="section.required"
+              :show="sections[section.key].active"
+              :completed="sections[section.key].complete"
+              :error="sections[section.key].error"
+              v-bind="section.additionalProps"
+              @continue="completeSection(section.key, section.next)"
+              @toggle="toggleSection(section.key)"
+            />
+          </div>
 
           <p
             v-if="errors?.basket"
@@ -420,40 +425,90 @@ onMounted(() => {
           />
         </div>
       </Card>
+
+      <div
+        class="max-lg:order-first lg:sticky lg:top-4 lg:col-span-2 lg:self-start"
+      >
+        <Card class="border border-primary-light/60 bg-primary-lightest/50!">
+          <div
+            v-if="warnings?.length"
+            class="mb-4 flex flex-col gap-2 rounded-sm border border-red/40 bg-red/5 p-3"
+          >
+            <p class="font-semibold text-red">I've had to adjust your basket</p>
+
+            <p class="text-sm text-grey-dark">
+              Stock has changed since you created your basket, so I've altered
+              the quantity of some of your products.
+            </p>
+
+            <ul class="text-sm font-semibold text-primary-dark">
+              <li
+                v-for="(warning, index) in warnings"
+                :key="index"
+                v-text="warning"
+              />
+            </ul>
+          </div>
+
+          <CheckoutDeliveryCountry
+            v-if="basket.digital_only === false"
+            :countries="countries as FormSelectOption[]"
+            :selected-country="basket.selected_country"
+            :delivery-timescale="basket.delivery_timescale"
+            :has-fees="basket.fees.length > 0"
+          />
+
+          <div class="mt-4 flow-root border-t border-primary-light/60">
+            <ul class="divide-y divide-primary-light/60">
+              <CheckOutItemsRow
+                v-for="item in basket.items"
+                :key="item.id"
+                :item="item"
+              />
+
+              <CheckOutDigitalItemsRow
+                v-for="item in basket.digital_items"
+                :key="item.id"
+                :item="item"
+              />
+            </ul>
+          </div>
+
+          <CheckoutTotals
+            :postage="basket.postage"
+            :discount="basket.discount"
+            :fees="basket.fees"
+            :total-fees="basket.total_fees"
+            :total="basket.total"
+            :subtotal="basket.subtotal"
+            :digital-only="basket.digital_only"
+          />
+
+          <Link
+            href="/shop"
+            class="mt-4 inline-flex items-center justify-center gap-2 text-sm text-grey-dark hover:text-primary-dark"
+          >
+            <ArrowUturnLeftIcon class="size-4" />
+            <span>Continue shopping</span>
+          </Link>
+
+          <TestModeDetails />
+        </Card>
+      </div>
     </div>
-
-    <Alert
-      v-if="warnings?.length"
-      title="We've had to make some adjustments to your basket..."
-      :open="showWarningModal"
-      :actions="[
-        {
-          theme: 'secondary',
-          size: 'lg',
-          label: 'Ok, understood',
-          action: () => (showWarningModal = false),
-        },
-      ]"
-    >
-      <p class="prose-md prose mb-3 max-w-none">
-        Sorry, due to stock changes since you created your basket, we've had to
-        alter the quantity of some of your products.
-      </p>
-
-      <ul class="font-semibold text-primary-dark">
-        <li
-          v-for="(warning, index) in warnings"
-          :key="index"
-          v-text="warning"
-        />
-      </ul>
-    </Alert>
   </template>
 
   <template v-else>
-    <Card class="flex flex-col items-center justify-center space-y-4 py-8">
-      <p class="prose prose-xl text-center font-semibold">
-        You haven't got any items in your basket!
+    <Card
+      class="mt-3 flex flex-col items-center justify-center gap-3 rounded-sm bg-primary-lightest/60 py-10 text-center"
+    >
+      <ShoppingBagIcon class="size-12 text-primary" />
+
+      <p class="text-lg font-semibold">Your basket is empty</p>
+
+      <p class="max-w-md text-sm text-grey-dark">
+        Once you've added something to your basket you'll be able to check out
+        here.
       </p>
 
       <CoeliacButton
@@ -462,7 +517,15 @@ onMounted(() => {
         label="Back to shop"
         size="xxl"
         theme="secondary"
+        classes="mt-2"
       />
     </Card>
+
+    <ShopPopularProducts
+      v-if="popularProducts?.length"
+      class="mt-4"
+      :products="popularProducts"
+      tracking-label="ShopCheckoutEmptyBasket"
+    />
   </template>
 </template>

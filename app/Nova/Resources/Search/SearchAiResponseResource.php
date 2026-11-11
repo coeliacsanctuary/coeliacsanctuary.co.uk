@@ -16,7 +16,7 @@ class SearchAiResponseResource extends Resource
 {
     public static $model = SearchAiResponse::class;
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

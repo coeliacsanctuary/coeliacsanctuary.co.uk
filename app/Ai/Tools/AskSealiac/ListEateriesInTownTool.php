@@ -19,9 +19,6 @@ use Stringable;
 
 class ListEateriesInTownTool extends BaseTool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'text'
@@ -45,9 +42,6 @@ class ListEateriesInTownTool extends BaseTool
         text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         $filters = [
@@ -60,7 +54,7 @@ class ListEateriesInTownTool extends BaseTool
 
         return app(GetEateriesInTownForAskSealiacPipeline::class)
             ->run($town, $filters, $request->string('sort', 'alphabetical')->toString())
-            ->map(function (Eatery $eatery) {
+            ->map(function (Eatery $eatery): array {
                 /** @var NationwideBranch | null $branch */
                 $branch = $eatery->relationLoaded('branch') ? $eatery->branch : null;
 
@@ -109,7 +103,7 @@ class ListEateriesInTownTool extends BaseTool
                     'info' => $eatery->info,
                     'location' => [
                         'address' => collect(explode("\n", $eatery->address))
-                            ->map(fn (string $line) => mb_trim($line))
+                            ->map(fn (string $line): string => mb_trim($line))
                             ->join(', '),
                     ],
                     'phone' => $eatery->phone,
@@ -127,7 +121,7 @@ class ListEateriesInTownTool extends BaseTool
                             'service_rating' => $adminReview->service_rating,
                             'branch_name' => $adminReview->branch_name,
                         ] : null,
-                        'user_reviews' => $reviews->map(fn (EateryReview $review) => [
+                        'user_reviews' => $reviews->map(fn (EateryReview $review): array => [
                             'published' => $review->created_at,
                             'date_diff' => $review->human_date,
                             'name' => $review->name,
@@ -138,9 +132,9 @@ class ListEateriesInTownTool extends BaseTool
                             'service_rating' => $review->service_rating,
                             'branch_name' => $review->branch ? $review->branch->name : $review->branch_name,
                         ]),
-                        'ratings' => collect(range(5, 1))->map(fn ($rating) => [
+                        'ratings' => collect(range(5, 1))->map(fn ($rating): array => [
                             'rating' => $rating,
-                            'count' => $reviews->filter(fn (EateryReview $reviewItem) => (int) $reviewItem->rating === $rating)->count(),
+                            'count' => $reviews->filter(fn (EateryReview $reviewItem): bool => (int) $reviewItem->rating === $rating)->count(),
                         ]),
                     ],
                     'features' => $features->map(fn (EateryFeature $feature) => $feature->feature),
@@ -158,9 +152,6 @@ class ListEateriesInTownTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [
@@ -214,7 +205,7 @@ class ListEateriesInTownTool extends BaseTool
             'link' => $branch->absoluteLink(),
             'location' => [
                 'address' => collect(explode("\n", $branch->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
             ],
         ];

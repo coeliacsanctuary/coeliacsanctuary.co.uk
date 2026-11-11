@@ -42,7 +42,6 @@ const useShopStore = defineStore<'shop-checkout', State, Getters, Actions>(
         contact: {
           name: '',
           email: '',
-          email_confirmation: '',
           phone: '',
           subscribeToNewsletter: false,
         },
@@ -88,12 +87,9 @@ const useShopStore = defineStore<'shop-checkout', State, Getters, Actions>(
       setForm(state) {
         (<Keys[]>Object.keys(state)).forEach((key: Keys) => {
           const value:
-            | CheckoutContactStep
-            | CheckoutBillingStep
-            | CheckoutShippingStep = state[key] as
-            | CheckoutContactStep
-            | CheckoutBillingStep
-            | CheckoutShippingStep;
+            CheckoutContactStep | CheckoutBillingStep | CheckoutShippingStep =
+            state[key] as
+              CheckoutContactStep | CheckoutBillingStep | CheckoutShippingStep;
 
           (<CheckoutContactStep | CheckoutBillingStep | CheckoutShippingStep>(
             this.data[key]

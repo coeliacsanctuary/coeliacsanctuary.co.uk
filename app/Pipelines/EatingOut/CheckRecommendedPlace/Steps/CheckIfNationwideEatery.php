@@ -39,7 +39,7 @@ class CheckIfNationwideEatery extends AbstractStepAction
             $locations = Str::explode($data->location);
 
             /** @var Collection<int, string> $locations */
-            $locations = $locations->map(fn (string $line) => mb_trim($line, ',.-'))
+            $locations = $locations->map(fn (string $line): string => mb_trim($line, ',.-'))
                 ->filter()
                 ->values();
 
@@ -47,7 +47,7 @@ class CheckIfNationwideEatery extends AbstractStepAction
                 ->where(function (Builder $query) use ($locations): void {
                     $locations->each(
                         fn (string $location) => $query
-                            ->orWhere('town', 'like', "%{$location}%")
+                            ->orWhereLike('town', "%{$location}%")
                     );
                 })
                 ->pluck('id');
@@ -58,7 +58,7 @@ class CheckIfNationwideEatery extends AbstractStepAction
                 ->orWhere(function (Builder|HasMany $query) use ($locations): void {
                     $locations->each(
                         fn (string $location) => $query
-                            ->orWhere('address', 'like', "%{$location}%")
+                            ->orWhereLike('address', "%{$location}%")
                     );
                 })
                 ->first();

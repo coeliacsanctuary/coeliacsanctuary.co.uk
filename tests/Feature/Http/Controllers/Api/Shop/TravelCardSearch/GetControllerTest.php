@@ -57,11 +57,11 @@ class GetControllerTest extends TestCase
 
         $this->getJson(route('api.shop.travel-card-search.get', $searchTerm))
             ->assertJson(
-                fn (AssertableJson $json) => $json
+                fn (AssertableJson $json): AssertableJson => $json
                     ->has(
                         'products',
                         2,
-                        fn (AssertableJson $json) => $json
+                        fn (AssertableJson $json): AssertableJson => $json
                             ->where('title', 'Product 0')
                             ->etc()
                     )

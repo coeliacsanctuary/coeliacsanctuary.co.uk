@@ -22,7 +22,7 @@ class AppendDistanceToBranches implements GetEateriesPipelineActionContract
         $hydratedBranches = $pipelineData->hydratedBranches;
 
         if ($hydratedBranches) {
-            $pipelineData->hydratedBranches = $hydratedBranches->map(function (NationwideBranch $branch) use ($results) {
+            $pipelineData->hydratedBranches = $hydratedBranches->map(function (NationwideBranch $branch) use ($results): NationwideBranch {
                 $rawData = $results->firstWhere('branchId', $branch->id);
 
                 if ($rawData && $rawData->distance) {

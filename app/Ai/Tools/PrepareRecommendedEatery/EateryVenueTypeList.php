@@ -12,17 +12,11 @@ use Stringable;
 
 class EateryVenueTypeList implements Tool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Return a list of eatery venue types';
     }
 
-    /**
-     * Execute the tool.
-     */
     public function handle(Request $request): Stringable|string
     {
         $list = EateryVenueType::query()

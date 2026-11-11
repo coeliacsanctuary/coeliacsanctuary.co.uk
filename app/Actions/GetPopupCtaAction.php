@@ -14,7 +14,7 @@ class GetPopupCtaAction
     {
         return Popup::query()
             ->get()
-            ->reject(function (Popup $popup) {
+            ->reject(function (Popup $popup): bool {
                 if (Request::hasCookie("CS_SEEN_POPUP_{$popup->id}")) {
                     $lastSeenModal = Carbon::createFromTimestamp((int) Request::cookie("CS_SEEN_POPUP_{$popup->id}"));
                     $modalDisplayLimit = Carbon::now()->subDays($popup->display_every);

@@ -1,0 +1,10 @@
+/node_modules
+/public
+/vendor
+/storage
+/build
+/nova-components
+/bootstrap/cache
+package-lock.json
+composer.json
+composer.lock

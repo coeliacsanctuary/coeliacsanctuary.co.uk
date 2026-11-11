@@ -16,8 +16,6 @@ class Eateries extends Aggregator implements IsSearchable
     protected $model;
 
     /**
-     * The names of the models that should be aggregated.
-     *
      * @var string[]
      */
     protected $models = [

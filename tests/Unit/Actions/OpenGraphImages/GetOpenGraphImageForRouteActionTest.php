@@ -13,6 +13,7 @@ use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateHomePageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateRecipeIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateShopIndexPageOpenGraphImageJob;
+use App\Jobs\OpenGraphImages\CreateTripPlannerPageOpenGraphImageJob;
 use App\Models\OpenGraphImage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
@@ -60,6 +61,7 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
             'eatery' => CreateEateryIndexPageOpenGraphImageJob::class,
             'eatery-app' => CreateEateryAppPageOpenGraphImageJob::class,
             'eatery-map' => CreateEateryIndexPageOpenGraphImageJob::class,
+            'eatery-trip-planner' => CreateTripPlannerPageOpenGraphImageJob::class,
         ];
 
         foreach ($jobs as $route => $job) {
@@ -86,7 +88,6 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
         Bus::fake();
         Storage::fake('media');
 
-        // Create an old open graph image (25 hours ago)
         $openGraphImage = $this->create(OpenGraphImage::class, [
             'route' => 'blog',
             'updated_at' => now()->subHours(25),
@@ -96,7 +97,6 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
 
         app(GetOpenGraphImageForRouteAction::class)->handle('blog');
 
-        // Should dispatch the job to regenerate the image since it's older than 24 hours
         Bus::assertDispatched(CreateBlogIndexPageOpenGraphImageJob::class);
     }
 
@@ -106,7 +106,6 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
         Bus::fake();
         Storage::fake('media');
 
-        // Create a recent open graph image (23 hours ago)
         $openGraphImage = $this->create(OpenGraphImage::class, [
             'route' => 'recipe',
             'updated_at' => now()->subHours(23),
@@ -116,7 +115,6 @@ class GetOpenGraphImageForRouteActionTest extends TestCase
 
         app(GetOpenGraphImageForRouteAction::class)->handle('recipe');
 
-        // Should NOT dispatch the job since the image is still fresh (within 24 hours)
         Bus::assertNothingDispatched();
     }
 

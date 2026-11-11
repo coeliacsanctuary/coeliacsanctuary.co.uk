@@ -31,7 +31,7 @@ class SealiacOverviews extends Resource
 
     public static $clickAction = 'open';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -73,7 +73,7 @@ class SealiacOverviews extends Resource
 
             Number::make('Thumbs Down Count', 'thumbs_down')->sortable(),
 
-            Number::make('Rating', '')->displayUsing(fn () => $this->resource->thumbs_up - $this->resource->thumbs_down)->sortable(),
+            Number::make('Rating', '')->displayUsing(fn (): int|float => $this->resource->thumbs_up - $this->resource->thumbs_down)->sortable(),
 
             Text::make('Overview')->displayUsing(fn () => Str::limit($this->resource->overview, 100))->onlyOnIndex(),
         ];
@@ -85,7 +85,7 @@ class SealiacOverviews extends Resource
             InvalidateSealiacOverview::make()
                 ->sole()
                 ->showInline()
-                ->canRun(fn ($foo, SealiacOverview $sealiacOverview) => $sealiacOverview->invalidated === false)
+                ->canRun(fn ($foo, SealiacOverview $sealiacOverview): bool => $sealiacOverview->invalidated === false)
                 ->confirmText('Are you sure you want to invalidate this overview?'),
         ];
     }

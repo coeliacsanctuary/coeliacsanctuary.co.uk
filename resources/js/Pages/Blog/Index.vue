@@ -38,7 +38,7 @@ const gotoPage = (page: number) => {
       ...(page > 1 ? { page } : undefined),
     },
     {
-      only: ['blogs'],
+      only: ['blogs', 'meta'],
       preserveState: true,
       onStart: () => (isLoading.value = true),
       onFinish: () => (isLoading.value = false),

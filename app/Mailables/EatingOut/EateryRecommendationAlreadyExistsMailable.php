@@ -25,7 +25,7 @@ class EateryRecommendationAlreadyExistsMailable extends BaseMailable
         /** @var EateryTown | null $town */
         $town = $this->eatery->town;
 
-        if ($this->branch) {
+        if ($this->branch instanceof NationwideBranch) {
             $town = $this->branch->town;
         }
 
@@ -49,7 +49,7 @@ class EateryRecommendationAlreadyExistsMailable extends BaseMailable
     public function toMail(): MjmlMessage
     {
         $subject = match (true) {
-            $this->branch && $this->branch->name => "Your recommendation of {$this->branch->name} as part of the {$this->eatery->name} chain already exists in the Coeliac Sanctuary eating out guide!",
+            $this->branch instanceof NationwideBranch && $this->branch->name => "Your recommendation of {$this->branch->name} as part of the {$this->eatery->name} chain already exists in the Coeliac Sanctuary eating out guide!",
             (bool) $this->branch => "Your recommendation of the {$this->branch->town?->town} branch of {$this->eatery->name} already exists in the Coeliac Sanctuary eating out guide!",
             default => "Your recommendation of {$this->eatery->name} already exists in the Coeliac Sanctuary eating out guide!",
         };

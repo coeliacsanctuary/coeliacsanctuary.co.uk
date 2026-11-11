@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import SubHeading from '@/Components/SubHeading.vue';
 import { Link } from '@inertiajs/vue3';
 import { EaterySimpleReviewResource } from '@/types/EateryTypes';
 import StarRating from '@/Components/StarRating.vue';
+import { ArrowRightIcon } from '@heroicons/vue/24/outline';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import { useTemplateRef } from 'vue';
 
@@ -18,48 +20,62 @@ useJourneyTracking().logWhenVisible(
 <template>
   <Card
     ref="card"
-    class="space-y-4 pb-10"
+    class="space-y-4 overflow-hidden"
   >
-    <h3 class="text-center text-2xl font-semibold text-primary-dark">
+    <SubHeading
+      as="h2"
+      text-size="xs"
+    >
       Latest Ratings
-    </h3>
+    </SubHeading>
 
     <p class="prose">
-      These are the latest ratings people have left on locations in our
+      These are the latest ratings people have left on locations in my
       <Link href="/eating-out">Eating Out</Link> guide.
     </p>
 
-    <ul class="divide-y divide-primary-dark/80">
+    <ul class="-mx-2 divide-y divide-grey-off-light">
       <li
-        v-for="review in reviews"
-        :key="review.eatery.link"
-        class="flex flex-col p-2"
+        v-for="(review, index) in reviews"
+        :key="`${review.eatery.link}-${index}`"
       >
-        <div class="flex items-center justify-between">
-          <Link
-            :href="review.eatery.link"
-            class="text-lg font-semibold text-primary-dark hover:text-black hover:underline"
-            prefetch
-          >
-            {{ review.eatery.name }}
-          </Link>
-
-          <div>
-            <StarRating :rating="review.rating" />
-          </div>
-        </div>
-
         <Link
-          :href="review.eatery.location.link"
-          class="hover:underline"
+          :href="review.eatery.link"
+          class="group flex flex-col rounded-sm px-2 py-3 transition hover:bg-primary-lightest/60"
+          prefetch
         >
-          {{ review.eatery.location.name }}
+          <span class="flex items-center justify-between gap-2">
+            <span
+              class="font-semibold text-primary-dark transition group-hover:text-black"
+              v-text="review.eatery.name"
+            />
+
+            <StarRating
+              class="shrink-0"
+              :rating="review.rating"
+            />
+          </span>
+
+          <span
+            class="text-sm text-grey-darker"
+            v-text="review.eatery.location.name"
+          />
+
+          <span
+            class="mt-1 text-xs text-grey-dark italic"
+            v-text="review.created_at"
+          />
         </Link>
-        <span
-          class="mt-4! block text-sm italic"
-          v-text="review.created_at"
-        />
       </li>
     </ul>
+
+    <Link
+      href="/eating-out"
+      class="-mx-4 mt-4! -mb-4 flex items-center justify-center space-x-2 bg-primary-lightest/60 p-4 font-semibold transition hover:bg-primary-light/60"
+    >
+      <span>Explore the Eating Out guide</span>
+
+      <ArrowRightIcon class="size-4" />
+    </Link>
   </Card>
 </template>

@@ -30,9 +30,11 @@ const svg = computed(() => {
   const template = document.createElement('template');
   template.innerHTML = modules[filepath];
 
-  const element: SVGElement = template.content.firstChild;
+  const element = template.content.firstElementChild;
 
-  element.setAttribute('class', props.class);
+  if (element) {
+    element.setAttribute('class', props.class);
+  }
 
   return template.innerHTML;
 });

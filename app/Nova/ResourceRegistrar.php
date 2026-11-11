@@ -17,6 +17,7 @@ use App\Nova\Resources\EatingOut\EateryCuisines;
 use App\Nova\Resources\EatingOut\EateryMagicRoutesResource;
 use App\Nova\Resources\EatingOut\EaterySearch;
 use App\Nova\Resources\EatingOut\EaterySearchHistory;
+use App\Nova\Resources\EatingOut\EateryTrips;
 use App\Nova\Resources\EatingOut\MyPlaces;
 use App\Nova\Resources\EatingOut\NationwideBranches;
 use App\Nova\Resources\EatingOut\NationwideEateries;
@@ -46,8 +47,13 @@ use App\Nova\Resources\Shop\Baskets;
 use App\Nova\Resources\Shop\Categories;
 use App\Nova\Resources\Shop\Customer;
 use App\Nova\Resources\Shop\CustomsFee;
+use App\Nova\Resources\Shop\DigitalCardResource;
+use App\Nova\Resources\Shop\DigitalCardTypeResource;
+use App\Nova\Resources\Shop\DigitalOrders;
 use App\Nova\Resources\Shop\DiscountCode;
+use App\Nova\Resources\Shop\Holidays;
 use App\Nova\Resources\Shop\MassDiscount;
+use App\Nova\Resources\Shop\OrderDigitalItem;
 use App\Nova\Resources\Shop\OrderItem;
 use App\Nova\Resources\Shop\OrderReviewItem;
 use App\Nova\Resources\Shop\OrderReviews;
@@ -59,7 +65,6 @@ use App\Nova\Resources\Shop\PostageArea;
 use App\Nova\Resources\Shop\PostageCountry;
 use App\Nova\Resources\Shop\PostagePrice;
 use App\Nova\Resources\Shop\Price;
-use App\Nova\Resources\Shop\ProductAddOn;
 use App\Nova\Resources\Shop\Products;
 use App\Nova\Resources\Shop\ProductVariant;
 use App\Nova\Resources\Shop\ShippingAddress;
@@ -76,7 +81,6 @@ class ResourceRegistrar
     public static function handle(): void
     {
         Nova::resources([
-            // Main
             Blog::class,
             BlogTag::class,
             Collection::class,
@@ -90,11 +94,9 @@ class ResourceRegistrar
             AnnouncementResource::class,
             RedirectResource::class,
 
-            // Ask Sealiac
             AskSealiacChatResource::class,
             AskSealiacChatMessageResource::class,
 
-            // Eating Out
             Eateries::class,
             NationwideEateries::class,
             NationwideBranches::class,
@@ -112,47 +114,47 @@ class ResourceRegistrar
             SuggestedEdits::class,
             EaterySearch::class,
             EaterySearchHistory::class,
+            EateryTrips::class,
             SealiacOverviews::class,
             EateryAiDescriptionResource::class,
             EateryAttractionRestaurantResource::class,
             EateryMagicRoutesResource::class,
 
-            // Search
             SearchResource::class,
             SearchAiResponseResource::class,
             SearchHistoryResource::class,
 
-            // Shop Sales
             Baskets::class,
             Orders::class,
+            DigitalOrders::class,
             Payment::class,
             PaymentRefund::class,
             OrderItem::class,
+            OrderDigitalItem::class,
 
-            // Shop Inventory
             Categories::class,
             Products::class,
             ShippingMethod::class,
             Price::class,
             ProductVariant::class,
-            ProductAddOn::class,
 
-            // Shop Customers
+            DigitalCardResource::class,
+            DigitalCardTypeResource::class,
+
             Customer::class,
             ShippingAddress::class,
 
-            // Shop Admin
             DiscountCode::class,
             PostageCountry::class,
             PostagePrice::class,
             CustomsFee::class,
             PostageArea::class,
             MassDiscount::class,
+            Holidays::class,
             OrderReviews::class,
             OrderReviewItem::class,
             OrderSourcesResource::class,
 
-            // Shop Search
             TravelCardSearchHistory::class,
             TravelCardSearchTerms::class,
         ]);

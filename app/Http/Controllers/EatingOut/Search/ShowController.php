@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\Search;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\DataObjects\EatingOut\LatLng;
 use App\Http\Response\Inertia;
@@ -51,9 +52,8 @@ class ShowController
 
         $firstLocation?->loadMissing(['town.county']);
 
-        $locationFound = LatLngState::$latLng !== null;
+        $locationFound = LatLngState::$latLng instanceof LatLng;
 
-        /** @var ?LatLng $latLng */
         $latLng = LatLngState::$latLng;
 
         if ( ! $latLng && $firstLocation) {
@@ -85,14 +85,14 @@ class ShowController
             ->metaImage($getOpenGraphImageForRouteAction->handle('eatery'))
             ->doNotTrack()
             ->render('EatingOut/SearchResults', [
-                'term' => fn () => $displayTerm,
-                'prefillTerm' => fn () => $eaterySearchTerm->from_user_location ? '' : $formattedTerm,
+                'term' => fn (): string => $displayTerm,
+                'prefillTerm' => fn (): string => $eaterySearchTerm->from_user_location ? '' : $formattedTerm,
                 'range' => fn () => $eaterySearchTerm->range,
-                'eateries' => $inertia->scroll(fn () => $eateries),
-                'filters' => fn () => $getFiltersForSearchResults->handle($filters),
-                'latlng' => fn () => $latLng?->toLatLng(),
-                'locationFound' => fn () => $locationFound,
-                'relatedPage' => fn () => $relatedPage,
+                'eateries' => $inertia->scroll(fn (): LengthAwarePaginator => $eateries),
+                'filters' => fn (): array => $getFiltersForSearchResults->handle($filters),
+                'latlng' => fn (): ?array => $latLng?->toLatLng(),
+                'locationFound' => fn (): bool => $locationFound,
+                'relatedPage' => fn (): ?array => $relatedPage,
                 'sort' => [
                     'current' => $sort,
                     'options' => [

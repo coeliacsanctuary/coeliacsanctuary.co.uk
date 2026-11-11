@@ -43,8 +43,6 @@ const reloadEateries = () => {
   router.reload({
     only: ['eateries'],
     reset: ['eateries'],
-    preserveState: true,
-    preserveScroll: true,
   });
 };
 

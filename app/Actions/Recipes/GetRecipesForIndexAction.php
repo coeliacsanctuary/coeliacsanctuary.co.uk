@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Recipes;
 
+use App\Builders\Recipes\RecipeBuilder;
 use App\Models\Recipes\Recipe;
 use App\ResourceCollections\Recipes\RecipeListCollection;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +14,6 @@ class GetRecipesForIndexAction
 {
     /**
      * @template T of ResourceCollection
-     *
      * @param  array{features?: string[], meals?: string[], freeFrom?: string[]}  $filters
      * @param  class-string<T>  $resource
      * @return T
@@ -30,11 +30,11 @@ class GetRecipesForIndexAction
                 ->when($search, fn (Builder $builder) => $builder->where(
                     fn (Builder $builder) => $builder
                         ->where('id', $search)
-                        ->orWhere('title', 'LIKE', "%{$search}%")
+                        ->orWhereLike('title', "%{$search}%")
                 ))
-                ->when(count($featureFilters) > 0, fn (Builder $query) => $query->hasFeatures($featureFilters))
-                ->when(count($mealFilters) > 0, fn (Builder $query) => $query->hasMeals($mealFilters))
-                ->when(count($freeFromFilters) > 0, fn (Builder $query) => $query->hasFreeFrom($freeFromFilters))
+                ->when(count($featureFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasFeatures($featureFilters))
+                ->when(count($mealFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasMeals($mealFilters))
+                ->when(count($freeFromFilters) > 0, fn (RecipeBuilder $query): RecipeBuilder => $query->hasFreeFrom($freeFromFilters))
                 ->latest()
                 ->paginate($perPage)
                 ->withQueryString()

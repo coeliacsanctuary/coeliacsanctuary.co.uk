@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use App\Jobs\Shop\SyncProductToGoogleMerchantJob;
 use App\Jobs\Shop\SyncShippingToGoogleMerchantJob;
 use App\Models\Shop\ShopProduct;
@@ -13,12 +15,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 use function Laravel\Prompts\select;
 
+#[Description('Bulk sync products and/or shipping settings to Google Merchant')]
+#[Signature('coeliac:google-merchant:sync')]
 class SyncToGoogleMerchantCommand extends Command
 {
-    protected $signature = 'coeliac:google-merchant:sync';
-
-    protected $description = 'Bulk sync products and/or shipping settings to Google Merchant';
-
     public function handle(GoogleMerchantProductManager $productManager): void
     {
         if ( ! $productManager->isEnabled()) {
@@ -38,7 +38,6 @@ class SyncToGoogleMerchantCommand extends Command
 
         if ($selection === 'all' || $selection === 'products') {
             ShopProduct::query()
-                /** @phpstan-ignore-next-line */
                 ->whereHas('variants', fn (Builder $q) => $q->where('live', true))
                 ->lazy()
                 ->each(function (ShopProduct $product): void {

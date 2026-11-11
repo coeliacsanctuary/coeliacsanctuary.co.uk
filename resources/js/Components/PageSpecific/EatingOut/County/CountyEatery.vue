@@ -3,7 +3,7 @@ import { CountyEatery as CountyEateryType } from '@/types/EateryTypes';
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
 import StarRating from '@/Components/StarRating.vue';
-import { useTemplateRef, watch } from 'vue';
+import { useTemplateRef } from 'vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import { pluralise } from '@/helpers';
 

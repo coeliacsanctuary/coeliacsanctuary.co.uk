@@ -5,37 +5,26 @@ declare(strict_types=1);
 namespace App\Models\Shop;
 
 use App\Enums\Shop\OrderState;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Str;
 
 /**
  * @property bool $has_add_ons
+ * @property bool $has_digital_items
+ * @property bool $is_digital_only
  * @property int | null $add_on_total
  */
 class ShopOrder extends Model
 {
-    protected $casts = [
-        'state_id' => OrderState::class,
-        'shipped_at' => 'datetime',
-        'add_ons_sent_at' => 'datetime',
-        'sent_abandoned_basket_email' => 'boolean',
-        'newsletter_signup' => 'boolean',
-    ];
-
     protected static function booted(): void
     {
         self::creating(function (self $order): void {
-            /** @phpstan-ignore-next-line  */
-            if ($order->state_id === null) {
-                $order->state_id = OrderState::BASKET;
-            }
+            $order->state_id ??= OrderState::BASKET;
 
             if ( ! $order->postage_country_id) {
                 $order->postage_country_id = 1;
@@ -81,6 +70,12 @@ class ShopOrder extends Model
         return $this->hasMany(ShopOrderItem::class, 'order_id');
     }
 
+    /** @return HasMany<ShopOrderDigitalItem, $this> */
+    public function digitalItems(): HasMany
+    {
+        return $this->hasMany(ShopOrderDigitalItem::class, 'order_id');
+    }
+
     /** @return BelongsTo<ShopPostageCountry, $this> */
     public function postageCountry(): BelongsTo
     {
@@ -117,39 +112,32 @@ class ShopOrder extends Model
         return $this->belongsToMany(ShopSource::class, 'shop_order_sources', 'order_id', 'source_id');
     }
 
-    /** @return HasManyThrough<ShopProductAddOn, ShopOrderItem, $this> */
-    public function addOns(): HasManyThrough
+    public function hasAnyItems(): bool
     {
-        return $this->hasManyThrough(ShopProductAddOn::class, ShopOrderItem::class, 'order_id', 'id', 'id', 'product_add_on_id');
+        if ($this->relationLoaded('items') && $this->items->isNotEmpty()) {
+            return true;
+        }
+
+        if ($this->relationLoaded('digitalItems') && $this->digitalItems->isNotEmpty()) {
+            return true;
+        }
+
+        if ($this->items()->exists()) {
+            return true;
+        }
+
+        return (bool) ($this->digitalItems()->exists());
     }
 
-    /** @return HasMany<ShopOrderDownloadLink, $this> */
-    public function downloadLinks(): HasMany
+    protected function casts(): array
     {
-        return $this->hasMany(ShopOrderDownloadLink::class, 'order_id');
-    }
-
-    /** @return Attribute<bool, never> */
-    public function hasAddOns(): Attribute
-    {
-        return Attribute::get(function () {
-            if ($this->relationLoaded('items')) {
-                return $this->items->whereNotNull('product_add_on_id')->isNotEmpty();
-            }
-
-            return $this->items()->whereNotNull('product_add_on_id')->exists();
-        });
-    }
-
-    /** @return Attribute<null | int, never> */
-    public function addOnTotal(): Attribute
-    {
-        return Attribute::get(function () {
-            if ($this->relationLoaded('items')) {
-                return $this->items->whereNotNull('product_add_on_id')->sum('product_add_on_price');
-            }
-
-            return $this->items()->whereNotNull('product_add_on_id')->sum('product_add_on_price');
-        });
+        return [
+            'state_id' => OrderState::class,
+            'shipped_at' => 'datetime',
+            'is_digital_only' => 'boolean',
+            'has_digital_items' => 'boolean',
+            'sent_abandoned_basket_email' => 'boolean',
+            'newsletter_signup' => 'boolean',
+        ];
     }
 }

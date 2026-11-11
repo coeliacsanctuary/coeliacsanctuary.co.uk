@@ -6,7 +6,6 @@ namespace Tests\Unit\Console\Commands;
 
 use App\Console\Commands\CheckForMailcoachScheduledEmailsCommand;
 use App\Models\MailcoachSchedule;
-use Carbon\Carbon;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
@@ -40,7 +39,7 @@ class CheckForMailcoachScheduledEmailsCommandTest extends TestCase
     #[Test]
     public function itPingsTheMailcoachWebsiteWhenTheScheduleIsOneMinuteAway(): void
     {
-        Carbon::setTestNow('2025-01-01 09:58:00');
+        $this->travelTo('2025-01-01 09:58:00');
 
         MailcoachSchedule::query()->create([
             'scheduled_at' => '2025-01-01 10:00:00'
@@ -50,11 +49,11 @@ class CheckForMailcoachScheduledEmailsCommandTest extends TestCase
 
         Http::assertNothingSent();
 
-        Carbon::setTestNow('2025-01-01 09:59:00');
+        $this->travelTo('2025-01-01 09:59:00');
 
         $this->artisan(CheckForMailcoachScheduledEmailsCommand::class);
 
-        Http::assertSent(fn (Request $request) => $request->url() === config('mailcoach-sdk.endpoint'));
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('mailcoach-sdk.endpoint'));
 
         $this->assertDatabaseEmpty(MailcoachSchedule::class);
     }

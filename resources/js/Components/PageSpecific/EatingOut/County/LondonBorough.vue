@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { LondonPageBorough } from '@/types/EateryTypes';
 import { pluralise } from '@/helpers';
-import StaticMap from '@/Components/Maps/StaticMap.vue';
 import { Link } from '@inertiajs/vue3';
 import Card from '@/Components/Card.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';

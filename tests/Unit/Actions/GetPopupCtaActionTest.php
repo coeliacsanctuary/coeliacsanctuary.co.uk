@@ -17,7 +17,7 @@ class GetPopupCtaActionTest extends TestCase
 {
     protected Popup $popup;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

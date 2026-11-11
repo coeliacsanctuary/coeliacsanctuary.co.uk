@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\London\Borough\Area;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
 use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
@@ -29,16 +30,12 @@ class ShowController
         GetEateriesInLondonAreaPipeline $getEateriesPipeline,
         GetEatingOutOpenGraphImageAction $getOpenGraphImageAction,
     ): Response {
-        if ($area->town_id !== $borough->id) {
-            abort(404);
-        }
+        abort_if($area->town_id !== $borough->id, 404);
 
         /** @var EateryCounty $county */
         $county = EateryCounty::query()->where('slug', 'london')->first();
 
-        if ($borough->county_id !== $county->id) {
-            abort(404);
-        }
+        abort_if($borough->county_id !== $county->id, 404);
 
         $borough->setRelation('county', $county);
         $sort = $request->string('sort', 'alphabetical')->toString();
@@ -56,7 +53,7 @@ class ShowController
             ->where('area', $area->area)
             ->withCount(['liveEateries', 'liveBranches'])
             ->get()
-            ->map(fn (EateryArea $alternateArea) => [
+            ->map(fn (EateryArea $alternateArea): array => [
                 /** @phpstan-ignore-next-line  */
                 'borough' => $alternateArea->town->town,
                 'link' => $alternateArea->link(),
@@ -79,10 +76,10 @@ class ShowController
             ]))
             ->render('EatingOut/LondonArea', [
                 'live_eateries_count' => $area->liveEateries->count() + $area->liveBranches->count(),
-                'area' => fn () => new LondonAreaPageResource($area),
+                'area' => fn (): LondonAreaPageResource => new LondonAreaPageResource($area),
                 'alternateAreas' => fn () => $otherAreas,
-                'eateries' => $inertia->scroll(fn () => $getEateriesPipeline->run($area, $filters, $sort)),
-                'filters' => fn () => $getFiltersForLondonArea->setArea($area)->handle($filters),
+                'eateries' => $inertia->scroll(fn (): LengthAwarePaginator => $getEateriesPipeline->run($area, $filters, $sort)),
+                'filters' => fn (): array => $getFiltersForLondonArea->setArea($area)->handle($filters),
                 'sort' => [
                     'current' => $sort,
                     'options' => [

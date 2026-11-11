@@ -36,7 +36,7 @@ class SearchableItemResource extends JsonResource
         $description = match ($this->resource::class) {
             Blog::class, Recipe::class, ShopProduct::class => $this->resource->meta_description,
             Eatery::class => $this->resource->display_snippet,
-            default => $this->resource->eatery->display_snippet,
+            NationwideBranch::class => $this->resource->eatery->display_snippet,
         };
 
         $image = match ($this->resource::class) {

@@ -35,7 +35,7 @@ class NationwideBranchResource extends JsonResource
             'link' => $this->link(),
             'location' => [
                 'address' => collect(explode("\n", $this->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
                 'lat' => $this->lat,
                 'lng' => $this->lng,

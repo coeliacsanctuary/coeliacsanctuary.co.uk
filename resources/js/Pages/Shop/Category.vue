@@ -4,6 +4,7 @@ import Heading from '@/Components/Heading.vue';
 import { ShopCategoryIndex, ShopProductIndex } from '@/types/Shop';
 import CategoryProductCard from '@/Components/PageSpecific/Shop/CategoryProductCard.vue';
 import CategoryTravelCardSearch from '@/Components/PageSpecific/Shop/CategoryTravelCardSearch.vue';
+import ShopDeliveryFacts from '@/Components/PageSpecific/Shop/ShopDeliveryFacts.vue';
 import Warning from '@/Components/Warning.vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -34,23 +35,25 @@ defineProps<{
     <Warning v-if="category.title === 'Coeliac+ Other Allergen Travel Cards'">
       <p class="prose max-w-none">
         Have you just got Coeliac/Gluten intolerance and no other allergens? You
-        might be looking for our blue
+        might be looking for my blue
         <Link href="/shop/standard-coeliac-travel-cards">
           Standard Coeliac Travel Cards </Link
-        >, rather than our yellow Coeliac+ Other Allergen cards.
+        >, rather than my yellow Coeliac+ Other Allergen cards.
       </p>
     </Warning>
   </Card>
 
   <CategoryTravelCardSearch v-if="category.travelCardSearch" />
 
-  <div
-    class="grid grid-cols-1 gap-y-4 p-3 sm:gap-3 sm:max-lg:grid-cols-2 lg:grid-cols-3 2xl:p-0"
-  >
+  <div class="grid gap-6 sm:max-xl:grid-cols-2 lg:gap-8 xl:grid-cols-3">
     <CategoryProductCard
-      v-for="product in products"
+      v-for="(product, index) in products"
       :key="product.link"
       :product="product"
+      :eager="index < 3"
+      class="transition duration-300 sm:hover:-translate-y-1 sm:hover:shadow-lg"
     />
   </div>
+
+  <ShopDeliveryFacts />
 </template>

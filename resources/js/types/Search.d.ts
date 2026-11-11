@@ -9,12 +9,7 @@ export type SearchParams = {
 };
 
 export type SearchableItem =
-  | 'Blog'
-  | 'Recipe'
-  | 'Shop Product'
-  | 'Eatery'
-  | 'Hotel'
-  | 'Attraction';
+  'Blog' | 'Recipe' | 'Shop Product' | 'Eatery' | 'Hotel' | 'Attraction';
 
 export type SiteSearchResult = {
   type: SearchableItem;

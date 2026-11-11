@@ -290,7 +290,7 @@ watchDebounced(
       class="py-8"
     >
       <div class="mb-8 flex justify-center text-green">
-        <CheckCircleIcon class="h-24 w-24" />
+        <CheckCircleIcon class="size-24" />
       </div>
 
       <p class="prose prose-lg max-w-none text-center">

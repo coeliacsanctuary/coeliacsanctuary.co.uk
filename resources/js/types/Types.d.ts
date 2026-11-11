@@ -18,6 +18,12 @@ export type HomeHoverItem = {
   header_image_alt_text?: string;
   square_image?: string;
   type?: 'Blog' | 'Recipe';
+  date?: string;
+  nutrition?: {
+    calories: number;
+    servings: string;
+    portion_size: string;
+  };
 };
 
 export type FormItem = {

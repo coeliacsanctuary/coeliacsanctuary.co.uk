@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderReview;
 use App\Models\Shop\ShopOrderReviewItem;
 use App\Models\Shop\ShopProduct;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopOrderReviewItem>
+ */
 class ShopOrderReviewItemFactory extends Factory
 {
     protected $model = ShopOrderReviewItem::class;
@@ -18,30 +22,40 @@ class ShopOrderReviewItemFactory extends Factory
         return [
             'review_id' => self::factoryForModel(ShopOrderReview::class),
             'order_id' => self::factoryForModel(ShopOrder::class),
+            'product_type' => ShopProduct::class,
             'product_id' => self::factoryForModel(ShopProduct::class),
             'rating' => $this->faker->numberBetween(1, 5),
-            'review' => $this->faker->paragraph,
+            'review' => $this->faker->paragraph(),
         ];
     }
 
     public function forOrder(ShopOrder $order): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'order_id' => $order->id,
         ]);
     }
 
     public function forReview(ShopOrderReview $review): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'review_id' => $review->id,
         ]);
     }
 
     public function forProduct(ShopProduct $product): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
+            'product_type' => ShopProduct::class,
             'product_id' => $product->id,
+        ]);
+    }
+
+    public function forDigitalCard(ShopDigitalCard $digitalCard): self
+    {
+        return $this->state(fn (): array => [
+            'product_type' => ShopDigitalCard::class,
+            'product_id' => $digitalCard->id,
         ]);
     }
 }

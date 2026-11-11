@@ -7,6 +7,7 @@ namespace Tests\Unit\Mailables\Shop;
 use PHPUnit\Framework\Attributes\Test;
 use App\Infrastructure\MjmlMessage;
 use App\Mailables\Shop\OrderConfirmedMailable;
+use App\Models\Shop\ShopHoliday;
 use App\Models\Shop\ShopOrder;
 use Tests\TestCase;
 
@@ -55,5 +56,26 @@ class OrderConfirmedMailableTest extends TestCase
             $this->assertArrayHasKey($key, $emailData);
             $closure($emailData[$key]);
         }
+    }
+
+    #[Test]
+    public function itIncludesTheNoticeOfAnActiveShopHoliday(): void
+    {
+        $holiday = $this->create(ShopHoliday::class);
+        $order = $this->build(ShopOrder::class)->asPaid()->create();
+
+        $mailable = OrderConfirmedMailable::make($order, 'foo');
+
+        $this->assertEquals($holiday->notice, $mailable->data()['holidayNotice']);
+    }
+
+    #[Test]
+    public function itHasANullHolidayNoticeWhenThereIsntAnActiveHoliday(): void
+    {
+        $order = $this->build(ShopOrder::class)->asPaid()->create();
+
+        $mailable = OrderConfirmedMailable::make($order, 'foo');
+
+        $this->assertNull($mailable->data()['holidayNotice']);
     }
 }

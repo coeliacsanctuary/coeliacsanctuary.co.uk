@@ -160,6 +160,6 @@ class ShowControllerTest extends TestCase
         $this->get(route('shop.basket.done', [
             'payment_intent' => 'foo',
             'payment_intent_client_secret' => $this->order->payment_intent_secret,
-        ]))->assertInertia(fn (Assert $page) => $page->component('Shop/OrderComplete'));
+        ]))->assertInertia(fn (Assert $page): Assert => $page->component('Shop/OrderComplete'));
     }
 }

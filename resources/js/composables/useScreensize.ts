@@ -1,16 +1,8 @@
 import { ref } from 'vue';
 import useBrowser from '@/composables/useBrowser';
 
-type BreakPoint =
-  | 'xxxs'
-  | 'xxs'
-  | 'xs'
-  | 'sm'
-  | 'xmd'
-  | 'md'
-  | 'lg'
-  | 'xl'
-  | '2xl';
+export type BreakPoint =
+  'xxxs' | 'xxs' | 'xs' | 'sm' | 'xmd' | 'md' | 'lg' | 'xl' | '2xl';
 
 type ScreenSize = {
   breakpoint: BreakPoint;

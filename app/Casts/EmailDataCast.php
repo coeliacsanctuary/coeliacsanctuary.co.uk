@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Casts;
 
+use App\Actions\Shop\PrepareOrderForEmailAction;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
 use App\Models\EatingOut\Eatery;
@@ -22,12 +23,11 @@ class EmailDataCast implements CastsAttributes
 {
     /**
      * @phpstan-param  string  $value
-     *
      * @return array{date?: Carbon|null, comment?: Comment|null, reply?: CommentReply, rating?: EateryReview, order?: ShopOrder, notifiable?: ShopCustomer, recommendation?: EateryRecommendation, eatery?: Eatery, branch?: NationwideBranch, nearbyEateries?: Collection<int, Eatery>}
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): array
     {
-        /** @var array{date?: string, comment?: array{id?: number, created_at?: string, name?: string}, reply?: array{id: string}, rating?: array{id: string}, order?: array{id: string}, notifiable?: array{id: string}, recommendation?: array{id: string}, eatery?: array{id: string}, branch?: array{id: string}, nearbyEateries?: array{array{id: string}}, ...<string, scalar>} $data */
+        /** @var array{date?: string, comment?: array{id?: number, created_at?: string, name?: string}, reply?: array{id: string}, rating?: array{id: string}, order?: array{id: string}, notifiable?: array{id: string}, recommendation?: array{id: string}, eatery?: array{id: string}, branch?: array{id: string}, nearbyEateries?: array{array{id: string}}, ...<string, scalar|null>} $data */
         $data = json_decode($value, true);
 
         $return = [];
@@ -58,9 +58,10 @@ class EmailDataCast implements CastsAttributes
         }
 
         if (isset($data['order'])) {
-            $return['order'] = ShopOrder::query()
-                ->with(['items.product', 'items.variant', 'payment', 'refunds'])
-                ->findOrFail($data['order']['id']);
+            /** @var ShopOrder $order */
+            $order = ShopOrder::query()->findOrFail($data['order']['id']);
+
+            $return['order'] = app(PrepareOrderForEmailAction::class)->handle($order);
         }
 
         if (isset($data['notifiable'])) {
@@ -86,7 +87,7 @@ class EmailDataCast implements CastsAttributes
         $modelKeys = ['date', 'comment', 'reply', 'rating', 'order', 'notifiable', 'recommendation', 'eatery', 'branch', 'nearbyEateries'];
 
         foreach ($data as $key => $value) {
-            if ( ! in_array($key, $modelKeys) && is_scalar($value)) {
+            if ( ! in_array($key, $modelKeys) && (is_scalar($value) || $value === null)) {
                 $return[$key] = $value;
             }
         }
@@ -97,6 +98,56 @@ class EmailDataCast implements CastsAttributes
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        return json_encode($value);
+        /** @phpstan-ignore-next-line  */
+        return json_encode($this->toReferences(is_array($value) ? $value : []));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function toReferences(array $data): array
+    {
+        $references = [];
+
+        foreach ($data as $key => $value) {
+            if ($value instanceof Carbon) {
+                $references[$key] = $value->toDateTimeString();
+
+                continue;
+            }
+
+            if ($value instanceof Comment) {
+                $references[$key] = [
+                    'id' => $value->getKey(),
+                    'created_at' => $value->created_at->toDateTimeString(),
+                    'name' => $value->name,
+                ];
+
+                continue;
+            }
+
+            if ($value instanceof Model) {
+                $references[$key] = ['id' => $value->getKey()];
+
+                continue;
+            }
+
+            if ($value instanceof Collection) {
+                $references[$key] = $value
+                    ->filter(fn (mixed $item): bool => $item instanceof Model)
+                    ->map(fn (Model $item): array => ['id' => $item->getKey()])
+                    ->values()
+                    ->all();
+
+                continue;
+            }
+
+            if (is_scalar($value) || $value === null) {
+                $references[$key] = $value;
+            }
+        }
+
+        return $references;
     }
 }

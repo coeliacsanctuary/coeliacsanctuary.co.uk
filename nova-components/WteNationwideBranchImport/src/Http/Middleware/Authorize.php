@@ -14,8 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 class Authorize
 {
     /**
-     * Handle the incoming request.
-     *
      * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
@@ -33,9 +31,6 @@ class Authorize
         return $next($request);
     }
 
-    /**
-     * Determine whether this tool belongs to the package.
-     */
     public function matchesTool(Tool $tool): bool
     {
         return $tool instanceof WteNationwideBranchImport;

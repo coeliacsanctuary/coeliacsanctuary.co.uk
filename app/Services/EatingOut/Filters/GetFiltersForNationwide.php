@@ -32,9 +32,7 @@ class GetFiltersForNationwide extends GetFilters
 
     protected function withWhereClause(Builder $builder): Builder
     {
-        if ( ! $this->county) {
-            throw new RuntimeException('County not set');
-        }
+        throw_unless($this->county instanceof EateryCounty, new RuntimeException('County not set'));
 
         return $builder
             ->select('*')
@@ -48,10 +46,6 @@ class GetFiltersForNationwide extends GetFilters
         return $builder->orderByRaw("eateries_count desc, {$field} asc");
     }
 
-    /**
-     * Chains are counted once each, their nationwide branches are deliberately
-     * not included, the list this filters shows one row per chain.
-     */
     protected function eateryQuery(): string
     {
         return Eatery::query()

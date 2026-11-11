@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools\AskSealiac;
 
+use App\Builders\Recipes\RecipeBuilder;
 use App\Ai\Concerns\FormatsRecipes;
 use App\Models\Recipes\Recipe;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -15,9 +16,6 @@ class FindRecipeForIngredientsTool extends BaseTool
 {
     use FormatsRecipes;
 
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'Text'
@@ -29,29 +27,23 @@ class FindRecipeForIngredientsTool extends BaseTool
         Text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         return Recipe::query()
             ->where(
-                fn (Builder $builder) => $request /** @phpstan-ignore-line */
+                fn (Builder $builder) => $request
                     ->collect('ingredients')
                     ->each(fn (string $ingredient) => $builder->orWhereLike('ingredients', "%{$ingredient}%"))
             )
             ->with(['media', 'nutrition'])
-            ->when($request->filled('allergens'), fn (Builder $builder) => $builder->hasFreeFrom($request->array('allergens')))
-            ->when($request->filled('meals'), fn (Builder $builder) => $builder->hasMeals($request->array('meals')))
-            ->when($request->filled('features'), fn (Builder $builder) => $builder->hasFeatures($request->array('features')))
+            ->when($request->filled('allergens'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasFreeFrom($request->array('allergens')))
+            ->when($request->filled('meals'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasMeals($request->array('meals')))
+            ->when($request->filled('features'), fn (RecipeBuilder $builder): RecipeBuilder => $builder->hasFeatures($request->array('features')))
             ->get()
             ->map($this->formatRecipe(...))
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

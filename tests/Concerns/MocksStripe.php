@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Concerns;
 
 use Illuminate\Support\Str;
+use Stripe\Exception\ApiConnectionException;
 use Stripe\BalanceTransaction;
 use Stripe\Card;
 use Stripe\Charge;
@@ -41,7 +42,7 @@ trait MocksStripe
         $this->getStripeClient()->paymentIntents = $paymentIntent;
 
         $paymentIntent->shouldReceive('create')
-            ->withArgs(function (array $args) use ($amount) {
+            ->withArgs(function (array $args) use ($amount): true {
                 $this->assertArrayHasKey('amount', $args);
                 $this->assertEquals($amount, $args['amount']);
 
@@ -71,6 +72,17 @@ trait MocksStripe
             ->once();
     }
 
+    protected function mockPaymentIntentRetrievalFailure(): void
+    {
+        $paymentIntent = $this->partialMock(PaymentIntentService::class);
+
+        $this->getStripeClient()->paymentIntents = $paymentIntent;
+
+        $paymentIntent->shouldReceive('retrieve')
+            ->andThrow(new ApiConnectionException('Could not connect to Stripe'))
+            ->once();
+    }
+
     protected function mockUpdatePaymentIntent(string $id): void
     {
         $paymentIntent = $this->partialMock(PaymentIntentService::class);
@@ -78,7 +90,7 @@ trait MocksStripe
         $this->getStripeClient()->paymentIntents = $paymentIntent;
 
         $paymentIntent->shouldReceive('update')
-            ->withArgs(function ($argId) use ($id) {
+            ->withArgs(function ($argId) use ($id): true {
                 $this->assertEquals($id, $argId);
 
                 return true;
@@ -91,7 +103,7 @@ trait MocksStripe
         $charges = $this->partialMock(ChargeService::class);
 
         $charges->shouldReceive('retrieve')
-            ->withArgs(fn ($id) => $chargeId === $id)
+            ->withArgs(fn ($id): bool => $chargeId === $id)
             ->andReturn($this->createCharge($chargeId))
             ->once();
 
@@ -101,7 +113,7 @@ trait MocksStripe
     protected function mockCreateRefund(string $chargeId, int $amount): Refund
     {
         $id = Str::password(12);
-        $token = Str::uuid()->toString();
+        Str::uuid()->toString();
 
         $refunds = $this->partialMock(RefundService::class);
 
@@ -113,7 +125,7 @@ trait MocksStripe
         ]);
 
         $refunds->shouldReceive('create')
-            ->withArgs(function (array $args) use ($chargeId, $amount) {
+            ->withArgs(function (array $args) use ($chargeId, $amount): true {
                 $this->assertArrayHasKeys(['charge', 'amount'], $args);
                 $this->assertEquals($chargeId, $args['charge']);
                 $this->assertEquals($amount, $args['amount']);

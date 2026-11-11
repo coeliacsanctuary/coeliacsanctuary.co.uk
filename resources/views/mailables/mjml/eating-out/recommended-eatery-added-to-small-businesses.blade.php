@@ -1,16 +1,18 @@
 @php
     use App\Models\EatingOut\EateryRecommendation;
     use Money\Money;
+
     /** @var EateryRecommendation $recommendation */
 
-$hideRelatedGap = true;
+    $hideRelatedGap = true;
 @endphp
 
 @extends('mailables.mjml.layout')
 
 @push('head')
     <mj-style>
-        @media only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
+        @media
+        only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
     </mj-style>
 @endpush
 
@@ -23,18 +25,18 @@ $hideRelatedGap = true;
         <mj-column>
             <mj-text mj-class="inner">Hey {{ $recommendation->name }}</mj-text>
             <mj-text mj-class="inner">
-                Thanks for your suggestion to add <strong>{{ $recommendation->place_name }}</strong> to the Coeliac Sanctuary Eating
-                out guide.
+                Thanks for your suggestion to add <strong>{{ $recommendation->place_name }}</strong> to the Coeliac
+                Sanctuary Eating out guide.
             </mj-text>
             <mj-text mj-class="inner">
-                Unfortunately, {{ $recommendation->place_name }} is not elligible to be added to my eating out guide as I can only list eateries where anyone can walk up during business hours to eat.
+                Unfortunately, {{ $recommendation->place_name }} is not elligible to be added to my eating out guide as
+                I can only list eateries where anyone can walk up during business hours to eat.
             </mj-text>
             <mj-text mj-class="inner">
-                I have instead added it to my 'Small Business' blog with other small, home businesses and online independent retailers.
+                I have instead added it to my 'Small Business' blog with other small, home businesses and online
+                independent retailers.
             </mj-text>
-            <mj-text mj-class="inner" padding-top="10px">
-                Thanks, Alison - Coeliac Sanctuary
-            </mj-text>
+            <mj-text mj-class="inner" padding-top="10px"> Thanks, Alison - Coeliac Sanctuary </mj-text>
         </mj-column>
     </mj-section>
 

@@ -33,9 +33,7 @@ class GetFiltersForTown extends GetFilters
 
     protected function withWhereClause(Builder $builder): Builder
     {
-        if ( ! $this->town) {
-            throw new RuntimeException('Town not set');
-        }
+        throw_unless($this->town instanceof EateryTown, new RuntimeException('Town not set'));
 
         return $builder
             ->select('*')

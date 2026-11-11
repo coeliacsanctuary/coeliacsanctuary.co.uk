@@ -54,7 +54,7 @@ class EaterySuggestEditResource extends JsonResource
             'values' => EateryVenueType::query()
                 ->orderBy('venue_type')
                 ->get()
-                ->map(fn (EateryVenueType $venueType) => [
+                ->map(fn (EateryVenueType $venueType): array => [
                     'value' => $venueType->id,
                     'label' => $venueType->venue_type,
                     'selected' => $venueType->id === $eateryVenueType->id,
@@ -70,7 +70,7 @@ class EaterySuggestEditResource extends JsonResource
             'values' => EateryCuisine::query()
                 ->orderBy('cuisine')
                 ->get()
-                ->map(fn (EateryCuisine $cuisine) => [
+                ->map(fn (EateryCuisine $cuisine): array => [
                     'value' => $cuisine->id,
                     'label' => $cuisine->cuisine,
                     'selected' => $cuisine->id === $this->cuisine?->id,
@@ -81,14 +81,14 @@ class EaterySuggestEditResource extends JsonResource
     protected function getFeatures(): array
     {
         return [
-            'selected' => $this->features->map(fn (EateryFeature $feature) => [
+            'selected' => $this->features->map(fn (EateryFeature $feature): array => [
                 'id' => $feature->id,
                 'label' => $feature->feature,
             ]),
             'values' => EateryFeature::query()
                 ->orderBy('feature')
                 ->get()
-                ->map(fn (EateryFeature $feature) => [
+                ->map(fn (EateryFeature $feature): array => [
                     'value' => $feature->id,
                     'label' => $feature->feature,
                     'selected' => in_array($feature->id, $this->features->pluck('id')->toArray(), true),

@@ -134,13 +134,13 @@ const otherValue = ref('');
 
 watch(otherOptionSelected, () => {
   if (otherOptionSelected.value) {
-    value.value?.push({ label: '', value: 'other' });
+    value.value?.push({ label: '', value: 'other', isOther: true });
     otherValue.value = '';
 
     return;
   }
 
-  value.value = value.value?.filter((v) => v.value !== 'other');
+  value.value = value.value?.filter((v) => !v.isOther);
   otherValue.value = '';
 });
 
@@ -148,13 +148,14 @@ watch(otherValue, () => {
   const existingOptions: FormMultiSelectOption[] =
     value.value as FormMultiSelectOption[];
 
-  if (!existingOptions.filter((v) => v.value === 'other').length) {
+  const index = existingOptions.findIndex((v) => v.isOther);
+
+  if (index === -1) {
     return;
   }
 
-  const index = existingOptions.findIndex((v) => v.value === 'other');
-
   existingOptions[index].label = otherValue.value;
+  existingOptions[index].value = otherValue.value || 'other';
 
   value.value = existingOptions;
 });

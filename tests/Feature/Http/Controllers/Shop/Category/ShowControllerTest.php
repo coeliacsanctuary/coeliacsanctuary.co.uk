@@ -8,6 +8,8 @@ use App\Models\Shop\ShopCategory;
 use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
+use App\Models\Shop\TravelCardSearchTerm;
+use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
@@ -53,7 +55,7 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itRendersTheShopCategoryPage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/Category'));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->component('Shop/Category'));
     }
 
     #[Test]
@@ -61,9 +63,9 @@ class ShowControllerTest extends TestCase
     {
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Category')
-                    ->has('category', fn (Assert $page) => $page->hasAll(['title', 'description', 'image', 'link', 'travelCardSearch']))
+                    ->has('category', fn (Assert $page): Assert => $page->hasAll(['title', 'description', 'image', 'link', 'travelCardSearch']))
                     ->etc()
             );
     }
@@ -73,7 +75,7 @@ class ShowControllerTest extends TestCase
     {
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Category')
                     ->has(
                         'products',
@@ -93,7 +95,7 @@ class ShowControllerTest extends TestCase
             ->has($this->build(ShopProductVariant::class), 'variants')
             ->has($this->build(ShopPrice::class), 'prices')
             ->pinned()
-            ->state(fn () => ['title' => 'This is a Pinned Product'])
+            ->state(fn (): array => ['title' => 'This is a Pinned Product'])
             ->afterCreating(function (ShopProduct $product): void {
                 $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('primary');
                 $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('social');
@@ -102,7 +104,7 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Category')
                     ->has('products')
                     ->where('products.0.title', 'This is a Pinned Product')
@@ -115,21 +117,182 @@ class ShowControllerTest extends TestCase
     {
         $this->build(ShopProduct::class)
             ->inCategory($this->category)
-            ->state(fn () => ['title' => 'This is a Not Live Product'])
+            ->state(fn (): array => ['title' => 'This is a Not Live Product'])
             ->create();
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Category')
                     ->has(
                         'products',
-                        fn (Assert $page) => $page
-                            ->each(fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
+                            ->each(fn (Assert $page): Assert => $page
                                 ->whereNot('title', 'This is a Not Live Product')
                                 ->etc())
                     )
             );
+    }
+
+    #[Test]
+    public function itIncludesTheProductListSchema(): void
+    {
+        $this->makeRequest()->assertInertia(function (Assert $page): void {
+            /** @var string[] $schema */
+            $schema = $page->toArray()['props']['meta']['schema'];
+
+            $itemList = collect($schema)->first(fn (string $item): bool => str_contains($item, 'ItemList'));
+
+            $this->assertNotNull($itemList);
+            $this->assertStringContainsString('Product 0', $itemList);
+        });
+    }
+
+    #[Test]
+    public function itReturnsThatAProductWithStockIsInStock(): void
+    {
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has(
+                        'products',
+                        fn (Assert $page): Assert => $page
+                            ->each(fn (Assert $page): Assert => $page->where('in_stock', true)->etc())
+                    )
+            );
+    }
+
+    #[Test]
+    public function itReturnsThatAProductWithNoStockIsNotInStock(): void
+    {
+        $this->buildProductInCategory('This Product Is Out Of Stock', variantState: fn (): array => ['quantity' => 0]);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has('products', 6)
+                    ->where('products.5.title', 'This Product Is Out Of Stock')
+                    ->where('products.5.in_stock', false)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itReturnsAFootnoteListingEveryCountryForATravelCardProduct(): void
+    {
+        $product = $this->buildProductInCategory('A Travel Card Product');
+
+        $this->attachCountry($product, 'france', 10);
+        $this->attachCountry($product, 'belgium', 5);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->where('products.0.title', 'A Travel Card Product')
+                    ->where('products.0.footnote', 'Covers France and Belgium')
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itReturnsAFootnoteWithACountForATravelCardProductWithMoreThanThreeCountries(): void
+    {
+        $product = $this->buildProductInCategory('A Travel Card Product');
+
+        $this->attachCountry($product, 'france', 10);
+        $this->attachCountry($product, 'belgium', 9);
+        $this->attachCountry($product, 'germany', 8);
+        $this->attachCountry($product, 'austria', 7);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->where('products.0.title', 'A Travel Card Product')
+                    ->where('products.0.footnote', 'Covers 4 countries including France, Belgium and Germany')
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itDoesntIncludeCountriesInTheFootnoteThatArentFlaggedToShow(): void
+    {
+        $product = $this->buildProductInCategory('A Travel Card Product');
+
+        $this->attachCountry($product, 'france', 10, showOnProductPage: false);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->where('products.0.title', 'A Travel Card Product')
+                    ->where('products.0.footnote', null)
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itDoesntReturnAFootnoteForAProductInANonTravelCardCategory(): void
+    {
+        $category = $this->create(ShopCategory::class, ['id' => 5]);
+        $category->addMedia(UploadedFile::fake()->image('category.jpg'))->toMediaCollection('primary');
+        $category->addMedia(UploadedFile::fake()->image('category.jpg'))->toMediaCollection('social');
+
+        $this->category = $category;
+
+        $product = $this->buildProductInCategory('A Non Travel Card Product');
+
+        $this->attachCountry($product, 'france', 10);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->where('products.0.title', 'A Non Travel Card Product')
+                    ->where('products.0.footnote', null)
+                    ->etc()
+            );
+    }
+
+    protected function attachCountry(ShopProduct $product, string $term, int $score, bool $showOnProductPage = true): void
+    {
+        $product->travelCardSearchTerms()->attach(
+            $this->create(TravelCardSearchTerm::class, ['term' => $term, 'type' => 'country']),
+            ['card_show_on_product_page' => $showOnProductPage, 'card_score' => $score, 'card_language' => 'french'],
+        );
+    }
+
+    #[Test]
+    public function itDoesntListAProductThatHasNoCurrentPrice(): void
+    {
+        $this->buildProductInCategory('This Product Has An Expired Price', priceState: fn (): array => ['end_at' => Carbon::now()->subDay()]);
+
+        $this->makeRequest()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has('products', 5)
+                    ->has(
+                        'products',
+                        fn (Assert $page): Assert => $page
+                            ->each(fn (Assert $page): Assert => $page
+                                ->whereNot('title', 'This Product Has An Expired Price')
+                                ->etc())
+                    )
+            );
+    }
+
+    protected function buildProductInCategory(string $title, ?callable $variantState = null, ?callable $priceState = null): ShopProduct
+    {
+        $variant = $this->build(ShopProductVariant::class);
+        $price = $this->build(ShopPrice::class);
+
+        return $this->build(ShopProduct::class)
+            ->inCategory($this->category)
+            ->has($variantState ? $variant->state($variantState) : $variant, 'variants')
+            ->has($priceState ? $price->state($priceState) : $price, 'prices')
+            ->state(fn (): array => ['title' => $title])
+            ->afterCreating(function (ShopProduct $product): void {
+                $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('primary');
+                $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('social');
+            })
+            ->create();
     }
 
     public function makeRequest(): TestResponse

@@ -28,7 +28,7 @@ class SearchCountyTest extends TestCase
         $country = $this->create(EateryCountry::class, ['country' => 'England']);
         $this->create(EateryCounty::class, ['county' => 'Dorset', 'country_id' => $country->id]);
 
-        $result = json_decode((string) (new SearchCounty())->handle(new Request([
+        $result = json_decode((string) new SearchCounty()->handle(new Request([
             'country' => 'England',
             'county' => 'Dorset',
         ])), true);
@@ -42,7 +42,7 @@ class SearchCountyTest extends TestCase
         $country = $this->create(EateryCountry::class, ['country' => 'England']);
         $this->create(EateryCounty::class, ['county' => 'Dorset', 'country_id' => $country->id]);
 
-        $result = json_decode((string) (new SearchCounty())->handle(new Request([
+        $result = json_decode((string) new SearchCounty()->handle(new Request([
             'country' => 'England',
             'county' => 'Dor',
         ])), true);
@@ -59,7 +59,7 @@ class SearchCountyTest extends TestCase
         $this->create(EateryCounty::class, ['county' => 'Dorset', 'country_id' => $england->id]);
         $this->create(EateryCounty::class, ['county' => 'Perthshire', 'country_id' => $scotland->id]);
 
-        $result = json_decode((string) (new SearchCounty())->handle(new Request([
+        $result = json_decode((string) new SearchCounty()->handle(new Request([
             'country' => 'England',
             'county' => '',
         ])), true);
@@ -74,7 +74,7 @@ class SearchCountyTest extends TestCase
         $country = $this->create(EateryCountry::class, ['country' => 'England']);
         $this->create(EateryCounty::class, ['county' => 'Dorset', 'country_id' => $country->id]);
 
-        $result = json_decode((string) (new SearchCounty())->handle(new Request([
+        $result = json_decode((string) new SearchCounty()->handle(new Request([
             'country' => 'England',
             'county' => 'Nonexistent',
         ])), true);
@@ -85,7 +85,7 @@ class SearchCountyTest extends TestCase
     #[Test]
     public function itHasTheExpectedSchema(): void
     {
-        $schema = (new SearchCounty())->schema(new JsonSchemaTypeFactory());
+        $schema = new SearchCounty()->schema(new JsonSchemaTypeFactory());
 
         $this->assertArrayHasKey('country', $schema);
         $this->assertArrayHasKey('county', $schema);

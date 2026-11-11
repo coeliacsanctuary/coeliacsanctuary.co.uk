@@ -17,7 +17,8 @@ const nutritionSummary = computed(() =>
       ? `Makes ${props.recipe.nutrition.servings}`
       : null,
     props.recipe.nutrition.calories
-      ? `${props.recipe.nutrition.calories} calories per ${props.recipe.nutrition.portion_size}`
+      ? // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `${props.recipe.nutrition.calories} calories per ${props.recipe.nutrition.portion_size}`
       : null,
   ]
     .filter(Boolean)

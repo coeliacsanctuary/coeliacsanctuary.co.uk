@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Recipes;
 
+use App\ResourceCollections\Comments\CommentCollection;
 use App\Actions\Comments\GetCommentsForItemAction;
 use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
@@ -45,9 +46,10 @@ class ShowController
                 new BreadcrumbItemData('Recipes', route('recipe.index')),
                 new BreadcrumbItemData($recipe->title),
             ]))
+            ->bodyClass('mv-recipe')
             ->render('Recipe/Show', [
                 'recipe' => new RecipeShowResource($recipe),
-                'comments' => fn () => $getCommentsForItemAction->handle($recipe),
+                'comments' => fn (): CommentCollection => $getCommentsForItemAction->handle($recipe),
                 'backLink' => $backLink,
             ]);
     }

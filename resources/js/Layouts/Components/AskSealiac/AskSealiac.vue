@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
-import { computed, onMounted, ref, watch } from 'vue';
-import { marked } from 'marked';
+import { onMounted, ref, watch } from 'vue';
 import UseGoogleEvents from '@/composables/useGoogleEvents';
 import PromptBox from '@/Layouts/Components/AskSealiac/PromptBox.vue';
 import Messages from '@/Layouts/Components/AskSealiac/Messages.vue';

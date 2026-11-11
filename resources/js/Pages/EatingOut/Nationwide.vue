@@ -57,7 +57,6 @@ const filteredChains = computed(() => {
 
   return chains;
 });
-
 </script>
 
 <template>

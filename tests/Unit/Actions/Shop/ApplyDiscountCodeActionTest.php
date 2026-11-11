@@ -74,8 +74,6 @@ class ApplyDiscountCodeActionTest extends TestCase
             'deduction' => 15,
         ]);
 
-        // Running total is 400, so 15% is 60
-
         $this->assertEquals(60, app(ApplyDiscountCodeAction::class)->handle($this->discountCode, $this->order->token));
     }
 }

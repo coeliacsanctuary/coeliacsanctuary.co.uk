@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Algolia\ScoutExtended\Builder as AlgoliaBuilder;
+use App\Builders\EatingOut\NationwideBranchBuilder;
 use App\Concerns\ClearsCache;
 use App\Concerns\EatingOut\HasEateryDetails;
 use App\Concerns\HasOpenGraphImage;
@@ -25,6 +28,7 @@ use App\Jobs\OpenGraphImages\CreateEateryIndexPageOpenGraphImageJob;
 use App\Jobs\OpenGraphImages\CreateEatingOutOpenGraphImageJob;
 use App\Scopes\LiveScope;
 use App\Support\Helpers;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -38,13 +42,15 @@ use Laravel\Scout\Searchable;
 /**
  * @implements HasOpenGraphImageContract<$this>
  * @implements Collectable<$this>
- *
  * @property Eatery $eatery
  * @property string $short_name
  * @property string $full_name
  * @property string | null $average_rating
  * @property array{value: string, label: string} | null $average_expense
  */
+#[UseEloquentBuilder(NationwideBranchBuilder::class)]
+#[Appends(['formatted_address', 'full_location'])]
+#[Table(name: 'wheretoeat_nationwide_branches')]
 class NationwideBranch extends Model implements Collectable, HasOpenGraphImageContract, IsSearchable
 {
     /** @use CanBeCollected<$this> */
@@ -59,22 +65,11 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
     use HasSealiacOverview;
     use Searchable;
 
-    protected $table = 'wheretoeat_nationwide_branches';
-
-    /** @phpstan-ignore-next-line */
-    protected $appends = ['formatted_address', 'full_location'];
-
-    protected $casts = [
-        'lat' => 'float',
-        'lng' => 'float',
-        'live' => 'bool',
-    ];
-
-    public static function booted(): void
+    protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope('wheretoeat_nationwide_branches.live'));
 
-        static::saving(function (self $eatery) {
+        static::saving(function (self $eatery): NationwideBranch {
             if ( ! $eatery->slug) {
                 $eatery->slug = $eatery->generateSlug();
             }
@@ -141,8 +136,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
         return $searcher->with($params);
     }
 
-    /** @return Builder<static> */
-    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2, array $additionalColumns = []): Builder
+    public static function databaseSearchAroundLatLng(LatLng $latLng, int|float $radius = 2, array $additionalColumns = []): NationwideBranchBuilder
     {
         return static::query()
             ->selectRaw('(
@@ -161,28 +155,6 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
             ->having('distance', '<=', $radius)
             ->addSelect(['id', 'wheretoeat_id', 'lat', 'lng', 'name', ...$additionalColumns])
             ->orderBy('distance');
-    }
-
-    /**
-     * @param  Builder<self>  $query
-     * @return Builder<self>
-     */
-    public function scopeSelectDistance(Builder $query, LatLng $latLng, array $columns = []): Builder
-    {
-        return $this->selectRaw('(
-                        6371000 * acos (
-                          cos ( radians(?) )
-                          * cos( radians( wheretoeat_nationwide_branches.lat ) )
-                          * cos( radians( wheretoeat_nationwide_branches.lng ) - radians(?) )
-                          + sin ( radians(?) )
-                          * sin( radians( wheretoeat_nationwide_branches.lat ) )
-                        )
-                     ) AS distance', [
-            $latLng->lat,
-            $latLng->lng,
-            $latLng->lat,
-        ])
-            ->addSelect($columns);
     }
 
     /** @return BelongsTo<Eatery, $this> */
@@ -301,7 +273,7 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
     /** @return Attribute<non-falsy-string, never> */
     public function fullName(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): string {
             if ($this->name) {
                 return "{$this->name} ({$this->eatery->name}) - {$this->full_location}";
             }
@@ -331,5 +303,14 @@ class NationwideBranch extends Model implements Collectable, HasOpenGraphImageCo
     protected function cacheKey(): string
     {
         return 'eating-out';
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'lat' => 'float',
+            'lng' => 'float',
+            'live' => 'bool',
+        ];
     }
 }

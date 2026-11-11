@@ -3,9 +3,6 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.0/phpunit.xsd" bootstrap="vendor/autoload.php"
          colors="true" cacheDirectory=".phpunit.cache">
     <testsuites>
-        <testsuite name="Acceptance">
-            <directory suffix="Test.php">./tests/Acceptance</directory>
-        </testsuite>
         <testsuite name="Code">
             <directory suffix="Test.php">./tests/Code</directory>
         </testsuite>
@@ -25,13 +22,22 @@
         <env name="CACHE_STORE" value="array"/>
         <env name="DB_DATABASE" value="coeliac_tests"/>
         <env name="MAIL_MAILER" value="array"/>
+        <env name="MOBILE_PASS_APPLE_ORGANIZATION_NAME" value="Coeliac Sanctuary"/>
+        <env name="MOBILE_PASS_APPLE_TEAM_IDENTIFIER" value="TESTTEAM"/>
+        <env name="MOBILE_PASS_APPLE_TYPE_IDENTIFIER" value="pass.test.coeliac"/>
+        <env name="MOBILE_PASS_QUEUE_CONNECTION" value="sync"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SCOUT_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="GENERATE_OG_IMAGES" value="false"/>
         <env name="GENERATE_EATERY_AI_DESCRIPTIONS" value="false"/>
+        <env name="GOOGLE_WALLET_ENABLED" value="false"/>
         <env name="ENABLE_EATERY_COLLECTIONS" value="true"/>
+        <env name="FINANCE_SERVICE_URL" value="foo"/>
+        <env name="FINANCE_SERVICE_KEY" value="bar"/>
+        <env name="OPEN_ROUTE_SERVICE_KEY" value="foo"/>
+        <env name="GOOGLE_MAP_PLACES" value="foo"/>
     </php>
     <source>
         <include>

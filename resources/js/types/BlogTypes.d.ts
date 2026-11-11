@@ -24,6 +24,8 @@ export type BlogPage = {
   updated: string | null;
   description: string;
   body: string;
+  reading_time: number;
+  comments_count: number;
   hasTwitterEmbed: boolean;
   short_title?: string;
   show_author: boolean;

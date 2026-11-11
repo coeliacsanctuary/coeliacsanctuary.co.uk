@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Actions\Shop\FinanceService\SendRefundToFinanceServiceAction;
 use App\DataObjects\Shop\RefundOrderDto;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
@@ -60,5 +61,7 @@ class RefundOrderAction
 
             $customer->notify(new OrderRefundNotification($refundModel, $refundOrderDto->reason));
         }
+
+        app(SendRefundToFinanceServiceAction::class)->handle($refundModel);
     }
 }

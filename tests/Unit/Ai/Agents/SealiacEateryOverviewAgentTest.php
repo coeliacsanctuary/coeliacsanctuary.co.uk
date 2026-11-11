@@ -102,8 +102,6 @@ class SealiacEateryOverviewAgentTest extends TestCase
         $this->assertStringNotContainsString('Average Rating:', $result);
     }
 
-    // --- adminReview() helper ---
-
     #[Test]
     public function itReturnsNullAdminReviewWhenNone(): void
     {
@@ -146,8 +144,6 @@ class SealiacEateryOverviewAgentTest extends TestCase
 
         $this->assertInstanceOf(EateryReview::class, invade($this->makeAgent($eatery, $branch))->adminReview());
     }
-
-    // --- Admin review rendering ---
 
     #[Test]
     public function itRendersAdminReviewWhenPresent(): void
@@ -195,8 +191,6 @@ class SealiacEateryOverviewAgentTest extends TestCase
 
         $this->assertStringNotContainsString('## Coeliac Sanctuary Team Reviews', $result);
     }
-
-    // --- Visitor review rendering ---
 
     #[Test]
     public function itRendersVisitorReviewsWhenPresent(): void
@@ -397,8 +391,6 @@ class SealiacEateryOverviewAgentTest extends TestCase
         $this->assertStringNotContainsString('Branch Name:', $result);
     }
 
-    // --- Features rendering ---
-
     #[Test]
     public function itRendersFeaturesWhenPresent(): void
     {
@@ -425,8 +417,6 @@ class SealiacEateryOverviewAgentTest extends TestCase
 
         $this->assertStringNotContainsString('## Features of this eatery listed on our website:', $result);
     }
-
-    // --- eateryName() helper ---
 
     #[Test]
     public function itCanGetTheBranchNameWhenABranchIsSetAndItHasAName(): void
@@ -459,8 +449,6 @@ class SealiacEateryOverviewAgentTest extends TestCase
 
         $this->assertEquals('My Eatery', invade($this->makeAgent($eatery))->eateryName());
     }
-
-    // --- eateryLocation() helper ---
 
     #[Test]
     public function itCanGetTheBranchLocationWhenABranchIsSet(): void

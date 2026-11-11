@@ -36,9 +36,9 @@ defineProps<{
   </Card>
 
   <Card
-    class="flex flex-col space-y-4"
     v-for="town in towns"
     :key="town.name"
+    class="flex flex-col space-y-4"
   >
     <Heading classes="text-left">{{ town.name }}</Heading>
 

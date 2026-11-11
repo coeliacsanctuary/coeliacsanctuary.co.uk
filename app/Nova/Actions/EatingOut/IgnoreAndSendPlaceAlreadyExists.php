@@ -25,12 +25,7 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
 
     public $withoutActionEvents = true;
 
-    /**
-     * Perform the action on the given models.
-     *
-     * @return mixed
-     */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, Collection $models): void
     {
         $models->each(function (EateryRecommendation $model) use ($fields): void {
             $eateryInfo = json_decode($fields->get('eatery_id'), true);
@@ -43,7 +38,7 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
                 $branch = $eatery->nationwideBranches()->find($branchId);
             }
 
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $model->email)
                 ->notify(new EateryRecommendationAlreadyExistsNotification($model, $eatery, $branch));
 
@@ -52,8 +47,6 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
     }
 
     /**
-     * Get the fields available on the action.
-     *
      * @return array
      */
     public function fields(NovaRequest $request)
@@ -61,10 +54,10 @@ class IgnoreAndSendPlaceAlreadyExists extends Action
         return [
             SelectPlus::make('eatery_id')
                 ->fillUsing(function (Request $request, Fluent $fluent, $attribute, $requestAttribute): void {
-                    $fluent->set($attribute, $request->get($requestAttribute));
+                    $fluent->set($attribute, $request->input($requestAttribute));
                 })
                 ->options([])
-                ->ajaxSearchable(fn ($search) => []),
+                ->ajaxSearchable(fn ($search): array => []),
         ];
     }
 }

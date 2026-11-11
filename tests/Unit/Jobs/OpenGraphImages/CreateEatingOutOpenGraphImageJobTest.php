@@ -36,7 +36,7 @@ class CreateEatingOutOpenGraphImageJobTest extends TestCase
 
     #[Test]
     #[DataProvider('openGraphModelsDataProvider')]
-    public function itCallsTheRenderOpenGraphImageService($classString, $expectedAction, $useMedia): void
+    public function itCallsTheRenderOpenGraphImageService(string $classString, string $expectedAction, bool $useMedia): void
     {
         $this->mock(RenderOpenGraphImage::class)
             ->shouldReceive('handle')
@@ -47,12 +47,12 @@ class CreateEatingOutOpenGraphImageJobTest extends TestCase
 
         $this->expectAction($expectedAction, return: view('app', ['page' => []]));
 
-        (new CreateEatingOutOpenGraphImageJob($model))->handle(app(RenderOpenGraphImage::class));
+        new CreateEatingOutOpenGraphImageJob($model)->handle(app(RenderOpenGraphImage::class));
     }
 
     #[Test]
     #[DataProvider('openGraphModelsDataProvider')]
-    public function itCreatesAnOpenGraphRecord($classString, $action, $useMedia): void
+    public function itCreatesAnOpenGraphRecord(string $classString, string $action, bool $useMedia): void
     {
         $this->assertDatabaseEmpty(OpenGraphImage::class);
         $this->assertEmpty(Storage::disk('media')->allFiles());
@@ -68,7 +68,7 @@ class CreateEatingOutOpenGraphImageJobTest extends TestCase
             $model->addMedia(UploadedFile::fake()->image('image.jpg'))->toMediaCollection('primary');
         }
 
-        (new CreateEatingOutOpenGraphImageJob($model))->handle(app(RenderOpenGraphImage::class));
+        new CreateEatingOutOpenGraphImageJob($model)->handle(app(RenderOpenGraphImage::class));
 
         $this->assertDatabaseCount(OpenGraphImage::class, 1);
         $this->assertNotNull($model->refresh()->openGraphImage);

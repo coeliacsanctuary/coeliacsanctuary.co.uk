@@ -12,17 +12,11 @@ use Stringable;
 
 class EateryInfoExamples implements Tool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Return a random selection of 10 eatery info fields written in the last 6 months, use this to get an example of the writing style.';
     }
 
-    /**
-     * Execute the tool.
-     */
     public function handle(Request $request): Stringable|string
     {
         $info = Eatery::query()

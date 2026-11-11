@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  shallowRef,
-  onMounted,
-  defineProps,
-  compile,
-  defineComponent,
-} from 'vue';
+import { shallowRef, onMounted, compile, defineComponent } from 'vue';
 import { CustomComponent } from '@/types/Types';
 const props = defineProps<{ content: string }>();
 

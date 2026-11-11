@@ -39,7 +39,7 @@ class AskSealiacChatResource extends Resource
             Number::make('Messages Count'),
 
             Text::make('Summary')
-                ->displayUsing(fn () => "<div style=\"min-width: 500px; text-wrap:auto;\">{$this->resource->summary}</div>")
+                ->displayUsing(fn (): string => "<div style=\"min-width: 500px; text-wrap:auto;\">{$this->resource->summary}</div>")
                 ->asHtml(),
 
             DateTime::make('Created At'),
@@ -58,7 +58,7 @@ class AskSealiacChatResource extends Resource
         return false;
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
