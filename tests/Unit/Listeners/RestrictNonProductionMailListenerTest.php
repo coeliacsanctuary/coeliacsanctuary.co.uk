@@ -14,7 +14,7 @@ class RestrictNonProductionMailListenerTest extends TestCase
 {
     protected function makeEvent(string $to): MessageSending
     {
-        return new MessageSending((new Email())->to($to)->subject('Foo Bar Baz'));
+        return new MessageSending(new Email()->to($to)->subject('Foo Bar Baz'));
     }
 
     protected function useHerdMailer(): void

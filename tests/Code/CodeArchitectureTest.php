@@ -101,6 +101,14 @@ class CodeArchitectureTest extends CodeAssertionsTestCase
     }
 
     #[Test]
+    public function allBootstrappersFollowTheSamePattern(): void
+    {
+        $this->assertClassesIn('app/Bootstrappers')
+            ->areClasses()
+            ->hasMethod('handle');
+    }
+
+    #[Test]
     public function allCastablesInCastsImplementTheCastsAttributesInterface(): void
     {
         $this->assertClassesIn('app/Casts')->implement(CastsAttributes::class);
