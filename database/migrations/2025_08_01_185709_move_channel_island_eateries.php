@@ -56,6 +56,10 @@ return new class () extends Migration {
         /** @var EateryCountry $channelIslands */
         $channelIslands = EateryCountry::query()->where('country', 'Channel Islands')->first();
 
+        if (!$channelIslands) {
+            return;
+        }
+
         foreach ($eateries as $eatery) {
             $model = Eatery::query()
                 ->where('country_id', $channelIslands->id)
