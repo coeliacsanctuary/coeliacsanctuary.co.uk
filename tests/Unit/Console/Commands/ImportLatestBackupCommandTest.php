@@ -197,7 +197,7 @@ class ImportLatestBackupCommandTest extends TestCase
 
         $this->artisan(ImportLatestBackupCommand::class)->assertSuccessful();
 
-        $this->assertSame('SELECT 1;', $input);
+        $this->assertSame('SELECT "£";', $input);
     }
 
     #[Test]
@@ -221,7 +221,7 @@ class ImportLatestBackupCommandTest extends TestCase
 
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::OVERWRITE);
-        $zip->addFromString('db-dumps/mysql-test.sql', 'SELECT 1;');
+        $zip->addFromString('db-dumps/mysql-test.sql', 'SELECT "£";');
         $zip->setCompressionName('db-dumps/mysql-test.sql', $compressionMethod);
         $zip->close();
 

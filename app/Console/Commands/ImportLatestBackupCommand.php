@@ -112,7 +112,7 @@ class ImportLatestBackupCommand extends Command
     {
         while ($size > 0 && ! feof($stream)) {
             $chunk = (string) fread($stream, min(1024 * 1024, $size));
-            $size -= mb_strlen($chunk);
+            $size -= mb_strlen($chunk, '8bit');
 
             yield $chunk;
         }
