@@ -18,23 +18,30 @@ use App\Models\Shop\ShopPaymentResponse;
 use App\Models\Shop\ShopShippingAddress;
 use Illuminate\Contracts\Process\ProcessResult;
 use Illuminate\Process\PendingProcess;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
+use Tests\Fixtures\FakeWipeCommand;
 use Tests\TestCase;
 use ZipArchive;
 
 class ImportLatestBackupCommandTest extends TestCase
 {
+    protected FakeWipeCommand $wipeCommand;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         Storage::fake('backup');
         Process::fake();
+
+        $this->wipeCommand = new FakeWipeCommand();
+        Artisan::registerCommand($this->wipeCommand);
     }
 
     #[Test]
@@ -52,7 +59,18 @@ class ImportLatestBackupCommandTest extends TestCase
 
         Process::assertNothingRan();
 
+        $this->assertFalse($this->wipeCommand->ran);
         $this->assertSame($customer->name, $customer->refresh()->name);
+    }
+
+    #[Test]
+    public function itWipesTheDatabaseBeforeImporting(): void
+    {
+        $this->storeBackup();
+
+        $this->artisan(ImportLatestBackupCommand::class)->assertSuccessful();
+
+        $this->assertTrue($this->wipeCommand->ran);
     }
 
     #[Test]
@@ -212,6 +230,7 @@ class ImportLatestBackupCommandTest extends TestCase
             $this->artisan(ImportLatestBackupCommand::class)->run();
         } finally {
             Process::assertNothingRan();
+            $this->assertFalse($this->wipeCommand->ran);
         }
     }
 

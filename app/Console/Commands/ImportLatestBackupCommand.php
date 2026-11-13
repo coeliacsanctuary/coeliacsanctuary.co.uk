@@ -48,6 +48,8 @@ class ImportLatestBackupCommand extends Command
             return self::FAILURE;
         }
 
+        $this->call('db:wipe', ['--force' => true]);
+
         $this->info('Importing database, this may take a while');
 
         /** @var array{host: string, port: string|int, username: string, password: string|null, database: string} $connection */
