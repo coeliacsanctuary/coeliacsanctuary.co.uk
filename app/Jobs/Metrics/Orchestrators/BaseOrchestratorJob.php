@@ -78,6 +78,10 @@ abstract class BaseOrchestratorJob implements ShouldQueue, ShouldBeUnique
 
     public static function scheduleAll(Schedule $schedule): void
     {
+        if (config()->boolean('journey-tracker-laravel.enabled') === false) {
+            return;
+        }
+
         $schedule->job(MinuteOrchestratorJob::class)->everyMinute();
         $schedule->job(TenMinuteOrchestratorJob::class)->everyTenMinutes();
         $schedule->job(ThirtyMinuteOrchestratorJob::class)->everyThirtyMinutes();
