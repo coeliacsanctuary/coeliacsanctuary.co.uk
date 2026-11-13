@@ -56,7 +56,7 @@ return new class () extends Migration {
         /** @var EateryCountry $channelIslands */
         $channelIslands = EateryCountry::query()->where('country', 'Channel Islands')->first();
 
-        if (!$channelIslands) {
+        if ( ! $channelIslands) {
             return;
         }
 

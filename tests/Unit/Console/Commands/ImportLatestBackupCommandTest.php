@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 use ZipArchive;
 
@@ -181,13 +182,47 @@ class ImportLatestBackupCommandTest extends TestCase
         $this->assertNull($eateryReview->email);
     }
 
-    protected function storeBackup(): void
+    #[Test]
+    public function itStreamsOnlyTheDumpIntoMysql(): void
+    {
+        $input = null;
+
+        Process::fake(function (PendingProcess $process) use (&$input) {
+            $input = implode('', iterator_to_array($process->input));
+
+            return Process::result();
+        });
+
+        $this->storeBackup();
+
+        $this->artisan(ImportLatestBackupCommand::class)->assertSuccessful();
+
+        $this->assertSame('SELECT 1;', $input);
+    }
+
+    #[Test]
+    public function itRefusesACompressedBackup(): void
+    {
+        $this->storeBackup(ZipArchive::CM_DEFLATE);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The backup is not an uncompressed zip.');
+
+        try {
+            $this->artisan(ImportLatestBackupCommand::class)->run();
+        } finally {
+            Process::assertNothingRan();
+        }
+    }
+
+    protected function storeBackup(int $compressionMethod = ZipArchive::CM_STORE): void
     {
         $zipPath = tempnam(sys_get_temp_dir(), 'backup');
 
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::OVERWRITE);
         $zip->addFromString('db-dumps/mysql-test.sql', 'SELECT 1;');
+        $zip->setCompressionName('db-dumps/mysql-test.sql', $compressionMethod);
         $zip->close();
 
         Storage::disk('backup')->put(config('backup.backup.name') . '/2026-11-08-10-00-00.zip', file_get_contents($zipPath));
