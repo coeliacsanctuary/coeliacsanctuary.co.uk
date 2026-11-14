@@ -10,7 +10,7 @@
 
     $country = $item->card->countries->first()->term;
     $countryCode = Helpers::countryCode($country);
-    $inBasket = $item->orderItem->exists();
+    $inBasket = $item->orderItem?->exists();
 
     $size = $compact ? '40x30' : '96x72';
 @endphp
