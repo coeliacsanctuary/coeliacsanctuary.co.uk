@@ -10,15 +10,19 @@ use App\Listeners\Shop\SendOrderConfirmationMails;
 use App\Listeners\Shop\SendOrderToFinanceService;
 use App\Listeners\Shop\SubscribeToNewsletterIfRequired;
 use App\Listeners\Shop\SyncProductsToGoogleMerchantOnOrderPaid;
+use App\Listeners\Shop\SyncStripeData;
 use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopOrder;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Concerns\MocksStripe;
 use Tests\TestCase;
 
 class OrderPaidEventTest extends TestCase
 {
+    use MocksStripe;
+
     protected ShopOrder $order;
 
     protected function setUp(): void
@@ -28,7 +32,11 @@ class OrderPaidEventTest extends TestCase
         Notification::fake();
         Http::fake();
 
-        $this->withAdminUser();
+        $this
+            ->withFakeStripeClient()
+            ->withAdminUser();
+
+        $this->mockChargeUpdate();
 
         $customer = $this->create(ShopCustomer::class);
 
@@ -81,6 +89,16 @@ class OrderPaidEventTest extends TestCase
     public function itIsHandledByTheSendOrderToFinanceServiceListener(): void
     {
         $this->mock(SendOrderToFinanceService::class)
+            ->shouldReceive('handle')
+            ->once();
+
+        OrderPaidEvent::dispatch($this->order);
+    }
+
+    #[Test]
+    public function itIsHandledByTheSyncStripeDataListener(): void
+    {
+        $this->mock(SyncStripeData::class)
             ->shouldReceive('handle')
             ->once();
 
