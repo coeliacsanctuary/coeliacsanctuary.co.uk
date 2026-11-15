@@ -23,6 +23,13 @@ trait MocksStripe
 {
     protected ?StripeClient $stripeClient = null;
 
+    protected function withFakeStripeClient(): self
+    {
+        $this->getStripeClient();
+
+        return $this;
+    }
+
     protected function getStripeClient(): StripeClient
     {
         if ( ! $this->stripeClient) {
@@ -161,5 +168,13 @@ trait MocksStripe
         return PaymentIntent::constructFrom(array_merge([
 
         ], $params));
+    }
+
+    protected function mockChargeUpdate(): void
+    {
+        $charge = $this->partialMock(Charge::class);
+        $this->getStripeClient()->charges = $charge;
+
+        $charge->shouldReceive('update')->andReturn($this->createCharge());
     }
 }

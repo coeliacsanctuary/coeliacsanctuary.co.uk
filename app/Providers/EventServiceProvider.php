@@ -17,6 +17,7 @@ use App\Listeners\Shop\SendOrderShippedNotification;
 use App\Listeners\Shop\SendOrderToFinanceService;
 use App\Listeners\Shop\SubscribeToNewsletterIfRequired;
 use App\Listeners\Shop\SyncProductsToGoogleMerchantOnOrderPaid;
+use App\Listeners\Shop\SyncStripeData;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 
@@ -29,6 +30,7 @@ class EventServiceProvider extends ServiceProvider
             SubscribeToNewsletterIfRequired::class,
             SyncProductsToGoogleMerchantOnOrderPaid::class,
             SendOrderToFinanceService::class,
+            SyncStripeData::class,
         ],
         OrderShippedEvent::class => [SendOrderShippedNotification::class],
         OrderCancelledEvent::class => [SendOrderCancellationNotification::class],
