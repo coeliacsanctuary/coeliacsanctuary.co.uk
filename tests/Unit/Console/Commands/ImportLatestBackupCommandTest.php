@@ -18,22 +18,30 @@ use App\Models\Shop\ShopPaymentResponse;
 use App\Models\Shop\ShopShippingAddress;
 use Illuminate\Contracts\Process\ProcessResult;
 use Illuminate\Process\PendingProcess;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
+use Tests\Fixtures\FakeWipeCommand;
 use Tests\TestCase;
 use ZipArchive;
 
 class ImportLatestBackupCommandTest extends TestCase
 {
+    protected FakeWipeCommand $wipeCommand;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         Storage::fake('backup');
         Process::fake();
+
+        $this->wipeCommand = new FakeWipeCommand();
+        Artisan::registerCommand($this->wipeCommand);
     }
 
     #[Test]
@@ -51,7 +59,18 @@ class ImportLatestBackupCommandTest extends TestCase
 
         Process::assertNothingRan();
 
+        $this->assertFalse($this->wipeCommand->ran);
         $this->assertSame($customer->name, $customer->refresh()->name);
+    }
+
+    #[Test]
+    public function itWipesTheDatabaseBeforeImporting(): void
+    {
+        $this->storeBackup();
+
+        $this->artisan(ImportLatestBackupCommand::class)->assertSuccessful();
+
+        $this->assertTrue($this->wipeCommand->ran);
     }
 
     #[Test]
@@ -181,13 +200,48 @@ class ImportLatestBackupCommandTest extends TestCase
         $this->assertNull($eateryReview->email);
     }
 
-    protected function storeBackup(): void
+    #[Test]
+    public function itStreamsOnlyTheDumpIntoMysql(): void
+    {
+        $input = null;
+
+        Process::fake(function (PendingProcess $process) use (&$input) {
+            $input = implode('', iterator_to_array($process->input));
+
+            return Process::result();
+        });
+
+        $this->storeBackup();
+
+        $this->artisan(ImportLatestBackupCommand::class)->assertSuccessful();
+
+        $this->assertSame('SELECT "£";', $input);
+    }
+
+    #[Test]
+    public function itRefusesACompressedBackup(): void
+    {
+        $this->storeBackup(ZipArchive::CM_DEFLATE);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The backup is not an uncompressed zip.');
+
+        try {
+            $this->artisan(ImportLatestBackupCommand::class)->run();
+        } finally {
+            Process::assertNothingRan();
+            $this->assertFalse($this->wipeCommand->ran);
+        }
+    }
+
+    protected function storeBackup(int $compressionMethod = ZipArchive::CM_STORE): void
     {
         $zipPath = tempnam(sys_get_temp_dir(), 'backup');
 
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::OVERWRITE);
-        $zip->addFromString('db-dumps/mysql-test.sql', 'SELECT 1;');
+        $zip->addFromString('db-dumps/mysql-test.sql', 'SELECT "£";');
+        $zip->setCompressionName('db-dumps/mysql-test.sql', $compressionMethod);
         $zip->close();
 
         Storage::disk('backup')->put(config('backup.backup.name') . '/2026-11-08-10-00-00.zip', file_get_contents($zipPath));

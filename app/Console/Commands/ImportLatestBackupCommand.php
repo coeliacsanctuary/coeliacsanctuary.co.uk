@@ -7,12 +7,13 @@ namespace App\Console\Commands;
 use Spatie\Backup\BackupDestination\Backup;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
+use Generator;
 use Illuminate\Console\Command;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Process\Factory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Spatie\Backup\BackupDestination\BackupDestination;
 use ZipArchive;
 
@@ -20,7 +21,7 @@ use ZipArchive;
 #[Signature('coeliac:import-latest-backup')]
 class ImportLatestBackupCommand extends Command
 {
-    public function handle(Factory $process, Filesystem $files): int
+    public function handle(Factory $process): int
     {
         if ($this->laravel->isProduction()) {
             $this->error('This command can not be run in production.');
@@ -36,70 +37,86 @@ class ImportLatestBackupCommand extends Command
             return self::FAILURE;
         }
 
-        $this->info("Downloading {$backup->path()}");
+        $this->info("Streaming {$backup->path()}");
 
-        $directory = storage_path('app/backup-import');
-        $zipPath = "{$directory}/" . basename($backup->path());
+        $stream = $backup->stream();
+        $dump = $this->readDumpHeader($stream);
 
-        $files->ensureDirectoryExists($directory);
+        if ( ! Str::is('db-dumps/*.sql', $dump['name'])) {
+            $this->error('No database dump found in the backup.');
 
-        try {
-            file_put_contents($zipPath, $backup->stream());
+            return self::FAILURE;
+        }
 
-            $zip = new ZipArchive();
+        $this->call('db:wipe', ['--force' => true]);
 
-            if ($zip->open($zipPath) !== true) {
-                $this->error('Unable to open the backup zip.');
+        $this->info('Importing database, this may take a while');
 
-                return self::FAILURE;
-            }
+        /** @var array{host: string, port: string|int, username: string, password: string|null, database: string} $connection */
+        $connection = config('database.connections.' . config('database.default'));
 
-            $dumpName = collect(range(0, $zip->numFiles - 1))
-                ->map(fn (int $index): string|false => $zip->getNameIndex($index))
-                ->first(fn (string|false $name): bool => $name && Str::is('db-dumps/*.sql', $name));
+        $result = $process
+            ->newPendingProcess()
+            ->forever()
+            ->env(['MYSQL_PWD' => (string) $connection['password']])
+            ->input($this->readDump($stream, $dump['size']))
+            ->run([
+                'mysql',
+                "--host={$connection['host']}",
+                "--port={$connection['port']}",
+                "--user={$connection['username']}",
+                $connection['database'],
+            ]);
 
-            if ( ! $dumpName) {
-                $this->error('No database dump found in the backup.');
+        fclose($stream);
 
-                return self::FAILURE;
-            }
+        $this->info('Anonymising data');
 
-            $this->info('Importing database, this may take a while');
+        $this->anonymiseData();
 
-            /** @var array{host: string, port: string|int, username: string, password: string|null, database: string} $connection */
-            $connection = config('database.connections.' . config('database.default'));
+        if ($result->failed()) {
+            $this->error('The import failed, any data that was imported has been anonymised.');
+            $this->error($result->errorOutput());
 
-            $result = $process
-                ->newPendingProcess()
-                ->forever()
-                ->env(['MYSQL_PWD' => (string) $connection['password']])
-                ->input($zip->getStream($dumpName))
-                ->run([
-                    'mysql',
-                    "--host={$connection['host']}",
-                    "--port={$connection['port']}",
-                    "--user={$connection['username']}",
-                    $connection['database'],
-                ]);
+            return self::FAILURE;
+        }
 
-            $zip->close();
+        $this->info('Import complete');
 
-            $this->info('Anonymising data');
+        return self::SUCCESS;
+    }
 
-            $this->anonymiseData();
+    /**
+     * @param resource $stream
+     * @return array{name: string, size: int}
+     */
+    protected function readDumpHeader($stream): array
+    {
+        /** @var array{signature: string, method: int, size: int, nameLength: int, extraLength: int}|false $header */
+        $header = @unpack('a4signature/x4/vmethod/x8/Vsize/x4/vnameLength/vextraLength', (string) stream_get_contents($stream, 30));
 
-            if ($result->failed()) {
-                $this->error('The import failed, any data that was imported has been anonymised.');
-                $this->error($result->errorOutput());
+        throw_if(
+            ! $header || $header['signature'] !== "PK\x03\x04" || $header['method'] !== ZipArchive::CM_STORE,
+            new RuntimeException('The backup is not an uncompressed zip.'),
+        );
 
-                return self::FAILURE;
-            }
+        $name = (string) stream_get_contents($stream, $header['nameLength']);
+        stream_get_contents($stream, $header['extraLength']);
 
-            $this->info('Import complete');
+        return ['name' => $name, 'size' => $header['size']];
+    }
 
-            return self::SUCCESS;
-        } finally {
-            $files->delete($zipPath);
+    /**
+     * @param resource $stream
+     * @return Generator<int, string>
+     */
+    protected function readDump($stream, int $size): Generator
+    {
+        while ($size > 0 && ! feof($stream)) {
+            $chunk = (string) fread($stream, min(1024 * 1024, $size));
+            $size -= mb_strlen($chunk, '8bit');
+
+            yield $chunk;
         }
     }
 
