@@ -44,7 +44,7 @@ class BackFillRecipeMetricsCommand extends Command
                             fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
                                     fn (EventFilter $event): EventFilter => $event
-                                        ->type(EventType::SCROLLED_INTO_VIEW)
+                                        ->type(EventType::ScrolledIntoView)
                                         ->identifier('CommentsCard')
                                         ->withParameters([
                                             'page' => 'recipe',
@@ -57,7 +57,7 @@ class BackFillRecipeMetricsCommand extends Command
                             fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
                                     fn (EventFilter $event): EventFilter => $event
-                                        ->type(EventType::SCROLLED_INTO_VIEW)
+                                        ->type(EventType::ScrolledIntoView)
                                         ->identifier('RecipeDetailCard')
                                         ->withParameters([
                                             'title' => $recipe->title,
@@ -69,7 +69,7 @@ class BackFillRecipeMetricsCommand extends Command
                             fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
                                     fn (EventFilter $event): EventFilter => $event
-                                        ->type(EventType::SCROLLED_INTO_VIEW)
+                                        ->type(EventType::ScrolledIntoView)
                                         ->identifier('CollectionItemCard')
                                         ->withParameters([
                                             'title' => $recipe->title,
