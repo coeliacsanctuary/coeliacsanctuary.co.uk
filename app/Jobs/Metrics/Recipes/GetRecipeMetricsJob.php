@@ -51,7 +51,7 @@ class GetRecipeMetricsJob implements ShouldQueue
                     fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
                             fn (EventFilter $event): EventFilter => $event
-                                ->type(EventType::SCROLLED_INTO_VIEW)
+                                ->type(EventType::ScrolledIntoView)
                                 ->identifier('CommentsCard')
                                 ->withParameters([
                                     'page' => 'recipe',
@@ -64,7 +64,7 @@ class GetRecipeMetricsJob implements ShouldQueue
                     fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
                             fn (EventFilter $event): EventFilter => $event
-                                ->type(EventType::SCROLLED_INTO_VIEW)
+                                ->type(EventType::ScrolledIntoView)
                                 ->identifier('RecipeDetailCard')
                                 ->withParameters([
                                     'title' => $this->recipe->title,
@@ -76,7 +76,7 @@ class GetRecipeMetricsJob implements ShouldQueue
                     fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
                             fn (EventFilter $event): EventFilter => $event
-                                ->type(EventType::SCROLLED_INTO_VIEW)
+                                ->type(EventType::ScrolledIntoView)
                                 ->identifier('CollectionItemCard')
                                 ->withParameters([
                                     'title' => $this->recipe->title,

@@ -19,7 +19,7 @@
         "hammerstone/sidecar": "^0.8.0",
         "inertiajs/inertia-laravel": "^3.5.2",
         "intervention/image": "^4.4.1",
-        "journey-tracker/journey-tracker-laravel": "^0.13.0",
+        "journey-tracker/journey-tracker-laravel": "^1.0.0-RC1",
         "jpeters8889/address-field": "@dev",
         "jpeters8889/apex-charts": "@dev",
         "jpeters8889/body": "@dev",

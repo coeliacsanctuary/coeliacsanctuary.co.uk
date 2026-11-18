@@ -40,7 +40,7 @@ return [
         'term',
     ],
 
-    'internal-event-endpoint' => 'api/event',
+    'event-endpoint' => 'api/event',
 
     'heartbeat-endpoint' => 'api/heartbeat',
 

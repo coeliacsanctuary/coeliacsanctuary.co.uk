@@ -44,7 +44,7 @@ class BackFillBlogMetricsCommand extends Command
                             fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
                                     fn (EventFilter $event): EventFilter => $event
-                                        ->type(EventType::SCROLLED_INTO_VIEW)
+                                        ->type(EventType::ScrolledIntoView)
                                         ->identifier('CommentsCard')
                                         ->withParameters([
                                             'page' => 'blog',
@@ -57,7 +57,7 @@ class BackFillBlogMetricsCommand extends Command
                             fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
                                     fn (EventFilter $event): EventFilter => $event
-                                        ->type(EventType::SCROLLED_INTO_VIEW)
+                                        ->type(EventType::ScrolledIntoView)
                                         ->identifier('BlogDetailCard')
                                         ->withParameters([
                                             'title' => $blog->title,
@@ -69,7 +69,7 @@ class BackFillBlogMetricsCommand extends Command
                             fn (QueryDescriptor $query): QueryDescriptor => $query
                                 ->withEvent(
                                     fn (EventFilter $event): EventFilter => $event
-                                        ->type(EventType::SCROLLED_INTO_VIEW)
+                                        ->type(EventType::ScrolledIntoView)
                                         ->identifier('CollectionItemCard')
                                         ->withParameters([
                                             'title' => $blog->title,
