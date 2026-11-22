@@ -9,11 +9,9 @@ import {
 } from '@/types/Shop';
 import Heading from '@/Components/Heading.vue';
 import CheckoutTotals from '@/Components/PageSpecific/Shop/Checkout/CheckoutTotals.vue';
-import CheckoutDeliveryCountry from '@/Components/PageSpecific/Shop/Checkout/CheckoutDeliveryCountry.vue';
 import ShopPopularProducts from '@/Components/PageSpecific/Shop/ShopPopularProducts.vue';
 import { ArrowUturnLeftIcon } from '@heroicons/vue/20/solid';
 import { ShoppingBagIcon } from '@heroicons/vue/24/outline';
-import { FormSelectOption } from '@/Components/Forms/Props';
 import ContactDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ContactDetails.vue';
 import { computed, nextTick, reactive, Ref, ref, watch, onMounted } from 'vue';
 import type { Component } from 'vue';
@@ -25,18 +23,15 @@ import Loader from '@/Components/Loader.vue';
 import useUrl from '@/composables/useUrl';
 import axios, { AxiosError } from 'axios';
 import useStripeStore from '@/stores/useStripeStore';
-import en from 'i18n-iso-countries/langs/en.json';
 import { Link, usePage } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import { ConfirmPaymentData } from '@stripe/stripe-js';
 import useGoogleEvents from '@/composables/useGoogleEvents';
-import pkg from 'i18n-iso-countries';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import CheckOutItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsRow.vue';
 import CheckOutDigitalItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutDigitalItemsRow.vue';
-const { registerLocale, getAlpha2Code } = pkg;
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
 type FormSection = {
@@ -57,7 +52,6 @@ type SectionComponent = {
 
 type NoBasketProps = {
   has_basket: false;
-  countries: undefined;
   basket: undefined;
   payment_intent: undefined;
   warnings: undefined;
@@ -67,16 +61,13 @@ type NoBasketProps = {
 type BasketProps = {
   has_basket: true;
   popularProducts: undefined;
-  countries: FormSelectOption[];
   basket: {
     items: ShopBasketItem[];
     digital_items: ShopBasketDigitalItem[];
     digital_only: boolean;
-    selected_country: number;
     delivery_timescale: string;
     subtotal: string;
     postage: string;
-    fees: { fee: string; description?: string }[];
     total_fees: string;
     discount?: string;
     total: string;
@@ -84,8 +75,6 @@ type BasketProps = {
   payment_intent: string;
   warnings?: string[];
 };
-
-registerLocale(en);
 
 const showLoader = ref(false);
 
@@ -112,6 +101,10 @@ const { getFromLocalStorage, putInLocalStorage } = useLocalStorage();
 const createGenericError = (
   message: string = 'An unknown error has occurred, you have not been charged.',
 ): void => {
+  if (message === 'Your card has been declined.') {
+    message += ' Please ensure you are using a UK registered payment method.';
+  }
+
   useJourneyTracking().logEvent('other', 'Checkout/GenericError', { message });
 
   store.setErrors({
@@ -174,9 +167,7 @@ const stripePayload = (payload: CheckoutForm): ConfirmPaymentData => ({
         city: payload.billing.town,
         state: payload.billing.county,
         postal_code: payload.billing.postcode,
-        country:
-          getAlpha2Code(payload.billing.country, 'en') ||
-          payload.billing.country,
+        country: 'GB',
       },
     },
   },
@@ -343,9 +334,7 @@ const sectionComponents = computed((): SectionComponent[] => [
     key: 'shipping',
     next: 'payment',
     required: props.basket?.digital_only === false,
-    additionalProps: {
-      canLookupPostcode: props.basket?.selected_country === 1,
-    },
+    additionalProps: {},
   },
   {
     component: PaymentDetails as Component,
@@ -450,15 +439,7 @@ onMounted(() => {
             </ul>
           </div>
 
-          <CheckoutDeliveryCountry
-            v-if="basket.digital_only === false"
-            :countries="countries as FormSelectOption[]"
-            :selected-country="basket.selected_country"
-            :delivery-timescale="basket.delivery_timescale"
-            :has-fees="basket.fees.length > 0"
-          />
-
-          <div class="mt-4 flow-root border-t border-primary-light/60">
+          <div class="flow-root">
             <ul class="divide-y divide-primary-light/60">
               <CheckOutItemsRow
                 v-for="item in basket.items"
@@ -477,7 +458,6 @@ onMounted(() => {
           <CheckoutTotals
             :postage="basket.postage"
             :discount="basket.discount"
-            :fees="basket.fees"
             :total-fees="basket.total_fees"
             :total="basket.total"
             :subtotal="basket.subtotal"

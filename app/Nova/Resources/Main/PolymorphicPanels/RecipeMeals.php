@@ -45,7 +45,7 @@ class RecipeMeals implements PolymorphicResource
 
         $model->meals->each($callback);
 
-        $values->map(fn ($value): false => filter_var($value, FILTER_VALIDATE_BOOL))
+        $values->map(fn ($value): bool => filter_var($value, FILTER_VALIDATE_BOOL))
             ->filter(fn ($value): bool => $value === true)
             ->map(fn ($value, $key) => RecipeMeal::query()->where('meal', Str::headline($key))->firstOrFail()->id)
             ->each(fn ($id) => $model->meals()->attach($id));

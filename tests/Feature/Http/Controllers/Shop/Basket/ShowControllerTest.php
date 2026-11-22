@@ -294,27 +294,6 @@ class ShowControllerTest extends TestCase
     }
 
     #[Test]
-    public function itPassesTheFeesToTheComponent(): void
-    {
-        $this->expectAction(CreatePaymentIntentAction::class);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->get(route('shop.basket.checkout'))
-            ->assertInertia(
-                fn (Assert $page): Assert => $page
-                    ->has(
-                        'basket',
-                        fn (Assert $page): Assert => $page
-                            ->has('fees')
-                            ->has('total_fees')
-                            ->etc()
-                    )
-                    ->etc()
-            );
-    }
-
-    #[Test]
     public function itCallsTheApplyDiscountCodeActionIfADiscountCodeIsPresentInTheSession(): void
     {
         $this->expectAction(ApplyDiscountCodeAction::class);
@@ -325,61 +304,6 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->withSession(['discountCode' => app(Encrypter::class)->encrypt('foobar')])
             ->get(route('shop.basket.checkout'));
-    }
-
-    #[Test]
-    public function itPassesTheShippableCountriesToTheComponent(): void
-    {
-        $this->expectAction(CreatePaymentIntentAction::class);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->get(route('shop.basket.checkout'))
-            ->assertInertia(
-                fn (Assert $page): Assert => $page
-                    ->has('countries')
-                    ->etc()
-            );
-    }
-
-    #[Test]
-    public function itPassesTheSelectedCountryId(): void
-    {
-        $this->expectAction(CreatePaymentIntentAction::class);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->get(route('shop.basket.checkout'))
-            ->assertInertia(
-                fn (Assert $page): Assert => $page
-                    ->has(
-                        'basket',
-                        fn (Assert $page): Assert => $page
-                            ->where('selected_country', 1)
-                            ->etc()
-                    )
-                    ->etc()
-            );
-    }
-
-    #[Test]
-    public function itPassesTheDeliveryTimescale(): void
-    {
-        $this->expectAction(CreatePaymentIntentAction::class);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->get(route('shop.basket.checkout'))
-            ->assertInertia(
-                fn (Assert $page): Assert => $page
-                    ->has(
-                        'basket',
-                        fn (Assert $page): Assert => $page
-                            ->where('delivery_timescale', '1 - 2')
-                            ->etc()
-                    )
-                    ->etc()
-            );
     }
 
     #[Test]

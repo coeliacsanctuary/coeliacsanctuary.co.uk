@@ -67,7 +67,7 @@ const useShopStore = defineStore<'shop-checkout', State, Getters, Actions>(
         },
       },
 
-      country: '',
+      country: 'United Kingdom',
 
       errors: {},
     }),

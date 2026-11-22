@@ -25,7 +25,7 @@ const errors: ComputedRef<Partial<CheckoutShippingStep>> = computed(
 );
 
 const postcodeFormatError = computed((): string | undefined => {
-  if (country.value !== 'United Kingdom' || data.postcode === '') {
+  if (data.postcode === '') {
     return undefined;
   }
 
@@ -74,33 +74,6 @@ const handleAddressLookup = (address: CheckoutShippingStep) => {
 };
 
 const addressActive = ref(false);
-
-const postcodeLabel = computed(() => {
-  switch (country.value) {
-    case 'United Kingdom':
-    case 'Republic of Ireland':
-      return 'Postcode';
-    case 'Canada':
-      return 'Postal Code';
-    default:
-      return 'Zipcode';
-  }
-});
-
-const countyLabel = computed(() => {
-  switch (country.value) {
-    case 'United States':
-    case 'Australia':
-      return 'State';
-    case 'United Kingdom':
-    case 'Republic of Ireland':
-      return 'County';
-    case 'New Zealand':
-      return 'Region';
-    default:
-      return 'Province';
-  }
-});
 
 watch(data, () => {
   store.setShippingDetails(data);
@@ -208,7 +181,7 @@ const track = (label: string, value?: string) => {
       <FormInput
         v-model="data.county"
         :error="errors?.county"
-        :label="countyLabel"
+        label="County"
         name="county"
         autocomplete="county"
         borders
@@ -218,7 +191,7 @@ const track = (label: string, value?: string) => {
       <FormInput
         v-model="data.postcode"
         :error="errors?.postcode || postcodeFormatError"
-        :label="postcodeLabel"
+        label="Postcode"
         name="postcode"
         autocomplete="postcode"
         class="flex-1"

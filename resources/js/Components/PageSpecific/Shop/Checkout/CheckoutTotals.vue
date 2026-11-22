@@ -7,12 +7,12 @@ import { router, usePage } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import { ShopHolidayProps } from '@/types/Shop';
+import UkShippingOnlyModal from '@/Components/PageSpecific/Shop/Checkout/UkShippingOnlyModal.vue';
 
 defineProps<{
   subtotal: string;
   postage: string;
   discount?: string;
-  fees: { fee: string; description?: string }[];
   totalFees: string;
   total: string;
   digitalOnly: boolean;
@@ -66,40 +66,16 @@ const removeDiscountCode = () => {
         v-if="!digitalOnly"
         class="flex justify-between gap-3"
       >
-        <dt class="text-grey-dark">Postage</dt>
+        <dt class="flex items-center space-x-1 text-grey-dark">
+          <span>Postage to the United Kingdom</span>
+
+          <UkShippingOnlyModal />
+        </dt>
         <dd
           class="font-semibold"
           v-text="postage"
         />
       </div>
-
-      <template v-if="fees.length > 0">
-        <div
-          v-for="(fee, x) in fees"
-          :key="x"
-          class="flex justify-between gap-3"
-        >
-          <dt
-            class="text-grey-dark"
-            v-text="fee.description ? fee.description : 'Customs Charge'"
-          />
-          <dd
-            class="font-semibold"
-            v-text="fee.fee"
-          />
-        </div>
-
-        <div
-          v-if="fees.length > 1"
-          class="flex justify-between gap-3"
-        >
-          <dt class="text-grey-dark">Total Fees</dt>
-          <dd
-            class="font-semibold"
-            v-text="totalFees"
-          />
-        </div>
-      </template>
 
       <div
         v-if="discount"
@@ -145,6 +121,16 @@ const removeDiscountCode = () => {
           v-text="shopHoliday.notice"
         />
       </div>
+    </div>
+
+    <div
+      v-if="digitalOnly === false"
+      class="relative mt-4 flex flex-col gap-2"
+    >
+      <p class="text-sm text-grey-dark">
+        Dispatched within 1 - 2 working days by first class post, usually
+        arriving within 1 - 2 days.
+      </p>
     </div>
 
     <div

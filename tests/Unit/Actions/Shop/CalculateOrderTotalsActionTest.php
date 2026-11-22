@@ -10,7 +10,6 @@ use App\Actions\Shop\GetOrderDigitalItemsAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Enums\Shop\PostageArea;
 use App\Enums\Shop\ShippingMethod;
-use App\Models\Shop\ShopCustomsFee;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderDigitalItem;
 use App\Models\Shop\ShopOrderItem;
@@ -91,9 +90,20 @@ class CalculateOrderTotalsActionTest extends TestCase
     }
 
     #[Test]
+    public function itErrorsIfTheCountryIsNotUnitedKingdom(): void
+    {
+        $this->order->postageCountry->update(['country' => 'Ireland']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Only postage to the UK is supported');
+
+        $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
+    }
+
+    #[Test]
     public function itReturnsAnArrayWithTheCorrectKeys(): void
     {
-        $keys = ['subtotal', 'postage', 'fees', 'total_fees'];
+        $keys = ['subtotal', 'postage'];
 
         $result = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
@@ -195,66 +205,6 @@ class CalculateOrderTotalsActionTest extends TestCase
     }
 
     #[Test]
-    public function itReturnsAnEmptyCollectionOfCustomsFeesIfNoneAreApplicable(): void
-    {
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
-
-        $this->assertInstanceOf(Collection::class, $totals['fees']);
-        $this->assertEmpty($totals['fees']);
-        $this->assertEquals(0, $totals['total_fees']);
-    }
-
-    #[Test]
-    public function itDoesntAddFeesForAnotherCountry(): void
-    {
-        $this->create(ShopCustomsFee::class);
-
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
-
-        $this->assertInstanceOf(Collection::class, $totals['fees']);
-        $this->assertEmpty($totals['fees']);
-        $this->assertEquals(0, $totals['total_fees']);
-    }
-
-    #[Test]
-    public function itWillAddFeesIfTheFeeCountryMatchesTheOrderCountry(): void
-    {
-        $fee = $this->create(ShopCustomsFee::class, [
-            'postage_country_id' => $this->order->postageCountry->id,
-            'fee' => 123,
-        ]);
-
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
-
-        $this->assertInstanceOf(Collection::class, $totals['fees']);
-        $this->assertCount(1, $totals['fees']);
-        $this->assertEquals(['fee' => 123, 'description' => $fee->description], $totals['fees']->first());
-
-        $this->assertEquals(123, $totals['total_fees']);
-    }
-
-    #[Test]
-    public function itCanHaveMultipleFees(): void
-    {
-        $this->create(ShopCustomsFee::class, [
-            'postage_country_id' => $this->order->postageCountry->id,
-            'fee' => 50,
-        ]);
-
-        $this->create(ShopCustomsFee::class, [
-            'postage_country_id' => $this->order->postageCountry->id,
-            'fee' => 75,
-        ]);
-
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
-
-        $this->assertInstanceOf(Collection::class, $totals['fees']);
-        $this->assertCount(2, $totals['fees']);
-
-        $this->assertEquals(125, $totals['total_fees']);
-    }
-
-    #[Test]
     public function itAddsTheDigitalItemPricesToTheSubtotal(): void
     {
         $this->addDigitalItemToBasket(250);
@@ -307,22 +257,5 @@ class CalculateOrderTotalsActionTest extends TestCase
         ['postage' => $postage] = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
 
         $this->assertEquals(0, $postage);
-    }
-
-    #[Test]
-    public function itStillReturnsCustomsFeesForABasketOfOnlyDigitalItems(): void
-    {
-        $this->create(ShopCustomsFee::class, [
-            'postage_country_id' => $this->order->postageCountry->id,
-            'fee' => 123,
-        ]);
-
-        $this->addDigitalItemToBasket(250);
-        $this->removeThePhysicalItemsFromTheBasket();
-
-        $totals = $this->callAction(CalculateOrderTotalsAction::class, $this->itemsCollection, $this->digitalItemsCollection, $this->order->postageCountry);
-
-        $this->assertCount(1, $totals['fees']);
-        $this->assertEquals(123, $totals['total_fees']);
     }
 }
