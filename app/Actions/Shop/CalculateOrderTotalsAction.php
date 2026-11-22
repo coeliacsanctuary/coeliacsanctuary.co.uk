@@ -23,9 +23,7 @@ class CalculateOrderTotalsAction
      */
     public function handle(Collection $items, Collection $digitalItems, ShopPostageCountry $country): array
     {
-        if($country->country !== 'United Kingdom') {
-            throw new RuntimeException('Only postage to the UK is supported');
-        }
+        throw_if($country->country !== 'United Kingdom', new RuntimeException('Only postage to the UK is supported'));
 
         /** @var int $physicalSubtotal */
         $physicalSubtotal = $items->sum(fn (ShopOrderItemResource $item): int => $item->product_price * $item->quantity);
