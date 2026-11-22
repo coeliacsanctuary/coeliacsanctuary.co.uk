@@ -43,6 +43,10 @@ class StoreController
         /** @var ShopPostageCountry $country */
         $country = $basket->postageCountry;
 
+        if($country->country !== 'United Kingdom') {
+            throw ValidationException::withMessages(['basket' => 'Sorry, we are currently only accepting orders from the UK.']);
+        }
+
         $physicalItems = $getOrderItemsAction->handle($basket);
         $digitalItems = $getOrderDigitalItemsAction->handle($basket);
 
@@ -52,8 +56,8 @@ class StoreController
         /** @var Collection<int, ShopOrderDigitalItemResource> $digitalItemCollection */
         $digitalItemCollection = $digitalItems->collection;
 
-        ['subtotal' => $subtotal, 'postage' => $postage, 'fees' => $fees, 'total_fees' => $totalFees] = $calculateOrderTotalsAction->handle($physicalItemCollection, $digitalItemCollection, $country);
-        $total = $subtotal + $postage + $totalFees;
+        ['subtotal' => $subtotal, 'postage' => $postage] = $calculateOrderTotalsAction->handle($physicalItemCollection, $digitalItemCollection, $country);
+        $total = $subtotal + $postage;
 
         $discountCode = null;
         $discount = null;
@@ -98,8 +102,6 @@ class StoreController
                 'subtotal' => $subtotal,
                 'postage' => $postage,
                 'discount' => $discount ?? 0,
-                'fees_breakdown' => $fees,
-                'custom_fees' => $totalFees,
                 'total' => $total,
                 'created_at' => now(),
             ]);

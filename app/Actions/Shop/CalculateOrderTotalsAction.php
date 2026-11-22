@@ -19,10 +19,14 @@ class CalculateOrderTotalsAction
     /**
      * @param  Collection<int, ShopOrderItemResource>  $items
      * @param  Collection<int, ShopOrderDigitalItemResource>  $digitalItems
-     * @return array{subtotal: int, postage: int, fees: Collection<int, array{fee: int, description: string|null}>, total_fees: int}
+     * @return array{subtotal: int, postage: int}
      */
     public function handle(Collection $items, Collection $digitalItems, ShopPostageCountry $country): array
     {
+        if($country->country !== 'United Kingdom') {
+            throw new RuntimeException('Only postage to the UK is supported');
+        }
+
         /** @var int $physicalSubtotal */
         $physicalSubtotal = $items->sum(fn (ShopOrderItemResource $item): int => $item->product_price * $item->quantity);
 
@@ -55,18 +59,8 @@ class CalculateOrderTotalsAction
             $postage = $postagePrice->price;
         }
 
-        $fees = ShopCustomsFee::query()
-            ->where('postage_country_id', $country->id)
-            ->get()
-            ->map(fn (ShopCustomsFee $fee): array => [
-                'fee' => $fee->fee,
-                'description' => $fee->description,
-            ]);
-
         return [
             'subtotal' => $physicalSubtotal + $digitalSubtotal,
-            'fees' => $fees,
-            'total_fees' => (int) $fees->sum('fee'),
             'postage' => $postage ?? 0,
         ];
     }

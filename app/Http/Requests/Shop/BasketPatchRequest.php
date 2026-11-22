@@ -23,7 +23,6 @@ class BasketPatchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'postage_country_id' => ['nullable', Rule::exists(ShopPostageCountry::class, 'id')],
             'action' => ['nullable', 'in:increase,decrease'],
             'item_id' => ['nullable', 'required_with:action', 'numeric'],
             'discount' => ['nullable', 'bail', Rule::exists(ShopDiscountCode::class, 'code')->where(

@@ -11,7 +11,6 @@ use App\Models\Shop\ShopCustomer;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopOrderItem;
-use App\Models\Shop\ShopPostageCountry;
 use App\Models\Shop\ShopProduct;
 use App\Models\Shop\ShopProductVariant;
 use Illuminate\Encryption\Encrypter;
@@ -60,39 +59,6 @@ class UpdateControllerTest extends TestCase
             ->from(route('shop.index'))
             ->patch(route('shop.basket.patch'))
             ->assertRedirectToRoute('shop.index');
-    }
-
-    #[Test]
-    public function itReturnsAValidationErrorIfTheCountryDoesntExist(): void
-    {
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->patch(route('shop.basket.patch'), [
-                'postage_country_id' => 123,
-            ])
-            ->assertSessionHasErrors('postage_country_id');
-    }
-
-    #[Test]
-    public function itUpdatesTheCountry(): void
-    {
-        $country = $this->create(ShopPostageCountry::class, [
-            'id' => 5,
-        ]);
-
-        $this->assertNotEquals($country->id, $this->order->postage_country_id);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->from(route('shop.index'))
-            ->patch(route('shop.basket.patch'), [
-                'postage_country_id' => $country->id,
-            ])
-            ->assertRedirectToRoute('shop.index');
-
-        $this->order->refresh();
-
-        $this->assertEquals($country->id, $this->order->postage_country_id);
     }
 
     #[Test]

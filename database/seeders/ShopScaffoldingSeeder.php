@@ -46,7 +46,7 @@ class ShopScaffoldingSeeder extends Seeder
         ShopPostageCountry::query()->create([
             'id' => 1,
             'postage_area_id' => PostageArea::UK->value,
-            'country' => 'UK',
+            'country' => 'United Kingdom',
             'iso_code' => 'uk',
         ]);
 

@@ -53,7 +53,7 @@ class StoreControllerTest extends TestCase
         $this->withCategoriesAndProducts(1, 1);
 
         $this->basket = $this->build(ShopOrder::class)->asBasket()->create();
-        $this->create(ShopPostageCountry::class, ['id' => $this->basket->postage_country_id, 'country' => 'UK']);
+        $this->create(ShopPostageCountry::class, ['id' => $this->basket->postage_country_id, 'country' => 'United Kingdom']);
 
         $this->product = ShopProduct::query()->first();
         $this->variant = $this->product->variants->first();
@@ -103,6 +103,14 @@ class StoreControllerTest extends TestCase
         $this->makeBasketDigitalOnly();
 
         $this->makeRequest($data)->assertSessionHasErrors($key);
+    }
+
+    #[Test]
+    public function itReturnsAnErrorIfTheCountryIsNotUnitedKingdom(): void
+    {
+        $this->basket->postageCountry->update(['country' => 'Ireland']);
+
+        $this->makeRequest()->assertSessionHasErrors('basket', 'Sorry, we are currently only accepting orders from the UK.');
     }
 
     #[Test]
