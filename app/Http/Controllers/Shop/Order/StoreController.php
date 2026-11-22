@@ -43,7 +43,7 @@ class StoreController
         /** @var ShopPostageCountry $country */
         $country = $basket->postageCountry;
 
-        if($country->country !== 'United Kingdom') {
+        if ($country->country !== 'United Kingdom') {
             throw ValidationException::withMessages(['basket' => 'Sorry, we are currently only accepting orders from the UK.']);
         }
 
