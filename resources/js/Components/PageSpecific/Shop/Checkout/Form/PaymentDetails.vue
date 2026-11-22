@@ -11,6 +11,8 @@ import FormSelect from '@/Components/Forms/FormSelect.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import eventBus from '@/eventBus';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import FormLockedInput from '@/Components/Forms/FormLockedInput.vue';
+import UkShippingOnlyModal from '@/Components/PageSpecific/Shop/Checkout/UkShippingOnlyModal.vue';
 
 const props = defineProps<{
   show: boolean;
@@ -36,7 +38,7 @@ const fields = reactive<CheckoutBillingStep>({
   town: '',
   county: '',
   postcode: '',
-  country: '',
+  country: 'United Kingdom',
 });
 
 const billingDetails = (): CheckoutBillingStep => {
@@ -94,7 +96,7 @@ const canSubmit = computed((): boolean => {
       return false;
     }
 
-    if (fields.country === '') {
+    if (fields.country !== 'United Kingdom') {
       return false;
     }
   }
@@ -125,7 +127,7 @@ watch(billingAddressSelect, () => {
     town: '',
     county: '',
     postcode: '',
-    country: '',
+    country: 'United Kingdom',
   });
 });
 
@@ -180,13 +182,14 @@ const track = (label: string, value?: string) => {
         name="billing_address"
         :options="selectOptions"
         :placeholder="undefined"
+        borders
       />
 
       <template v-if="billingAddressSelect === 'other'">
         <FormInput
           v-model="fields.name"
           label="Card Holders Name"
-          name="address_1"
+          name="name"
           autocomplete="name"
           required
           borders
@@ -250,15 +253,16 @@ const track = (label: string, value?: string) => {
           @blur-sm="() => track('Postcode', fields.postcode)"
         />
 
-        <FormInput
+        <FormLockedInput
           v-model="fields.country"
           label="Country"
           name="country"
-          autocomplete="country"
-          required
           borders
-          @blur-sm="() => track('Country', fields.country)"
-        />
+        >
+          <template #label>
+            <UkShippingOnlyModal />
+          </template>
+        </FormLockedInput>
       </template>
 
       <Suspense>
@@ -285,9 +289,9 @@ const track = (label: string, value?: string) => {
 
       <p class="flex items-center justify-center gap-2 text-sm text-grey-dark">
         <LockClosedIcon class="size-4 shrink-0" />
-        <span
-          >Payments are handled by Stripe - I never see your card details.</span
-        >
+        <span>
+          Payments are handled by Stripe - I never see your card details.
+        </span>
       </p>
     </template>
   </div>

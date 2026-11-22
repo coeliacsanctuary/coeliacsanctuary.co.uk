@@ -75,9 +75,9 @@ class ShowController
             /** @var Collection<int, ShopOrderDigitalItemResource> $digitalItemCollection */
             $digitalItemCollection = $digitalItems->collection;
 
-            ['subtotal' => $subtotal, 'postage' => $postage, 'fees' => $fees, 'total_fees' => $totalFees] = $calculateOrderTotalsAction->handle($physicalItemCollection, $digitalItemCollection, $country);
+            ['subtotal' => $subtotal, 'postage' => $postage] = $calculateOrderTotalsAction->handle($physicalItemCollection, $digitalItemCollection, $country);
 
-            $total = $subtotal + $postage + $totalFees;
+            $total = $subtotal + $postage;
 
             $discount = null;
 
@@ -100,13 +100,6 @@ class ShowController
 
             $props = [
                 'has_basket' => true,
-                'countries' => fn () => ShopPostageCountry::query()
-                    ->orderBy('country')
-                    ->get()
-                    ->map(fn (ShopPostageCountry $postageCountry): array => [
-                        'value' => $postageCountry->id,
-                        'label' => $postageCountry->country,
-                    ]),
                 'basket' => fn (): array => [
                     'items' => $physicalItems,
                     'digital_items' => $digitalItems,
@@ -116,11 +109,6 @@ class ShowController
                     'subtotal' => Helpers::formatMoney(Money::GBP($subtotal)),
                     'postage' => Helpers::formatMoney(Money::GBP($postage)),
                     'discount' => $discount ? Helpers::formatMoney(Money::GBP($discount)) : null,
-                    'fees' => $fees->map(fn (array $fee): array => [
-                        ...$fee,
-                        'fee' => Helpers::formatMoney(Money::GBP($fee['fee'])),
-                    ]),
-                    'total_fees' => Helpers::formatMoney(Money::GBP($totalFees)),
                     'total' => Helpers::formatMoney(Money::GBP($total)),
                 ],
                 'payment_intent' => app(CreatePaymentIntentAction::class)->handle($basket, $total),

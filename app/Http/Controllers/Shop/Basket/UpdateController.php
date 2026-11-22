@@ -33,12 +33,6 @@ class UpdateController
 
         DB::beginTransaction();
         try {
-            if ($request->has('postage_country_id')) {
-                $basket->update([
-                    'postage_country_id' => $request->integer('postage_country_id'),
-                ]);
-            }
-
             if ($request->has('action')) {
                 $orderItem = $basket->items()->findOrFail($request->integer('item_id'));
 
