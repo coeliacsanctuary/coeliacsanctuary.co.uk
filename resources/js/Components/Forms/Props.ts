@@ -33,7 +33,7 @@ export type InputProps = BaseFormInputProps & {
   helpText?: string;
   error?: string;
   hideLabel?: boolean;
-  size?: 'sm' | 'default' | 'large';
+  size?: 'sm' | 'default' | 'large' | 'xl';
   min?: number;
   max?: number;
   wrapperClasses?: string;
@@ -57,6 +57,15 @@ export const InputPropDefaults = {
   ...InputPropDefaultsWithoutType,
   type: 'text',
 } satisfies Partial<InputProps>;
+
+export type OneTimeInputProps = Omit<InputProps, 'type' | 'size'> & {
+  length: number;
+};
+
+export const OneTimeInputPropDefaults = {
+  ...InputPropDefaults,
+  length: 6,
+};
 
 export type TextareaProps = BaseFormInputProps & {
   label: string;
@@ -120,6 +129,7 @@ export type FormSelectProps = BaseFormProps & {
   options: FormSelectOption[] | FormSelectGroup[];
   placeholder?: string;
   hideLabel?: boolean;
+  helpText?: string;
   error?: string;
   size?: 'small' | 'default' | 'large';
   inputClasses?: string;
@@ -131,6 +141,7 @@ export const FormSelectPropsDefaults = {
   label: undefined,
   placeholder: 'Select an option',
   hideLabel: false,
+  helpText: undefined,
   error: undefined,
   size: 'default',
   inputClasses: '',
@@ -184,6 +195,7 @@ export type FormLookupProps = Omit<InputProps, 'type'> & {
   fallbackObject?: object;
   fallbackKey?: string;
   resultsClasses?: string;
+  ignoreAutofill?: boolean;
 };
 
 export const FormLookupPropDefaults = {
@@ -197,6 +209,7 @@ export const FormLookupPropDefaults = {
   fallbackObject: () => ({}),
   fallbackKey: undefined,
   resultsClasses: '',
+  ignoreAutofill: false,
 } satisfies Partial<FormLookupProps>;
 
 export type ProductQuantitySwitcherProps = Omit<

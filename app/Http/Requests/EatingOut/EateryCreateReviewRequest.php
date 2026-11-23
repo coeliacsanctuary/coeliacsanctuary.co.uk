@@ -53,7 +53,6 @@ class EateryCreateReviewRequest extends FormRequest
 
     public function shouldReviewBeApproved(): bool
     {
-        //        if ($this->boolean('admin_review') === true && $this->user()?->isAdmin()) {
         if ($this->boolean('admin_review')) {
             return true;
         }

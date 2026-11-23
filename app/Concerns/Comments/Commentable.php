@@ -10,9 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @template T of Model
- *
  * @mixin Model
- *
  * @property string $title
  */
 trait Commentable

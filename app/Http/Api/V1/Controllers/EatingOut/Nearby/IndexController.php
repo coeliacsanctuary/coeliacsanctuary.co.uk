@@ -16,7 +16,7 @@ class IndexController
         /** @var float[] $latLng */
         $latLng = $request->string('latlng')
             ->explode(',')
-            ->map(fn (string $value) => (float) $value)
+            ->map(fn (string $value): float => (float) $value)
             ->toArray();
 
         return [

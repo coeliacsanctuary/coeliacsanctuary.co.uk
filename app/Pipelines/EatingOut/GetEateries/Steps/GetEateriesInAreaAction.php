@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Models\EatingOut\EateryArea;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
@@ -18,11 +19,8 @@ class GetEateriesInAreaAction implements GetEateriesPipelineActionContract
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->area) {
-            throw new RuntimeException('No Area');
-        }
+        throw_unless($pipelineData->area instanceof EateryArea, new RuntimeException('No Area'));
 
-        /** @var Builder<Eatery> $query */
         $query = Eatery::query()
             ->when(
                 $pipelineData->sort === 'rating',
@@ -48,7 +46,7 @@ class GetEateriesInAreaAction implements GetEateriesPipelineActionContract
         /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string}> $pendingEateries */
         $pendingEateries = $query->toBase()->get();
 
-        $pendingEateries = $pendingEateries->map(fn (object $eatery) => new PendingEatery(
+        $pendingEateries = $pendingEateries->map(fn (object $eatery): PendingEatery => new PendingEatery(
             id: $eatery->id,
             branchId: $eatery->branch_id,
             ordering: $eatery->ordering,

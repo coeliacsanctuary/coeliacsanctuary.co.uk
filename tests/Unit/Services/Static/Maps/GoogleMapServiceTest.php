@@ -69,7 +69,7 @@ class GoogleMapServiceTest extends TestCase
 
         URL::shouldReceive('query')
             ->once()
-            ->withArgs(function (string $host, array $query) use ($london) {
+            ->withArgs(function (string $host, array $query) use ($london): true {
                 $this->assertEquals('https://maps.googleapis.com/maps/api/staticmap', $host);
                 $this->assertArrayHasKeys(['center', 'size', 'maptype', 'markers', 'key'], $query);
                 $this->assertEquals($london, $query['center']);
@@ -95,7 +95,7 @@ class GoogleMapServiceTest extends TestCase
 
         URL::shouldReceive('query')
             ->once()
-            ->withArgs(function (string $host, array $query) use ($london) {
+            ->withArgs(function (string $host, array $query) use ($london): true {
                 $this->assertEquals('https://maps.googleapis.com/maps/api/staticmap', $host);
                 $this->assertArrayHasKeys(['center', 'size', 'maptype', 'markers', 'key', 'foo'], $query);
                 $this->assertEquals($london, $query['center']);
@@ -130,7 +130,7 @@ class GoogleMapServiceTest extends TestCase
 
         URL::shouldReceive('query')
             ->once()
-            ->withArgs(function (string $host, array $query) {
+            ->withArgs(function (string $host, array $query): true {
                 $this->assertEquals('600x600', $query['size']);
 
                 return true;
@@ -141,7 +141,7 @@ class GoogleMapServiceTest extends TestCase
 
         URL::shouldReceive('query')
             ->once()
-            ->withArgs(function (string $host, array $query) {
+            ->withArgs(function (string $host, array $query): true {
                 $this->assertEquals('300x300', $query['size']);
 
                 return true;
@@ -217,7 +217,7 @@ class GoogleMapServiceTest extends TestCase
 
         URL::shouldReceive('query')
             ->once()
-            ->withArgs(function (string $host, array $query) use ($london) {
+            ->withArgs(function (string $host, array $query) use ($london): true {
                 $this->assertEquals('https://maps.googleapis.com/maps/api/staticmap', $host);
                 $this->assertArrayHasKeys(['center', 'size', 'maptype', 'markers', 'key'], $query);
                 $this->assertEquals($london, $query['center']);
@@ -237,7 +237,7 @@ class GoogleMapServiceTest extends TestCase
             ->andReturnSelf()
             ->getMock()
             ->shouldReceive('put')
-            ->withArgs(function (string $path) use ($uuid, $record) {
+            ->withArgs(function (string $path) use ($uuid, $record): true {
                 $this->assertEquals("maps/{$uuid}-{$record->parameters}.jpg", $path);
 
                 return true;

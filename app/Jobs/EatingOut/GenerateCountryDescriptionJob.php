@@ -4,28 +4,22 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Ai\Agents\EateryCountryDescriptionAgent;
 use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 
 #[Tries(1)]
 #[Timeout(300)]
 class GenerateCountryDescriptionJob implements ShouldQueue, ShouldBeUnique
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $uniqueFor = 600;
 
@@ -56,7 +50,7 @@ class GenerateCountryDescriptionJob implements ShouldQueue, ShouldBeUnique
     {
         $counties = $this->getCounties();
 
-        $eateries = number_format($counties->sum(fn (EateryCounty $county) => $county->getAttribute('total_eateries_count') + $county->getAttribute('nationwide_branches_count')));
+        $eateries = number_format($counties->sum(fn (EateryCounty $county): float|int|array => $county->getAttribute('total_eateries_count') + $county->getAttribute('nationwide_branches_count')));
         $averageRating = number_format($counties->avg('avg_rating') ?? 0, 1);
 
         return <<<PROMPT

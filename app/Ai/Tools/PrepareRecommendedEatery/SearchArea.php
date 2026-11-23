@@ -12,17 +12,11 @@ use Stringable;
 
 class SearchArea implements Tool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Search for an area in the given london borough';
     }
 
-    /**
-     * Execute the tool.
-     */
     public function handle(Request $request): Stringable|string
     {
         $search = EateryArea::query()
@@ -35,9 +29,6 @@ class SearchArea implements Tool
         return (string) json_encode($search);
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

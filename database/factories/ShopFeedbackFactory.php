@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopFeedback;
 use App\Models\Shop\ShopProduct;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopFeedback>
+ */
 class ShopFeedbackFactory extends Factory
 {
     protected $model = ShopFeedback::class;
@@ -14,15 +17,15 @@ class ShopFeedbackFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
-            'feedback' => $this->faker->sentence,
+            'name' => $this->faker->name(),
+            'feedback' => $this->faker->sentence(),
             'product_id' => Factory::factoryForModel(ShopProduct::class),
         ];
     }
 
     public function forProduct(ShopProduct $product): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'product_id' => $product->id,
         ]);
     }

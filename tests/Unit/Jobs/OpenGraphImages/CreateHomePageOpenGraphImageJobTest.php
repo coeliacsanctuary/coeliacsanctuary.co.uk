@@ -30,7 +30,7 @@ class CreateHomePageOpenGraphImageJobTest extends TestCase
             ->andReturn('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAb0lEQVR4nGK567aCAQZOXAuEs/cf3QZnO3xaDGczMZAIaK+BJVjTFs5RLAyBs1UuS8DZaj8m0tFJJGtgzORshHMELtfA2TMC58LZ7i3MdHQS6fHw6VkPnKMWcRHOlq/JgbOPFO+ko5NI1gAIAAD//3qSF5xOx6hcAAAAAElFTkSuQmCC')
             ->once();
 
-        (new CreateHomePageOpenGraphImageJob())->handle(app(RenderOpenGraphImage::class));
+        new CreateHomePageOpenGraphImageJob()->handle(app(RenderOpenGraphImage::class));
     }
 
     #[Test]
@@ -44,7 +44,7 @@ class CreateHomePageOpenGraphImageJobTest extends TestCase
             ->andReturn('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAb0lEQVR4nGK567aCAQZOXAuEs/cf3QZnO3xaDGczMZAIaK+BJVjTFs5RLAyBs1UuS8DZaj8m0tFJJGtgzORshHMELtfA2TMC58LZ7i3MdHQS6fHw6VkPnKMWcRHOlq/JgbOPFO+ko5NI1gAIAAD//3qSF5xOx6hcAAAAAElFTkSuQmCC')
             ->once();
 
-        (new CreateHomePageOpenGraphImageJob())->handle(app(RenderOpenGraphImage::class));
+        new CreateHomePageOpenGraphImageJob()->handle(app(RenderOpenGraphImage::class));
 
         $this->assertDatabaseCount(OpenGraphImage::class, 1);
         $model = OpenGraphImage::query()->first();

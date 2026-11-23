@@ -4,27 +4,21 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Ai\Agents\EateryCountyDescriptionAgent;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 #[Tries(1)]
 #[Timeout(300)]
 class GenerateCountyDescriptionJob implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $uniqueFor = 600;
 
@@ -53,7 +47,7 @@ class GenerateCountyDescriptionJob implements ShouldBeUnique, ShouldQueue
     {
         $towns = $this->getTowns();
 
-        $eateries = number_format($towns->sum(fn (EateryTown $town) => $town->live_eateries_count + $town->live_branches_count));
+        $eateries = number_format($towns->sum(fn (EateryTown $town): int => $town->live_eateries_count + $town->live_branches_count));
         $averageRating = number_format($towns->avg('avg_rating') ?? 0, 1);
 
         return <<<PROMPT

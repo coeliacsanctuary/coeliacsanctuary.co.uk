@@ -137,6 +137,18 @@ useJourneyTracking().logWhenVisible(
       </EaterySidebarCta>
 
       <EaterySidebarCta
+        icon="route"
+        title="Plan a trip"
+        href="/wheretoeat/trip-planner"
+        label="Go to the Trip Planner"
+        identifier="WhereToEatIndexSidebar/TripPlanner"
+      >
+        Heading on a trip? Check out my Trip Planner, give your start, end,
+        anywhere between, and even how often you want to stop for a break, and
+        find places to eat on your route!
+      </EaterySidebarCta>
+
+      <EaterySidebarCta
         icon="dinner"
         title="Nationwide chains"
         href="/wheretoeat/nationwide"

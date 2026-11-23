@@ -196,22 +196,20 @@ useJourneyTracking().logWhenVisible(
 
     <div class="gap-6 lg:grid lg:grid-cols-5 lg:gap-8">
       <!-- Gallery -->
-      <div class="flex flex-col space-y-3 lg:col-span-3">
+      <div
+        class="flex flex-col space-y-3 lg:sticky lg:top-14 lg:col-span-3 lg:self-start"
+      >
         <button
           type="button"
-          class="cursor-zoom-in overflow-hidden rounded-lg lg:min-h-0 lg:flex-1"
+          class="cursor-zoom-in overflow-hidden rounded-lg"
           :aria-label="`View a larger image of ${product.title}`"
           @click="viewImage = -1"
         >
-          <!-- Fills the column height on desktop so a single wide image doesn't leave a gap
-               below it next to the taller buy box. -->
           <img
             :src="product.image"
             :alt="product.title"
-            width="1200"
-            height="630"
             fetchpriority="high"
-            class="aspect-[1200/630] w-full object-cover object-center lg:aspect-auto lg:h-full"
+            class="h-auto w-full"
           />
         </button>
 
@@ -397,8 +395,8 @@ useJourneyTracking().logWhenVisible(
         :filtered-on="reviewFilter"
         @load-more="loadMoreReviews()"
         @set-rating="
-          (rating: StarRatingType | undefined) =>
-            (reviewFilter = reviewFilter === rating ? undefined : rating)
+          (r: StarRatingType | undefined) =>
+            (reviewFilter = reviewFilter === r ? undefined : r)
         "
       />
 

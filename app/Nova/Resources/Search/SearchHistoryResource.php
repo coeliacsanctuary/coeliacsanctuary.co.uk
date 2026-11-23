@@ -21,7 +21,7 @@ class SearchHistoryResource extends Resource
 
     public static $perPageViaRelationship = 10;
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -31,7 +31,7 @@ class SearchHistoryResource extends Resource
         return [
             ID::make()->hide(),
 
-            Text::make('User Lat/Lng', fn (SearchHistory $model) => $model->lat ? "{$model->lat}, {$model->lng}" : 'Unknown'),
+            Text::make('User Lat/Lng', fn (SearchHistory $model): string => $model->lat ? "{$model->lat}, {$model->lng}" : 'Unknown'),
 
             Text::make('User Geocoded Location', function (SearchHistory $model) {
                 if ( ! $model->lat) {

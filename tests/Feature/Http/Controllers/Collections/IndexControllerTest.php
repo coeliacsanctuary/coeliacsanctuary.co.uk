@@ -20,7 +20,7 @@ class IndexControllerTest extends TestCase
 
         Storage::fake('media');
 
-        Collection::truncate();
+        Collection::query()->truncate();
         $this->withCollections(30);
     }
 
@@ -51,13 +51,13 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('collection.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Collection/Index')
                     ->has('collections')
                     ->has(
                         'collections.data',
                         12,
-                        fn (Assert $page) => $page->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'items'])
+                        fn (Assert $page): Assert => $page->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'items'])
                     )
                     ->where('collections.data.0.title', 'Collection 0')
                     ->where('collections.data.1.title', 'Collection 1')
@@ -75,13 +75,13 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('collection.index', ['page' => 2]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Collection/Index')
                     ->has('collections')
                     ->has(
                         'collections.data',
                         12,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'items'])
                     )
                     ->where('collections.data.0.title', 'Collection 12')

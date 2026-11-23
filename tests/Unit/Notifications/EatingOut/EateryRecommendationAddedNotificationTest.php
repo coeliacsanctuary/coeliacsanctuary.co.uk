@@ -40,7 +40,7 @@ class EateryRecommendationAddedNotificationTest extends TestCase
     #[DataProvider('mailDataProvider')]
     public function itHasTheEmailData(callable $closure): void
     {
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $this->recommendation->email)
             ->notify(new EateryRecommendationAddedNotification($this->recommendation, $this->eatery));
 
@@ -80,7 +80,7 @@ class EateryRecommendationAddedNotificationTest extends TestCase
         /** @var Eatery $eatery */
         $eatery = $this->eatery->fresh();
 
-        $content = (new EateryRecommendationAddedNotification($this->recommendation, $eatery))
+        $content = new EateryRecommendationAddedNotification($this->recommendation, $eatery)
             ->toMail(new AnonymousNotifiable())
             ->render();
 

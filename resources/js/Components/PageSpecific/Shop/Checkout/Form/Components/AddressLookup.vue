@@ -29,8 +29,6 @@ const getLocation = () => {
 
 const emits = defineEmits(['setAddress']);
 
-const country = computed(() => useShopStore().selectedCountry);
-
 const hasSelectedAddress = ref(false);
 const searchResults = ref<{ id: string; address: string }[]>([]);
 
@@ -48,10 +46,6 @@ const selectAddress = async (id: string) => {
 };
 
 const handleSearch = async () => {
-  if (country.value !== 'United Kingdom') {
-    return;
-  }
-
   if (hasSelectedAddress.value) {
     hasSelectedAddress.value = false;
     return;
@@ -90,14 +84,12 @@ watchDebounced(() => props.address, handleSearch, { debounce: 100 });
   <div class="relative">
     <slot />
 
-    <div v-if="country === 'United Kingdom'">
-      <FormCheckbox
-        v-model="useMyLocation"
-        name="foo"
-        label="Use my location to find my address quicker?"
-        layout="left"
-      />
-    </div>
+    <FormCheckbox
+      v-model="useMyLocation"
+      name="foo"
+      label="Use my location to find my address quicker?"
+      layout="left"
+    />
 
     <div
       v-if="

@@ -41,7 +41,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($latlng) {
+            ->withArgs(function ($latlng): true {
                 $this->assertInstanceOf(LatLng::class, $latlng);
                 $this->assertEquals(51, $latlng->lat);
                 $this->assertEquals(-1, $latlng->lng);
@@ -59,7 +59,7 @@ class IndexControllerTest extends TestCase
     {
         $this->mock(GetNearbyEateriesPipeline::class)
             ->shouldReceive('run')
-            ->withArgs(function ($latlng, $resource) {
+            ->withArgs(function ($latlng, $resource): true {
                 $this->assertEquals(NearbyEateryResource::class, $resource);
 
                 return true;

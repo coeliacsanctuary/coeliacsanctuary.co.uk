@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopPayment;
 use App\Models\Shop\ShopPaymentResponse;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopPaymentResponse>
+ */
 class ShopPaymentResponseFactory extends Factory
 {
     protected $model = ShopPaymentResponse::class;
@@ -15,14 +18,14 @@ class ShopPaymentResponseFactory extends Factory
     {
         return [
             'payment_id' => Factory::factoryForModel(ShopPayment::class),
-            'charge_id' => $this->faker->uuid,
+            'charge_id' => $this->faker->uuid(),
             'response' => ['foo' => 'bar'],
         ];
     }
 
     public function forPayment(ShopPayment $payment): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'payment_id' => $payment->id,
         ]);
     }

@@ -6,7 +6,9 @@ namespace Tests\Unit\Actions\EatingOut;
 
 use App\Actions\EatingOut\GetTopRatedPlacesAction;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
+use App\Models\EatingOut\EateryTown;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
@@ -20,7 +22,13 @@ class GetTopRatedPlacesActionTest extends TestCase
 
         $this->seed(EateryScaffoldingSeeder::class);
 
-        $eateries = $this->build(Eatery::class)->count(5)->create();
+        $county = $this->build(EateryCounty::class)->create();
+        $town = $this->build(EateryTown::class)->create(['county_id' => $county->id]);
+
+        $eateries = $this->build(Eatery::class)->count(5)->create([
+            'county_id' => $county->id,
+            'town_id' => $town->id,
+        ]);
 
         $eateries->each(function (Eatery $eatery, $index): void {
             $this->build(EateryReview::class)

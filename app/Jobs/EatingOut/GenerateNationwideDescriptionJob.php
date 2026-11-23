@@ -4,35 +4,25 @@ declare(strict_types=1);
 
 namespace App\Jobs\EatingOut;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Ai\Agents\EateryNationwideDescriptionAgent;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection as SupportCollection;
 
 #[Tries(1)]
 #[Timeout(300)]
 class GenerateNationwideDescriptionJob implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $uniqueFor = 600;
 
-    /**
-     * A chain needs at least this many reviews before its rating is worth
-     * mentioning, otherwise a single five star review reads as top rated.
-     */
     protected int $minimumReviewsForRating = 5;
 
     public function __construct(protected EateryCounty $county)
@@ -62,7 +52,7 @@ class GenerateNationwideDescriptionJob implements ShouldBeUnique, ShouldQueue
 
         return view('prompts.nationwide-description-prompt', [
             'chains' => $chains,
-            'chainsWithBranches' => $chains->filter(fn (Eatery $chain) => $chain->getAttribute('nationwide_branches_count') > 0),
+            'chainsWithBranches' => $chains->filter(fn (Eatery $chain): bool => $chain->getAttribute('nationwide_branches_count') > 0),
             'branches' => $chains->sum(fn (Eatery $chain) => $chain->getAttribute('nationwide_branches_count')),
             'venueTypes' => $this->summarise($chains->map(fn (Eatery $chain) => $chain->venueType?->venue_type)),
             'cuisines' => $this->summarise($chains->map(fn (Eatery $chain) => $chain->cuisine?->cuisine)),
@@ -77,7 +67,7 @@ class GenerateNationwideDescriptionJob implements ShouldBeUnique, ShouldQueue
             ->filter()
             ->countBy()
             ->sortDesc()
-            ->map(fn (int $count, string $value) => "{$value} ({$count})")
+            ->map(fn (int $count, string $value): string => "{$value} ({$count})")
             ->implode(', ');
     }
 

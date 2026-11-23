@@ -13,9 +13,7 @@ class ShipOrderAction
 {
     public function handle(ShopOrder $order): void
     {
-        if ($order->state_id !== OrderState::READY) {
-            throw new RuntimeException('Order must be in ready state');
-        }
+        throw_if($order->state_id !== OrderState::READY, new RuntimeException('Order must be in ready state'));
 
         $order->update([
             'state_id' => OrderState::SHIPPED,

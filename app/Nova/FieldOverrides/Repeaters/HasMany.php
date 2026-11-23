@@ -25,8 +25,6 @@ class HasMany extends NovaRepeater\Presets\HasMany
     }
 
     /**
-     * Save the field value to permanent storage.
-     *
      * @param  Model  $model
      */
     public function set(
@@ -44,7 +42,7 @@ class HasMany extends NovaRepeater\Presets\HasMany
 
             $model->{$attribute}()->delete();
 
-            $repeaterItems->transform(static function ($item, $blockKey) use ($request, $requestAttribute, $repeatables) {
+            $repeaterItems->transform(static function (array $item, $blockKey) use ($request, $requestAttribute, $repeatables): array {
                 $block = $repeatables->findByKey($item['type']);
                 $fields = FieldCollection::make($block->fields($request));
                 $data = Fluent::make();
@@ -52,11 +50,11 @@ class HasMany extends NovaRepeater\Presets\HasMany
                 [$regularFields, $nestedFields] = $fields
                     ->withoutUnfillable()
                     ->withoutMissingValues()
-                    ->partition(fn ($field) => ! ($field instanceof NovaRepeater));
+                    ->partition(fn ($field): bool => ! ($field instanceof NovaRepeater));
 
                 $callbacks = $regularFields
                     ->map(static fn (Field $field) => $field->fillInto($request, $data, $field->attribute, "{$requestAttribute}.{$blockKey}.fields.{$field->attribute}"))
-                    ->filter(static fn ($callback) => is_callable($callback))
+                    ->filter(static fn ($callback): bool => is_callable($callback))
                     ->toBase();
 
                 return [$data, $callbacks, $nestedFields, $blockKey];
@@ -75,13 +73,6 @@ class HasMany extends NovaRepeater\Presets\HasMany
         };
     }
 
-    /**
-     * Nova's JS Repeater field wraps all field names in [fields][key], but when a nested repeater's
-     * fill() runs first, its keys already contain bracket notation (e.g. items[0][fields][title]).
-     * PHP stops at the first ] when parsing, so groups[0][fields][items[0][type]] becomes the key
-     * "items[0" instead of a proper nested array. We recursively walk the entire request and reconstruct
-     * those malformed keys at any depth before deferring to the parent set().
-     */
     protected function fixNestedRepeaterKeys(NovaRequest $request): void
     {
         $request->replace($this->reconstructMalformedKeys($request->all()));

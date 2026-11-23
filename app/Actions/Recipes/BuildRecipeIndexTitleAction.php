@@ -23,11 +23,11 @@ class BuildRecipeIndexTitleAction
         }
 
         if ($features !== []) {
-            return $this->forFeature((string) reset($features));
+            return $this->forFeature(reset($features));
         }
 
         if ($meals !== []) {
-            return $this->forMeal((string) reset($meals));
+            return $this->forMeal(reset($meals));
         }
 
         return $this->forAllergen((string) reset($freeFrom));

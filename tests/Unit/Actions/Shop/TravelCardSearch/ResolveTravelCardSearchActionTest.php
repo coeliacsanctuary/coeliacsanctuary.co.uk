@@ -5,9 +5,15 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\Shop\TravelCardSearch;
 
 use App\Actions\Shop\TravelCardSearch\ResolveTravelCardSearchAction;
+use App\Models\Shop\ShopDigitalCard;
+use App\Models\Shop\ShopDigitalCardPrice;
+use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPrice;
 use App\Models\Shop\ShopProduct;
+use App\Models\Shop\ShopProductVariant;
 use App\Models\Shop\TravelCardSearchTerm;
+use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -236,5 +242,132 @@ class ResolveTravelCardSearchActionTest extends TestCase
 
         $this->assertEquals('es', $this->resolve('Spain')['destinations'][0]['flag']);
         $this->assertNull($this->resolve('Klingon')['destinations'][0]['flag']);
+    }
+
+    protected function digitalCard(ShopProduct $product, array $attributes = []): ShopDigitalCard
+    {
+        /** @var ShopDigitalCard $card */
+        $card = $this->build(ShopDigitalCard::class)
+            ->forProduct($product)
+            ->state($attributes)
+            ->create();
+
+        return $card;
+    }
+
+    protected function productWithVariant(): ShopProduct
+    {
+        /** @var ShopProduct $product */
+        $product = $this->build(ShopProduct::class)
+            ->has($this->build(ShopProductVariant::class), 'variants')
+            ->create();
+
+        return $product;
+    }
+
+    protected function cardCovering(TravelCardSearchTerm $term, ShopProduct $product, string $language, array $attributes = []): ShopDigitalCard
+    {
+        $term->products()->attach($product, ['card_language' => $language]);
+
+        return $this->digitalCard($product, array_merge(['language' => $language], $attributes));
+    }
+
+    /** @return Collection<int, ShopDigitalCard> */
+    protected function digitalCards(string $searchString, ?ShopOrder $basket = null): Collection
+    {
+        return $this->callAction(ResolveTravelCardSearchAction::class, $searchString, $basket)['destinations'][0]['digital_cards']->collection;
+    }
+
+    #[Test]
+    public function itReturnsTheDigitalCardsBelongingToTheTermsProducts(): void
+    {
+        $this->cardCovering($this->term('Spain'), $this->product(0), 'Spanish', ['title' => 'Spanish']);
+
+        $this->digitalCard($this->product(1), ['title' => 'German', 'language' => 'German']);
+
+        $this->assertEquals(['Spanish'], $this->digitalCards('Spain')->pluck('title')->all());
+    }
+
+    #[Test]
+    public function itOnlyReturnsTheCardForTheLanguageThatCoversTheTerm(): void
+    {
+        $this->cardCovering($this->term('Spain'), $this->product(0), 'Spanish', ['title' => 'Spanish']);
+
+        $this->digitalCard($this->product(0), ['title' => 'Italian', 'language' => 'Italian']);
+
+        $this->assertEquals(['Spanish'], $this->digitalCards('Spain')->pluck('title')->all());
+    }
+
+    #[Test]
+    public function itOnlyReturnsLiveDigitalCards(): void
+    {
+        $spain = $this->term('Spain');
+
+        $this->cardCovering($spain, $this->product(0), 'Spanish', ['title' => 'Spanish']);
+        $this->cardCovering($spain, $this->productWithVariant(), 'French', ['title' => 'French', 'live' => false]);
+
+        $this->assertEquals(['Spanish'], $this->digitalCards('Spain')->pluck('title')->all());
+    }
+
+    #[Test]
+    public function itReturnsTheDigitalCardsOrderedByTitle(): void
+    {
+        $spain = $this->term('Spain');
+
+        $this->cardCovering($spain, $this->product(0), 'Spanish', ['title' => 'Spanish']);
+        $this->cardCovering($spain, $this->productWithVariant(), 'French', ['title' => 'French']);
+        $this->cardCovering($spain, $this->productWithVariant(), 'German', ['title' => 'German']);
+
+        $this->assertEquals(['French', 'German', 'Spanish'], $this->digitalCards('Spain')->pluck('title')->all());
+    }
+
+    #[Test]
+    public function itStillReturnsADigitalCardWhenItsProductHasNoCurrentPrice(): void
+    {
+        $spain = $this->term('Spain');
+
+        $spain->products()->attach($this->product(0));
+
+        $this->cardCovering($spain, $this->product(1), 'Spanish', ['title' => 'Spanish']);
+
+        ShopPrice::query()->where('purchasable_id', $this->product(1)->id)->delete();
+
+        $result = $this->resolve('Spain');
+
+        $this->assertCount(1, $result['destinations'][0]['products']->collection);
+        $this->assertEquals(['Spanish'], $result['destinations'][0]['digital_cards']->collection->pluck('title')->all());
+    }
+
+    #[Test]
+    public function itFallsBackToTheDefaultPriceWhenACardDoesntHaveOne(): void
+    {
+        $this->cardCovering($this->term('Spain'), $this->product(0), 'Spanish');
+
+        $this->assertTrue($this->digitalCards('Spain')->first()->price->is(ShopDigitalCard::defaultPrice()));
+    }
+
+    #[Test]
+    public function itReturnsThePriceAssignedToTheCard(): void
+    {
+        $card = $this->cardCovering($this->term('Spain'), $this->product(0), 'Spanish');
+
+        $this->build(ShopDigitalCardPrice::class)->forCard($card)->create(['price' => 500]);
+
+        $this->assertSame(500, $this->digitalCards('Spain')->first()->price->price);
+    }
+
+    #[Test]
+    public function itFlagsWhenTheCardsPhysicalProductIsAlreadyInTheBasket(): void
+    {
+        $this->cardCovering($this->term('Spain'), $this->product(0), 'Spanish');
+
+        /** @var ShopOrder $basket */
+        $basket = $this->create(ShopOrder::class);
+
+        $this->assertFalse($this->digitalCards('Spain', $basket)->first()->physicalProductInBasket);
+
+        $this->build(ShopOrderItem::class)->inOrder($basket)->inProduct($this->product(0))->create();
+
+        $this->assertTrue($this->digitalCards('Spain', $basket->refresh())->first()->physicalProductInBasket);
     }
 }

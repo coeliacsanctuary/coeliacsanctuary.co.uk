@@ -10,6 +10,9 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\Recipes\Recipe;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Collections\CollectionGroupItem>
+ */
 class CollectionGroupItemFactory extends Factory
 {
     protected $model = CollectionGroupItem::class;
@@ -24,7 +27,7 @@ class CollectionGroupItemFactory extends Factory
 
     public function forBlog(Blog $blog): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'item_id' => $blog->id,
             'item_type' => Blog::class,
         ]);
@@ -32,7 +35,7 @@ class CollectionGroupItemFactory extends Factory
 
     public function forRecipe(Recipe $recipe): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'item_id' => $recipe->id,
             'item_type' => Recipe::class,
         ]);
@@ -40,7 +43,7 @@ class CollectionGroupItemFactory extends Factory
 
     public function forEatery(Eatery $eatery): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'item_id' => $eatery->id,
             'item_type' => Eatery::class,
         ]);
@@ -48,7 +51,7 @@ class CollectionGroupItemFactory extends Factory
 
     public function forNationwideBranch(NationwideBranch $branch): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'item_id' => $branch->id,
             'item_type' => NationwideBranch::class,
         ]);

@@ -17,6 +17,12 @@ return [
 
     'generate_og_images' => (bool) env('GENERATE_OG_IMAGES', true),
     'generate_eatery_ai_descriptions' => (bool) env('GENERATE_EATERY_AI_DESCRIPTIONS', true),
+    'google_wallet_enabled' => (bool) env('GOOGLE_WALLET_ENABLED', true),
+
+    'digital_cards_enabled' => (bool) env('DIGITAL_CARDS_ENABLED', false),
+
+    'enable_web_access' => (bool) env('ENABLE_WEB_ACCESS', false),
+    'enable_api_access' => (bool) env('ENABLE_API_ACCESS', false),
 
     'cacheable' => [
         'blogs' => [

@@ -41,6 +41,21 @@ jobs:
         if: steps.composer.outputs.cache-hit != 'true'
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '22.18.x'
+
+      - uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install JavaScript Dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
       - name: Laravel Pint
         run: composer run pint
         env:

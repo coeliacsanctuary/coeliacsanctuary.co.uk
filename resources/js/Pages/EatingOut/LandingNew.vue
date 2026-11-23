@@ -92,21 +92,78 @@ import SubHeading from '@/Components/SubHeading.vue';
       <SubHeading text-size="large">Browse places to eat</SubHeading>
     </div>
 
-    <div class="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:gap-5">
-      <Card
-        theme="primary"
-        faded
-      >
-        <div class="flex flex-1 space-x-4">
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
+      <Card class="relative overflow-hidden">
+        <div
+          class="absolute inset-0 overflow-hidden bg-secondary/20 xmd:bg-gradient-to-bl xmd:from-white xmd:to-secondary/5"
+        >
+          <img
+            src="/images/misc/eating-out-trip-planner.png"
+            alt=""
+            class="h-full w-full scale-110 -skew-y-3 object-cover object-center opacity-20 blur-[2px]"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="relative z-10 flex flex-1 space-x-4 xmd:p-2">
           <Icon
-            class="mx-auto size-8 text-secondary xs:size-12 xmd:size-14"
+            class="mx-auto size-10 shrink-0 text-secondary xs:size-14 xmd:size-16"
+            name="route"
+          />
+
+          <div class="flex flex-1 flex-col space-y-3 xs:space-y-5">
+            <h2 class="text-2xl font-semibold xmd:text-3xl">
+              Gluten Free Trip Planner
+            </h2>
+
+            <h3
+              class="prose text-base sm:prose-lg sm:text-lg xl:prose-xl xl:text-xl"
+            >
+              Planning a journey? Tell me where you're starting from and where
+              you're going, and I'll find gluten free places to eat along the
+              way, with suggested stops at the intervals you choose.
+            </h3>
+
+            <div class="mt-auto">
+              <CoeliacButton
+                theme="secondary"
+                href="/wheretoeat/trip-planner"
+                size="xl"
+                label="Plan a Trip"
+                bold
+                classes="justify-center"
+              />
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card class="relative overflow-hidden">
+        <div
+          class="absolute inset-0 overflow-hidden bg-secondary/20 xmd:bg-gradient-to-bl xmd:from-white xmd:to-secondary/5"
+        >
+          <img
+            src="/images/misc/eating-out-list.png"
+            alt=""
+            class="h-full w-full scale-110 -skew-y-3 object-cover object-top opacity-20 blur-[2px]"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="relative z-10 flex flex-1 space-x-4 xmd:p-2">
+          <Icon
+            class="mx-auto size-10 shrink-0 text-secondary xs:size-14 xmd:size-16"
             name="eatery"
           />
 
           <div class="flex flex-1 flex-col space-y-3 xs:space-y-5">
-            <h2 class="text-xl font-semibold xs:text-2xl">Eating Out Guide</h2>
+            <h2 class="text-2xl font-semibold xmd:text-3xl">
+              Eating Out Guide
+            </h2>
 
-            <h3 class="prose text-base lg:prose-lg lg:text-lg">
+            <h3
+              class="prose text-base sm:prose-lg sm:text-lg xl:prose-xl xl:text-xl"
+            >
               Prefer to browse instead of search? Our Eating Out Guide lets you
               explore gluten free venues across the UK by county and town,
               making it easy to navigate and discover places to eat in a more
@@ -115,9 +172,9 @@ import SubHeading from '@/Components/SubHeading.vue';
 
             <div class="mt-auto">
               <CoeliacButton
-                theme="primary"
+                theme="secondary"
                 href="/wheretoeat"
-                size="lg"
+                size="xl"
                 label="View Guide"
                 bold
                 classes="justify-center"

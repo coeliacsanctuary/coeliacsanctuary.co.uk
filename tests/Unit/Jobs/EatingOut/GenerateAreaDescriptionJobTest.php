@@ -55,10 +55,10 @@ class GenerateAreaDescriptionJobTest extends TestCase
     {
         EateryAreaDescriptionAgent::fake();
 
-        (new GenerateAreaDescriptionJob($this->area))->handle();
+        new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Area: Camden Lock')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Area: Camden Lock')
         );
     }
 
@@ -67,10 +67,10 @@ class GenerateAreaDescriptionJobTest extends TestCase
     {
         EateryAreaDescriptionAgent::fake();
 
-        (new GenerateAreaDescriptionJob($this->area))->handle();
+        new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Borough: Camden')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Borough: Camden')
         );
     }
 
@@ -79,10 +79,10 @@ class GenerateAreaDescriptionJobTest extends TestCase
     {
         EateryAreaDescriptionAgent::fake();
 
-        (new GenerateAreaDescriptionJob($this->area))->handle();
+        new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -98,10 +98,10 @@ class GenerateAreaDescriptionJobTest extends TestCase
             'live' => false,
         ]);
 
-        (new GenerateAreaDescriptionJob($this->area))->handle();
+        new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 6')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 6')
         );
     }
 
@@ -119,10 +119,10 @@ class GenerateAreaDescriptionJobTest extends TestCase
             ->count(2)
             ->create();
 
-        (new GenerateAreaDescriptionJob($this->area))->handle();
+        new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Eateries: 8')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Eateries: 8')
         );
     }
 
@@ -138,10 +138,10 @@ class GenerateAreaDescriptionJobTest extends TestCase
                 ->create(['rating' => 4]);
         });
 
-        (new GenerateAreaDescriptionJob($this->area))->handle();
+        new GenerateAreaDescriptionJob($this->area)->handle();
 
         EateryAreaDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Average Eatery Rating: 4.0')
         );
     }
 
@@ -150,7 +150,7 @@ class GenerateAreaDescriptionJobTest extends TestCase
     {
         EateryAreaDescriptionAgent::fake(['AI generated description']);
 
-        (new GenerateAreaDescriptionJob($this->area))->handle();
+        new GenerateAreaDescriptionJob($this->area)->handle();
 
         $this->assertEquals('AI generated description', $this->area->refresh()->description);
     }
@@ -160,7 +160,7 @@ class GenerateAreaDescriptionJobTest extends TestCase
     {
         $this->assertEquals(
             $this->area->id,
-            (new GenerateAreaDescriptionJob($this->area))->uniqueId()
+            new GenerateAreaDescriptionJob($this->area)->uniqueId()
         );
     }
 

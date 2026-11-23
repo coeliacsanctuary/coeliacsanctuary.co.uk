@@ -18,7 +18,7 @@ class EateryReviewApprovedNotificationTest extends TestCase
 {
     protected EateryReview $eateryReview;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -32,7 +32,7 @@ class EateryReviewApprovedNotificationTest extends TestCase
     #[DataProvider('mailDataProvider')]
     public function itHasTheEmailData(callable $closure): void
     {
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $this->eateryReview->email)
             ->notify(new EateryReviewApprovedNotification($this->eateryReview));
 

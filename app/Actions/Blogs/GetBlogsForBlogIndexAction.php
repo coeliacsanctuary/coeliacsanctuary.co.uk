@@ -14,7 +14,6 @@ class GetBlogsForBlogIndexAction
 {
     /**
      * @template T of ResourceCollection
-     *
      * @param  class-string<T>  $resource
      * @return T
      */
@@ -22,14 +21,14 @@ class GetBlogsForBlogIndexAction
     {
         return new $resource(
             Blog::query()
-                ->when($tag && $tag->exists, fn (Builder $builder) => $builder->whereHas(
+                ->when($tag instanceof BlogTag && $tag->exists, fn (Builder $builder) => $builder->whereHas(
                     'tags',
                     fn (Builder $builder) => $builder->where('slug', $tag->slug), /** @phpstan-ignore-line */
                 ))
                 ->when($search, fn (Builder $builder) => $builder->where(
                     fn (Builder $builder) => $builder
                         ->where('id', $search)
-                        ->orWhere('title', 'LIKE', "%{$search}%")
+                        ->orWhereLike('title', "%{$search}%")
                 ))
                 ->with(['media', 'tags'])
                 ->withCount(['comments'])

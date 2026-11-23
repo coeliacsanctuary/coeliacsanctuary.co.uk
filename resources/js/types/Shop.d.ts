@@ -1,5 +1,6 @@
 import { StarRating } from '@/types/EateryTypes';
 import { ArticleFaq } from '@/types/Types';
+import { PaginatedResponse } from '@/types/GenericTypes';
 
 export type ShopCategoryIndex = {
   title: string;
@@ -66,14 +67,7 @@ export type ShopProductDetail = ShopBaseProduct & {
     link: string;
   };
   rating?: ShopProductRating;
-  add_ons?: ShopProductAddOn;
   faqs: ArticleFaq[] | null;
-};
-
-export type ShopProductAddOn = {
-  name: string;
-  description: string;
-  price: ShopProductPrice;
 };
 
 export type ShopProductPrice = {
@@ -87,6 +81,14 @@ export type ShopTravelCardProductDetail = ShopProductDetail & {
   countries: {
     language: string;
     countries: { country: string; code?: string }[];
+  }[];
+  digital_card_link: string;
+  digital_cards: {
+    id: number;
+    name: string;
+    slug: string;
+    price: string;
+    raw_price: number;
   }[];
 };
 
@@ -118,22 +120,44 @@ export type ShopProductReview = {
   date_diff: string;
 };
 
+export type BasketProp = {
+  items: ShopBasketItem[];
+  digitalItems: ShopBasketDigitalItem[];
+  subtotal: string;
+};
+
 export type ShopBasketItem = {
   id: number;
   title: string;
   description?: string;
-  add_on?: {
-    title: string;
-    description: string;
-    price: string;
-    in_basket: boolean;
-  };
   link: string;
   variant: string;
   item_price: string;
   line_price: string;
   quantity: number;
   image: string;
+  digitalBundles?: ShopBasketDigitalItem[];
+  digitalCards?: ShopBasketItemDigitalCardUpsell[];
+};
+
+export type ShopBasketDigitalItem = {
+  id: number;
+  digital_item_id: number;
+  title: string;
+  item_price: string;
+  hasBundleInBasket: boolean;
+  country: {
+    label: string;
+    code?: string;
+  };
+};
+
+export type ShopBasketItemDigitalCardUpsell = Omit<
+  ShopBasketDigitalItem,
+  'hasBundleInBasket'
+> & {
+  isInBasket: boolean;
+  slug: string;
 };
 
 export type CheckoutContactStep = {
@@ -176,9 +200,13 @@ export type OrderCompleteProps = {
   fees: { fee: string; description?: string }[];
   total_fees: string;
   discount: null | { amount: string; name: string };
-  products: ShopBasketItem[];
+  products: {
+    items: ShopBasketItem[];
+    digital: ShopBasketDigitalItem[];
+  };
   payment: CardPayment | PaypalPayment;
-  has_add_ons: boolean;
+  has_digital_items: boolean;
+  is_digital_only: boolean;
   event: {
     [T: string]: string | number | [];
   };
@@ -205,12 +233,21 @@ export type TravelCardDestination = {
   type: string;
   flag: string | null;
   products: ShopProductIndex[];
+  digital_cards: ShopDigitalCard[];
 };
 
 export type TravelCardSearchResult = {
   term: string;
   destinations: TravelCardDestination[];
   covers_all: ShopProductIndex[];
+};
+
+export type TravelCardDigitalType = {
+  title: string;
+  link: string;
+  image: string;
+  products_count: number;
+  price: string | null;
 };
 
 export type TravelCardReviewSummary = {
@@ -229,4 +266,72 @@ export type TravelCardLookupResult = {
 export type ShopHolidayProps = {
   id: number;
   notice: string;
+};
+
+type ShopBaseDigitalCard = {
+  title: string;
+  slug: string;
+  language: string;
+  countries?: {
+    country: string;
+    code?: string;
+  }[];
+  flag?: string;
+};
+
+export type ShopDigitalCard = ShopBaseDigitalCard & {
+  id: number;
+  native_language: string;
+  product?: {
+    id: number;
+    variantId: number;
+    title: string;
+    link: string;
+    price: string;
+    isInBasket: boolean;
+    quantity: number;
+  };
+  price: {
+    default: string;
+    extra: string;
+    bundle: string;
+    saving: string;
+  };
+  rating?: {
+    average: StarRating;
+    count: number;
+  };
+};
+
+type PurchasedCardIndex = ShopBaseDigitalCard & {
+  link: string;
+  apple_wallet_link: string;
+  google_wallet_link: string;
+};
+
+export type PurchasedCard = {
+  id: ShopDigitalCard['id'];
+  title: ShopBaseDigitalCard['title'];
+  language: ShopBaseDigitalCard['language'];
+  native_language: ShopDigitalCard['native_language'];
+  content: {
+    title: string;
+    intro: string;
+    cant_eat: PurchasedCardEatSection;
+    can_eat: PurchasedCardEatSection;
+    outro: string;
+    thank_you: string;
+  };
+};
+
+export type PurchasedCardEatSection = {
+  label: string;
+  items: string;
+  colour: { hex: string };
+  icon: string;
+};
+
+export type DigitalCardReviewResponse = {
+  rating: ShopProductRating;
+  reviews: PaginatedResponse<ShopProductReview>;
 };

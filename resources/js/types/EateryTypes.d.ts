@@ -134,6 +134,7 @@ export type TownPage = Town & {
   latlng: string;
   link: string;
   image?: string;
+  tripPlannerUrl?: string | null;
 };
 
 export type LondonBoroughPage = TownPage & {
@@ -157,9 +158,7 @@ export type EateryFilters = {
 };
 
 export type EateryCollectionFilterKeys =
-  | EateryFilterKeys
-  | 'towns'
-  | 'counties';
+  EateryFilterKeys | 'towns' | 'counties';
 
 export type EateryCollectionFilters = {
   [T in EateryCollectionFilterKeys]: EateryFilterItem[];
@@ -407,8 +406,7 @@ type BaseEditableEateryFieldComponent = BaseEditableEateryField & {
 };
 
 export type EditableEateryField =
-  | BaseEditableEateryFieldForm
-  | BaseEditableEateryFieldComponent;
+  BaseEditableEateryFieldForm | BaseEditableEateryFieldComponent;
 
 type EditableEateryFieldComponent = {
   component: Component;

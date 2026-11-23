@@ -14,8 +14,6 @@ use Laravel\Nova\Dashboard;
 class Shop extends Dashboard
 {
     /**
-     * Get the cards for the dashboard.
-     *
      * @return array
      */
     public function cards()
@@ -29,8 +27,6 @@ class Shop extends Dashboard
     }
 
     /**
-     * Get the URI key for the dashboard.
-     *
      * @return string
      */
     public function uriKey()

@@ -3,7 +3,11 @@ import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import EventBus from '@/eventBus';
 import { computed, onMounted, ref, watch } from 'vue';
 import Sidebar from '@/Components/Overlays/Sidebar.vue';
-import { ShopBasketItem } from '@/types/Shop';
+import {
+  BasketProp,
+  ShopBasketDigitalItem,
+  ShopBasketItem,
+} from '@/types/Shop';
 import { Page } from '@inertiajs/core';
 import { usePage } from '@inertiajs/vue3';
 import BasketSidebar from '@/Components/PageSpecific/Shop/BasketSidebar.vue';
@@ -26,14 +30,20 @@ const openSidebar = () => {
 EventBus.$on('product-added-to-basket', openSidebar);
 EventBus.$on('open-basket', openSidebar);
 
-type PageProps = { basket?: { items: ShopBasketItem[]; subtotal: string } };
+type PageProps = { basket?: BasketProp };
 const page: Page<PageProps> = usePage<PageProps>();
 
 const items = computed((): ShopBasketItem[] => page.props.basket?.items || []);
+const digitalItems = computed(
+  (): ShopBasketDigitalItem[] => page.props.basket?.digitalItems || [],
+);
 const subtotal = computed(() => page.props.basket?.subtotal || '');
 
 const quantity = computed(() => {
-  return items.value.reduce((total, item) => total + item.quantity, 0);
+  return (
+    items.value.reduce((total, item) => total + item.quantity, 0) +
+    digitalItems.value.length
+  );
 });
 
 onMounted(() => {
@@ -140,8 +150,9 @@ watch(viewSideBar, () => {
   >
     <div class="flex flex-1 flex-col bg-white">
       <BasketSidebar
-        v-if="items.length > 0"
+        v-if="items.length > 0 || digitalItems.length > 0"
         :items="items"
+        :digital-items="digitalItems"
         :subtotal="subtotal"
         @close="viewSideBar = false"
       />

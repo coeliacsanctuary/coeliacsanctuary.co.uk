@@ -60,7 +60,7 @@ class ListPopularEateriesInAreaTest extends TestCase
     /** @return array<int, array<string, mixed>> */
     protected function handleTool(string $area = 'Primrose Hill'): array
     {
-        return json_decode((string) (new ListPopularEateriesInArea())->handle(new Request(['area' => $area])), true);
+        return json_decode((string) new ListPopularEateriesInArea()->handle(new Request(['area' => $area])), true);
     }
 
     #[Test]
@@ -167,7 +167,7 @@ class ListPopularEateriesInAreaTest extends TestCase
     #[Test]
     public function itHasTheCorrectSchema(): void
     {
-        $schema = (new ListPopularEateriesInArea())->schema(new JsonSchemaTypeFactory());
+        $schema = new ListPopularEateriesInArea()->schema(new JsonSchemaTypeFactory());
 
         $this->assertArrayHasKey('area', $schema);
     }

@@ -10,9 +10,6 @@ use Laravel\Nova\Nova;
 
 class AssetServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Nova::serving(function (ServingNova $event): void {
@@ -20,9 +17,6 @@ class AssetServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //

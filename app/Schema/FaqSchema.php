@@ -15,8 +15,8 @@ class FaqSchema
     /** @param Collection<int, Faq> $faqs */
     public static function make(Collection $faqs): FAQPage
     {
-        return (new FAQPage())->mainEntity($faqs->map(fn (Faq $faq): Question => (new Question())
+        return new FAQPage()->mainEntity($faqs->map(fn (Faq $faq): Question => new Question()
             ->name($faq->question)
-            ->acceptedAnswer((new Answer())->text($faq->answer)))->all());
+            ->acceptedAnswer(new Answer()->text($faq->answer)))->all());
     }
 }

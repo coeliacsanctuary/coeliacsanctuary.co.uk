@@ -15,8 +15,6 @@ class EateryOpeningTimes extends Field
     use SupportsDependentFields;
 
     /**
-     * The field's component.
-     *
      * @var string
      */
     public $component = 'eatery-opening-times';

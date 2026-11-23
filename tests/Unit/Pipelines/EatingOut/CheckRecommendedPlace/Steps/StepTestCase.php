@@ -27,7 +27,7 @@ abstract class StepTestCase extends TestCase
             ->getMock()
             ->shouldNotReceive('check');
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
     }
 
     abstract protected function getStep(): AbstractStepAction;

@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('wheretoeat_venue_types', function (Blueprint $table): void {

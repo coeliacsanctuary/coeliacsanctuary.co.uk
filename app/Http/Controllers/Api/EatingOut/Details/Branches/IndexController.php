@@ -13,9 +13,7 @@ class IndexController
 {
     public function __invoke(Request $request, Eatery $eatery): array
     {
-        if ($eatery->county_id !== 1) {
-            abort(404);
-        }
+        abort_if($eatery->county_id !== 1, 404);
 
         return [
             'data' => $eatery->nationwideBranches()
@@ -27,7 +25,7 @@ class IndexController
                 )
                 ->where('live', true)
                 ->get()
-                ->map(fn (NationwideBranch $branch) => [
+                ->map(fn (NationwideBranch $branch): array => [
                     'name' => $branch->short_name,
                 ]),
         ];

@@ -34,7 +34,7 @@ class TravelCardSearchTerms extends Resource
 
     public static $clickAction = 'view';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -55,13 +55,13 @@ class TravelCardSearchTerms extends Resource
             DateTime::make('Most Recent Click', 'updated_at')->sortable()->exceptOnForms(),
 
             BelongsToMany::make('Products', resource: Products::class)
-                ->display(function (Products $product) {
+                ->display(function (Products $product): string {
                     /** @var ShopCategory $category */
                     $category = $product->categories()->first();
 
                     return "{$category->title} - {$product->title}";
                 })
-                ->fields(fn () => [
+                ->fields(fn (): array => [
                     Boolean::make('Show on Product Page Country List', 'card_show_on_product_page'),
 
                     Select::make('Language', 'card_language')
@@ -83,8 +83,8 @@ class TravelCardSearchTerms extends Resource
                                         Str::of($product->title)
                                             ->before(' Coeliac')
                                             ->explode(' and ')
-                                            ->map(fn (string $language) => mb_trim($language))
-                                            ->mapWithKeys(fn (string $language) => [Str::headline($language) => Str::headline($language)])
+                                            ->map(fn (string $language): string => mb_trim($language))
+                                            ->mapWithKeys(fn (string $language): array => [Str::headline($language) => Str::headline($language)])
                                             ->put('both', 'Both Languages')
                                             ->toArray()
                                     )

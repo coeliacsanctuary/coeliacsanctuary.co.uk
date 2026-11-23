@@ -25,11 +25,11 @@ class ShopProductIndexResource extends JsonResource
             'link' => $this->link,
             'image' => $this->main_image_as_webp ?? $this->main_image,
             'price' => Helpers::formatMoney(Money::GBP($this->currentPrice)),
-            'rating' => $this->whenLoaded('reviews', fn () => [
+            'rating' => $this->whenLoaded('reviews', fn (): array => [
                 'average' => $this->averageRating,
                 'count' => $this->reviews->count(),
             ]),
-            'in_stock' => $this->variants->contains(fn (ShopProductVariant $variant) => $variant->quantity > 0),
+            'in_stock' => $this->variants->contains(fn (ShopProductVariant $variant): bool => $variant->quantity > 0),
             'number_of_variants' => $this->variants->count(),
             'primary_variant' => $this->variants->first()?->id,
             'primary_variant_quantity' => $this->variants->first()?->quantity,
@@ -62,8 +62,8 @@ class ShopProductIndexResource extends JsonResource
             ->filter(fn (TravelCardSearchTerm $term) => $term->pivot->card_show_on_product_page) /** @phpstan-ignore-line */
             ->sortBy([
                 /** @phpstan-ignore-next-line */
-                fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b) => $b->pivot->card_score <=> $a->pivot->card_score,
-                fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b) => Str::lower($a->term) <=> Str::lower($b->term),
+                fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b): int => $b->pivot->card_score <=> $a->pivot->card_score,
+                fn (TravelCardSearchTerm $a, TravelCardSearchTerm $b): int => Str::lower($a->term) <=> Str::lower($b->term),
             ])
             ->map(fn (TravelCardSearchTerm $term) => Str::title($term->term))
             ->unique()

@@ -28,17 +28,17 @@ class GetSealiacEateryOverviewAction
             ->count();
 
         if ($reviewCheck === 0) {
-            if ($branch && $eatery->sealiacOverview) {
+            if ($branch instanceof NationwideBranch && $eatery->sealiacOverview) {
                 return $eatery->sealiacOverview;
             }
 
             throw new Exception('No reviews found to generate overview');
         }
 
-        $response = (new SealiacEateryOverviewAgent($eatery, $branch))->prompt('Generate your overview.');
+        $response = new SealiacEateryOverviewAgent($eatery, $branch)->prompt('Generate your overview.');
 
         return SealiacOverview::query()->create([
-            'model_type' => $branch ? NationwideBranch::class : Eatery::class,
+            'model_type' => $branch instanceof NationwideBranch ? NationwideBranch::class : Eatery::class,
             'model_id' => $branch->id ?? $eatery->id,
             'overview' => $response->text,
         ]);

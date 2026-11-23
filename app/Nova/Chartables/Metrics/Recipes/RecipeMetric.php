@@ -17,12 +17,12 @@ abstract class RecipeMetric extends Chartable
 
     abstract protected function column(): string;
 
-    public function type(): string
+    protected function type(): string
     {
         return static::LINE_CHART;
     }
 
-    public function getData(Carbon $startDate, Carbon $endDate): int
+    protected function getData(Carbon $startDate, Carbon $endDate): int
     {
         return RecipeMetricModel::query()
             ->where('recipe_id', $this->recipeId)

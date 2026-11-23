@@ -22,7 +22,6 @@ class LondonPageResource extends JsonResource
     {
         $this->load([
             'activeTowns', 'activeTowns.county', 'activeTowns.liveEateries', 'activeTowns.liveBranches',
-            /** @phpstan-ignore-next-line  */
             'activeTowns.areas' => fn (Relation $builder) => $builder->chaperone()->withCount('eateries'),
         ]);
         $this->loadCount(['eateries', 'reviews']);

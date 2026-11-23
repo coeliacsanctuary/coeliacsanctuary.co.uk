@@ -35,11 +35,9 @@ class ShowController
             return redirect(route('shop.product', $product), LaravelResponse::HTTP_MOVED_PERMANENTLY);
         }
 
-        $product->load(['categories', 'prices', 'variants', 'media', 'reviews', 'addOns', 'addOns.prices', 'faqs']);
+        $product->load(['categories', 'prices', 'variants', 'media', 'reviews', 'faqs']);
 
-        if ($product->currentPrices()->isEmpty()) {
-            abort(LaravelResponse::HTTP_NOT_FOUND);
-        }
+        abort_if($product->currentPrices()->isEmpty(), LaravelResponse::HTTP_NOT_FOUND);
 
         /** @var class-string<JsonResource> $resource */
         $resource = ShopProductResource::class;
@@ -47,7 +45,10 @@ class ShowController
         if (Helpers::isTravelCard($product->categories->first())) {
             $resource = ShopTravelCardProductResource::class;
 
-            $product->load(['travelCardSearchTerms' => fn (Relation $builder) => $builder->where('type', 'country')]); /** @phpstan-ignore-line  */
+            $product->load([
+                'digitalCards', 'digitalCards.price',
+                'travelCardSearchTerms' => fn (Relation $builder) => $builder->where('type', 'country'),
+            ]);
         }
 
         $reviews = $product->reviews()

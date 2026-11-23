@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 </script>
 
 <template>
-  <Link
+  <a
     class="group absolute bottom-0 left-2 z-10 flex items-center"
     href="/wheretoeat/recommend-a-place"
   >
@@ -21,5 +20,5 @@ import { PlusIcon } from '@heroicons/vue/24/solid';
     >
       Recommend a Place
     </div>
-  </Link>
+  </a>
 </template>

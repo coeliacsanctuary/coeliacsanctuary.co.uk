@@ -40,7 +40,7 @@ class StoreController
             $request->string('branch_name')->toString(),
         );
 
-        if ($branch) {
+        if ($branch instanceof NationwideBranch) {
             $requestData['nationwide_branch_id'] = $branch->id;
         }
 

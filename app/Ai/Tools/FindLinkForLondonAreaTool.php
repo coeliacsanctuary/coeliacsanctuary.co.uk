@@ -12,17 +12,11 @@ use Stringable;
 
 class FindLinkForLondonAreaTool implements Tool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Attempt to find a link to the London area page in the eating out guide of the website, using a whereLike on the database';
     }
 
-    /**
-     * Execute the tool.
-     */
     public function handle(Request $request): Stringable|string
     {
         $area = EateryArea::query()->whereLike('area', "%{$request->string('area')->toString()}%")->first();
@@ -34,9 +28,6 @@ class FindLinkForLondonAreaTool implements Tool
         return '- area not found -';
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

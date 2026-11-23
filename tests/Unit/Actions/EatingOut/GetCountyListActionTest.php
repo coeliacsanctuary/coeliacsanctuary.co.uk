@@ -36,7 +36,7 @@ class GetCountyListActionTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
 
         $country2 = $this->build(EateryCountry::class)
-            ->state(['id' => 2, 'country' => $this->faker->unique->country])
+            ->state(['id' => 2, 'country' => $this->faker->unique()->country()])
             ->create();
 
         $this->build(EateryCounty::class)
@@ -54,7 +54,7 @@ class GetCountyListActionTest extends TestCase
             });
 
         $country3 = $this->build(EateryCountry::class)
-            ->state(['id' => 3, 'country' => $this->faker->unique->country])
+            ->state(['id' => 3, 'country' => $this->faker->unique()->country()])
             ->create();
 
         $county3 = $this->build(EateryCounty::class)
@@ -155,7 +155,7 @@ class GetCountyListActionTest extends TestCase
         $collection = app(GetCountyListAction::class)->handle();
 
         $collection->each(function (array $item): void {
-            $listedCounties = collect($item['list'])->map(fn ($county) => (array) $county)->pluck('name');
+            $listedCounties = collect($item['list'])->map(fn ($county): array => (array) $county)->pluck('name');
 
             EateryCountry::query()
                 ->firstWhere('country', $item['name'])
@@ -236,7 +236,7 @@ class GetCountyListActionTest extends TestCase
     #[Test]
     public function topCountiesIsLimitedToThree(): void
     {
-        $country = EateryCountry::find(2);
+        $country = EateryCountry::query()->find(2);
 
         $country->counties->each(function (EateryCounty $county): void {
             $this->build(EateryReview::class)
@@ -257,7 +257,7 @@ class GetCountyListActionTest extends TestCase
     #[Test]
     public function topCountiesWithNoReviewsAreExcluded(): void
     {
-        $country = EateryCountry::find(2);
+        $country = EateryCountry::query()->find(2);
 
         $country->counties->take(2)->each(function (EateryCounty $county): void {
             $this->build(EateryReview::class)
@@ -277,7 +277,7 @@ class GetCountyListActionTest extends TestCase
     #[Test]
     public function topCountiesAreRankedByBayesianScore(): void
     {
-        $country = EateryCountry::find(2);
+        $country = EateryCountry::query()->find(2);
         $counties = $country->counties->take(3)->values();
 
         // 1 review @ 5 stars → Bayesian ≈ 4.17
@@ -309,15 +309,15 @@ class GetCountyListActionTest extends TestCase
         $countryResult = $collection->firstWhere('name', $country->country);
         $topCounties = collect($countryResult['top_counties']);
 
-        $this->assertEquals($counties[1]->county, $topCounties[0]['name']); // 4.67
-        $this->assertEquals($counties[0]->county, $topCounties[1]['name']); // 4.17
-        $this->assertEquals($counties[2]->county, $topCounties[2]['name']); // 4.0
+        $this->assertEquals($counties[1]->county, $topCounties[0]['name']);
+        $this->assertEquals($counties[0]->county, $topCounties[1]['name']);
+        $this->assertEquals($counties[2]->county, $topCounties[2]['name']);
     }
 
     #[Test]
     public function topCountiesUseTheSameFormatAsList(): void
     {
-        $country = EateryCountry::find(2);
+        $country = EateryCountry::query()->find(2);
 
         $this->build(EateryReview::class)
             ->approved()

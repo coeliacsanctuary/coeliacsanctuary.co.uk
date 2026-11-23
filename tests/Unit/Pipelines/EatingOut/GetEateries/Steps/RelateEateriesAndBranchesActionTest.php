@@ -25,8 +25,8 @@ class RelateEateriesAndBranchesActionTest extends GetEateriesTestCase
         $eateries = collect([new PendingEatery(id: $eatery->id, branchId: $branch->id, ordering: 'abc')]);
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $this->town,
             filters: [],
+            town: $this->town,
             eateries: $eateries,
             paginator: $eateries->paginate(5),
             hydrated: $this->callHydrateEateriesAction($eateries)->hydrated,

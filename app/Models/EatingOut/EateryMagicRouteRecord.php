@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Contracts\RegexRouteFallbackResolver;
 use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Services\EatingOut\Collection\Configuration;
@@ -20,16 +21,9 @@ use RuntimeException;
  * @property Configuration $builder_config
  * @property EateryCounty|EateryTown|EateryArea $location
  */
+#[Table(name: 'wheretoeat_magic_route_records')]
 class EateryMagicRouteRecord extends Model
 {
-    protected $table = 'wheretoeat_magic_route_records';
-
-    protected $casts = [
-        'body' => 'array',
-        'resolver_type' => EateryMagicRouteType::class,
-        'builder_config' => Configuration::class,
-    ];
-
     /** @return MorphTo<EateryCounty|EateryTown|EateryArea, $this> */
     public function location(): MorphTo
     {
@@ -42,7 +36,7 @@ class EateryMagicRouteRecord extends Model
     /** @return Attribute<non-falsy-string, never> */
     public function title(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): string {
             $location = match($this->location::class) {
                 EateryCounty::class => $this->location->county,
                 EateryTown::class => $this->location->town,
@@ -67,5 +61,14 @@ class EateryMagicRouteRecord extends Model
         }
 
         return null;
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'body' => 'array',
+            'resolver_type' => EateryMagicRouteType::class,
+            'builder_config' => Configuration::class,
+        ];
     }
 }

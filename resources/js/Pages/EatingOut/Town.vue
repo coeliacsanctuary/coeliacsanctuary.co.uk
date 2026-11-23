@@ -22,6 +22,7 @@ import useJourneyTracking from '@/composables/useJourneyTracking';
 import SubHeading from '@/Components/SubHeading.vue';
 import SidebarLayout from '@/Components/SidebarLayout.vue';
 import NearbyTowns from '@/Components/PageSpecific/EatingOut/Town/NearbyTowns.vue';
+import TripPlannerCta from '@/Components/PageSpecific/EatingOut/Shared/TripPlannerCta.vue';
 
 const props = defineProps<{
   live_eateries_count: number;
@@ -127,6 +128,12 @@ useJourneyTracking().logWhenVisible(
         class="order-1 xmd:order-0"
         heading="Other towns nearby"
         :towns="nearby"
+      />
+
+      <TripPlannerCta
+        v-if="town.tripPlannerUrl"
+        :place="town.name"
+        :href="town.tripPlannerUrl"
       />
 
       <TownFilterSidebar

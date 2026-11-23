@@ -7,10 +7,11 @@ import { router, usePage } from '@inertiajs/vue3';
 import { ShopBasketItem, ShopHolidayProps } from '@/types/Shop';
 
 type AddBasketPayload = {
-  product_id: number;
-  variant_id: number;
-  quantity: number;
-  include_add_on: boolean;
+  product_id?: number;
+  variant_id?: number;
+  quantity?: number;
+  digital_card_id?: number;
+  digital_card_ids?: number[];
 };
 
 export type ShopHolidayConfirmation = {
@@ -33,8 +34,9 @@ export default () => {
     {
       product_id: undefined,
       variant_id: undefined,
-      quantity: 1,
-      include_add_on: false,
+      quantity: undefined,
+      digital_card_id: undefined,
+      digital_card_ids: undefined,
     },
   );
 
@@ -42,12 +44,18 @@ export default () => {
     productId: number,
     variantId: number,
     quantity: number = 1,
-    includeAddOn: boolean = false,
   ) => {
     addBasketForm.product_id = productId;
     addBasketForm.variant_id = variantId;
     addBasketForm.quantity = quantity;
-    addBasketForm.include_add_on = includeAddOn;
+  };
+
+  const prepareAddBasketDigitalCardForm = (digitalCardId: number) => {
+    addBasketForm.digital_card_id = digitalCardId;
+  };
+
+  const withMultipleDigitalCards = (digitalCardIds: number[]) => {
+    addBasketForm.digital_card_ids = digitalCardIds;
   };
 
   const holidayStorageKey = (holiday: ShopHolidayProps): string =>
@@ -80,11 +88,15 @@ export default () => {
 
         useGoogleEvents().googleEvent('event', 'add_to_cart', {
           items: [
-            {
-              productId: addBasketForm.product_id,
-              variantId: addBasketForm.variant_id,
-              quantity: addBasketForm.quantity,
-            },
+            addBasketForm.product_id
+              ? {
+                  productId: addBasketForm.product_id,
+                  variantId: addBasketForm.variant_id,
+                  quantity: addBasketForm.quantity,
+                }
+              : {
+                  digitalCardId: addBasketForm.digital_card_id,
+                },
           ],
         });
 
@@ -114,5 +126,11 @@ export default () => {
     sendAddBasketForm(params, callback);
   };
 
-  return { addBasketForm, prepareAddBasketForm, submitAddBasketForm };
+  return {
+    addBasketForm,
+    prepareAddBasketForm,
+    prepareAddBasketDigitalCardForm,
+    withMultipleDigitalCards,
+    submitAddBasketForm,
+  };
 };

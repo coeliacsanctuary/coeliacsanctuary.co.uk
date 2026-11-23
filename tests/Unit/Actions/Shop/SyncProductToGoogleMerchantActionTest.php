@@ -108,7 +108,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itInsertsWhenProductIsInStockAndHasNoExistingId(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -125,7 +125,7 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
         $existingId = 'accounts/12345/productInputs/ZW4~GB~' . $this->product->id;
         $this->product->update(['google_merchant_product_id' => $existingId]);
 
-        $returned = (new ProductInput())->setName($existingId);
+        $returned = new ProductInput()->setName($existingId);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
@@ -142,13 +142,13 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
         $existingId = 'accounts/12345/productInputs/ZW4~GB~' . $this->product->id;
         $this->product->update(['google_merchant_product_id' => $existingId]);
 
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~new');
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~new');
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('update')->with($existingId, Mockery::type(ProductInput::class))->once()->andThrow($this->notFoundException())
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getName() === '')
+            ->withArgs(fn (ProductInput $input): bool => $input->getName() === '')
             ->once()
             ->andReturn($returned);
 
@@ -218,12 +218,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itUsesTheProductTitleAsTheMerchantTitle(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getTitle() === $this->product->title)
+            ->withArgs(fn (ProductInput $input): bool => $input->getProductAttributes()->getTitle() === $this->product->title)
             ->once()
             ->andReturn($returned);
 
@@ -234,12 +234,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     public function itSetsTheShippingWeightFromTheFirstVariantInKg(): void
     {
         $variant = ShopProductVariant::query()->first();
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getShippingWeight()->getValue() === $variant->weight / 1000
+            ->withArgs(fn (ProductInput $input): bool => $input->getProductAttributes()->getShippingWeight()->getValue() === $variant->weight / 1000
                     && $input->getProductAttributes()->getShippingWeight()->getUnit() === 'kg')
             ->once()
             ->andReturn($returned);
@@ -250,12 +250,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsTheDescriptionFromTheProductDescription(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getDescription() === $this->product->description)
+            ->withArgs(fn (ProductInput $input): bool => $input->getProductAttributes()->getDescription() === $this->product->description)
             ->once()
             ->andReturn($returned);
 
@@ -265,12 +265,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsTheBrandToCoeliacSanctuary(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getBrand() === 'Coeliac Sanctuary')
+            ->withArgs(fn (ProductInput $input): bool => $input->getProductAttributes()->getBrand() === 'Coeliac Sanctuary')
             ->once()
             ->andReturn($returned);
 
@@ -280,12 +280,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsTheMpnFromTheProductSlug(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getMpn() === $this->product->slug)
+            ->withArgs(fn (ProductInput $input): bool => $input->getProductAttributes()->getMpn() === $this->product->slug)
             ->once()
             ->andReturn($returned);
 
@@ -295,12 +295,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsTheConditionToNew(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getCondition() === Condition::PBNEW)
+            ->withArgs(fn (ProductInput $input): bool => $input->getProductAttributes()->getCondition() === Condition::PBNEW)
             ->once()
             ->andReturn($returned);
 
@@ -310,12 +310,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
     #[Test]
     public function itSetsThePriceWhenNotOnSale(): void
     {
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getPrice()->getAmountMicros() === $this->product->currentPrice * 10000
+            ->withArgs(fn (ProductInput $input): bool => $input->getProductAttributes()->getPrice()->getAmountMicros() === $this->product->currentPrice * 10000
                     && $input->getProductAttributes()->getSalePrice() === null)
             ->once()
             ->andReturn($returned);
@@ -335,12 +335,12 @@ class SyncProductToGoogleMerchantActionTest extends TestCase
 
         $this->product->unsetRelation('prices');
 
-        $returned = (new ProductInput())->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
+        $returned = new ProductInput()->setName('accounts/12345/productInputs/ZW4~GB~' . $this->product->id);
 
         $this->mock(GoogleMerchantProductManager::class)
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('insert')
-            ->withArgs(fn (ProductInput $input) => $input->getProductAttributes()->getPrice()->getAmountMicros() === $originalPrice * 10000
+            ->withArgs(fn (ProductInput $input): bool => $input->getProductAttributes()->getPrice()->getAmountMicros() === $originalPrice * 10000
                     && $input->getProductAttributes()->getSalePrice()->getAmountMicros() === $this->product->currentPrice * 10000)
             ->once()
             ->andReturn($returned);

@@ -10,6 +10,9 @@ use App\Models\NotificationEmail;
 use App\Models\Shop\ShopCustomer;
 use Illuminate\Support\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\NotificationEmail>
+ */
 class NotificationEmailFactory extends Factory
 {
     protected $model = NotificationEmail::class;

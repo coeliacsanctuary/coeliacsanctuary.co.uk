@@ -13,13 +13,13 @@ use Jpeters8889\ApexCharts\DTO\DateRange;
 
 class PaymentProviders extends Chartable
 {
-    public function type(): string
+    protected function type(): string
     {
         return static::AREA_CHART;
     }
 
     /** @return array<Collection<string, Collection<int, ShopOrder>>> */
-    public function getData(Carbon $startDate, Carbon $endDate): array
+    protected function getData(Carbon $startDate, Carbon $endDate): array
     {
         return [
             ShopOrder::query()
@@ -78,8 +78,8 @@ class PaymentProviders extends Chartable
         }
 
         return collect($results)
-            ->reject(fn (array $items) => empty(array_filter($items)))
-            ->map(fn (array $items, string $provider) => [
+            ->reject(fn (array $items): bool => empty(array_filter($items)))
+            ->map(fn (array $items, string $provider): array => [
                 'name' => $provider,
                 'data' => $items,
                 'color' => $colours[$provider],

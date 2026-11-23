@@ -19,7 +19,7 @@ class CommentRepliedNotificationTest extends TestCase
 {
     protected CommentReply $reply;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -40,7 +40,7 @@ class CommentRepliedNotificationTest extends TestCase
     #[DataProvider('mailDataProvider')]
     public function itHasTheEmailData(callable $closure): void
     {
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $this->reply->comment->email)
             ->notify(new CommentRepliedNotification($this->reply));
 

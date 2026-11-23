@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use App\Builders\EatingOut\EateryAlertBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[UseEloquentBuilder(EateryAlertBuilder::class)]
+#[Table(name: 'wheretoeat_alerts')]
 class EateryAlert extends Model
 {
-    protected $table = 'wheretoeat_alerts';
-
     protected function casts(): array
     {
         return [
@@ -24,14 +26,5 @@ class EateryAlert extends Model
     public function eatery(): BelongsTo
     {
         return $this->belongsTo(Eatery::class, 'wheretoeat_id');
-    }
-
-    /**
-     * @param Builder<static> $query
-     * @return Builder<static>
-     */
-    public function scopePending(Builder $query): Builder
-    {
-        return $query->where('completed', false)->where('ignored', false);
     }
 }

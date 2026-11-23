@@ -53,7 +53,7 @@ class ShopProductResourceTest extends TestCase
     {
         $this->buildReviewWithItems(['A genuinely useful review']);
 
-        $resource = (new ShopProductResource($this->product))->toArray(new Request());
+        $resource = new ShopProductResource($this->product)->toArray(new Request());
 
         $this->assertInstanceOf(MissingValue::class, $resource['rating']);
     }
@@ -92,7 +92,7 @@ class ShopProductResourceTest extends TestCase
 
         $this->product->load(['reviews', 'faqs']);
 
-        return (new ShopProductResource($this->product))->toArray(new Request());
+        return new ShopProductResource($this->product)->toArray(new Request());
     }
 
     /** @param array<int, string|null> $reviews */

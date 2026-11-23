@@ -12,7 +12,7 @@ use Illuminate\Support\Stringable;
 class RelatedBlogSimpleCardViewResource extends BlogSimpleCardViewResource
 {
     /** @return array{type: string, title: string|Stringable, link: string, image: string, header_image_alt_text: string|null, date: string, related_tag: string, related_tag_url: string} */
-    public function toArray(Request $request)
+    public function toArray(Request $request): array
     {
         return [
             ...parent::toArray($request),

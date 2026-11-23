@@ -19,7 +19,7 @@ class FindRelatedBlogsAction
     {
         $primaryTagBlogs = collect();
 
-        if ($primaryTag) {
+        if ($primaryTag instanceof BlogTag) {
             $primaryTagBlogs = $this->loadBlogs(collect([$primaryTag]), $excludeBlogId)
                 ->pluck('blogs')
                 ->flatten()

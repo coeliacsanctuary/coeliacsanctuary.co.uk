@@ -32,7 +32,7 @@ class ShowController
             ->orderBy('title')
             ->get()
             /** @phpstan-ignore-next-line */
-            ->filter(fn (ShopProduct $product) => $product->currentPrice !== null)
+            ->filter(fn (ShopProduct $product): bool => $product->currentPrice !== null)
             ->map(fn (ShopProduct $product) => $product->setRelation('categories', collect([$category])))
             ->values();
 

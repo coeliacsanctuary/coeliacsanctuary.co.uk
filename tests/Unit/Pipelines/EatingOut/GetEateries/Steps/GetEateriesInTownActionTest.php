@@ -35,7 +35,7 @@ class GetEateriesInTownActionTest extends GetEateriesTestCase
 
         $newCollection = $this->callGetEateriesInTownAction($eateries)->eateries;
 
-        $this->assertCount(10, $newCollection); // 5 in setup, 5 from above
+        $this->assertCount(10, $newCollection);
     }
 
     #[Test]

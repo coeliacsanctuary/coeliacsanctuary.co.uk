@@ -13,22 +13,21 @@ class Helpers
 {
     public static function priceFromPence(int $pence): Price
     {
-        return (new Price())
+        return new Price()
             ->setAmountMicros($pence * 10_000)
             ->setCurrencyCode('GBP');
     }
 
     public static function shippingWeightFromGrams(int $grams): ShippingWeight
     {
-        return (new ShippingWeight())
+        return new ShippingWeight()
             ->setValue($grams / 1000)
             ->setUnit('kg');
     }
 
-    /** Pass null to represent an unbounded (infinity) weight tier. */
     public static function weightFromGrams(?int $grams): Weight
     {
-        return (new Weight())
+        return new Weight()
             ->setUnit(WeightUnit::KILOGRAM)
             ->setAmountMicros($grams === null ? -1 : $grams * 1_000);
     }

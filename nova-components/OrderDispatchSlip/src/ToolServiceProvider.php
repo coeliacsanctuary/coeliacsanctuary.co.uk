@@ -13,9 +13,6 @@ use Laravel\Nova\Nova;
 
 class ToolServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         $this->app->booted(function (): void {
@@ -27,9 +24,6 @@ class ToolServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Register the tool's routes.
-     */
     protected function routes(): void
     {
         if ($this->app->routesAreCached()) {
@@ -44,9 +38,6 @@ class ToolServiceProvider extends ServiceProvider
             ->group(__DIR__ . '/../routes/api.php');
     }
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //

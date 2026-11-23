@@ -26,14 +26,14 @@
         <changefreq>always</changefreq>
         <priority>0.95</priority>
     </url>
-    @foreach($categories as $category)
+    @foreach ($categories as $category)
         <url>
             <loc>{{ $category->absolute_link }}</loc>
             <changefreq>weekly</changefreq>
             <priority>0.8</priority>
         </url>
     @endforeach
-    @foreach($products as $product)
+    @foreach ($products as $product)
         <url>
             <loc>{{ $product->absolute_link }}</loc>
             <changefreq>weekly</changefreq>
@@ -46,14 +46,13 @@
         <priority>0.9</priority>
     </url>
 
-
     <!-- Blogs -->
     <url>
         <loc>{{ route('blog.index') }}</loc>
         <changefreq>always</changefreq>
         <priority>0.9</priority>
     </url>
-    @foreach($blogs as $blog)
+    @foreach ($blogs as $blog)
         <url>
             <loc>{{ $blog->absolute_link }}</loc>
             <lastmod>{{ $blog->updated_at?->toW3cString() }}</lastmod>
@@ -68,7 +67,7 @@
         <changefreq>always</changefreq>
         <priority>0.9</priority>
     </url>
-    @foreach($recipes as $recipe)
+    @foreach ($recipes as $recipe)
         <url>
             <loc>{{ $recipe->absolute_link }}</loc>
             <lastmod>{{ $recipe->updated_at?->toW3cString() }}</lastmod>
@@ -99,7 +98,7 @@
         <priority>0.5</priority>
     </url>
     <!-- Counties -->
-    @foreach($counties as $county)
+    @foreach ($counties as $county)
         <url>
             <loc>{{ $county->absoluteLink() }}</loc>
             <changefreq>weekly</changefreq>
@@ -108,7 +107,7 @@
     @endforeach
 
     <!-- Towns -->
-    @foreach($towns as $town)
+    @foreach ($towns as $town)
         <url>
             <loc>{{ $town->absoluteLink() }}</loc>
             <changefreq>weekly</changefreq>
@@ -117,7 +116,7 @@
     @endforeach
 
     <!-- Areas -->
-    @foreach($areas as $area)
+    @foreach ($areas as $area)
         <url>
             <loc>{{ $area->absoluteLink() }}</loc>
             <changefreq>weekly</changefreq>
@@ -126,7 +125,7 @@
     @endforeach
 
     <!-- Eateries -->
-    @foreach($eateries as $eatery)
+    @foreach ($eateries as $eatery)
         <url>
             <loc>{{ $eatery->absoluteLink() }}</loc>
             <lastmod>{{ $eatery->updated_at?->toW3cString() }}</lastmod>
@@ -134,7 +133,6 @@
             <priority>0.6</priority>
         </url>
     @endforeach
-
 
     <url>
         <loc>{{ route('eating-out.nationwide') }}</loc>
@@ -142,7 +140,7 @@
         <changefreq>always</changefreq>
         <priority>0.8</priority>
     </url>
-    @foreach($nationwideChains as $eatery)
+    @foreach ($nationwideChains as $eatery)
         <url>
             <loc>{{ $eatery->absoluteLink() }}</loc>
             <lastmod>{{ $eatery->updated_at?->toW3cString() }}</lastmod>
@@ -150,7 +148,7 @@
             <priority>0.6</priority>
         </url>
     @endforeach
-    @foreach($nationwideBranches as $branch)
+    @foreach ($nationwideBranches as $branch)
         <url>
             <loc>{{ $branch->absoluteLink() }}</loc>
             <lastmod>{{ $branch->updated_at?->toW3cString() }}</lastmod>

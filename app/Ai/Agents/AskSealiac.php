@@ -45,9 +45,6 @@ class AskSealiac implements Agent, Conversational, HasMiddleware, HasTools
     /** @var array<array{role: string, message: string}> */
     protected array $messages = [];
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         $recipeAllergens = RecipeAllergen::query()->get();
@@ -71,7 +68,7 @@ class AskSealiac implements Agent, Conversational, HasMiddleware, HasTools
     public function messages(): iterable
     {
         return collect($this->messages)
-            ->map(fn (array $message) => new Message($message['role'], $message['message']))
+            ->map(fn (array $message): Message => new Message($message['role'], $message['message']))
             ->all();
     }
 
@@ -128,8 +125,6 @@ class AskSealiac implements Agent, Conversational, HasMiddleware, HasTools
     }
 
     /**
-     * Get the tools available to the agent.
-     *
      * @return Tool[]
      */
     public function tools(): iterable

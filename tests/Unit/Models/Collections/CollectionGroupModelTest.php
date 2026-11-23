@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models\Collections;
 
+use App\Models\Blogs\Blog;
 use App\Models\Collections\Collection;
 use App\Models\Collections\CollectionGroup;
 use App\Models\Collections\CollectionGroupItem;
@@ -36,7 +37,7 @@ class CollectionGroupModelTest extends TestCase
 
         $this->assertEmpty($group->items);
 
-        $this->create(CollectionGroupItem::class, ['collection_group_id' => $group->id, 'item_id' => 1, 'item_type' => 'App\Models\Blogs\Blog']);
+        $this->create(CollectionGroupItem::class, ['collection_group_id' => $group->id, 'item_id' => 1, 'item_type' => Blog::class]);
 
         $this->assertCount(1, $group->refresh()->items);
     }
@@ -46,8 +47,8 @@ class CollectionGroupModelTest extends TestCase
     {
         $group = $this->create(CollectionGroup::class, ['collection_id' => $this->collection->id]);
 
-        $first = $this->create(CollectionGroupItem::class, ['collection_group_id' => $group->id, 'item_id' => 1, 'item_type' => 'App\Models\Blogs\Blog']);
-        $second = $this->create(CollectionGroupItem::class, ['collection_group_id' => $group->id, 'item_id' => 2, 'item_type' => 'App\Models\Blogs\Blog']);
+        $first = $this->create(CollectionGroupItem::class, ['collection_group_id' => $group->id, 'item_id' => 1, 'item_type' => Blog::class]);
+        $second = $this->create(CollectionGroupItem::class, ['collection_group_id' => $group->id, 'item_id' => 2, 'item_type' => Blog::class]);
 
         $this->assertLessThan($second->position, $first->position);
     }

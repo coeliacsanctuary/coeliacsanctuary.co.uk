@@ -40,7 +40,7 @@ trait SeedsWebsite
 
         $this->build(Blog::class)
             ->count($count)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'id' => $sequence->index + 1,
                 'title' => "Blog {$sequence->index}",
                 'created_at' => Carbon::now()->subDays($sequence->index),
@@ -65,7 +65,7 @@ trait SeedsWebsite
 
         $this->build(Recipe::class)
             ->count($count)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'id' => $sequence->index + 1,
                 'title' => "Recipe {$sequence->index}",
                 'created_at' => Carbon::now()->subDays($sequence->index),
@@ -93,7 +93,7 @@ trait SeedsWebsite
 
         $this->build(Collection::class)
             ->count($count)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'id' => $sequence->index + 1,
                 'title' => "Collection {$sequence->index}",
                 'created_at' => Carbon::now()->subDays($sequence->index),
@@ -123,7 +123,7 @@ trait SeedsWebsite
 
         $this->build(ShopCategory::class)
             ->count($categories)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'id' => $sequence->index + 1,
                 'title' => "Category {$sequence->index}",
                 'created_at' => Carbon::now()->subDays($sequence->index),
@@ -135,7 +135,7 @@ trait SeedsWebsite
 
                 $this->build(ShopProduct::class)
                     ->count($products)
-                    ->sequence(fn (Sequence $sequence) => [
+                    ->sequence(fn (Sequence $sequence): array => [
                         'id' => $category->id . ($sequence->index + 1),
                         'title' => "Product {$sequence->index}",
                         'created_at' => Carbon::now()->subDays($sequence->index),
@@ -151,7 +151,7 @@ trait SeedsWebsite
                         $this->build(ShopProductVariant::class)
                             ->count($variants)
                             ->belongsToProduct($product)
-                            ->sequence(fn (Sequence $sequence) => [
+                            ->sequence(fn (Sequence $sequence): array => [
                                 'id' => $product->id . ($sequence->index + 1),
                                 'title' => "Variant {$sequence->index}",
                                 'created_at' => Carbon::now()->subDays($sequence->index),

@@ -13,8 +13,13 @@ use App\Ai\Tools\PrepareRecommendedEatery\GeoLookup;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchArea;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchCounty;
 use App\Ai\Tools\PrepareRecommendedEatery\SearchTown;
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
+use Laravel\Ai\Contracts\HasProviderOptions;
 use Laravel\Ai\Contracts\HasStructuredOutput;
 use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Enums\Lab;
+use Laravel\Ai\Gateway\Anthropic\AnthropicSchemaSanitizer;
+use Laravel\Ai\ObjectSchema;
 use Laravel\Ai\Providers\Tools\WebFetch;
 use Laravel\Ai\Providers\Tools\WebSearch;
 use PHPUnit\Framework\Attributes\Test;
@@ -75,6 +80,46 @@ class PrepareRecommendedEateryTest extends TestCase
     public function itImplementsHasStructuredOutput(): void
     {
         $this->assertInstanceOf(HasStructuredOutput::class, $this->agent);
+    }
+
+    #[Test]
+    public function theSchemaStaysWithinAnthropicsUnionTypeLimit(): void
+    {
+        $schema = AnthropicSchemaSanitizer::sanitize(
+            new ObjectSchema($this->agent->schema(new JsonSchemaTypeFactory()))->toSchema()
+        );
+
+        $this->assertLessThanOrEqual(16, mb_substr_count(json_encode($schema), '{"type":"null"}'));
+    }
+
+    #[Test]
+    public function itUsesAnAnthropicProviderWithNativeStructuredOutputDisabled(): void
+    {
+        $provider = $this->agent->provider();
+
+        $this->assertSame('anthropic', $provider->driver());
+        $this->assertFalse($provider->additionalConfiguration()['use_native_structured_output']);
+    }
+
+    #[Test]
+    public function itImplementsHasProviderOptions(): void
+    {
+        $this->assertInstanceOf(HasProviderOptions::class, $this->agent);
+    }
+
+    #[Test]
+    public function itEnablesPromptCachingForAnthropic(): void
+    {
+        $this->assertSame(
+            ['cache_control' => ['type' => 'ephemeral']],
+            $this->agent->providerOptions(Lab::Anthropic),
+        );
+    }
+
+    #[Test]
+    public function itHasNoProviderOptionsForOtherProviders(): void
+    {
+        $this->assertSame([], $this->agent->providerOptions(Lab::OpenAI));
     }
 
     #[Test]

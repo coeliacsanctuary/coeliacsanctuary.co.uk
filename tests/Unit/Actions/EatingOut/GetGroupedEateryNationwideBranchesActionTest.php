@@ -200,7 +200,6 @@ class GetGroupedEateryNationwideBranchesActionTest extends TestCase
 
         DB::disableQueryLog();
 
-        // One per eager loaded relation, not one per branch.
         $this->assertLessThan(10, $queries);
     }
 }

@@ -11,10 +11,10 @@ class ContactRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
-            'subject' => $this->faker->sentence,
-            'message' => $this->faker->paragraph,
+            'name' => $this->faker->name(),
+            'email' => $this->faker->email(),
+            'subject' => $this->faker->sentence(),
+            'message' => $this->faker->paragraph(),
         ];
     }
 }

@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\NationwideBranch;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\NationwideBranch>
+ */
 class NationwideBranchFactory extends Factory
 {
     protected $model = NationwideBranch::class;
@@ -15,32 +18,32 @@ class NationwideBranchFactory extends Factory
     {
         return [
             'wheretoeat_id' => 1,
-            'name' => $this->faker->word,
-            'slug' => $this->faker->slug,
+            'name' => $this->faker->word(),
+            'slug' => $this->faker->slug(),
             'town_id' => 1,
             'county_id' => 1,
             'country_id' => 1,
-            'address' => str_replace(', ', '<br />', $this->faker->address),
-            'lat' => $this->faker->latitude,
-            'lng' => $this->faker->longitude,
+            'address' => str_replace(', ', '<br />', $this->faker->address()),
+            'lat' => $this->faker->latitude(),
+            'lng' => $this->faker->longitude(),
             'live' => true,
         ];
     }
 
     public function forEatery(Eatery $eatery): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'wheretoeat_id' => $eatery->id,
         ]);
     }
 
     public function notLive(): self
     {
-        return $this->state(fn () => ['live' => false]);
+        return $this->state(fn (): array => ['live' => false]);
     }
 
     public function withOutSlug(): self
     {
-        return $this->state(fn () => ['slug' => null]);
+        return $this->state(fn (): array => ['slug' => null]);
     }
 }

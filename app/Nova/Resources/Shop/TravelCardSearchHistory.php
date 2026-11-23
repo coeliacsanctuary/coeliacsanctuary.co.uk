@@ -21,7 +21,7 @@ class TravelCardSearchHistory extends Resource
 
     public static $search = ['term'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return false;
     }

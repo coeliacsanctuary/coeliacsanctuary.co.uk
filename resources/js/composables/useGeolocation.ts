@@ -2,10 +2,7 @@ import { ref, Ref } from 'vue';
 import { LatLng } from '@/helpers';
 
 export type GeolocationError =
-  | 'unsupported'
-  | 'denied'
-  | 'unavailable'
-  | 'timeout';
+  'unsupported' | 'denied' | 'unavailable' | 'timeout';
 
 const messages: Record<GeolocationError, string> = {
   unsupported: "Your browser doesn't support location sharing.",

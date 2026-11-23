@@ -228,6 +228,17 @@ watchDebounced(value, performSearch, { debounce: 500 });
           ...(disabled ? { disabled } : null),
           ...(min ? { min } : null),
           ...(max ? { max } : null),
+          ...(ignoreAutofill
+            ? {
+                autocomplete: 'off',
+                autocorrect: 'off',
+                autocapitalize: 'off',
+                spellcheck: 'false',
+                'data-1p-ignore': '',
+                'data-lpignore': 'true',
+                'data-bwignore': '',
+              }
+            : null),
         }"
         @keyup="$emit('typed')"
         @keydown.down.prevent="move(1)"

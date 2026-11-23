@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Ai\Tools\AskSealiac;
 
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use App\Ai\State\ChatContext;
 use App\Ai\Tools\AskSealiac\GetEateryCountriesTool;
 use App\Models\EatingOut\EateryCountry;
@@ -85,7 +86,7 @@ class GetEateryCountriesToolTest extends TestCase
     public function itHasAnEmptySchema(): void
     {
         $tool = new GetEateryCountriesTool();
-        $schema = new \Illuminate\JsonSchema\JsonSchemaTypeFactory();
+        $schema = new JsonSchemaTypeFactory();
 
         $this->assertEmpty($tool->schema($schema));
     }

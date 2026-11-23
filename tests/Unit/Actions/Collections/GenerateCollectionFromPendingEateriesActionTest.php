@@ -322,7 +322,7 @@ class GenerateCollectionFromPendingEateriesActionTest extends TestCase
         $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $eateryQueries = collect(DB::getQueryLog())
-            ->filter(fn (array $query) => str_starts_with($query['query'], 'select `id`') && str_contains($query['query'], 'from `wheretoeat`'))
+            ->filter(fn (array $query): bool => str_starts_with($query['query'], 'select `id`') && str_contains($query['query'], 'from `wheretoeat`'))
             ->values();
 
         $this->assertCount(1, $eateryQueries);
@@ -343,7 +343,7 @@ class GenerateCollectionFromPendingEateriesActionTest extends TestCase
         $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $townQueries = collect(DB::getQueryLog())
-            ->filter(fn (array $query) => str_starts_with($query['query'], 'select * from `wheretoeat_towns`'))
+            ->filter(fn (array $query): bool => str_starts_with($query['query'], 'select * from `wheretoeat_towns`'))
             ->values();
 
         $this->assertCount(1, $townQueries);
@@ -378,7 +378,7 @@ class GenerateCollectionFromPendingEateriesActionTest extends TestCase
         $this->callAction(GenerateCollectionFromPendingEateriesAction::class, $pending, 'Test', 'town');
 
         $branchQueries = collect(DB::getQueryLog())
-            ->filter(fn (array $query) => str_starts_with($query['query'], 'select `id`') && str_contains($query['query'], 'from `wheretoeat_nationwide_branches`'))
+            ->filter(fn (array $query): bool => str_starts_with($query['query'], 'select `id`') && str_contains($query['query'], 'from `wheretoeat_nationwide_branches`'))
             ->values();
 
         $this->assertCount(1, $branchQueries);

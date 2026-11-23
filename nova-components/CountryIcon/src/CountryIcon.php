@@ -9,8 +9,6 @@ use Laravel\Nova\Fields\Field;
 class CountryIcon extends Field
 {
     /**
-     * The field's component.
-     *
      * @var string
      */
     public $component = 'country-icon';

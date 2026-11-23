@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Resources\EatingOut;
 
+use App\Builders\EatingOut\EateryBuilder;
 use App\Concerns\FormatsMarkdown;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryFeature;
 use App\ResourceCollections\EatingOut\NationwideListCollection;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
@@ -37,18 +37,9 @@ class NationwidePageResource extends JsonResource
     {
         $this->load([
             'eateries' => fn (HasMany $builder) => $builder
-                ->when($this->filters['categories'], function (Builder $builder, array $categories) {
-                    /** @var Builder<Eatery> $builder */
-                    return $builder->hasCategories($categories);
-                })
-                ->when($this->filters['venueTypes'], function (Builder $builder, array $venueTypes) {
-                    /** @var Builder<Eatery> $builder */
-                    return $builder->hasVenueTypes($venueTypes);
-                })
-                ->when($this->filters['features'], function (Builder $builder, array $features) {
-                    /** @var Builder<Eatery> $builder */
-                    return $builder->hasFeatures($features);
-                })
+                ->when($this->filters['categories'], fn (EateryBuilder $builder, array $categories): EateryBuilder => $builder->hasCategories($categories))
+                ->when($this->filters['venueTypes'], fn (EateryBuilder $builder, array $venueTypes): EateryBuilder => $builder->hasVenueTypes($venueTypes))
+                ->when($this->filters['features'], fn (EateryBuilder $builder, array $features): EateryBuilder => $builder->hasFeatures($features))
                 ->orderBy('name'),
             'eateries.features' => function (BelongsToMany $builder) {
                 /** @var BelongsToMany<EateryFeature, Eatery> $builder */

@@ -7,6 +7,7 @@ use App\Http\Api\V1\Controllers\EatingOut\Browse\IndexController as EatingOutBro
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\Branches\IndexController as EatingOutListBranchIndexController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\Branches\Summary\IndexController as EatingOutListBranchSummaryController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\GetController as EatingOutGetController;
+use App\Http\Api\V1\Controllers\EatingOut\Eatery\Nearby\ShowController as EatingOutDetailsNearbyController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\OpeningTimes\GetController as EatingOutOpeningTimesController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\Report\StoreController as EatingOutReportStoreController;
 use App\Http\Api\V1\Controllers\EatingOut\Eatery\Reviews\Admin\GetController as EatingOutAdminReviewController;
@@ -30,6 +31,7 @@ use App\Http\Api\V1\Controllers\EatingOut\VenueTypes\IndexController as EatingOu
 use App\Http\Api\V1\Controllers\Recipes\IndexController as RecipeIndexController;
 use App\Http\Api\V1\Controllers\ShopCta\GetController as ShopCtaGetController;
 use App\Http\Api\V1\Controllers\WebsiteImage\GetController as WebsiteImageGetController;
+use App\Http\Api\V1\Controllers\EatingOut\Marker\GetController as MarkerGetController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/blogs', BlogIndexController::class)->name('blogs.index');
@@ -52,6 +54,10 @@ Route::prefix('/eating-out')->name('eating-out.')->group(function (): void {
     Route::post('recommend-a-place/check', EatingOutRecommendAPlaceCheckStoreController::class)->name('recommend-a-place.check.store');
 
     Route::get('/nationwide', EatingOutNationwideIndexController::class)->name('nationwide.index');
+
+    Route::get('marker/{typeId}/{venueTypeId?}', MarkerGetController::class)
+        ->whereNumber(['typeId', 'venueTypeId'])
+        ->name('marker.get');
 
     Route::prefix('/{eatery}')->name('details.')->group(function (): void {
         Route::get('/opening-times', EatingOutOpeningTimesController::class)->name('opening-times');
@@ -80,6 +86,8 @@ Route::prefix('/eating-out')->name('eating-out.')->group(function (): void {
         Route::post('report', EatingOutReportStoreController::class)->name('report');
 
         Route::get('/summary', EatingOutSummaryController::class)->name('summary');
+
+        Route::get('/nearby', EatingOutDetailsNearbyController::class)->name('nearby');
 
         Route::get('/{nationwideBranch}', EatingOutGetController::class)->name('get.branch');
         Route::get('/', EatingOutGetController::class)->name('get');

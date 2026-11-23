@@ -10,9 +10,6 @@ use Laravel\Nova\Nova;
 
 class FieldServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Nova::serving(function (ServingNova $event): void {
@@ -21,9 +18,6 @@ class FieldServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //

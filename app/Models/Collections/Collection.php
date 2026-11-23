@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Collections;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\CanBePublished;
 use App\Concerns\ClearsCache;
 use App\Concerns\DisplaysDates;
@@ -28,6 +29,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int $eateries_count
  * @property CollectionDisplayType $display_type
  */
+#[RouteKey('slug')]
 class Collection extends Model implements HasMedia
 {
     use CanBePublished;
@@ -39,12 +41,6 @@ class Collection extends Model implements HasMedia
     use InteractsWithMedia;
 
     use LinkableModel;
-
-    protected $casts = [
-        'display_on_homepage' => 'bool',
-        'remove_from_homepage' => 'datetime',
-        'display_type' => CollectionDisplayType::class,
-    ];
 
     protected static function booted(): void
     {
@@ -59,11 +55,6 @@ class Collection extends Model implements HasMedia
         });
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('social')->singleFile();
@@ -73,7 +64,7 @@ class Collection extends Model implements HasMedia
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 
@@ -116,5 +107,14 @@ class Collection extends Model implements HasMedia
     protected function cacheKey(): string
     {
         return 'collections';
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'display_on_homepage' => 'bool',
+            'remove_from_homepage' => 'datetime',
+            'display_type' => CollectionDisplayType::class,
+        ];
     }
 }

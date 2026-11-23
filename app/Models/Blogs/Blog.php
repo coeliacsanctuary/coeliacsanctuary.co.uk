@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Blogs;
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use App\Concerns\CanBePublished;
 use App\Concerns\ClearsCache;
 use App\Concerns\Comments\Commentable;
@@ -39,11 +40,11 @@ use Spatie\SchemaOrg\Schema;
 
 /**
  * @property int<1, max> $reading_time
- *
  * @implements Collectable<$this>
  * @implements HasComments<$this>
  * @implements HasFaqs<$this>
  */
+#[RouteKey('slug')]
 class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia, IsSearchable, HasRichContent
 {
     /** @use CanBeCollected<$this> */
@@ -83,11 +84,6 @@ class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia,
         });
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
     /** @param Builder<static> $query */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
@@ -111,7 +107,7 @@ class Blog extends Model implements Collectable, HasComments, HasFaqs, HasMedia,
 
     public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        if ( ! $media || $media->extension === 'webp') {
+        if ( ! $media instanceof \Spatie\MediaLibrary\MediaCollections\Models\Media || $media->extension === 'webp') {
             return;
         }
 

@@ -74,8 +74,8 @@ abstract class TestCase extends BaseTestCase
             $previousLetter = 0;
 
             while ($currentLetter === $previousLetter) {
-                $currentLetter = mb_strlen($item) > $characterIndex ? array_search($item[$characterIndex], $lookup) : 30;
-                $previousLetter = mb_strlen($toCompare) > $characterIndex ? array_search($toCompare[$characterIndex], $lookup) : -1;
+                $currentLetter = mb_strlen($item) > $characterIndex ? array_search($item[$characterIndex], $lookup, true) : 30;
+                $previousLetter = mb_strlen($toCompare) > $characterIndex ? array_search($toCompare[$characterIndex], $lookup, true) : -1;
 
                 $characterIndex++;
             }

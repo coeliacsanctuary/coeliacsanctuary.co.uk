@@ -13,6 +13,7 @@ use App\Services\EatingOut\Collection\Builder\ValueObjects\Join;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Order;
 use App\Services\EatingOut\Collection\Builder\ValueObjects\Where;
 use App\Services\EatingOut\Collection\Configuration;
+use Laravel\Ai\Responses\StructuredAgentResponse;
 use RuntimeException;
 
 class GenerateNewMagicRouteAction
@@ -53,7 +54,10 @@ class GenerateNewMagicRouteAction
 
         $agent = $eateryMagicRouteType->agent([$routeRecord]);
 
-        $routeRecord->body = json_decode($agent->prompt('Generate the content')->text, true);
+        /** @var StructuredAgentResponse $response */
+        $response = $agent->prompt('Generate the content');
+
+        $routeRecord->body = $response->toArray();
         $routeRecord->save();
 
         return $routeRecord;

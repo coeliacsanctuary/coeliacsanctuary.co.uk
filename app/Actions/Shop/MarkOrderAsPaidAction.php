@@ -17,9 +17,7 @@ class MarkOrderAsPaidAction
 {
     public function handle(ShopOrder $pendingOrder, Charge $stripeCharge): void
     {
-        if ($pendingOrder->state_id !== OrderState::PENDING) {
-            throw new RuntimeException('Order must be pending');
-        }
+        throw_if($pendingOrder->state_id !== OrderState::PENDING, new RuntimeException('Order must be pending'));
 
         $pendingOrder->update([
             'state_id' => OrderState::PAID,

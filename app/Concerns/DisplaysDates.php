@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @mixin Model
- *
  * @property string $published
  * @property Carbon $created_at
  * @property Carbon $updated_at

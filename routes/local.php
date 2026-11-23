@@ -11,6 +11,7 @@ use App\DataObjects\NotificationRelatedObject;
 use App\Enums\EatingOut\EateryType;
 use App\Enums\Shop\OrderState;
 use App\Mailables\EatingOut\EateryRecommendationAddedMailable;
+use App\Mailables\EatingOut\TripPlannerTripMailable;
 use App\Models\Blogs\Blog;
 use App\Models\Comments\Comment;
 use App\Models\Comments\CommentReply;
@@ -19,6 +20,7 @@ use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryRecommendation;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
+use App\Models\EatingOut\EateryTrip;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\Recipes\Recipe;
 use App\Models\Shop\ShopOrder;
@@ -357,6 +359,19 @@ Route::get('/mail/eating-out/recommendation-added/{id?}', function (?int $id = n
     return Mjml::new()->sidecar()->toHtml($content);
 });
 
+Route::get('/mail/eating-out/trip-planner/{key?}', function (?string $key = null): string {
+    $trip = EateryTrip::query()
+        ->when($key, fn (Builder $builder) => $builder->where('key', $key))
+        ->latest()
+        ->firstOrFail();
+
+    $message = TripPlannerTripMailable::make($trip, true, 'me@example.com', 'foo');
+
+    $content = view($message->mjml, $message->data())->render();
+
+    return Mjml::new()->sidecar()->toHtml($content);
+});
+
 Route::get('/mail/comment-approved/{id?}', function (?int $id = null): string {
     $comment = Comment::query()
         ->where('approved', true)
@@ -464,11 +479,6 @@ Route::get('og/generic/shop', function () {
         ->where('title', 'like', 'spanish and italian%')
         ->firstOrFail();
 
-    //    $stickers = ShopProduct::query()
-    //        ->with(['media'])
-    //        ->where('title', 'like', '%stickers%')
-    //        ->firstOrFail();
-
     $otherAllergyCard = ShopProduct::query()
         ->with(['media'])
         ->where('title', 'like', '%coeliac+%')
@@ -476,7 +486,6 @@ Route::get('og/generic/shop', function () {
 
     return view('og-images.shop', [
         'spanishCard' => $spanishCard,
-        //        'stickers' => $stickers,
         'otherAllergyCard' => $otherAllergyCard,
     ]);
 });

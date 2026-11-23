@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Blogs\Blog;
 use App\Models\Collections\Collection;
 use App\Models\Recipes\Recipe;
@@ -11,10 +12,9 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+#[Signature('coeliac:publish-items')]
 class PublishItemsCommand extends Command
 {
-    protected $signature = 'coeliac:publish-items';
-
     public function handle(): void
     {
         /** @var class-string<Model>[] $models */

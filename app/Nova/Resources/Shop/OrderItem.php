@@ -87,12 +87,12 @@ class OrderItem extends Resource
                 }),
 
             BelongsTo::make('Variant', resource: ProductVariant::class)
-                ->canSee(function (NovaRequest $request) {
+                ->canSee(function (NovaRequest $request): bool {
                     $item = ShopOrderItem::query()->find($request->resourceId);
 
                     return $item?->product?->variants()->first()->title !== '';
                 })
-                ->readonly(function (NovaRequest $request) {
+                ->readonly(function (NovaRequest $request): bool {
                     if ($request instanceof ResourceIndexRequest) {
                         return true;
                     }
@@ -120,7 +120,7 @@ class OrderItem extends Resource
 
             Currency::make('Line Price', 'product_price')->asMinorUnits()->readonly(),
 
-            Currency::make('Subtotal', fn (ShopOrderItem $item) => $item->product_price * $item->quantity)->asMinorUnits(),
+            Currency::make('Subtotal', fn (ShopOrderItem $item): int|float => $item->product_price * $item->quantity)->asMinorUnits(),
         ];
     }
 
@@ -142,7 +142,7 @@ class OrderItem extends Resource
         }
     }
 
-    public static function redirectAfterUpdate(NovaRequest $request, $resource)
+    public static function redirectAfterUpdate(NovaRequest $request, $resource): string
     {
         return "resources/orders/{$resource->order_id}";
     }

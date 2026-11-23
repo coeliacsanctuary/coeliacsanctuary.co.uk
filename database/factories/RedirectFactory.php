@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Redirect;
 use Illuminate\Http\Response;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Redirect>
+ */
 class RedirectFactory extends Factory
 {
     protected $model = Redirect::class;

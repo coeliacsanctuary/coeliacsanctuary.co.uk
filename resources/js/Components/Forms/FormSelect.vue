@@ -94,6 +94,13 @@ const classes = (): string[] => {
         v-text="'*'"
       />
     </label>
+
+    <small
+      v-if="helpText"
+      class="mt-0 mb-2 block text-sm leading-none text-grey-dark"
+      v-text="helpText"
+    />
+
     <div
       class="relative rounded-md shadow-xs"
       :class="wrapperClasses"

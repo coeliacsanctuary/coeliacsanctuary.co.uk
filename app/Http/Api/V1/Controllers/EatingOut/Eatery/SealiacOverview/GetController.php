@@ -17,9 +17,7 @@ class GetController
     {
         $branch = null;
 
-        if ($eatery->closed_down) {
-            abort(404);
-        }
+        abort_if($eatery->closed_down, 404);
 
         $eatery->load(['area', 'town', 'county', 'country']);
 
@@ -39,12 +37,12 @@ class GetController
                     'id' => $sealiacOverview->id,
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             Log::error('Sealiac AI Overview failed in api/v1', [
-                'message' => $e->getMessage(),
+                'message' => $exception->getMessage(),
                 'eateryId' => $eatery->id,
                 'branchId' => $branch?->id,
-                'trace' => $e->getTraceAsString(),
+                'trace' => $exception->getTraceAsString(),
             ]);
 
             abort(404);

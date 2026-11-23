@@ -18,11 +18,11 @@ class PendingEaterySchema
     {
         /** @var Collection<int, ListItem> $schemaItems */
         $schemaItems = $eateries->map(
-            fn (PendingEatery $eatery, int $index) => (new ListItem())
+            fn (PendingEatery $eatery, int $index) => new ListItem()
                 ->position($index + 1)
-                ->item((new LocalBusiness())->name((string) $eatery->ordering)->address((new PostalAddress())->addressLocality($town)))
+                ->item(new LocalBusiness()->name((string) $eatery->ordering)->address(new PostalAddress()->addressLocality($town)))
         );
 
-        return (new ItemList())->name("Gluten Free places to eat in {$town}")->itemListElement($schemaItems->toArray());
+        return new ItemList()->name("Gluten Free places to eat in {$town}")->itemListElement($schemaItems->toArray());
     }
 }

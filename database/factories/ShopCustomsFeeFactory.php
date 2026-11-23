@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopCustomsFee;
 use App\Models\Shop\ShopPostageCountry;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopCustomsFee>
+ */
 class ShopCustomsFeeFactory extends Factory
 {
     protected $model = ShopCustomsFee::class;
@@ -16,7 +19,7 @@ class ShopCustomsFeeFactory extends Factory
         return [
             'postage_country_id' => self::factoryForModel(ShopPostageCountry::class),
             'fee' => $this->faker->numberBetween(100, 200),
-            'description' => $this->faker->sentence,
+            'description' => $this->faker->sentence(),
         ];
     }
 }

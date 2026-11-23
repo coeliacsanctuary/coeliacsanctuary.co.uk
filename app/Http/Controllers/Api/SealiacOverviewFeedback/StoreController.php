@@ -18,10 +18,10 @@ class StoreController
             $sealiacOverview->increment($request->string('rating')->toString() === 'up' ? 'thumbs_up' : 'thumbs_down');
 
             return response()->noContent();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             Log::error('Sealiac Rating failed', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
             ]);
 
             abort(404);

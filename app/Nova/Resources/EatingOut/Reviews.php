@@ -43,7 +43,7 @@ class Reviews extends Resource
 
     public static $clickAction = 'detail';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -72,7 +72,7 @@ class Reviews extends Resource
 
             Stack::make('Eatery', [
                 BelongsTo::make('eatery', resource: Eateries::class)->displayUsing(fn ($eatery) => $eatery->resource->load($eateryRelations)->full_name),
-                ...($this->resource->eatery?->county_id === 1 ? [BelongsTo::make('branch', resource: NationwideBranches::class)->displayUsing(fn ($branch) => "Branch: {$branch->resource->load($eateryRelations)->full_name}")] : [Text::make('Branch', fn () => '')]),
+                ...($this->resource->eatery?->county_id === 1 ? [BelongsTo::make('branch', resource: NationwideBranches::class)->displayUsing(fn ($branch): string => "Branch: {$branch->resource->load($eateryRelations)->full_name}")] : [Text::make('Branch', fn (): string => '')]),
             ])->onlyOnIndex(),
 
             BelongsTo::make('eatery', resource: Eateries::class)
@@ -98,15 +98,15 @@ class Reviews extends Resource
             ]),
 
             Stack::make('Ratings', [
-                Line::make('Rating')->displayUsing(fn ($rating) => "Rating: {$rating}"),
-                Line::make('How Expensive')->displayUsing(fn ($rating) => "How Expensive: {$rating}"),
-                Line::make('Food Rating')->displayUsing(fn ($rating) => "Food Rating: {$rating}"),
-                Line::make('Service Rating')->displayUsing(fn ($rating) => "Service Rating: {$rating}"),
+                Line::make('Rating')->displayUsing(fn ($rating): string => "Rating: {$rating}"),
+                Line::make('How Expensive')->displayUsing(fn ($rating): string => "How Expensive: {$rating}"),
+                Line::make('Food Rating')->displayUsing(fn ($rating): string => "Food Rating: {$rating}"),
+                Line::make('Service Rating')->displayUsing(fn ($rating): string => "Service Rating: {$rating}"),
             ])->onlyOnIndex(),
 
             Text::make('Review')
                 ->onlyOnIndex()
-                ->displayUsing(fn () => "<div style=\"width: 300px; text-wrap:auto;\">{$this->resource->review}</div>")
+                ->displayUsing(fn (): string => "<div style=\"width: 300px; text-wrap:auto;\">{$this->resource->review}</div>")
                 ->asHtml(),
 
             new Panel('Ratings', [
@@ -144,7 +144,7 @@ class Reviews extends Resource
                     ->showOnPreview(),
             ]),
 
-            ...($this->resource->eatery?->county_id === 1 ? $this->getBranchPanel() : [Text::make('Branch', fn () => '-')->hideFromIndex()]),
+            ...($this->resource->eatery?->county_id === 1 ? $this->getBranchPanel() : [Text::make('Branch', fn (): string => '-')->hideFromIndex()]),
 
             new Panel('Review', [
                 Textarea::make('Review')->showOnPreview()->alwaysShow(),
@@ -163,7 +163,7 @@ class Reviews extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            ApproveReview::make()->showInline()->canRun(fn ($request, EateryReview $review) => $review->approved === false),
+            ApproveReview::make()->showInline()->canRun(fn ($request, EateryReview $review): bool => $review->approved === false),
         ];
     }
 
@@ -187,7 +187,7 @@ class Reviews extends Resource
                         ->with(['area', 'town', 'county', 'country'])
                         ->chaperone('eatery')
                         ->get()
-                        ->mapWithKeys(fn (NationwideBranch $nationwideBranch) => [$nationwideBranch->id => $nationwideBranch->full_name])
+                        ->mapWithKeys(fn (NationwideBranch $nationwideBranch): array => [$nationwideBranch->id => $nationwideBranch->full_name])
                         ->sort()
                 ),
 
@@ -199,7 +199,7 @@ class Reviews extends Resource
     {
         /** @var EateryReview $model */
         if ($model->approved && (bool) $model->getPrevious()['approved'] === false) {
-            (new AnonymousNotifiable())
+            new AnonymousNotifiable()
                 ->route('mail', $model->email)
                 ->notify(new EateryReviewApprovedNotification($model));
         }

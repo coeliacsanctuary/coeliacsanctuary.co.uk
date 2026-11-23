@@ -50,7 +50,7 @@ class FindLinkForLondonAreaToolTest extends TestCase
 
     protected function handleTool(string $area): string
     {
-        return (string) (new FindLinkForLondonAreaTool())->handle(new Request(['area' => $area]));
+        return (string) new FindLinkForLondonAreaTool()->handle(new Request(['area' => $area]));
     }
 
     #[Test]
@@ -86,7 +86,7 @@ class FindLinkForLondonAreaToolTest extends TestCase
     #[Test]
     public function itHasTheCorrectSchema(): void
     {
-        $schema = (new FindLinkForLondonAreaTool())->schema(new JsonSchemaTypeFactory());
+        $schema = new FindLinkForLondonAreaTool()->schema(new JsonSchemaTypeFactory());
 
         $this->assertArrayHasKey('area', $schema);
     }

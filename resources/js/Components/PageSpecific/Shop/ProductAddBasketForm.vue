@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import CoeliacButton from '@/Components/CoeliacButton.vue';
-import { ShopProductDetail, ShopProductVariant } from '@/types/Shop';
+import {
+  ShopProductDetail,
+  ShopProductVariant,
+  ShopTravelCardProductDetail,
+} from '@/types/Shop';
 import { computed, onMounted, ref, Ref, watch } from 'vue';
 import useAddToBasket from '@/composables/useAddToBasket';
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
@@ -9,15 +13,26 @@ import ProductQuantitySwitcher from '@/Components/PageSpecific/Shop/ProductQuant
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import ProductSelectVariant from '@/Components/PageSpecific/Shop/ProductSelectVariant.vue';
 import FormCheckbox from '@/Components/Forms/FormCheckbox.vue';
+import { Link } from '@inertiajs/vue3';
 
-const props = defineProps<{ product: ShopProductDetail }>();
+type Product = ShopProductDetail | ShopTravelCardProductDetail;
+
+const props = defineProps<{ product: Product }>();
 
 const selectedVariant: Ref<ShopProductVariant | undefined> = ref();
 const quantity: Ref<number> = ref(1);
 const isInStock: Ref<boolean> = ref(true);
-const includeAddOn: Ref<boolean> = ref(false);
 
 const emit = defineEmits(['selected-variant']);
+
+const isTravelCardProduct = (
+  product: Product,
+): product is ShopTravelCardProductDetail =>
+  (product as ShopTravelCardProductDetail).is_travel_card;
+
+const travelCardProduct = computed(() =>
+  isTravelCardProduct(props.product) ? props.product : undefined,
+);
 
 const checkStock = () => {
   if (!selectedVariant.value) {
@@ -30,14 +45,32 @@ const checkStock = () => {
 
 const availableQuantity = computed(() => selectedVariant.value?.quantity);
 
-const { addBasketForm, prepareAddBasketForm, submitAddBasketForm } =
-  useAddToBasket();
+const addDigitalCards = ref<{ [T: string]: boolean }>({});
+
+onMounted(() => {
+  if (travelCardProduct.value?.digital_cards.length) {
+    travelCardProduct.value.digital_cards.forEach((card) => {
+      addDigitalCards.value[card.slug] = false;
+    });
+  }
+});
+
+const {
+  addBasketForm,
+  prepareAddBasketForm,
+  withMultipleDigitalCards,
+  submitAddBasketForm,
+} = useAddToBasket();
 
 const runningTotal = computed((): number => {
   let total = props.product.prices.raw_price * quantity.value;
 
-  if (includeAddOn.value && props.product.add_ons) {
-    total += props.product.add_ons.price.raw_price;
+  if (travelCardProduct.value?.digital_cards?.length) {
+    travelCardProduct.value.digital_cards.forEach((card) => {
+      if (addDigitalCards.value[card.slug]) {
+        total += card.raw_price;
+      }
+    });
   }
 
   return total / 100;
@@ -72,7 +105,6 @@ watch(selectedVariant, () => {
   );
 
   quantity.value = 1;
-  includeAddOn.value = false;
 
   useJourneyTracking().logEvent(
     'clicked',
@@ -89,7 +121,6 @@ watch(quantity, () => {
     props.product.id,
     (<ShopProductVariant>selectedVariant.value).id,
     quantity.value,
-    includeAddOn.value,
   );
 
   useJourneyTracking().logEvent(
@@ -102,25 +133,21 @@ watch(quantity, () => {
   );
 });
 
-watch(includeAddOn, () => {
-  prepareAddBasketForm(
-    props.product.id,
-    (<ShopProductVariant>selectedVariant.value).id,
-    quantity.value,
-    includeAddOn.value,
-  );
-
-  useJourneyTracking().logEvent(
-    'clicked',
-    'ShopProduct/AddBasketForm/ToggledAddOn',
-    {
-      title: props.product.title,
-      included: includeAddOn.value,
-    },
-  );
-});
-
 const addToBasket = () => {
+  if (travelCardProduct.value?.digital_cards.length) {
+    const digitalCardsToAdd: number[] = [];
+
+    travelCardProduct.value.digital_cards.forEach((card) => {
+      if (addDigitalCards.value[card.slug]) {
+        digitalCardsToAdd.push(card.id);
+      }
+    });
+
+    if (digitalCardsToAdd.length) {
+      withMultipleDigitalCards(digitalCardsToAdd);
+    }
+  }
+
   submitAddBasketForm({
     only: ['basket', 'errors'],
   });
@@ -165,40 +192,6 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
         />
       </div>
 
-      <div v-if="availableQuantity && availableQuantity > 0 && product.add_ons">
-        <label
-          class="block text-base leading-6 font-semibold text-primary-dark sm:max-xl:text-lg xl:text-xl"
-        >
-          Add {{ product.add_ons.name }}
-        </label>
-
-        <div
-          class="flex w-full flex-col justify-between space-y-4 rounded-md border border-grey-off bg-white p-2 text-base text-gray-900 shadow-xs xs:flex-row xs:items-start xs:space-y-0 xs:space-x-2 md:text-lg"
-        >
-          <div class="flex-1">
-            Include a digital PDF of your travel card delivered straight to your
-            email once your order is complete.
-          </div>
-
-          <div
-            class="border-gray-off flex w-full items-center justify-end space-x-2 border-t pt-4 xs:w-auto xs:border-t-0 xs:pt-0"
-          >
-            <span
-              :class="includeAddOn ? 'text-lg font-semibold text-green' : ''"
-              v-text="`+${product.add_ons.price.current_price}`"
-            />
-
-            <FormCheckbox
-              v-model="includeAddOn"
-              name="include-add-on"
-              label=""
-              xl
-              hide-label
-            />
-          </div>
-        </div>
-      </div>
-
       <div
         v-if="availableQuantity === 0"
         class="font-semibold text-red-dark"
@@ -218,6 +211,48 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
         }}!
       </p>
 
+      <div
+        v-if="availableQuantity && travelCardProduct?.digital_cards.length"
+        class="mt-4 flex flex-col space-y-2"
+      >
+        <h3 class="text-xl font-semibold">Digital Card Add Ons</h3>
+
+        <p class="prose-sm max-w-none">
+          Complete your {{ product.category.title }} by including my digital
+          cards that can be accessed anywhere, on any device, at any time!
+        </p>
+
+        <p class="prose max-w-none">
+          <Link
+            :href="travelCardProduct.digital_card_link"
+            target="_blank"
+          >
+            See more Digital Travel Cards
+          </Link>
+        </p>
+
+        <ul class="flex flex-col space-y-2">
+          <li
+            v-for="card in travelCardProduct.digital_cards"
+            :key="card.id"
+            class="flex items-start space-x-2"
+          >
+            <FormCheckbox
+              v-model="addDigitalCards[card.slug]"
+              layout="left"
+              xl
+              :name="card.slug"
+              :label="card.name"
+              class="p-0!"
+            />
+            <span
+              class="flex-no-shrink min-w-[50px] flex-1 flex-shrink-0 text-right font-semibold"
+              v-text="`+${card.price}`"
+            />
+          </li>
+        </ul>
+      </div>
+
       <div class="flex items-center justify-center md:justify-between">
         <CoeliacButton
           as="button"
@@ -230,6 +265,27 @@ const { screenIsGreaterThanOrEqualTo } = useScreensize();
           icon-position="right"
           size="xxl"
           :loading="addBasketForm.processing"
+        />
+      </div>
+
+      <div
+        v-if="!availableQuantity && travelCardProduct?.digital_cards.length"
+        class="mt-4 flex flex-col space-y-2"
+      >
+        <h3 class="text-xl font-semibold">Digital Travel Cards</h3>
+
+        <p class="prose-sm max-w-none">
+          Why not look at my digital cards that can be accessed anywhere, on any
+          device, at any time, while this product is out of stock?
+        </p>
+
+        <CoeliacButton
+          as="a"
+          :href="travelCardProduct.digital_card_link"
+          target="_blank"
+          bold
+          classes="justify-center text-center"
+          label="See more Digital Travel Cards"
         />
       </div>
     </form>

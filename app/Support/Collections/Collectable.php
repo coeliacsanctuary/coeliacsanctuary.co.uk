@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @template T of Model
- *
  * @property string $title
  * @property string $meta_description
  * @property string $main_image

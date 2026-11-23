@@ -24,6 +24,6 @@ class SyncProductToGoogleMerchantJobTest extends TestCase
             ->with($product)
             ->once();
 
-        (new SyncProductToGoogleMerchantJob($product))->handle(app(SyncProductToGoogleMerchantAction::class));
+        new SyncProductToGoogleMerchantJob($product)->handle(app(SyncProductToGoogleMerchantAction::class));
     }
 }

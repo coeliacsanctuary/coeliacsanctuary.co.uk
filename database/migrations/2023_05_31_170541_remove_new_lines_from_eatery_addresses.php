@@ -6,9 +6,6 @@ use App\Models\EatingOut\Eatery;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Eatery::query()->get()->each(function (Eatery $eatery): void {

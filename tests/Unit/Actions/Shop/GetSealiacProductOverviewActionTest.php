@@ -43,7 +43,7 @@ class GetSealiacProductOverviewActionTest extends TestCase
     #[Test]
     public function itWillThrowAnErrorIfNoReviewsExistWhenThereIsNoExistingRecordInTheDatabase(): void
     {
-        ShopOrderReviewItem::truncate();
+        ShopOrderReviewItem::query()->truncate();
 
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('No reviews found to generate overview');

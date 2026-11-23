@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Nova\Repeaters;
 
-use App\Nova\FieldOverrides\Repeater;
+use App\Nova\FieldOverrides\CollectionItemsRepeater;
 use App\Nova\Resources\Main\CollectionGroupItem;
 use Jpeters8889\Body\Body;
 use Laravel\Nova\Fields\Repeater\Repeatable;
@@ -16,8 +16,6 @@ class CollectionGroup extends Repeatable
     public static $model = \App\Models\Collections\CollectionGroup::class;
 
     /**
-     * Get the fields displayed by the repeatable.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field>
      */
     public function fields(NovaRequest $request): array
@@ -35,7 +33,7 @@ class CollectionGroup extends Repeatable
                 ->noToolbar()
                 ->nullable(),
 
-            Repeater::make('Items', 'items')
+            CollectionItemsRepeater::make('Items', 'items')
                 ->repeatables([
                     \App\Nova\Repeaters\CollectionGroupItem::make(),
                 ])

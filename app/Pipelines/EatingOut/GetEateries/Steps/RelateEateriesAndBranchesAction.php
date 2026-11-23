@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
@@ -19,13 +20,13 @@ class RelateEateriesAndBranchesAction implements GetEateriesPipelineActionContra
     {
         $hydratedBranches = $pipelineData->hydratedBranches;
 
-        if ( ! $hydratedBranches || $hydratedBranches->count() === 0) {
+        if ( ! $hydratedBranches instanceof Collection || $hydratedBranches->count() === 0) {
             return $next($pipelineData);
         }
 
-        if ($pipelineData->paginator) {
+        if ($pipelineData->paginator instanceof LengthAwarePaginator) {
             $pendingEateries = collect($pipelineData->paginator->items());
-        } elseif ($pipelineData->eateries) {
+        } elseif ($pipelineData->eateries instanceof Collection) {
             $pendingEateries = $pipelineData->eateries;
         } else {
             throw new RuntimeException('No eateries');
@@ -34,7 +35,7 @@ class RelateEateriesAndBranchesAction implements GetEateriesPipelineActionContra
         /** @var Collection<int, Eatery> $hydratedEateries */
         $hydratedEateries = $pipelineData->hydrated;
 
-        $pipelineData->hydrated = $hydratedEateries->map(function (Eatery $eatery, $index) use ($hydratedBranches, $pendingEateries) {
+        $pipelineData->hydrated = $hydratedEateries->map(function (Eatery $eatery, $index) use ($hydratedBranches, $pendingEateries): Eatery {
             /** @var PendingEatery $currentPendingEatery */
             $currentPendingEatery = $pendingEateries->at($index);
 

@@ -15,12 +15,15 @@ class User extends Authenticatable implements FilamentUser
     use Notifiable;
     use TwoFactorAuthenticatable;
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+        ];
     }
 }

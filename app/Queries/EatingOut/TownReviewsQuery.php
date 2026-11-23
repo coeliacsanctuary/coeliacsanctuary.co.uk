@@ -29,11 +29,11 @@ class TownReviewsQuery
             ->orderByRaw($rating)
             ->take(3)
             ->get()
-            ->map(function (Eatery $eatery) use ($town) {
+            ->map(function (Eatery $eatery) use ($town): Eatery {
                 $eatery->setRelation('town', $town);
 
                 return $eatery;
             })
-            ->map(fn (Eatery $eatery) => new CountyEateryResource($eatery));
+            ->map(fn (Eatery $eatery): CountyEateryResource => new CountyEateryResource($eatery));
     }
 }

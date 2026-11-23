@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\County;
 
+use Illuminate\Support\Collection;
 use App\Actions\EatingOut\GetMostRatedPlacesInCountyAction;
 use App\Actions\EatingOut\GetTopRatedPlacesInCountyAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
@@ -36,8 +37,8 @@ class ShowController
             ]))
             ->render('EatingOut/County', [
                 'county' => new CountyPageResource($county),
-                'topRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
-                'mostRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
+                'topRated' => fn (): Collection => $getTopRatedPlacesInCounty->handle($county),
+                'mostRated' => fn (): Collection => $getMostRatedPlacesInCounty->handle($county),
                 'nearby' => fn () => NearbyCountyResource::collection($county->nearbyCounties()),
                 'guides' => fn () => MagicRouteGuideResource::collection($county->magicRoutes),
             ]);

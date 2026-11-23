@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\AskSealiacChat;
 use App\Models\AskSealiacChatMessage;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AskSealiacChatMessage>
+ */
 class AskSealiacChatMessageFactory extends Factory
 {
     protected $model = AskSealiacChatMessage::class;

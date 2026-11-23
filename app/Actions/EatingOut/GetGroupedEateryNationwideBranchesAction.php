@@ -25,14 +25,11 @@ class GetGroupedEateryNationwideBranchesAction
         return $branches
             ->groupBy(fn (NationwideBranch $branch) => $branch->country->country) /** @phpstan-ignore-line */
             ->sortKeys()
-            ->map(fn (Collection $branches) => $this->groupByCounty($branches, $formatter))
+            ->map(fn (Collection $branches): Collection => $this->groupByCounty($branches, $formatter))
             ->toArray();
     }
 
     /**
-     * Eager loads everything the grouping and the resource reach for, so that
-     * neither this action nor NationwideBranchResource triggers an N+1.
-     *
      * @return Collection<int, NationwideBranch>
      */
     protected function loadBranchesFor(Eatery $eatery): Collection
@@ -58,7 +55,7 @@ class GetGroupedEateryNationwideBranchesAction
         return $branches
             ->groupBy(fn (NationwideBranch $branch) => $branch->county->county) /** @phpstan-ignore-line */
             ->sortKeys()
-            ->map(fn (Collection $branches) => $this->groupByTown($branches, $formatter));
+            ->map(fn (Collection $branches): Collection => $this->groupByTown($branches, $formatter));
     }
 
     /**
@@ -71,7 +68,7 @@ class GetGroupedEateryNationwideBranchesAction
         return $branches
             ->groupBy(fn (NationwideBranch $branch) => $branch->town->town) /** @phpstan-ignore-line */
             ->sortKeys()
-            ->map(fn (Collection $branches) => $this->groupByArea($branches, $formatter));
+            ->map(fn (Collection $branches): Collection => $this->groupByArea($branches, $formatter));
     }
 
     /**

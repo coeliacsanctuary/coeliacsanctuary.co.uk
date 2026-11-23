@@ -229,7 +229,7 @@ class InertiaTest extends TestCase
 
     protected function inertiaForRoute(string $name): Inertia
     {
-        $route = (new Route('GET', '/foo', []))->name($name);
+        $route = new Route('GET', '/foo', [])->name($name);
 
         request()->setRouteResolver(fn () => $route);
 

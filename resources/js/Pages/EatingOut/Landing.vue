@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import Card from '@/Components/Card.vue';
 import { Link } from '@inertiajs/vue3';
+import { needsFullPageLoad } from '@/helpers';
 import Icon from '@/Components/Icon.vue';
 import LocationSearch from '@/Components/PageSpecific/EatingOut/LocationSearch.vue';
 import Heading from '@/Components/Heading.vue';
@@ -106,9 +107,10 @@ const elemClasses = (index: number): string[] => {
         :key="item.title"
         :class="elemClasses(index)"
       >
-        <Link
+        <component
+          :is="needsFullPageLoad(item.href) ? 'a' : Link"
           :href="item.href"
-          prefetch
+          v-bind="needsFullPageLoad(item.href) ? {} : { prefetch: true }"
         >
           <div class="flex flex-1 flex-col space-y-4">
             <Icon
@@ -126,7 +128,7 @@ const elemClasses = (index: number): string[] => {
               v-text="item.description"
             />
           </div>
-        </Link>
+        </component>
       </li>
     </ul>
   </Card>

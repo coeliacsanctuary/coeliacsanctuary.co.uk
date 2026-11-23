@@ -74,7 +74,7 @@ class CollectionGroupItemResource extends JsonResource
             'description' => $this->item_description ?? $eatery->display_snippet,
             'location' => [
                 'address' => collect(explode("\n", $eatery->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
                 'lat' => $eatery->lat,
                 'lng' => $eatery->lng,
@@ -95,7 +95,7 @@ class CollectionGroupItemResource extends JsonResource
             'description' => $this->item_description ?? $branch->eatery->display_snippet,
             'location' => [
                 'address' => collect(explode("\n", $branch->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
                 'lat' => $branch->lat,
                 'lng' => $branch->lng,

@@ -38,7 +38,7 @@ class ShopProductIndexResourceTest extends TestCase
 
         $this->product->load('travelCardSearchTerms');
 
-        $resource = (new ShopProductIndexResource($this->product))->toArray(new Request());
+        $resource = new ShopProductIndexResource($this->product)->toArray(new Request());
 
         $this->assertNull($resource['footnote']);
     }
@@ -50,7 +50,7 @@ class ShopProductIndexResourceTest extends TestCase
 
         $this->product->setRelation('categories', collect([ShopCategory::query()->first()]));
 
-        $resource = (new ShopProductIndexResource($this->product))->toArray(new Request());
+        $resource = new ShopProductIndexResource($this->product)->toArray(new Request());
 
         $this->assertNull($resource['footnote']);
     }
@@ -63,7 +63,7 @@ class ShopProductIndexResourceTest extends TestCase
         $this->product->load('travelCardSearchTerms');
         $this->product->setRelation('categories', collect([ShopCategory::query()->first()]));
 
-        $resource = (new ShopProductIndexResource($this->product))->toArray(new Request());
+        $resource = new ShopProductIndexResource($this->product)->toArray(new Request());
 
         $this->assertSame('Covers France', $resource['footnote']);
     }
@@ -73,7 +73,7 @@ class ShopProductIndexResourceTest extends TestCase
     {
         $this->product->unsetRelation('reviews');
 
-        $resource = (new ShopProductIndexResource($this->product))->toArray(new Request());
+        $resource = new ShopProductIndexResource($this->product)->toArray(new Request());
 
         $this->assertInstanceOf(MissingValue::class, $resource['rating']);
     }
@@ -92,7 +92,7 @@ class ShopProductIndexResourceTest extends TestCase
 
         $this->product->load('reviews');
 
-        $resource = (new ShopProductIndexResource($this->product))->toArray(new Request());
+        $resource = new ShopProductIndexResource($this->product)->toArray(new Request());
 
         $this->assertSame(1, $resource['rating']['count']);
         $this->assertSame(5.0, $resource['rating']['average']);

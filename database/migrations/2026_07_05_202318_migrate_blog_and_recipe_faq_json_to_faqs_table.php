@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Blog::withoutGlobalScopes()->whereNotNull('faqs')->cursor()->each(function (Blog $blog): void {
+        Blog::query()->withoutGlobalScopes()->whereNotNull('faqs')->cursor()->each(function (Blog $blog): void {
             $faqs = json_decode($blog->getRawOriginal('faqs'), true) ?? [];
 
             foreach ($faqs as $faq) {
@@ -27,7 +27,7 @@ return new class () extends Migration {
             }
         });
 
-        Recipe::withoutGlobalScopes()->whereNotNull('faqs')->cursor()->each(function (Recipe $recipe): void {
+        Recipe::query()->withoutGlobalScopes()->whereNotNull('faqs')->cursor()->each(function (Recipe $recipe): void {
             $faqs = json_decode($recipe->getRawOriginal('faqs'), true) ?? [];
 
             foreach ($faqs as $faq) {

@@ -84,7 +84,7 @@ class NationwideBranchTest extends TestCase
 
         $dispatchedModels = [];
 
-        Bus::assertDispatched(CreateEatingOutOpenGraphImageJob::class, function (CreateEatingOutOpenGraphImageJob $job) use (&$dispatchedModels) {
+        Bus::assertDispatched(CreateEatingOutOpenGraphImageJob::class, function (CreateEatingOutOpenGraphImageJob $job) use (&$dispatchedModels): true {
             $dispatchedModels[] = $job->model;
 
             return true;
@@ -495,7 +495,7 @@ class NationwideBranchTest extends TestCase
 
         $this->build(SealiacOverview::class)
             ->count(5)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'created_at' => now()->subDays($sequence->index + 1),
             ])
             ->forNationwideBranch($branch)
@@ -515,7 +515,7 @@ class NationwideBranchTest extends TestCase
 
         $this->build(SealiacOverview::class)
             ->count(5)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'created_at' => now()->subDays($sequence->index + 1),
             ])
             ->forNationwideBranch($branch)

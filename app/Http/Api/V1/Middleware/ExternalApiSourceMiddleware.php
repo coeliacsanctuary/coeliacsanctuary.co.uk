@@ -11,9 +11,7 @@ class ExternalApiSourceMiddleware
 {
     public function handle(Request $request, Closure $next): mixed
     {
-        if ( ! $request->hasHeader('X-Coeliac-Source')) {
-            abort(403);
-        }
+        abort_unless($request->hasHeader('X-Coeliac-Source'), 403);
 
         return $next($request);
     }

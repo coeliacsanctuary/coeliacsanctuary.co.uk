@@ -47,6 +47,28 @@ export default () => {
     return window.screen.height;
   };
 
+  const isAppleDevice = (): boolean => {
+    if (!hasWindowObject) {
+      return false;
+    }
+
+    const agent = window.navigator.userAgent;
+
+    if (/iPhone|iPod/.test(agent)) {
+      return true;
+    }
+
+    return /iPad|Macintosh/.test(agent) && window.navigator.maxTouchPoints > 1;
+  };
+
+  const isGoogleWalletDevice = (): boolean => {
+    if (!hasWindowObject) {
+      return false;
+    }
+
+    return !isAppleDevice();
+  };
+
   const replaceHistory = (
     url: string,
     data: null | undefined | object = undefined,
@@ -64,6 +86,8 @@ export default () => {
     absoluteUrl,
     pageWidth,
     pageHeight,
+    isAppleDevice,
+    isGoogleWalletDevice,
     replaceHistory,
   };
 };

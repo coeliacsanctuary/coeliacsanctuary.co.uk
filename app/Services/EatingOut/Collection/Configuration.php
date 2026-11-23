@@ -33,35 +33,26 @@ class Configuration implements Castable, Jsonable
     /** @var Order[] */
     protected array $orderBy = [];
 
-    protected ?int $limit = null;
-
-    protected ?array $novaDisplay = null;
-
-    protected mixed $novaLimit = null;
-
     public function __construct(
         array $wheres = [],
         array $joins = [],
         array $counts = [],
         array $averages = [],
         array $orderBy = [],
-        ?int $limit = null,
-        ?array $novaDisplay = null,
-        mixed $novaLimit = null,
+        protected ?int $limit = null,
+        protected ?array $novaDisplay = null,
+        protected mixed $novaLimit = null,
     ) {
         $this->wheres = $this->deduplicateItems($this->processWheres($wheres));
-        $this->joins = $this->deduplicateItems(array_map(fn ($join) => $join instanceof Join ? $join : new Join(...$join), $joins));
-        $this->counts = $this->deduplicateItems(array_map(fn ($count) => $count instanceof Count ? $count : new Count(...$count), $counts));
-        $this->averages = $this->deduplicateItems(array_map(fn ($average) => $average instanceof Average ? $average : new Average(...$average), $averages));
-        $this->orderBy = $this->deduplicateItems(array_map(fn ($order) => $order instanceof Order ? $order : new Order(...$order), $orderBy));
-        $this->limit = $limit;
-        $this->novaDisplay = $novaDisplay;
-        $this->novaLimit = $novaLimit;
+        $this->joins = $this->deduplicateItems(array_map(fn ($join): Join => $join instanceof Join ? $join : new Join(...$join), $joins));
+        $this->counts = $this->deduplicateItems(array_map(fn ($count): Count => $count instanceof Count ? $count : new Count(...$count), $counts));
+        $this->averages = $this->deduplicateItems(array_map(fn ($average): Average => $average instanceof Average ? $average : new Average(...$average), $averages));
+        $this->orderBy = $this->deduplicateItems(array_map(fn ($order): Order => $order instanceof Order ? $order : new Order(...$order), $orderBy));
     }
 
     protected function processWheres(array $wheres): array
     {
-        return array_map(function ($where) {
+        return array_map(function ($where): Where|Collection {
             if ($where instanceof Where) {
                 return $where;
             }
@@ -119,7 +110,7 @@ class Configuration implements Castable, Jsonable
 
         $key = $this->itemKey($where);
 
-        $isDuplicate = collect($this->wheres)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+        $isDuplicate = collect($this->wheres)->contains(fn ($existing): bool => $this->itemKey($existing) === $key);
 
         if ( ! $isDuplicate) {
             /** @phpstan-ignore-next-line  */
@@ -133,7 +124,7 @@ class Configuration implements Castable, Jsonable
     {
         $key = $this->itemKey($join);
 
-        $isDuplicate = collect($this->joins)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+        $isDuplicate = collect($this->joins)->contains(fn ($existing): bool => $this->itemKey($existing) === $key);
 
         if ( ! $isDuplicate) {
             $this->joins[] = $join;
@@ -146,7 +137,7 @@ class Configuration implements Castable, Jsonable
     {
         $key = $this->itemKey($order);
 
-        $isDuplicate = collect($this->orderBy)->contains(fn ($existing) => $this->itemKey($existing) === $key);
+        $isDuplicate = collect($this->orderBy)->contains(fn ($existing): bool => $this->itemKey($existing) === $key);
 
         if ( ! $isDuplicate) {
             $this->orderBy[] = $order;
@@ -185,7 +176,7 @@ class Configuration implements Castable, Jsonable
     protected function prepareWheres(Collection $wheres): Collection
     {
         /** @phpstan-ignore return.type */
-        return $wheres->map(function (Where|Collection $where) {
+        return $wheres->map(function (Where|Collection $where): Where|Collection {
             if ($where instanceof Where) {
                 return $where;
             }

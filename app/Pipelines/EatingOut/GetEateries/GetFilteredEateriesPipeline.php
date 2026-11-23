@@ -78,8 +78,8 @@ class GetFilteredEateriesPipeline
         $pipelineData = new GetEateriesPipelineData(
             filters: $filters,
             searchTerm: $searchTerm,
-            jsonResource: $jsonResource,
             latLng: $latLng,
+            jsonResource: $jsonResource,
             throwSearchException: false,
         );
 

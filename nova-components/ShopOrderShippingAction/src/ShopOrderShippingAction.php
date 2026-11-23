@@ -9,8 +9,6 @@ use Laravel\Nova\Fields\Field;
 class ShopOrderShippingAction extends Field
 {
     /**
-     * The field's component.
-     *
      * @var string
      */
     public $component = 'shop-order-shipping-action';

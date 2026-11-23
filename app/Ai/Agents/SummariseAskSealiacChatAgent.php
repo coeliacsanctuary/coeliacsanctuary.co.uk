@@ -32,7 +32,7 @@ class SummariseAskSealiacChatAgent implements Agent, Conversational
     public function messages(): iterable
     {
         return $this->chat->messages
-            ->flatMap(fn (AskSealiacChatMessage $message) => [
+            ->flatMap(fn (AskSealiacChatMessage $message): array => [
                 new Message('user', $message->prompt),
                 new Message('assistant', $message->response),
             ])

@@ -4,30 +4,24 @@ declare(strict_types=1);
 
 namespace App\Jobs\Metrics\Recipes;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeMetric;
 use Exception;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
-use Jpeters8889\JourneyTrackerLaravel\Enums\EventType;
-use Jpeters8889\JourneyTrackerLaravel\Facades\JourneyTracker;
-use Jpeters8889\JourneyTrackerLaravel\Query\EventFilter;
-use Jpeters8889\JourneyTrackerLaravel\Query\PageFilter;
-use Jpeters8889\JourneyTrackerLaravel\Query\QueryDescriptor;
+use JourneyTracker\JourneyTrackerLaravel\Enums\EventType;
+use JourneyTracker\JourneyTrackerLaravel\Facades\JourneyTracker;
+use JourneyTracker\JourneyTrackerLaravel\Query\EventFilter;
+use JourneyTracker\JourneyTrackerLaravel\Query\PageFilter;
+use JourneyTracker\JourneyTrackerLaravel\Query\QueryDescriptor;
 use Throwable;
 
 class GetRecipeMetricsJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $tries = 1;
 
@@ -49,15 +43,15 @@ class GetRecipeMetricsJob implements ShouldQueue
                 ->today($this->date)
                 ->count(
                     'views',
-                    fn (QueryDescriptor $query) => $query
-                        ->withPage(fn (PageFilter $page) => $page->path(mb_trim($this->recipe->link, '/')))
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
+                        ->withPage(fn (PageFilter $page): PageFilter => $page->path(mb_trim($this->recipe->link, '/')))
                 )
                 ->count(
                     'comment_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
-                                ->type(EventType::SCROLLED_INTO_VIEW)
+                            fn (EventFilter $event): EventFilter => $event
+                                ->type(EventType::ScrolledIntoView)
                                 ->identifier('CommentsCard')
                                 ->withParameters([
                                     'page' => 'recipe',
@@ -67,10 +61,10 @@ class GetRecipeMetricsJob implements ShouldQueue
                 )
                 ->count(
                     'detail_card_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
-                                ->type(EventType::SCROLLED_INTO_VIEW)
+                            fn (EventFilter $event): EventFilter => $event
+                                ->type(EventType::ScrolledIntoView)
                                 ->identifier('RecipeDetailCard')
                                 ->withParameters([
                                     'title' => $this->recipe->title,
@@ -79,10 +73,10 @@ class GetRecipeMetricsJob implements ShouldQueue
                 )
                 ->count(
                     'collection_card_views',
-                    fn (QueryDescriptor $query) => $query
+                    fn (QueryDescriptor $query): QueryDescriptor => $query
                         ->withEvent(
-                            fn (EventFilter $event) => $event
-                                ->type(EventType::SCROLLED_INTO_VIEW)
+                            fn (EventFilter $event): EventFilter => $event
+                                ->type(EventType::ScrolledIntoView)
                                 ->identifier('CollectionItemCard')
                                 ->withParameters([
                                     'title' => $this->recipe->title,

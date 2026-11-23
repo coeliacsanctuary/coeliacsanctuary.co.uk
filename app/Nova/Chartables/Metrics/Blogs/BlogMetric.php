@@ -17,12 +17,12 @@ abstract class BlogMetric extends Chartable
 
     abstract protected function column(): string;
 
-    public function type(): string
+    protected function type(): string
     {
         return static::LINE_CHART;
     }
 
-    public function getData(Carbon $startDate, Carbon $endDate): int
+    protected function getData(Carbon $startDate, Carbon $endDate): int
     {
         return BlogMetricModel::query()
             ->where('blog_id', $this->blogId)

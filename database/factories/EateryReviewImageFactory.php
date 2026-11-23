@@ -9,6 +9,9 @@ use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryReviewImage;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryReviewImage>
+ */
 class EateryReviewImageFactory extends Factory
 {
     protected $model = EateryReviewImage::class;
@@ -25,7 +28,7 @@ class EateryReviewImageFactory extends Factory
 
     public function on(Eatery|int $eatery)
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'wheretoeat_id' => $eatery instanceof Eatery ? $eatery->id : $eatery,
         ]);
     }

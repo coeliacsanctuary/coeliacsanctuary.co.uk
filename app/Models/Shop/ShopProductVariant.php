@@ -10,11 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShopProductVariant extends Model
 {
-    protected $casts = [
-        'icon' => 'json',
-        'live' => 'bool',
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(new LiveScope());
@@ -24,5 +19,13 @@ class ShopProductVariant extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(ShopProduct::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'icon' => 'json',
+            'live' => 'bool',
+        ];
     }
 }

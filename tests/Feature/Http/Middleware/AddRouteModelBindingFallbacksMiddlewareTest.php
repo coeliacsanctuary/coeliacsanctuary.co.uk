@@ -51,7 +51,7 @@ class AddRouteModelBindingFallbacksMiddlewareTest extends TestCase
 
         $this->mock(CheckForRouteRedirectAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($argPath) use ($blog) {
+            ->withArgs(function ($argPath) use ($blog): true {
                 $this->assertEquals("blog/{$blog->slug}", $argPath);
 
                 return true;
@@ -77,7 +77,7 @@ class AddRouteModelBindingFallbacksMiddlewareTest extends TestCase
 
         $this->mock(CheckForRouteRedirectAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($argPath) use ($blog) {
+            ->withArgs(function ($argPath) use ($blog): true {
                 $this->assertEquals("blog/{$blog->slug}", $argPath);
 
                 return true;
@@ -87,7 +87,7 @@ class AddRouteModelBindingFallbacksMiddlewareTest extends TestCase
 
         $this->mock(HandleRedirectResponseAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($redirectArg) use ($redirect) {
+            ->withArgs(function ($redirectArg) use ($redirect): true {
                 $this->assertTrue($redirect->is($redirectArg));
 
                 return true;
@@ -106,7 +106,7 @@ class AddRouteModelBindingFallbacksMiddlewareTest extends TestCase
 
         $this->mock(CheckForRouteRedirectAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($argPath) use ($blog) {
+            ->withArgs(function ($argPath) use ($blog): true {
                 $this->assertEquals("blog/{$blog->slug}", $argPath);
 
                 return true;

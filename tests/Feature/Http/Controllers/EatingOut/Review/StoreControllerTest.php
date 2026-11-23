@@ -394,8 +394,6 @@ class StoreControllerTest extends TestCase
 
     public static function routesToVisit(): array
     {
-        // [route, post data, before hook, after hook]
-
         return [
             'normal eatery' => [
                 fn (self $test, ?string $eatery = null): string => route('eating-out.show.reviews.create', [
@@ -403,7 +401,7 @@ class StoreControllerTest extends TestCase
                     'town' => $test->town->slug,
                     'eatery' => $eatery ?? $test->eatery->slug,
                 ]),
-                fn (array $data = []): EateryCreateReviewRequestFactory => EateryCreateReviewRequestFactory::new($data),
+                EateryCreateReviewRequestFactory::new(...),
                 function (): void {
                 },
                 function (self $test, EateryReview $review): void {
@@ -417,7 +415,7 @@ class StoreControllerTest extends TestCase
                     'area' => $test->area->slug,
                     'eatery' => $eatery ?? $test->eatery->slug,
                 ]),
-                fn (array $data = []): EateryCreateReviewRequestFactory => EateryCreateReviewRequestFactory::new($data),
+                EateryCreateReviewRequestFactory::new(...),
                 function (self $test): void {
                     $test->eatery->update(['area_id' => $test->area->id]);
                 },

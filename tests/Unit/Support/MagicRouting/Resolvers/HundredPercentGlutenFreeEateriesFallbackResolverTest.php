@@ -79,7 +79,7 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
 
         $this->mock(FindEateryMagicRouteRecordAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function (EateryMagicRouteType $type) {
+            ->withArgs(function (EateryMagicRouteType $type): true {
                 $this->assertSame(EateryMagicRouteType::HundredPercentGlutenFree, $type);
 
                 return true;
@@ -101,7 +101,7 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
 
         $this->mock(FindEateryMagicRouteRecordAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function (EateryMagicRouteType $type, string $location) {
+            ->withArgs(function (EateryMagicRouteType $type, string $location): true {
                 $this->assertSame('london', $location);
 
                 return true;
@@ -129,7 +129,7 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
 
         $this->mock(RouteToController::class)
             ->shouldReceive('handle')
-            ->withArgs(function (mixed $controller) use ($countyController) {
+            ->withArgs(function (mixed $controller) use ($countyController): true {
                 $this->assertSame($countyController, $controller);
 
                 return true;
@@ -155,7 +155,7 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
 
         $this->mock(RouteToController::class)
             ->shouldReceive('handle')
-            ->withArgs(function (mixed $controller) use ($townController) {
+            ->withArgs(function (mixed $controller) use ($townController): true {
                 $this->assertSame($townController, $controller);
 
                 return true;
@@ -198,7 +198,7 @@ class HundredPercentGlutenFreeEateriesFallbackResolverTest extends TestCase
 
         $this->mock(RouteToController::class)
             ->shouldReceive('handle')
-            ->withArgs(function (mixed $controller, array $knownDependencies) use ($routeRecord) {
+            ->withArgs(function (mixed $controller, array $knownDependencies) use ($routeRecord): true {
                 $this->assertSame($routeRecord, $knownDependencies['routeRecord']);
 
                 return true;

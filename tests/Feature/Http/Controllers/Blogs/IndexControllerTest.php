@@ -65,13 +65,13 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('blog.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Blog/Index')
                     ->has('blogs')
                     ->has(
                         'blogs.data',
                         12,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 0')
@@ -90,13 +90,13 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('blog.index', ['page' => 2]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Blog/Index')
                     ->has('blogs')
                     ->has(
                         'blogs.data',
                         12,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 12')
@@ -115,7 +115,7 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('blog.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Blog/Index')
                     ->missing('tags')
             );
@@ -129,9 +129,9 @@ class IndexControllerTest extends TestCase
             Header::PARTIAL_COMPONENT => 'Blog/Index',
         ])
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Blog/Index')
-                    ->has('tags', BlogTag::count(), fn (Assert $page) => $page->hasAll(['slug', 'tag', 'blogs_count'])->etc())
+                    ->has('tags', BlogTag::query()->count(), fn (Assert $page): Assert => $page->hasAll(['slug', 'tag', 'blogs_count'])->etc())
                     ->where('tags.0.tag', $this->tag->tag)
                     ->where('tags.0.slug', $this->tag->slug)
                     ->where('tags.0.blogs_count', 2)
@@ -162,10 +162,10 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('blog.index.tags', ['tag' => $this->tag->slug]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Blog/Index')
                     ->has('blogs')
-                    ->has('blogs.data', 2, fn (Assert $page) => $page->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count']))
+                    ->has('blogs.data', 2, fn (Assert $page): Assert => $page->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count']))
                     ->where('blogs.data.0.title', 'Blog 0')
                     ->has('blogs.links')
                     ->has('blogs.meta')
@@ -187,13 +187,13 @@ class IndexControllerTest extends TestCase
 
         $this->get(route('blog.index.tags', ['tag' => $this->tag->slug, 'page' => 2]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Blog/Index')
                     ->has('blogs')
                     ->has(
                         'blogs.data',
                         12,
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->hasAll(['title', 'description', 'date', 'image', 'header_image_alt_text', 'link', 'description', 'tags', 'comments_count'])
                     )
                     ->where('blogs.data.0.title', 'Blog 12')
@@ -212,7 +212,7 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('blog.index'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('meta.description', 'Gluten free and coeliac blogs from Coeliac Sanctuary — coeliac news, new gluten free product launches, free from range reviews, and life with coeliac disease.')
                     ->etc()
             );
@@ -223,7 +223,7 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('blog.index.tags', ['tag' => $this->tag->slug]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('meta.description', "Coeliac Sanctuary gluten free blogs tagged with {$this->tag->tag} — coeliac news, new product launches, free from reviews, and life with coeliac disease.")
                     ->etc()
             );

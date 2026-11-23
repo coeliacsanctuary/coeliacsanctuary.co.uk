@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -14,12 +15,9 @@ use Illuminate\Support\Str;
  * @property bool $is_open_now
  * @property array $opening_times_array
  */
+#[Table(name: 'wheretoeat_opening_times')]
 class EateryOpeningTimes extends Model
 {
-    protected $casts = ['is_open_now' => 'bool'];
-
-    protected $table = 'wheretoeat_opening_times';
-
     /** @return BelongsTo<Eatery, $this> */
     public function eatery(): BelongsTo
     {
@@ -29,7 +27,7 @@ class EateryOpeningTimes extends Model
     /** @return Attribute<bool, never> */
     public function isOpenNow(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): bool {
             $today = $this->currentDay();
 
             $todaysOpeningTime = $this->formatTime($today . '_start');
@@ -115,7 +113,7 @@ class EateryOpeningTimes extends Model
     public function openingTimesArray(): Attribute
     {
         return Attribute::get(fn () => collect(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
-            ->mapWithKeys(fn (string $day) => [
+            ->mapWithKeys(fn (string $day): array => [
                 $day => [
                     'opens' => $this->opensAt($day),
                     'closes' => $this->closesAt($day),
@@ -127,5 +125,10 @@ class EateryOpeningTimes extends Model
     protected function currentDay(): string
     {
         return Str::lower(Carbon::now()->dayName);
+    }
+
+    protected function casts(): array
+    {
+        return ['is_open_now' => 'bool'];
     }
 }

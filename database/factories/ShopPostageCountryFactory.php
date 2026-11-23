@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Enums\Shop\PostageArea;
 use App\Models\Shop\ShopPostageCountry;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopPostageCountry>
+ */
 class ShopPostageCountryFactory extends Factory
 {
     protected $model = ShopPostageCountry::class;

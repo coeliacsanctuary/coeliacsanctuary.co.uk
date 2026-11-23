@@ -29,7 +29,7 @@ class RecipeShowResourceTest extends TestCase
     {
         $this->recipe->update(['ingredients' => $ingredients]);
 
-        return (new RecipeShowResource($this->recipe->fresh()))->toArray(new Request())['ingredients'];
+        return new RecipeShowResource($this->recipe->fresh())->toArray(new Request())['ingredients'];
     }
 
     #[Test]
@@ -141,7 +141,7 @@ class RecipeShowResourceTest extends TestCase
     #[Test]
     public function itReturnsNullFaqsWhenThereAreNoFaqs(): void
     {
-        $resource = (new RecipeShowResource($this->recipe))->toArray(new Request());
+        $resource = new RecipeShowResource($this->recipe)->toArray(new Request());
 
         $this->assertNull($resource['faqs']);
     }
@@ -152,7 +152,7 @@ class RecipeShowResourceTest extends TestCase
         $this->build(Faq::class)->on($this->recipe)->create(['question' => 'Is this gluten free?', 'answer' => 'Yes!']);
         $this->build(Faq::class)->on($this->recipe)->create(['question' => 'Can I freeze it?', 'answer' => 'Absolutely.']);
 
-        $resource = (new RecipeShowResource($this->recipe->fresh()))->toArray(new Request());
+        $resource = new RecipeShowResource($this->recipe->fresh())->toArray(new Request());
 
         $this->assertCount(2, $resource['faqs']);
         $this->assertSame('Is this gluten free?', $resource['faqs'][0]['question']);

@@ -41,7 +41,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
     {
         $this->expectAction(SendEateryRecommendationToAiAction::class, return: $this->validDto());
 
-        (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
+        new SendEateryRecommendationToAiJob($this->recommendation)->handle();
     }
 
     #[Test]
@@ -51,7 +51,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
 
         $this->dontExpectAction(SendEateryRecommendationToAiAction::class);
 
-        (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
+        new SendEateryRecommendationToAiJob($this->recommendation)->handle();
     }
 
     #[Test]
@@ -61,7 +61,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
 
         $this->dontExpectAction(SendEateryRecommendationToAiAction::class);
 
-        (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
+        new SendEateryRecommendationToAiJob($this->recommendation)->handle();
     }
 
     #[Test]
@@ -75,7 +75,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
 
         $this->dontExpectAction(SendEateryRecommendationToAiAction::class);
 
-        (new SendEateryRecommendationToAiJob($recommendation))->handle();
+        new SendEateryRecommendationToAiJob($recommendation)->handle();
     }
 
     #[Test]
@@ -85,7 +85,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
 
         $this->expectAction(SendEateryRecommendationToAiAction::class, return: $this->validDto());
 
-        (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
+        new SendEateryRecommendationToAiJob($this->recommendation)->handle();
 
         $this->assertDatabaseCount(EateryRecommendationAiData::class, 1);
     }
@@ -97,7 +97,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
 
         $this->dontExpectAction(SendEateryRecommendationToAiAction::class);
 
-        (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
+        new SendEateryRecommendationToAiJob($this->recommendation)->handle();
 
         $this->assertDatabaseEmpty(EateryRecommendationAiData::class);
     }
@@ -107,7 +107,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
     {
         $this->expectAction(SendEateryRecommendationToAiAction::class, return: $this->validDto());
 
-        (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
+        new SendEateryRecommendationToAiJob($this->recommendation)->handle();
 
         $aiData = $this->recommendation->aiData()->first();
 
@@ -123,7 +123,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
 
         $exception = new RuntimeException('AI service unavailable.');
 
-        (new SendEateryRecommendationToAiJob($this->recommendation))->failed($exception);
+        new SendEateryRecommendationToAiJob($this->recommendation)->failed($exception);
 
         $aiData = $this->recommendation->aiData()->first();
 
@@ -138,7 +138,7 @@ class SendEateryRecommendationToAiJobTest extends TestCase
 
         $this->expectAction(SendEateryRecommendationToAiAction::class, return: $dto);
 
-        (new SendEateryRecommendationToAiJob($this->recommendation))->handle();
+        new SendEateryRecommendationToAiJob($this->recommendation)->handle();
 
         $aiData = $this->recommendation->aiData()->first();
 

@@ -36,6 +36,7 @@ class ShowController
                 'id' => $order->order_key,
                 'invitation' => $invitation->id,
                 'name' => $customer->name,
+                'digital_only' => $order->is_digital_only,
                 'products' => $getOrderProductsForReviewAction->handle($order),
             ]);
     }

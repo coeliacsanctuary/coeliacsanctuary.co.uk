@@ -26,7 +26,7 @@ class GetPopularTravelCardDestinationsAction
                 ->orderBy('term')
                 ->take(10)
                 ->get()
-                ->map(fn (TravelCardSearchTerm $term) => [
+                ->map(fn (TravelCardSearchTerm $term): array => [
                     'term' => $term->display_term,
                     'flag' => Helpers::countryCode($term->term),
                 ])

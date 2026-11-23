@@ -79,7 +79,7 @@ class SuggestTravelCardSearchTermsAction
             'term' => $names->join(', ', ' and '),
             'value' => $searchString,
             'type' => "{$terms->count()} destinations",
-        ]])->concat($terms->map(fn (TravelCardSearchTerm $term) => [
+        ]])->concat($terms->map(fn (TravelCardSearchTerm $term): array => [
             'id' => $term->id,
             'term' => $term->display_term,
             'value' => $term->display_term,

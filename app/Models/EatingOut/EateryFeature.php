@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+#[Table(name: 'wheretoeat_features')]
 class EateryFeature extends Model
 {
-    protected $table = 'wheretoeat_features';
-
     /** @return BelongsToMany<Eatery, $this> */
     public function eateries(): BelongsToMany
     {

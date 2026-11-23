@@ -53,7 +53,7 @@ class ListPopularEateriesInCountyTest extends TestCase
 
     protected function handleTool(string $county = 'Cheshire East'): array
     {
-        return json_decode((string) (new ListPopularEateriesInCounty())->handle(new Request(['county' => $county])), true);
+        return json_decode((string) new ListPopularEateriesInCounty()->handle(new Request(['county' => $county])), true);
     }
 
     #[Test]
@@ -160,7 +160,7 @@ class ListPopularEateriesInCountyTest extends TestCase
     #[Test]
     public function itHasTheCorrectSchema(): void
     {
-        $schema = (new ListPopularEateriesInCounty())->schema(new JsonSchemaTypeFactory());
+        $schema = new ListPopularEateriesInCounty()->schema(new JsonSchemaTypeFactory());
 
         $this->assertArrayHasKey('county', $schema);
     }

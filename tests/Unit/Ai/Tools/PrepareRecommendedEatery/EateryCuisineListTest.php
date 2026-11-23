@@ -20,7 +20,7 @@ class EateryCuisineListTest extends TestCase
         $this->create(EateryCuisine::class, ['cuisine' => 'Chinese']);
         $this->create(EateryCuisine::class, ['cuisine' => 'English']);
 
-        $result = json_decode((string) (new EateryCuisineList())->handle(new Request()), true);
+        $result = json_decode((string) new EateryCuisineList()->handle(new Request()), true);
 
         $this->assertEquals(['Chinese', 'English', 'Italian'], $result);
     }
@@ -28,7 +28,7 @@ class EateryCuisineListTest extends TestCase
     #[Test]
     public function itReturnsEmptyWhenNoCuisinesExist(): void
     {
-        $result = json_decode((string) (new EateryCuisineList())->handle(new Request()), true);
+        $result = json_decode((string) new EateryCuisineList()->handle(new Request()), true);
 
         $this->assertEmpty($result);
     }
@@ -36,6 +36,6 @@ class EateryCuisineListTest extends TestCase
     #[Test]
     public function itHasAnEmptySchema(): void
     {
-        $this->assertEmpty((new EateryCuisineList())->schema(new JsonSchemaTypeFactory()));
+        $this->assertEmpty(new EateryCuisineList()->schema(new JsonSchemaTypeFactory()));
     }
 }

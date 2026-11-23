@@ -24,12 +24,12 @@ class GetBranchThatMatchesName extends BaseStep
         }
 
         $matchingBranches = $data->branches
-            ->reject(fn (NationwideBranch $branch) => $branch->name === null)
+            ->reject(fn (NationwideBranch $branch): bool => $branch->name === null)
             /** @phpstan-ignore-next-line */
-            ->filter(fn (NationwideBranch $branch) => Str::of($branch->name)->contains($branchName, true) || Str::of($branchName)->contains($branch->name, false));
+            ->filter(fn (NationwideBranch $branch): bool => Str::of($branch->name)->contains($branchName, true) || Str::of($branchName)->contains($branch->name, false));
 
         if ($matchingBranches->count() > 1) {
-            $matchingBranches = $matchingBranches->filter(fn (NationwideBranch $branch) => $branch->name === $branchName);
+            $matchingBranches = $matchingBranches->filter(fn (NationwideBranch $branch): bool => $branch->name === $branchName);
         }
 
         if ($matchingBranches->count() === 1) {

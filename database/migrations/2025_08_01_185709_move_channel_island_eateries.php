@@ -32,7 +32,7 @@ return new class () extends Migration {
                 'town' => 'St Anne',
             ],
             [
-                'name' => 'L\'Horizon Hotel',
+                'name' => "L'Horizon Hotel",
                 'county' => 'Jersey',
                 'town' => 'St Brelade',
             ],
@@ -55,6 +55,10 @@ return new class () extends Migration {
 
         /** @var EateryCountry $channelIslands */
         $channelIslands = EateryCountry::query()->where('country', 'Channel Islands')->first();
+
+        if ( ! $channelIslands) {
+            return;
+        }
 
         foreach ($eateries as $eatery) {
             $model = Eatery::query()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Support\EatingOut\SuggestEdits\Fields\AddressField;
 use App\Support\EatingOut\SuggestEdits\Fields\CuisineField;
 use App\Support\EatingOut\SuggestEdits\Fields\EditableField;
@@ -18,15 +19,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Table(name: 'wheretoeat_suggested_edits')]
 class EaterySuggestedEdit extends Model
 {
-    protected $table = 'wheretoeat_suggested_edits';
-
-    protected $casts = [
-        'accepted' => 'bool',
-        'rejected' => 'bool',
-    ];
-
     /** @return BelongsTo<Eatery, $this> */
     public function eatery(): BelongsTo
     {
@@ -52,7 +47,7 @@ class EaterySuggestedEdit extends Model
     /** @return Attribute<string, never> */
     public function status(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): string {
             if ($this->accepted) {
                 return 'Accepted';
             }
@@ -63,5 +58,13 @@ class EaterySuggestedEdit extends Model
 
             return 'New';
         });
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'accepted' => 'bool',
+            'rejected' => 'bool',
+        ];
     }
 }

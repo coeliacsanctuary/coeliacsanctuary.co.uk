@@ -7,6 +7,7 @@ namespace App\Actions\EatingOut;
 use App\Ai\Agents\PrepareRecommendedEatery;
 use App\DataObjects\EatingOut\AiPreparedRecommendation;
 use App\Models\EatingOut\EateryRecommendation;
+use Laravel\Ai\Responses\StructuredAgentResponse;
 
 class SendEateryRecommendationToAiAction
 {
@@ -16,10 +17,9 @@ class SendEateryRecommendationToAiAction
             'recommendation' => $eateryRecommendation,
         ])->render();
 
-        $info = PrepareRecommendedEatery::make()->prompt($prompt);
+        /** @var StructuredAgentResponse $response */
+        $response = PrepareRecommendedEatery::make()->prompt($prompt);
 
-        $aiInfo = json_decode($info->text, true);
-
-        return AiPreparedRecommendation::fromArray($aiInfo);
+        return AiPreparedRecommendation::fromArray($response->toArray());
     }
 }

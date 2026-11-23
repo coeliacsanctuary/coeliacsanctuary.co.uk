@@ -32,7 +32,7 @@ class MyPlaces extends Resource
 
     public static $search = ['place_name', 'place_location', 'place_details'];
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -73,12 +73,12 @@ class MyPlaces extends Resource
                 ->showInline()
                 ->withoutConfirmation()
                 ->sole()
-                ->canRun(fn ($request, EateryRecommendation $recommendation) => $recommendation->completed === false),
+                ->canRun(fn ($request, EateryRecommendation $recommendation): bool => $recommendation->completed === false),
 
             CompleteReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryRecommendation $report) => $report->completed === false),
+                ->canRun(fn ($request, EateryRecommendation $report): bool => $report->completed === false),
         ];
     }
 
@@ -92,7 +92,7 @@ class MyPlaces extends Resource
         return EateryVenueType::query()
             ->when($typeId, fn (Builder $query) => $query->where('type_id', $typeId))
             ->get()
-            ->mapWithKeys(fn (EateryVenueType $venueType) => [$venueType->id => $venueType->venue_type])
+            ->mapWithKeys(fn (EateryVenueType $venueType): array => [$venueType->id => $venueType->venue_type])
             ->toArray();
     }
 }

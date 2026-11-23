@@ -59,7 +59,7 @@ class Areas extends Resource
                 ->addButtonLabel('Select Image')
                 ->nullable(),
 
-            Boolean::make('Live', fn () => $this->eateries_count > 0)->onlyOnIndex(),
+            Boolean::make('Live', fn (): bool => $this->eateries_count > 0)->onlyOnIndex(),
 
             Number::make('Eateries', 'eateries_count')->onlyOnIndex()->sortable(),
         ];

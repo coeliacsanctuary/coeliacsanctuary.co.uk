@@ -11,7 +11,7 @@ use Jpeters8889\ApexCharts\DTO\DateRange;
 
 class BasketOrders extends Chartable
 {
-    public function type(): string
+    protected function type(): string
     {
         return static::LINE_CHART;
     }
@@ -21,7 +21,7 @@ class BasketOrders extends Chartable
         return 'Baskets vs Orders';
     }
 
-    public function getData(Carbon $startDate, Carbon $endDate): array
+    protected function getData(Carbon $startDate, Carbon $endDate): array
     {
         $orders = ShopOrder::query()
             ->where('created_at', '>=', $startDate)

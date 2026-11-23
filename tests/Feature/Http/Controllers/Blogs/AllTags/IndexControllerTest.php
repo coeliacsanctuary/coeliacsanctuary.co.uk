@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class IndexControllerTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -39,7 +39,7 @@ class IndexControllerTest extends TestCase
     {
         $this->get(route('blog.tags'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Blog/AllTags')
                     ->has('tags')
                     ->has('tags.0.group')

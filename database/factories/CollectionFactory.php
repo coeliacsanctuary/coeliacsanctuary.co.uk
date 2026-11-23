@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Collections\Collection;
 use Carbon\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Collections\Collection>
+ */
 class CollectionFactory extends Factory
 {
     protected $model = Collection::class;
@@ -14,10 +17,10 @@ class CollectionFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->sentence,
-            'slug' => $this->faker->slug,
+            'title' => $this->faker->sentence(),
+            'slug' => $this->faker->slug(),
             'meta_keywords' => implode(',', $this->faker->words(5)),
-            'meta_description' => $description = $this->faker->paragraph,
+            'meta_description' => $description = $this->faker->paragraph(),
             'long_description' => $description,
             'body' => $this->faker->paragraphs(3, true),
             'live' => true,
@@ -29,12 +32,12 @@ class CollectionFactory extends Factory
 
     public function notOnHomepage()
     {
-        return $this->state(fn () => ['display_on_homepage' => false]);
+        return $this->state(fn (): array => ['display_on_homepage' => false]);
     }
 
-    public function displayedOnHomepage(Carbon $until = null)
+    public function displayedOnHomepage(?Carbon $until = null)
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'display_on_homepage' => true,
             'remove_from_homepage' => $until ?? Carbon::now()->addDays(14),
         ]);

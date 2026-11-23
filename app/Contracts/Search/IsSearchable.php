@@ -10,9 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @mixin Model
- *
  * @property int $id
- *
  * @method array{_rankingInfo: array{userScore: int, firstMatchedWord: int}} scoutMetadata()
  */
 interface IsSearchable

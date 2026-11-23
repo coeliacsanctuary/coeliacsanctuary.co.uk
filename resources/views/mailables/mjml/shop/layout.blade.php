@@ -3,6 +3,7 @@
     use App\Support\Helpers;
     use Illuminate\Support\Str;
     use Money\Money;
+
     /** @var ShopOrder $order */
 @endphp
 
@@ -10,7 +11,8 @@
 
 @push('head')
     <mj-style>
-        @media only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
+        @media
+        only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
     </mj-style>
 @endpush
 
@@ -21,34 +23,34 @@
         </mj-column>
     </mj-section>
 
-    @if($order->has_add_ons && isset($newOrder) && $newOrder === true)
+    @if ($order->has_digital_items && isset($newOrder) && $newOrder === true)
         <mj-section>
             <mj-column>
                 <mj-text mj-class="inner">
-                        <span style="line-height:1.4; font-weight: bold; text-align: center;">
-                            You will receive a separate email with the download link for your digital cards.
-                        </span>
+                    <span style="line-height: 1.4; font-weight: bold; text-align: center">
+                        You will receive a separate email with details to access your digital cards.
+                    </span>
                 </mj-text>
             </mj-column>
         </mj-section>
     @endif
 
-    @unless(isset($minimal) && $minimal === true)
+    @unless (isset($minimal) && $minimal === true)
         <mj-section mj-class="light-section">
             <mj-column>
                 <mj-text align="center" padding-bottom="10px"><h2>Order Summary</h2></mj-text>
                 <mj-text align="center" padding-bottom="4px">
-                    <strong>Order Number:</strong> {{ $order->order_key }}<br/>
+                    <strong>Order Number:</strong> {{ $order->order_key }}<br />
                 </mj-text>
                 <mj-text align="center" padding-bottom="4px">
-                    <strong>Order Total:</strong> {{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}<br/>
+                    <strong>Order Total:</strong> {{ Helpers::formatMoney(Money::GBP($order->payment->total)) }}<br />
                 </mj-text>
                 <mj-text align="center">
-                    <strong>Order Date:</strong> {{ $order->payment->created_at->format('d/m/Y') }}<br/>
+                    <strong>Order Date:</strong> {{ $order->payment->created_at->format('d/m/Y') }}<br />
                 </mj-text>
-                @if($order->shipped_at)
+                @if ($order->shipped_at)
                     <mj-text align="center" padding-top="4px">
-                        <strong>Shipped On</strong> {{ $order->shipped_at->format('d/m/Y') }}<br/>
+                        <strong>Shipped On</strong> {{ $order->shipped_at->format('d/m/Y') }}<br />
                     </mj-text>
                 @endif
             </mj-column>
@@ -67,20 +69,22 @@
         <mj-section>
             <mj-column>
                 <mj-text>
-                    <hr color="#addaf9"></hr>
+                    <hr color="#addaf9" />
                 </mj-text>
             </mj-column>
         </mj-section>
 
-        <mj-section>
-            <mj-column>
-                <mj-text><h2>Postage Address</h2></mj-text>
-                <mj-text mj-class="inner">
-                    <span style="line-height:1.4">
-                        {!! Str::markdown($order->address->formattedAddress, ['renderer' => ['soft_break' => "<br/>"]]) !!}
-                    </span>
-                </mj-text>
-            </mj-column>
-        </mj-section>
+        @unless ($order->is_digital_only)
+            <mj-section>
+                <mj-column>
+                    <mj-text><h2>Postage Address</h2></mj-text>
+                    <mj-text mj-class="inner">
+                        <span style="line-height: 1.4">
+                            {!! Str::markdown($order->address->formattedAddress, ['renderer' => ['soft_break' => "<br/>"]]) !!}
+                        </span>
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+        @endunless
     @endunless
 @endsection

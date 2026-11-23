@@ -15,9 +15,6 @@ class WhatAreTravelCardsTool extends BaseTool
         return 'Describe what our gluten free travel cards are any why you would want one';
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         return <<<'text'
@@ -45,9 +42,6 @@ class WhatAreTravelCardsTool extends BaseTool
         text;
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Ai\Tools\AskSealiac;
 
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use App\Ai\State\ChatContext;
 use App\Ai\Tools\AskSealiac\SearchRecipesTool;
 use Laravel\Ai\Tools\Request;
@@ -45,7 +46,7 @@ class SearchRecipesToolTest extends TestCase
     public function itHasTheCorrectSchema(): void
     {
         $tool = new SearchRecipesTool();
-        $schema = new \Illuminate\JsonSchema\JsonSchemaTypeFactory();
+        $schema = new JsonSchemaTypeFactory();
 
         $result = $tool->schema($schema);
 

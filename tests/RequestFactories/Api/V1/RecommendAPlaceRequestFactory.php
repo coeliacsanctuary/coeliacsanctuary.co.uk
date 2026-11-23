@@ -12,14 +12,14 @@ class RecommendAPlaceRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
+            'name' => $this->faker->name(),
+            'email' => $this->faker->email(),
             'place' => [
-                'name' => $this->faker->company,
-                'location' => $this->faker->address,
-                'url' => $this->faker->url,
+                'name' => $this->faker->company(),
+                'location' => $this->faker->address(),
+                'url' => $this->faker->url(),
                 'venueType' => EateryVenueType::query()->first()->id ?? 1,
-                'details' => $this->faker->paragraph,
+                'details' => $this->faker->paragraph(),
             ],
         ];
     }

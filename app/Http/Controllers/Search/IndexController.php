@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Search;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\DataObjects\Search\SearchAiResponse;
 use App\Actions\Search\IdentifySearchAreasWithAiAction;
 use App\DataObjects\Search\SearchParameters;
 use App\Http\Requests\Search\SearchRequest;
@@ -43,7 +45,7 @@ class IndexController
         if ( ! Str::contains(URL::previousPath(), '/search') && ! Str::contains(URL::previousPath(), 'wheretoeat/search')) {
             $searchAiResponse = $identifySearchAreasWithAiAction->handle($search);
 
-            if ($searchAiResponse) {
+            if ($searchAiResponse instanceof SearchAiResponse) {
                 $parameters->blogs = $searchAiResponse->blogs >= 10;
                 $parameters->recipes = $searchAiResponse->recipes >= 10;
                 $parameters->eateries = $searchAiResponse->eatingOut >= 10;
@@ -53,7 +55,7 @@ class IndexController
                     $parameters->locationSearch = $searchAiResponse->location;
                 }
 
-                Paginator::queryStringResolver(fn () => $parameters->toRequest());
+                Paginator::queryStringResolver(fn (): array => $parameters->toRequest());
 
                 $aiAssisted = true;
             }
@@ -68,7 +70,7 @@ class IndexController
                 'parameters' => $parameters->toResponse(),
                 'location' => $parameters->locationSearch,
                 'searchedLatLng' => SearchState::$lat ? ['lat' => SearchState::$lat, 'lng' => SearchState::$lng] : null,
-                'results' => Inertia::defer(fn () => $results),
+                'results' => Inertia::defer(fn (): LengthAwarePaginator => $results),
                 'hasEatery' => SearchState::$hasGeoSearched,
                 'aiAssisted' => $aiAssisted,
             ]);

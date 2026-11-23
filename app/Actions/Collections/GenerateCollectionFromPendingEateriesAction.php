@@ -71,8 +71,8 @@ class GenerateCollectionFromPendingEateriesAction
     {
         $fieldIdMap = [];
 
-        $eateryIds = $pendingEateries->filter(fn (PendingEatery $pending) => $pending->branchId === null)->pluck('id');
-        $branchIds = $pendingEateries->filter(fn (PendingEatery $pending) => $pending->branchId !== null)->pluck('branchId');
+        $eateryIds = $pendingEateries->filter(fn (PendingEatery $pending): bool => $pending->branchId === null)->pluck('id');
+        $branchIds = $pendingEateries->filter(fn (PendingEatery $pending): bool => $pending->branchId !== null)->pluck('branchId');
 
         if ($eateryIds->isNotEmpty()) {
             Eatery::query()
@@ -109,14 +109,14 @@ class GenerateCollectionFromPendingEateriesAction
             'country' => EateryCountry::query()
                 ->whereIn('id', $uniqueFieldIds)
                 ->get()
-                ->mapWithKeys(fn (EateryCountry $country) => [$country->id => $country->country])
+                ->mapWithKeys(fn (EateryCountry $country): array => [$country->id => $country->country])
                 ->all(),
 
             'county' => EateryCounty::query()
                 ->whereIn('id', $uniqueFieldIds)
                 ->with('country')
                 ->get()
-                ->mapWithKeys(function (EateryCounty $county) {
+                ->mapWithKeys(function (EateryCounty $county): array {
                     /** @var EateryCountry $country */
                     $country = $county->country;
 
@@ -128,7 +128,7 @@ class GenerateCollectionFromPendingEateriesAction
                 ->whereIn('id', $uniqueFieldIds)
                 ->with(['county', 'county.country'])
                 ->get()
-                ->mapWithKeys(function (EateryTown $town) {
+                ->mapWithKeys(function (EateryTown $town): array {
                     /** @var EateryCounty $county */
                     $county = $town->county;
 
@@ -143,7 +143,7 @@ class GenerateCollectionFromPendingEateriesAction
                 ->whereIn('id', $uniqueFieldIds)
                 ->with(['town', 'town.county', 'town.county.country'])
                 ->get()
-                ->mapWithKeys(function (EateryArea $area) {
+                ->mapWithKeys(function (EateryArea $area): array {
                     /** @var EateryTown $town */
                     $town = $area->town;
 

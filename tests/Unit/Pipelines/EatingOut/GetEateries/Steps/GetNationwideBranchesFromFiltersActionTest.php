@@ -39,7 +39,7 @@ class GetNationwideBranchesFromFiltersActionTest extends GetEateriesTestCase
 
         $newCollection = $this->callGetBranchesFromFiltersAction($eateries);
 
-        $this->assertCount(10, $newCollection->eateries); // 5 in setup, 5 from above
+        $this->assertCount(10, $newCollection->eateries);
     }
 
     #[Test]

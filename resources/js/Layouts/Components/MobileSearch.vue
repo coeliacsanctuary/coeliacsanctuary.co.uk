@@ -5,11 +5,12 @@ import { nextTick, watch } from 'vue';
 import OverlayFrame from '@/Components/Overlays/OverlayFrame.vue';
 import useSearch from '@/composables/useSearch';
 
-const props = defineProps<{ open: boolean }>();
+const props = defineProps<{ open: boolean; plainLinks?: boolean }>();
 
 const emit = defineEmits(['close']);
 
-const { hasError, searchForm, submitSearch } = useSearch();
+const { hasError, searchForm, submitSearch, submitSearchWithPageLoad } =
+  useSearch();
 
 watch(
   () => props.open,
@@ -35,7 +36,7 @@ watch(
     <form
       class="flex flex-col items-center space-y-2"
       @submit.prevent="
-        submitSearch();
+        plainLinks ? submitSearchWithPageLoad() : submitSearch();
         $emit('close');
       "
     >

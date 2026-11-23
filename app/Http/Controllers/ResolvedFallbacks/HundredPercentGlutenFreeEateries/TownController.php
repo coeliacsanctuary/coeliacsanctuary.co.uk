@@ -60,7 +60,7 @@ class TownController
                     'image' => $town->image ?: $county->image,
                 ],
                 'eateries' => $eateries
-                    ->map(function (Eatery $eatery) use ($routeRecord) {
+                    ->map(function (Eatery $eatery) use ($routeRecord): array {
                         $key = $eatery->slug . ($eatery->relationLoaded('branch') && $eatery->branch ? "-{$eatery->branch->id}" : '');
 
                         return [

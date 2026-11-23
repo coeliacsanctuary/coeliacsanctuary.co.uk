@@ -15,9 +15,7 @@ use Money\Money;
 
 /**
  * @template T of Model
- *
  * @mixin Model
- *
  * @property int $currentPrice
  * @property null | int $oldPrice
  */
@@ -34,7 +32,7 @@ trait HasPrices
     {
         return $this->prices
             ->filter(fn (ShopPrice $price) => $price->start_at->lessThan(Carbon::now()))
-            ->filter(fn (ShopPrice $price) => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
+            ->filter(fn (ShopPrice $price): bool => ! $price->end_at || $price->end_at->endOfDay()->greaterThan(Carbon::now()))
             ->sortByDesc('start_at');
     }
 
@@ -48,7 +46,7 @@ trait HasPrices
     public function oldPrice(): Attribute
     {
         return Attribute::get(function () {
-            if ((bool) $this->currentPrices()->first()?->sale_price === true) {
+            if ((bool) $this->currentPrices()->first()?->sale_price) {
                 return $this->currentPrices()->skip(1)->first()?->price;
             }
 
@@ -59,7 +57,7 @@ trait HasPrices
     /** @return Attribute<array{current_price: string, raw_price: int, old_price?: string}, never> */
     public function price(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): array {
             $rtr = [
                 'current_price' => Helpers::formatMoney(Money::GBP($this->currentPrice)),
                 'raw_price' => $this->currentPrice,

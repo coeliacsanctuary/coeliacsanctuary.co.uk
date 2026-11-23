@@ -14,7 +14,7 @@ class ReviewOrderInvitationMailableTest extends TestCase
 {
     protected ShopOrder $order;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

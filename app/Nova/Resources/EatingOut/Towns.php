@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 use Jpeters8889\AdvancedNovaMediaLibrary\Fields\Images;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Slug;
@@ -52,7 +51,7 @@ class Towns extends Resource
             BelongsTo::make('County', resource: Counties::class)
                 ->filterable()
                 ->fullWidth()
-                ->displayUsing(function ($county) {
+                ->displayUsing(function ($county): string {
                     if ( ! $county->relationLoaded('country')) {
                         $county->load('country');
                     }
@@ -67,11 +66,10 @@ class Towns extends Resource
                 ->addButtonLabel('Select Image')
                 ->nullable(),
 
-            Boolean::make('Live', fn () => $this->eateries_count > 0)->onlyOnIndex(),
+            Boolean::make('Live', fn (): bool => $this->eateries_count > 0)->onlyOnIndex(),
 
             Number::make('Eateries', 'eateries_count')->onlyOnIndex()->sortable(),
 
-            //            HasMany::make('eateries')
         ];
     }
 

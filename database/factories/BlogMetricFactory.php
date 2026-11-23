@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\Blogs\BlogMetric;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Blogs\BlogMetric>
+ */
 class BlogMetricFactory extends Factory
 {
     protected $model = BlogMetric::class;

@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 
+#[Table(name: 'place_requests')]
 class EateryPlaceRequest extends Model
 {
-    protected $table = 'place_requests';
-
-    protected $casts = [
-        'completed' => 'bool',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'completed' => 'bool',
+        ];
+    }
 }

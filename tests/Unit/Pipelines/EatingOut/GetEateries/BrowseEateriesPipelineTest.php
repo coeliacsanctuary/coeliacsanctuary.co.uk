@@ -32,7 +32,6 @@ class BrowseEateriesPipelineTest extends TestCase
 
         Http::preventStrayRequests();
         $london = ['lat' => 51.50, 'lon' => 0.12, 'display_name' => 'London', 'type' => 'administrative'];
-        $edinburgh = ['lat' => 55.95, 'lon' => -3.18, 'display_name' => 'Edinburgh', 'type' => 'administrative'];
 
         Eatery::query()->update([
             'lat' => $london['lat'],
@@ -47,7 +46,7 @@ class BrowseEateriesPipelineTest extends TestCase
 
         $eateries = $this->build(Eatery::class)
             ->count(10)
-            ->sequence(fn (Sequence $sequence) => ['id' => $sequence->index + 1])
+            ->sequence(fn (Sequence $sequence): array => ['id' => $sequence->index + 1])
             ->create([
                 'venue_type_id' => EateryVenueType::query()->first()->id,
                 'lat' => $london['lat'],

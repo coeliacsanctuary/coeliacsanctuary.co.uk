@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\London;
 
+use Illuminate\Support\Collection;
 use App\Actions\EatingOut\GetMostRatedPlacesInCountyAction;
 use App\Actions\EatingOut\GetTopRatedPlacesInCountyAction;
 use App\Actions\OpenGraphImages\GetEatingOutOpenGraphImageAction;
@@ -41,8 +42,8 @@ class IndexController
             ->metaImage($getOpenGraphImageAction->handle($county))
             ->render('EatingOut/County', [
                 'county' => new LondonPageResource($county),
-                'topRated' => fn () => $getMostRatedPlacesInCounty->handle($county),
-                'mostRated' => fn () => $getTopRatedPlacesInCounty->handle($county),
+                'topRated' => fn (): Collection => $getMostRatedPlacesInCounty->handle($county),
+                'mostRated' => fn (): Collection => $getTopRatedPlacesInCounty->handle($county),
                 'nearby' => fn () => NearbyCountyResource::collection($county->nearbyCounties()),
                 'guides' => fn () => MagicRouteGuideResource::collection($county->magicRoutes),
             ]);

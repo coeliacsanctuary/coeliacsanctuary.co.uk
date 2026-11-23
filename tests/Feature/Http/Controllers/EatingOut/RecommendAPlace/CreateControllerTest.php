@@ -43,6 +43,6 @@ class CreateControllerTest extends TestCase
     #[Test]
     public function itRendersTheInertiaPage(): void
     {
-        $this->visitPage()->assertInertia(fn (Assert $page) => $page->component('EatingOut/RecommendAPlace'));
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->component('EatingOut/RecommendAPlace'));
     }
 }

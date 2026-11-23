@@ -9,8 +9,6 @@ use Laravel\Nova\Fields\Field;
 class HiddenWritableField extends Field
 {
     /**
-     * The field's component.
-     *
      * @var string
      */
     public $component = 'hidden-writable-field';

@@ -40,7 +40,7 @@ class SyncProductToGoogleMerchantAction
 
         $result = $this->syncToMerchant($product);
 
-        $product->update(['google_merchant_product_id' => $result->getName()]);
+        $product->updateQuietly(['google_merchant_product_id' => $result->getName()]);
     }
 
     protected function syncToMerchant(ShopProduct $product): ProductInput
@@ -51,13 +51,11 @@ class SyncProductToGoogleMerchantAction
 
         try {
             return $this->manager->update($product->google_merchant_product_id, $this->buildProduct($product));
-        } catch (ApiException $exception) {
-            if ( ! $this->isNotFound($exception)) {
-                throw $exception;
-            }
+        } catch (ApiException $apiException) {
+            throw_unless($this->isNotFound($apiException), $apiException);
         }
 
-        $product->update(['google_merchant_product_id' => null]);
+        $product->updateQuietly(['google_merchant_product_id' => null]);
 
         return $this->manager->insert($this->buildProduct($product));
     }
@@ -70,13 +68,11 @@ class SyncProductToGoogleMerchantAction
 
         try {
             $this->manager->delete($product->google_merchant_product_id);
-        } catch (ApiException $exception) {
-            if ( ! $this->isNotFound($exception)) {
-                throw $exception;
-            }
+        } catch (ApiException $apiException) {
+            throw_unless($this->isNotFound($apiException), $apiException);
         }
 
-        $product->update(['google_merchant_product_id' => null]);
+        $product->updateQuietly(['google_merchant_product_id' => null]);
     }
 
     protected function isNotFound(ApiException $exception): bool
@@ -111,7 +107,7 @@ class SyncProductToGoogleMerchantAction
             $attrs->setShippingWeight(Helpers::shippingWeightFromGrams($firstVariant->weight));
         }
 
-        return (new ProductInput())
+        return new ProductInput()
             ->setOfferId((string) $product->id)
             ->setContentLanguage('en')
             ->setFeedLabel('GB')

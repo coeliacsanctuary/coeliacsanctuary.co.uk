@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 
 /**
  * @mixin Model
- *
  * @property string $link
  * @property string $absolute_link
  */
@@ -24,13 +23,13 @@ trait LinkableModel
     /** @return Attribute<non-falsy-string, never> */
     public function link(): Attribute
     {
-        return Attribute::get(fn () => '/' . $this->linkRoot() . '/' . $this->linkColumn());
+        return Attribute::get(fn (): string => '/' . $this->linkRoot() . '/' . $this->linkColumn());
     }
 
     /** @return Attribute<string, never> */
     public function absoluteLink(): Attribute
     {
-        return Attribute::get(fn () => config('app.url') . $this->link);
+        return Attribute::get(fn (): string => config('app.url') . $this->link);
     }
 
     protected function linkRoot(): string

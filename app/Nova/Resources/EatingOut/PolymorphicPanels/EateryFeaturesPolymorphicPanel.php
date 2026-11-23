@@ -41,10 +41,10 @@ class EateryFeaturesPolymorphicPanel implements PolymorphicResource
         if (count($this->defaults) > 0) {
             $selectedFeatures = once(fn () => EateryFeature::query()->whereIn('feature', $this->defaults)->get());
 
-            return $selectedFeatures->filter(fn (EateryFeature $feature) => $this->checkIfFilterSelected($feature, $key))->count() === 1;
+            return $selectedFeatures->filter(fn (EateryFeature $feature): bool => $this->checkIfFilterSelected($feature, $key))->count() === 1;
         }
 
-        return $relationship->filter(fn (EateryFeature $feature) => $this->checkIfFilterSelected($feature, $key))->count() === 1;
+        return $relationship->filter(fn (EateryFeature $feature): bool => $this->checkIfFilterSelected($feature, $key))->count() === 1;
     }
 
     protected function checkIfFilterSelected(EateryFeature $feature, string $key): bool
@@ -69,8 +69,8 @@ class EateryFeaturesPolymorphicPanel implements PolymorphicResource
     {
         $model->features->each(fn (EateryFeature $feature) => $model->features()->detach($feature));
 
-        $values->map(fn ($value) => filter_var($value, FILTER_VALIDATE_BOOL))
-            ->filter(fn ($value) => $value === true)
+        $values->map(fn ($value): bool => filter_var($value, FILTER_VALIDATE_BOOL))
+            ->filter(fn ($value): bool => $value === true)
             ->map(fn ($value, $key) => EateryFeature::query()->where('feature', Str::headline($key))->firstOrFail()->id)
             ->each(fn ($id) => $model->features()->attach($id));
     }

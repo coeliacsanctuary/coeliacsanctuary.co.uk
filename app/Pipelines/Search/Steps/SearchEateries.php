@@ -35,7 +35,7 @@ class SearchEateries
                 $searchPipelineData->parameters->locationSearch ?: $searchPipelineData->parameters->term,
                 raw: true,
                 nullIfEmpty: true,
-                checkResult: fn ($result) => $this->geocoderIsValid($result, $searchPipelineData),
+                checkResult: fn ($result): bool => $this->geocoderIsValid($result, $searchPipelineData),
             );
 
             if ($geocoder) {
@@ -50,7 +50,7 @@ class SearchEateries
                 $geoResults = $this->performGeoSearch(implode(',', $searchPipelineData->parameters->userLocation), $searchPipelineData->parameters->term);
             }
 
-            $baseResults = $baseResults->map(function (Eatery|NationwideBranch $eatery) use ($geoResults) {
+            $baseResults = $baseResults->map(function (Eatery|NationwideBranch $eatery) use ($geoResults): Eatery|NationwideBranch {
                 /** @var Eatery|NationwideBranch|null $geoResult */
                 $geoResult = $geoResults->where('id', $eatery->id)
                     ->where('slug', $eatery->slug)
@@ -64,8 +64,8 @@ class SearchEateries
             });
 
             $results = collect([...$geoResults->all(), ...$baseResults->all()])
-                ->map(fn (Eatery|NationwideBranch $eatery) => SearchResultItem::fromSearchableResult($eatery))
-                ->unique(fn (SearchResultItem $item) => "{$item->model}#{$item->id}");
+                ->map(fn (Eatery|NationwideBranch $eatery): SearchResultItem => SearchResultItem::fromSearchableResult($eatery))
+                ->unique(fn (SearchResultItem $item): string => "{$item->model}#{$item->id}");
 
             $searchPipelineData
                 ->results

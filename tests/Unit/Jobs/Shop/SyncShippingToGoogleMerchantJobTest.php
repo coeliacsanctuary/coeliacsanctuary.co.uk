@@ -18,6 +18,6 @@ class SyncShippingToGoogleMerchantJobTest extends TestCase
             ->shouldReceive('handle')
             ->once();
 
-        (new SyncShippingToGoogleMerchantJob())->handle(app(SyncShippingToGoogleMerchantAction::class));
+        new SyncShippingToGoogleMerchantJob()->handle(app(SyncShippingToGoogleMerchantAction::class));
     }
 }

@@ -66,9 +66,6 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
         $this->eateries = $eateries;
     }
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         return match (true) {
@@ -124,7 +121,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
 
     protected function countySchema(JsonSchema $schema): iterable
     {
-        return $this->eateriesGroupedByTown()->mapWithKeys(fn (Collection $eateries) => [
+        return $this->eateriesGroupedByTown()->mapWithKeys(fn (Collection $eateries): array => [
             $eateries->first()?->town?->slug => $schema->string()->required(),
         ]);
     }
@@ -132,7 +129,7 @@ class HundredPercentGlutenFreeMagicRouteContentAgent extends MagicRouteAgent imp
     protected function townSchema(JsonSchema $schema): iterable
     {
         return [
-            ...$this->eateries->mapWithKeys(function (Eatery $eatery) use ($schema) {
+            ...$this->eateries->mapWithKeys(function (Eatery $eatery) use ($schema): array {
                 $branch = $eatery->relationLoaded('branch') && $eatery->branch ? $eatery->branch : null;
 
                 return [

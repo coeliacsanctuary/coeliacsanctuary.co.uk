@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs\OpenGraphImages;
+
+use Illuminate\Foundation\Queue\Queueable;
+use App\Enums\EatingOut\EateryType;
+use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryReview;
+use App\Models\EatingOut\NationwideBranch;
+use App\Models\OpenGraphImage;
+use App\Services\RenderOpenGraphImage;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class CreateTripPlannerPageOpenGraphImageJob implements ShouldQueue
+{
+    use Queueable;
+
+    public int $tries = 2;
+
+    public function handle(RenderOpenGraphImage $renderOpenGraphImage): void
+    {
+        if (config('coeliac.generate_og_images') === false) {
+            return;
+        }
+
+        $eateries = Eatery::query()
+            ->where('type_id', EateryType::EATERY)
+            ->where('closed_down', false)
+            ->count();
+
+        $attractions = Eatery::query()
+            ->where('type_id', EateryType::ATTRACTION)
+            ->where('closed_down', false)
+            ->count();
+
+        $hotels = Eatery::query()
+            ->where('type_id', EateryType::HOTEL)
+            ->where('closed_down', false)
+            ->count();
+
+        $branches = NationwideBranch::query()->count();
+
+        $reviews = EateryReview::query()->count();
+
+        $base64Image = $renderOpenGraphImage->handle(view('og-images.trip-planner', [
+            'eateries' => $eateries + $branches,
+            'attractions' => $attractions,
+            'hotels' => $hotels,
+            'branches' => $branches,
+            'reviews' => $reviews,
+        ])->render());
+
+        /** @var OpenGraphImage $openGraphModel */
+        $openGraphModel = OpenGraphImage::query()->firstOrCreate(['route' => 'eatery-trip-planner']);
+
+        $openGraphModel->clearMediaCollection();
+        $openGraphModel->addMediaFromBase64($base64Image)->usingFileName('og-image.png')->toMediaCollection();
+        $openGraphModel->touch();
+    }
+}

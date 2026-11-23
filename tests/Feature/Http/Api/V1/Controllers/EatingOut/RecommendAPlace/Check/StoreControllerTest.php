@@ -35,7 +35,7 @@ class StoreControllerTest extends TestCase
         $this->mock(CheckRecommendedPlacePipeline::class)
             ->shouldReceive('run')
             ->once()
-            ->andReturn(new RecommendAPlaceExistsCheckData(id: 1, reason: 'foo', branchId: 2, label: 'bar'));
+            ->andReturn(new RecommendAPlaceExistsCheckData(reason: 'foo', label: 'bar', id: 1, branchId: 2));
 
         $this->makeRequest($this->paramFactory())
             ->assertOk()

@@ -19,7 +19,7 @@ class SerialiseBrowseResultsAction implements GetEateriesPipelineActionContract
         $eateries = $pipelineData->eateries;
 
         /** @var Collection<int, JsonResource> $serialisedEateries */
-        $serialisedEateries = $eateries->map(fn (PendingEatery $eatery) => new ($pipelineData->jsonResource)($eatery));
+        $serialisedEateries = $eateries->map(fn (PendingEatery $eatery): object => new ($pipelineData->jsonResource)($eatery));
 
         $pipelineData->serialisedEateries = $serialisedEateries;
 

@@ -11,9 +11,6 @@ use Stringable;
 
 class ViewBlogTool extends BaseTool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'text'
@@ -25,9 +22,6 @@ class ViewBlogTool extends BaseTool
         text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         $blog = Blog::query()->findOrFail($request->integer('blog_id'));
@@ -47,9 +41,6 @@ class ViewBlogTool extends BaseTool
         return (string) json_encode($data);
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

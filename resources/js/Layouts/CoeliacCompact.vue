@@ -52,7 +52,10 @@ onUnmounted(() => {
       <slot />
     </section>
 
-    <CoeliacCompactFooter ref="footerEl" />
+    <CoeliacCompactFooter
+      ref="footerEl"
+      plain-links
+    />
   </div>
 
   <AdBlocker />

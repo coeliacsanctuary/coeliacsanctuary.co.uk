@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\EatingOut\EateryDetails;
 
+use Illuminate\Support\Collection;
 use App\Actions\EatingOut\ComputeEateryBackLinkAction;
 use App\Actions\EatingOut\GetGroupedEateryNationwideBranchesAction;
 use App\Actions\EatingOut\GetNearbyEateriesAction;
@@ -61,15 +62,14 @@ class GetController
         [$name, $previous] = $computeEateryBackLinkAction->handle($eatery);
 
         $props = [
-            'eatery' => fn () => new EateryDetailsResource($eatery),
+            'eatery' => fn (): EateryDetailsResource => new EateryDetailsResource($eatery),
             'previous' => $previous,
             'name' => $name,
-            'nearbyEateries' => fn () => $getNearbyEateriesAction->handle($nationwideBranch->exists ? $nationwideBranch : $eatery),
+            'nearbyEateries' => fn (): Collection => $getNearbyEateriesAction->handle($nationwideBranch->exists ? $nationwideBranch : $eatery),
         ];
 
-        // Only chain pages have a branch list, and only they should pay for the follow up request.
         if ($pageType === 'nationwide') {
-            $props['branches'] = Inertia::defer(fn () => $getGroupedEateryNationwideBranchesAction->handle($eatery));
+            $props['branches'] = Inertia::defer(fn (): array => $getGroupedEateryNationwideBranchesAction->handle($eatery));
         }
 
         return $inertia

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Ai\Tools\AskSealiac;
 
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use App\Ai\State\ChatContext;
 use App\Ai\Tools\AskSealiac\ListAllTravelCardsTool;
 use App\Models\Shop\ShopCategory;
@@ -100,7 +101,7 @@ class ListAllTravelCardsToolTest extends TestCase
     public function itHasAnEmptySchema(): void
     {
         $tool = new ListAllTravelCardsTool();
-        $schema = new \Illuminate\JsonSchema\JsonSchemaTypeFactory();
+        $schema = new JsonSchemaTypeFactory();
 
         $this->assertEmpty($tool->schema($schema));
     }

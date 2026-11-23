@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\ClearsCache;
 use App\Scopes\LiveScope;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $rating
  * @property array | null $price
  */
+#[Table(name: 'wheretoeat_reviews')]
 class EateryReview extends Model
 {
     use ClearsCache;
@@ -29,14 +31,6 @@ class EateryReview extends Model
         3 => 'Average / Mid Range',
         4 => 'A special treat',
         5 => 'Expensive',
-    ];
-
-    protected $table = 'wheretoeat_reviews';
-
-    protected $casts = [
-        'admin_review' => 'bool',
-        'approved' => 'bool',
-        'how_expensive' => 'int',
     ];
 
     protected static function booted(): void
@@ -62,7 +56,7 @@ class EateryReview extends Model
     /** @return Attribute<string | null, never> */
     public function averageRating(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?string {
             if ( ! $this->relationLoaded('eatery')) {
                 return null;
             }
@@ -95,7 +89,7 @@ class EateryReview extends Model
     /** @return Attribute<array{value: int, label: string} | null, never> */
     public function price(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function (): ?array {
             if ( ! $this->how_expensive) {
                 return null;
             }
@@ -117,5 +111,14 @@ class EateryReview extends Model
     protected function cacheKey(): string
     {
         return 'eating-out-reviews';
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'admin_review' => 'bool',
+            'approved' => 'bool',
+            'how_expensive' => 'int',
+        ];
     }
 }

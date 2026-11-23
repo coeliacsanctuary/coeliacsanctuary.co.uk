@@ -54,7 +54,7 @@ class GetControllerTest extends TestCase
         $this->mock(GetSealiacProductOverviewAction::class)
             ->shouldReceive('handle')
             ->once()
-            ->withArgs(function ($product) {
+            ->withArgs(function ($product): true {
                 $this->assertTrue($this->product->is($product));
 
                 return true;
@@ -85,7 +85,7 @@ class GetControllerTest extends TestCase
 
         $this->mock(FormatResponseAction::class)
             ->shouldReceive('handle')
-            ->withArgs(function ($argResponse) {
+            ->withArgs(function ($argResponse): true {
                 $this->assertEquals('this is the ai overview', $argResponse);
 
                 return true;

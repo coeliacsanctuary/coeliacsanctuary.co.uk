@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\Shop\TravelCardSearchTerm;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\TravelCardSearchTerm>
+ */
 class TravelCardSearchTermFactory extends Factory
 {
     protected $model = TravelCardSearchTerm::class;
@@ -13,7 +16,7 @@ class TravelCardSearchTermFactory extends Factory
     public function definition()
     {
         return [
-            'term' => $this->faker->word,
+            'term' => $this->faker->word(),
             'type' => $this->faker->randomElement(['country', 'language']),
             'hits' => 0,
         ];

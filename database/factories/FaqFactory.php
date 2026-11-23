@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Contracts\Faqs\HasFaqs;
 use App\Models\Faqs\Faq;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Faqs\Faq>
+ */
 class FaqFactory extends Factory
 {
     protected $model = Faq::class;
@@ -14,14 +17,14 @@ class FaqFactory extends Factory
     public function definition(): array
     {
         return [
-            'question' => $this->faker->sentence,
-            'answer' => $this->faker->paragraph,
+            'question' => $this->faker->sentence(),
+            'answer' => $this->faker->paragraph(),
         ];
     }
 
     public function on(HasFaqs $faqable): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'faqable_type' => $faqable::class,
             'faqable_id' => $faqable->id,
         ]);

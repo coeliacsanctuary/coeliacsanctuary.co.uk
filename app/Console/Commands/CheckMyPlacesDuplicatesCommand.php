@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryRecommendation;
 use Illuminate\Console\Command;
@@ -11,12 +13,10 @@ use Illuminate\Support\Collection;
 
 use function Laravel\Prompts\confirm;
 
+#[Description('Check My Places recommendations against the eateries table and interactively delete duplicates')]
+#[Signature('coeliac:eating-out:check-my-places-duplicates')]
 class CheckMyPlacesDuplicatesCommand extends Command
 {
-    protected $signature = 'coeliac:eating-out:check-my-places-duplicates';
-
-    protected $description = 'Check My Places recommendations against the eateries table and interactively delete duplicates';
-
     public function handle(): void
     {
         $recommendations = EateryRecommendation::query()
@@ -31,7 +31,7 @@ class CheckMyPlacesDuplicatesCommand extends Command
         $possible = collect();
 
         foreach ($recommendations as $recommendation) {
-            $matches = Eatery::withoutGlobalScopes()
+            $matches = Eatery::query()->withoutGlobalScopes()
                 ->whereRaw('LOWER(name) = ?', [mb_strtolower($recommendation->place_name)])
                 ->with(['town', 'county'])
                 ->get();
@@ -41,7 +41,7 @@ class CheckMyPlacesDuplicatesCommand extends Command
             }
 
             $locationWords = $this->parseLocationWords($recommendation->place_location ?? '');
-            $locationMatch = $matches->first(fn (Eatery $eatery) => $this->locationMatches($eatery, $locationWords));
+            $locationMatch = $matches->first(fn (Eatery $eatery): bool => $this->locationMatches($eatery, $locationWords));
 
             if ($locationMatch) {
                 $confirmed->push(['recommendation' => $recommendation, 'eatery' => $locationMatch]);
@@ -58,7 +58,7 @@ class CheckMyPlacesDuplicatesCommand extends Command
 
             $this->table(
                 ['Recommendation', 'Place Location', 'Matched Eatery', 'Eatery Town'],
-                $confirmed->map(fn (array $item) => [
+                $confirmed->map(fn (array $item): array => [
                     $item['recommendation']->place_name,
                     $item['recommendation']->place_location,
                     $item['eatery']->name,
@@ -131,8 +131,8 @@ class CheckMyPlacesDuplicatesCommand extends Command
 
         /** @phpstan-ignore-next-line */
         return collect($parts)
-            ->map(fn (string $word) => (string) mb_strtolower(mb_trim($word)))
-            ->filter(fn (string $word) => mb_strlen($word) >= 3)
+            ->map(fn (string $word): string => (string) mb_strtolower(mb_trim($word)))
+            ->filter(fn (string $word): bool => mb_strlen($word) >= 3)
             ->unique()
             ->values();
     }
@@ -144,7 +144,7 @@ class CheckMyPlacesDuplicatesCommand extends Command
         $county = mb_strtolower($eatery->county?->county ?? ''); // @phpstan-ignore nullsafe.neverNull
 
         return $locationWords->contains(
-            fn (string $word) => (mb_strlen($town) >= 3 && (str_contains($town, $word) || str_contains($word, $town)))
+            fn (string $word): bool => (mb_strlen($town) >= 3 && (str_contains($town, $word) || str_contains($word, $town)))
                 || (mb_strlen($county) >= 3 && (str_contains($county, $word) || str_contains($word, $county)))
         );
     }

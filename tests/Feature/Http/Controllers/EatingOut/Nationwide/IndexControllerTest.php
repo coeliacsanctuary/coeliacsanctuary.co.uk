@@ -84,7 +84,7 @@ class IndexControllerTest extends TestCase
     {
         $this->visitPage()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/Nationwide')
                     ->has('county')
                     ->where('county.name', $this->county->county)
@@ -97,7 +97,7 @@ class IndexControllerTest extends TestCase
     {
         $this->visitPage()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('filters.categories')
                     ->has('filters.venueTypes')
                     ->has('filters.features')
@@ -110,7 +110,7 @@ class IndexControllerTest extends TestCase
     {
         $this->build(Eatery::class)->attraction()->create(['county_id' => $this->county->id]);
 
-        $this->visitPage()->assertInertia(fn (Assert $page) => $page->has('county.chains', 2)->etc());
+        $this->visitPage()->assertInertia(fn (Assert $page): Assert => $page->has('county.chains', 2)->etc());
     }
 
     #[Test]
@@ -120,7 +120,7 @@ class IndexControllerTest extends TestCase
 
         $this->visitPage(['filter' => ['category' => 'att']])
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('county.chains', 1)
                     ->where('county.chains.0.key', $attraction->id)
                     ->etc()
@@ -139,7 +139,7 @@ class IndexControllerTest extends TestCase
 
         $this->visitPage(['filter' => ['venueType' => $venueType->slug]])
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('county.chains', 1)
                     ->where('county.chains.0.key', $eatery->id)
                     ->etc()
@@ -157,7 +157,7 @@ class IndexControllerTest extends TestCase
 
         $this->visitPage(['filter' => ['feature' => $feature->slug]])
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('county.chains', 1)
                     ->where('county.chains.0.key', $eatery->id)
                     ->etc()
@@ -171,7 +171,7 @@ class IndexControllerTest extends TestCase
 
         $this->visitPage(['filter' => ['category' => 'att']])
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('county.chains', 1)
                     ->where('county.eateries', 2)
                     ->etc()

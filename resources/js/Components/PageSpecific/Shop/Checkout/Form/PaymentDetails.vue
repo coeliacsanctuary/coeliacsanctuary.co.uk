@@ -11,19 +11,24 @@ import FormSelect from '@/Components/Forms/FormSelect.vue';
 import FormInput from '@/Components/Forms/FormInput.vue';
 import eventBus from '@/eventBus';
 import useJourneyTracking from '@/composables/useJourneyTracking';
+import FormLockedInput from '@/Components/Forms/FormLockedInput.vue';
+import UkShippingOnlyModal from '@/Components/PageSpecific/Shop/Checkout/UkShippingOnlyModal.vue';
 
-defineProps<{
+const props = defineProps<{
   show: boolean;
   completed: boolean;
   error: boolean;
   paymentToken: string;
+  requiredShipping: boolean;
 }>();
 
 const emits = defineEmits(['continue', 'toggle']);
 
 const store = useShopStore();
 
-const billingAddressSelect = ref<'same' | 'other'>('same');
+const billingAddressSelect = ref<'same' | 'other'>(
+  props.requiredShipping ? 'same' : 'other',
+);
 
 const fields = reactive<CheckoutBillingStep>({
   name: '',
@@ -33,7 +38,7 @@ const fields = reactive<CheckoutBillingStep>({
   town: '',
   county: '',
   postcode: '',
-  country: '',
+  country: 'United Kingdom',
 });
 
 const billingDetails = (): CheckoutBillingStep => {
@@ -91,7 +96,7 @@ const canSubmit = computed((): boolean => {
       return false;
     }
 
-    if (fields.country === '') {
+    if (fields.country !== 'United Kingdom') {
       return false;
     }
   }
@@ -122,7 +127,7 @@ watch(billingAddressSelect, () => {
     town: '',
     county: '',
     postcode: '',
-    country: '',
+    country: 'United Kingdom',
   });
 });
 
@@ -145,7 +150,7 @@ const track = (label: string, value?: string) => {
 <template>
   <div class="flex flex-col space-y-6 pt-4">
     <CheckoutStepHeader
-      :step="3"
+      :step="requiredShipping ? 3 : 2"
       title="Payment"
       :show="show"
       :completed="completed"
@@ -154,24 +159,37 @@ const track = (label: string, value?: string) => {
     />
 
     <template v-if="show">
-      <p class="prose mt-2! max-w-none xl:prose-lg">
+      <p
+        v-if="requiredShipping"
+        class="prose mt-2! max-w-none xl:prose-lg"
+      >
         Thanks for letting me know where you want your order shipped, finally I
         need to know how you'd like to pay.
       </p>
 
+      <p
+        v-else
+        class="prose mt-2! max-w-none xl:prose-lg"
+      >
+        Thanks {{ store.customerName }}, finally I need to know how you'd like
+        to pay.
+      </p>
+
       <FormSelect
+        v-if="requiredShipping"
         v-model="billingAddressSelect"
         label="Billing Address"
         name="billing_address"
         :options="selectOptions"
         :placeholder="undefined"
+        borders
       />
 
       <template v-if="billingAddressSelect === 'other'">
         <FormInput
           v-model="fields.name"
           label="Card Holders Name"
-          name="address_1"
+          name="name"
           autocomplete="name"
           required
           borders
@@ -235,15 +253,16 @@ const track = (label: string, value?: string) => {
           @blur-sm="() => track('Postcode', fields.postcode)"
         />
 
-        <FormInput
+        <FormLockedInput
           v-model="fields.country"
           label="Country"
           name="country"
-          autocomplete="country"
-          required
           borders
-          @blur-sm="() => track('Country', fields.country)"
-        />
+        >
+          <template #label>
+            <UkShippingOnlyModal />
+          </template>
+        </FormLockedInput>
       </template>
 
       <Suspense>
@@ -270,9 +289,9 @@ const track = (label: string, value?: string) => {
 
       <p class="flex items-center justify-center gap-2 text-sm text-grey-dark">
         <LockClosedIcon class="size-4 shrink-0" />
-        <span
-          >Payments are handled by Stripe - I never see your card details.</span
-        >
+        <span>
+          Payments are handled by Stripe - I never see your card details.
+        </span>
       </p>
     </template>
   </div>

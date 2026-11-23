@@ -12,9 +12,9 @@ class CreateReviewRequestFactory extends RequestFactory
     {
         return [
             'rating' => $this->faker->numberBetween(1, 5),
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
-            'review' => $this->faker->paragraph,
+            'name' => $this->faker->name(),
+            'email' => $this->faker->email(),
+            'review' => $this->faker->paragraph(),
             'food_rating' => $this->faker->randomElement(['poor', 'good', 'excellent']),
             'service_rating' => $this->faker->randomElement(['poor', 'good', 'excellent']),
             'how_expensive' => $this->faker->numberBetween(1, 5),

@@ -8,12 +8,14 @@ use App\Actions\Shop\ApplyDiscountCodeAction;
 use App\Actions\Shop\CalculateOrderTotalsAction;
 use App\Actions\Shop\CheckForPendingOrderAction;
 use App\Actions\Shop\CreatePaymentIntentAction;
+use App\Actions\Shop\GetOrderDigitalItemsAction;
 use App\Actions\Shop\GetOrderItemsAction;
 use App\Actions\Shop\ResolveBasketAction;
 use App\Enums\Shop\OrderState;
 use App\Enums\Shop\PostageArea;
 use App\Models\Shop\ShopDiscountCode;
 use App\Models\Shop\ShopOrder;
+use App\Models\Shop\ShopOrderDigitalItem;
 use App\Models\Shop\ShopOrderItem;
 use App\Models\Shop\ShopPostagePrice;
 use App\Models\Shop\ShopProduct;
@@ -71,6 +73,21 @@ class ShowControllerTest extends TestCase
         ]);
     }
 
+    protected function addDigitalItemToBasket(int $price = 250): ShopOrderDigitalItem
+    {
+        /** @var ShopOrderDigitalItem $item */
+        $item = $this->build(ShopOrderDigitalItem::class)
+            ->inOrder($this->order)
+            ->create(['digital_card_price' => $price]);
+
+        return $item;
+    }
+
+    protected function removeThePhysicalItemsFromTheBasket(): void
+    {
+        $this->item->delete();
+    }
+
     #[Test]
     public function itReturnsOk(): void
     {
@@ -81,7 +98,7 @@ class ShowControllerTest extends TestCase
     public function itReturnsTheInertiaCheckoutView(): void
     {
         $this->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->component('Shop/Checkout'));
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Shop/Checkout'));
     }
 
     #[Test]
@@ -138,7 +155,7 @@ class ShowControllerTest extends TestCase
     public function itPassesHasBasketFalseAsAPropIfNoBasket(): void
     {
         $this->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->where('has_basket', false));
+            ->assertInertia(fn (Assert $page): Assert => $page->where('has_basket', false));
     }
 
     #[Test]
@@ -149,13 +166,13 @@ class ShowControllerTest extends TestCase
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->where('has_basket', true)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('has_basket', true)->etc());
     }
 
     #[Test]
     public function itCallsTheGetOrderItemsActonIfABasketExists(): void
     {
-        $this->expectAction(GetOrderItemsAction::class);
+        $this->expectAction(GetOrderItemsAction::class, [ShopOrder::class, false, true]);
 
         $this
             ->withCookie('basket_token', $this->order->token)
@@ -183,18 +200,18 @@ class ShowControllerTest extends TestCase
         $this->expectAction(CreatePaymentIntentAction::class);
 
         /** @var AnonymousResourceCollection $items */
-        $items = $this->callAction(GetOrderItemsAction::class, $this->order);
+        $items = $this->callAction(GetOrderItemsAction::class, $this->order, false, true);
 
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->has('items', $items->count())
-                            ->where('items', $items->toArray(request()))
+                            ->where('items', $items->response()->getData(true))
                             ->etc()
                     )
                     ->etc()
@@ -209,16 +226,16 @@ class ShowControllerTest extends TestCase
         /** @var AnonymousResourceCollection $items */
         $items = $this->callAction(GetOrderItemsAction::class, $this->order);
 
-        $subtotal = $items->collection->map(fn (ShopOrderItemResource $item) => $item->product_price * $item->quantity)->sum();
+        $subtotal = $items->collection->map(fn (ShopOrderItemResource $item): int|float => $item->product_price * $item->quantity)->sum();
 
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('subtotal', Helpers::formatMoney(Money::GBP($subtotal)))
                             ->etc()
                     )
@@ -245,10 +262,10 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('postage', '£1.00')
                             ->etc()
                     )
@@ -265,32 +282,11 @@ class ShowControllerTest extends TestCase
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'basket',
-                        fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
                             ->where('total', '£3.00')
-                            ->etc()
-                    )
-                    ->etc()
-            );
-    }
-
-    #[Test]
-    public function itPassesTheFeesToTheComponent(): void
-    {
-        $this->expectAction(CreatePaymentIntentAction::class);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->get(route('shop.basket.checkout'))
-            ->assertInertia(
-                fn (Assert $page) => $page
-                    ->has(
-                        'basket',
-                        fn (Assert $page) => $page
-                            ->has('fees')
-                            ->has('total_fees')
                             ->etc()
                     )
                     ->etc()
@@ -311,61 +307,6 @@ class ShowControllerTest extends TestCase
     }
 
     #[Test]
-    public function itPassesTheShippableCountriesToTheComponent(): void
-    {
-        $this->expectAction(CreatePaymentIntentAction::class);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->get(route('shop.basket.checkout'))
-            ->assertInertia(
-                fn (Assert $page) => $page
-                    ->has('countries')
-                    ->etc()
-            );
-    }
-
-    #[Test]
-    public function itPassesTheSelectedCountryId(): void
-    {
-        $this->expectAction(CreatePaymentIntentAction::class);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->get(route('shop.basket.checkout'))
-            ->assertInertia(
-                fn (Assert $page) => $page
-                    ->has(
-                        'basket',
-                        fn (Assert $page) => $page
-                            ->where('selected_country', 1)
-                            ->etc()
-                    )
-                    ->etc()
-            );
-    }
-
-    #[Test]
-    public function itPassesTheDeliveryTimescale(): void
-    {
-        $this->expectAction(CreatePaymentIntentAction::class);
-
-        $this
-            ->withCookie('basket_token', $this->order->token)
-            ->get(route('shop.basket.checkout'))
-            ->assertInertia(
-                fn (Assert $page) => $page
-                    ->has(
-                        'basket',
-                        fn (Assert $page) => $page
-                            ->where('delivery_timescale', '1 - 2')
-                            ->etc()
-                    )
-                    ->etc()
-            );
-    }
-
-    #[Test]
     public function itCallsTheCreatePaymentIntentAction(): void
     {
         $this->expectAction(CreatePaymentIntentAction::class);
@@ -373,6 +314,181 @@ class ShowControllerTest extends TestCase
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'));
+    }
+
+    #[Test]
+    public function itCallsTheGetOrderDigitalItemsActionIfABasketExists(): void
+    {
+        $this->expectAction(GetOrderDigitalItemsAction::class);
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'));
+    }
+
+    #[Test]
+    public function itPassesTheBasketDigitalItemsToTheComponent(): void
+    {
+        $this->expectAction(CreatePaymentIntentAction::class);
+
+        $item = $this->addDigitalItemToBasket();
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has(
+                        'basket',
+                        fn (Assert $page): Assert => $page
+                            ->has('digital_items', 1)
+                            ->where('digital_items.0.id', $item->id)
+                            ->where('digital_items.0.title', $item->digital_card_title)
+                            ->etc()
+                    )
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itPassesNoDigitalItemsWhenTheBasketOnlyContainsPhysicalItems(): void
+    {
+        $this->expectAction(CreatePaymentIntentAction::class);
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has(
+                        'basket',
+                        fn (Assert $page): Assert => $page
+                            ->has('digital_items', 0)
+                            ->etc()
+                    )
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itFlagsTheBasketAsNotDigitalOnlyWhenItContainsAPhysicalItem(): void
+    {
+        $this->expectAction(CreatePaymentIntentAction::class);
+
+        $this->addDigitalItemToBasket();
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has(
+                        'basket',
+                        fn (Assert $page): Assert => $page
+                            ->where('digital_only', false)
+                            ->etc()
+                    )
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itFlagsTheBasketAsDigitalOnlyWhenItOnlyContainsDigitalItems(): void
+    {
+        $this->expectAction(CreatePaymentIntentAction::class);
+
+        $this->addDigitalItemToBasket();
+        $this->removeThePhysicalItemsFromTheBasket();
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has(
+                        'basket',
+                        fn (Assert $page): Assert => $page
+                            ->where('digital_only', true)
+                            ->etc()
+                    )
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itPassesHasBasketTrueForABasketOfOnlyDigitalItems(): void
+    {
+        $this->expectAction(CreatePaymentIntentAction::class);
+
+        $this->addDigitalItemToBasket();
+        $this->removeThePhysicalItemsFromTheBasket();
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(fn (Assert $page): Assert => $page->where('has_basket', true)->etc());
+    }
+
+    #[Test]
+    public function itPassesHasBasketFalseForABasketWithNoItemsAtAll(): void
+    {
+        $this->dontExpectAction(CreatePaymentIntentAction::class);
+
+        $this->removeThePhysicalItemsFromTheBasket();
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(fn (Assert $page): Assert => $page->where('has_basket', false)->etc());
+    }
+
+    #[Test]
+    public function itIncludesTheDigitalItemsInTheBasketTotals(): void
+    {
+        $this->expectAction(CreatePaymentIntentAction::class);
+
+        $this->addDigitalItemToBasket();
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has(
+                        'basket',
+                        fn (Assert $page): Assert => $page
+                            ->where('subtotal', '£4.50')
+                            ->where('postage', '£1.00')
+                            ->where('total', '£5.50')
+                            ->etc()
+                    )
+                    ->etc()
+            );
+    }
+
+    #[Test]
+    public function itDoesntChargePostageForABasketOfOnlyDigitalItems(): void
+    {
+        $this->expectAction(CreatePaymentIntentAction::class);
+
+        $this->addDigitalItemToBasket();
+        $this->removeThePhysicalItemsFromTheBasket();
+
+        $this
+            ->withCookie('basket_token', $this->order->token)
+            ->get(route('shop.basket.checkout'))
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->has(
+                        'basket',
+                        fn (Assert $page): Assert => $page
+                            ->where('subtotal', '£2.50')
+                            ->where('postage', '£0.00')
+                            ->where('total', '£2.50')
+                            ->etc()
+                    )
+                    ->etc()
+            );
     }
 
     #[Test]
@@ -385,6 +501,6 @@ class ShowControllerTest extends TestCase
         $this
             ->withCookie('basket_token', $this->order->token)
             ->get(route('shop.basket.checkout'))
-            ->assertInertia(fn (Assert $page) => $page->where('payment_intent', $token)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('payment_intent', $token)->etc());
     }
 }

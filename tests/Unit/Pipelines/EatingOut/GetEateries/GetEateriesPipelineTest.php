@@ -43,7 +43,7 @@ class GetEateriesPipelineTest extends TestCase
 
         $this->build(Eatery::class)
             ->count(10)
-            ->sequence(fn (Sequence $sequence) => ['id' => $sequence->index + 1])
+            ->sequence(fn (Sequence $sequence): array => ['id' => $sequence->index + 1])
             ->create([
                 'county_id' => $this->county->id,
                 'town_id' => $this->town->id,

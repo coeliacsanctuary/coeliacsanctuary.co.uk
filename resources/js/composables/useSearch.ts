@@ -78,6 +78,25 @@ export default () => {
     });
   };
 
+  const submitSearchWithPageLoad = () => {
+    hasError.value = false;
+
+    if (searchForm.value.q.length < 3) {
+      hasError.value = true;
+
+      return;
+    }
+
+    const query = new URLSearchParams(
+      Object.entries(searchForm.value).map(([key, value]) => [
+        key,
+        String(value),
+      ]),
+    );
+
+    window.location.assign(`/search?${query.toString()}`);
+  };
+
   return {
     latLng,
     hasError,
@@ -86,5 +105,6 @@ export default () => {
     store,
     isSubmitting,
     submitSearch,
+    submitSearchWithPageLoad,
   };
 };

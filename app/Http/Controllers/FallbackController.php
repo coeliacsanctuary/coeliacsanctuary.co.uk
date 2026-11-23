@@ -24,7 +24,7 @@ class FallbackController
 
         return collect($resolvers)
             ->map(fn (string $resolver) => app($resolver))
-            ->first(fn (RouteFallbackResolverContract $resolver) => $resolver->canHandle($request))
+            ->first(fn (RouteFallbackResolverContract $resolver): bool => $resolver->canHandle($request))
             ?->handle($request) ?? abort(Response::HTTP_NOT_FOUND);
     }
 }

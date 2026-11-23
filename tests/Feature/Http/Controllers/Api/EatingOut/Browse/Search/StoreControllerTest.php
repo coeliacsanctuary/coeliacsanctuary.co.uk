@@ -20,7 +20,7 @@ class StoreControllerTest extends TestCase
     #[Test]
     public function itReturnsAnErrorWithoutASearchTerm(): void
     {
-        $this->makeRequest(null)->assertJsonValidationErrorFor('term');
+        $this->makeRequest()->assertJsonValidationErrorFor('term');
     }
 
     #[Test]

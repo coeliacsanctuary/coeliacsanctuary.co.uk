@@ -58,12 +58,12 @@ class Eateries extends Resource
 
     public static $search = ['id', 'name', 'area.area', 'town.town', 'county.county'];
 
-    public function authorizedToReplicate(Request $request)
+    public function authorizedToReplicate(Request $request): bool
     {
         return true;
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -72,7 +72,7 @@ class Eateries extends Resource
     {
         $detailsFields = [
             Panel::make('Location', [
-                EateryLocationSearch::make('Location Search', 'location', fn () => null)
+                EateryLocationSearch::make('Location Search', 'location', fn (): null => null)
                     ->fullWidth()
                     ->onlyOnForms(),
 
@@ -102,7 +102,7 @@ class Eateries extends Resource
                         $field->show();
 
                         /** @var EateryCounty | null $county */
-                        $county = EateryCounty::withoutGlobalScopes()->find($request->county);
+                        $county = EateryCounty::query()->withoutGlobalScopes()->find($request->county);
 
                         if ($county) {
                             $field->setValue($county->country_id);
@@ -142,7 +142,7 @@ class Eateries extends Resource
                         $field->show();
 
                         /** @var EateryTown $town */
-                        $town = EateryTown::withoutGlobalScopes()->find($request->town);
+                        $town = EateryTown::query()->withoutGlobalScopes()->find($request->town);
 
                         if ($town) {
                             $field->setValue($town->county_id);
@@ -216,7 +216,7 @@ class Eateries extends Resource
                     })
                     ->dependsOn(['county'], function (BelongsTo $field, NovaRequest $request): BelongsTo {
                         $countyId = $request->input('county');
-                        $county = EateryCounty::withoutGlobalScopes()->where('id', $countyId)->first();
+                        $county = EateryCounty::query()->withoutGlobalScopes()->where('id', $countyId)->first();
 
                         if ($county?->slug === 'london') {
                             $field->show();
@@ -238,7 +238,7 @@ class Eateries extends Resource
 
                 AddressField::make('Address')
                     ->required()
-                    ->default(fn () => json_encode([
+                    ->default(fn (): string|false => json_encode([
                         'address' => Arr::get(Cache::get('admin-recommend-place'), 'place_location'),
                         'latitude' => Arr::get(Cache::get('admin-recommend-place'), 'latitude'),
                         'longitude' => Arr::get(Cache::get('admin-recommend-place'), 'longitude'),
@@ -309,21 +309,17 @@ class Eateries extends Resource
                     ->hideFromIndex()
                     ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_cuisine_id'))
                     ->fullWidth()
-                    ->dependsOn(['type_id'], function (Select $field, NovaRequest $request) {
-                        return match ($request->type_id) {
-                            1 => $field->options($this->getCuisines())->rules(['required']),
-                            default => $field->hide()->setValue(29),
-                        };
+                    ->dependsOn(['type_id'], fn (Select $field, NovaRequest $request) => match ($request->type_id) {
+                        1 => $field->options($this->getCuisines())->rules(['required']),
+                        default => $field->hide()->setValue(29),
                     }),
 
                 Textarea::make('Info')
                     ->alwaysShow()
                     ->default(Arr::get(Cache::get('admin-recommend-place'), 'place_details'))
-                    ->dependsOn(['type_id'], function (Textarea $field, NovaRequest $request) {
-                        return match ($request->type_id) {
-                            2 => $field->hide()->nullable()->setValue(null),
-                            default => $field->show(),
-                        };
+                    ->dependsOn(['type_id'], fn (Textarea $field, NovaRequest $request) => match ($request->type_id) {
+                        2 => $field->hide()->nullable()->setValue(null),
+                        default => $field->show(),
                     })
                     ->fullWidth(),
 
@@ -342,7 +338,7 @@ class Eateries extends Resource
                     ]),
 
                 EateryOpeningTimes::make('Opening Times', 'openingTimes')
-                    ->dependsOn(['type_id'], function (EateryOpeningTimes $field, NovaRequest $request) {
+                    ->dependsOn(['type_id'], function (EateryOpeningTimes $field, NovaRequest $request): EateryOpeningTimes {
                         if ($request->type_id !== 1) {
                             $field->hide();
                         }
@@ -446,7 +442,7 @@ class Eateries extends Resource
             ->when($typeId, fn (Builder $query) => $query->where('type_id', $typeId))
             ->orderBy('venue_type')
             ->get()
-            ->mapWithKeys(fn (EateryVenueType $venueType) => [$venueType->id => $venueType->venue_type])
+            ->mapWithKeys(fn (EateryVenueType $venueType): array => [$venueType->id => $venueType->venue_type])
             ->toArray();
     }
 
@@ -454,7 +450,7 @@ class Eateries extends Resource
     {
         return EateryCuisine::query()
             ->get()
-            ->mapWithKeys(fn (EateryCuisine $cuisine) => [$cuisine->id => $cuisine->cuisine])
+            ->mapWithKeys(fn (EateryCuisine $cuisine): array => [$cuisine->id => $cuisine->cuisine])
             ->toArray();
     }
 
@@ -463,7 +459,7 @@ class Eateries extends Resource
         return [
             GenerateSealiacOverview::make()
                 ->showInline()
-                ->canRun(fn (NovaRequest $request, Eatery $model) => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
+                ->canRun(fn (NovaRequest $request, Eatery $model): bool => $model->live === true && $model->closed_down === false && $model->reviews_count > 0),
         ];
     }
 
@@ -474,7 +470,7 @@ class Eateries extends Resource
             return;
         }
 
-        $placeRecommendation = EateryRecommendation::query()->find($request->get('place_recommendation_id'));
+        $placeRecommendation = EateryRecommendation::query()->find($request->input('place_recommendation_id'));
 
         if ( ! $placeRecommendation) {
             return;
@@ -482,7 +478,7 @@ class Eateries extends Resource
 
         $placeRecommendation->update(['completed' => true]);
 
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $placeRecommendation->email)
             ->notify(new EateryRecommendationAddedNotification($placeRecommendation, $model));
     }

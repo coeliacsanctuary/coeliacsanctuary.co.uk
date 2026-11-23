@@ -13,7 +13,6 @@ class GetProductsForProductIndexAction
 {
     /**
      * @template T of ResourceCollection
-     *
      * @param  class-string<T>  $resource
      * @return T
      */
@@ -24,7 +23,7 @@ class GetProductsForProductIndexAction
                 ->when($search, fn (Builder $builder) => $builder->where(
                     fn (Builder $builder) => $builder
                         ->where('id', $search)
-                        ->orWhere('title', 'LIKE', "%{$search}%")
+                        ->orWhereLike('title', "%{$search}%")
                 ))
                 ->with(['media', 'prices'])
                 ->latest()

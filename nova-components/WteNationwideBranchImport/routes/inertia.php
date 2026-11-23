@@ -100,7 +100,6 @@ Route::post('add', function (NovaRequest $request) {
 
     sleep(1);
 
-    // set slugs
     NationwideBranch::query()
         ->whereIn('id', $ids)
         ->lazy()

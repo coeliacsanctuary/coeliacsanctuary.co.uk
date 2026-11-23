@@ -6,24 +6,27 @@ withDefaults(
     label: string;
     href?: string;
     active?: boolean;
+    plain?: boolean;
   }>(),
   {
     href: undefined,
     active: false,
+    plain: false,
   },
 );
 </script>
 
 <template>
-  <Link
+  <component
+    :is="plain ? 'a' : Link"
     :class="{
       'border-b-4 border-secondary': active,
       'border-b-2 border-transparent hover:border-white': !active,
     }"
     :href="href"
     class="flex h-full items-center px-4 font-coeliac text-2xl leading-none font-medium tracking-wider lg:text-3xl"
-    prefetch
+    v-bind="plain ? {} : { prefetch: true }"
   >
     {{ label }}
-  </Link>
+  </component>
 </template>

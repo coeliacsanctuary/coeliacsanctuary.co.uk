@@ -8,6 +8,9 @@ use App\Enums\Shop\PostageArea;
 use App\Enums\Shop\ShippingMethod;
 use App\Models\Shop\ShopPostagePrice;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopPostagePrice>
+ */
 class ShopPostagePriceFactory extends Factory
 {
     protected $model = ShopPostagePrice::class;

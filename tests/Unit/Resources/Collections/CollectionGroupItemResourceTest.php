@@ -30,7 +30,7 @@ class CollectionGroupItemResourceTest extends TestCase
     /** @return array<string, mixed> */
     protected function resource(CollectionGroupItem $item): array
     {
-        return (new CollectionGroupItemResource($item->fresh()))->toArray(new Request());
+        return new CollectionGroupItemResource($item->fresh())->toArray(new Request());
     }
 
     #[Test]

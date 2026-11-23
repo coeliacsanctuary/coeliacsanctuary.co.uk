@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Search\Search;
 use App\Models\Search\SearchAiResponse;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Search\SearchAiResponse>
+ */
 class SearchAiResponseFactory extends Factory
 {
     protected $model = SearchAiResponse::class;

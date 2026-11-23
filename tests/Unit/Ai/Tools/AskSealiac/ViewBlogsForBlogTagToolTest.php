@@ -28,7 +28,7 @@ class ViewBlogsForBlogTagToolTest extends TestCase
         $blog = $this->create(Blog::class, ['title' => 'Tagged Blog']);
         $blog->tags()->attach($tag);
 
-        $untaggedBlog = $this->create(Blog::class, ['title' => 'Untagged Blog']);
+        $this->create(Blog::class, ['title' => 'Untagged Blog']);
 
         $tool = new ViewBlogsForBlogTagTool();
         $result = json_decode((string) $tool->handle(new Request(['tag_id' => [$tag->id]])), true);

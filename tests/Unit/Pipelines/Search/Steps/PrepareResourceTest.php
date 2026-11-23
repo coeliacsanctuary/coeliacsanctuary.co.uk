@@ -24,7 +24,6 @@ class PrepareResourceTest extends TestCase
         $paginator = collect([$blogModel])->paginate();
 
         $closure = function (LengthAwarePaginator $paginator) use ($blogModel): void {
-            /** @var LengthAwarePaginator<int, SearchableItemResource> $results */
             $resourceToCheck = SearchableItemResource::make($blogModel);
 
             $this->assertEquals($paginator->first()->toArray(request()), $resourceToCheck->toArray(request()));

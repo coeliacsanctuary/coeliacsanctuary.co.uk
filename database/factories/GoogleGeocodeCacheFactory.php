@@ -6,6 +6,9 @@ namespace Database\Factories;
 
 use App\Models\GoogleGeocodeCache;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\GoogleGeocodeCache>
+ */
 class GoogleGeocodeCacheFactory extends Factory
 {
     protected $model = GoogleGeocodeCache::class;

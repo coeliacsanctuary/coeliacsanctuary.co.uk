@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import Loader from '@/Components/Loader.vue';
 import { CoeliacButtonProps } from '@/types/Types';
+import { needsFullPageLoad } from '@/helpers';
 
 const props = withDefaults(defineProps<CoeliacButtonProps>(), {
   label: undefined,
@@ -113,6 +114,12 @@ const classes = computed((): string[] => {
 
 const emits = defineEmits(['click']);
 
+const element = computed(() => {
+  const isInertiaLink = props.as instanceof Object && props.as?.name === 'Link';
+
+  return isInertiaLink && needsFullPageLoad(props.href) ? 'a' : props.as;
+});
+
 const isLinkComponent = computed(() => {
   if (props.as === 'a') {
     return true;
@@ -128,7 +135,7 @@ const isLinkComponent = computed(() => {
 
 <template>
   <component
-    :is="props.as"
+    :is="element"
     :class="classes"
     v-bind="{
       ...(props.as === 'button' ? { type: props.type } : null),

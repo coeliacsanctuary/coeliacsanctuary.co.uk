@@ -42,10 +42,10 @@ class IndexControllerTest extends TestCase
             ->orderBy('venue_type')
             ->get()
             ->groupBy('type_id')
-            ->map(fn (Collection $options, int $typeId) => [
+            ->map(fn (Collection $options, int $typeId): array => [
                 'label' => Str::of(EateryType::from($typeId)->name)->title()->plural()->toString(),
                 'options' => $options
-                    ->map(fn (EateryVenueType $eateryVenueType) => [
+                    ->map(fn (EateryVenueType $eateryVenueType): array => [
                         'label' => $eateryVenueType->venue_type,
                         'value' => $eateryVenueType->id,
                     ]),

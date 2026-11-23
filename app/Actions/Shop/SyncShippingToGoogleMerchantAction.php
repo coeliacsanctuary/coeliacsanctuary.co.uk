@@ -45,7 +45,7 @@ class SyncShippingToGoogleMerchantAction
                     }
 
                     return $area->countries->map(
-                        fn ($country) => $this->buildService($method, $country, $area->delivery_timescale, $prices)
+                        fn ($country): Service => $this->buildService($method, $country, $area->delivery_timescale, $prices)
                     );
                 })
         )->all();

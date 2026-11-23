@@ -11,7 +11,6 @@ class GetCommentsForItemAction
 {
     /**
      * @template T of HasComments
-     *
      * @param  T  $item
      * @return CommentCollection<T>
      */

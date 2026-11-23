@@ -14,9 +14,6 @@ class ListAllTravelCardsTool extends BaseTool
 {
     use FormatTravelCard;
 
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'text'
@@ -28,9 +25,6 @@ class ListAllTravelCardsTool extends BaseTool
         text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         $standardCards = ShopProduct::query()
@@ -57,9 +51,6 @@ class ListAllTravelCardsTool extends BaseTool
         return (string) json_encode($data);
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [];

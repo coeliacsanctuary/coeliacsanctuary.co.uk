@@ -24,11 +24,11 @@ class GetController
                     'id' => $sealiacOverview->id,
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             Log::error('Sealiac AI Overview failed', [
-                'message' => $e->getMessage(),
+                'message' => $exception->getMessage(),
                 'productId' => $product->id,
-                'trace' => $e->getTraceAsString(),
+                'trace' => $exception->getTraceAsString(),
             ]);
 
             abort(404);

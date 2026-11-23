@@ -91,7 +91,7 @@ class PreviewControllerTest extends TestCase
         $this->actingAsUser()
             ->get(route('nova-preview.show', $preview->token))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('Blog/Preview'));
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Blog/Preview'));
     }
 
     #[Test]
@@ -106,7 +106,7 @@ class PreviewControllerTest extends TestCase
         $this->actingAsUser()
             ->get(route('nova-preview.show', $preview->token))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('blog')
                     ->where('blog.title', 'Mocked Title')
             );

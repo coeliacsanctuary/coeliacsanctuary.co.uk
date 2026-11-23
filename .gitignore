@@ -29,6 +29,7 @@ yarn-error.log
 /.claude
 /boost.json
 /.ai/mcp/
-google-auth.json
 /public/css/filament
 /public/js/filament
+google-*-auth.json
+/coeliac-sanctuary-apple-wallet-pass-certificate.p12

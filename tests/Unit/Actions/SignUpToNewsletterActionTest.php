@@ -16,7 +16,7 @@ class SignUpToNewsletterActionTest extends TestCase
     {
         $this->mock(Mailcoach::class)
             ->shouldReceive('createSubscriber')
-            ->withArgs(function (string $listId, array $parameters) {
+            ->withArgs(function (string $listId, array $parameters): true {
                 $this->assertEquals(config('mailcoach-sdk.newsletter_id'), $listId);
                 $this->assertArrayHasKeys(['email', 'skip_confirmation'], $parameters);
                 $this->assertEquals('foo@bar.com', $parameters['email']);

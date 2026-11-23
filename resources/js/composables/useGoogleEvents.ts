@@ -6,7 +6,7 @@ export default () => {
   ) => {
     if (
       typeof window === 'undefined' ||
-      import.meta.env.VITE_APP_ENV === 'local'
+      import.meta.env.VITE_APP_ENV !== 'production'
     ) {
       return;
     }

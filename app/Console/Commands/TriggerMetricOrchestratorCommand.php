@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use App\Jobs\Metrics\Orchestrators\BaseOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\DailyOrchestratorJob;
 use App\Jobs\Metrics\Orchestrators\HourlyOrchestratorJob;
@@ -21,12 +23,10 @@ use Illuminate\Support\Facades\Event;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
 
+#[Description('Manually trigger a metric orchestrator to queue metric jobs')]
+#[Signature('coeliac:metrics:trigger')]
 class TriggerMetricOrchestratorCommand extends Command
 {
-    protected $signature = 'coeliac:metrics:trigger';
-
-    protected $description = 'Manually trigger a metric orchestrator to queue metric jobs';
-
     /** @var array<class-string<BaseOrchestratorJob>, string> */
     protected array $orchestrators = [
         MinuteOrchestratorJob::class => 'Minute — less than 24 hours old',
@@ -57,7 +57,7 @@ class TriggerMetricOrchestratorCommand extends Command
         });
 
         spin(
-            callback: fn () => (new $selected())->handle(),
+            callback: fn () => new $selected()->handle(),
             message: "Running {$this->orchestrators[$selected]}...",
         );
 

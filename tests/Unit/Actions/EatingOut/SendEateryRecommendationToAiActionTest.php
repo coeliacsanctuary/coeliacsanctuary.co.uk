@@ -32,7 +32,7 @@ class SendEateryRecommendationToAiActionTest extends TestCase
         app(SendEateryRecommendationToAiAction::class)->handle($this->recommendation);
 
         PrepareRecommendedEatery::assertPrompted(
-            fn ($prompt) => str_contains($prompt->prompt, 'Place Name: ' . $this->recommendation->place_name)
+            fn ($prompt): bool => str_contains($prompt->prompt, 'Place Name: ' . $this->recommendation->place_name)
         );
     }
 
@@ -98,8 +98,8 @@ class SendEateryRecommendationToAiActionTest extends TestCase
                 'longitude' => null,
                 'phone_number' => null,
                 'website' => null,
-                'facebook' => null,
-                'instagram' => null,
+                'facebook' => '',
+                'instagram' => '',
                 'eatery_Type' => null,
                 'venue_type' => null,
                 'cuisine' => null,
@@ -113,6 +113,8 @@ class SendEateryRecommendationToAiActionTest extends TestCase
         $result = app(SendEateryRecommendationToAiAction::class)->handle($this->recommendation);
 
         $this->assertNull($result->placeName);
+        $this->assertNull($result->facebook);
+        $this->assertNull($result->instagram);
         $this->assertNull($result->latitude);
         $this->assertNull($result->features);
         $this->assertFalse($result->isEligible);

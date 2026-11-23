@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Shop\TravelCards;
 
+use Illuminate\Support\Collection;
 use App\Actions\OpenGraphImages\GetOpenGraphImageForRouteAction;
 use App\Actions\Shop\GetTravelCardReviewsAction;
+use App\Actions\Shop\ResolveBasketAction;
 use App\Actions\Shop\TravelCardSearch\GetPopularTravelCardDestinationsAction;
 use App\Actions\Shop\TravelCardSearch\GetTravelCardCategoriesAction;
+use App\Actions\Shop\TravelCardSearch\GetTravelCardDigitalTypesAction;
 use App\Actions\Shop\TravelCardSearch\ResolveTravelCardSearchAction;
 use App\DataObjects\BreadcrumbItemData;
 use App\Http\Response\Inertia;
@@ -20,14 +23,21 @@ class IndexController
         Request $request,
         Inertia $inertia,
         GetOpenGraphImageForRouteAction $getOpenGraphImageForRouteAction,
+        ResolveBasketAction $resolveBasketAction,
         ResolveTravelCardSearchAction $resolveTravelCardSearchAction,
         GetPopularTravelCardDestinationsAction $getPopularTravelCardDestinationsAction,
         GetTravelCardCategoriesAction $getTravelCardCategoriesAction,
+        GetTravelCardDigitalTypesAction $getTravelCardDigitalTypesAction,
         GetTravelCardReviewsAction $getTravelCardReviewsAction,
     ): Response {
         $searchTerm = mb_trim($request->string('term')->toString());
 
-        $search = $searchTerm === '' ? null : $resolveTravelCardSearchAction->handle($searchTerm);
+        /** @var string | null $token */
+        $token = $request->cookies->get('basket_token');
+
+        $basket = $resolveBasketAction->handle($token, create: false);
+
+        $search = $searchTerm === '' ? null : $resolveTravelCardSearchAction->handle($searchTerm, $basket);
 
         $destinations = $search === null ? '' : collect($search['destinations'])->pluck('term')->join(', ', ' and ');
 
@@ -47,9 +57,11 @@ class IndexController
             ->render('Shop/TravelCards', [
                 'searchTerm' => $searchTerm === '' ? null : $searchTerm,
                 'search' => $search,
-                'destinations' => fn () => $getPopularTravelCardDestinationsAction->handle(),
-                'categories' => fn () => $getTravelCardCategoriesAction->handle(),
-                'reviews' => fn () => $getTravelCardReviewsAction->handle(),
+                'digitalCardsEnabled' => config('coeliac.digital_cards_enabled'),
+                'destinations' => $getPopularTravelCardDestinationsAction->handle(...),
+                'categories' => $getTravelCardCategoriesAction->handle(...),
+                'digitalCardTypes' => fn (): Collection => config('coeliac.digital_cards_enabled') ? $getTravelCardDigitalTypesAction->handle() : collect(),
+                'reviews' => $getTravelCardReviewsAction->handle(...),
             ]);
     }
 }

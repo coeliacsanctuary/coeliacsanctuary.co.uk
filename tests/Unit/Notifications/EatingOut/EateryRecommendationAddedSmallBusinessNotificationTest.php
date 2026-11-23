@@ -32,7 +32,7 @@ class EateryRecommendationAddedSmallBusinessNotificationTest extends TestCase
     #[DataProvider('mailDataProvider')]
     public function itHasTheEmailData(callable $closure): void
     {
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $this->recommendation->email)
             ->notify(new EateryRecommendationAddedSmallBusinessNotification($this->recommendation));
 

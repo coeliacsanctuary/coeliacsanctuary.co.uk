@@ -11,17 +11,11 @@ use Stringable;
 
 class GetEateryCountriesTool extends BaseTool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return 'Get all available eatery countries in the system. Returns a list of countries with their id and name. Use this to find out which countries have eateries listed.';
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         return EateryCountry::query()
@@ -30,9 +24,6 @@ class GetEateryCountriesTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [];

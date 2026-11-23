@@ -29,7 +29,7 @@ class ShopOrderStateTest extends TestCase
             ->asCompleted()
             ->create();
 
-        $state = ShopOrderState::find(OrderState::SHIPPED);
+        $state = ShopOrderState::query()->find(OrderState::SHIPPED);
 
         $this->assertInstanceOf(Collection::class, $state->orders);
     }

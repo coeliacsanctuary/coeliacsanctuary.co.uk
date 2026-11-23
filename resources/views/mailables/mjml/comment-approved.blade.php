@@ -1,8 +1,10 @@
 @php
-    use App\Models\Comments\Comment;use App\Models\EatingOut\EateryReview;
+    use App\Models\Comments\Comment;
+    use App\Models\EatingOut\EateryReview;
     use App\Support\Helpers;
     use Illuminate\Support\Str;
     use Money\Money;
+
     /** @var Comment $comment */
 @endphp
 
@@ -10,7 +12,8 @@
 
 @push('head')
     <mj-style>
-        @media only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
+        @media
+        only screen and (min-width: 480px) { *[class~=prod-image] { padding-right: 10px !important;} }
     </mj-style>
 @endpush
 
@@ -23,13 +26,11 @@
         <mj-column>
             <mj-text mj-class="inner">Hey {{ $comment->name }}</mj-text>
             <mj-text mj-class="inner">
-                Your recent comment on our {{ strtolower(class_basename($comment->commentable_type)) }} <strong>{{ $comment->commentable->title }}</strong> on Coeliac Sanctuary
-                has been approved!
-                Thank you for sharing your thoughts with the wider community and helping others eat out safely!
+                Your recent comment on our {{ strtolower(class_basename($comment->commentable_type)) }}
+                <strong>{{ $comment->commentable->title }}</strong> on Coeliac Sanctuary has been approved! Thank you
+                for sharing your thoughts with the wider community and helping others eat out safely!
             </mj-text>
-            <mj-text mj-class="inner" padding-top="10px">
-                Thanks, Alison - Coeliac Sanctuary
-            </mj-text>
+            <mj-text mj-class="inner" padding-top="10px"> Thanks, Alison - Coeliac Sanctuary </mj-text>
         </mj-column>
     </mj-section>
 
@@ -43,9 +44,7 @@
 
     <mj-section mj-class="light-section" padding="0 25px 0 25px">
         <mj-column padding="25px">
-            <mj-text mj-class="inner">
-                {{ $comment->comment }}
-            </mj-text>
+            <mj-text mj-class="inner"> {{ $comment->comment }} </mj-text>
         </mj-column>
     </mj-section>
 

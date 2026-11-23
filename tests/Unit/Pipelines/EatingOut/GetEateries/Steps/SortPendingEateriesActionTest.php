@@ -17,7 +17,7 @@ class SortPendingEateriesActionTest extends GetEateriesTestCase
 
         $sortedEateries = $this->callSortEateriesAction($eateries)->eateries;
 
-        $eateryNames = $sortedEateries->map(fn (PendingEatery $eatery) => $eatery->ordering)->toArray();
+        $eateryNames = $sortedEateries->map(fn (PendingEatery $eatery): string|float => $eatery->ordering)->toArray();
 
         $this->assertSortedAlphabetically($eateryNames);
     }

@@ -23,7 +23,6 @@ class CollectionGroup extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-            //
         ];
     }
 }

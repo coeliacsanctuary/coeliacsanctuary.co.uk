@@ -47,7 +47,7 @@ class ProcessReviewImagesJobTest extends TestCase
     {
         $this->assertFalse(Storage::disk('review-images')->exists($this->fileUpload->path));
 
-        (new ProcessReviewImagesJob($this->review, [$this->fileUpload->id]))->handle();
+        new ProcessReviewImagesJob($this->review, [$this->fileUpload->id])->handle();
 
         $this->assertTrue(Storage::disk('review-images')->exists($this->fileUpload->filename));
     }
@@ -57,7 +57,7 @@ class ProcessReviewImagesJobTest extends TestCase
     {
         $this->assertFalse(Storage::disk('review-images')->exists('thumbs/' . $this->fileUpload->path));
 
-        (new ProcessReviewImagesJob($this->review, [$this->fileUpload->id]))->handle();
+        new ProcessReviewImagesJob($this->review, [$this->fileUpload->id])->handle();
 
         $this->assertTrue(Storage::disk('review-images')->exists('thumbs/' . $this->fileUpload->filename));
     }
@@ -67,7 +67,7 @@ class ProcessReviewImagesJobTest extends TestCase
     {
         $this->assertEmpty($this->review->images);
 
-        (new ProcessReviewImagesJob($this->review, [$this->fileUpload->id]))->handle();
+        new ProcessReviewImagesJob($this->review, [$this->fileUpload->id])->handle();
 
         $this->assertNotEmpty($this->review->refresh()->images);
         $this->assertCount(1, $this->review->images);

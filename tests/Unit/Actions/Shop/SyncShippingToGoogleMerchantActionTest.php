@@ -72,7 +72,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -80,7 +80,6 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
 
         $this->callAction(SyncShippingToGoogleMerchantAction::class);
 
-        // Europe area has 1 country in ShopScaffoldingSeeder (France)
         $this->assertCount(1, $capturedSettings->getServices());
     }
 
@@ -100,7 +99,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -129,7 +128,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -139,7 +138,6 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
 
         $service = $capturedSettings->getServices()[0];
 
-        // ShopScaffoldingSeeder creates UK with iso_code 'uk' (lowercase)
         $this->assertSame('UK', $service->getDeliveryCountries()[0]);
     }
 
@@ -159,7 +157,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -192,7 +190,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -206,12 +204,10 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
         $rows = $table->getRows();
 
         $this->assertCount(3, $rows);
-        // 50g = 50_000 micros, 100g = 100_000 micros, last row = -1 (infinity)
         $this->assertSame(50_000, $weights[0]->getAmountMicros());
         $this->assertSame(100_000, $weights[1]->getAmountMicros());
         $this->assertSame(-1, $weights[2]->getAmountMicros());
         $this->assertSame(WeightUnit::KILOGRAM, $weights[0]->getUnit());
-        // 150p = 1_500_000 micros, 250p = 2_500_000 micros, 400p = 4_000_000 micros
         $this->assertSame(1_500_000, $rows[0]->getCells()[0]->getFlatRate()->getAmountMicros());
         $this->assertSame(2_500_000, $rows[1]->getCells()[0]->getFlatRate()->getAmountMicros());
         $this->assertSame(4_000_000, $rows[2]->getCells()[0]->getFlatRate()->getAmountMicros());
@@ -234,7 +230,7 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
             ->shouldReceive('isEnabled')->andReturn(true)
             ->shouldReceive('merchantId')->andReturn('12345')
             ->shouldReceive('update')
-            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings) {
+            ->withArgs(function (ShippingSettings $settings) use (&$capturedSettings): true {
                 $capturedSettings = $settings;
 
                 return true;
@@ -244,7 +240,6 @@ class SyncShippingToGoogleMerchantActionTest extends TestCase
 
         $deliveryTime = $capturedSettings->getServices()[0]->getDeliveryTime();
 
-        // PostageArea::EUROPE deliveryEstimate = "5 - 7"
         $this->assertSame(5, $deliveryTime->getMinTransitDays());
         $this->assertSame(7, $deliveryTime->getMaxTransitDays());
         $this->assertSame(0, $deliveryTime->getMinHandlingDays());

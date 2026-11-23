@@ -21,7 +21,9 @@ class CheckEateryWebsiteAction
 
     public function handle(Eatery $eatery): EateryWebsiteCheckResult
     {
-        if ( ! $eatery->website) {
+        $website = $eatery->website;
+
+        if ( ! $website) {
             return new EateryWebsiteCheckResult(
                 success: false,
                 errorMessage: 'No website URL configured',
@@ -29,14 +31,14 @@ class CheckEateryWebsiteAction
         }
 
         try {
-            $response = $this->sendHeadRequest($eatery);
+            $response = $this->sendHeadRequest($website);
 
             if ($response->successful()) {
                 return $this->returnSuccess($response->status());
             }
 
             if ($this->shouldRetryFailedRequest($response->status())) {
-                $response = $this->sendGetRequest($eatery);
+                $response = $this->sendGetRequest($website);
 
                 if ($response->successful()) {
                     return $this->returnSuccess($response->status());
@@ -48,11 +50,11 @@ class CheckEateryWebsiteAction
                 statusCode: $response->status(),
                 errorMessage: "HTTP {$response->status()} response",
             );
-        } catch (ConnectionException $e) {
+        } catch (ConnectionException $connectionException) {
             return new EateryWebsiteCheckResult(
                 success: false,
                 statusCode: 500,
-                errorMessage: "Connection failed: {$e->getMessage()}",
+                errorMessage: "Connection failed: {$connectionException->getMessage()}",
                 timedOut: true,
             );
         }
@@ -66,14 +68,14 @@ class CheckEateryWebsiteAction
         );
     }
 
-    protected function sendGetRequest(Eatery $eatery): Response
+    protected function sendGetRequest(string $url): Response
     {
-        return $this->sendRequest($eatery->website, 'GET');
+        return $this->sendRequest($url, 'GET');
     }
 
-    protected function sendHeadRequest(Eatery $eatery): Response
+    protected function sendHeadRequest(string $url): Response
     {
-        return $this->sendRequest($eatery->website);
+        return $this->sendRequest($url);
     }
 
     /** @throws ConnectionException */

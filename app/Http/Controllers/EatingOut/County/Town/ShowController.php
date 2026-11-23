@@ -61,9 +61,9 @@ class ShowController
             ->schema(PendingEaterySchema::make($eateries, $town->town)->toScript())
             ->render('EatingOut/Town', [
                 'live_eateries_count' => $town->liveEateries->count() + $town->liveBranches->count(),
-                'town' => fn () => new TownPageResource($town),
+                'town' => fn (): TownPageResource => new TownPageResource($town),
                 'eateries' => $inertia->scroll($pipeline),
-                'filters' => fn () => $getFiltersForTown->setTown($town)->handle($filters),
+                'filters' => fn (): array => $getFiltersForTown->setTown($town)->handle($filters),
                 'sort' => [
                     'current' => $sort,
                     'options' => [

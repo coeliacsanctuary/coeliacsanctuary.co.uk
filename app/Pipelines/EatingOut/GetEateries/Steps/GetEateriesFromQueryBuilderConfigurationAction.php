@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pipelines\EatingOut\GetEateries\Steps;
 
+use App\Services\EatingOut\Collection\Configuration;
 use App\Contracts\EatingOut\GetEateriesPipelineActionContract;
 use App\DataObjects\EatingOut\GetEateriesPipelineData;
 use App\DataObjects\EatingOut\PendingEatery;
@@ -20,9 +21,7 @@ class GetEateriesFromQueryBuilderConfigurationAction implements GetEateriesPipel
 {
     public function handle(GetEateriesPipelineData $pipelineData, Closure $next): mixed
     {
-        if ( ! $pipelineData->configuration) {
-            throw new RuntimeException('No configuration');
-        }
+        throw_unless($pipelineData->configuration instanceof Configuration, new RuntimeException('No configuration'));
 
         if (Arr::has($pipelineData->filters, 'categories') && $pipelineData->filters['categories'] !== null) {
             $wheres = [];
@@ -83,7 +82,7 @@ class GetEateriesFromQueryBuilderConfigurationAction implements GetEateriesPipel
         /** @var Collection<int, object{id: int, branch_id: int | null, ordering: string}> $pendingEateries */
         $pendingEateries = collect(DB::select(new EateryQueryBuilder($pipelineData->configuration)->toSql()));
 
-        $pendingEateries = $pendingEateries->map(fn (object $eatery) => new PendingEatery(
+        $pendingEateries = $pendingEateries->map(fn (object $eatery): PendingEatery => new PendingEatery(
             id: $eatery->id,
             branchId: $eatery->branch_id,
             ordering: $eatery->ordering,

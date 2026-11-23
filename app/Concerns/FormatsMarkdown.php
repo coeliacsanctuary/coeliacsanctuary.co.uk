@@ -12,7 +12,7 @@ trait FormatsMarkdown
     protected function formatMarkdown(string $string, ?callable $using = null): string|Stringable
     {
         return Str::of($string)
-            ->pipe($using ?? fn (Stringable $str) => $str)
+            ->pipe($using ?? fn (Stringable $str): Stringable => $str)
             ->replace('&quot;', '"')
             ->markdown([
                 'renderer' => [

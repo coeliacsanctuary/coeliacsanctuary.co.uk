@@ -34,7 +34,7 @@ class GetFilteredEateriesPipelineTest extends TestCase
 
         $this->build(Eatery::class)
             ->count(10)
-            ->sequence(fn (Sequence $sequence) => ['id' => $sequence->index + 1])
+            ->sequence(fn (Sequence $sequence): array => ['id' => $sequence->index + 1])
             ->create();
     }
 

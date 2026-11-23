@@ -32,7 +32,7 @@ class FindLinkForCountyToolTest extends TestCase
         $town = $this->create(EateryTown::class, ['county_id' => $county->id]);
         $this->create(Eatery::class, ['county_id' => $county->id, 'town_id' => $town->id]);
 
-        $result = (new FindLinkForCountyTool())->handle(new Request(['county' => 'Cheshire East']));
+        $result = new FindLinkForCountyTool()->handle(new Request(['county' => 'Cheshire East']));
 
         $this->assertEquals($county->absoluteLink(), (string) $result);
     }
@@ -44,7 +44,7 @@ class FindLinkForCountyToolTest extends TestCase
         $town = $this->create(EateryTown::class, ['county_id' => $county->id]);
         $this->create(Eatery::class, ['county_id' => $county->id, 'town_id' => $town->id]);
 
-        $result = (new FindLinkForCountyTool())->handle(new Request(['county' => 'Cheshire']));
+        $result = new FindLinkForCountyTool()->handle(new Request(['county' => 'Cheshire']));
 
         $this->assertEquals($county->absoluteLink(), (string) $result);
     }
@@ -52,7 +52,7 @@ class FindLinkForCountyToolTest extends TestCase
     #[Test]
     public function itReturnsNotFoundWhenCountyDoesNotExist(): void
     {
-        $result = (new FindLinkForCountyTool())->handle(new Request(['county' => 'Nonexistent County']));
+        $result = new FindLinkForCountyTool()->handle(new Request(['county' => 'Nonexistent County']));
 
         $this->assertEquals('- county not found -', (string) $result);
     }

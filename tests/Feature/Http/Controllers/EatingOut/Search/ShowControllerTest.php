@@ -94,7 +94,7 @@ class ShowControllerTest extends TestCase
     {
         $this->visitSearchResults()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('EatingOut/SearchResults')
                     ->etc()
             );
@@ -130,7 +130,7 @@ class ShowControllerTest extends TestCase
 
         $this->visitSearchResults()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('relatedPage.name', $town->town)
                     ->where('relatedPage.link', $town->link())
                     ->where('latlng.lat', $branch->lat)
@@ -143,7 +143,7 @@ class ShowControllerTest extends TestCase
     public function itFlagsThatTheLocationWasFound(): void
     {
         $this->visitSearchResults()
-            ->assertInertia(fn (Assert $page) => $page->where('locationFound', true)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('locationFound', true)->etc());
     }
 
     #[Test]
@@ -154,7 +154,7 @@ class ShowControllerTest extends TestCase
         $this->expectPipelineToRun(GetSearchResultsPipeline::class, $this->resultsFor());
 
         $this->visitSearchResults()
-            ->assertInertia(fn (Assert $page) => $page->where('locationFound', false)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('locationFound', false)->etc());
     }
 
     #[Test]
@@ -166,7 +166,7 @@ class ShowControllerTest extends TestCase
 
         $this->get(route('eating-out.search.show', ['eaterySearchTerm' => $searchTerm->key]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('relatedPage.name', $county->county)
                     ->where('relatedPage.link', $county->link())
                     ->etc()
@@ -182,7 +182,7 @@ class ShowControllerTest extends TestCase
 
         $this->visitSearchResults()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('relatedPage.name', $eatery->town->town)
                     ->where('relatedPage.link', $eatery->town->link())
                     ->etc()
@@ -195,7 +195,7 @@ class ShowControllerTest extends TestCase
         $this->expectPipelineToRun(GetSearchResultsPipeline::class, $this->resultsFor());
 
         $this->visitSearchResults()
-            ->assertInertia(fn (Assert $page) => $page->where('relatedPage', null)->etc());
+            ->assertInertia(fn (Assert $page): Assert => $page->where('relatedPage', null)->etc());
     }
 
     #[Test]
@@ -205,7 +205,7 @@ class ShowControllerTest extends TestCase
 
         $this->get(route('eating-out.search.show', ['eaterySearchTerm' => $searchTerm->key]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('term', 'CW1 2AB')
                     ->where('prefillTerm', 'CW1 2AB')
                     ->etc()
@@ -222,7 +222,7 @@ class ShowControllerTest extends TestCase
 
         $this->get(route('eating-out.search.show', ['eaterySearchTerm' => $searchTerm->key]))
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('term', 'your location')
                     ->where('prefillTerm', '')
                     ->etc()
@@ -232,7 +232,7 @@ class ShowControllerTest extends TestCase
     /** @return LengthAwarePaginator<int, EateryListResource> */
     protected function resultsFor(?Eatery $eatery = null): LengthAwarePaginator
     {
-        $items = $eatery ? [new EateryListResource($eatery)] : [];
+        $items = $eatery instanceof Eatery ? [new EateryListResource($eatery)] : [];
 
         return new LengthAwarePaginator($items, count($items), 10);
     }

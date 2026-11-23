@@ -84,7 +84,6 @@ class GetLatestBlogsForHomePageActionTest extends TestCase
 
         $this->callAction(GetLatestBlogsForHomepageAction::class);
 
-        // Blogs and media relation;
         $this->assertCount(2, DB::getQueryLog());
 
         $this->callAction(GetLatestBlogsForHomepageAction::class);

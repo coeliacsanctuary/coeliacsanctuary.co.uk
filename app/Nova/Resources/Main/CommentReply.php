@@ -26,7 +26,7 @@ class CommentReply extends Resource
 
     public static $clickAction = 'view';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -52,7 +52,7 @@ class CommentReply extends Resource
     public static function afterCreate(NovaRequest $request, Model $model): void
     {
         /** @var \App\Models\Comments\CommentReply $model */
-        (new AnonymousNotifiable())
+        new AnonymousNotifiable()
             ->route('mail', $model->comment->email)
             ->notify(new CommentRepliedNotification($model));
     }

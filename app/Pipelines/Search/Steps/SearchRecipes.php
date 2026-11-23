@@ -30,7 +30,7 @@ class SearchRecipes
             $searchPipelineData
                 ->results
                 ->recipes
-                ->push(...$results->map(fn (Recipe $recipe) => SearchResultItem::fromSearchableResult($recipe))->all());
+                ->push(...$results->map(fn (Recipe $recipe): SearchResultItem => SearchResultItem::fromSearchableResult($recipe))->all());
         }
 
         return $next($searchPipelineData);

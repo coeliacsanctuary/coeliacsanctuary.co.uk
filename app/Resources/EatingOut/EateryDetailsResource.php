@@ -67,7 +67,7 @@ class EateryDetailsResource extends JsonResource
             'info' => $this->info,
             'location' => [
                 'address' => collect(explode("\n", $this->address))
-                    ->map(fn (string $line) => mb_trim($line))
+                    ->map(fn (string $line): string => mb_trim($line))
                     ->join(', '),
                 'lat' => $this->lat,
                 'lng' => $this->lng,
@@ -78,13 +78,13 @@ class EateryDetailsResource extends JsonResource
                 'average' => $this->average_rating,
                 'expense' => $this->average_expense,
                 'has_rated' => $this->has_been_rated,
-                'images' => $this->approvedReviewImages->count() > 0 ? $this->approvedReviewImages->map(fn (EateryReviewImage $image) => [
+                'images' => $this->approvedReviewImages->count() > 0 ? $this->approvedReviewImages->map(fn (EateryReviewImage $image): array => [
                     'id' => $image->id,
                     'thumbnail' => $image->thumb,
                     'path' => $image->path,
                     'location' => $image->review?->branch && $image->review->branch->name ? "{$image->review->branch->name}, {$image->review->branch->town?->town}" : $image->review?->eatery?->name,
                 ]) : [],
-                'user_reviews' => $reviews->map(fn (EateryReview $review) => [
+                'user_reviews' => $reviews->map(fn (EateryReview $review): array => [
                     'id' => $review->id,
                     'published' => $review->created_at,
                     'date_diff' => $review->human_date,
@@ -96,18 +96,18 @@ class EateryDetailsResource extends JsonResource
                     'service_rating' => $review->service_rating,
                     'branch_name' => $review->branch ? $review->branch->name : $review->branch_name,
                     'admin_review' => $review->admin_review,
-                    'images' => $review->images->count() > 0 ? $review->images->map(fn (EateryReviewImage $image) => [
+                    'images' => $review->images->count() > 0 ? $review->images->map(fn (EateryReviewImage $image): array => [
                         'id' => $image->id,
                         'thumbnail' => $image->thumb,
                         'path' => $image->path,
                     ]) : [],
                 ]),
-                'ratings' => collect(range(5, 1))->map(fn ($rating) => [
+                'ratings' => collect(range(5, 1))->map(fn ($rating): array => [
                     'rating' => $rating,
-                    'count' => $reviews->filter(fn (EateryReview $reviewItem) => (int) $reviewItem->rating === $rating)->count(),
+                    'count' => $reviews->filter(fn (EateryReview $reviewItem): bool => (int) $reviewItem->rating === $rating)->count(),
                 ]),
             ],
-            'features' => $features->map(fn (EateryFeature $feature) => [
+            'features' => $features->map(fn (EateryFeature $feature): array => [
                 'name' => $feature->feature,
                 'slug' => $feature->slug,
             ]),
@@ -124,7 +124,7 @@ class EateryDetailsResource extends JsonResource
             'branch_count' => $this->whenCounted('nationwideBranches', default: 0),
             'last_updated' => $this->updated_at,
             'last_updated_human' => $this->updated_at?->diffForHumans(),
-            'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review) => $review->admin_review === false && $review->review)->count() > 0,
+            'qualifies_for_ai' => $this->reviews->filter(fn (EateryReview $review): bool => $review->admin_review === false && $review->review)->count() > 0,
         ];
     }
 }

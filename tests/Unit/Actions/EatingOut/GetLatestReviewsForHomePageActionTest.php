@@ -65,7 +65,7 @@ class GetLatestReviewsForHomePageActionTest extends TestCase
             ->count(10)
             ->on($this->create(Eatery::class))
             ->approved()
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'id' => $sequence->index + 1,
                 'name' => "Review {$sequence->index}",
                 'created_at' => Carbon::now()->subDays($sequence->index),
@@ -86,10 +86,10 @@ class GetLatestReviewsForHomePageActionTest extends TestCase
             ->count(10)
             ->on($this->create(Eatery::class))
             ->approved()
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'id' => $sequence->index + 1,
                 'name' => "Review {$sequence->index}",
-                'approved' => $sequence->index === 0 ? false : true,
+                'approved' => $sequence->index !== 0,
                 'created_at' => Carbon::now()->subDays($sequence->index),
             ])
             ->create();

@@ -32,8 +32,6 @@ class RegenerateMagicRouteBody extends Action
     }
 
     /**
-     * Get the fields available on the action.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field>
      */
     public function fields(NovaRequest $request): array

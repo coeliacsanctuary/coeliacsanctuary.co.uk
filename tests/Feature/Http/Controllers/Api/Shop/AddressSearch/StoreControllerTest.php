@@ -42,7 +42,7 @@ class StoreControllerTest extends TestCase
             'search' => 'foo',
         ])->assertOk();
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertEquals('GET', $request->method());
             $this->assertStringContainsString(config('services.idealPostcodes.url'), $request->url());
             $this->assertStringContainsString('/autocomplete/addresses', $request->url());
@@ -66,7 +66,7 @@ class StoreControllerTest extends TestCase
             'lng' => 56.78,
         ])->assertOk();
 
-        Http::assertSent(function (Request $request) {
+        Http::assertSent(function (Request $request): true {
             $this->assertStringContainsString('bias_lonlat=56.78%2C12.34%2C5000', $request->url());
 
             return true;

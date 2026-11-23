@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\OpenGraphImages;
 
+use Illuminate\Foundation\Queue\Queueable;
 use App\Actions\OpenGraphImages\GenerateAreaOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateCountyOpenGraphImageAction;
 use App\Actions\OpenGraphImages\GenerateEateryOpenGraphImageAction;
@@ -18,19 +19,12 @@ use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use App\Models\OpenGraphImage;
 use App\Services\RenderOpenGraphImage;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use RuntimeException;
 
 class CreateEatingOutOpenGraphImageJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $tries = 2;
 

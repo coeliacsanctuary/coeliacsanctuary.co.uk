@@ -13,6 +13,7 @@ return [
         '/cs-adm/*',
         'fallback',
         '/nova*',
+        '/passkit/*',
         '/ads.txt',
         '/blog/feed',
         '/feed',
@@ -20,9 +21,32 @@ return [
         '/sitemap.xml',
     ],
 
-    'internal-event-endpoint' => 'api/event',
+    'track-query-strings' => [
+        'page',
+        'cursor',
+        'features',
+        'meals',
+        'freeFrom',
+        'filter',
+        'sort',
+        'categories',
+        'venueTypes',
+        'q',
+        'blogs',
+        'recipes',
+        'eateries',
+        'shop',
+        'reviewFilter',
+        'term',
+    ],
+
+    'event-endpoint' => 'api/event',
 
     'heartbeat-endpoint' => 'api/heartbeat',
+
+    'confirm-endpoint' => 'api/confirm',
+
+    'visit-threshold-minutes' => 15,
 
     'queue' => env('JOURNEY_TRACKER_QUEUE', null),
 ];

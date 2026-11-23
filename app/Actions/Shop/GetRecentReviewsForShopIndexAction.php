@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Actions\Shop;
 
+use App\Models\Shop\ShopDigitalCard;
 use App\Models\Shop\ShopOrderReviewItem;
+use App\Models\Shop\ShopProduct;
 use App\Resources\Shop\ShopIndexReviewResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
@@ -23,7 +25,7 @@ class GetRecentReviewsForShopIndexAction
                 ->where('rating', '>=', 4)
                 ->whereNotNull('review')
                 ->where('review', '!=', '')
-                ->whereHas('product')
+                ->whereHasMorph('product', [ShopProduct::class, ShopDigitalCard::class])
                 ->whereHas('parent')
                 ->with(['parent', 'product'])
                 ->latest()

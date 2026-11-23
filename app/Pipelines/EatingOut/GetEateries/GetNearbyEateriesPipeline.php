@@ -46,8 +46,8 @@ class GetNearbyEateriesPipeline
 
         $pipelineData = new GetEateriesPipelineData(
             filters: ['categories' => null, 'features' => null, 'venueTypes' => null, 'county' => null],
-            jsonResource: $jsonResource,
             latLng: $latLng,
+            jsonResource: $jsonResource,
             throwSearchException: false,
         );
 

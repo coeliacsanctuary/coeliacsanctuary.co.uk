@@ -16,7 +16,9 @@
         "build-refresh-ads-txt": "cd nova-components/RefreshAdsTxt && npm run dev",
         "build-refresh-ads-txt-prod": "cd nova-components/RefreshAdsTxt && npm run prod",
         "build-eatery-collections-query-builder": "cd nova-components/EateryCollectionsQueryBuilder && npm run dev",
-        "build-eatery-collections-query-builder-prod": "cd nova-components/EateryCollectionsQueryBuilder && npm run prod"
+        "build-eatery-collections-query-builder-prod": "cd nova-components/EateryCollectionsQueryBuilder && npm run prod",
+        "build-collection-builder": "cd nova-components/CollectionBuilder && npm run dev",
+        "build-collection-builder-prod": "cd nova-components/CollectionBuilder && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",
@@ -34,8 +36,9 @@
         "laravel-vite-plugin": "^1.0",
         "n": "^2.0.5",
         "postcss": "^8.4.21",
-        "prettier": "^3.2.5",
-        "prettier-plugin-tailwindcss": "^0.6.11",
+        "prettier": "^3.9.10",
+        "prettier-plugin-blade": "^3.3.3",
+        "prettier-plugin-tailwindcss": "^0.8.1",
         "tailwindcss": "^4.3.1",
         "typescript": "^6.0.3",
         "vite": "^5.0.0",
@@ -45,8 +48,8 @@
         "@googlemaps/polyline-codec": "^1.0.28",
         "@headlessui/vue": "^1.7.8",
         "@heroicons/vue": "^2.0.14",
-        "@inertiajs/core": "^3.6.1",
-        "@inertiajs/vue3": "^3.6.1",
+        "@inertiajs/core": "^3.11.0",
+        "@inertiajs/vue3": "^3.11.0",
         "@laravel/stream-vue": "^0.3.10",
         "@rushstack/eslint-patch": "^1.10.2",
         "@stripe/stripe-js": "^3.4.0",

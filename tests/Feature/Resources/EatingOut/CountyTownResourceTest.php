@@ -36,7 +36,7 @@ class CountyTownResourceTest extends TestCase
     #[Test]
     public function itHasANameAttribute(): void
     {
-        $resource = (new CountyTownResource($this->town))->toArray(request());
+        $resource = new CountyTownResource($this->town)->toArray(request());
 
         $this->assertArrayHasKey('name', $resource);
         $this->assertEquals($this->town->town, $resource['name']);
@@ -45,7 +45,7 @@ class CountyTownResourceTest extends TestCase
     #[Test]
     public function itHasALinkAttribute(): void
     {
-        $resource = (new CountyTownResource($this->town))->toArray(request());
+        $resource = new CountyTownResource($this->town)->toArray(request());
 
         $this->assertArrayHasKey('link', $resource);
         $this->assertEquals($this->town->link(), $resource['link']);
@@ -57,10 +57,10 @@ class CountyTownResourceTest extends TestCase
         $this->build(Eatery::class)->count(4)->create();
         $this->build(Eatery::class)->notLive()->create();
 
-        $resource = (new CountyTownResource($this->town))->toArray(request());
+        $resource = new CountyTownResource($this->town)->toArray(request());
 
         $this->assertArrayHasKey('eateries', $resource);
-        $this->assertEquals(5, $resource['eateries']); // 4 created, plus one in setup
+        $this->assertEquals(5, $resource['eateries']);
     }
 
     #[Test]
@@ -71,17 +71,17 @@ class CountyTownResourceTest extends TestCase
 
         $this->build(NationwideBranch::class)
             ->count(5)
-            ->sequence(fn (Sequence $sequence) => [
+            ->sequence(fn (Sequence $sequence): array => [
                 'wheretoeat_id' => $eateries[$sequence->index]->id ?? $this->eatery->id,
             ])
             ->create();
 
         $this->build(NationwideBranch::class)->notLive()->create();
 
-        $resource = (new CountyTownResource($this->town))->toArray(request());
+        $resource = new CountyTownResource($this->town)->toArray(request());
 
         $this->assertArrayHasKey('eateries', $resource);
-        $this->assertEquals(10, $resource['eateries']); // 4 eateries, plus one in setup, 5 branches
+        $this->assertEquals(10, $resource['eateries']);
     }
 
     #[Test]
@@ -90,7 +90,7 @@ class CountyTownResourceTest extends TestCase
         $this->build(Eatery::class)->attraction()->count(4)->create();
         $this->build(Eatery::class)->attraction()->notLive()->create();
 
-        $resource = (new CountyTownResource($this->town))->toArray(request());
+        $resource = new CountyTownResource($this->town)->toArray(request());
 
         $this->assertArrayHasKey('attractions', $resource);
         $this->assertEquals(4, $resource['attractions']);
@@ -102,7 +102,7 @@ class CountyTownResourceTest extends TestCase
         $this->build(Eatery::class)->hotel()->count(4)->create();
         $this->build(Eatery::class)->hotel()->notLive()->create();
 
-        $resource = (new CountyTownResource($this->town))->toArray(request());
+        $resource = new CountyTownResource($this->town)->toArray(request());
 
         $this->assertArrayHasKey('hotels', $resource);
         $this->assertEquals(4, $resource['hotels']);

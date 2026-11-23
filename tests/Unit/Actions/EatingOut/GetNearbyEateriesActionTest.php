@@ -385,7 +385,7 @@ class GetNearbyEateriesActionTest extends TestCase
 
         $results = app(GetNearbyEateriesAction::class)->handle($eatery);
 
-        $expectedKeys = ['id', 'name', 'address', 'info', 'link', 'distance', 'ratings_count', 'average_rating'];
+        $expectedKeys = ['id', 'eatery_id', 'branch_id', 'name', 'address', 'info', 'link', 'distance', 'ratings_count', 'average_rating'];
 
         foreach ($results as $result) {
             $this->assertArrayHasKeys($expectedKeys, $result);
@@ -406,9 +406,6 @@ class GetNearbyEateriesActionTest extends TestCase
     }
 
     /**
-     * The parent of a nationwide branch is always a nationwide eatery, so it is
-     * never itself a nearby result.
-     *
      * @param  array<string, mixed>  $attributes
      */
     protected function createNationwideEatery(array $attributes = []): Eatery

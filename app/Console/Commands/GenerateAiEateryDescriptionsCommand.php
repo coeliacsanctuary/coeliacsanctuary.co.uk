@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Signature;
 use App\Ai\Agents\EateryDescriptionAgent;
 use App\Models\EateryAiDescription;
 use App\Models\EatingOut\Eatery;
 use Exception;
 use Illuminate\Console\Command;
 
+#[Signature('coeliac:generate-ai-eatery-descriptions')]
 class GenerateAiEateryDescriptionsCommand extends Command
 {
-    protected $signature = 'coeliac:generate-ai-eatery-descriptions';
-
     public function handle(): void
     {
         Eatery::query()
@@ -25,7 +25,7 @@ class GenerateAiEateryDescriptionsCommand extends Command
             ->lazy()
             ->each(function (Eatery $eatery): void {
                 try {
-                    $response = (new EateryDescriptionAgent($eatery))->prompt('Generate the description');
+                    $response = new EateryDescriptionAgent($eatery)->prompt('Generate the description');
 
                     EateryAiDescription::query()->create([
                         'wheretoeat_id' => $eatery->id,
@@ -39,7 +39,7 @@ class GenerateAiEateryDescriptionsCommand extends Command
 
                     /** @phpstan-ignore-next-line  */
                     $this->info("Generated description for {$eatery->name} in {$eatery->town->town}");
-                } catch (Exception $e) {
+                } catch (Exception) {
                     //
                 }
             });

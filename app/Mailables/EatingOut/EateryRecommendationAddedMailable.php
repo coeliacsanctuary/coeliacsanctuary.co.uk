@@ -49,7 +49,7 @@ class EateryRecommendationAddedMailable extends BaseMailable
                 'eatery' => $this->eatery,
                 'recommendation' => $this->recommendation,
                 'nearbyEateries' => $this->nearbyEateries(),
-                'reason' => 'to let you know that we\'ve added your place recommendation to the Coeliac Sanctuary eating out guide.',
+                'reason' => "to let you know that we've added your place recommendation to the Coeliac Sanctuary eating out guide.",
                 'email' => $this->recommendation->email,
             ]));
     }

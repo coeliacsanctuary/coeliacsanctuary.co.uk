@@ -23,6 +23,13 @@ trait MocksStripe
 {
     protected ?StripeClient $stripeClient = null;
 
+    protected function withFakeStripeClient(): self
+    {
+        $this->getStripeClient();
+
+        return $this;
+    }
+
     protected function getStripeClient(): StripeClient
     {
         if ( ! $this->stripeClient) {
@@ -42,7 +49,7 @@ trait MocksStripe
         $this->getStripeClient()->paymentIntents = $paymentIntent;
 
         $paymentIntent->shouldReceive('create')
-            ->withArgs(function (array $args) use ($amount) {
+            ->withArgs(function (array $args) use ($amount): true {
                 $this->assertArrayHasKey('amount', $args);
                 $this->assertEquals($amount, $args['amount']);
 
@@ -90,7 +97,7 @@ trait MocksStripe
         $this->getStripeClient()->paymentIntents = $paymentIntent;
 
         $paymentIntent->shouldReceive('update')
-            ->withArgs(function ($argId) use ($id) {
+            ->withArgs(function ($argId) use ($id): true {
                 $this->assertEquals($id, $argId);
 
                 return true;
@@ -103,7 +110,7 @@ trait MocksStripe
         $charges = $this->partialMock(ChargeService::class);
 
         $charges->shouldReceive('retrieve')
-            ->withArgs(fn ($id) => $chargeId === $id)
+            ->withArgs(fn ($id): bool => $chargeId === $id)
             ->andReturn($this->createCharge($chargeId))
             ->once();
 
@@ -113,7 +120,7 @@ trait MocksStripe
     protected function mockCreateRefund(string $chargeId, int $amount): Refund
     {
         $id = Str::password(12);
-        $token = Str::uuid()->toString();
+        Str::uuid()->toString();
 
         $refunds = $this->partialMock(RefundService::class);
 
@@ -125,7 +132,7 @@ trait MocksStripe
         ]);
 
         $refunds->shouldReceive('create')
-            ->withArgs(function (array $args) use ($chargeId, $amount) {
+            ->withArgs(function (array $args) use ($chargeId, $amount): true {
                 $this->assertArrayHasKeys(['charge', 'amount'], $args);
                 $this->assertEquals($chargeId, $args['charge']);
                 $this->assertEquals($amount, $args['amount']);
@@ -161,5 +168,13 @@ trait MocksStripe
         return PaymentIntent::constructFrom(array_merge([
 
         ], $params));
+    }
+
+    protected function mockChargeUpdate(): void
+    {
+        $charge = $this->partialMock(Charge::class);
+        $this->getStripeClient()->charges = $charge;
+
+        $charge->shouldReceive('update')->andReturn($this->createCharge());
     }
 }

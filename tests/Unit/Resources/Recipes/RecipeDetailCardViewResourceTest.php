@@ -27,7 +27,7 @@ class RecipeDetailCardViewResourceTest extends TestCase
     /** @return array<string, mixed> */
     protected function resource(): array
     {
-        return (new RecipeDetailCardViewResource($this->recipe->fresh()))->toArray(new Request());
+        return new RecipeDetailCardViewResource($this->recipe->fresh())->toArray(new Request());
     }
 
     #[Test]

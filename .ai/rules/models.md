@@ -9,7 +9,12 @@ paths:
 ## Model events via booted(), not observers
 Model event hooks and global scopes go in `protected static function booted(): void` on the model. There is no `app/Observers` directory and observers / `#[ObservedBy]` are not used.
 
-Shared publish/live filtering uses `static::addGlobalScope(new LiveScope())` from `app/Scopes`. Query helpers are local `public function scope*(Builder $query): Builder` methods on the model.
+Shared publish/live filtering uses `static::addGlobalScope(new LiveScope())` from `app/Scopes`.
+
+## Query helpers live on a custom builder
+Query helpers are public methods returning `static` on a dedicated builder in `app/Builders` (`/** @extends Builder<Model> */ class FooBuilder extends Builder`), wired to the model with `#[UseEloquentBuilder(FooBuilder::class)]`. Never write local `scope*` methods.
+
+Type closures that receive the builder as the builder (`fn (EateryBuilder $query) => ...`) rather than `Builder` plus an inline `@var`.
 
 ## Accessors use the Attribute class
 Accessors and mutators use the `Attribute` class style (`protected function foo(): Attribute { return Attribute::make(get: ...); }`).

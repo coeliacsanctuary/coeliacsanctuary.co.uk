@@ -10,12 +10,34 @@ import IndexCategoryCard from '@/Components/PageSpecific/Shop/IndexCategoryCard.
 import ShopPopularProducts from '@/Components/PageSpecific/Shop/ShopPopularProducts.vue';
 import ShopCustomerReviews from '@/Components/PageSpecific/Shop/ShopCustomerReviews.vue';
 import ShopDeliveryFacts from '@/Components/PageSpecific/Shop/ShopDeliveryFacts.vue';
+import SubHeading from '@/Components/SubHeading.vue';
+import { computed } from 'vue';
 
-defineProps<{
-  categories: ShopCategoryIndex[];
+const props = defineProps<{
+  categories: {
+    travelCards: ShopCategoryIndex[];
+    everythingElse: ShopCategoryIndex[];
+  };
+  digitalCards: {
+    id: string;
+    pageTitle: string;
+    link: string;
+    image: string;
+  }[];
   popularProducts: ShopPopularProduct[];
   reviews: ShopIndexReview[];
 }>();
+
+const travelCards = computed((): ShopCategoryIndex[] => [
+  ...props.categories.travelCards,
+  ...props.digitalCards.map((card) => ({
+    title: card.pageTitle,
+    description: '',
+    link: card.link,
+    image: card.image,
+    travelCardSearch: false,
+  })),
+]);
 </script>
 
 <template>
@@ -43,13 +65,29 @@ defineProps<{
     </div>
   </Card>
 
-  <div class="flex flex-col space-y-4 py-2 sm:space-y-6">
-    <IndexCategoryCard
-      v-for="category in categories"
-      :key="category.link"
-      :category="category"
-    />
-  </div>
+  <Card>
+    <SubHeading text-size="small">My Travel Cards</SubHeading>
+
+    <div class="grid grid-cols-1 gap-4 py-2 sm:grid-cols-2 lg:grid-cols-3">
+      <IndexCategoryCard
+        v-for="category in travelCards"
+        :key="category.link"
+        :category="category"
+      />
+    </div>
+  </Card>
+
+  <Card>
+    <SubHeading text-size="small">My Other Products</SubHeading>
+
+    <div class="grid grid-cols-1 gap-4 py-2 sm:grid-cols-2 lg:grid-cols-3">
+      <IndexCategoryCard
+        v-for="category in categories.everythingElse"
+        :key="category.link"
+        :category="category"
+      />
+    </div>
+  </Card>
 
   <ShopPopularProducts
     v-if="popularProducts.length"

@@ -20,10 +20,10 @@ class StoreController
             $eatery->sealiacOverview->increment($request->string('rating')->toString() === 'up' ? 'thumbs_up' : 'thumbs_down');
 
             return response()->noContent();
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             Log::error('Sealiac Rating failed', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'message' => $throwable->getMessage(),
+                'trace' => $throwable->getTraceAsString(),
             ]);
 
             abort(404);

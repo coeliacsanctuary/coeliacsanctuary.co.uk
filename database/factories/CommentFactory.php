@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Contracts\Comments\HasComments;
 use App\Models\Comments\Comment;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Comments\Comment>
+ */
 class CommentFactory extends Factory
 {
     protected $model = Comment::class;
@@ -14,15 +17,15 @@ class CommentFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
-            'comment' => $this->faker->paragraph,
+            'name' => $this->faker->name(),
+            'email' => $this->faker->email(),
+            'comment' => $this->faker->paragraph(),
         ];
     }
 
     public function on(HasComments $commentable)
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'commentable_type' => $commentable::class,
             'commentable_id' => $commentable->id,
         ]);
@@ -30,6 +33,6 @@ class CommentFactory extends Factory
 
     public function approved(): self
     {
-        return $this->state(fn () => ['approved' => true]);
+        return $this->state(fn (): array => ['approved' => true]);
     }
 }

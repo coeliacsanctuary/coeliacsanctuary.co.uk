@@ -67,7 +67,7 @@ class EateryRecommendationAddedMailableTest extends TestCase
             'eatery' => fn ($assertionEatery) => $this->assertTrue($eatery->is($assertionEatery)),
             'recommendation' => fn ($assertionRecommendation) => $this->assertTrue($recomendation->is($assertionRecommendation)),
             'email' => fn ($email) => $this->assertEquals($recomendation->email, $email),
-            'reason' => fn ($reason) => $this->assertEquals('to let you know that we\'ve added your place recommendation to the Coeliac Sanctuary eating out guide.', $reason),
+            'reason' => fn ($reason) => $this->assertEquals("to let you know that we've added your place recommendation to the Coeliac Sanctuary eating out guide.", $reason),
         ];
 
         $mailable = EateryRecommendationAddedMailable::make($eatery, $recomendation, 'foo');

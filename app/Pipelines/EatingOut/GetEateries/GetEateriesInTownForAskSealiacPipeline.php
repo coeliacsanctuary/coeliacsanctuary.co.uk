@@ -38,9 +38,9 @@ class GetEateriesInTownForAskSealiacPipeline
         ];
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $town,
             filters: $filters,
             sort: $sort,
+            town: $town,
         );
 
         /** @var GetEateriesPipelineData $pipeline */

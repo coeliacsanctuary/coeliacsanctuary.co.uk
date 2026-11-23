@@ -17,7 +17,7 @@ class ShowControllerTest extends TestCase
         $this
             ->get(route('eating-out.app'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('EatingOut/CoeliacSanctuaryOnTheGo'));
+            ->assertInertia(fn (Assert $page): Assert => $page->component('EatingOut/CoeliacSanctuaryOnTheGo'));
     }
 
     #[Test]

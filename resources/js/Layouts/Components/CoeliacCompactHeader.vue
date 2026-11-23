@@ -8,7 +8,6 @@ import MobileNav from '@/Layouts/Components/Nav/MobileNav.vue';
 import CoeliacMetas from '@/Layouts/Components/CoeliacMetas.vue';
 import MainNav from '@/Layouts/Components/Nav/MainNav.vue';
 import Sealiac from '@/Svg/Sealiac.vue';
-import { Link } from '@inertiajs/vue3';
 import { MetaProps } from '@/types/DefaultProps';
 import MobileSearch from '@/Layouts/Components/MobileSearch.vue';
 
@@ -38,14 +37,17 @@ const mobileSearchOpen = ref(false);
           />
         </div>
 
-        <Link
+        <a
           href="/"
           class="z-[999] lg:absolute lg:left-2"
         >
           <Sealiac class="h-14 w-full" />
-        </Link>
+        </a>
 
-        <MainNav class="md:hidden! lg:flex!" />
+        <MainNav
+          class="md:hidden! lg:flex!"
+          plain-links
+        />
 
         <div class="lg:absolute lg:right-2">
           <div class="h-10 w-10 py-2">
@@ -62,11 +64,13 @@ const mobileSearchOpen = ref(false);
 
     <MobileNav
       :open="mobileNavOpen"
+      plain-links
       @close="mobileNavOpen = false"
     />
 
     <MobileSearch
       :open="mobileSearchOpen"
+      plain-links
       @close="mobileSearchOpen = false"
     />
   </div>

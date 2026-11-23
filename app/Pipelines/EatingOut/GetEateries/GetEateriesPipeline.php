@@ -44,9 +44,9 @@ class GetEateriesPipeline
         ];
 
         $pipelineData = new GetEateriesPipelineData(
-            town: $town,
             filters: $filters,
             sort: $sort,
+            town: $town,
             jsonResource: $jsonResource
         );
 

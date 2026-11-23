@@ -58,7 +58,7 @@ class ShowControllerTest extends TestCase
     {
         $this->visitCollection()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Collection/Show')
                     ->has('collection')
                     ->where('collection.title', 'Collection 0')
@@ -74,7 +74,7 @@ class ShowControllerTest extends TestCase
 
         $this->visitCollection()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Collection/Show')
                     ->where('collection.display_type', CollectionDisplayType::LIST->value)
                     ->etc()
@@ -98,7 +98,7 @@ class ShowControllerTest extends TestCase
         $this->visitCollection()
             ->assertOk()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Collection/Show')
                     ->has('collection.groups.0.items', 1)
                     ->where('collection.groups.0.items.0.title', $liveRecipe->title)
@@ -117,7 +117,7 @@ class ShowControllerTest extends TestCase
         $this->visitCollection()
             ->assertOk()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Collection/Show')
                     ->has('collection.groups.0.items', 0)
                     ->etc()

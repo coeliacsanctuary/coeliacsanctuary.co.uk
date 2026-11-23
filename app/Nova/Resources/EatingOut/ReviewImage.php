@@ -19,7 +19,7 @@ class ReviewImage extends Resource
 
     public static $clickAction = 'preview';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }

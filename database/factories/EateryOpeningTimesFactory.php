@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryOpeningTimes;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryOpeningTimes>
+ */
 class EateryOpeningTimesFactory extends Factory
 {
     protected $model = EateryOpeningTimes::class;
@@ -34,6 +37,6 @@ class EateryOpeningTimesFactory extends Factory
 
     public function forEatery(Eatery $eatery)
     {
-        return $this->state(fn () => ['wheretoeat_id' => $eatery->id]);
+        return $this->state(fn (): array => ['wheretoeat_id' => $eatery->id]);
     }
 }

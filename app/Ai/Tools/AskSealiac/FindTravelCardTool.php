@@ -14,9 +14,6 @@ class FindTravelCardTool extends BaseTool
 {
     use FormatTravelCard;
 
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'text'
@@ -28,16 +25,13 @@ class FindTravelCardTool extends BaseTool
         text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         return TravelCardSearchTerm::query()
-            ->where('term', 'like', "%{$request->string('country_or_language')->toString()}%")
+            ->whereLike('term', "%{$request->string('country_or_language')->toString()}%")
             ->with(['products', 'products.categories', 'products.reviews', 'products.prices', 'products.variants'])
             ->get()
-            ->map(fn (TravelCardSearchTerm $searchTerm) => [
+            ->map(fn (TravelCardSearchTerm $searchTerm): array => [
                 'id' => $searchTerm->id,
                 'term' => $searchTerm->term,
                 'type' => $searchTerm->type,
@@ -46,9 +40,6 @@ class FindTravelCardTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

@@ -1,5 +1,6 @@
 @php
     use App\Models\Shop\ShopOrder;
+
     /** @var ShopOrder $order */
 @endphp
 
@@ -10,14 +11,8 @@
 @endsection
 
 @section('intro')
-    <mj-text mj-class="inner">Hi {{ $order->address->name }}</mj-text>
-    <mj-text mj-class="inner">
-        Your recent order at Coeliac Sanctuary has been cancelled.
-    </mj-text>
-    <mj-text mj-class="inner">
-        You will receive your refund separately.
-    </mj-text>
-    <mj-text mj-class="inner" padding-top="10px">
-        Thanks, Alison - Coeliac Sanctuary
-    </mj-text>
+    <mj-text mj-class="inner">Hi {{ $order->customer->name }}</mj-text>
+    <mj-text mj-class="inner"> Your recent order at Coeliac Sanctuary has been cancelled. </mj-text>
+    <mj-text mj-class="inner"> You will receive your refund separately. </mj-text>
+    <mj-text mj-class="inner" padding-top="10px"> Thanks, Alison - Coeliac Sanctuary </mj-text>
 @endsection

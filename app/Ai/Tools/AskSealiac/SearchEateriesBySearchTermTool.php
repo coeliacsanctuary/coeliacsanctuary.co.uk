@@ -16,9 +16,6 @@ use Stringable;
 
 class SearchEateriesBySearchTermTool extends BaseTool
 {
-    /**
-     * Get the description of the tool's purpose.
-     */
     public function description(): Stringable|string
     {
         return <<<'text'
@@ -46,9 +43,6 @@ class SearchEateriesBySearchTermTool extends BaseTool
         text;
     }
 
-    /**
-     * Execute the tool's logic.
-     */
     protected function execute(Request $request): Stringable|string
     {
         $filters = [
@@ -59,7 +53,7 @@ class SearchEateriesBySearchTermTool extends BaseTool
 
         return app(GetEateriesForAskSealiacSearchPipeline::class)
             ->run($request->string('term')->toString(), $request->integer('radius', 5), $filters, $request->string('sort', 'distance')->toString())
-            ->map(function (Eatery $eatery) {
+            ->map(function (Eatery $eatery): array {
                 /** @var NationwideBranch | null $branch */
                 $branch = $eatery->relationLoaded('branch') ? $eatery->branch : null;
 
@@ -93,7 +87,7 @@ class SearchEateriesBySearchTermTool extends BaseTool
                         'name' => $branch->name,
                         'location' => [
                             'address' => collect(explode("\n", $branch->address))
-                                ->map(fn (string $line) => mb_trim($line))
+                                ->map(fn (string $line): string => mb_trim($line))
                                 ->join(', '),
                         ],
                         'link' => $branch->link(),
@@ -110,7 +104,7 @@ class SearchEateriesBySearchTermTool extends BaseTool
                     'is_fully_gf' => $eatery->features->where('feature', '100% Gluten Free')->isNotEmpty(),
                     'location' => [
                         'address' => collect(explode("\n", $eatery->address))
-                            ->map(fn (string $line) => mb_trim($line))
+                            ->map(fn (string $line): string => mb_trim($line))
                             ->join(', '),
                     ],
                     'phone' => $eatery->phone,
@@ -124,9 +118,6 @@ class SearchEateriesBySearchTermTool extends BaseTool
             ->toJson();
     }
 
-    /**
-     * Get the tool's schema definition.
-     */
     public function schema(JsonSchema $schema): array
     {
         return [

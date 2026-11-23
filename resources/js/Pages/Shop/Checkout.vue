@@ -3,16 +3,15 @@ import Card from '@/Components/Card.vue';
 import {
   CheckoutForm,
   CheckoutFormErrors,
+  ShopBasketDigitalItem,
   ShopBasketItem,
   ShopPopularProduct,
 } from '@/types/Shop';
 import Heading from '@/Components/Heading.vue';
 import CheckoutTotals from '@/Components/PageSpecific/Shop/Checkout/CheckoutTotals.vue';
-import CheckoutDeliveryCountry from '@/Components/PageSpecific/Shop/Checkout/CheckoutDeliveryCountry.vue';
 import ShopPopularProducts from '@/Components/PageSpecific/Shop/ShopPopularProducts.vue';
 import { ArrowUturnLeftIcon } from '@heroicons/vue/20/solid';
 import { ShoppingBagIcon } from '@heroicons/vue/24/outline';
-import { FormSelectOption } from '@/Components/Forms/Props';
 import ContactDetails from '@/Components/PageSpecific/Shop/Checkout/Form/ContactDetails.vue';
 import { computed, nextTick, reactive, Ref, ref, watch, onMounted } from 'vue';
 import type { Component } from 'vue';
@@ -24,17 +23,15 @@ import Loader from '@/Components/Loader.vue';
 import useUrl from '@/composables/useUrl';
 import axios, { AxiosError } from 'axios';
 import useStripeStore from '@/stores/useStripeStore';
-import en from 'i18n-iso-countries/langs/en.json';
 import { Link, usePage } from '@inertiajs/vue3';
 import eventBus from '@/eventBus';
 import { ConfirmPaymentData } from '@stripe/stripe-js';
 import useGoogleEvents from '@/composables/useGoogleEvents';
-import pkg from 'i18n-iso-countries';
 import TestModeDetails from '@/Components/PageSpecific/Shop/Checkout/TestModeDetails.vue';
 import CoeliacButton from '@/Components/CoeliacButton.vue';
 import useJourneyTracking from '@/composables/useJourneyTracking';
 import CheckOutItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutItemsRow.vue';
-const { registerLocale, getAlpha2Code } = pkg;
+import CheckOutDigitalItemsRow from '@/Components/PageSpecific/Shop/Checkout/CheckOutDigitalItemsRow.vue';
 
 type SectionKeys = 'details' | 'shipping' | 'payment' | '_complete';
 type FormSection = {
@@ -50,11 +47,11 @@ type SectionComponent = {
   key: SectionKeys;
   next: SectionKeys;
   additionalProps: Record<string, unknown>;
+  required: boolean;
 };
 
 type NoBasketProps = {
   has_basket: false;
-  countries: undefined;
   basket: undefined;
   payment_intent: undefined;
   warnings: undefined;
@@ -64,14 +61,13 @@ type NoBasketProps = {
 type BasketProps = {
   has_basket: true;
   popularProducts: undefined;
-  countries: FormSelectOption[];
   basket: {
     items: ShopBasketItem[];
-    selected_country: number;
+    digital_items: ShopBasketDigitalItem[];
+    digital_only: boolean;
     delivery_timescale: string;
     subtotal: string;
     postage: string;
-    fees: { fee: string; description?: string }[];
     total_fees: string;
     discount?: string;
     total: string;
@@ -79,8 +75,6 @@ type BasketProps = {
   payment_intent: string;
   warnings?: string[];
 };
-
-registerLocale(en);
 
 const showLoader = ref(false);
 
@@ -107,6 +101,10 @@ const { getFromLocalStorage, putInLocalStorage } = useLocalStorage();
 const createGenericError = (
   message: string = 'An unknown error has occurred, you have not been charged.',
 ): void => {
+  if (message === 'Your card has been declined.') {
+    message += ' Please ensure you are using a UK registered payment method.';
+  }
+
   useJourneyTracking().logEvent('other', 'Checkout/GenericError', { message });
 
   store.setErrors({
@@ -169,9 +167,7 @@ const stripePayload = (payload: CheckoutForm): ConfirmPaymentData => ({
         city: payload.billing.town,
         state: payload.billing.county,
         postal_code: payload.billing.postcode,
-        country:
-          getAlpha2Code(payload.billing.country, 'en') ||
-          payload.billing.country,
+        country: 'GB',
       },
     },
   },
@@ -323,40 +319,51 @@ watch(
   { deep: true },
 );
 
-const sectionComponents: SectionComponent[] = [
+const sectionComponents = computed((): SectionComponent[] => [
   {
     component: ContactDetails as Component,
     key: 'details',
-    next: 'shipping',
-    additionalProps: {},
+    next: props.basket?.digital_only ? 'payment' : 'shipping',
+    required: true,
+    additionalProps: {
+      hasDigitalItems: props.basket?.digital_items.length,
+    },
   },
   {
     component: ShippingDetails as Component,
     key: 'shipping',
     next: 'payment',
-    additionalProps: {
-      canLookupPostcode: props.basket?.selected_country === 1,
-    },
+    required: props.basket?.digital_only === false,
+    additionalProps: {},
   },
   {
     component: PaymentDetails as Component,
     key: 'payment',
     next: '_complete',
+    required: true,
     additionalProps: {
       paymentToken: props.payment_intent,
+      requiredShipping: props.basket?.digital_only === false,
     },
   },
-];
+]);
 
 onMounted(() => {
   useGoogleEvents().googleEvent('event', 'begin_checkout', {
-    items: props.basket?.items.map((item: ShopBasketItem) => ({
-      id: item.id,
-      name: item.title,
-      variant: item.variant ?? '',
-      quantity: item.quantity,
-      price: item.line_price,
-    })),
+    items: [
+      ...(props.basket?.items.map((item: ShopBasketItem) => ({
+        id: item.id,
+        name: item.title,
+        variant: item.variant ?? '',
+        quantity: item.quantity,
+        price: item.line_price,
+      })) ?? []),
+      ...(props.basket?.digital_items.map((item: ShopBasketDigitalItem) => ({
+        id: item.id,
+        name: item.title,
+        price: item.item_price,
+      })) ?? []),
+    ],
   });
 });
 </script>
@@ -389,6 +396,7 @@ onMounted(() => {
           >
             <component
               :is="section.component"
+              v-if="section.required"
               :show="sections[section.key].active"
               :completed="sections[section.key].complete"
               :error="sections[section.key].error"
@@ -431,17 +439,16 @@ onMounted(() => {
             </ul>
           </div>
 
-          <CheckoutDeliveryCountry
-            :countries="countries as FormSelectOption[]"
-            :selected-country="basket.selected_country"
-            :delivery-timescale="basket.delivery_timescale"
-            :has-fees="basket.fees.length > 0"
-          />
-
-          <div class="mt-4 flow-root border-t border-primary-light/60">
+          <div class="flow-root">
             <ul class="divide-y divide-primary-light/60">
               <CheckOutItemsRow
                 v-for="item in basket.items"
+                :key="item.id"
+                :item="item"
+              />
+
+              <CheckOutDigitalItemsRow
+                v-for="item in basket.digital_items"
                 :key="item.id"
                 :item="item"
               />
@@ -451,10 +458,10 @@ onMounted(() => {
           <CheckoutTotals
             :postage="basket.postage"
             :discount="basket.discount"
-            :fees="basket.fees"
             :total-fees="basket.total_fees"
             :total="basket.total"
             :subtotal="basket.subtotal"
+            :digital-only="basket.digital_only"
           />
 
           <Link

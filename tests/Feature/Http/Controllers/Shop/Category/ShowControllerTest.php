@@ -55,7 +55,7 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itRendersTheShopCategoryPage(): void
     {
-        $this->makeRequest()->assertInertia(fn (Assert $page) => $page->component('Shop/Category'));
+        $this->makeRequest()->assertInertia(fn (Assert $page): Assert => $page->component('Shop/Category'));
     }
 
     #[Test]
@@ -63,9 +63,9 @@ class ShowControllerTest extends TestCase
     {
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Category')
-                    ->has('category', fn (Assert $page) => $page->hasAll(['title', 'description', 'image', 'link', 'travelCardSearch']))
+                    ->has('category', fn (Assert $page): Assert => $page->hasAll(['title', 'description', 'image', 'link', 'travelCardSearch']))
                     ->etc()
             );
     }
@@ -75,7 +75,7 @@ class ShowControllerTest extends TestCase
     {
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Category')
                     ->has(
                         'products',
@@ -95,7 +95,7 @@ class ShowControllerTest extends TestCase
             ->has($this->build(ShopProductVariant::class), 'variants')
             ->has($this->build(ShopPrice::class), 'prices')
             ->pinned()
-            ->state(fn () => ['title' => 'This is a Pinned Product'])
+            ->state(fn (): array => ['title' => 'This is a Pinned Product'])
             ->afterCreating(function (ShopProduct $product): void {
                 $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('primary');
                 $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('social');
@@ -104,7 +104,7 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Category')
                     ->has('products')
                     ->where('products.0.title', 'This is a Pinned Product')
@@ -117,17 +117,17 @@ class ShowControllerTest extends TestCase
     {
         $this->build(ShopProduct::class)
             ->inCategory($this->category)
-            ->state(fn () => ['title' => 'This is a Not Live Product'])
+            ->state(fn (): array => ['title' => 'This is a Not Live Product'])
             ->create();
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->component('Shop/Category')
                     ->has(
                         'products',
-                        fn (Assert $page) => $page
-                            ->each(fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
+                            ->each(fn (Assert $page): Assert => $page
                                 ->whereNot('title', 'This is a Not Live Product')
                                 ->etc())
                     )
@@ -141,7 +141,7 @@ class ShowControllerTest extends TestCase
             /** @var string[] $schema */
             $schema = $page->toArray()['props']['meta']['schema'];
 
-            $itemList = collect($schema)->first(fn (string $item) => str_contains($item, 'ItemList'));
+            $itemList = collect($schema)->first(fn (string $item): bool => str_contains($item, 'ItemList'));
 
             $this->assertNotNull($itemList);
             $this->assertStringContainsString('Product 0', $itemList);
@@ -153,11 +153,11 @@ class ShowControllerTest extends TestCase
     {
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has(
                         'products',
-                        fn (Assert $page) => $page
-                            ->each(fn (Assert $page) => $page->where('in_stock', true)->etc())
+                        fn (Assert $page): Assert => $page
+                            ->each(fn (Assert $page): Assert => $page->where('in_stock', true)->etc())
                     )
             );
     }
@@ -165,11 +165,11 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itReturnsThatAProductWithNoStockIsNotInStock(): void
     {
-        $this->buildProductInCategory('This Product Is Out Of Stock', variantState: fn () => ['quantity' => 0]);
+        $this->buildProductInCategory('This Product Is Out Of Stock', variantState: fn (): array => ['quantity' => 0]);
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('products', 6)
                     ->where('products.5.title', 'This Product Is Out Of Stock')
                     ->where('products.5.in_stock', false)
@@ -187,7 +187,7 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('products.0.title', 'A Travel Card Product')
                     ->where('products.0.footnote', 'Covers France and Belgium')
                     ->etc()
@@ -206,7 +206,7 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('products.0.title', 'A Travel Card Product')
                     ->where('products.0.footnote', 'Covers 4 countries including France, Belgium and Germany')
                     ->etc()
@@ -222,7 +222,7 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('products.0.title', 'A Travel Card Product')
                     ->where('products.0.footnote', null)
                     ->etc()
@@ -244,7 +244,7 @@ class ShowControllerTest extends TestCase
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->where('products.0.title', 'A Non Travel Card Product')
                     ->where('products.0.footnote', null)
                     ->etc()
@@ -262,16 +262,16 @@ class ShowControllerTest extends TestCase
     #[Test]
     public function itDoesntListAProductThatHasNoCurrentPrice(): void
     {
-        $this->buildProductInCategory('This Product Has An Expired Price', priceState: fn () => ['end_at' => Carbon::now()->subDay()]);
+        $this->buildProductInCategory('This Product Has An Expired Price', priceState: fn (): array => ['end_at' => Carbon::now()->subDay()]);
 
         $this->makeRequest()
             ->assertInertia(
-                fn (Assert $page) => $page
+                fn (Assert $page): Assert => $page
                     ->has('products', 5)
                     ->has(
                         'products',
-                        fn (Assert $page) => $page
-                            ->each(fn (Assert $page) => $page
+                        fn (Assert $page): Assert => $page
+                            ->each(fn (Assert $page): Assert => $page
                                 ->whereNot('title', 'This Product Has An Expired Price')
                                 ->etc())
                     )
@@ -287,7 +287,7 @@ class ShowControllerTest extends TestCase
             ->inCategory($this->category)
             ->has($variantState ? $variant->state($variantState) : $variant, 'variants')
             ->has($priceState ? $price->state($priceState) : $price, 'prices')
-            ->state(fn () => ['title' => $title])
+            ->state(fn (): array => ['title' => $title])
             ->afterCreating(function (ShopProduct $product): void {
                 $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('primary');
                 $product->addMedia(UploadedFile::fake()->image('product.jpg'))->toMediaCollection('social');

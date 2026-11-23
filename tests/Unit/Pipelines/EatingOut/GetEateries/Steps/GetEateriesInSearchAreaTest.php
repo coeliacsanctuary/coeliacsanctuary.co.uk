@@ -50,7 +50,7 @@ class GetEateriesInSearchAreaTest extends GetEateriesTestCase
 
         $newCollection = $this->callGetEateriesInSearchAreaAction($eateries)->eateries;
 
-        $this->assertCount(10, $newCollection); // 5 in setup, 5 from above
+        $this->assertCount(10, $newCollection);
     }
 
     #[Test]
@@ -131,7 +131,7 @@ class GetEateriesInSearchAreaTest extends GetEateriesTestCase
         $eateries = $this->callGetEateriesInSearchAreaAction();
 
         $this->assertEqualsCanonicalizing(
-            $eateries->eateries->map(fn (PendingEatery $eatery) => $eatery->id)->all(),
+            $eateries->eateries->map(fn (PendingEatery $eatery): int => $eatery->id)->all(),
             SearchResultIdsState::$eateryIds,
         );
     }
@@ -185,7 +185,7 @@ class GetEateriesInSearchAreaTest extends GetEateriesTestCase
         $queries = collect(app('db')->getQueryLog())->pluck('query');
 
         $this->assertTrue(
-            $queries->every(fn (string $query) => ! str_contains($query, 'from `wheretoeat_counties`')),
+            $queries->every(fn (string $query): bool => ! str_contains($query, 'from `wheretoeat_counties`')),
             'The county relation is still being loaded to reject nationwide eateries.',
         );
     }
@@ -194,6 +194,6 @@ class GetEateriesInSearchAreaTest extends GetEateriesTestCase
     {
         return collect(app('db')->getQueryLog())
             ->pluck('query')
-            ->first(fn (string $query) => str_contains($query, 'AS distance')) ?? '';
+            ->first(fn (string $query): bool => str_contains($query, 'AS distance')) ?? '';
     }
 }

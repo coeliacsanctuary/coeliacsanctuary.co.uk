@@ -8,6 +8,9 @@ use App\Enums\EatingOut\EateryMagicRouteType;
 use App\Models\EatingOut\EateryMagicRouteRecord;
 use App\Services\EatingOut\Collection\Configuration;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EatingOut\EateryMagicRouteRecord>
+ */
 class EateryMagicRouteRecordFactory extends Factory
 {
     protected $model = EateryMagicRouteRecord::class;
@@ -16,7 +19,7 @@ class EateryMagicRouteRecordFactory extends Factory
     {
         return [
             'resolver_type' => EateryMagicRouteType::HundredPercentGlutenFree,
-            'raw_location' => $this->faker->slug,
+            'raw_location' => $this->faker->slug(),
             'location_type' => null,
             'location_id' => null,
             'builder_config' => app(Configuration::class),

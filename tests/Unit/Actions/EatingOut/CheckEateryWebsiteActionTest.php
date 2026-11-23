@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\EatingOut;
 
+use Illuminate\Http\Client\ConnectionException;
 use App\Actions\EatingOut\CheckEateryWebsiteAction;
 use App\Models\EatingOut\Eatery;
 use Database\Seeders\EateryScaffoldingSeeder;
@@ -157,7 +158,7 @@ class CheckEateryWebsiteActionTest extends TestCase
     public function itReturnsFailureForConnectionErrors(): void
     {
         Http::fake([
-            '*' => fn () => throw new \Illuminate\Http\Client\ConnectionException('Connection timed out'),
+            '*' => fn () => throw new ConnectionException('Connection timed out'),
         ]);
 
         $result = $this->callAction(CheckEateryWebsiteAction::class, $this->eatery);

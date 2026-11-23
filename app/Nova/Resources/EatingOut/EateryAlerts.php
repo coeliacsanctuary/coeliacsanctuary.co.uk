@@ -31,7 +31,7 @@ class EateryAlerts extends Resource
 
     public static $tableStyle = 'tight';
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
@@ -87,16 +87,16 @@ class EateryAlerts extends Resource
             CompleteReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryAlert $report) => $report->completed === false && $report->ignored === false),
+                ->canRun(fn ($request, EateryAlert $report): bool => $report->completed === false && $report->ignored === false),
 
             IgnoreReportOrRecommendation::make()
                 ->showInline()
                 ->withoutConfirmation()
-                ->canRun(fn ($request, EateryAlert $report) => $report->completed === false && $report->ignored === false),
+                ->canRun(fn ($request, EateryAlert $report): bool => $report->completed === false && $report->ignored === false),
 
             IgnoreEateryAlertForSixMonths::make()
                 ->showInline()
-                ->canRun(fn ($request, EateryAlert $report) => $report->completed === false && $report->ignored === false),
+                ->canRun(fn ($request, EateryAlert $report): bool => $report->completed === false && $report->ignored === false),
         ];
     }
 

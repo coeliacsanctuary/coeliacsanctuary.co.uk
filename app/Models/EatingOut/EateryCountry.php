@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\EatingOut;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,10 +13,9 @@ use Illuminate\Support\Str;
 /**
  * @property string $image
  */
+#[Table(name: 'wheretoeat_countries')]
 class EateryCountry extends Model
 {
-    protected $table = 'wheretoeat_countries';
-
     /** @return HasMany<Eatery, $this> */
     public function eateries(): HasMany
     {
@@ -33,6 +33,6 @@ class EateryCountry extends Model
     {
         $filename = Str::slug($this->country);
 
-        return Attribute::get(fn () => asset("images/eating-out/{$filename}.jpg"));
+        return Attribute::get(fn (): string => asset("images/eating-out/{$filename}.jpg"));
     }
 }

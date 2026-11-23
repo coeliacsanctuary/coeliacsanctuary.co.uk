@@ -1,6 +1,8 @@
 {
     "preset": "psr12",
     "rules": {
+        "Pint/laravel_blade": true,
+        "Pint/phpdoc_type_annotations_only": true,
         "align_multiline_comment": true,
         "array_indentation": true,
         "array_syntax": true,
@@ -33,5 +35,9 @@
         "use_arrow_functions": true,
         "void_return": true,
         "php_unit_method_casing": false
-    }
+    },
+    "exclude": [
+        "resources/views/markers/glyphs",
+        "resources/views/prompts"
+    ]
 }

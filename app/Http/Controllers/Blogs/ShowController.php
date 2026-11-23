@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Blogs;
 
+use App\ResourceCollections\Comments\CommentCollection;
 use App\Actions\Blogs\FindRelatedBlogsAction;
 use App\Actions\Comments\GetCommentsForItemAction;
 use App\DataObjects\BreadcrumbItemData;
@@ -50,7 +51,7 @@ class ShowController
                 'relatedBlogs' => RelatedBlogSimpleCardViewResource::collection(
                     $findRelatedBlogsAction->handle($blog->tags, $blog->primaryTag, $blog->id)
                 ),
-                'comments' => fn () => $commentsForItemAction->handle($blog),
+                'comments' => fn (): CommentCollection => $commentsForItemAction->handle($blog),
             ]);
     }
 }

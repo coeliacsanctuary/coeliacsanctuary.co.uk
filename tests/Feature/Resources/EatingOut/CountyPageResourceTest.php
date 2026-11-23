@@ -36,7 +36,7 @@ class CountyPageResourceTest extends TestCase
     {
         $keys = ['name', 'slug', 'latlng', 'description', 'image', 'towns', 'eateries', 'reviews'];
 
-        $resource = (new CountyPageResource($this->county))->toArray(request());
+        $resource = new CountyPageResource($this->county)->toArray(request());
 
         foreach ($keys as $key) {
             $this->assertArrayHasKey($key, $resource);
@@ -48,7 +48,7 @@ class CountyPageResourceTest extends TestCase
     {
         $this->county->updateQuietly(['description' => 'A **gluten free** county']);
 
-        $resource = (new CountyPageResource($this->county))->toArray(request());
+        $resource = new CountyPageResource($this->county)->toArray(request());
 
         $this->assertStringContainsString('<strong>gluten free</strong>', (string) $resource['description']);
     }
@@ -58,7 +58,7 @@ class CountyPageResourceTest extends TestCase
     {
         $this->county->updateQuietly(['description' => null]);
 
-        $resource = (new CountyPageResource($this->county))->toArray(request());
+        $resource = new CountyPageResource($this->county)->toArray(request());
 
         $this->assertEmpty((string) $resource['description']);
     }
@@ -68,7 +68,7 @@ class CountyPageResourceTest extends TestCase
     {
         $this->county->addMedia(UploadedFile::fake()->image('county.jpg'))->toMediaCollection('primary');
 
-        $resource = (new CountyPageResource($this->county))->toArray(request());
+        $resource = new CountyPageResource($this->county)->toArray(request());
 
         $this->assertStringContainsString('county-webp.webp', $resource['image']);
     }
@@ -76,7 +76,7 @@ class CountyPageResourceTest extends TestCase
     #[Test]
     public function itFallsBackToTheGenericCountryImageIfTheCountyDoesntHaveOne(): void
     {
-        $resource = (new CountyPageResource($this->county))->toArray(request());
+        $resource = new CountyPageResource($this->county)->toArray(request());
 
         $this->assertStringContainsString('england.jpg', $resource['image']);
     }
@@ -88,7 +88,7 @@ class CountyPageResourceTest extends TestCase
             ->count(5)
             ->create(['county_id' => $this->county->id]);
 
-        $resource = (new CountyPageResource($this->county))->toArray(request());
+        $resource = new CountyPageResource($this->county)->toArray(request());
 
         $this->assertEquals(5, $resource['eateries']);
     }
@@ -101,7 +101,7 @@ class CountyPageResourceTest extends TestCase
             ->has($this->build(EateryReview::class)->approved()->count(5), 'reviews')
             ->create(['county_id' => $this->county->id]);
 
-        $resource = (new CountyPageResource($this->county))->toArray(request());
+        $resource = new CountyPageResource($this->county)->toArray(request());
 
         $this->assertEquals(25, $resource['reviews']);
     }
@@ -113,7 +113,7 @@ class CountyPageResourceTest extends TestCase
             ->count(10)
             ->create(['county_id' => $this->county->id]);
 
-        $resource = (new CountyPageResource($this->county))->toArray(request());
+        $resource = new CountyPageResource($this->county)->toArray(request());
 
         $this->assertInstanceOf(CountyTownCollection::class, $resource['towns']);
     }
@@ -127,7 +127,7 @@ class CountyPageResourceTest extends TestCase
             ->create(['county_id' => $this->county->id]);
 
         /** @var CountyTownCollection $towns */
-        $towns = (new CountyPageResource($this->county))->toArray(request())['towns'];
+        $towns = new CountyPageResource($this->county)->toArray(request())['towns'];
 
         $towns->resource->each(fn ($town) => $this->assertInstanceOf(CountyTownResource::class, $town));
     }

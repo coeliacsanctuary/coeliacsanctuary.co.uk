@@ -41,7 +41,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL') . '/storage',
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -105,6 +105,7 @@ return [
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
             'bucket' => env('AWS_BACKUPS_BUCKET', 'prod-coeliac-backups'),
+            'stream_reads' => true,
         ],
 
         'system' => [

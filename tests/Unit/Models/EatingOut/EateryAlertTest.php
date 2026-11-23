@@ -58,8 +58,8 @@ class EateryAlertTest extends TestCase
         $eatery = $this->create(Eatery::class);
 
         $pendingAlert = $this->build(EateryAlert::class)->on($eatery)->create();
-        $completedAlert = $this->build(EateryAlert::class)->on($eatery)->completed()->create();
-        $ignoredAlert = $this->build(EateryAlert::class)->on($eatery)->ignored()->create();
+        $this->build(EateryAlert::class)->on($eatery)->completed()->create();
+        $this->build(EateryAlert::class)->on($eatery)->ignored()->create();
 
         $pendingAlerts = EateryAlert::query()->pending()->get();
 

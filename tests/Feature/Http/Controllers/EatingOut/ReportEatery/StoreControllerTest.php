@@ -101,7 +101,7 @@ class StoreControllerTest extends TestCase
     {
         $this->expectPipelineToRun(DetermineNationwideBranchFromNamePipeline::class, return: $this->nationwideBranch);
 
-        $this->expectAction(CreateEateryReportAction::class, args: [function ($a, $b, $branchId) {
+        $this->expectAction(CreateEateryReportAction::class, args: [function ($a, $b, $branchId): true {
             $this->assertEquals($this->nationwideBranch->id, $branchId);
 
             return true;

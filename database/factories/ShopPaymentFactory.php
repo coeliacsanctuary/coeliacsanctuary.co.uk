@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Shop\ShopOrder;
 use App\Models\Shop\ShopPayment;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shop\ShopPayment>
+ */
 class ShopPaymentFactory extends Factory
 {
     protected $model = ShopPayment::class;
@@ -25,7 +28,7 @@ class ShopPaymentFactory extends Factory
 
     public function forOrder(ShopOrder $order): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'order_id' => $order->id,
         ]);
     }

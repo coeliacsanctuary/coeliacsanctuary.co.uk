@@ -16,7 +16,7 @@ use Database\Seeders\EateryScaffoldingSeeder;
 
 class CheckIfNationwideEateryTest extends StepTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -28,7 +28,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
     {
         $data = $this->makeData('Bella Italia');
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertFalse($data->found);
     }
@@ -46,7 +46,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
 
         $data = $this->makeData($search);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$name}, did you know they're already listed on our Nationwide Eateries page?", $data->reason);
@@ -56,7 +56,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
 
     #[Test]
     #[DataProvider('searchScenarios')]
-    public function itReturnsAsFoundForABranchSearchByTheAddress($name, $search, $branchName, $address, $searchAddress, $town): void
+    public function itReturnsAsFoundForABranchSearchByTheAddress(string $name, string $search, string $branchName, string $address, string $searchAddress, string $town): void
     {
         $eatery = $this
             ->create(Eatery::class, [
@@ -73,7 +73,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
             'name' => $branchName,
         ]);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$name}, {$branch->short_location}, but we've already got it listed!", $data->reason);
@@ -83,7 +83,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
 
     #[Test]
     #[DataProvider('searchScenarios')]
-    public function itReturnsAsFoundForABranchSearchWithALocationByTheTownName($name, $search, $branchName, $address, $searchAddress, $town): void
+    public function itReturnsAsFoundForABranchSearchWithALocationByTheTownName(string $name, string $search, string $branchName, string $address, string $searchAddress, string $town): void
     {
         $eatery = $this
             ->create(Eatery::class, [
@@ -101,7 +101,7 @@ class CheckIfNationwideEateryTest extends StepTestCase
             'name' => $branchName,
         ]);
 
-        $this->getStep()->handle($data, fn () => null);
+        $this->getStep()->handle($data, fn (): null => null);
 
         $this->assertTrue($data->found);
         $this->assertEquals("It looks like you're recommending {$name}, {$branch->short_location}, but we've already got it listed!", $data->reason);
@@ -113,12 +113,12 @@ class CheckIfNationwideEateryTest extends StepTestCase
     {
         return [
             'nandos' => ["Nando's", 'nandos', '', '123 Fake Street, Crewe, AB1 2CD', 'Fake Street, Crewe, AB1 2CD', 'Crewe'],
-            'nando\'s' => ["Nando's", 'nando\'s', '', '123 Fake Street, Crewe, AB1 2CD', 'Fake Street, Crewe, AB1 2CD', 'Crewe'],
+            "nando's" => ["Nando's", "nando's", '', '123 Fake Street, Crewe, AB1 2CD', 'Fake Street, Crewe, AB1 2CD', 'Crewe'],
             'nando' => ["Nando's", 'nando', '', '123 Fake Street, Crewe, AB1 2CD', 'Fake Street, Crewe, AB1 2CD', 'Crewe'],
             'brunning and price' => ['Brunning And Price', 'brunning and price', '', '123 Fake Street, London, AB1 2CD', 'Fake Street, London, AB1 2CD', 'London'],
             'brewers fayre' => ['Brewers Fayre', 'brewers fayre', '', '123 Fake Street, Manchester, AB1 2CD', 'Fake Street, Manchester, AB1 2CD', 'Manchester'],
             'wagamamas' => ["Wagamama's", 'wagamamas', '', 'Liverpool Dock, L1', 'Liverpool Dock, L1', 'Liverpool'],
-            'wagamama\'s' => ["Wagamama's", 'wagamama\'s', '', 'Liverpool Dock, L1', 'Liverpool Dock, L1', 'Liverpool'],
+            "wagamama's" => ["Wagamama's", "wagamama's", '', 'Liverpool Dock, L1', 'Liverpool Dock, L1', 'Liverpool'],
             'wagamama' => ["Wagamama's", 'wagamama', '', 'Liverpool Dock, L1', 'Liverpool Dock, L1', 'Liverpool'],
         ];
     }

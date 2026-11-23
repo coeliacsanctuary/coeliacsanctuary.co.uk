@@ -21,7 +21,7 @@ class ShopPopularProductResource extends JsonResource
             'link' => $this->link,
             'image' => $this->main_image_as_webp ?? $this->main_image,
             'price' => Helpers::formatMoney(Money::GBP($this->currentPrice)),
-            'rating' => $this->whenLoaded('reviews', fn () => [
+            'rating' => $this->whenLoaded('reviews', fn (): array => [
                 'average' => $this->averageRating,
                 'count' => $this->reviews->count(),
             ]),

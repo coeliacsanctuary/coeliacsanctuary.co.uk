@@ -69,10 +69,10 @@ class GenerateNationwideDescriptionJobTest extends TestCase
         $this->createChain('Nandos');
         $this->createChain('Wagamama');
 
-        (new GenerateNationwideDescriptionJob($this->county))->handle();
+        new GenerateNationwideDescriptionJob($this->county)->handle();
 
         EateryNationwideDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Chains: 2')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Chains: 2')
         );
     }
 
@@ -84,10 +84,10 @@ class GenerateNationwideDescriptionJobTest extends TestCase
         $this->createChain('Nandos');
         $this->createChain('Wagamama');
 
-        (new GenerateNationwideDescriptionJob($this->county))->handle();
+        new GenerateNationwideDescriptionJob($this->county)->handle();
 
         EateryNationwideDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Nandos')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Nandos')
                 && str_contains($prompt->prompt, 'Wagamama')
         );
     }
@@ -108,10 +108,10 @@ class GenerateNationwideDescriptionJobTest extends TestCase
             ->count(3)
             ->create();
 
-        (new GenerateNationwideDescriptionJob($this->county))->handle();
+        new GenerateNationwideDescriptionJob($this->county)->handle();
 
         EateryNationwideDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Chains with Branch Listings: 1')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Chains with Branch Listings: 1')
                 && str_contains($prompt->prompt, 'Total Branches Listed: 3')
                 && str_contains($prompt->prompt, 'Branches Listed: 3')
         );
@@ -124,10 +124,10 @@ class GenerateNationwideDescriptionJobTest extends TestCase
 
         $this->createChain('Nandos');
 
-        (new GenerateNationwideDescriptionJob($this->county))->handle();
+        new GenerateNationwideDescriptionJob($this->county)->handle();
 
         EateryNationwideDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Number of Chains with Branch Listings: 0')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Number of Chains with Branch Listings: 0')
                 && ! str_contains($prompt->prompt, "\nBranches Listed:")
         );
     }
@@ -145,10 +145,10 @@ class GenerateNationwideDescriptionJobTest extends TestCase
             ->count(5)
             ->create(['rating' => 4]);
 
-        (new GenerateNationwideDescriptionJob($this->county))->handle();
+        new GenerateNationwideDescriptionJob($this->county)->handle();
 
         EateryNationwideDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => str_contains($prompt->prompt, 'Rating: 4.0 from 5 reviews')
+            fn (AgentPrompt $prompt): bool => str_contains($prompt->prompt, 'Rating: 4.0 from 5 reviews')
         );
     }
 
@@ -165,10 +165,10 @@ class GenerateNationwideDescriptionJobTest extends TestCase
             ->count(2)
             ->create(['rating' => 5]);
 
-        (new GenerateNationwideDescriptionJob($this->county))->handle();
+        new GenerateNationwideDescriptionJob($this->county)->handle();
 
         EateryNationwideDescriptionAgent::assertPrompted(
-            fn (AgentPrompt $prompt) => ! str_contains($prompt->prompt, 'Rating:')
+            fn (AgentPrompt $prompt): bool => ! str_contains($prompt->prompt, 'Rating:')
         );
     }
 
@@ -179,7 +179,7 @@ class GenerateNationwideDescriptionJobTest extends TestCase
 
         $this->createChain('Nandos');
 
-        (new GenerateNationwideDescriptionJob($this->county))->handle();
+        new GenerateNationwideDescriptionJob($this->county)->handle();
 
         $this->assertEquals('AI generated description', $this->county->refresh()->description);
     }
@@ -191,7 +191,7 @@ class GenerateNationwideDescriptionJobTest extends TestCase
 
         $county = EateryCounty::query()->withoutGlobalScopes()->firstOrFail();
 
-        (new GenerateNationwideDescriptionJob($county))->handle();
+        new GenerateNationwideDescriptionJob($county)->handle();
 
         EateryNationwideDescriptionAgent::assertNeverPrompted();
     }
@@ -205,7 +205,7 @@ class GenerateNationwideDescriptionJobTest extends TestCase
 
         $county->update(['description' => null]);
 
-        (new GenerateNationwideDescriptionJob($county))->handle();
+        new GenerateNationwideDescriptionJob($county)->handle();
 
         $this->assertNull($county->refresh()->description);
     }
@@ -215,7 +215,7 @@ class GenerateNationwideDescriptionJobTest extends TestCase
     {
         $this->assertEquals(
             $this->county->id,
-            (new GenerateNationwideDescriptionJob($this->county))->uniqueId()
+            new GenerateNationwideDescriptionJob($this->county)->uniqueId()
         );
     }
 

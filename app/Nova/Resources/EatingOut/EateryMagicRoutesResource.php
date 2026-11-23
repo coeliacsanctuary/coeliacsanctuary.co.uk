@@ -92,13 +92,13 @@ class EateryMagicRoutesResource extends Resource
             Code::make('Configuration', 'builder_config')
                 ->hideFromIndex()
                 ->exceptOnForms()
-                ->resolveUsing(fn ($foo, ?EateryMagicRouteRecord $resource) => json_encode(json_decode($resource->getRawOriginal('builder_config'), true), JSON_PRETTY_PRINT))
+                ->resolveUsing(fn ($foo, ?EateryMagicRouteRecord $resource): string|false => json_encode(json_decode($resource->getRawOriginal('builder_config'), true), JSON_PRETTY_PRINT))
                 ->readonly()
                 ->language('javascript'),
         ];
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request): bool
     {
         return true;
     }
