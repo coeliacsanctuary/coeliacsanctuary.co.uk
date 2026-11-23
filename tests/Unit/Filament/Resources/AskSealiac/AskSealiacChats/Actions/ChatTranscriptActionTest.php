@@ -80,7 +80,7 @@ class ChatTranscriptActionTest extends TestCase
         $this->listPage()->assertActionExists(
             $this->transcript(),
             fn (Action $action): bool => $action->getModalHeading() === 'Chat Transcript'
-                && $action->getModalSubmitAction() === null,
+                && !$action->getModalSubmitAction() instanceof Action,
         );
     }
 

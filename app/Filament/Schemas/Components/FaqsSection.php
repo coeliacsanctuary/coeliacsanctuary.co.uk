@@ -17,7 +17,7 @@ class FaqsSection
         return Section::make('FAQs')
             ->collapsible()
             ->collapsed(fn (string $operation): bool => $operation !== 'create')
-            ->schema(function () use ($display) {
+            ->schema(function () use ($display): array {
                 $schema = [
                     Repeater::make('faqs')
                         ->relationship()

@@ -65,7 +65,7 @@ class BodyTest extends TestCase
     {
         $rules = collect(Body::make('body')->getValidationRules());
 
-        $this->assertFalse($rules->contains(fn ($rule) => $rule instanceof ValidArticleHtmlRule));
+        $this->assertFalse($rules->contains(fn ($rule): bool => $rule instanceof ValidArticleHtmlRule));
     }
 
     #[Test]
@@ -73,7 +73,7 @@ class BodyTest extends TestCase
     {
         $rules = collect(Body::make('body')->validHtml()->getValidationRules());
 
-        $this->assertTrue($rules->contains(fn ($rule) => $rule instanceof ValidArticleHtmlRule));
+        $this->assertTrue($rules->contains(fn ($rule): bool => $rule instanceof ValidArticleHtmlRule));
     }
 
     #[Test]

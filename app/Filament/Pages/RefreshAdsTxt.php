@@ -24,7 +24,7 @@ class RefreshAdsTxt extends Page
             Section::make()->schema([
                 Action::make('refresh')
                     ->label('Reload ads.txt from mediavine')
-                    ->action(fn (FetchAdsTxtAction $fetchAdsTxtAction) => $fetchAdsTxtAction->handle())
+                    ->action(fn (FetchAdsTxtAction $fetchAdsTxtAction): bool => $fetchAdsTxtAction->handle())
                     ->successNotificationTitle('ads.txt refreshed!'),
             ]),
         ]);

@@ -32,20 +32,20 @@ class CommentsTable
             ->columns([
                 TextColumn::make('commentable.title')
                     ->label('Resource')
-                    ->prefix(fn (Comment $record) => "{$record->what} - ")
-                    ->url(fn (Comment $record) => match ($record->commentable_type) {
+                    ->prefix(fn (Comment $record): string => "{$record->what} - ")
+                    ->url(fn (Comment $record): ?string => match ($record->commentable_type) {
                         Blog::class => BlogResource::getUrl('edit', ['record' => $record->commentable_id]),
                         Recipe::class => RecipeResource::getUrl('edit', ['record' => $record->commentable_id]),
                         default => null,
                     })
-                    ->visible(fn ($livewire) => ! $livewire instanceof RelationManager),
+                    ->visible(fn ($livewire): bool => ! $livewire instanceof RelationManager),
 
                 TextColumn::make('name'),
 
                 TextColumn::make('comment')->wrap(),
 
                 IconColumn::make('has_reply')
-                    ->state(fn (Comment $record) => $record->reply !== null)
+                    ->state(fn (Comment $record): bool => $record->reply !== null)
                     ->boolean(),
 
                 IconColumn::make('approved')->boolean(),
@@ -57,11 +57,11 @@ class CommentsTable
                     ->label('Approve')
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->requiresConfirmation()
-                    ->visible(fn (Comment $record) => ! $record->approved)
+                    ->visible(fn (Comment $record): bool => ! $record->approved)
                     ->action(function (Comment $record): void {
                         $record->update(['approved' => true]);
 
-                        (new AnonymousNotifiable())
+                        new AnonymousNotifiable()
                             ->route('mail', $record->email)
                             ->notify(new CommentApprovedNotification($record));
                     }),
@@ -72,12 +72,12 @@ class CommentsTable
                     ->schema([
                         Textarea::make('reply')->rows(5)->autosize(),
                     ])
-                    ->visible(fn (Comment $record) => ! $record->approved)
+                    ->visible(fn (Comment $record): bool => ! $record->approved)
                     ->action(function (Comment $record, array $data): void {
                         $reply = $record->reply()->create(['comment_reply' => $data['reply']]);
                         $record->update(['approved' => true]);
 
-                        (new AnonymousNotifiable())
+                        new AnonymousNotifiable()
                             ->route('mail', $record->email)
                             ->notify(new CommentRepliedNotification($reply));
                     }),
@@ -88,7 +88,7 @@ class CommentsTable
                     ->schema([
                         TextEntry::make('reply.comment_reply')->label('Reply'),
                     ])
-                    ->visible(fn (Comment $record) => $record->reply !== null),
+                    ->visible(fn (Comment $record): bool => $record->reply !== null),
 
                 DeleteAction::make(),
             ])

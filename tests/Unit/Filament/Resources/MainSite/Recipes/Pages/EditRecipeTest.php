@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources\MainSite\Recipes\Pages;
 
+use Illuminate\Support\Collection;
 use App\Filament\Resources\MainSite\Recipes\Pages\EditRecipe;
 use App\Filament\Resources\MainSite\Recipes\RecipeResource;
 use App\Models\Faqs\Faq;
@@ -327,7 +328,7 @@ class EditRecipeTest extends TestCase
         return $this->recipe->allergens()->pluck('recipe_allergens.id')->sort()->values()->all();
     }
 
-    protected function allergens()
+    protected function allergens(): Collection
     {
         return collect([
             $this->create(RecipeAllergen::class, ['allergen' => 'Dairy']),

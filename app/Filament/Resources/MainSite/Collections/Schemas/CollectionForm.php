@@ -156,12 +156,12 @@ class CollectionForm
                                         ])
                                         ->required()
                                         ->live()
-                                        ->afterStateUpdated(fn (Set $set) => $set('item_id', null)),
+                                        ->afterStateUpdated(fn (Set $set): mixed => $set('item_id', null)),
 
                                     CollectionItemSelect::make('item_id')
                                         ->label('Item')
                                         ->required()
-                                        ->disabled(fn (Get $get) => ! $get('item_type')),
+                                        ->disabled(fn (Get $get): bool => ! $get('item_type')),
 
                                     TextInput::make('item_title')
                                         ->label('Title override')

@@ -32,7 +32,7 @@ class EateryCountiesTable
                 TextColumn::make('latlng'),
 
                 IconColumn::make('live')
-                    ->getStateUsing(fn (EateryCounty $record) => $record->eateries_count > 0 || $record->nationwide_branches_count > 0)
+                    ->getStateUsing(fn (EateryCounty $record): bool => $record->eateries_count > 0 || $record->nationwide_branches_count > 0)
                     ->boolean(),
 
                 TextColumn::make('towns_count')

@@ -31,7 +31,7 @@ class EateryLocationSection
     {
         return Section::make('Location')
             ->columnSpanFull()
-            ->schema(function () use ($isBranch, $fromChain) {
+            ->schema(function () use ($isBranch, $fromChain): array {
                 $schema = [];
 
                 if ( ! $isBranch) {
@@ -53,7 +53,7 @@ class EateryLocationSection
                     $schema[] = Select::make('wheretoeat_id')
                         ->relationship('eatery', 'name', modifyQueryUsing: fn ($query) => $query->where('county_id', 1))
                         ->default($fromChain?->id)
-                        ->disabled($fromChain !== null);
+                        ->disabled($fromChain instanceof Eatery);
                 }
 
                 return [
@@ -334,14 +334,14 @@ class EateryLocationSection
 
                                     TextInput::make('lat')
                                         ->required()
-                                        ->afterStateUpdated(fn (Get $get, Set $set, $state) => $set('map', ['lat' => (float) $state, 'lng' => (float) $get('lng')]))
+                                        ->afterStateUpdated(fn (Get $get, Set $set, $state): mixed => $set('map', ['lat' => (float) $state, 'lng' => (float) $get('lng')]))
                                         ->reactive()
                                         ->readOnly()
                                         ->lazy(),
 
                                     TextInput::make('lng')
                                         ->required()
-                                        ->afterStateUpdated(fn (Get $get, Set $set, $state) => $set('map', ['lng' => (float) $state, 'lat' => (float) $get('lat')]))
+                                        ->afterStateUpdated(fn (Get $get, Set $set, $state): mixed => $set('map', ['lng' => (float) $state, 'lat' => (float) $get('lat')]))
                                         ->reactive()
                                         ->readOnly()
                                         ->lazy(),
@@ -362,14 +362,12 @@ class EateryLocationSection
                                 ->draggable()
                                 ->dehydrated(false)
                                 ->defaultZoom(15)
-                                ->afterStateUpdated(function ($state, Set $set): void {
+                                ->afterStateUpdated(function (array $state, Set $set): void {
                                     $set('lat', $state['lat']);
                                     $set('lng', $state['lng']);
                                 }),
                         ]),
                 ];
-
-                return $schema;
             });
     }
 }

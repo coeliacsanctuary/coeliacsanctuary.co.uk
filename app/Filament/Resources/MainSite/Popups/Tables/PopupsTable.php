@@ -17,7 +17,7 @@ class PopupsTable
     {
         return $table
             ->defaultSort('id', 'desc')
-            ->recordUrl(fn (Popup $record) => PopupResource::getUrl('edit', ['record' => $record]))
+            ->recordUrl(fn (Popup $record): string => PopupResource::getUrl('edit', ['record' => $record]))
             ->columns([
                 TextColumn::make('id')->label('ID'),
 

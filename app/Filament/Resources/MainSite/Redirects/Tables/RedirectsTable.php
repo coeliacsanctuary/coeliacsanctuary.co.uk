@@ -17,7 +17,7 @@ class RedirectsTable
     {
         return $table
             ->defaultSort('id', 'desc')
-            ->recordUrl(fn (Redirect $record) => RedirectResource::getUrl('edit', ['record' => $record]))
+            ->recordUrl(fn (Redirect $record): string => RedirectResource::getUrl('edit', ['record' => $record]))
             ->columns([
                 TextColumn::make('id')->label('ID')->searchable(),
 

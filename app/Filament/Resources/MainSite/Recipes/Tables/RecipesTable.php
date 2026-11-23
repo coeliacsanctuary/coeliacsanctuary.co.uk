@@ -18,7 +18,7 @@ class RecipesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->recordUrl(fn (Recipe $record) => RecipeResource::getUrl('edit', ['record' => $record]))
+            ->recordUrl(fn (Recipe $record): string => RecipeResource::getUrl('edit', ['record' => $record]))
             ->columns([
                 TextColumn::make('id')->label('ID')->searchable(),
 
@@ -41,7 +41,7 @@ class RecipesTable
                 Action::make('metrics')
                     ->icon(Heroicon::ChartBar)
                     ->label('Metrics')
-                    ->url(fn (Recipe $record) => RecipeResource::getUrl('metrics', ['record' => $record])),
+                    ->url(fn (Recipe $record): string => RecipeResource::getUrl('metrics', ['record' => $record])),
 
                 EditAction::make(),
             ]);

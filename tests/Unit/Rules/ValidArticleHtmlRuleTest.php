@@ -86,7 +86,7 @@ class ValidArticleHtmlRuleTest extends TestCase
     {
         $failed = false;
 
-        (new ValidArticleHtmlRule())->validate('body', $value, function () use (&$failed): void {
+        new ValidArticleHtmlRule()->validate('body', $value, function () use (&$failed): void {
             $failed = true;
         });
 
@@ -97,7 +97,7 @@ class ValidArticleHtmlRuleTest extends TestCase
     {
         $message = null;
 
-        (new ValidArticleHtmlRule())->validate('body', $value, function (string $fail) use (&$message): void {
+        new ValidArticleHtmlRule()->validate('body', $value, function (string $fail) use (&$message): void {
             $message = $fail;
         });
 

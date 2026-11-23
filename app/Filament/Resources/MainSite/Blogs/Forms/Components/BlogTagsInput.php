@@ -15,7 +15,7 @@ class BlogTagsInput extends TagsInput
         parent::setUp();
 
         $this->loadStateFromRelationshipsUsing(static function (BlogTagsInput $component, ?Blog $record): void {
-            if ( ! $record) {
+            if ( !$record instanceof Blog) {
                 return;
             }
 
@@ -39,7 +39,7 @@ class BlogTagsInput extends TagsInput
      */
     protected function syncTagsWithAnyType(?Blog $record, array $state): void
     {
-        if ( ! $record) {
+        if ( !$record instanceof Blog) {
             return;
         }
 

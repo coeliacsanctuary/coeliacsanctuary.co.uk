@@ -24,7 +24,7 @@ class EateryOpeningTimes
                 Toggle::make('no_opening_times')
                     ->label('Unknown / Not Set')
                     ->default(true)
-                    ->formatStateUsing(fn (?Eatery $record): bool => ! $record || $record->openingTimes === null)
+                    ->formatStateUsing(fn (?Eatery $record): bool => ! $record instanceof Eatery || $record->openingTimes === null)
                     ->dehydrated(false)
                     ->live(),
 
@@ -44,7 +44,7 @@ class EateryOpeningTimes
                         $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
                         return collect($days)
-                            ->map(function ($day) use ($openingTimes) {
+                            ->map(function ($day) use ($openingTimes): array {
                                 $start = explode(':', $openingTimes->{"{$day}_start"} ?? '');
                                 $end = explode(':', $openingTimes->{"{$day}_end"} ?? '');
 
@@ -63,7 +63,7 @@ class EateryOpeningTimes
                         $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
                         return collect($days)
-                            ->map(function (string $day) use ($state) {
+                            ->map(function (string $day) use ($state): array {
                                 $start = null;
                                 $end = null;
 
@@ -93,7 +93,7 @@ class EateryOpeningTimes
                         $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
                         return collect($days)
-                            ->map(fn (string $day) => [
+                            ->map(fn (string $day): array => [
                                 Text::make(ucwords($day))->extraAttributes(['style' => 'font-weight: 600'])->columnSpan(5),
 
                                 Toggle::make($day . '_closed')
@@ -109,15 +109,15 @@ class EateryOpeningTimes
                                             ->options(range(0, 23))
                                             ->hiddenLabel()
                                             ->default(0)
-                                            ->required(fn (Get $get) => ! $get($day . '_closed'))
-                                            ->disabled(fn (Get $get) => $get($day . '_closed')),
+                                            ->required(fn (Get $get): bool => ! $get($day . '_closed'))
+                                            ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
 
                                         Select::make($day . '_start_m')
                                             ->options([0 => '00', 15 => '15', 30 => '30', 45 => '45'])
                                             ->hiddenLabel()
                                             ->default(0)
-                                            ->required(fn (Get $get) => ! $get($day . '_closed'))
-                                            ->disabled(fn (Get $get) => $get($day . '_closed')),
+                                            ->required(fn (Get $get): bool => ! $get($day . '_closed'))
+                                            ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
                                     ]),
 
                                 Grid::make()
@@ -127,15 +127,15 @@ class EateryOpeningTimes
                                             ->options(range(0, 23))
                                             ->hiddenLabel()
                                             ->default(0)
-                                            ->required(fn (Get $get) => ! $get($day . '_closed'))
-                                            ->disabled(fn (Get $get) => $get($day . '_closed')),
+                                            ->required(fn (Get $get): bool => ! $get($day . '_closed'))
+                                            ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
 
                                         Select::make($day . '_end_m')
                                             ->options([0 => '00', 15 => '15', 30 => '30', 45 => '45'])
                                             ->hiddenLabel()
                                             ->default(0)
-                                            ->required(fn (Get $get) => ! $get($day . '_closed'))
-                                            ->disabled(fn (Get $get) => $get($day . '_closed')),
+                                            ->required(fn (Get $get): bool => ! $get($day . '_closed'))
+                                            ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
                                     ]),
                             ])
                             ->flatten()

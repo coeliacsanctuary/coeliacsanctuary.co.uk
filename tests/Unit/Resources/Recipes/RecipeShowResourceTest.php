@@ -43,7 +43,7 @@ class RecipeShowResourceTest extends TestCase
             $first->id => ['position' => 1],
         ]);
 
-        $related = (new RecipeShowResource($this->recipe->fresh()))->toArray(new Request())['related_recipes'];
+        $related = new RecipeShowResource($this->recipe->fresh())->toArray(new Request())['related_recipes'];
 
         $this->assertSame(
             ['Gluten Free Flapjacks', 'Gluten Free Scones'],

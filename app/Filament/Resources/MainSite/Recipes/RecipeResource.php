@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Recipes;
 
+use App\Filament\Resources\MainSite\Recipes\Pages\ListRecipes;
+use App\Filament\Resources\MainSite\Recipes\Pages\CreateRecipe;
+use App\Filament\Resources\MainSite\Recipes\Pages\EditRecipe;
+use App\Filament\Resources\MainSite\Recipes\Pages\RecipeMetrics;
 use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Recipes\RelationManagers\CommentsRelationManager;
 use App\Filament\Resources\MainSite\Recipes\Schemas\RecipeForm;
@@ -42,10 +46,10 @@ class RecipeResource extends BaseResource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRecipes::route('/'),
-            'create' => Pages\CreateRecipe::route('/create'),
-            'edit' => Pages\EditRecipe::route('/{record}/edit'),
-            'metrics' => Pages\RecipeMetrics::route('/{record}/metrics'),
+            'index' => ListRecipes::route('/'),
+            'create' => CreateRecipe::route('/create'),
+            'edit' => EditRecipe::route('/{record}/edit'),
+            'metrics' => RecipeMetrics::route('/{record}/metrics'),
         ];
     }
 

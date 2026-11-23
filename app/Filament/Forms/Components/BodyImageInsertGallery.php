@@ -67,8 +67,8 @@ class BodyImageInsertGallery extends Field
      */
     public function getGalleryItems(): array
     {
-        $rawState = $this->evaluate(fn (Get $get) => $get('body_images')) ?? [];
-        $bodyContent = $this->evaluate(fn (Get $get) => $get('body')) ?? '';
+        $rawState = $this->evaluate(fn (Get $get): mixed => $get('body_images')) ?? [];
+        $bodyContent = $this->evaluate(fn (Get $get): mixed => $get('body')) ?? '';
 
         $record = $this->getRecord();
         $existingMedia = $record?->getMedia($this->collection) ?? collect();

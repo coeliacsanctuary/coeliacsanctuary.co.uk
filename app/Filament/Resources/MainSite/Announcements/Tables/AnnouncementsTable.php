@@ -19,7 +19,7 @@ class AnnouncementsTable
     {
         return $table
             ->defaultSort('id', 'desc')
-            ->recordUrl(fn (Announcement $record) => AnnouncementResource::getUrl('edit', ['record' => $record]))
+            ->recordUrl(fn (Announcement $record): string => AnnouncementResource::getUrl('edit', ['record' => $record]))
             ->columns([
                 TextColumn::make('id')->label('ID')->searchable(),
 

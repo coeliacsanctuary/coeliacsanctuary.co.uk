@@ -63,7 +63,7 @@ class BlogForm
                             BlogTagsInput::make('tags')
                                 ->required()
                                 ->live()
-                                ->afterStateUpdated(fn (Get $get, Set $set) => $set(
+                                ->afterStateUpdated(fn (Get $get, Set $set): mixed => $set(
                                     'primary_tag_id',
                                     BlogTag::query()
                                         ->whereIn('tag', $get('tags') ?? [])

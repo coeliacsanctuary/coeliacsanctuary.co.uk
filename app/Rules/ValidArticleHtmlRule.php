@@ -27,10 +27,10 @@ class ValidArticleHtmlRule implements ValidationRule
         $dom->loadHTML("<div>{$value}</div>");
 
         $xmlErrors = collect(libxml_get_errors())
-            ->map(fn (LibXMLError $error) => mb_trim($error->message))
+            ->map(fn (LibXMLError $error): string => mb_trim($error->message))
             ->reject(fn (string $error) => collect($this->allowedCustomTags)->contains(fn (string $tag) => Str::contains(mb_strtolower($error), $tag)))
             ->reject(fn (string $error) => Str::contains($error, 'htmlParseEntityRef: no name'))
-            ->reject(fn (string $error) => Str::contains($error, 'htmlParseEntityRef: expecting \';'))
+            ->reject(fn (string $error) => Str::contains($error, "htmlParseEntityRef: expecting ';"))
             ->values();
 
         libxml_clear_errors();

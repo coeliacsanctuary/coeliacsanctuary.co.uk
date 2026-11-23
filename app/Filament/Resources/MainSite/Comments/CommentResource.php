@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Comments;
 
+use App\Filament\Resources\MainSite\Comments\Pages\ListComments;
 use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Comments\Tables\CommentsTable;
 use App\Models\Comments\Comment;
@@ -31,7 +32,7 @@ class CommentResource extends BaseResource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListComments::route('/'),
+            'index' => ListComments::route('/'),
         ];
     }
 

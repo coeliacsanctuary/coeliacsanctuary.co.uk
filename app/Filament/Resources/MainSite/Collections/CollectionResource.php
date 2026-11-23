@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Collections;
 
+use App\Filament\Resources\MainSite\Collections\Pages\ListCollections;
+use App\Filament\Resources\MainSite\Collections\Pages\CreateCollection;
+use App\Filament\Resources\MainSite\Collections\Pages\EditCollection;
 use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Collections\Schemas\CollectionForm;
 use App\Filament\Resources\MainSite\Collections\Tables\CollectionsTable;
@@ -41,9 +44,9 @@ class CollectionResource extends BaseResource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCollections::route('/'),
-            'create' => Pages\CreateCollection::route('/create'),
-            'edit' => Pages\EditCollection::route('/{record}/edit'),
+            'index' => ListCollections::route('/'),
+            'create' => CreateCollection::route('/create'),
+            'edit' => EditCollection::route('/{record}/edit'),
         ];
     }
 

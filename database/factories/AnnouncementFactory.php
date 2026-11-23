@@ -7,6 +7,9 @@ namespace Database\Factories;
 use App\Models\Announcement;
 use Carbon\Carbon;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Announcement>
+ */
 class AnnouncementFactory extends Factory
 {
     protected $model = Announcement::class;
@@ -23,6 +26,6 @@ class AnnouncementFactory extends Factory
 
     public function expired()
     {
-        return $this->state(fn () => ['expires_at' => Carbon::now()->subWeek()]);
+        return $this->state(fn (): array => ['expires_at' => Carbon::now()->subWeek()]);
     }
 }

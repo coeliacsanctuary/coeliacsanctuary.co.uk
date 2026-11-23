@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Blogs;
 
+use App\Filament\Resources\MainSite\Blogs\Pages\ListBlogs;
+use App\Filament\Resources\MainSite\Blogs\Pages\CreateBlog;
+use App\Filament\Resources\MainSite\Blogs\Pages\EditBlog;
+use App\Filament\Resources\MainSite\Blogs\Pages\BlogMetrics;
 use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\MainSite\Blogs\RelationManagers\CommentsRelationManager;
 use App\Filament\Resources\MainSite\Blogs\Schemas\BlogForm;
@@ -42,10 +46,10 @@ class BlogResource extends BaseResource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBlogs::route('/'),
-            'create' => Pages\CreateBlog::route('/create'),
-            'edit' => Pages\EditBlog::route('/{record}/edit'),
-            'metrics' => Pages\BlogMetrics::route('/{record}/metrics'),
+            'index' => ListBlogs::route('/'),
+            'create' => CreateBlog::route('/create'),
+            'edit' => EditBlog::route('/{record}/edit'),
+            'metrics' => BlogMetrics::route('/{record}/metrics'),
         ];
     }
 

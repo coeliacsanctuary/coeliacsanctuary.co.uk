@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MainSite\Blogs\Actions;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
 use App\Models\NovaPreview;
@@ -51,7 +53,7 @@ class BlogPreviewAction
                     'payload' => $payload,
                 ]);
             })
-            ->modalContent(fn () => view('filament.actions.blog-preview', [
+            ->modalContent(fn (): Factory|View => view('filament.actions.blog-preview', [
                 'url' => $token ? route('nova-preview.show', $token) : null,
                 'previewErrors' => $errors,
             ]));
@@ -93,7 +95,6 @@ class BlogPreviewAction
     }
 
     /**
-     * @param  mixed  $state
      * @return array<int, array{question: string, answer: string|null}>
      */
     protected static function faqs(mixed $state): array
@@ -109,7 +110,6 @@ class BlogPreviewAction
     }
 
     /**
-     * @param  mixed  $state
      * @return array<int, array{file_name: string, url: string|null}>
      */
     protected static function bodyImages(mixed $state, ?Blog $record): array

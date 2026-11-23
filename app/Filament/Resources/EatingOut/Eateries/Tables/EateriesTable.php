@@ -52,7 +52,7 @@ class EateriesTable
                 TextColumn::make('nationwide_branches_count')
                     ->label('Branches')
                     ->sortable()
-                    ->visible(fn ($livewire) => $livewire->activeTab === 'chains')
+                    ->visible(fn ($livewire): bool => $livewire->activeTab === 'chains')
                     ->numeric(),
 
                 TextColumn::make('reviews_count')
@@ -87,8 +87,8 @@ class EateriesTable
 
                 ReplicateAction::make()
                     ->excludeAttributes(['slug', 'order_country', 'order_county', 'order_town', 'reviews_count', 'nationwide_branches_count'])
-                    ->beforeReplicaSaved(fn (Eatery $replica) => $replica->live = false)
-                    ->successRedirectUrl(fn (Eatery $replica) => EateryResource::getUrl('edit', ['record' => $replica])),
+                    ->beforeReplicaSaved(fn (Eatery $replica): false => $replica->live = false)
+                    ->successRedirectUrl(fn (Eatery $replica): string => EateryResource::getUrl('edit', ['record' => $replica])),
 
                 EditAction::make(),
             ])

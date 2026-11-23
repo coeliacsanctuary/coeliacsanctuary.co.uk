@@ -20,7 +20,7 @@ class CollectionsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->recordUrl(fn (Collection $record) => CollectionResource::getUrl('edit', ['record' => $record]))
+            ->recordUrl(fn (Collection $record): string => CollectionResource::getUrl('edit', ['record' => $record]))
             ->columns([
                 TextColumn::make('id')->label('ID')->searchable(),
 

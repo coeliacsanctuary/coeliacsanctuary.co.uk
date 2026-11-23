@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\AskSealiac\AskSealiacChats\Actions;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use App\Models\AskSealiacChat;
 use App\Models\AskSealiacChatMessage;
 use Filament\Actions\Action;
@@ -23,7 +25,7 @@ class ChatTranscriptAction
             ->modalWidth(Width::FourExtraLarge)
             ->modalSubmitAction(false)
             ->modalCancelActionLabel('Close')
-            ->modalContent(fn (AskSealiacChat $record) => view('filament.actions.ask-sealiac-chat-transcript', [
+            ->modalContent(fn (AskSealiacChat $record): Factory|View => view('filament.actions.ask-sealiac-chat-transcript', [
                 'chat' => $record,
                 'turns' => static::turns($record),
             ]));

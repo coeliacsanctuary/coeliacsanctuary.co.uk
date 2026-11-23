@@ -38,7 +38,7 @@ class SealiacOverviewsTable
                         [Eatery::class, NationwideBranch::class, ShopProduct::class],
                         fn (Builder $query, string $type) => $query
                             ->withoutGlobalScopes()
-                            ->where($type === ShopProduct::class ? 'title' : 'name', 'like', "%{$search}%"),
+                            ->whereLike($type === ShopProduct::class ? 'title' : 'name', "%{$search}%"),
                     )),
 
                 TextColumn::make('status')

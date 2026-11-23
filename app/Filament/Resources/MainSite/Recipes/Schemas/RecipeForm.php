@@ -188,7 +188,7 @@ class RecipeForm
                         ->columns(5)
                         ->columnSpanFull()
                         ->formatStateUsing(function (array $state, ?Recipe $record) {
-                            if ( ! $record) {
+                            if ( !$record instanceof Recipe) {
                                 return [];
                             }
 

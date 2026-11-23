@@ -15,7 +15,7 @@ class MetasSection
         return Section::make('Metas')
             ->collapsible()
             ->collapsed(fn (string $operation): bool => $operation !== 'create')
-            ->schema(function () use ($metaTags, $metaDescription) {
+            ->schema(function () use ($metaTags, $metaDescription): array {
                 $schema = [];
 
                 if ($metaTags) {

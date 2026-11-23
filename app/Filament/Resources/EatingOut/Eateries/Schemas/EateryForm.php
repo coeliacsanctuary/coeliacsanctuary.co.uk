@@ -49,13 +49,13 @@ class EateryForm
                                     ->readOnly(fn (Get $get): bool => ! $get('unlock_slug'))
                                     ->required()
                                     ->maxLength(255)
-                                    ->unique(modifyRuleUsing: fn (Unique $rule, Eatery $record) => $rule->where('town_id', $record->town_id), ignoreRecord: true)
+                                    ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Eatery $record) => $rule->where('town_id', $record->town_id))
                                     ->belowContent(
                                         Action::make('unlock_slug_action')
                                             ->label('Unlock Slug')
                                             ->button()
                                             ->visible(fn (Get $get): bool => ! $get('unlock_slug'))
-                                            ->action(fn (Set $set) => $set('unlock_slug', true))
+                                            ->action(fn (Set $set): mixed => $set('unlock_slug', true))
                                     ),
                             ]),
 

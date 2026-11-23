@@ -25,8 +25,8 @@ class FindEateryLocation
             ->merge($this->getCountyResults($search))
             ->merge($this->getTownResults($search))
             ->merge($this->getAreaResults($search))
-            ->sortByDesc([fn (EateryLocationDto $a, EateryLocationDto $b) => levenshtein($a->matchedTerm, $search) <=> levenshtein($b->matchedTerm, $search)])
-            ->mapWithKeys(fn (EateryLocationDto $dto) => ["{$dto->countryId}|{$dto->countyId}|{$dto->townId}|{$dto->areaId}" => $dto->label])
+            ->sortByDesc([fn (EateryLocationDto $a, EateryLocationDto $b): int => levenshtein($a->matchedTerm, $search) <=> levenshtein($b->matchedTerm, $search)])
+            ->mapWithKeys(fn (EateryLocationDto $dto): array => ["{$dto->countryId}|{$dto->countyId}|{$dto->townId}|{$dto->areaId}" => $dto->label])
             ->take(10);
 
         return $results->toArray();
@@ -34,11 +34,11 @@ class FindEateryLocation
 
     protected function getCountyResults(string $search): Collection|\Illuminate\Database\Eloquent\Collection
     {
-        return EateryCounty::withoutGlobalScopes()
+        return EateryCounty::query()->withoutGlobalScopes()
             ->whereLike('county', "%{$search}%")
             ->with(['country'])
             ->get()
-            ->map(fn (EateryCounty $county) => new EateryLocationDto(
+            ->map(fn (EateryCounty $county): EateryLocationDto => new EateryLocationDto(
                 type: 'county',
                 label: "{$county->county}, {$county->country->country}",
                 matchedTerm: $county->county,
@@ -50,11 +50,11 @@ class FindEateryLocation
 
     protected function getTownResults(string $search): Collection|\Illuminate\Database\Eloquent\Collection
     {
-        return EateryTown::withoutGlobalScopes()
+        return EateryTown::query()->withoutGlobalScopes()
             ->whereLike('town', "%{$search}%")
             ->with(['county' => fn ($query) => $query->withoutGlobalScopes(), 'county.country'])
             ->get()
-            ->map(fn (EateryTown $town) => new EateryLocationDto(
+            ->map(fn (EateryTown $town): EateryLocationDto => new EateryLocationDto(
                 type: $town->county->slug === 'london' ? 'borough' : 'town',
                 label: "{$town->town}, {$town->county->county}, {$town->county->country->country}",
                 matchedTerm: $town->town,
@@ -66,11 +66,11 @@ class FindEateryLocation
 
     protected function getAreaResults(string $search): Collection|\Illuminate\Database\Eloquent\Collection
     {
-        return EateryArea::withoutGlobalScopes()
+        return EateryArea::query()->withoutGlobalScopes()
             ->whereLike('area', "%{$search}%")
             ->with(['town' => fn ($query) => $query->withoutGlobalScopes(), 'town.county' => fn ($query) => $query->withoutGlobalScopes(), 'town.county.country'])
             ->get()
-            ->map(fn (EateryArea $area) => new EateryLocationDto(
+            ->map(fn (EateryArea $area): EateryLocationDto => new EateryLocationDto(
                 type: 'area',
                 label: "{$area->area}, {$area->town->town}, {$area->town->county->county}, {$area->town->county->country->country}",
                 matchedTerm: $area->area,

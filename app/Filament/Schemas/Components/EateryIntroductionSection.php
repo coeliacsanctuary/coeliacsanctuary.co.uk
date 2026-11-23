@@ -22,8 +22,8 @@ class EateryIntroductionSection
                     ->dehydrateStateUsing($isBranch ? fn (?string $state): string => $state ?: '' : null),
 
                 TextInput::make('slug')
-                    ->visible(fn (string $operation) => $operation === 'edit')
-                    ->unique(modifyRuleUsing: fn (Unique $rule, Eatery $record) => $rule->where('town_id', $record->town_id), ignoreRecord: true)
+                    ->visible(fn (string $operation): bool => $operation === 'edit')
+                    ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Eatery $record) => $rule->where('town_id', $record->town_id))
                     ->required(),
 
                 Toggle::make('live'),

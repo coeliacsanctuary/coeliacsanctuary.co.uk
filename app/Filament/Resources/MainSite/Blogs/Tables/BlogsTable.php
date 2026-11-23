@@ -18,7 +18,7 @@ class BlogsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->recordUrl(fn (Blog $record) => BlogResource::getUrl('edit', ['record' => $record]))
+            ->recordUrl(fn (Blog $record): string => BlogResource::getUrl('edit', ['record' => $record]))
             ->columns([
                 TextColumn::make('id')->label('ID')->searchable(),
 
@@ -41,7 +41,7 @@ class BlogsTable
                 Action::make('metrics')
                     ->icon(Heroicon::ChartBar)
                     ->label('Metrics')
-                    ->url(fn (Blog $record) => BlogResource::getUrl('metrics', ['record' => $record])),
+                    ->url(fn (Blog $record): string => BlogResource::getUrl('metrics', ['record' => $record])),
 
                 EditAction::make(),
             ]);

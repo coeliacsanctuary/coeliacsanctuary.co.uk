@@ -46,26 +46,26 @@ class EateryReportsTable
 
                         Stack::make([
                             TextColumn::make('completed')
-                                ->visible(fn (EateryReport $record) => ! $record->completed && ! $record->ignored)
+                                ->visible(fn (EateryReport $record): bool => ! $record->completed && ! $record->ignored)
                                 ->badge()
                                 ->color('danger')
                                 ->alignRight()
                                 ->size(TextSize::Large)
-                                ->formatStateUsing(fn () => 'New!'),
+                                ->formatStateUsing(fn (): string => 'New!'),
 
                             TextColumn::make('completed')
                                 ->prefix('Completed: ')
-                                ->icon(fn ($state) => ($state ? Heroicon::OutlinedCheckCircle : Heroicon::OutlinedXCircle))
-                                ->iconColor(fn ($state) => ($state ? 'success' : 'danger'))
-                                ->formatStateUsing(fn () => '')
+                                ->icon(fn ($state): Heroicon => ($state ? Heroicon::OutlinedCheckCircle : Heroicon::OutlinedXCircle))
+                                ->iconColor(fn ($state): string => ($state ? 'success' : 'danger'))
+                                ->formatStateUsing(fn (): string => '')
                                 ->iconPosition(IconPosition::After)
                                 ->alignRight(),
 
                             TextColumn::make('ignored')
                                 ->prefix('Ignored: ')
-                                ->icon(fn ($state) => ($state ? Heroicon::OutlinedCheckCircle : Heroicon::OutlinedXCircle))
-                                ->iconColor(fn ($state) => ($state ? 'success' : 'danger'))
-                                ->formatStateUsing(fn () => '')
+                                ->icon(fn ($state): Heroicon => ($state ? Heroicon::OutlinedCheckCircle : Heroicon::OutlinedXCircle))
+                                ->iconColor(fn ($state): string => ($state ? 'success' : 'danger'))
+                                ->formatStateUsing(fn (): string => '')
                                 ->iconPosition(IconPosition::After)
                                 ->alignRight(),
                         ]),
@@ -73,14 +73,14 @@ class EateryReportsTable
                         TextColumn::make('id')
                             ->columnSpanFull()
                             ->html()
-                            ->formatStateUsing(fn () => '<hr  />'),
+                            ->formatStateUsing(fn (): string => '<hr  />'),
 
                         TextColumn::make('details')->wrap()->columnSpanFull(),
 
                         TextColumn::make('wheretoeat_id')
                             ->columnSpanFull()
                             ->html()
-                            ->formatStateUsing(fn () => '<hr  />'),
+                            ->formatStateUsing(fn (): string => '<hr  />'),
 
                         Split::make([
                             TextColumn::make('created_at')
@@ -98,7 +98,7 @@ class EateryReportsTable
                 Action::make('complete')
                     ->label('Complete')
                     ->requiresConfirmation()
-                    ->disabled(fn (EateryReport $record) => $record->completed || $record->ignored)
+                    ->disabled(fn (EateryReport $record): bool => $record->completed || $record->ignored)
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
                     ->action(function (EateryReport $record): void {
@@ -108,7 +108,7 @@ class EateryReportsTable
                 Action::make('ignore')
                     ->label('Ignore')
                     ->requiresConfirmation()
-                    ->disabled(fn (EateryReport $record) => $record->completed || $record->ignored)
+                    ->disabled(fn (EateryReport $record): bool => $record->completed || $record->ignored)
                     ->icon(Heroicon::OutlinedBellSlash)
                     ->color('warning')
                     ->action(function (EateryReport $record): void {

@@ -254,7 +254,7 @@ class SealiacOverviewsTableTest extends TestCase
         Livewire::test(ListSealiacOverviews::class)
             ->assertActionExists(
                 TestAction::make('view')->table($overview),
-                fn (Action $action): bool => $action->getModalHeading() === 'Sealiac Overview' && $action->getModalSubmitAction() === null,
+                fn (Action $action): bool => $action->getModalHeading() === 'Sealiac Overview' && !$action->getModalSubmitAction() instanceof Action,
             )
             ->mountAction(TestAction::make('view')->table($overview))
             ->assertSee('Sealiac reckons this one is worth a visit.');

@@ -19,7 +19,7 @@ class ImagesSection
             ->schema([
                 Grid::make()
                     ->columns(4)
-                    ->schema(function () use ($headerImage, $socialImage, $squareImage, $headerImageAltText, $additionalImages) {
+                    ->schema(function () use ($headerImage, $socialImage, $squareImage, $headerImageAltText, $additionalImages): array {
                         $schema = [];
 
                         if ($headerImage) {

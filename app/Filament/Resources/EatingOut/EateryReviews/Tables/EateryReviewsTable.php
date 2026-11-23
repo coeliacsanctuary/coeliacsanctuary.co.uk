@@ -54,12 +54,12 @@ class EateryReviewsTable
 
                         Stack::make([
                             TextColumn::make('approved')
-                                ->visible(fn (EateryReview $record) => ! $record->approved)
+                                ->visible(fn (EateryReview $record): bool => ! $record->approved)
                                 ->badge()
                                 ->color('danger')
                                 ->alignRight()
                                 ->size(TextSize::Large)
-                                ->formatStateUsing(fn () => 'New!'),
+                                ->formatStateUsing(fn (): string => 'New!'),
 
                             TextColumn::make('method')->prefix('Source: ')->alignRight(),
                         ]),
@@ -67,7 +67,7 @@ class EateryReviewsTable
                         TextColumn::make('id')
                             ->columnSpanFull()
                             ->html()
-                            ->formatStateUsing(fn () => '<hr  />'),
+                            ->formatStateUsing(fn (): string => '<hr  />'),
 
                         Stack::make([
                             TextColumn::make('rating')->prefix('Rating: '),
@@ -81,7 +81,7 @@ class EateryReviewsTable
                         TextColumn::make('wheretoeat_id')
                             ->columnSpanFull()
                             ->html()
-                            ->formatStateUsing(fn () => '<hr  />'),
+                            ->formatStateUsing(fn (): string => '<hr  />'),
 
                         Split::make([
                             TextColumn::make('images_count')
@@ -93,9 +93,9 @@ class EateryReviewsTable
 
                             TextColumn::make('approved')
                                 ->prefix('Approved: ')
-                                ->icon(fn ($state) => ($state ? Heroicon::OutlinedCheckCircle : Heroicon::OutlinedXCircle))
-                                ->iconColor(fn ($state) => ($state ? 'success' : 'danger'))
-                                ->formatStateUsing(fn () => '')
+                                ->icon(fn ($state): Heroicon => ($state ? Heroicon::OutlinedCheckCircle : Heroicon::OutlinedXCircle))
+                                ->iconColor(fn ($state): string => ($state ? 'success' : 'danger'))
+                                ->formatStateUsing(fn (): string => '')
                                 ->iconPosition(IconPosition::After),
                         ])->columnSpanFull(),
 
@@ -104,12 +104,12 @@ class EateryReviewsTable
                 Panel::make([
                     Grid::make()
                         ->columns(6)
-                        ->schema(function () {
+                        ->schema(function (): array {
                             $columns = [];
 
                             foreach (range(0, 5) as $i) {
                                 $columns[] = ImageColumn::make("image-{$i}")
-                                    ->visible(fn (?EateryReview $record) => isset($record?->images[$i]))
+                                    ->visible(fn (?EateryReview $record): bool => isset($record?->images[$i]))
                                     ->getStateUsing(fn (?EateryReview $record) => $record?->images[$i]->thumb)
                                     ->imageSize(150)
                                     ->action(
@@ -124,7 +124,7 @@ class EateryReviewsTable
 
                             return $columns;
                         }),
-                ])->visible(fn (EateryReview $record) => $record->images_count > 0),
+                ])->visible(fn (EateryReview $record): bool => $record->images_count > 0),
             ])
             ->contentGrid(['md' => 1])
             ->filters([
@@ -145,7 +145,7 @@ class EateryReviewsTable
 
                         $record->eatery->touch();
 
-                        (new AnonymousNotifiable())
+                        new AnonymousNotifiable()
                             ->route('mail', $record->email)
                             ->notify(new EateryReviewApprovedNotification($record));
                     }),
