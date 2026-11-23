@@ -77,7 +77,15 @@ class Body extends Textarea
             }
 
             $record->getMedia($component->getImagesCollection())->each(function (Media $media) use (&$state): void {
-                $state = str_replace($media->getUrl(), $media->file_name, $state);
+                $bucket = (string) config("filesystems.disks.{$media->disk}.bucket");
+
+                $urlInAnyBucket = str_replace(
+                    preg_quote($bucket, '~'),
+                    '[a-z0-9-]+',
+                    preg_quote($media->getUrl(), '~'),
+                );
+
+                $state = preg_replace("~{$urlInAnyBucket}~", $media->file_name, $state);
             });
 
             $component->state($state);

@@ -140,6 +140,31 @@ class BodyTest extends TestCase
     }
 
     #[Test]
+    public function itRecognisesImageUrlsFromAnotherBucket(): void
+    {
+        config(['filesystems.disks.media.bucket' => 'local-coeliac-media']);
+
+        [$blog, $media] = $this->blogWithABodyImage(['url' => 'https://local-coeliac-media.s3.amazonaws.com']);
+
+        $otherBucketUrl = str_replace('local-coeliac-media', 'prod-coeliac-media', $media->getUrl());
+
+        $this->assertNotSame($media->getUrl(), $otherBucketUrl);
+
+        $blog->updateQuietly(['body' => '<p>Look</p><img src="' . $otherBucketUrl . '" />']);
+
+        $page = $this->editPage($blog);
+
+        $this->assertSame(
+            '<p>Look</p><img src="' . $media->file_name . '" />',
+            $page->instance()->form->getRawState()['body'],
+        );
+
+        $page->call('save')->assertHasNoFormErrors();
+
+        $this->assertSame('<p>Look</p><img src="' . $media->getUrl() . '" />', $blog->refresh()->body);
+    }
+
+    #[Test]
     public function itPutsTheImageUrlsBackIntoTheBodyOnSave(): void
     {
         [$blog, $media] = $this->blogWithABodyImage();
@@ -188,11 +213,11 @@ class BodyTest extends TestCase
     }
 
     /** @return array{0: Blog, 1: Media} */
-    protected function blogWithABodyImage(): array
+    protected function blogWithABodyImage(array $diskConfig = []): array
     {
         Filament::setCurrentPanel('admin');
 
-        Storage::fake('media');
+        Storage::fake('media', $diskConfig);
 
         $this->actingAs($this->create(User::class));
 

@@ -7,6 +7,9 @@ namespace Tests\Unit\Filament\Resources\MainSite\Blogs\Pages;
 use App\Filament\Resources\MainSite\Blogs\Pages\CreateBlog;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
+use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Models\Faqs\Faq;
 use App\Models\User;
 use Carbon\Carbon;
@@ -158,6 +161,52 @@ class CreateBlogTest extends TestCase
         $this->createBlog(['header_image_alt_text' => 'A loaf of gluten free bread']);
 
         $this->assertSame('A loaf of gluten free bread', $this->createdBlog()->header_image_alt_text);
+    }
+
+    #[Test]
+    public function itAddsTheBlogToTheEndOfTheLastGroupInTheChosenCollection(): void
+    {
+        $collection = $this->create(Collection::class);
+
+        $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+        $lastGroup = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $existingItem = $this->build(CollectionGroupItem::class)
+            ->forBlog($this->create(Blog::class))
+            ->create(['collection_group_id' => $lastGroup->id]);
+
+        $this->createBlog(['add_to_collection' => $collection->id]);
+
+        $blog = Blog::query()->where('slug', 'how-to-make-gluten-free-bread')->firstOrFail();
+
+        $this->assertDatabaseCount(CollectionGroupItem::class, 2);
+
+        $item = $blog->associatedCollectionGroups()->firstOrFail();
+
+        $this->assertEquals($lastGroup->id, $item->collection_group_id);
+        $this->assertGreaterThan($existingItem->refresh()->position, $item->position);
+    }
+
+    #[Test]
+    public function itDoesNotAddTheBlogToACollectionWhenNoneIsChosen(): void
+    {
+        $collection = $this->create(Collection::class);
+
+        $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $this->createBlog();
+
+        $this->assertDatabaseCount(Blog::class, 1);
+        $this->assertDatabaseEmpty(CollectionGroupItem::class);
+    }
+
+    #[Test]
+    public function itStillCreatesTheBlogWhenTheChosenCollectionHasNoGroups(): void
+    {
+        $this->createBlog(['add_to_collection' => $this->create(Collection::class)->id]);
+
+        $this->assertDatabaseCount(Blog::class, 1);
+        $this->assertDatabaseEmpty(CollectionGroupItem::class);
     }
 
     protected function createBlog(array $overrides = []): Testable

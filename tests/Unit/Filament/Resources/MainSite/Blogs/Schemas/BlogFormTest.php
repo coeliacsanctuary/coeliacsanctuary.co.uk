@@ -8,6 +8,7 @@ use App\Filament\Resources\MainSite\Blogs\Pages\CreateBlog;
 use App\Filament\Resources\MainSite\Blogs\Pages\EditBlog;
 use App\Models\Blogs\Blog;
 use App\Models\Blogs\BlogTag;
+use App\Models\Collections\Collection;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
@@ -73,6 +74,28 @@ class BlogFormTest extends TestCase
             '`header` is required' => [['header' => []], ['header' => 'required']],
             '`social` is required' => [['social' => []], ['social' => 'required']],
         ];
+    }
+
+    #[Test]
+    public function itOnlyOffersTheCollectionFieldWhenCreating(): void
+    {
+        Livewire::test(CreateBlog::class)->assertFormFieldVisible('add_to_collection');
+
+        Livewire::test(EditBlog::class, ['record' => $this->create(Blog::class)->getRouteKey()])
+            ->assertFormFieldHidden('add_to_collection');
+    }
+
+    #[Test]
+    public function itOnlyOffersLiveCollectionsOrderedByTitle(): void
+    {
+        $second = $this->create(Collection::class, ['title' => 'Breads']);
+        $first = $this->create(Collection::class, ['title' => 'Apples']);
+        $this->create(Collection::class, ['title' => 'Cakes', 'live' => false]);
+
+        Livewire::test(CreateBlog::class)->assertFormFieldExists(
+            'add_to_collection',
+            fn (Select $field): bool => $field->getOptions() === [$first->id => 'Apples', $second->id => 'Breads'],
+        );
     }
 
     #[Test]

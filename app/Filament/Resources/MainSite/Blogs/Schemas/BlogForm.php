@@ -7,6 +7,7 @@ namespace App\Filament\Resources\MainSite\Blogs\Schemas;
 use App\Filament\Forms\Components\Body;
 use App\Filament\Resources\MainSite\Blogs\Actions\BlogPreviewAction;
 use App\Filament\Resources\MainSite\Blogs\Forms\Components\BlogTagsInput;
+use App\Filament\Schemas\Components\CollectionSection;
 use App\Filament\Schemas\Components\FaqsSection;
 use App\Filament\Schemas\Components\ImagesSection;
 use App\Filament\Schemas\Components\MetasSection;
@@ -100,6 +101,8 @@ class BlogForm
 
                     VisibilitySection::make()->columnSpan(1),
                 ]),
+
+            CollectionSection::make('blog')->columnSpanFull(),
 
             MetasSection::make()->columnSpanFull(),
 
