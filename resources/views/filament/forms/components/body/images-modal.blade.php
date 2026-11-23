@@ -8,15 +8,9 @@
     $modalIdJs = \Illuminate\Support\Js::from($modalId);
 @endphp
 
-<x-filament::modal
-    :id="$modalId"
-    width="7xl"
-    heading="Image Manager"
->
+<x-filament::modal :id="$modalId" width="7xl" heading="Image Manager">
     <div class="fi-body-images-field relative">
-        <div class="space-y-4">
-            {{ $field->getChildSchema('bodyImages') }}
-        </div>
+        <div class="space-y-4">{{ $field->getChildSchema('bodyImages') }}</div>
 
         <div
             x-show="$store.bodyImageInsert.open"
@@ -27,7 +21,7 @@
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="translate-x-0 opacity-100"
             x-transition:leave-end="translate-x-full opacity-0"
-            class="absolute right-0 top-0 w-80 space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-xl dark:border-white/10 dark:bg-gray-900"
+            class="absolute top-0 right-0 w-80 space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-xl dark:border-white/10 dark:bg-gray-900"
         >
             <p class="text-sm font-semibold text-gray-950 dark:text-white">Insert Image</p>
 
@@ -78,20 +72,11 @@
             </div>
 
             <div class="flex gap-2 pt-2">
-                <x-filament::button
-                    type="button"
-                    color="gray"
-                    size="sm"
-                    x-on:click="$store.bodyImageInsert.cancel()"
-                >
+                <x-filament::button type="button" color="gray" size="sm" x-on:click="$store.bodyImageInsert.cancel()">
                     Cancel
                 </x-filament::button>
 
-                <x-filament::button
-                    type="button"
-                    size="sm"
-                    x-on:click="$dispatch('body-image-do-insert')"
-                >
+                <x-filament::button type="button" size="sm" x-on:click="$dispatch('body-image-do-insert')">
                     Insert
                 </x-filament::button>
             </div>

@@ -23,10 +23,10 @@
                     </div>
 
                     <button
-                        x-show="!item.isProcessing && item.isDeletable"
+                        x-show="! item.isProcessing && item.isDeletable"
                         x-on:click="$store.bodyImages.confirmDelete(item)"
                         type="button"
-                        class="absolute right-1.5 top-1.5 rounded-md bg-white/90 p-1 text-danger-600 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 dark:bg-gray-900/90 dark:text-danger-400"
+                        class="text-danger-600 dark:text-danger-400 absolute top-1.5 right-1.5 rounded-md bg-white/90 p-1 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 dark:bg-gray-900/90"
                     >
                         <x-heroicon-o-trash class="h-4 w-4" />
                     </button>
@@ -35,7 +35,7 @@
                 <p class="truncate text-xs text-gray-500 dark:text-gray-400" x-text="item.title"></p>
 
                 <button
-                    x-show="!item.isProcessing"
+                    x-show="! item.isProcessing"
                     x-on:click="$dispatch('body-image-open-insert', { src: item.insertSrc, title: '' })"
                     type="button"
                     class="fi-btn fi-btn-size-sm fi-color-gray fi-btn-color-gray w-full rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-950 shadow-sm ring-1 ring-gray-950/10 transition duration-75 hover:bg-gray-50 dark:text-white dark:ring-white/20 dark:hover:bg-white/5"
@@ -56,15 +56,18 @@
 
             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                 Are you sure you want to delete
-                <span class="font-medium text-gray-700 dark:text-gray-300" x-text="$store.bodyImages.pendingDelete?.title"></span>?
-                This cannot be undone.
+                <span
+                    class="font-medium text-gray-700 dark:text-gray-300"
+                    x-text="$store.bodyImages.pendingDelete?.title"
+                ></span
+                >? This cannot be undone.
             </p>
 
             <div class="mt-6 flex gap-3">
                 <button
                     x-on:click="$store.bodyImages.performDelete($store.bodyImages.pendingDelete)"
                     type="button"
-                    class="fi-btn fi-btn-size-sm fi-color-danger fi-btn-color-danger flex-1 rounded-lg px-3 py-2 text-sm font-semibold text-danger-600 shadow-sm ring-1 ring-danger-600/10 transition duration-75 hover:bg-danger-50 dark:text-danger-400 dark:ring-danger-400/20 dark:hover:bg-danger-400/10"
+                    class="fi-btn fi-btn-size-sm fi-color-danger fi-btn-color-danger text-danger-600 ring-danger-600/10 hover:bg-danger-50 dark:text-danger-400 dark:ring-danger-400/20 dark:hover:bg-danger-400/10 flex-1 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition duration-75"
                 >
                     Confirm Delete
                 </button>

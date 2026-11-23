@@ -10,7 +10,7 @@
 ])
 
 @php
-    $openModal = fn (string $modalId): string => "recordCursorPosition(); \$dispatch('open-modal', { id: ".Js::from($modalId)." })";
+    $openModal = fn (string $modalId): string => "recordCursorPosition(); \$dispatch('open-modal', { id: " . Js::from($modalId) . " })";
 
     $buttons = [
         [
@@ -49,7 +49,7 @@
             :icon-size="IconSize::Small"
             :label="$button['label']"
             :tooltip="$button['label']"
-            class="m-0 rounded-md !p-0 border size-7 border-gray-200 bg-white dark:border-white/10 dark:bg-white/5"
+            class="m-0 size-7 rounded-md border border-gray-200 bg-white !p-0 dark:border-white/10 dark:bg-white/5"
             x-on:click="{{ $button['click'] }}"
         />
     @endforeach

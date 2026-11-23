@@ -37,7 +37,6 @@ class AskSealiacChatsTable
                 TextColumn::make('created_at')->dateTime(),
             ])
             ->filters([
-                // A chat with a single message is the bot's opening greeting and nothing else.
                 Filter::make('greetingOnly')
                     ->label('Greeting only')
                     ->default()

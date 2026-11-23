@@ -45,7 +45,6 @@ class ChatTranscriptActionTest extends TestCase
         return TestAction::make('transcript')->table($this->chat);
     }
 
-    /** The greeting only filter is on by default, and these chats deliberately have a single message. */
     protected function listPage(): Testable
     {
         return Livewire::test(ListAskSealiacChats::class)->filterTable('greetingOnly', false);
@@ -80,7 +79,7 @@ class ChatTranscriptActionTest extends TestCase
         $this->listPage()->assertActionExists(
             $this->transcript(),
             fn (Action $action): bool => $action->getModalHeading() === 'Chat Transcript'
-                && !$action->getModalSubmitAction() instanceof Action,
+                && ! $action->getModalSubmitAction() instanceof Action,
         );
     }
 

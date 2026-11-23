@@ -19,11 +19,7 @@
     $imagesModalId = "{$id}-body-images-modal";
 @endphp
 
-<x-dynamic-component
-    :component="$fieldWrapperView"
-    :field="$field"
-    class="fi-fo-textarea-wrp"
->
+<x-dynamic-component :component="$fieldWrapperView" :field="$field" class="fi-fo-textarea-wrp">
     <div
         x-data="bodyField({
             state: $wire.$entangle('{{ $statePath }}'),
@@ -39,7 +35,7 @@
     >
         <x-filament::input.wrapper
             :disabled="$isDisabled"
-            :valid="! $errors->has($statePath)"
+            :valid=" ! $errors->has($statePath)"
             :attributes="
                 \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
                     ->class([
@@ -77,11 +73,11 @@
                                     'cols' => $getCols(),
                                     'disabled' => $isDisabled,
                                     'id' => $id,
-                                    'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
-                                    'minlength' => (! $isConcealed) ? $getMinLength() : null,
+                                    'maxlength' => ( ! $isConcealed) ? $getMaxLength() : null,
+                                    'minlength' => ( ! $isConcealed) ? $getMinLength() : null,
                                     'placeholder' => filled($placeholder) ? e($placeholder) : null,
                                     'readonly' => $isReadOnly(),
-                                    'required' => $isRequired() && (! $isConcealed),
+                                    'required' => $isRequired() && ( ! $isConcealed),
                                     'rows' => $rows,
                                     $applyStateBindingModifiers('wire:model') => $statePath,
                                 ], escape: false)
@@ -91,12 +87,7 @@
             </div>
         </x-filament::input.wrapper>
 
-        <p
-            x-cloak
-            x-show="customError"
-            x-text="customError"
-            class="fi-fo-field-wrp-error-message"
-        ></p>
+        <p x-cloak x-show="customError" x-text="customError" class="fi-fo-field-wrp-error-message"></p>
 
         @if ($hasToolbar)
             <x-body::heading-modal :id="$id" />

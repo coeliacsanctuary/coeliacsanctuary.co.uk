@@ -21,7 +21,7 @@ class RelatedRecipesSearch extends Field
         $this->default([]);
 
         $this->loadStateFromRelationshipsUsing(static function (RelatedRecipesSearch $component, ?Recipe $record): void {
-            if ( !$record instanceof Recipe) {
+            if ( ! $record instanceof Recipe) {
                 return;
             }
 

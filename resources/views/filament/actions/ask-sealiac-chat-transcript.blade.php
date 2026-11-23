@@ -8,7 +8,7 @@
         @if (filled($chat->summary))
             <p class="text-sm text-gray-950 dark:text-white">{{ $chat->summary }}</p>
         @else
-            <p class="text-sm italic text-gray-400 dark:text-gray-500">Not yet summarised</p>
+            <p class="text-sm text-gray-400 italic dark:text-gray-500">Not yet summarised</p>
         @endif
 
         <dl class="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
@@ -19,7 +19,9 @@
 
             <div class="flex gap-1">
                 <dt>Started</dt>
-                <dd class="font-medium text-gray-700 dark:text-gray-300">{{ $chat->created_at->format('jS M Y, H:i') }}</dd>
+                <dd class="font-medium text-gray-700 dark:text-gray-300">
+                    {{ $chat->created_at->format('jS M Y, H:i') }}
+                </dd>
             </div>
 
             <div class="flex gap-1">
@@ -33,13 +35,17 @@
         @forelse ($turns as $turn)
             <li class="space-y-3 rounded-lg border border-gray-200 p-4 dark:border-white/10">
                 <div>
-                    <p class="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Visitor</p>
+                    <p class="text-xs font-medium tracking-wide text-gray-400 uppercase dark:text-gray-500">Visitor</p>
                     <p class="mt-1 text-sm break-words text-gray-950 dark:text-white">{!! $turn['prompt'] !!}</p>
                 </div>
 
                 <div>
-                    <p class="text-xs font-medium uppercase tracking-wide text-primary-600 dark:text-primary-400">Sealiac</p>
-                    <div class="prose prose-sm mt-1 max-w-none break-words dark:prose-invert">{!! $turn['response'] !!}</div>
+                    <p class="text-primary-600 dark:text-primary-400 text-xs font-medium tracking-wide uppercase">
+                        Sealiac
+                    </p>
+                    <div class="prose prose-sm dark:prose-invert mt-1 max-w-none break-words">
+                        {!! $turn['response'] !!}
+                    </div>
                 </div>
 
                 @if ($turn['toolUses'] !== [])

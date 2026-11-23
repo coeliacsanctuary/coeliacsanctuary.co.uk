@@ -15,7 +15,7 @@ class BlogTagsInput extends TagsInput
         parent::setUp();
 
         $this->loadStateFromRelationshipsUsing(static function (BlogTagsInput $component, ?Blog $record): void {
-            if ( !$record instanceof Blog) {
+            if ( ! $record instanceof Blog) {
                 return;
             }
 
@@ -32,14 +32,11 @@ class BlogTagsInput extends TagsInput
     }
 
     /**
-     * Syncs tags with the record without taking types into account. This avoids recreating existing tags with an empty type.
-     * Spatie's `HasTags` trait does not have functionality for this behavior.
-     *
      * @param  array<string>  $state
      */
     protected function syncTagsWithAnyType(?Blog $record, array $state): void
     {
-        if ( !$record instanceof Blog) {
+        if ( ! $record instanceof Blog) {
             return;
         }
 

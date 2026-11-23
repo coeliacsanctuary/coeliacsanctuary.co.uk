@@ -11,7 +11,7 @@
         title="Blog preview"
     ></iframe>
 @else
-    <ul class="space-y-1 text-sm text-danger-600 dark:text-danger-400">
+    <ul class="text-danger-600 dark:text-danger-400 space-y-1 text-sm">
         @forelse ($previewErrors as $previewError)
             <li>{{ $previewError }}</li>
         @empty

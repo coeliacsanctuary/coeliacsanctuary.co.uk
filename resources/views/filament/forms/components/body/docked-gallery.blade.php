@@ -16,7 +16,7 @@
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="translate-x-0"
     x-transition:leave-end="translate-x-full"
-    class="fixed right-0 top-0 z-[100] flex h-screen w-80 flex-col border-l border-gray-200 bg-white shadow-2xl dark:border-white/10 dark:bg-gray-900"
+    class="fixed top-0 right-0 z-[100] flex h-screen w-80 flex-col border-l border-gray-200 bg-white shadow-2xl dark:border-white/10 dark:bg-gray-900"
 >
     <div class="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-white/10">
         <span class="text-sm font-semibold text-gray-950 dark:text-white">Image Gallery</span>
@@ -46,7 +46,7 @@
         </div>
     </div>
 
-    <div x-show="!$store.bodyImageInsert.open" class="flex-1 overflow-y-auto p-4">
+    <div x-show="! $store.bodyImageInsert.open" class="flex-1 overflow-y-auto p-4">
         <div class="grid grid-cols-2 gap-2">
             <template x-for="item in $store.bodyImages.items" :key="item.key">
                 <div class="flex flex-col gap-1.5 rounded-lg border border-gray-200 p-1.5 dark:border-white/10">
@@ -70,7 +70,7 @@
                     <p class="truncate text-xs text-gray-500 dark:text-gray-400" x-text="item.title"></p>
 
                     <button
-                        x-show="!item.isProcessing"
+                        x-show="! item.isProcessing"
                         x-on:click="$dispatch('body-image-open-insert', { src: item.insertSrc, title: '' })"
                         type="button"
                         class="w-full rounded px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:text-gray-200 dark:ring-white/20 dark:hover:bg-white/5"
@@ -132,20 +132,11 @@
         </div>
 
         <div class="flex gap-2 pt-2">
-            <x-filament::button
-                type="button"
-                color="gray"
-                size="sm"
-                x-on:click="$store.bodyImageInsert.cancel()"
-            >
+            <x-filament::button type="button" color="gray" size="sm" x-on:click="$store.bodyImageInsert.cancel()">
                 Back
             </x-filament::button>
 
-            <x-filament::button
-                type="button"
-                size="sm"
-                x-on:click="$dispatch('body-image-do-insert')"
-            >
+            <x-filament::button type="button" size="sm" x-on:click="$dispatch('body-image-do-insert')">
                 Insert
             </x-filament::button>
         </div>

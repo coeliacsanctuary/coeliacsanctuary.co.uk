@@ -28,7 +28,6 @@ class CreateEateryTest extends TestCase
 
         $this->actingAs($this->create(User::class));
 
-        // the location lookup resolves through the `hasPlaces` scopes, so the town needs an eatery already
         $this->create(Eatery::class);
     }
 

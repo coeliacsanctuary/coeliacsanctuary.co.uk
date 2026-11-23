@@ -60,7 +60,6 @@ class SealiacOverviewsTable
                     ->numeric()
                     ->sortable(),
 
-                // Both thumbs columns are unsigned, so the subtraction has to be cast or it underflows on a negative rating.
                 TextColumn::make('rating')
                     ->badge()
                     ->state(fn (SealiacOverview $record): int => self::rating($record))

@@ -84,7 +84,7 @@
                     placeholder="Search for a recipe..."
                     x-model="term"
                     x-on:input="search()"
-                    x-on:focus="if (results.length) open = true"
+                    x-on:focus="if (results.length) open = true;"
                 />
             </x-filament::input.wrapper>
 
@@ -119,13 +119,7 @@
                 </template>
             </div>
 
-            <p
-                x-show="searching"
-                x-cloak
-                class="mt-1 text-sm text-gray-500 dark:text-gray-400"
-            >
-                Searching...
-            </p>
+            <p x-show="searching" x-cloak class="mt-1 text-sm text-gray-500 dark:text-gray-400">Searching...</p>
 
             <p
                 x-show="! searching && open && ! results.length && term.trim() !== ''"
@@ -171,7 +165,7 @@
                         type="button"
                         title="Remove"
                         x-on:click="remove(recipe.id)"
-                        class="absolute end-1.5 top-1.5 rounded-md bg-white/90 p-1 text-danger-600 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 focus:opacity-100 dark:bg-gray-900/90 dark:text-danger-400"
+                        class="text-danger-600 dark:text-danger-400 absolute end-1.5 top-1.5 rounded-md bg-white/90 p-1 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 focus:opacity-100 dark:bg-gray-900/90"
                     >
                         <x-heroicon-o-trash class="h-4 w-4" />
                     </button>

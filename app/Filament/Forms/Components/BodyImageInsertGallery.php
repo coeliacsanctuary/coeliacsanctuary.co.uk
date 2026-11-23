@@ -111,10 +111,6 @@ class BodyImageInsertGallery extends Field
         return $items;
     }
 
-    /**
-     * Mirrors Spatie's FileAdder::defaultSanitizer() so the placeholder matches
-     * the `file_name` the media library will assign once this file is persisted.
-     */
     protected function sanitiseFileName(string $fileName): string
     {
         $fileName = preg_replace('#\p{C}+#u', '', $fileName) ?? $fileName;

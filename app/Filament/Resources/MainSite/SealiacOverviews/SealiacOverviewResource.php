@@ -23,11 +23,6 @@ class SealiacOverviewResource extends BaseResource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
 
-    /**
-     * Every morph target is globally scoped - eateries and branches to live records,
-     * products to those with variants - so without dropping those scopes per type an
-     * overview for a hidden record loads with a null model.
-     */
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with([

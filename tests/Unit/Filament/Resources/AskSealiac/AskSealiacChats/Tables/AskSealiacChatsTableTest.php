@@ -25,7 +25,6 @@ class AskSealiacChatsTableTest extends TestCase
         $this->actingAs($this->create(User::class));
     }
 
-    /** The greeting only filter is on by default, so a chat needs more than one message to be listed. */
     protected function chatWithMessages(int $messages = 2, array $attributes = []): AskSealiacChat
     {
         $chat = $this->create(AskSealiacChat::class, $attributes);

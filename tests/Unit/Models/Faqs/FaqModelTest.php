@@ -36,10 +36,6 @@ class FaqModelTest extends TestCase
         );
     }
 
-    /**
-     * Nova's repeater deletes and recreates every FAQ without setting a position, so
-     * they all land on the default. Insertion order has to survive that.
-     */
     #[Test]
     public function itFallsBackToIdOrderWhenPositionsAreEqual(): void
     {
