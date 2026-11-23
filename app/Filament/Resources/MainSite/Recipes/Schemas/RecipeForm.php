@@ -6,6 +6,7 @@ namespace App\Filament\Resources\MainSite\Recipes\Schemas;
 
 use App\Filament\Forms\Components\Body;
 use App\Filament\Forms\Components\RelatedRecipesSearch;
+use App\Filament\Schemas\Components\CollectionSection;
 use App\Filament\Schemas\Components\FaqsSection;
 use App\Filament\Schemas\Components\ImagesSection;
 use App\Filament\Schemas\Components\MetasSection;
@@ -72,6 +73,8 @@ class RecipeForm
 
                     VisibilitySection::make()->columnSpan(1),
                 ]),
+
+            CollectionSection::make('recipe')->columnSpanFull(),
 
             MetasSection::make()->columnSpanFull(),
 

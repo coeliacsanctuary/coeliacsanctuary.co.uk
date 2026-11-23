@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Filament\Resources\MainSite\Recipes\Pages;
 
 use App\Filament\Resources\MainSite\Recipes\Pages\CreateRecipe;
+use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Models\Faqs\Faq;
 use App\Models\Recipes\Recipe;
 use App\Models\Recipes\RecipeAllergen;
@@ -203,6 +206,52 @@ class CreateRecipeTest extends TestCase
         $this->assertSame(2, $faqs->last()->position);
 
         $undoRepeaterFake();
+    }
+
+    #[Test]
+    public function itAddsTheRecipeToTheEndOfTheLastGroupInTheChosenCollection(): void
+    {
+        $collection = $this->create(Collection::class);
+
+        $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+        $lastGroup = $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $existingItem = $this->build(CollectionGroupItem::class)
+            ->forRecipe($this->create(Recipe::class))
+            ->create(['collection_group_id' => $lastGroup->id]);
+
+        $this->createRecipe(['add_to_collection' => $collection->id]);
+
+        $recipe = Recipe::query()->where('slug', 'gluten-free-victoria-sponge')->firstOrFail();
+
+        $this->assertDatabaseCount(CollectionGroupItem::class, 2);
+
+        $item = $recipe->associatedCollectionGroups()->firstOrFail();
+
+        $this->assertEquals($lastGroup->id, $item->collection_group_id);
+        $this->assertGreaterThan($existingItem->refresh()->position, $item->position);
+    }
+
+    #[Test]
+    public function itDoesNotAddTheRecipeToACollectionWhenNoneIsChosen(): void
+    {
+        $collection = $this->create(Collection::class);
+
+        $this->create(CollectionGroup::class, ['collection_id' => $collection->id]);
+
+        $this->createRecipe();
+
+        $this->assertDatabaseCount(Recipe::class, 1);
+        $this->assertDatabaseEmpty(CollectionGroupItem::class);
+    }
+
+    #[Test]
+    public function itStillCreatesTheRecipeWhenTheChosenCollectionHasNoGroups(): void
+    {
+        $this->createRecipe(['add_to_collection' => $this->create(Collection::class)->id]);
+
+        $this->assertDatabaseCount(Recipe::class, 1);
+        $this->assertDatabaseEmpty(CollectionGroupItem::class);
     }
 
     protected function createRecipe(array $overrides = []): Testable

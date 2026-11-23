@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tests\Unit\Filament\Resources\MainSite\Recipes\Schemas;
 
 use App\Filament\Resources\MainSite\Recipes\Pages\CreateRecipe;
+use App\Filament\Resources\MainSite\Recipes\Pages\EditRecipe;
+use App\Models\Collections\Collection;
 use App\Models\Recipes\Recipe;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Illuminate\Http\UploadedFile;
@@ -111,6 +114,28 @@ class RecipeFormTest extends TestCase
             'fibre' => ['fibre'],
             'sugar' => ['sugar'],
         ];
+    }
+
+    #[Test]
+    public function itOnlyOffersTheCollectionFieldWhenCreating(): void
+    {
+        Livewire::test(CreateRecipe::class)->assertFormFieldVisible('add_to_collection');
+
+        Livewire::test(EditRecipe::class, ['record' => $this->create(Recipe::class)->getRouteKey()])
+            ->assertFormFieldHidden('add_to_collection');
+    }
+
+    #[Test]
+    public function itOnlyOffersLiveCollectionsOrderedByTitle(): void
+    {
+        $second = $this->create(Collection::class, ['title' => 'Breads']);
+        $first = $this->create(Collection::class, ['title' => 'Apples']);
+        $this->create(Collection::class, ['title' => 'Cakes', 'live' => false]);
+
+        Livewire::test(CreateRecipe::class)->assertFormFieldExists(
+            'add_to_collection',
+            fn (Select $field): bool => $field->getOptions() === [$first->id => 'Apples', $second->id => 'Breads'],
+        );
     }
 
     #[Test]
