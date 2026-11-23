@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources\MainSite\Collections\Schemas;
 
-use App\Filament\Forms\Components\CollectionItemSelect;
 use App\Filament\Resources\MainSite\Collections\Pages\CreateCollection;
 use App\Filament\Resources\MainSite\Collections\Pages\EditCollection;
+use App\Models\Blogs\Blog;
 use App\Models\Collections\Collection;
+use App\Models\Collections\CollectionGroup;
+use App\Models\Collections\CollectionGroupItem;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -150,40 +153,73 @@ class CollectionFormTest extends TestCase
     }
 
     #[Test]
-    public function itCollapsesTheGroupsWhenEditing(): void
+    public function itCollapsesTheGroupsWhenThereIsMoreThanOne(): void
+    {
+        $this->assertTrue($this->groupsRepeater($this->collectionWithGroups(2))->isCollapsed());
+    }
+
+    #[Test]
+    public function itLeavesASingleGroupExpanded(): void
+    {
+        $this->assertFalse($this->groupsRepeater($this->collectionWithGroups(1))->isCollapsed());
+    }
+
+    #[Test]
+    #[DataProvider('groupLabels')]
+    public function itLabelsAGroupWithItsTitleAndItemCount(?string $title, int $items, string $label): void
+    {
+        $collection = $this->create(Collection::class);
+        $group = $this->create(CollectionGroup::class, ['collection_id' => $collection->id, 'title' => $title]);
+        $blog = $this->create(Blog::class);
+
+        if ($items > 0) {
+            $this->build(CollectionGroupItem::class)->forBlog($blog)->count($items)->create(['collection_group_id' => $group->id]);
+        }
+
+        $this->assertSame($label, $this->groupsRepeater($collection)->getItemLabel("record-{$group->id}"));
+    }
+
+    public static function groupLabels(): array
+    {
+        return [
+            'one item' => ['Breads', 1, 'Breads (1 item)'],
+            'several items' => ['Breads', 2, 'Breads (2 items)'],
+            'no items' => ['Breads', 0, 'Breads (0 items)'],
+            'no title' => [null, 0, 'Untitled group (0 items)'],
+        ];
+    }
+
+    #[Test]
+    public function itAsksForConfirmationBeforeRemovingAGroup(): void
+    {
+        $collection = $this->collectionWithGroups(1);
+        $group = $collection->groups()->firstOrFail();
+
+        $page = Livewire::test(EditCollection::class, ['record' => $collection->getRouteKey()])
+            ->mountAction(TestAction::make('delete')->schemaComponent('groups')->arguments(['item' => "record-{$group->id}"]));
+
+        $this->assertCount(1, $page->get('data.groups'));
+
+        $page->callMountedAction();
+
+        $this->assertCount(0, $page->get('data.groups'));
+    }
+
+    protected function collectionWithGroups(int $count): Collection
     {
         $collection = $this->create(Collection::class);
 
-        Livewire::test(EditCollection::class, ['record' => $collection->getRouteKey()])
-            ->assertSchemaComponentExists(
-                'groups',
-                checkComponentUsing: fn (Repeater $component): bool => $component->isCollapsed(),
-            );
+        $this->build(CollectionGroup::class)->count($count)->create(['collection_id' => $collection->id]);
+
+        return $collection;
     }
 
-    #[Test]
-    public function itLeavesTheGroupsExpandedWhenCreating(): void
+    protected function groupsRepeater(Collection $collection): Repeater
     {
-        Livewire::test(CreateCollection::class)
-            ->assertSchemaComponentExists(
-                'groups',
-                checkComponentUsing: fn (Repeater $component): bool => ! $component->isCollapsed(),
-            );
-    }
-
-    #[Test]
-    public function itPicksTheItemWithTheCollectionItemSelect(): void
-    {
-        Livewire::test(CreateCollection::class)
-            ->fillForm([
-                'groups' => [
-                    ['title' => 'Breads', 'items' => [['item_type' => null, 'item_id' => null]]],
-                ],
-            ])
-            ->assertSchemaComponentExists(
-                'groups.0.items.0.item_id',
-                checkComponentUsing: fn ($component): bool => $component instanceof CollectionItemSelect,
-            );
+        return Livewire::test(EditCollection::class, ['record' => $collection->getRouteKey()])
+            ->instance()
+            ->form
+            ->getFlatComponents(withHidden: true)['groups'];
     }
 
     protected function formComponent(string $key): Select

@@ -87,7 +87,7 @@ class CollectionItemSelect extends Select
      * @param  class-string<Model>  $type
      * @return Builder<Model>
      */
-    protected static function baseQuery(string $type): Builder
+    public static function baseQuery(string $type): Builder
     {
         $query = $type::query()->withoutGlobalScopes();
 

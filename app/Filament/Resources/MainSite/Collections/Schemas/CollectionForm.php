@@ -6,14 +6,11 @@ namespace App\Filament\Resources\MainSite\Collections\Schemas;
 
 use App\Enums\Collections\CollectionDisplayType;
 use App\Filament\Forms\Components\Body;
-use App\Filament\Forms\Components\CollectionItemSelect;
+use App\Filament\Forms\Components\CollectionItemsRepeater;
 use App\Filament\Schemas\Components\ImagesSection;
 use App\Filament\Schemas\Components\MetasSection;
 use App\Filament\Schemas\Components\VisibilitySection;
-use App\Models\Blogs\Blog;
-use App\Models\EatingOut\Eatery;
-use App\Models\EatingOut\NationwideBranch;
-use App\Models\Recipes\Recipe;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -128,11 +125,14 @@ class CollectionForm
                         ->columnSpanFull()
                         ->orderColumn('position')
                         ->collapsible()
-                        ->collapsed(fn (string $operation): bool => $operation === 'edit')
-                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
+                        ->collapsed(fn (Repeater $component): bool => $component->getItemsCount() > 1)
+                        ->itemLabel(fn (Repeater $component, string $key): string => static::groupLabel($component->getRawState()[$key] ?? []))
+                        ->addActionLabel('Add Group')
+                        ->deleteAction(fn (Action $action): Action => $action->requiresConfirmation())
                         ->schema([
                             TextInput::make('title')
                                 ->maxLength(255)
+                                ->live(onBlur: true)
                                 ->columnSpanFull(),
 
                             Body::make('body')
@@ -140,41 +140,21 @@ class CollectionForm
                                 ->toolbar(false)
                                 ->columnSpanFull(),
 
-                            Repeater::make('items')
+                            CollectionItemsRepeater::make('items')
                                 ->relationship()
-                                ->columnSpanFull()
                                 ->orderColumn('position')
-                                ->columns(2)
-                                ->schema([
-                                    Select::make('item_type')
-                                        ->label('Type')
-                                        ->options([
-                                            Blog::class => 'Blog',
-                                            Recipe::class => 'Recipe',
-                                            Eatery::class => 'Eatery',
-                                            NationwideBranch::class => 'Nationwide Branch',
-                                        ])
-                                        ->required()
-                                        ->live()
-                                        ->afterStateUpdated(fn (Set $set): mixed => $set('item_id', null)),
-
-                                    CollectionItemSelect::make('item_id')
-                                        ->label('Item')
-                                        ->required()
-                                        ->disabled(fn (Get $get): bool => ! $get('item_type')),
-
-                                    TextInput::make('item_title')
-                                        ->label('Title override')
-                                        ->helperText("Leave blank to use the item's own title")
-                                        ->maxLength(255),
-
-                                    Textarea::make('item_description')
-                                        ->label('Description override')
-                                        ->helperText("Leave blank to use the item's own description")
-                                        ->columnSpanFull(),
-                                ]),
+                                ->columnSpanFull(),
                         ]),
                 ]),
         ]);
+    }
+
+    /** @param array<string, mixed> $group */
+    protected static function groupLabel(array $group): string
+    {
+        $title = ($group['title'] ?? null) ?: 'Untitled group';
+        $items = count($group['items'] ?? []);
+
+        return "{$title} ({$items} " . Str::plural('item', $items) . ')';
     }
 }

@@ -12,6 +12,7 @@ use App\Models\Collections\CollectionGroup;
 use App\Models\Collections\CollectionGroupItem;
 use App\Models\User;
 use Carbon\Carbon;
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Http\UploadedFile;
@@ -165,6 +166,71 @@ class EditCollectionTest extends TestCase
     }
 
     #[Test]
+    public function itSavesAnItemAddedToAnExistingGroup(): void
+    {
+        $group = $this->groupWithItems(1);
+        $blog = $this->create(Blog::class);
+
+        $this->editPage()
+            ->callAction($this->itemAction('add', $group), ['item_type' => Blog::class, 'item_id' => $blog->id])
+            ->assertHasNoFormErrors()
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $items = $group->items()->get();
+
+        $this->assertCount(2, $items);
+        $this->assertSame($blog->id, $items->last()->item_id);
+        $this->assertSame([1, 2], $items->pluck('position')->all());
+    }
+
+    #[Test]
+    public function itSavesAnEditedItem(): void
+    {
+        $group = $this->groupWithItems(2);
+        [$first, $second] = $group->items()->get()->all();
+
+        $this->editPage()
+            ->callAction($this->itemAction('edit', $group, ['item' => "record-{$second->id}"]), ['item_title' => 'My favourite loaf'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertNull($first->refresh()->item_title);
+        $this->assertSame('My favourite loaf', $second->refresh()->item_title);
+        $this->assertDatabaseCount(CollectionGroupItem::class, 2);
+    }
+
+    #[Test]
+    public function itDeletesARemovedItem(): void
+    {
+        $group = $this->groupWithItems(2);
+        [$first, $second] = $group->items()->get()->all();
+
+        $this->editPage()
+            ->callAction($this->itemAction('delete', $group, ['item' => "record-{$first->id}"]))
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertModelMissing($first);
+        $this->assertModelExists($second);
+    }
+
+    #[Test]
+    public function itSavesTheNewOrderOfReorderedItems(): void
+    {
+        $group = $this->groupWithItems(2);
+        [$first, $second] = $group->items()->get()->all();
+
+        $this->editPage()
+            ->callAction($this->itemAction('reorder', $group, ['items' => ["record-{$second->id}", "record-{$first->id}"]]))
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame([$second->id, $first->id], $group->items()->pluck('id')->all());
+        $this->assertSame([1, 2], $group->items()->pluck('position')->all());
+    }
+
+    #[Test]
     public function itUnpublishesACollectionMovedBackToDraft(): void
     {
         $this->collection->update(['publish_at' => Carbon::now()]);
@@ -203,6 +269,24 @@ class EditCollectionTest extends TestCase
         $collection = $this->create(Collection::class, ['live' => false]);
 
         Livewire::test(EditCollection::class, ['record' => $collection->getRouteKey()])->assertOk();
+    }
+
+    protected function groupWithItems(int $count): CollectionGroup
+    {
+        $group = $this->create(CollectionGroup::class, ['collection_id' => $this->collection->id]);
+
+        $this->build(CollectionGroupItem::class)
+            ->forBlog($this->create(Blog::class))
+            ->count($count)
+            ->create(['collection_group_id' => $group->id]);
+
+        return $group;
+    }
+
+    /** @param array<string, mixed> $arguments */
+    protected function itemAction(string $name, CollectionGroup $group, array $arguments = []): TestAction
+    {
+        return TestAction::make($name)->schemaComponent("groups.record-{$group->id}.items")->arguments($arguments);
     }
 
     protected function editPage(): Testable
