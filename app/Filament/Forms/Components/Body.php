@@ -72,7 +72,7 @@ class Body extends Textarea
         $this->afterStateHydrated(static function (Body $component, mixed $state): void {
             $record = $component->getRecord();
 
-            if ( ! $record || ! is_string($state) || blank($state)) {
+            if ( ! $record instanceof HasMedia || ! is_string($state) || blank($state)) {
                 return;
             }
 
@@ -85,7 +85,7 @@ class Body extends Textarea
                     preg_quote($media->getUrl(), '~'),
                 );
 
-                $state = preg_replace("~{$urlInAnyBucket}~", $media->file_name, $state);
+                $state = preg_replace("~{$urlInAnyBucket}~", $media->file_name, $state) ?? $state;
             });
 
             $component->state($state);

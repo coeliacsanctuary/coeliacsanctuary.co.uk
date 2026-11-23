@@ -16,6 +16,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class SealiacOverviewResource extends BaseResource
 {
@@ -26,13 +27,16 @@ class SealiacOverviewResource extends BaseResource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with([
-            'model' => fn (MorphTo $morphTo) => $morphTo
-                ->constrain([
+            'model' => function (Relation $relation): void {
+                assert($relation instanceof MorphTo);
+
+                $relation->constrain([
                     Eatery::class => fn (Builder $query) => $query->withoutGlobalScopes(),
                     NationwideBranch::class => fn (Builder $query) => $query->withoutGlobalScopes(),
                     ShopProduct::class => fn (Builder $query) => $query->withoutGlobalScopes(),
                 ])
-                ->morphWith([NationwideBranch::class => ['eatery']]),
+                ->morphWith([NationwideBranch::class => ['eatery']]);
+            },
         ]);
     }
 

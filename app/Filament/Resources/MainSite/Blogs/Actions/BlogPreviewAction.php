@@ -62,7 +62,8 @@ class BlogPreviewAction
     /** @return array<string, mixed> */
     protected static function buildPayload(Get $schemaGet, ?Blog $record): array
     {
-        $tags = collect($schemaGet('tags') ?? [])->filter()->values();
+        $tagState = $schemaGet('tags');
+        $tags = collect(is_array($tagState) ? $tagState : [])->filter()->values();
 
         return [
             'title' => $schemaGet('title'),
@@ -87,7 +88,7 @@ class BlogPreviewAction
             return null;
         }
 
-        return BlogTag::query()->find($primaryTagId)?->tag;
+        return BlogTag::query()->whereKey($primaryTagId)->first()?->tag;
     }
 
     /**

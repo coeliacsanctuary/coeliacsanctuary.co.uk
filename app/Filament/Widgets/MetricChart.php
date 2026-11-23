@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
+use App\Models\Blogs\Blog;
+use App\Models\Blogs\BlogMetric;
+use App\Models\Recipes\Recipe;
+use App\Models\Recipes\RecipeMetric;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,9 +21,10 @@ abstract class MetricChart extends ChartWidget
 
     protected ?string $maxHeight = '200px';
 
+    /** @return literal-string */
     abstract protected function column(): string;
 
-    /** @return HasMany<covariant Model, covariant Model> */
+    /** @return HasMany<covariant BlogMetric|RecipeMetric, covariant Blog|Recipe> */
     abstract protected function metrics(): HasMany;
 
     protected function getType(): string
@@ -91,6 +96,7 @@ abstract class MetricChart extends ChartWidget
 
         $metrics = $this->metrics()
             ->whereBetween('date', [$start, $end])
+            ->toBase()
             ->pluck($this->column(), 'date');
 
         $labels = [];
@@ -117,6 +123,7 @@ abstract class MetricChart extends ChartWidget
                 DB::raw("DATE_FORMAT(`date`, '%Y-%m') as month"),
                 DB::raw("SUM(`{$this->column()}`) as total"),
             ])
+            ->toBase()
             ->pluck('total', 'month');
 
         $labels = [];

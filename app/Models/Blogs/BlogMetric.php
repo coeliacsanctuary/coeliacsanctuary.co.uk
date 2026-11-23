@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class BlogMetric extends Model
 {

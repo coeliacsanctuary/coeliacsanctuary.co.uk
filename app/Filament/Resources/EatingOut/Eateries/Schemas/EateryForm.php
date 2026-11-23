@@ -7,6 +7,7 @@ namespace App\Filament\Resources\EatingOut\Eateries\Schemas;
 use App\Enums\EatingOut\EateryType;
 use App\Filament\Schemas\Components\EateryLocationSection;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryVenueType;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Hidden;
@@ -128,7 +129,10 @@ class EateryForm
                             ->columnSpanFull()
                             ->schema([
                                 Select::make('venue_type_id')
-                                    ->relationship('venueType', 'venue_type', fn (Builder $query, Get $get) => $query->where('type_id', (int) $get('type_id'))->reorder('venue_type'))
+                                    ->relationship('venueType', 'venue_type', function (Builder $query, Get $get): Builder {
+                                        /** @var Builder<EateryVenueType> $query */
+                                        return $query->where('type_id', (int) $get('type_id'))->reorder('venue_type');
+                                    })
                                     ->disabled(fn (Get $get): bool => (int) $get('type_id') === EateryType::HOTEL->value)
                                     ->dehydrated()
                                     ->required(),

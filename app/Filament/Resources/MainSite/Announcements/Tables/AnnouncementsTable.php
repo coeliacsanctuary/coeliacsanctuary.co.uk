@@ -37,8 +37,14 @@ class AnnouncementsTable
                 TernaryFilter::make('live'),
 
                 TernaryFilter::make('expired')->queries(
-                    true: fn (Builder $query) => $query->where('expires_at', '<=', now()),
-                    false: fn (Builder $query) => $query->where('expires_at', '>', now()),
+                    true: function (Builder $query): Builder {
+                        /** @var Builder<Announcement> $query */
+                        return $query->where('expires_at', '<=', now());
+                    },
+                    false: function (Builder $query): Builder {
+                        /** @var Builder<Announcement> $query */
+                        return $query->where('expires_at', '>', now());
+                    },
                 ),
             ])
             ->recordActions([

@@ -16,6 +16,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class SealiacOverviewsTable
 {
@@ -64,7 +65,7 @@ class SealiacOverviewsTable
                     ->badge()
                     ->state(fn (SealiacOverview $record): int => self::rating($record))
                     ->color(fn (int $state): string => self::ratingColour($state))
-                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderByRaw("(cast(thumbs_up as signed) - cast(thumbs_down as signed)) {$direction}")),
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderBy(DB::raw('(cast(thumbs_up as signed) - cast(thumbs_down as signed))'), $direction === 'desc' ? 'desc' : 'asc')),
 
                 TextColumn::make('overview')
                     ->lineClamp(3)
@@ -138,10 +139,12 @@ class SealiacOverviewsTable
 
     protected static function modelName(SealiacOverview $record): ?string
     {
-        return match ($record->model_type) {
-            Eatery::class => $record->model?->name,
-            NationwideBranch::class => $record->model?->name ?: $record->model?->eatery?->name,
-            ShopProduct::class => $record->model?->title,
+        $model = $record->model;
+
+        return match (true) {
+            $model instanceof Eatery => $model->name,
+            $model instanceof NationwideBranch => $model->name ?: data_get($model, 'eatery.name'),
+            $model instanceof ShopProduct => $model->title,
             default => null,
         };
     }

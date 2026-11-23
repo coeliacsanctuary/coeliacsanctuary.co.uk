@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Filament\Forms\Components;
 
 use Filament\Forms\Components\Field;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class BodyImageInsertGallery extends Field
@@ -48,8 +50,13 @@ class BodyImageInsertGallery extends Field
     public function deleteBodyImage(string $fileName, string $collection): void
     {
         $record = $this->getRecord();
+        $livewire = $this->getLivewire();
 
-        $bodyContent = $this->getLivewire()->form->getRawState()[$this->bodyAttribute] ?? '';
+        if ( ! $record instanceof HasMedia || ! $livewire instanceof EditRecord) {
+            return;
+        }
+
+        $bodyContent = collect($livewire->form->getRawState())->get($this->bodyAttribute, '');
 
         if (str_contains((string) $bodyContent, $fileName)) {
             return;
@@ -59,7 +66,7 @@ class BodyImageInsertGallery extends Field
             ->firstWhere('file_name', $fileName)
             ?->delete();
 
-        $this->getLivewire()->refreshFormData(['body_images']);
+        $livewire->refreshFormData(['body_images']);
     }
 
     /**
@@ -71,7 +78,7 @@ class BodyImageInsertGallery extends Field
         $bodyContent = $this->evaluate(fn (Get $get): mixed => $get('body')) ?? '';
 
         $record = $this->getRecord();
-        $existingMedia = $record?->getMedia($this->collection) ?? collect();
+        $existingMedia = $record instanceof HasMedia ? $record->getMedia($this->collection) : collect();
 
         $items = [];
 

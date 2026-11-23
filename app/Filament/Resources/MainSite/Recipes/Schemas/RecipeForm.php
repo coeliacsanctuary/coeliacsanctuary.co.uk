@@ -203,9 +203,8 @@ class RecipeForm
                         ->saveRelationshipsUsing(function (Recipe $record, array $state): void {
                             $record->allergens()->sync(
                                 RecipeAllergen::query()
+                                    ->whereNotIn('id', $state)
                                     ->pluck('id')
-                                    ->diff($state)
-                                    ->values()
                                     ->all()
                             );
                         }),

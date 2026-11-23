@@ -110,12 +110,12 @@ class EateryReviewsTable
                             foreach (range(0, 5) as $i) {
                                 $columns[] = ImageColumn::make("image-{$i}")
                                     ->visible(fn (?EateryReview $record): bool => isset($record?->images[$i]))
-                                    ->getStateUsing(fn (?EateryReview $record) => $record?->images[$i]->thumb)
+                                    ->getStateUsing(fn (?EateryReview $record) => $record?->images->get($i)?->thumb)
                                     ->imageSize(150)
                                     ->action(
                                         Action::make("view-image-{$i}")
                                             ->schema([
-                                                Image::make(fn (?EateryReview $record) => $record?->images[$i]->path, '')->imageSize('100%'),
+                                                Image::make(fn (?EateryReview $record) => $record?->images->get($i)?->path, '')->imageSize('100%'),
                                             ])
                                             ->modalSubmitAction(false)
                                             ->modalCancelAction(false),
@@ -139,11 +139,11 @@ class EateryReviewsTable
                     ->action(function (EateryReview $record): void {
                         $record->update(['approved' => true]);
 
-                        $record->eatery->sealiacOverview?->update([
+                        $record->eatery?->sealiacOverview?->update([
                             'invalidated' => true,
                         ]);
 
-                        $record->eatery->touch();
+                        $record->eatery?->touch();
 
                         new AnonymousNotifiable()
                             ->route('mail', $record->email)

@@ -48,7 +48,7 @@ class CollectionItemSelect extends Select
                 return null;
             }
 
-            $item = static::baseQuery($type)->find($value);
+            $item = static::baseQuery($type)->whereKey($value)->first();
 
             return $item ? static::optionLabel($item, $type) : null;
         });

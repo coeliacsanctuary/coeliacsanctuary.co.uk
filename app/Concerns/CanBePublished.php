@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @mixin Model
- * @property Carbon $publish_at
+ * @property Carbon | null $publish_at
  * @property bool $draft
  */
 trait CanBePublished

@@ -28,6 +28,8 @@ class BranchesRelationManager extends RelationManager
 
     public function form(Schema $schema): Schema
     {
+        assert($this->ownerRecord instanceof Eatery);
+
         return NationwideBranchForm::configure($schema, $this->ownerRecord);
     }
 

@@ -28,8 +28,8 @@ class StatusColumn
             })
             ->color(fn (string $state): string => match ($state) {
                 'Live' => 'success',
-                'Draft' => 'gray',
                 'Pending' => 'warning',
+                default => 'gray',
             });
     }
 }

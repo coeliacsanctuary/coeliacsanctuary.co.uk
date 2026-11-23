@@ -106,7 +106,7 @@ class EateryOpeningTimes
                                     ->columns(2)
                                     ->schema([
                                         Select::make($day . '_start_h')
-                                            ->options(range(0, 23))
+                                            ->options(array_map(strval(...), range(0, 23)))
                                             ->hiddenLabel()
                                             ->default(0)
                                             ->required(fn (Get $get): bool => ! $get($day . '_closed'))
@@ -124,7 +124,7 @@ class EateryOpeningTimes
                                     ->columns(2)
                                     ->schema([
                                         Select::make($day . '_end_h')
-                                            ->options(range(0, 23))
+                                            ->options(array_map(strval(...), range(0, 23)))
                                             ->hiddenLabel()
                                             ->default(0)
                                             ->required(fn (Get $get): bool => ! $get($day . '_closed'))

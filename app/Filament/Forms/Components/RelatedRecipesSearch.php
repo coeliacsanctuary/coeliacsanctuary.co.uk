@@ -89,9 +89,13 @@ class RelatedRecipesSearch extends Field
     protected function excludedIds(): array
     {
         $record = $this->getRecord();
+        $ids = static::ids($this->getState());
 
-        return static::ids($this->getState())
-            ->when($record instanceof Recipe, fn (Collection $ids) => $ids->push($record->getKey()))
+        if ($record instanceof Recipe) {
+            $ids->push($record->id);
+        }
+
+        return $ids
             ->unique()
             ->values()
             ->all();

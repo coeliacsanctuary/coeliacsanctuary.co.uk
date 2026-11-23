@@ -45,7 +45,7 @@ readonly class CollectionItemDto
                 id: $item->getKey(),
                 title: (string) $item->getAttribute('name'),
                 address: $item->getAttribute('address'),
-                info: $item instanceof NationwideBranch ? $item->eatery?->info : null,
+                info: $item instanceof NationwideBranch ? data_get($item, 'eatery.info') : null,
             ),
             default => new self(
                 id: $item->getKey(),

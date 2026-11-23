@@ -27,7 +27,7 @@ class CollectionSection
                             return;
                         }
 
-                        $group = Collection::query()->find($state)?->groups->last();
+                        $group = Collection::query()->whereKey($state)->first()?->groups->last();
 
                         if ( ! $group) {
                             return;
