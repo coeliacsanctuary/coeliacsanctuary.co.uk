@@ -30,6 +30,7 @@ yarn-error.log
 /boost.json
 /.ai/mcp/
 /public/css/filament
+/public/fonts/filament
 /public/js/filament
 google-*-auth.json
 /coeliac-sanctuary-apple-wallet-pass-certificate.p12
