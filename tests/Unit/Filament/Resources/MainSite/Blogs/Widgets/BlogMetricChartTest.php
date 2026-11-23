@@ -198,7 +198,7 @@ class BlogMetricChartTest extends TestCase
      */
     protected function chartData(string $chart, ?string $filter = null): array
     {
-        return (fn (): array => $this->getData())->call($this->chart($chart, $filter));
+        return ($this->getData(...))->call($this->chart($chart, $filter));
     }
 
     /**
@@ -207,7 +207,7 @@ class BlogMetricChartTest extends TestCase
      */
     protected function chartOptions(string $chart): array
     {
-        return (fn (): array => $this->getOptions())->call($this->chart($chart));
+        return ($this->getOptions(...))->call($this->chart($chart));
     }
 
     protected function createMetric(string $date, array $attributes = []): BlogMetric

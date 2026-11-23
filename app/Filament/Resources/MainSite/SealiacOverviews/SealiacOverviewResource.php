@@ -35,7 +35,7 @@ class SealiacOverviewResource extends BaseResource
                     NationwideBranch::class => fn (Builder $query) => $query->withoutGlobalScopes(),
                     ShopProduct::class => fn (Builder $query) => $query->withoutGlobalScopes(),
                 ])
-                ->morphWith([NationwideBranch::class => ['eatery']]);
+                    ->morphWith([NationwideBranch::class => ['eatery']]);
             },
         ]);
     }

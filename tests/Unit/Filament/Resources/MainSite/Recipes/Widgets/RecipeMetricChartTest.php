@@ -158,7 +158,7 @@ class RecipeMetricChartTest extends TestCase
      */
     protected function chartData(string $chart, ?string $filter = null): array
     {
-        return (fn (): array => $this->getData())->call($this->chart($chart, $filter));
+        return ($this->getData(...))->call($this->chart($chart, $filter));
     }
 
     protected function createMetric(string $date, array $attributes = []): RecipeMetric
