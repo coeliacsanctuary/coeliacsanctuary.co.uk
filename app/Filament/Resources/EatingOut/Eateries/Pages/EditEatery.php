@@ -6,7 +6,6 @@ namespace App\Filament\Resources\EatingOut\Eateries\Pages;
 
 use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\Pages\BaseEditRecord;
-use App\Filament\Support\ProcessEateryLocationData;
 
 class EditEatery extends BaseEditRecord
 {
@@ -14,6 +13,6 @@ class EditEatery extends BaseEditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        return ProcessEateryLocationData::handle($data);
+        return EateryResource::mutateForSave($data);
     }
 }

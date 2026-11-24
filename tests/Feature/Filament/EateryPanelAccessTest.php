@@ -49,6 +49,7 @@ class EateryPanelAccessTest extends TestCase
         return [
             'the eatery list' => ['index'],
             'the create page' => ['create'],
+            'the view page' => ['view'],
             'the edit page' => ['edit'],
         ];
     }

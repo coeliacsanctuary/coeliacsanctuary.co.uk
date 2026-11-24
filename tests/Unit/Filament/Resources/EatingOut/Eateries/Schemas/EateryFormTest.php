@@ -7,6 +7,8 @@ namespace Tests\Unit\Filament\Resources\EatingOut\Eateries\Schemas;
 use App\Enums\EatingOut\EateryType;
 use App\Filament\Resources\EatingOut\Eateries\Pages\CreateEatery;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryCounty;
+use App\Models\EatingOut\EateryTown;
 use App\Models\User;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Filament\Facades\Filament;
@@ -28,6 +30,9 @@ class EateryFormTest extends TestCase
         $this->seed(EateryScaffoldingSeeder::class);
 
         $this->actingAs($this->create(User::class));
+
+        $this->create(EateryCounty::class, ['id' => 2, 'county' => 'Cornwall', 'country_id' => 1]);
+        $this->create(EateryTown::class, ['id' => 2, 'town' => 'Truro', 'county_id' => 2]);
 
         $this->create(Eatery::class);
     }
@@ -130,7 +135,7 @@ class EateryFormTest extends TestCase
             ->fillForm([
                 'name' => 'The Gluten Free Cafe',
                 'live' => true,
-                'location' => '1|1|1|',
+                'location' => '1|2|2|',
                 'address' => "1 High Street\nCrewe\nCW1 2AB",
                 'lat' => 53.0977,
                 'lng' => -2.4426,

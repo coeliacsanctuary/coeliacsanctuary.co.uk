@@ -8,9 +8,14 @@ use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\EatingOut\Eateries\Pages\CreateEatery;
 use App\Filament\Resources\EatingOut\Eateries\Pages\EditEatery;
 use App\Filament\Resources\EatingOut\Eateries\Pages\ListEateries;
+use App\Filament\Resources\EatingOut\Eateries\Pages\ViewEatery;
 use App\Filament\Resources\EatingOut\Eateries\RelationManagers\BranchesRelationManager;
+use App\Filament\Resources\EatingOut\Eateries\RelationManagers\ReportsRelationManager;
 use App\Filament\Resources\EatingOut\Eateries\RelationManagers\ReviewsRelationManager;
+use App\Filament\Resources\EatingOut\Eateries\RelationManagers\SealiacOverviewsRelationManager;
+use App\Filament\Resources\EatingOut\Eateries\RelationManagers\SuggestedEditsRelationManager;
 use App\Filament\Resources\EatingOut\Eateries\Schemas\EateryForm;
+use App\Filament\Resources\EatingOut\Eateries\Schemas\EateryInfolist;
 use App\Filament\Resources\EatingOut\Eateries\Tables\EateriesTable;
 use App\Models\EatingOut\Eatery;
 use BackedEnum;
@@ -30,6 +35,11 @@ class EateryResource extends BaseResource
     public static function form(Schema $schema): Schema
     {
         return EateryForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return EateryInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
@@ -58,7 +68,23 @@ class EateryResource extends BaseResource
         return [
             'index' => ListEateries::route('/'),
             'create' => CreateEatery::route('/create'),
+            'view' => ViewEatery::route('/{record}'),
             'edit' => EditEatery::route('/{record}/edit'),
+        ];
+    }
+
+    public static function mutateForSave(array $data): array
+    {
+        if ((int) ($data['county_id'] ?? null) !== 1) {
+            return $data;
+        }
+
+        return [
+            ...$data,
+            'address' => '',
+            'lat' => 0,
+            'lng' => 0,
+            'area_id' => null,
         ];
     }
 
@@ -67,6 +93,9 @@ class EateryResource extends BaseResource
         return [
             ReviewsRelationManager::class,
             BranchesRelationManager::class,
+            SealiacOverviewsRelationManager::class,
+            SuggestedEditsRelationManager::class,
+            ReportsRelationManager::class,
         ];
     }
 

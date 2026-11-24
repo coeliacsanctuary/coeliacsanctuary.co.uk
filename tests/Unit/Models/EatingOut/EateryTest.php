@@ -67,6 +67,46 @@ class EateryTest extends TestCase
     }
 
     #[Test]
+    public function itAddsThePostcodeToTheSlugForASecondOneWithTheSameNameInTheTown(): void
+    {
+        $first = $this->create(Eatery::class, ['name' => 'The Gluten Free Cafe', 'slug' => null, 'address' => "1 High Street\nCW1 1AA"]);
+        $second = $this->create(Eatery::class, ['name' => 'The Gluten Free Cafe', 'slug' => null, 'address' => "2 Low Street\nCW2 2BB"]);
+
+        $this->assertSame('the-gluten-free-cafe', $first->slug);
+        $this->assertSame('the-gluten-free-cafe-cw2-2bb', $second->slug);
+    }
+
+    #[Test]
+    public function itDoesNotAddThePostcodeToTheSlugForTheSameNameInAnotherTown(): void
+    {
+        $this->create(EateryTown::class, ['id' => 99, 'town' => 'Truro']);
+
+        $this->create(Eatery::class, ['name' => 'The Gluten Free Cafe', 'slug' => null]);
+        $other = $this->create(Eatery::class, ['name' => 'The Gluten Free Cafe', 'slug' => null, 'town_id' => 99]);
+
+        $this->assertSame('the-gluten-free-cafe', $other->slug);
+    }
+
+    #[Test]
+    public function itDoesNotCountItselfWhenRegeneratingTheSlug(): void
+    {
+        $model = $this->create(Eatery::class, ['name' => 'The Gluten Free Cafe', 'slug' => null]);
+
+        $this->assertSame('the-gluten-free-cafe', $model->generateSlug(force: true));
+    }
+
+    #[Test]
+    public function itKeepsItsSlugWhenUpdated(): void
+    {
+        $first = $this->create(Eatery::class, ['name' => 'The Gluten Free Cafe', 'slug' => null]);
+        $this->create(Eatery::class, ['name' => 'The Gluten Free Cafe', 'slug' => null]);
+
+        $first->update(['address' => "3 New Street\nCW3 3CC"]);
+
+        $this->assertSame('the-gluten-free-cafe', $first->refresh()->slug);
+    }
+
+    #[Test]
     public function itDispatchesTheCreateOpenGraphImageJobWhenSavedForEateryAndTownAndCounty(): void
     {
         config()->set('coeliac.generate_og_images', true);

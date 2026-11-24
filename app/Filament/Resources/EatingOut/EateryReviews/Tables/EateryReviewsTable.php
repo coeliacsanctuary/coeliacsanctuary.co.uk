@@ -8,6 +8,7 @@ use App\Models\EatingOut\EateryReview;
 use App\Notifications\EatingOut\EateryReviewApprovedNotification;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Image;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
@@ -29,14 +30,14 @@ class EateryReviewsTable
     {
         return $table
             ->modifyQueryUsing(
-                fn ($query) => $query
+                fn ($query, $livewire) => $query
                     ->with([
                         'eatery' => fn ($query) => $query->withoutGlobalScopes(),
                         'branch' => fn ($query) => $query->withoutGlobalScopes(),
                         'images',
                     ])
                     ->withCount(['images' => fn ($query) => $query->withoutGlobalScopes()])
-                    ->where('admin_review', false)
+                    ->unless($livewire instanceof RelationManager, fn ($query) => $query->where('admin_review', false))
                     ->reorder('created_at', 'desc')
             )
             ->columns([

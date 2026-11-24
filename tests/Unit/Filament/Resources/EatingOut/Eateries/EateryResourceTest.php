@@ -81,9 +81,9 @@ class EateryResourceTest extends TestCase
     }
 
     #[Test]
-    public function itRegistersTheListCreateAndEditPages(): void
+    public function itRegistersTheListCreateViewAndEditPages(): void
     {
-        $this->assertSame(['index', 'create', 'edit'], array_keys(EateryResource::getPages()));
+        $this->assertSame(['index', 'create', 'view', 'edit'], array_keys(EateryResource::getPages()));
     }
 
     #[Test]

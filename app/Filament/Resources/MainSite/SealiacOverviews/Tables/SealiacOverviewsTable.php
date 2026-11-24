@@ -10,6 +10,7 @@ use App\Models\SealiacOverview;
 use App\Models\Shop\ShopProduct;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Grid;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -27,12 +28,14 @@ class SealiacOverviewsTable
             ->columns([
                 TextColumn::make('model_type')
                     ->label('Type')
+                    ->visible(fn ($livewire): bool => ! $livewire instanceof RelationManager)
                     ->badge()
                     ->color('gray')
                     ->formatStateUsing(fn (string $state): string => self::typeLabel($state)),
 
                 TextColumn::make('model_name')
                     ->label('Model')
+                    ->visible(fn ($livewire): bool => ! $livewire instanceof RelationManager)
                     ->state(fn (SealiacOverview $record): ?string => self::modelName($record))
                     ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereHasMorph(
                         'model',

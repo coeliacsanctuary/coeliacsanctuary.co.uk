@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Schemas\Components;
 
 use App\Filament\Forms\Components\LocationLookup;
-use App\Filament\Support\FindEateryLocation;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCountry;
@@ -14,7 +13,6 @@ use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\NationwideBranch;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -23,6 +21,9 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 use Spatie\Geocoder\Facades\Geocoder;
 
 class EateryLocationSection
@@ -34,18 +35,21 @@ class EateryLocationSection
             ->schema(function () use ($isBranch, $fromChain): array {
                 $schema = [];
 
+                $isChain = fn (Get $get): bool => ! $isBranch && $get('is_nationwide');
+
                 if ( ! $isBranch) {
                     $schema[] = Toggle::make('is_nationwide')
                         ->label('Nationwide Chain')
                         ->disabled(fn (string $operation): bool => $operation !== 'create')
                         ->dehydrated(false)
-                        ->formatStateUsing(fn (?Eatery $record): bool => $record?->county_id === 1)
+                        ->formatStateUsing(fn (?Eatery $record, ?bool $state): bool => $record instanceof Eatery ? $record->county_id === 1 : (bool) $state)
                         ->live()
                         ->hidden(fn (?Eatery $record): bool => $record?->county_id > 1)
-                        ->afterStateUpdated(function (Set $set): void {
-                            $set('country_id', 1);
-                            $set('county_id', 1);
-                            $set('town_id', 529);
+                        ->afterStateUpdated(function (bool $state, Set $set): void {
+                            $set('country_id', $state ? 1 : null);
+                            $set('county_id', $state ? 1 : null);
+                            $set('town_id', $state ? 529 : null);
+                            $set('area_id', null);
                         });
                 }
 
@@ -59,255 +63,94 @@ class EateryLocationSection
                 return [
                     ...$schema,
 
-                    LocationLookup::make('location')
-                        ->label('Search for a location...')
-                        ->hidden(function (Get $get, string $operation) use ($isBranch): bool {
-                            if ($get('add_manually')) {
-                                return true;
-                            }
+                    LocationLookup::make('location')->hidden($isChain),
 
-                            if ($get('unlock_location')) {
-                                return false;
-                            }
-
-                            if ($operation !== 'create') {
-                                return true;
-                            }
-
-                            return ! $isBranch && $get('is_nationwide');
-                        })
+                    Select::make('country_id')
+                        ->label('Country')
+                        ->options(fn (): array => EateryCountry::query()->pluck('country', 'id')->all())
                         ->searchable()
-                        ->getSearchResultsUsing(app(FindEateryLocation::class)->handle(...))
-                        ->noSearchResultsMessage('No results found, try searching for county, or add location manually')
                         ->live()
-                        ->afterStateUpdated(function (string $state, Set $set): void {
-                            [$countryId, $countyId, $townId, $areaId] = explode('|', $state);
-
-                            $set('country_id', $countryId);
-                            $set('county_id', $countyId);
-                            $set('town_id', $townId);
-                            $set('area_id', $areaId);
-
-                            $set('country', EateryCountry::query()->find($countryId)?->country);
-                            $set('county', EateryCounty::query()->find($countyId)?->county);
-                            $set('town', EateryTown::query()->find($townId)?->town);
-                            $set('area', EateryArea::query()->find($areaId)?->area);
-                        })
-                        ->dehydrated(false)
-                        ->in(null)
-                        ->saveRelationshipsUsing(null),
-
-                    Toggle::make('add_manually')
-                        ->dehydrated(false)
-                        ->hidden(function (Get $get, string $operation) use ($isBranch): bool {
-                            if ($get('location')) {
-                                return true;
-                            }
-
-                            if ($get('unlock_location')) {
-                                return false;
-                            }
-
-                            if ($operation !== 'create') {
-                                return true;
-                            }
-
-                            return ! $isBranch && $get('is_nationwide');
-                        })
-                        ->live(),
-
-                    Hidden::make('country_id'),
-                    Hidden::make('county_id'),
-                    Hidden::make('town_id'),
-                    Hidden::make('area_id'),
-
-                    Select::make('country')
-                        ->options(EateryCountry::query()->pluck('country', 'country'))
-                        ->dehydrated(false)
-                        ->disabled(function (Get $get, ?string $state): bool {
-                            if ($get('unlock_location')) {
-                                return false;
-                            }
-
-                            if ($get('add_manually') === false) {
-                                return true;
-                            }
-
-                            return $get('location') && $state;
-                        })
-                        ->visible(function (Get $get, string $operation) use ($isBranch): bool {
-                            $isChain = ! $isBranch && $get('is_nationwide');
-
-                            if ($operation !== 'create') {
-                                return ! $isChain;
-                            }
-
-                            if ($get('add_manually')) {
-                                return ! $isChain;
-                            }
-
-                            if ($get('location') !== null) {
-                                return ! $isChain;
-                            }
-
-                            return false;
-                        })
-                        ->formatStateUsing(fn (Eatery|NationwideBranch|null $record): ?string => $record?->country?->country)
-                        ->required(),
-
-                    TextInput::make('county')
-                        ->dehydrated(false)
-                        ->disabled(function (Get $get, ?string $state): bool {
-                            if ($get('unlock_location')) {
-                                return false;
-                            }
-
-                            if ($get('add_manually') === false) {
-                                return true;
-                            }
-
-                            return $get('location') && $state;
-                        })
-                        ->live()
-                        ->visible(function (Get $get, string $operation) use ($isBranch): bool {
-                            $isChain = ! $isBranch && $get('is_nationwide');
-
-                            if ($operation !== 'create') {
-                                return ! $isChain;
-                            }
-
-                            if ($get('add_manually')) {
-                                return ! $isChain;
-                            }
-
-                            if ($get('country') !== null) {
-                                return ! $isChain;
-                            }
-
-                            return false;
-                        })
-                        ->formatStateUsing(fn (Eatery|NationwideBranch|null $record): ?string => $record?->county?->county)
-                        ->required(),
-
-                    TextInput::make('town')
-                        ->dehydrated(false)
-                        ->disabled(function (Get $get, ?string $state): bool {
-                            if ($get('unlock_location')) {
-                                return false;
-                            }
-
-                            if ($get('add_manually') === false) {
-                                return true;
-                            }
-
-                            return $get('location') && $state;
-                        })
-                        ->live()
-                        ->visible(function (Get $get, string $operation) use ($isBranch): bool {
-                            $isChain = ! $isBranch && $get('is_nationwide');
-
-                            if ($operation !== 'create') {
-                                return ! $isChain;
-                            }
-
-                            if ($get('add_manually')) {
-                                return ! $isChain;
-                            }
-
-                            if ($get('county') !== null) {
-                                return ! $isChain;
-                            }
-
-                            return false;
-                        })
-                        ->formatStateUsing(fn (Eatery|NationwideBranch|null $record): ?string => $record?->town?->town)
-                        ->required(),
-
-                    TextInput::make('area')
-                        ->dehydrated(false)
-                        ->disabled(function (Get $get, ?string $state): bool {
-                            if ($get('unlock_location')) {
-                                return false;
-                            }
-
-                            if ($get('add_manually') === false) {
-                                return true;
-                            }
-
-                            return $get('location') && $state;
-                        })
-                        ->live()
-                        ->visible(function (Get $get, string $operation) use ($isBranch): bool {
-                            if ($get('county') !== 'London') {
-                                return false;
-                            }
-
-                            $isChain = ! $isBranch && $get('is_nationwide');
-
-                            if ($operation !== 'create') {
-                                return ! $isChain;
-                            }
-
-                            if ($get('add_manually')) {
-                                return ! $isChain;
-                            }
-
-                            if ($get('country') !== null) {
-                                return ! $isChain;
-                            }
-
-                            return false;
-                        })
-                        ->formatStateUsing(fn (Eatery|NationwideBranch|null $record): ?string => $record?->area?->area)
-                        ->required(),
-
-                    Action::make('reset_location')
-                        ->button()
-                        ->color('danger')
-                        ->visible(fn (Get $get): bool => $get('location') && ($get('country') || $get('county') || $get('town')))
-                        ->action(function (Set $set): void {
-                            $set('country_id', null);
+                        ->required()
+                        ->hidden($isChain)
+                        ->dehydratedWhenHidden()
+                        ->afterStateUpdated(function (Set $set): void {
                             $set('county_id', null);
                             $set('town_id', null);
                             $set('area_id', null);
-
-                            $set('country', null);
-                            $set('county', null);
-                            $set('town', null);
-                            $set('area', null);
-
-                            $set('location', null);
                         }),
 
-                    Hidden::make('unlock_location')->default(false)->dehydrated(false),
-
-                    Action::make('unlock_location_action')
-                        ->label('Unlock Location Fields')
-                        ->button()
-                        ->visible(function (Get $get, string $operation) use ($isBranch): bool {
-                            $isChain = ! $isBranch && $get('is_nationwide');
-
-                            if ($isChain) {
-                                return false;
-                            }
-
-                            if ($get('unlock_location')) {
-                                return false;
-                            }
-
-                            if ($operation !== 'create') {
-                                return true;
-                            }
-
-                            return $get('location') && ($get('country') || $get('county') || $get('town'));
+                    Select::make('county_id')
+                        ->label('County')
+                        ->options(fn (Get $get): array => EateryCounty::query()
+                            ->withoutGlobalScopes()
+                            ->where('country_id', $get('country_id'))
+                            ->orderBy('county')
+                            ->pluck('county', 'id')
+                            ->all())
+                        ->searchable()
+                        ->live()
+                        ->required()
+                        ->hidden($isChain)
+                        ->dehydratedWhenHidden()
+                        ->afterStateUpdated(function (Set $set): void {
+                            $set('town_id', null);
+                            $set('area_id', null);
                         })
-                        ->action(function (Set $set): void {
-                            $set('unlock_location', true);
-                        }),
+                        ->createOptionModalHeading('Add County')
+                        ->createOptionForm(self::createPlaceForm('county', EateryCounty::class))
+                        ->createOptionAction(fn (Action $action, Get $get): Action => $action->visible(filled($get('country_id'))))
+                        ->createOptionUsing(fn (array $data, Get $get): int => EateryCounty::query()->create([
+                            ...$data,
+                            'country_id' => $get('country_id'),
+                            'legacy' => $data['slug'],
+                        ])->id),
+
+                    Select::make('town_id')
+                        ->label(fn (Get $get): string => self::isLondon($get('county_id')) ? 'Borough' : 'Town')
+                        ->options(fn (Get $get): array => EateryTown::query()
+                            ->withoutGlobalScopes()
+                            ->where('county_id', $get('county_id'))
+                            ->orderBy('town')
+                            ->pluck('town', 'id')
+                            ->all())
+                        ->searchable()
+                        ->live()
+                        ->required()
+                        ->hidden($isChain)
+                        ->dehydratedWhenHidden()
+                        ->afterStateUpdated(fn (Set $set): mixed => $set('area_id', null))
+                        ->createOptionModalHeading(fn (Get $get): string => 'Add Town to ' . EateryCounty::query()->withoutGlobalScopes()->find($get('county_id'))?->county)
+                        ->createOptionForm(fn (Get $get): array => self::createPlaceForm('town', EateryTown::class, 'county_id', (int) $get('county_id')))
+                        ->createOptionAction(fn (Action $action, Get $get): Action => $action->visible(filled($get('county_id'))))
+                        ->createOptionUsing(fn (array $data, Get $get): int => EateryTown::query()->create([
+                            ...$data,
+                            'county_id' => $get('county_id'),
+                            'legacy' => $data['slug'],
+                        ])->id),
+
+                    Select::make('area_id')
+                        ->label('Area')
+                        ->options(fn (Get $get): array => EateryArea::query()
+                            ->withoutGlobalScopes()
+                            ->where('town_id', $get('town_id'))
+                            ->orderBy('area')
+                            ->pluck('area', 'id')
+                            ->all())
+                        ->searchable()
+                        ->required(fn (Get $get): bool => self::isLondon($get('county_id')))
+                        ->hidden(fn (Get $get): bool => $isChain($get) || ! self::isLondon($get('county_id')))
+                        ->dehydratedWhenHidden()
+                        ->createOptionModalHeading(fn (Get $get): string => 'Add Area to ' . EateryTown::query()->withoutGlobalScopes()->find($get('town_id'))?->town)
+                        ->createOptionForm(fn (Get $get): array => self::createPlaceForm('area', EateryArea::class, 'town_id', (int) $get('town_id')))
+                        ->createOptionAction(fn (Action $action, Get $get): Action => $action->visible(filled($get('town_id'))))
+                        ->createOptionUsing(fn (array $data, Get $get): int => EateryArea::query()->create([
+                            ...$data,
+                            'town_id' => $get('town_id'),
+                        ])->id),
 
                     Grid::make()
                         ->columnSpanFull()
-                        ->hidden(fn (Get $get): bool => ( ! $isBranch && $get('is_nationwide')))
+                        ->hidden($isChain)
                         ->columns(3)
                         ->schema([
                             Grid::make()
@@ -369,5 +212,44 @@ class EateryLocationSection
                         ]),
                 ];
             });
+    }
+
+    protected static function isLondon(mixed $countyId): bool
+    {
+        if (blank($countyId)) {
+            return false;
+        }
+
+        return EateryCounty::query()->withoutGlobalScopes()->whereKey($countyId)->where('slug', 'london')->exists();
+    }
+
+    /**
+     * @param  class-string<Model>  $model
+     * @return array<int, TextInput>
+     */
+    protected static function createPlaceForm(string $nameColumn, string $model, ?string $parentColumn = null, ?int $parentId = null): array
+    {
+        return [
+            TextInput::make($nameColumn)
+                ->label('Name')
+                ->required()
+                ->maxLength(200)
+                ->live(onBlur: true)
+                ->afterStateUpdated(fn (?string $state, Set $set): mixed => $set('slug', Str::slug((string) $state))),
+
+            TextInput::make('slug')
+                ->required()
+                ->maxLength(200)
+                ->unique(
+                    table: $model,
+                    column: 'slug',
+                    ignoreRecord: false,
+                    modifyRuleUsing: fn (Unique $rule): Unique => $parentColumn ? $rule->where($parentColumn, $parentId) : $rule,
+                ),
+
+            TextInput::make('latlng')
+                ->label('Lat / Lng')
+                ->nullable(),
+        ];
     }
 }

@@ -6,11 +6,12 @@ namespace App\Filament\Resources\EatingOut\Eateries\Tables;
 
 use App\Filament\Resources\EatingOut\Eateries\Actions\GenerateSealiacOverviewAction;
 use App\Filament\Resources\EatingOut\Eateries\EateryResource;
+use App\Filament\Resources\EatingOut\Eateries\Pages\ListEateries;
 use App\Models\EatingOut\Eatery;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Actions\ReplicateAction;
+use Filament\Actions\ViewAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -24,13 +25,14 @@ class EateriesTable
     {
         return $table
             ->modifyQueryUsing(
-                fn (Builder $query) => $query
+                fn (Builder $query, ListEateries $livewire) => $query
                     ->addSelect('wheretoeat.*')
                     ->selectRaw('(select country from wheretoeat_countries where wheretoeat_countries.id = wheretoeat.country_id) as order_country')
                     ->selectRaw('(select county from wheretoeat_counties where wheretoeat_counties.id = wheretoeat.county_id) as order_county')
                     ->selectRaw('(select town from wheretoeat_towns where wheretoeat_towns.id = wheretoeat.town_id) as order_town')
                     ->when(
-                        request()->missing('sort'),
+                        $livewire->activeTab === 'chains',
+                        fn (Builder $query) => $query->reorder('name'),
                         fn (Builder $query) => $query
                             ->reorder('order_country')
                             ->orderBy('order_county')
@@ -51,13 +53,11 @@ class EateriesTable
 
                 TextColumn::make('nationwide_branches_count')
                     ->label('Branches')
-                    ->sortable()
                     ->visible(fn ($livewire): bool => $livewire->activeTab === 'chains')
                     ->numeric(),
 
                 TextColumn::make('reviews_count')
                     ->label('Reviews')
-                    ->sortable()
                     ->numeric(),
 
                 TextColumn::make('type.name'),
@@ -66,6 +66,7 @@ class EateriesTable
 
                 IconColumn::make('closed_down')->boolean(),
             ])
+            ->recordUrl(fn (Eatery $record): string => EateryResource::getUrl('edit', ['record' => $record]))
             ->filters([
                 TernaryFilter::make('live'),
 
@@ -85,17 +86,14 @@ class EateriesTable
             ->recordActions([
                 GenerateSealiacOverviewAction::make(),
 
-                ReplicateAction::make()
-                    ->excludeAttributes(['slug', 'order_country', 'order_county', 'order_town', 'reviews_count', 'nationwide_branches_count'])
-                    ->beforeReplicaSaved(fn (Eatery $replica): false => $replica->live = false)
-                    ->successRedirectUrl(fn (Eatery $replica): string => EateryResource::getUrl('edit', ['record' => $replica])),
+                Action::make('replicate')
+                    ->icon(Heroicon::Square2Stack)
+                    ->color('gray')
+                    ->url(fn (Eatery $record): string => EateryResource::getUrl('create', ['replicate' => $record->id])),
+
+                ViewAction::make(),
 
                 EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ]);
     }
 }

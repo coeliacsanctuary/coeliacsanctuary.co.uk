@@ -135,6 +135,26 @@ class EateryOpeningTimesTest extends TestCase
         $this->assertNull($openingTimes->monday_end);
     }
 
+    #[Test]
+    public function itAddsOpeningTimesToAnEateryWithoutAny(): void
+    {
+        $this->editEatery()
+            ->fillForm([
+                'no_opening_times' => false,
+                'openingTimes.monday_start_h' => 8,
+                'openingTimes.monday_end_h' => 20,
+                'openingTimes.sunday_closed' => true,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $openingTimes = $this->eatery->refresh()->openingTimes;
+
+        $this->assertSame('08:00:00', $openingTimes->monday_start);
+        $this->assertSame('20:00:00', $openingTimes->monday_end);
+        $this->assertNull($openingTimes->sunday_start);
+    }
+
     protected function withOpeningTimes(array $overrides = []): void
     {
         $this->create(EateryOpeningTimesModel::class, ['wheretoeat_id' => $this->eatery->id, ...$overrides]);

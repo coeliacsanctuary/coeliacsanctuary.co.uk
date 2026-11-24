@@ -20,6 +20,16 @@ readonly class EateryLocationDto implements JsonSerializable
         //
     }
 
+    public function typeLabel(): string
+    {
+        return match ($this->type) {
+            'county' => 'County',
+            'borough' => 'London Borough',
+            'area' => 'London Area',
+            default => 'Town',
+        };
+    }
+
     public function jsonSerialize(): mixed
     {
         return get_object_vars($this);

@@ -22,7 +22,9 @@ class FindEateryLocation
             ->merge($this->getTownResults($search))
             ->merge($this->getAreaResults($search))
             ->sortBy(fn (EateryLocationDto $dto): int => levenshtein($dto->matchedTerm, $search))
-            ->mapWithKeys(fn (EateryLocationDto $dto): array => ["{$dto->countryId}|{$dto->countyId}|{$dto->townId}|{$dto->areaId}" => $dto->label])
+            ->mapWithKeys(fn (EateryLocationDto $dto): array => [
+                "{$dto->countryId}|{$dto->countyId}|{$dto->townId}|{$dto->areaId}" => view('filament.forms.components.location-option', ['location' => $dto])->render(),
+            ])
             ->take(10)
             ->all();
     }

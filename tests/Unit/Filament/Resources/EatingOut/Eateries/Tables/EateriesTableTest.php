@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources\EatingOut\Eateries\Tables;
 
+use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\EatingOut\Eateries\Pages\ListEateries;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
@@ -220,19 +221,48 @@ class EateriesTableTest extends TestCase
     }
 
     #[Test]
-    public function itReplicatesAnEateryWithItsVisibilityTurnedOff(): void
+    public function itLinksReplicateToThePrefilledCreateForm(): void
     {
-        $eatery = $this->create(Eatery::class, ['name' => 'The Gluten Free Cafe']);
+        $eatery = $this->create(Eatery::class);
 
-        $this->listEateries()->callAction(TestAction::make('replicate')->table($eatery));
+        $this->listEateries()->assertActionHasUrl(
+            TestAction::make('replicate')->table($eatery),
+            EateryResource::getUrl('create', ['replicate' => $eatery->id]),
+        );
+    }
 
-        $this->assertDatabaseCount(Eatery::class, 2);
+    #[Test]
+    public function itHasNoSortableColumnsOrBulkActions(): void
+    {
+        $table = $this->listEateries()->instance()->getTable();
 
-        $replica = Eatery::query()->withoutGlobalScopes()->latest('id')->firstOrFail();
+        foreach ($table->getColumns() as $column) {
+            $this->assertFalse($column->isSortable());
+        }
 
-        $this->assertNotSame($eatery->id, $replica->id);
-        $this->assertSame('The Gluten Free Cafe', $replica->name);
-        $this->assertFalse($replica->live);
+        $this->assertEmpty($table->getFlatBulkActions());
+    }
+
+    #[Test]
+    public function itSortsChainsByName(): void
+    {
+        $last = $this->create(Eatery::class, ['name' => 'Zizzi']);
+        $first = $this->create(Eatery::class, ['name' => 'Ask']);
+
+        $this->listEateries()
+            ->set('activeTab', 'chains')
+            ->assertCanSeeTableRecords([$first, $last], inOrder: true);
+    }
+
+    #[Test]
+    public function itOpensTheEditPageFromTheRow(): void
+    {
+        $eatery = $this->create(Eatery::class);
+
+        $this->assertSame(
+            EateryResource::getUrl('edit', ['record' => $eatery]),
+            $this->listEateries()->instance()->getTable()->getRecordUrl($eatery),
+        );
     }
 
     protected function listEateries(): Testable

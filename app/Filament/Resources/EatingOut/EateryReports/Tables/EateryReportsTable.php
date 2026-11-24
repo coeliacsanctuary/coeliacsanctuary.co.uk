@@ -7,6 +7,7 @@ namespace App\Filament\Resources\EatingOut\EateryReports\Tables;
 use App\Models\EatingOut\EateryReport;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\TextSize;
@@ -37,6 +38,7 @@ class EateryReportsTable
                     ->schema([
                         Stack::make([
                             TextColumn::make('eatery.name')
+                                ->visible(fn ($livewire): bool => ! $livewire instanceof RelationManager)
                                 ->size(TextSize::Large)
                                 ->weight(FontWeight::Bold),
 

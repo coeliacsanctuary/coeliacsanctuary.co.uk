@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\EatingOut\Eateries\RelationManagers;
 
 use App\Filament\Resources\EatingOut\EateryReviews\EateryReviewResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Table;
 
 class ReviewsRelationManager extends RelationManager
 {
@@ -15,11 +13,8 @@ class ReviewsRelationManager extends RelationManager
 
     protected static ?string $relatedResource = EateryReviewResource::class;
 
-    public function table(Table $table): Table
+    public function isReadOnly(): bool
     {
-        return $table
-            ->headerActions([
-                CreateAction::make(),
-            ]);
+        return false;
     }
 }

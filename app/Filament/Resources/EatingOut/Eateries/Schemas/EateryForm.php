@@ -111,6 +111,7 @@ class EateryForm
                         Select::make('type_id')
                             ->relationship('type', 'name', fn (Builder $query) => $query->reorder('id'))
                             ->columnSpanFull()
+                            ->default(EateryType::EATERY->value)
                             ->live()
                             ->required()
                             ->afterStateUpdated(function (Set $set, mixed $state): void {

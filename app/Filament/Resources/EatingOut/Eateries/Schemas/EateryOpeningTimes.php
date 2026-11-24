@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\EatingOut\Eateries\Schemas;
 
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryOpeningTimes as EateryOpeningTimesModel;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
@@ -24,7 +25,7 @@ class EateryOpeningTimes
                 Toggle::make('no_opening_times')
                     ->label('Unknown / Not Set')
                     ->default(true)
-                    ->formatStateUsing(fn (?Eatery $record): bool => ! $record instanceof Eatery || $record->openingTimes === null)
+                    ->formatStateUsing(fn (?Eatery $record, ?bool $state): bool => $record instanceof Eatery ? $record->openingTimes === null : $state ?? true)
                     ->dehydrated(false)
                     ->live(),
 
@@ -34,65 +35,13 @@ class EateryOpeningTimes
                     ->columns(8)
                     ->extraAttributes(['class' => 'items-center'])
                     ->relationship('openingTimes')
-                    ->formatStateUsing(function (?Eatery $record) {
-                        $openingTimes = $record?->openingTimes;
-
-                        if ( ! $openingTimes) {
-                            return [];
-                        }
-
-                        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-                        return collect($days)
-                            ->map(function ($day) use ($openingTimes): array {
-                                $start = explode(':', $openingTimes->{"{$day}_start"} ?? '');
-                                $end = explode(':', $openingTimes->{"{$day}_end"} ?? '');
-
-                                return [
-                                    "{$day}_closed" => $openingTimes->{"{$day}_start"} === null,
-                                    "{$day}_start_h" => $openingTimes->{"{$day}_start"} ? (int) $start[0] : 0,
-                                    "{$day}_start_m" => $openingTimes->{"{$day}_start"} ? (int) $start[1] : 0,
-                                    "{$day}_end_h" => $openingTimes->{"{$day}_end"} ? (int) $end[0] : 0,
-                                    "{$day}_end_m" => $openingTimes->{"{$day}_end"} ? (int) $end[1] : 0,
-                                ];
-                            })
-                            ->collapse()
-                            ->toArray();
-                    })
-                    ->mutateRelationshipDataBeforeSaveUsing(function (array $state): array {
-                        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-                        return collect($days)
-                            ->map(function (string $day) use ($state): array {
-                                $start = null;
-                                $end = null;
-
-                                if ( ! Arr::boolean($state, "{$day}_closed")) {
-                                    $start = implode(':', [
-                                        Str::padLeft(Arr::get($state, "{$day}_start_h", 0), 2, '0'),
-                                        Str::padLeft(Arr::get($state, "{$day}_start_m", 0), 2, '0'),
-                                        '00',
-                                    ]);
-
-                                    $end = implode(':', [
-                                        Str::padLeft(Arr::get($state, "{$day}_end_h", 0), 2, '0'),
-                                        Str::padLeft(Arr::get($state, "{$day}_end_m", 0), 2, '0'),
-                                        '00',
-                                    ]);
-                                }
-
-                                return [
-                                    "{$day}_start" => $start,
-                                    "{$day}_end" => $end,
-                                ];
-                            })
-                            ->collapse()
-                            ->toArray();
-                    })
+                    ->formatStateUsing(fn (?Eatery $record, mixed $state): array => ! $record instanceof Eatery && is_array($state) && $state !== []
+                        ? [...self::toFormState(null), ...array_filter($state, fn (mixed $value): bool => $value !== null)]
+                        : self::toFormState($record?->openingTimes))
+                    ->mutateRelationshipDataBeforeCreateUsing(fn (array $state): array => self::fromFormState($state))
+                    ->mutateRelationshipDataBeforeSaveUsing(fn (array $state): array => self::fromFormState($state))
                     ->schema(function () {
-                        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-                        return collect($days)
+                        return collect(self::days())
                             ->map(fn (string $day): array => [
                                 Text::make(ucwords($day))->extraAttributes(['style' => 'font-weight: 600'])->columnSpan(5),
 
@@ -142,5 +91,61 @@ class EateryOpeningTimes
                             ->toArray();
                     }),
             ]);
+    }
+
+    /** @return array<string, bool|int> */
+    public static function toFormState(?EateryOpeningTimesModel $openingTimes): array
+    {
+        return collect(self::days())
+            ->map(function (string $day) use ($openingTimes): array {
+                $start = $openingTimes?->{"{$day}_start"};
+                $end = $openingTimes?->{"{$day}_end"};
+
+                [$startHour, $startMinute] = explode(':', $start ?? '0:0');
+                [$endHour, $endMinute] = explode(':', $end ?? '0:0');
+
+                return [
+                    "{$day}_closed" => $openingTimes instanceof EateryOpeningTimesModel && $start === null,
+                    "{$day}_start_h" => (int) $startHour,
+                    "{$day}_start_m" => (int) $startMinute,
+                    "{$day}_end_h" => (int) $endHour,
+                    "{$day}_end_m" => (int) $endMinute,
+                ];
+            })
+            ->collapse()
+            ->all();
+    }
+
+    /**
+     * @param  array<string, mixed>  $state
+     * @return array<string, string|null>
+     */
+    protected static function fromFormState(array $state): array
+    {
+        return collect(self::days())
+            ->map(fn (string $day): array => Arr::get($state, "{$day}_closed")
+                ? ["{$day}_start" => null, "{$day}_end" => null]
+                : [
+                    "{$day}_start" => self::time($state, "{$day}_start"),
+                    "{$day}_end" => self::time($state, "{$day}_end"),
+                ])
+            ->collapse()
+            ->all();
+    }
+
+    /** @param array<string, mixed> $state */
+    protected static function time(array $state, string $key): string
+    {
+        return implode(':', [
+            Str::padLeft((string) Arr::get($state, "{$key}_h", 0), 2, '0'),
+            Str::padLeft((string) Arr::get($state, "{$key}_m", 0), 2, '0'),
+            '00',
+        ]);
+    }
+
+    /** @return array<int, string> */
+    protected static function days(): array
+    {
+        return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     }
 }

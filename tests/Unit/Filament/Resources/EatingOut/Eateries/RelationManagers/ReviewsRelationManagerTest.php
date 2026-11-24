@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources\EatingOut\Eateries\RelationManagers;
 
+use App\Filament\Resources\EatingOut\EateryReviews\Pages\ListEateryReviews;
 use App\Filament\Resources\EatingOut\Eateries\Pages\EditEatery;
 use App\Filament\Resources\EatingOut\Eateries\RelationManagers\ReviewsRelationManager;
 use App\Models\EatingOut\Eatery;
@@ -56,6 +57,36 @@ class ReviewsRelationManagerTest extends TestCase
         $this->reviewsPanel()
             ->assertCanSeeTableRecords([$mine])
             ->assertCanNotSeeTableRecords([$theirs]);
+    }
+
+    #[Test]
+    public function itShowsUnapprovedReviews(): void
+    {
+        $review = $this->create(EateryReview::class, ['wheretoeat_id' => $this->eatery->id, 'approved' => false]);
+
+        $this->reviewsPanel()->assertCanSeeTableRecords([$review]);
+    }
+
+    #[Test]
+    public function itShowsAdminReviews(): void
+    {
+        $review = $this->build(EateryReview::class)->adminReview()->on($this->eatery)->create();
+
+        $this->reviewsPanel()->assertCanSeeTableRecords([$review]);
+    }
+
+    #[Test]
+    public function itKeepsAdminReviewsOffTheMainReviewsList(): void
+    {
+        $review = $this->build(EateryReview::class)->adminReview()->on($this->eatery)->create();
+
+        Livewire::test(ListEateryReviews::class)->assertCanNotSeeTableRecords([$review]);
+    }
+
+    #[Test]
+    public function itDoesNotAllowReviewsToBeCreated(): void
+    {
+        $this->assertEmpty($this->reviewsPanel()->instance()->getTable()->getHeaderActions());
     }
 
     protected function reviewsPanel(): Testable

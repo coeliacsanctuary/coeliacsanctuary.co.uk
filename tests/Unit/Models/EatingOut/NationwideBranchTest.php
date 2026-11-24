@@ -61,6 +61,46 @@ class NationwideBranchTest extends TestCase
     }
 
     #[Test]
+    public function itAddsThePostcodeToTheSlugForASecondOneWithTheSameNameInTheTown(): void
+    {
+        $first = $this->create(NationwideBranch::class, ['name' => null, 'slug' => null, 'address' => "1 High Street\nCW1 1AA", 'wheretoeat_id' => $this->eatery->id]);
+        $second = $this->create(NationwideBranch::class, ['name' => null, 'slug' => null, 'address' => "2 Low Street\nCW2 2BB", 'wheretoeat_id' => $this->eatery->id]);
+
+        $this->assertSame('crewe', $first->slug);
+        $this->assertSame('crewe-cw2-2bb', $second->slug);
+    }
+
+    #[Test]
+    public function itDoesNotAddThePostcodeToTheSlugForTheSameNameInAnotherTown(): void
+    {
+        $this->create(EateryTown::class, ['id' => 99, 'town' => 'Truro']);
+
+        $this->create(NationwideBranch::class, ['name' => null, 'slug' => null, 'wheretoeat_id' => $this->eatery->id]);
+        $other = $this->create(NationwideBranch::class, ['name' => null, 'slug' => null, 'town_id' => 99, 'wheretoeat_id' => $this->eatery->id]);
+
+        $this->assertSame('truro', $other->slug);
+    }
+
+    #[Test]
+    public function itDoesNotCountItselfWhenRegeneratingTheSlug(): void
+    {
+        $model = $this->create(NationwideBranch::class, ['name' => null, 'slug' => null, 'wheretoeat_id' => $this->eatery->id]);
+
+        $this->assertSame('crewe', $model->generateSlug(force: true));
+    }
+
+    #[Test]
+    public function itKeepsItsSlugWhenUpdated(): void
+    {
+        $first = $this->create(NationwideBranch::class, ['name' => null, 'slug' => null, 'wheretoeat_id' => $this->eatery->id]);
+        $this->create(NationwideBranch::class, ['name' => null, 'slug' => null, 'wheretoeat_id' => $this->eatery->id]);
+
+        $first->update(['address' => "3 New Street\nCW3 3CC"]);
+
+        $this->assertSame('crewe', $first->refresh()->slug);
+    }
+
+    #[Test]
     public function itDispatchesTheCreateOpenGraphImageJobWhenSavedForBranchAndEateryAndTownAndCounty(): void
     {
         config()->set('coeliac.generate_og_images', true);

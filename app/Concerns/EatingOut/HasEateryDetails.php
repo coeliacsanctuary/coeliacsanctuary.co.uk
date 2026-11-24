@@ -10,6 +10,7 @@ use App\Models\EatingOut\EateryCountry;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryReview;
 use App\Models\EatingOut\EateryTown;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,10 +30,11 @@ trait HasEateryDetails
     protected function hasDuplicateNameInTown(): bool
     {
         return self::query()
+            ->when($this->exists, fn (Builder $query) => $query->whereKeyNot($this->id))
             ->where('town_id', $this->town_id)
             ->where('name', $this->name)
             ->where('live', 1)
-            ->count() > 1;
+            ->exists();
     }
 
     public function eateryPostcode(): string
