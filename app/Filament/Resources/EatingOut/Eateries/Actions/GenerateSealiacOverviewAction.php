@@ -24,13 +24,8 @@ class GenerateSealiacOverviewAction
                 && ($record instanceof NationwideBranch || $record->closed_down === false)
                 && $record->reviews_count > 0)
             ->action(function (Eatery|NationwideBranch $record): void {
-                $eatery = $record;
-                $branch = null;
-
-                if ($record instanceof NationwideBranch) {
-                    $eatery = $record->eatery;
-                    $branch = $record;
-                }
+                $eatery = $record instanceof NationwideBranch ? $record->eatery : $record;
+                $branch = $record instanceof NationwideBranch ? $record : null;
 
                 $eatery->sealiacOverview?->update(['invalidated' => true]);
                 $branch?->sealiacOverview?->update(['invalidated' => true]);
