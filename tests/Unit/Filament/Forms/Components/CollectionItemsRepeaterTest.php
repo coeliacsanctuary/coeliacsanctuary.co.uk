@@ -314,7 +314,7 @@ class CollectionItemsRepeaterTest extends TestCase
     {
         return TestAction::make($name)
             ->schemaComponent($this->componentKey())
-            ->arguments($item ? ['item' => "record-{$item->id}"] : []);
+            ->arguments($item instanceof CollectionGroupItem ? ['item' => "record-{$item->id}"] : []);
     }
 
     protected function componentKey(): string

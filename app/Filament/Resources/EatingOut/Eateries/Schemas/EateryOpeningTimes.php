@@ -40,56 +40,54 @@ class EateryOpeningTimes
                         : self::toFormState($record?->openingTimes))
                     ->mutateRelationshipDataBeforeCreateUsing(fn (array $state): array => self::fromFormState($state))
                     ->mutateRelationshipDataBeforeSaveUsing(fn (array $state): array => self::fromFormState($state))
-                    ->schema(function () {
-                        return collect(self::days())
-                            ->map(fn (string $day): array => [
-                                Text::make(ucwords($day))->extraAttributes(['style' => 'font-weight: 600'])->columnSpan(5),
+                    ->schema(fn () => collect(self::days())
+                        ->map(fn (string $day): array => [
+                            Text::make(ucwords($day))->extraAttributes(['style' => 'font-weight: 600'])->columnSpan(5),
 
-                                Toggle::make($day . '_closed')
-                                    ->dehydrated(false)
-                                    ->label('Closed')
-                                    ->inlineLabel()
-                                    ->live(),
+                            Toggle::make($day . '_closed')
+                                ->dehydrated(false)
+                                ->label('Closed')
+                                ->inlineLabel()
+                                ->live(),
 
-                                Grid::make()
-                                    ->columns(2)
-                                    ->schema([
-                                        Select::make($day . '_start_h')
-                                            ->options(array_map(strval(...), range(0, 23)))
-                                            ->hiddenLabel()
-                                            ->default(0)
-                                            ->required(fn (Get $get): bool => ! $get($day . '_closed'))
-                                            ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
+                            Grid::make()
+                                ->columns(2)
+                                ->schema([
+                                    Select::make($day . '_start_h')
+                                        ->options(array_map(strval(...), range(0, 23)))
+                                        ->hiddenLabel()
+                                        ->default(0)
+                                        ->required(fn (Get $get): bool => ! $get($day . '_closed'))
+                                        ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
 
-                                        Select::make($day . '_start_m')
-                                            ->options([0 => '00', 15 => '15', 30 => '30', 45 => '45'])
-                                            ->hiddenLabel()
-                                            ->default(0)
-                                            ->required(fn (Get $get): bool => ! $get($day . '_closed'))
-                                            ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
-                                    ]),
+                                    Select::make($day . '_start_m')
+                                        ->options([0 => '00', 15 => '15', 30 => '30', 45 => '45'])
+                                        ->hiddenLabel()
+                                        ->default(0)
+                                        ->required(fn (Get $get): bool => ! $get($day . '_closed'))
+                                        ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
+                                ]),
 
-                                Grid::make()
-                                    ->columns(2)
-                                    ->schema([
-                                        Select::make($day . '_end_h')
-                                            ->options(array_map(strval(...), range(0, 23)))
-                                            ->hiddenLabel()
-                                            ->default(0)
-                                            ->required(fn (Get $get): bool => ! $get($day . '_closed'))
-                                            ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
+                            Grid::make()
+                                ->columns(2)
+                                ->schema([
+                                    Select::make($day . '_end_h')
+                                        ->options(array_map(strval(...), range(0, 23)))
+                                        ->hiddenLabel()
+                                        ->default(0)
+                                        ->required(fn (Get $get): bool => ! $get($day . '_closed'))
+                                        ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
 
-                                        Select::make($day . '_end_m')
-                                            ->options([0 => '00', 15 => '15', 30 => '30', 45 => '45'])
-                                            ->hiddenLabel()
-                                            ->default(0)
-                                            ->required(fn (Get $get): bool => ! $get($day . '_closed'))
-                                            ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
-                                    ]),
-                            ])
-                            ->flatten()
-                            ->toArray();
-                    }),
+                                    Select::make($day . '_end_m')
+                                        ->options([0 => '00', 15 => '15', 30 => '30', 45 => '45'])
+                                        ->hiddenLabel()
+                                        ->default(0)
+                                        ->required(fn (Get $get): bool => ! $get($day . '_closed'))
+                                        ->disabled(fn (Get $get): mixed => $get($day . '_closed')),
+                                ]),
+                        ])
+                        ->flatten()
+                        ->toArray()),
             ]);
     }
 

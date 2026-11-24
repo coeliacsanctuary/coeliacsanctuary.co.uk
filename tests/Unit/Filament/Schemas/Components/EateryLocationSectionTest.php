@@ -99,7 +99,7 @@ class EateryLocationSectionTest extends TestCase
     {
         $this->createPage()
             ->set('data.location', '1|2|2|')
-            ->set('data.location', null)
+            ->set('data.location')
             ->assertSet('data.county_id', 2)
             ->assertSet('data.town_id', 2);
     }

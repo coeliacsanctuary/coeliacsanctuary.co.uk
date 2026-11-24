@@ -28,10 +28,11 @@
                         x-sortable-item="{{ $tile['key'] }}"
                         class="flex flex-col overflow-hidden rounded-lg bg-white ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                     >
-                        <div @if ($isReorderable) x-sortable-handle @endif @class(['flex-1', 'cursor-grab' => $isReorderable])>
-                            <div
-                                class="flex aspect-[16/10] items-center justify-center overflow-hidden bg-gray-100 text-gray-400 dark:bg-white/5 dark:text-gray-500"
-                            >
+                        <div
+                            @if ($isReorderable) x-sortable-handle @endif
+                            @class(['flex-1', 'cursor-grab' => $isReorderable])
+                        >
+                            <div class="flex aspect-[16/10] items-center justify-center overflow-hidden bg-gray-100 text-gray-400 dark:bg-white/5 dark:text-gray-500">
                                 @if ($tile['imageUrl'])
                                     <img
                                         src="{{ $tile['imageUrl'] }}"
@@ -45,9 +46,13 @@
                             </div>
 
                             <div class="flex flex-col gap-1 p-2">
-                                <p class="line-clamp-2 min-h-10 text-sm font-semibold text-gray-950 dark:text-white">{{ $tile['title'] }}</p>
+                                <p class="line-clamp-2 min-h-10 text-sm font-semibold text-gray-950 dark:text-white">
+                                    {{ $tile['title'] }}
+                                </p>
 
-                                <p class="min-h-4 truncate text-xs text-gray-500 dark:text-gray-400">{{ $tile['meta'] }}</p>
+                                <p class="min-h-4 truncate text-xs text-gray-500 dark:text-gray-400">
+                                    {{ $tile['meta'] }}
+                                </p>
                             </div>
                         </div>
 
