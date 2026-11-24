@@ -100,21 +100,21 @@ class CollectionItemsRepeater extends Repeater
     /** @return array<int, array{key: string, title: string, meta: string|null, imageUrl: string|null, icon: Heroicon}> */
     public function getTiles(): array
     {
-        $rows = collect($this->getRawState() ?? []);
+        $rows = collect($this->rows());
 
         $models = $rows
-            ->filter(fn (array $row): bool => filled($row['item_type'] ?? null) && filled($row['item_id'] ?? null))
+            ->filter(fn (array $row): bool => isset($row['item_type'], $row['item_id']) && filled($row['item_type']) && filled($row['item_id']))
             ->groupBy('item_type')
-            ->map(fn (Collection $rows, string $type): Collection => CollectionItemSelect::baseQuery($type)
+            ->map(fn (Collection $rows): Collection => CollectionItemSelect::baseQuery($rows->firstOrFail()['item_type'])
                 ->whereKey($rows->pluck('item_id')->unique()->all())
                 ->get()
-                ->keyBy(fn (Model $item): mixed => $item->getKey()));
+                ->keyBy(fn (Model $item): int|string => $item->getKey()));
 
         return $rows
             ->map(function (array $row, string|int $key) use ($models): array {
                 $type = $row['item_type'] ?? null;
                 $model = $models->get($type)?->get($row['item_id'] ?? null);
-                $item = $model ? CollectionItemDto::fromModel($model, $type) : null;
+                $item = $model && $type ? CollectionItemDto::fromModel($model, $type) : null;
 
                 return [
                     'key' => (string) $key,
@@ -131,6 +131,12 @@ class CollectionItemsRepeater extends Repeater
             })
             ->values()
             ->all();
+    }
+
+    /** @return array<array-key, array{item_type?: class-string<Model>|null, item_id?: int|string|null, item_title?: string|null, item_description?: string|null}> */
+    protected function rows(): array
+    {
+        return $this->getRawState() ?? [];
     }
 
     /** @return array<int, Field> */

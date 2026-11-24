@@ -95,7 +95,7 @@ class EateryOpeningTimes
     public static function toFormState(?EateryOpeningTimesModel $openingTimes): array
     {
         return collect(self::days())
-            ->map(function (string $day) use ($openingTimes): array {
+            ->mapWithKeys(function (string $day) use ($openingTimes): array {
                 $start = $openingTimes?->{"{$day}_start"};
                 $end = $openingTimes?->{"{$day}_end"};
 
@@ -110,7 +110,6 @@ class EateryOpeningTimes
                     "{$day}_end_m" => (int) $endMinute,
                 ];
             })
-            ->collapse()
             ->all();
     }
 
@@ -121,13 +120,12 @@ class EateryOpeningTimes
     protected static function fromFormState(array $state): array
     {
         return collect(self::days())
-            ->map(fn (string $day): array => Arr::get($state, "{$day}_closed")
+            ->mapWithKeys(fn (string $day): array => Arr::get($state, "{$day}_closed")
                 ? ["{$day}_start" => null, "{$day}_end" => null]
                 : [
                     "{$day}_start" => self::time($state, "{$day}_start"),
                     "{$day}_end" => self::time($state, "{$day}_end"),
                 ])
-            ->collapse()
             ->all();
     }
 

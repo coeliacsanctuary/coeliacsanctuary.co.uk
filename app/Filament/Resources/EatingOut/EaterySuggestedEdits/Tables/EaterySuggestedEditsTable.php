@@ -141,7 +141,7 @@ class EaterySuggestedEditsTable
             'cuisine' => [$eatery->cuisine?->cuisine],
             'address' => explode("\n", $eatery->address),
             'features' => $eatery->features->map(fn (EateryFeature $feature): string => $feature->feature)->all(),
-            'opening_times' => collect($eatery->openingTimes->openingTimesArray ?? [])
+            'opening_times' => collect($eatery->openingTimes->opening_times_array ?? [])
                 ->map(fn (array $times, string $day): string => Str::headline($day) . ': ' . ($times['opens'] === 'Closed' ? 'Closed' : "{$times['opens']} - {$times['closes']}"))
                 ->values()
                 ->all(),
@@ -156,16 +156,28 @@ class EaterySuggestedEditsTable
             'venue_type' => [EateryVenueType::query()->where('venue_type', $edit->value)->orWhere('id', $edit->value)->first()?->venue_type],
             'cuisine' => [EateryCuisine::query()->where('cuisine', $edit->value)->orWhere('id', $edit->value)->first()?->cuisine],
             'address' => explode("\n", $edit->value),
-            'features' => collect(json_decode($edit->value, true))
+            'features' => collect(self::features($edit))
                 ->filter(fn (array $feature): bool => (bool) $feature['selected'])
                 ->map(fn (array $feature): string => $feature['label'])
                 ->values()
                 ->all(),
-            'opening_times' => collect(json_decode($edit->value, true))
+            'opening_times' => collect(self::openingTimes($edit))
                 ->map(fn (array $times): string => $times['label'] . ': ' . (($times['closed'] ?? false) ? 'Closed' : self::time($times['start']) . ' - ' . self::time($times['end'])))
                 ->all(),
             default => [$edit->value],
         }));
+    }
+
+    /** @return array<int, array{label: string, selected: bool}> */
+    protected static function features(EaterySuggestedEdit $edit): array
+    {
+        return json_decode($edit->value, true) ?? [];
+    }
+
+    /** @return array<int, array{label: string, closed?: bool, start: array<int, int|null>, end: array<int, int|null>}> */
+    protected static function openingTimes(EaterySuggestedEdit $edit): array
+    {
+        return json_decode($edit->value, true) ?? [];
     }
 
     /** @param array<int, int|null> $time */

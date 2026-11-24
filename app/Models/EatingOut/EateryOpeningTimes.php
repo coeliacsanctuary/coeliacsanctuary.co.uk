@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 /**
  * @property bool $is_open_now
- * @property array $opening_times_array
+ * @property array<string, array{opens: string|null, closes: string|null}> $opening_times_array
  */
 #[Table(name: 'wheretoeat_opening_times')]
 class EateryOpeningTimes extends Model
@@ -109,7 +109,7 @@ class EateryOpeningTimes extends Model
         return "{$time[0]}:{$time[1]}{$timeSuffix}";
     }
 
-    /** @return Attribute<array<mixed>, never> */
+    /** @return Attribute<array<string, array{opens: string|null, closes: string|null}>, never> */
     public function openingTimesArray(): Attribute
     {
         return Attribute::get(fn () => collect(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
@@ -119,7 +119,7 @@ class EateryOpeningTimes extends Model
                     'closes' => $this->closesAt($day),
                 ],
             ])
-            ->toArray());
+            ->all());
     }
 
     protected function currentDay(): string

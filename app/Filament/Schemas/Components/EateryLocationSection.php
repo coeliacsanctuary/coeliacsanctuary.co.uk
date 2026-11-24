@@ -100,7 +100,9 @@ class EateryLocationSection
                         ->createOptionForm(self::createPlaceForm('county', EateryCounty::class))
                         ->createOptionAction(fn (Action $action, Get $get): Action => $action->visible(filled($get('country_id'))))
                         ->createOptionUsing(fn (array $data, Get $get): int => EateryCounty::query()->create([
-                            ...$data,
+                            'county' => $data['county'],
+                            'slug' => $data['slug'],
+                            'latlng' => $data['latlng'],
                             'country_id' => $get('country_id'),
                             'legacy' => $data['slug'],
                         ])->id),
@@ -119,11 +121,13 @@ class EateryLocationSection
                         ->hidden($isChain)
                         ->dehydratedWhenHidden()
                         ->afterStateUpdated(fn (Set $set): mixed => $set('area_id', null))
-                        ->createOptionModalHeading(fn (Get $get): string => 'Add Town to ' . EateryCounty::query()->withoutGlobalScopes()->find($get('county_id'))?->county)
+                        ->createOptionModalHeading(fn (Get $get): string => 'Add Town to ' . EateryCounty::query()->withoutGlobalScopes()->find($get->integer('county_id', isNullable: true))?->county)
                         ->createOptionForm(fn (Get $get): array => self::createPlaceForm('town', EateryTown::class, 'county_id', (int) $get('county_id')))
                         ->createOptionAction(fn (Action $action, Get $get): Action => $action->visible(filled($get('county_id'))))
                         ->createOptionUsing(fn (array $data, Get $get): int => EateryTown::query()->create([
-                            ...$data,
+                            'town' => $data['town'],
+                            'slug' => $data['slug'],
+                            'latlng' => $data['latlng'],
                             'county_id' => $get('county_id'),
                             'legacy' => $data['slug'],
                         ])->id),
@@ -140,11 +144,13 @@ class EateryLocationSection
                         ->required(fn (Get $get): bool => self::isLondon($get('county_id')))
                         ->hidden(fn (Get $get): bool => $isChain($get) || ! self::isLondon($get('county_id')))
                         ->dehydratedWhenHidden()
-                        ->createOptionModalHeading(fn (Get $get): string => 'Add Area to ' . EateryTown::query()->withoutGlobalScopes()->find($get('town_id'))?->town)
+                        ->createOptionModalHeading(fn (Get $get): string => 'Add Area to ' . EateryTown::query()->withoutGlobalScopes()->find($get->integer('town_id', isNullable: true))?->town)
                         ->createOptionForm(fn (Get $get): array => self::createPlaceForm('area', EateryArea::class, 'town_id', (int) $get('town_id')))
                         ->createOptionAction(fn (Action $action, Get $get): Action => $action->visible(filled($get('town_id'))))
                         ->createOptionUsing(fn (array $data, Get $get): int => EateryArea::query()->create([
-                            ...$data,
+                            'area' => $data['area'],
+                            'slug' => $data['slug'],
+                            'latlng' => $data['latlng'],
                             'town_id' => $get('town_id'),
                         ])->id),
 
