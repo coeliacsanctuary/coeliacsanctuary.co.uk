@@ -9,7 +9,6 @@ use App\Filament\Resources\EatingOut\EateryAreas\Pages\CreateEateryArea;
 use App\Filament\Resources\EatingOut\EateryAreas\Pages\EditEateryArea;
 use App\Filament\Resources\EatingOut\EateryAreas\Pages\ListEateryAreas;
 use App\Filament\Resources\EatingOut\EateryAreas\RelationManagers\EateriesRelationManager;
-use App\Filament\Resources\EatingOut\EateryAreas\RelationManagers\NationwideBranchesRelationManager;
 use App\Filament\Resources\EatingOut\EateryAreas\Schemas\EateryAreaForm;
 use App\Filament\Resources\EatingOut\EateryAreas\Tables\EateryAreasTable;
 use App\Models\EatingOut\EateryArea;
@@ -47,7 +46,6 @@ class EateryAreaResource extends BaseResource
     {
         return [
             EateriesRelationManager::class,
-            NationwideBranchesRelationManager::class,
         ];
     }
 }

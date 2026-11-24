@@ -9,7 +9,6 @@ use App\Filament\Resources\EatingOut\EateryCounties\Pages\CreateEateryCounty;
 use App\Filament\Resources\EatingOut\EateryCounties\Pages\EditEateryCounty;
 use App\Filament\Resources\EatingOut\EateryCounties\Pages\ListEateryCounties;
 use App\Filament\Resources\EatingOut\EateryCounties\RelationManagers\EateriesRelationManager;
-use App\Filament\Resources\EatingOut\EateryCounties\RelationManagers\NationwideBranchesRelationManager;
 use App\Filament\Resources\EatingOut\EateryCounties\RelationManagers\TownsRelationManager;
 use App\Filament\Resources\EatingOut\EateryCounties\Schemas\EateryCountyForm;
 use App\Filament\Resources\EatingOut\EateryCounties\Tables\EateryCountiesTable;
@@ -49,7 +48,6 @@ class EateryCountyResource extends BaseResource
         return [
             TownsRelationManager::class,
             EateriesRelationManager::class,
-            NationwideBranchesRelationManager::class,
         ];
     }
 }

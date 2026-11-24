@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources\EatingOut\Eateries\Actions;
 
+use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
+use App\Filament\Resources\EatingOut\Eateries\Pages\EditEatery;
 use App\Filament\Resources\EatingOut\Eateries\Pages\ListEateries;
+use App\Filament\Resources\EatingOut\Eateries\RelationManagers\BranchesRelationManager;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryReview;
+use App\Models\EatingOut\NationwideBranch;
 use App\Models\SealiacOverview;
 use App\Models\User;
 use Database\Seeders\EateryScaffoldingSeeder;
@@ -86,6 +90,72 @@ class GenerateSealiacOverviewActionTest extends TestCase
         $this->assertTrue($overview->refresh()->invalidated);
     }
 
+    #[Test]
+    public function itIsVisibleForALiveReviewedBranch(): void
+    {
+        $branch = $this->reviewedBranch();
+
+        $this->listBranches($branch)->assertActionVisible($this->action($branch));
+    }
+
+    #[Test]
+    public function itIsHiddenForABranchWithNoReviews(): void
+    {
+        $branch = $this->create(NationwideBranch::class, ['wheretoeat_id' => $this->create(Eatery::class)->id]);
+
+        $this->listBranches($branch)->assertActionHidden($this->action($branch));
+    }
+
+    #[Test]
+    public function itIsHiddenForABranchThatIsntLive(): void
+    {
+        $branch = $this->reviewedBranch();
+        $branch->updateQuietly(['live' => false]);
+
+        $this->listBranches($branch)->assertActionHidden($this->action($branch));
+    }
+
+    #[Test]
+    public function itInvalidatesTheChainAndBranchOverviewsAndQueuesTheNewOne(): void
+    {
+        $branch = $this->reviewedBranch();
+
+        $chainOverview = $this->build(SealiacOverview::class)->forEatery($branch->eatery)->create(['invalidated' => false]);
+        $branchOverview = $this->build(SealiacOverview::class)->forNationwideBranch($branch)->create(['invalidated' => false]);
+
+        $this->listBranches($branch)
+            ->callAction($this->action($branch))
+            ->assertNotified();
+
+        $this->assertTrue($chainOverview->refresh()->invalidated);
+        $this->assertTrue($branchOverview->refresh()->invalidated);
+
+        $this->expectAction(GetSealiacEateryOverviewAction::class, [
+            fn (Eatery $eatery, NationwideBranch $argument): bool => $eatery->is($branch->eatery) && $argument->is($branch),
+        ], return: $this->build(SealiacOverview::class)->forNationwideBranch($branch)->create());
+
+        $job = Bus::dispatched(CallQueuedClosure::class)->last();
+
+        app()->call($job->handle(...));
+    }
+
+    protected function reviewedBranch(): NationwideBranch
+    {
+        $branch = $this->create(NationwideBranch::class, ['wheretoeat_id' => $this->create(Eatery::class)->id]);
+
+        $this->create(EateryReview::class, ['wheretoeat_id' => $branch->wheretoeat_id, 'nationwide_branch_id' => $branch->id]);
+
+        return $branch;
+    }
+
+    protected function listBranches(NationwideBranch $branch): Testable
+    {
+        return Livewire::test(BranchesRelationManager::class, [
+            'ownerRecord' => $branch->eatery,
+            'pageClass' => EditEatery::class,
+        ]);
+    }
+
     protected function reviewedEatery(): Eatery
     {
         $eatery = $this->create(Eatery::class);
@@ -95,9 +165,9 @@ class GenerateSealiacOverviewActionTest extends TestCase
         return $eatery;
     }
 
-    protected function action(Eatery $eatery): TestAction
+    protected function action(Eatery|NationwideBranch $record): TestAction
     {
-        return TestAction::make('generateSealiacOverview')->table($eatery);
+        return TestAction::make('generateSealiacOverview')->table($record);
     }
 
     protected function listEateries(): Testable

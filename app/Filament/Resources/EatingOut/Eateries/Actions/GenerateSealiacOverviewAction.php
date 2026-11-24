@@ -6,6 +6,7 @@ namespace App\Filament\Resources\EatingOut\Eateries\Actions;
 
 use App\Actions\EatingOut\GetSealiacEateryOverviewAction;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\NationwideBranch;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
@@ -19,11 +20,22 @@ class GenerateSealiacOverviewAction
             ->icon(Heroicon::Sparkles)
             ->color('gray')
             ->requiresConfirmation()
-            ->visible(fn (Eatery $record): bool => $record->live === true && $record->closed_down === false && $record->reviews_count > 0)
-            ->action(function (Eatery $record): void {
-                $record->sealiacOverview?->update(['invalidated' => true]);
+            ->visible(fn (Eatery|NationwideBranch $record): bool => $record->live === true
+                && ($record instanceof NationwideBranch || $record->closed_down === false)
+                && $record->reviews_count > 0)
+            ->action(function (Eatery|NationwideBranch $record): void {
+                $eatery = $record;
+                $branch = null;
 
-                dispatch(fn () => app(GetSealiacEateryOverviewAction::class)->handle($record));
+                if ($record instanceof NationwideBranch) {
+                    $eatery = $record->eatery;
+                    $branch = $record;
+                }
+
+                $eatery->sealiacOverview?->update(['invalidated' => true]);
+                $branch?->sealiacOverview?->update(['invalidated' => true]);
+
+                dispatch(fn () => app(GetSealiacEateryOverviewAction::class)->handle($eatery, $branch));
 
                 Notification::make()
                     ->title('Sealiac overviews are queued to be generated')

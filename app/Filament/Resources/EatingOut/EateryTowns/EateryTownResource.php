@@ -10,7 +10,6 @@ use App\Filament\Resources\EatingOut\EateryTowns\Pages\EditEateryTown;
 use App\Filament\Resources\EatingOut\EateryTowns\Pages\ListEateryTowns;
 use App\Filament\Resources\EatingOut\EateryTowns\RelationManagers\AreasRelationManager;
 use App\Filament\Resources\EatingOut\EateryTowns\RelationManagers\EateriesRelationManager;
-use App\Filament\Resources\EatingOut\EateryTowns\RelationManagers\NationwideBranchesRelationManager;
 use App\Filament\Resources\EatingOut\EateryTowns\Schemas\EateryTownForm;
 use App\Filament\Resources\EatingOut\EateryTowns\Tables\EateryTownsTable;
 use App\Models\EatingOut\EateryTown;
@@ -48,7 +47,6 @@ class EateryTownResource extends BaseResource
     {
         return [
             EateriesRelationManager::class,
-            NationwideBranchesRelationManager::class,
             AreasRelationManager::class,
         ];
     }

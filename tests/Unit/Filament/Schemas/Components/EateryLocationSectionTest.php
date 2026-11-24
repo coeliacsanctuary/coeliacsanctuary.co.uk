@@ -7,7 +7,7 @@ namespace Tests\Unit\Filament\Schemas\Components;
 use App\DataObjects\EatingOut\LatLng;
 use App\Filament\Resources\EatingOut\Eateries\Pages\CreateEatery;
 use App\Filament\Resources\EatingOut\Eateries\Pages\EditEatery;
-use App\Filament\Resources\EatingOut\NationwideBranches\Pages\CreateNationwideBranch;
+use App\Filament\Resources\EatingOut\Eateries\RelationManagers\BranchesRelationManager;
 use App\Filament\Support\FindEateryLocation;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
@@ -267,11 +267,14 @@ class EateryLocationSectionTest extends TestCase
     #[Test]
     public function itFillsTheLocationOnTheBranchForm(): void
     {
-        Livewire::test(CreateNationwideBranch::class)
-            ->assertOk()
-            ->set('data.location', '1|2|2|')
-            ->assertSet('data.county_id', 2)
-            ->assertSet('data.town_id', 2);
+        Livewire::test(BranchesRelationManager::class, [
+            'ownerRecord' => $this->create(Eatery::class),
+            'pageClass' => EditEatery::class,
+        ])
+            ->mountAction(TestAction::make('create')->table())
+            ->set('mountedActions.0.data.location', '1|2|2|')
+            ->assertSet('mountedActions.0.data.county_id', 2)
+            ->assertSet('mountedActions.0.data.town_id', 2);
     }
 
     protected function createPage(): Testable

@@ -12,7 +12,6 @@ use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
 use App\Filament\Resources\EatingOut\EateryReports\EateryReportResource;
 use App\Filament\Resources\EatingOut\EateryReviews\EateryReviewResource;
 use App\Filament\Resources\EatingOut\EateryTowns\EateryTownResource;
-use App\Filament\Resources\EatingOut\NationwideBranches\NationwideBranchResource;
 use App\Filament\Resources\MainSite\Announcements\AnnouncementResource;
 use App\Filament\Resources\MainSite\Blogs\BlogResource;
 use App\Filament\Resources\MainSite\Collections\CollectionResource;
@@ -54,7 +53,6 @@ class Menu
             NavigationGroup::make('Eating Out Locations')
                 ->items([
                     ...EateryResource::getNavigationItems(),
-                    ...NationwideBranchResource::getNavigationItems(),
                     ...EateryCountyResource::getNavigationItems(),
                     ...EateryTownResource::getNavigationItems(),
                     ...EateryAreaResource::getNavigationItems(),

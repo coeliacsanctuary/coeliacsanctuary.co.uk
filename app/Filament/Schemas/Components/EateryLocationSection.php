@@ -28,11 +28,11 @@ use Spatie\Geocoder\Facades\Geocoder;
 
 class EateryLocationSection
 {
-    public static function make(bool $isBranch = false, ?Eatery $fromChain = null): Section
+    public static function make(bool $isBranch = false): Section
     {
         return Section::make('Location')
             ->columnSpanFull()
-            ->schema(function () use ($isBranch, $fromChain): array {
+            ->schema(function () use ($isBranch): array {
                 $schema = [];
 
                 $isChain = fn (Get $get): bool => ! $isBranch && $get('is_nationwide');
@@ -51,13 +51,6 @@ class EateryLocationSection
                             $set('town_id', $state ? 529 : null);
                             $set('area_id', null);
                         });
-                }
-
-                if ($isBranch) {
-                    $schema[] = Select::make('wheretoeat_id')
-                        ->relationship('eatery', 'name', modifyQueryUsing: fn ($query) => $query->where('county_id', 1))
-                        ->default($fromChain?->id)
-                        ->disabled($fromChain instanceof Eatery);
                 }
 
                 return [
