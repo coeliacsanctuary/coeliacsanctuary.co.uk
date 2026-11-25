@@ -11,6 +11,7 @@ use App\Filament\Resources\EatingOut\EateryTowns\Pages\ListEateryTowns;
 use App\Filament\Resources\EatingOut\EateryTowns\RelationManagers\EateriesRelationManager;
 use App\Filament\Resources\EatingOut\EateryTowns\Schemas\EateryTownForm;
 use App\Filament\Resources\EatingOut\EateryTowns\Tables\EateryTownsTable;
+use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use BackedEnum;
 use Closure;
@@ -37,7 +38,19 @@ class EateryTownResource extends BaseResource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->whereHas('county', fn (Builder $query): Builder => $query->withoutGlobalScopes()->where('slug', '!=', 'london'));
+            ->whereHas('county', function (Builder $query): Builder {
+                /** @var Builder<EateryCounty> $query */
+                return static::constrainCounty($query->withoutGlobalScopes());
+            });
+    }
+
+    /**
+     * @param  Builder<EateryCounty>  $query
+     * @return Builder<EateryCounty>
+     */
+    protected static function constrainCounty(Builder $query): Builder
+    {
+        return $query->where('slug', '!=', 'london');
     }
 
     public static function resolveRecordRouteBinding(int|string $key, ?Closure $modifyQuery = null): ?Model

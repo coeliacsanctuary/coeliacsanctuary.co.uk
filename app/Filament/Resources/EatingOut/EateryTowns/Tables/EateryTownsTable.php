@@ -25,8 +25,9 @@ class EateryTownsTable
         $resource = $isBorough ? EateryBoroughResource::class : EateryTownResource::class;
 
         return $table
-            ->modifyQueryUsing(
-                fn (Builder $query): Builder => $query
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                /** @var Builder<EateryTown> $query */
+                return $query
                     ->where('slug', '!=', 'nationwide')
                     ->with([
                         'county' => fn ($query) => $query->withoutGlobalScopes(),
@@ -35,8 +36,8 @@ class EateryTownsTable
                     ->withCount([
                         'eateries' => fn (EateryBuilder $query): EateryBuilder => $query->where('live', true),
                         'nationwideBranches' => fn (NationwideBranchBuilder $query): NationwideBranchBuilder => $query->where('live', true),
-                    ])
-            )
+                    ]);
+            })
             ->defaultSort('town')
             ->recordUrl(fn (EateryTown $record): string => $resource::getUrl('edit', ['record' => $record]))
             ->columns([

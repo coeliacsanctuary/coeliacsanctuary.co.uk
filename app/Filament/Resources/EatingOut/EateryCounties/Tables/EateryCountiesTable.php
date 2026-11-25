@@ -22,16 +22,17 @@ class EateryCountiesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(
-                fn (Builder $query): Builder => $query
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                /** @var Builder<EateryCounty> $query */
+                return $query
                     ->where('slug', '!=', 'nationwide')
                     ->with(['country'])
                     ->withCount([
                         'towns',
                         'eateries' => fn (EateryBuilder $query): EateryBuilder => $query->where('live', true),
                         'nationwideBranches' => fn (NationwideBranchBuilder $query): NationwideBranchBuilder => $query->where('live', true),
-                    ])
-            )
+                    ]);
+            })
             ->defaultSort('county')
             ->recordUrl(fn (EateryCounty $record): string => EateryCountyResource::getUrl('edit', ['record' => $record]))
             ->columns([

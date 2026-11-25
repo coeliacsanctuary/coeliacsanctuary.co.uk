@@ -13,7 +13,6 @@ use App\Filament\Resources\EatingOut\EateryTowns\RelationManagers\EateriesRelati
 use App\Filament\Resources\EatingOut\EateryTowns\Schemas\EateryTownForm;
 use App\Filament\Resources\EatingOut\EateryTowns\Tables\EateryTownsTable;
 use App\Models\EatingOut\EateryCounty;
-use App\Models\EatingOut\EateryTown;
 use BackedEnum;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -28,9 +27,9 @@ class EateryBoroughResource extends EateryTownResource
 
     protected static ?string $navigationLabel = 'London Boroughs';
 
-    public static function getEloquentQuery(): Builder
+    protected static function constrainCounty(Builder $query): Builder
     {
-        return EateryTown::query()->withoutGlobalScopes()->where('county_id', static::londonId());
+        return $query->where('slug', 'london');
     }
 
     public static function londonId(): int

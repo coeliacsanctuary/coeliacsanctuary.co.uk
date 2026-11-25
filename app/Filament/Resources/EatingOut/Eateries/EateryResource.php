@@ -23,6 +23,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class EateryResource extends BaseResource
 {
@@ -52,6 +53,10 @@ class EateryResource extends BaseResource
         return static::withLocationAndCounts(parent::getEloquentQuery());
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     public static function withLocationAndCounts(Builder $query): Builder
     {
         return $query
