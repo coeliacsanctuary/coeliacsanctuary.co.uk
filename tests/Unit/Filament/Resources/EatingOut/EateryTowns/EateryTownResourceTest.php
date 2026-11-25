@@ -38,7 +38,7 @@ class EateryTownResourceTest extends TestCase
     #[Test]
     public function itOnlyIncludesTownsOutsideOfLondonIncludingThoseWithoutPlaces(): void
     {
-        $borough = $this->create(EateryTown::class, ['town' => 'Camden', 'slug' => 'camden', 'county_id' => $this->london->id]);
+        $this->create(EateryTown::class, ['town' => 'Camden', 'slug' => 'camden', 'county_id' => $this->london->id]);
 
         $this->assertTrue(EateryTownResource::getEloquentQuery()->sole()->is(EateryTown::query()->withoutGlobalScopes()->findOrFail(1)));
     }
