@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\EatingOut\EateryCounties\Tables;
 
+use App\Builders\EatingOut\EateryBuilder;
+use App\Builders\EatingOut\NationwideBranchBuilder;
 use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
 use App\Models\EatingOut\EateryCounty;
 use Filament\Actions\EditAction;
@@ -21,12 +23,12 @@ class EateryCountiesTable
     {
         return $table
             ->modifyQueryUsing(
-                fn (Builder $query) => $query
+                fn (Builder $query): Builder => $query
                     ->with(['country'])
                     ->withCount([
                         'towns',
-                        'eateries' => fn (Builder $query) => $query->where('live', true),
-                        'nationwideBranches' => fn (Builder $query) => $query->where('live', true),
+                        'eateries' => fn (EateryBuilder $query): EateryBuilder => $query->where('live', true),
+                        'nationwideBranches' => fn (NationwideBranchBuilder $query): NationwideBranchBuilder => $query->where('live', true),
                     ])
             )
             ->defaultSort('county')
