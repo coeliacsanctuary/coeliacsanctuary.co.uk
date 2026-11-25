@@ -7,6 +7,7 @@ namespace App\Filament\Resources\EatingOut\Eateries\Pages;
 use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\EatingOut\Eateries\Schemas\EateryOpeningTimes;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryAttractionRestaurant;
 use App\Models\EatingOut\EateryTown;
 use Filament\Resources\Pages\CreateRecord;
@@ -22,12 +23,16 @@ class CreateEatery extends CreateRecord
     #[Url]
     public ?int $town = null;
 
+    #[Url]
+    public ?int $area = null;
+
     protected function fillForm(): void
     {
         if ($this->replicate === null) {
             parent::fillForm();
 
             $this->fillLocationFromTown();
+            $this->fillLocationFromArea();
 
             return;
         }
@@ -73,6 +78,26 @@ class CreateEatery extends CreateRecord
         $this->data['country_id'] = $town->county?->country_id;
         $this->data['county_id'] = $town->county_id;
         $this->data['town_id'] = $town->id;
+    }
+
+    protected function fillLocationFromArea(): void
+    {
+        if ($this->area === null) {
+            return;
+        }
+
+        $area = EateryArea::query()
+            ->withoutGlobalScopes()
+            ->with([
+                'town' => fn ($query) => $query->withoutGlobalScopes(),
+                'town.county' => fn ($query) => $query->withoutGlobalScopes(),
+            ])
+            ->findOrFail($this->area);
+
+        $this->data['country_id'] = $area->town?->county?->country_id;
+        $this->data['county_id'] = $area->town?->county_id;
+        $this->data['town_id'] = $area->town_id;
+        $this->data['area_id'] = $area->id;
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

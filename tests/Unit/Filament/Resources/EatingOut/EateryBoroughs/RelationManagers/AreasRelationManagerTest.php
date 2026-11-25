@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources\EatingOut\EateryBoroughs\RelationManagers;
 
+use App\Filament\Resources\EatingOut\EateryAreas\EateryAreaResource;
 use App\Filament\Resources\EatingOut\EateryBoroughs\Pages\EditEateryBorough;
 use App\Filament\Resources\EatingOut\EateryBoroughs\RelationManagers\AreasRelationManager;
 use App\Models\EatingOut\EateryArea;
@@ -65,6 +66,15 @@ class AreasRelationManagerTest extends TestCase
     public function itCanAddAnArea(): void
     {
         $this->areasPanel()->assertActionVisible(TestAction::make('create')->table());
+    }
+
+    #[Test]
+    public function itPrefillsTheBoroughWhenAddingAnArea(): void
+    {
+        $this->areasPanel()->assertActionHasUrl(
+            TestAction::make('create')->table(),
+            EateryAreaResource::getUrl('create', ['borough' => $this->borough->id]),
+        );
     }
 
     protected function areasPanel(): Testable

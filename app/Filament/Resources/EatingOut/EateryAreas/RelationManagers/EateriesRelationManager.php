@@ -8,6 +8,7 @@ use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class EateriesRelationManager extends RelationManager
 {
@@ -18,8 +19,10 @@ class EateriesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => EateryResource::withLocationAndCounts($query->withoutGlobalScopes()))
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->url(fn (): string => EateryResource::getUrl('create', ['area' => $this->getOwnerRecord()->getKey()])),
             ]);
     }
 }

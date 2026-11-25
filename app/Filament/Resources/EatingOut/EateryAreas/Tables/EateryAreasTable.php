@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\EatingOut\EateryAreas\Tables;
 
+use App\Builders\EatingOut\EateryBuilder;
+use App\Builders\EatingOut\NationwideBranchBuilder;
+use App\Filament\Resources\EatingOut\EateryAreas\EateryAreaResource;
+use App\Filament\Resources\EatingOut\EateryAreas\Schemas\EateryAreaForm;
 use App\Models\EatingOut\EateryArea;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
@@ -18,19 +22,28 @@ class EateryAreasTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(
-                fn ($query) => $query
-                    ->withCount(['eateries', 'nationwideBranches'])
-                    ->orderBy('area')
-            )
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                /** @var Builder<EateryArea> $query */
+                return $query
+                    ->with(['town' => fn ($query) => $query->withoutGlobalScopes()])
+                    ->withCount([
+                        'eateries' => fn (EateryBuilder $query): EateryBuilder => $query->where('live', true),
+                        'nationwideBranches' => fn (NationwideBranchBuilder $query): NationwideBranchBuilder => $query->where('live', true),
+                    ]);
+            })
+            ->defaultSort('area')
+            ->recordUrl(fn (EateryArea $record): string => EateryAreaResource::getUrl('edit', ['record' => $record]))
             ->columns([
+                TextColumn::make('area')
+                    ->label('Name')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('town.town')->label('Borough'),
+
+                TextColumn::make('latlng')->label('Lat / Lng'),
+
                 SpatieMediaLibraryImageColumn::make('image')->collection('primary'),
-
-                TextColumn::make('area')->searchable(),
-
-                TextColumn::make('town.town')->label('Borough')->searchable(),
-
-                TextColumn::make('latlng'),
 
                 IconColumn::make('live')
                     ->getStateUsing(fn (EateryArea $record): bool => $record->eateries_count > 0 || $record->nationwide_branches_count > 0)
@@ -38,15 +51,13 @@ class EateryAreasTable
 
                 TextColumn::make('eateries_count')
                     ->label('Eateries')
-                    ->sortable(),
-
-                TextColumn::make('nationwide_branches_count')
-                    ->label('Nationwide Branches')
+                    ->numeric()
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('borough')
-                    ->relationship('town', 'town', fn (Builder $query) => $query->whereRelation('county', 'slug', 'london'))
+                SelectFilter::make('town_id')
+                    ->label('Borough')
+                    ->options(EateryAreaForm::boroughOptions(...))
                     ->searchable(),
             ])
             ->recordActions([

@@ -21,7 +21,8 @@ class AreasRelationManager extends RelationManager
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->withoutGlobalScopes())
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->url(fn (): string => EateryAreaResource::getUrl('create', ['borough' => $this->getOwnerRecord()->getKey()])),
             ]);
     }
 }

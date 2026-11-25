@@ -12,16 +12,37 @@ use App\Filament\Resources\EatingOut\EateryAreas\RelationManagers\EateriesRelati
 use App\Filament\Resources\EatingOut\EateryAreas\Schemas\EateryAreaForm;
 use App\Filament\Resources\EatingOut\EateryAreas\Tables\EateryAreasTable;
 use App\Models\EatingOut\EateryArea;
+use BackedEnum;
+use Closure;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class EateryAreaResource extends BaseResource
 {
     protected static ?string $model = EateryArea::class;
 
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMapPin;
+
     protected static ?string $recordTitleAttribute = 'area';
 
+    protected static ?string $recordRouteKeyName = 'id';
+
+    protected static ?string $modelLabel = 'area';
+
     protected static ?string $navigationLabel = 'London Areas';
+
+    public static function resolveRecordRouteBinding(int|string $key, ?Closure $modifyQuery = null): ?Model
+    {
+        $query = static::getRecordRouteBindingEloquentQuery();
+
+        if ($modifyQuery instanceof Closure) {
+            $query = $modifyQuery($query) ?? $query;
+        }
+
+        return $query->find($key);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -38,7 +59,7 @@ class EateryAreaResource extends BaseResource
         return [
             'index' => ListEateryAreas::route('/'),
             'create' => CreateEateryArea::route('/create'),
-            'edit' => EditEateryArea::route('/{record}/edit'),
+            'edit' => EditEateryArea::route('/{record:id}/edit'),
         ];
     }
 

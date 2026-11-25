@@ -7,6 +7,7 @@ namespace Tests\Unit\Filament\Resources\EatingOut\Eateries\Pages;
 use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\EatingOut\Eateries\Pages\CreateEatery;
 use App\Models\EatingOut\Eatery;
+use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\EatingOut\EateryFeature;
@@ -129,6 +130,21 @@ class CreateEateryTest extends TestCase
             ->assertSchemaComponentStateSet('country_id', 1)
             ->assertSchemaComponentStateSet('county_id', 2)
             ->assertSchemaComponentStateSet('town_id', 2)
+            ->assertSchemaComponentStateSet('type_id', 1);
+    }
+
+    #[Test]
+    public function itPrefillsTheLocationFromAnAreaWithoutPlacesAndKeepsTheDefaults(): void
+    {
+        $london = $this->create(EateryCounty::class, ['county' => 'London', 'slug' => 'london', 'country_id' => 1]);
+        $borough = $this->create(EateryTown::class, ['county_id' => $london->id]);
+        $area = $this->create(EateryArea::class, ['town_id' => $borough->id]);
+
+        Livewire::withQueryParams(['area' => $area->id])->test(CreateEatery::class)
+            ->assertSchemaComponentStateSet('country_id', 1)
+            ->assertSchemaComponentStateSet('county_id', $london->id)
+            ->assertSchemaComponentStateSet('town_id', $borough->id)
+            ->assertSchemaComponentStateSet('area_id', $area->id)
             ->assertSchemaComponentStateSet('type_id', 1);
     }
 
