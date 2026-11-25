@@ -10,4 +10,12 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateEateryCounty extends CreateRecord
 {
     protected static string $resource = EateryCountyResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        return [
+            ...$data,
+            'legacy' => '',
+        ];
+    }
 }

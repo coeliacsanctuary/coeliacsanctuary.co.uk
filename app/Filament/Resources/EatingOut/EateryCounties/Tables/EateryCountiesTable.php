@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\EatingOut\EateryCounties\Tables;
 
+use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
 use App\Models\EatingOut\EateryCounty;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class EateryCountiesTable
 {
@@ -18,18 +21,27 @@ class EateryCountiesTable
     {
         return $table
             ->modifyQueryUsing(
-                fn ($query) => $query
-                    ->where('id', '>', 1)
-                    ->withCount(['towns', 'eateries', 'nationwideBranches'])
+                fn (Builder $query) => $query
+                    ->with(['country'])
+                    ->withCount([
+                        'towns',
+                        'eateries' => fn (Builder $query) => $query->where('live', true),
+                        'nationwideBranches' => fn (Builder $query) => $query->where('live', true),
+                    ])
             )
+            ->defaultSort('county')
+            ->recordUrl(fn (EateryCounty $record): string => EateryCountyResource::getUrl('edit', ['record' => $record]))
             ->columns([
+                TextColumn::make('county')
+                    ->label('Name')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('country.country')->label('Country'),
+
+                TextColumn::make('latlng')->label('Lat / Lng'),
+
                 SpatieMediaLibraryImageColumn::make('image')->collection('primary'),
-
-                TextColumn::make('county')->searchable(),
-
-                TextColumn::make('country.country')->searchable(),
-
-                TextColumn::make('latlng'),
 
                 IconColumn::make('live')
                     ->getStateUsing(fn (EateryCounty $record): bool => $record->eateries_count > 0 || $record->nationwide_branches_count > 0)
@@ -37,14 +49,12 @@ class EateryCountiesTable
 
                 TextColumn::make('towns_count')
                     ->label('Towns')
+                    ->numeric()
                     ->sortable(),
 
                 TextColumn::make('eateries_count')
                     ->label('Eateries')
-                    ->sortable(),
-
-                TextColumn::make('nationwide_branches_count')
-                    ->label('Nationwide Branches')
+                    ->numeric()
                     ->sortable(),
             ])
             ->filters([
@@ -52,6 +62,8 @@ class EateryCountiesTable
                     ->relationship('country', 'country'),
             ])
             ->recordActions([
+                ViewAction::make(),
+
                 EditAction::make(),
             ]);
     }

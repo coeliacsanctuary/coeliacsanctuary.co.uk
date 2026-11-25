@@ -9,9 +9,9 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Unique;
 
 class EateryCountyForm
 {
@@ -23,31 +23,38 @@ class EateryCountyForm
                     ->columnSpanFull()
                     ->columns(1)
                     ->schema([
-                        Select::make('country_id')
-                            ->relationship('country', 'country')
-                            ->live()
-                            ->required(),
-
                         TextInput::make('county')
-                            ->required()
                             ->label('Name')
-                            ->live()
-                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                            ->required()
+                            ->maxLength(200)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state, string $operation): void {
+                                if ($operation !== 'create' || ($get('slug') ?? '') !== Str::slug((string) $old)) {
+                                    return;
+                                }
+
+                                $set('slug', Str::slug((string) $state));
+                            }),
 
                         TextInput::make('slug')
+                            ->visibleOn('create')
                             ->required()
-                            ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('country_id', $get('country_id'))),
+                            ->maxLength(200)
+                            ->unique(),
 
-                        TextInput::make('lat')
-                            ->label('Latitude'),
+                        Select::make('country_id')
+                            ->label('Country')
+                            ->relationship('country', 'country')
+                            ->required(),
 
-                        TextInput::make('lng')
-                            ->label('Longitude'),
+                        TextInput::make('latlng')
+                            ->label('Lat / Lng')
+                            ->nullable(),
 
                         SpatieMediaLibraryFileUpload::make('primary')
                             ->label('Image')
-                            ->required()
                             ->collection('primary')
+                            ->image()
                             ->imagePreviewHeight('176px'),
                     ]),
             ]);

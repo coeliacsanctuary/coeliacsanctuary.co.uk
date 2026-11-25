@@ -12,6 +12,7 @@ Ads.txt
 Sealiac Chat History
 Eateries
 Nationwide Branches
+Counties
 
 ## In progress
 Still to do with their own resources
