@@ -149,6 +149,14 @@ class CreateEateryTest extends TestCase
     }
 
     #[Test]
+    public function itPrefillsTheCuisineAndKeepsTheDefaults(): void
+    {
+        Livewire::withQueryParams(['cuisine' => 2])->test(CreateEatery::class)
+            ->assertSchemaComponentStateSet('cuisine_id', 2)
+            ->assertSchemaComponentStateSet('type_id', 1);
+    }
+
+    #[Test]
     public function itStoresTheOpeningTimes(): void
     {
         $this->createEatery([

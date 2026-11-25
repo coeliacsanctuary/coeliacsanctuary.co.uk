@@ -10,6 +10,7 @@ use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\EatingOut\EateryAreas\EateryAreaResource;
 use App\Filament\Resources\EatingOut\EateryBoroughs\EateryBoroughResource;
 use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
+use App\Filament\Resources\EatingOut\EateryCuisines\EateryCuisineResource;
 use App\Filament\Resources\EatingOut\EateryReports\EateryReportResource;
 use App\Filament\Resources\EatingOut\EateryReviews\EateryReviewResource;
 use App\Filament\Resources\EatingOut\EateryTowns\EateryTownResource;
@@ -58,6 +59,7 @@ class Menu
                     ...EateryTownResource::getNavigationItems(),
                     ...EateryBoroughResource::getNavigationItems(),
                     ...EateryAreaResource::getNavigationItems(),
+                    ...EateryCuisineResource::getNavigationItems(),
                 ]),
 
             NavigationGroup::make('Eating Out Feedback')
