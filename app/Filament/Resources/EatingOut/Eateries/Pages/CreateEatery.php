@@ -8,6 +8,7 @@ use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\EatingOut\Eateries\Schemas\EateryOpeningTimes;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryAttractionRestaurant;
+use App\Models\EatingOut\EateryTown;
 use Filament\Resources\Pages\CreateRecord;
 use Livewire\Attributes\Url;
 
@@ -18,10 +19,15 @@ class CreateEatery extends CreateRecord
     #[Url]
     public ?int $replicate = null;
 
+    #[Url]
+    public ?int $town = null;
+
     protected function fillForm(): void
     {
         if ($this->replicate === null) {
             parent::fillForm();
+
+            $this->fillLocationFromTown();
 
             return;
         }
@@ -51,6 +57,22 @@ class CreateEatery extends CreateRecord
         ]);
 
         $this->callHook('afterFill');
+    }
+
+    protected function fillLocationFromTown(): void
+    {
+        if ($this->town === null) {
+            return;
+        }
+
+        $town = EateryTown::query()
+            ->withoutGlobalScopes()
+            ->with(['county' => fn ($query) => $query->withoutGlobalScopes()])
+            ->findOrFail($this->town);
+
+        $this->data['country_id'] = $town->county?->country_id;
+        $this->data['county_id'] = $town->county_id;
+        $this->data['town_id'] = $town->id;
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

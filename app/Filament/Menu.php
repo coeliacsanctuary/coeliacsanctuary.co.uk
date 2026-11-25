@@ -8,6 +8,7 @@ use App\Filament\Pages\RefreshAdsTxt;
 use App\Filament\Resources\AskSealiac\AskSealiacChats\AskSealiacChatResource;
 use App\Filament\Resources\EatingOut\Eateries\EateryResource;
 use App\Filament\Resources\EatingOut\EateryAreas\EateryAreaResource;
+use App\Filament\Resources\EatingOut\EateryBoroughs\EateryBoroughResource;
 use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
 use App\Filament\Resources\EatingOut\EateryReports\EateryReportResource;
 use App\Filament\Resources\EatingOut\EateryReviews\EateryReviewResource;
@@ -55,6 +56,7 @@ class Menu
                     ...EateryResource::getNavigationItems(),
                     ...EateryCountyResource::getNavigationItems(),
                     ...EateryTownResource::getNavigationItems(),
+                    ...EateryBoroughResource::getNavigationItems(),
                     ...EateryAreaResource::getNavigationItems(),
                 ]),
 

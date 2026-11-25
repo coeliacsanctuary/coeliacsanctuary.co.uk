@@ -8,21 +8,48 @@ use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\EatingOut\EateryTowns\Pages\CreateEateryTown;
 use App\Filament\Resources\EatingOut\EateryTowns\Pages\EditEateryTown;
 use App\Filament\Resources\EatingOut\EateryTowns\Pages\ListEateryTowns;
-use App\Filament\Resources\EatingOut\EateryTowns\RelationManagers\AreasRelationManager;
 use App\Filament\Resources\EatingOut\EateryTowns\RelationManagers\EateriesRelationManager;
 use App\Filament\Resources\EatingOut\EateryTowns\Schemas\EateryTownForm;
 use App\Filament\Resources\EatingOut\EateryTowns\Tables\EateryTownsTable;
 use App\Models\EatingOut\EateryTown;
+use BackedEnum;
+use Closure;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class EateryTownResource extends BaseResource
 {
     protected static ?string $model = EateryTown::class;
 
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+
     protected static ?string $recordTitleAttribute = 'town';
 
+    protected static ?string $recordRouteKeyName = 'id';
+
+    protected static ?string $modelLabel = 'town';
+
     protected static ?string $navigationLabel = 'Towns';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('county', fn (Builder $query): Builder => $query->withoutGlobalScopes()->where('slug', '!=', 'london'));
+    }
+
+    public static function resolveRecordRouteBinding(int|string $key, ?Closure $modifyQuery = null): ?Model
+    {
+        $query = static::getRecordRouteBindingEloquentQuery();
+
+        if ($modifyQuery instanceof Closure) {
+            $query = $modifyQuery($query) ?? $query;
+        }
+
+        return $query->find($key);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -39,7 +66,7 @@ class EateryTownResource extends BaseResource
         return [
             'index' => ListEateryTowns::route('/'),
             'create' => CreateEateryTown::route('/create'),
-            'edit' => EditEateryTown::route('/{record}/edit'),
+            'edit' => EditEateryTown::route('/{record:id}/edit'),
         ];
     }
 
@@ -47,7 +74,6 @@ class EateryTownResource extends BaseResource
     {
         return [
             EateriesRelationManager::class,
-            AreasRelationManager::class,
         ];
     }
 }

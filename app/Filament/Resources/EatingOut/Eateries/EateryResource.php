@@ -49,7 +49,12 @@ class EateryResource extends BaseResource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
+        return static::withLocationAndCounts(parent::getEloquentQuery());
+    }
+
+    public static function withLocationAndCounts(Builder $query): Builder
+    {
+        return $query
             ->with([
                 'area' => fn ($query) => $query->withoutGlobalScopes(),
                 'town' => fn ($query) => $query->withoutGlobalScopes(),

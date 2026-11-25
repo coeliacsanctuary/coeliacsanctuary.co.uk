@@ -123,6 +123,16 @@ class CreateEateryTest extends TestCase
     }
 
     #[Test]
+    public function itPrefillsTheLocationFromATownWithoutPlacesAndKeepsTheDefaults(): void
+    {
+        Livewire::withQueryParams(['town' => 2])->test(CreateEatery::class)
+            ->assertSchemaComponentStateSet('country_id', 1)
+            ->assertSchemaComponentStateSet('county_id', 2)
+            ->assertSchemaComponentStateSet('town_id', 2)
+            ->assertSchemaComponentStateSet('type_id', 1);
+    }
+
+    #[Test]
     public function itStoresTheOpeningTimes(): void
     {
         $this->createEatery([

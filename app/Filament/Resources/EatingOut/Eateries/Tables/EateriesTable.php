@@ -11,6 +11,7 @@ use App\Models\EatingOut\Eatery;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -25,7 +26,7 @@ class EateriesTable
     {
         return $table
             ->modifyQueryUsing(
-                fn (Builder $query, ListEateries $livewire) => $query
+                fn (Builder $query, ListEateries|RelationManager $livewire) => $query
                     ->addSelect('wheretoeat.*')
                     ->selectRaw('(select country from wheretoeat_countries where wheretoeat_countries.id = wheretoeat.country_id) as order_country')
                     ->selectRaw('(select county from wheretoeat_counties where wheretoeat_counties.id = wheretoeat.county_id) as order_county')

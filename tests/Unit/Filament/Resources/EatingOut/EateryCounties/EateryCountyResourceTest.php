@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Filament\Resources\EatingOut\EateryCounties;
 
 use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
+use App\Filament\Resources\EatingOut\EateryCounties\RelationManagers\BoroughsRelationManager;
 use App\Filament\Resources\EatingOut\EateryCounties\RelationManagers\TownsRelationManager;
 use App\Models\User;
 use Database\Seeders\EateryScaffoldingSeeder;
@@ -54,9 +55,9 @@ class EateryCountyResourceTest extends TestCase
     }
 
     #[Test]
-    public function itOnlyHasATownsPanel(): void
+    public function itHasTownsAndBoroughsPanels(): void
     {
-        $this->assertSame([TownsRelationManager::class], EateryCountyResource::getRelations());
+        $this->assertSame([TownsRelationManager::class, BoroughsRelationManager::class], EateryCountyResource::getRelations());
     }
 
     #[Test]

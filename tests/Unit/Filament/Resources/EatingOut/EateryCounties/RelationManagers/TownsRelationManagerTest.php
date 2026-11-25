@@ -7,6 +7,7 @@ namespace Tests\Unit\Filament\Resources\EatingOut\EateryCounties\RelationManager
 use App\Filament\Resources\EatingOut\EateryCounties\Pages\EditEateryCounty;
 use App\Filament\Resources\EatingOut\EateryCounties\Pages\ViewEateryCounty;
 use App\Filament\Resources\EatingOut\EateryCounties\RelationManagers\TownsRelationManager;
+use App\Filament\Resources\EatingOut\EateryTowns\EateryTownResource;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
 use App\Models\User;
@@ -83,11 +84,20 @@ class TownsRelationManagerTest extends TestCase
     }
 
     #[Test]
-    public function itCallsThemBoroughsInLondon(): void
+    public function itIsNotShownForLondon(): void
     {
         $london = $this->create(EateryCounty::class, ['county' => 'London', 'slug' => 'london']);
 
-        $this->assertLabels($london, 'Borough');
+        $this->assertFalse(TownsRelationManager::canViewForRecord($london, ViewEateryCounty::class));
+    }
+
+    #[Test]
+    public function itPrefillsTheCountyWhenAddingATown(): void
+    {
+        $this->townsPanel($this->county)->assertActionHasUrl(
+            TestAction::make('create')->table(),
+            EateryTownResource::getUrl('create', ['county' => $this->county->id]),
+        );
     }
 
     protected function assertLabels(EateryCounty $county, string $label): void

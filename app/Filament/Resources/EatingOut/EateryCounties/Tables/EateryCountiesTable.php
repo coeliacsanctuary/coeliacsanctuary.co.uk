@@ -24,6 +24,7 @@ class EateryCountiesTable
         return $table
             ->modifyQueryUsing(
                 fn (Builder $query): Builder => $query
+                    ->where('slug', '!=', 'nationwide')
                     ->with(['country'])
                     ->withCount([
                         'towns',

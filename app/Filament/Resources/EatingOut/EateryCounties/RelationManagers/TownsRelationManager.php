@@ -18,21 +18,17 @@ class TownsRelationManager extends RelationManager
 
     protected static ?string $relatedResource = EateryTownResource::class;
 
+    protected static ?string $title = 'Towns';
+
     public function table(Table $table): Table
     {
-        /** @var EateryCounty $county */
-        $county = $this->getOwnerRecord();
-
-        $isLondon = $county->slug === 'london';
-
-        $table->getColumn('town')?->label($isLondon ? 'Borough' : 'Town');
+        $table->getColumn('town')?->label('Town');
 
         return $table
-            ->modelLabel($isLondon ? 'borough' : 'town')
-            ->pluralModelLabel($isLondon ? 'boroughs' : 'towns')
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes())
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->url(fn (): string => EateryTownResource::getUrl('create', ['county' => $this->getOwnerRecord()->getKey()])),
             ]);
     }
 
@@ -42,8 +38,8 @@ class TownsRelationManager extends RelationManager
     }
 
     /** @param EateryCounty $ownerRecord */
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return $ownerRecord->slug === 'london' ? 'Boroughs' : 'Towns';
+        return $ownerRecord->slug !== 'london';
     }
 }

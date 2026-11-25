@@ -37,9 +37,13 @@ class EateryCountiesTableTest extends TestCase
     }
 
     #[Test]
-    public function itListsCountyOneWhichIsTheNationwideCounty(): void
+    public function itHidesNationwide(): void
     {
-        $this->listCounties()->assertCanSeeTableRecords([$this->county()]);
+        $nationwide = $this->create(EateryCounty::class, ['county' => 'Nationwide', 'slug' => 'nationwide']);
+
+        $this->listCounties()
+            ->assertCanSeeTableRecords([$this->county()])
+            ->assertCanNotSeeTableRecords([$nationwide]);
     }
 
     #[Test]

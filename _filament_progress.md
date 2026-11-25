@@ -13,6 +13,8 @@ Sealiac Chat History
 Eateries
 Nationwide Branches
 Counties
+Towns
+London Boroughs
 
 ## In progress
 Still to do with their own resources
