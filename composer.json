@@ -64,6 +64,7 @@
         "moneyphp/money": "^4.9.0",
         "nesbot/carbon": "^3.15.1",
         "outl1ne/nova-sortable": "^4.0.4",
+        "phiki/phiki": "^2.2",
         "saintsystems/nova-linkable-metrics": "^5.0.1",
         "skagarwal/google-places-api": "^3.2",
         "spatie/browsershot": "^5.4.2",
