@@ -17,6 +17,7 @@ Towns
 London Boroughs
 Magic Routes
 Eatery reviews
+Eatery Alerts
 
 ## In progress
 Still to do with their own resources

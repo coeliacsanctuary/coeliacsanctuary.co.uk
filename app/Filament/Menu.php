@@ -7,6 +7,7 @@ namespace App\Filament;
 use App\Filament\Pages\RefreshAdsTxt;
 use App\Filament\Resources\AskSealiac\AskSealiacChats\AskSealiacChatResource;
 use App\Filament\Resources\EatingOut\Eateries\EateryResource;
+use App\Filament\Resources\EatingOut\EateryAlerts\EateryAlertResource;
 use App\Filament\Resources\EatingOut\EateryAreas\EateryAreaResource;
 use App\Filament\Resources\EatingOut\EateryBoroughs\EateryBoroughResource;
 use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
@@ -71,6 +72,7 @@ class Menu
             NavigationGroup::make('Eating Out Feedback')
                 ->items([
                     ...EateryReviewResource::getNavigationItems(),
+                    ...EateryAlertResource::getNavigationItems(),
                     ...EateryReportResource::getNavigationItems(),
                 ]),
         ]);
