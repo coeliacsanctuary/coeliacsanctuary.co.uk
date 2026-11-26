@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use RuntimeException;
 
 class EateryMagicRouteForm
 {
@@ -83,7 +84,7 @@ class EateryMagicRouteForm
         $locationType = $get('location_type');
         $locationId = $get('location_id');
 
-        if ( ! $resolverType || ! $locationType || ! $locationId) {
+        if ( ! $resolverType instanceof EateryMagicRouteType || ! $locationType || ! $locationId) {
             $set('predicted_eateries', null);
 
             return;
@@ -93,6 +94,7 @@ class EateryMagicRouteForm
             EateryCounty::class => 'county_id',
             EateryTown::class => 'town_id',
             EateryArea::class => 'area_id',
+            default => throw new RuntimeException('Unsupported location type'),
         };
 
         $configuration = new Configuration([new Where("[parent].{$key}", '=', $locationId)]);
