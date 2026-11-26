@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property Eatery $eatery
+ */
 #[UseEloquentBuilder(EateryAlertBuilder::class)]
 #[Table(name: 'wheretoeat_alerts')]
 class EateryAlert extends Model

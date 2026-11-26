@@ -43,7 +43,7 @@ class EateryAlertsTable
             ->columns([
                 TextColumn::make('eatery_name')
                     ->label('Eatery')
-                    ->state(fn (EateryAlert $record): ?string => $record->eatery?->full_name)
+                    ->state(fn (EateryAlert $record): string => $record->eatery->full_name)
                     ->url(fn (EateryAlert $record): string => EateryResource::getUrl('view', ['record' => $record->wheretoeat_id])),
 
                 TextColumn::make('type')
@@ -53,7 +53,7 @@ class EateryAlertsTable
 
                 TextColumn::make('eatery.website')
                     ->label('Website')
-                    ->url(fn (EateryAlert $record): ?string => $record->eatery?->website)
+                    ->url(fn (EateryAlert $record): ?string => $record->eatery->website)
                     ->openUrlInNewTab(),
 
                 IconColumn::make('completed')->boolean(),
