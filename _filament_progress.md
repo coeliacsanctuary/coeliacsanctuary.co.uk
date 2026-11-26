@@ -16,6 +16,7 @@ Counties
 Towns
 London Boroughs
 Magic Routes
+Eatery reviews
 
 ## In progress
 Still to do with their own resources

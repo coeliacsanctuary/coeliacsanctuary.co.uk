@@ -12,15 +12,18 @@ use App\Models\Recipes\Recipe;
 use App\Notifications\CommentApprovedNotification;
 use App\Notifications\CommentRepliedNotification;
 use Filament\Actions\Action;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Notifications\AnonymousNotifiable;
 
@@ -30,27 +33,77 @@ class CommentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('commentable.title')
-                    ->label('Resource')
-                    ->prefix(fn (Comment $record): string => "{$record->what} - ")
-                    ->url(fn (Comment $record): ?string => match ($record->commentable_type) {
-                        Blog::class => BlogResource::getUrl('edit', ['record' => $record->commentable_id]),
-                        Recipe::class => RecipeResource::getUrl('edit', ['record' => $record->commentable_id]),
-                        default => null,
-                    })
+                Stack::make([
+                    Split::make([
+                        TextColumn::make('commentable.title')
+                            ->prefix(fn (Comment $record): string => "{$record->what} - ")
+                            ->url(fn (Comment $record): ?string => match ($record->commentable_type) {
+                                Blog::class => BlogResource::getUrl('edit', ['record' => $record->commentable_id]),
+                                Recipe::class => RecipeResource::getUrl('edit', ['record' => $record->commentable_id]),
+                                default => null,
+                            })
+                            ->size(TextSize::Large)
+                            ->weight(FontWeight::Bold)
+                            ->visible(fn ($livewire): bool => ! $livewire instanceof RelationManager),
+
+                        TextColumn::make('approved')
+                            ->badge()
+                            ->formatStateUsing(fn (bool $state): string => $state ? 'Approved' : 'Pending')
+                            ->color(fn (bool $state): string => $state ? 'success' : 'danger')
+                            ->alignEnd()
+                            ->grow(false),
+                    ]),
+
+                    Split::make([
+                        TextColumn::make('name')
+                            ->icon(Heroicon::OutlinedUser)
+                            ->color('gray')
+                            ->size(TextSize::Small)
+                            ->grow(false),
+
+                        TextColumn::make('email')
+                            ->icon(Heroicon::OutlinedEnvelope)
+                            ->color('gray')
+                            ->size(TextSize::Small)
+                            ->copyable()
+                            ->grow(false),
+
+                        TextColumn::make('created_at')
+                            ->prefix('Submitted ')
+                            ->dateTime()
+                            ->color('gray')
+                            ->size(TextSize::Small)
+                            ->grow(false),
+                    ])->from('md'),
+
+                    TextColumn::make('comment')->wrap(),
+                ])->space(3),
+
+                Panel::make([
+                    Stack::make([
+                        TextColumn::make('reply.comment_reply')
+                            ->icon(Heroicon::ArrowUturnLeft)
+                            ->wrap(),
+
+                        TextColumn::make('reply.created_at')
+                            ->prefix('Replied ')
+                            ->dateTime()
+                            ->color('gray')
+                            ->size(TextSize::Small),
+                    ])->space(2),
+                ])->visible(fn (?Comment $record): bool => $record?->reply !== null),
+            ])
+            ->contentGrid(['md' => 1])
+            ->filters([
+                TernaryFilter::make('approved'),
+
+                SelectFilter::make('commentable_type')
+                    ->label('Type')
+                    ->options([
+                        Blog::class => 'Blog',
+                        Recipe::class => 'Recipe',
+                    ])
                     ->visible(fn ($livewire): bool => ! $livewire instanceof RelationManager),
-
-                TextColumn::make('name'),
-
-                TextColumn::make('comment')->wrap(),
-
-                IconColumn::make('has_reply')
-                    ->state(fn (Comment $record): bool => $record->reply !== null)
-                    ->boolean(),
-
-                IconColumn::make('approved')->boolean(),
-
-                TextColumn::make('created_at')->label('Added')->dateTime(),
             ])
             ->recordActions([
                 Action::make('approve')
@@ -82,20 +135,7 @@ class CommentsTable
                             ->notify(new CommentRepliedNotification($reply));
                     }),
 
-                Action::make('view-reply')
-                    ->label('View Reply')
-                    ->icon(Heroicon::Eye)
-                    ->schema([
-                        TextEntry::make('reply.comment_reply')->label('Reply'),
-                    ])
-                    ->visible(fn (Comment $record): bool => $record->reply !== null),
-
                 DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ]);
     }
 }
