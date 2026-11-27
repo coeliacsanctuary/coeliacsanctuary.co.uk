@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\EatingOut\Eateries\Schemas;
 
 use App\Enums\EatingOut\EateryType;
+use App\Filament\Resources\EatingOut\Eateries\Pages\CreateEatery;
 use App\Filament\Schemas\Components\EateryLocationSection;
 use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryVenueType;
@@ -16,12 +17,14 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Unique;
 
 class EateryForm
@@ -30,6 +33,13 @@ class EateryForm
     {
         return $schema
             ->components([
+                Callout::make(fn (CreateEatery $livewire): string => $livewire->recommendationAiData()?->is_eligible ? '✓ Eligible for adding' : '✗ Not eligible')
+                    ->description(fn (CreateEatery $livewire): ?HtmlString => $livewire->recommendationAiData()?->explanation ? str($livewire->recommendationAiData()->explanation)->markdown(['html_input' => 'escape'])->toHtmlString() : null)
+                    ->status(fn (CreateEatery $livewire): string => $livewire->recommendationAiData()?->is_eligible ? 'success' : 'danger')
+                    ->visible(fn ($livewire): bool => $livewire instanceof CreateEatery && $livewire->recommendationAiData()?->completed_at !== null)
+                    ->key('recommendation_eligibility')
+                    ->columnSpanFull(),
+
                 Grid::make()
                     ->columns(5)
                     ->columnSpanFull()

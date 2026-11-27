@@ -10,10 +10,17 @@ use App\Models\EatingOut\Eatery;
 use App\Models\EatingOut\EateryArea;
 use App\Models\EatingOut\EateryCounty;
 use App\Models\EatingOut\EateryTown;
+use App\Models\EatingOut\EateryCuisine;
 use App\Models\EatingOut\EateryFeature;
+use App\Models\EatingOut\EateryRecommendation;
+use App\Models\EatingOut\EateryRecommendationAiData;
+use App\Models\EatingOut\EateryVenueType;
 use App\Models\User;
+use App\Notifications\EatingOut\EateryRecommendationAddedNotification;
 use Database\Seeders\EateryScaffoldingSeeder;
 use Filament\Facades\Filament;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -182,6 +189,135 @@ class CreateEateryTest extends TestCase
         $this->createEatery();
 
         $this->assertNull($this->createdEatery()->openingTimes);
+    }
+
+    #[Test]
+    public function itPrefillsFromARecommendationWithoutAiData(): void
+    {
+        $recommendation = $this->create(EateryRecommendation::class, [
+            'place_name' => 'The Recommended Cafe',
+            'place_location' => '1 Market Street, Crewe',
+            'place_web_address' => 'https://recommended.example.com',
+            'place_venue_type_id' => 2,
+            'place_details' => 'Great gluten free cakes.',
+        ]);
+
+        Livewire::withQueryParams(['recommendation' => $recommendation->id])->test(CreateEatery::class)
+            ->assertSchemaComponentStateSet('name', 'The Recommended Cafe')
+            ->assertSchemaComponentStateSet('address', '1 Market Street, Crewe')
+            ->assertSchemaComponentStateSet('website', 'https://recommended.example.com')
+            ->assertSchemaComponentStateSet('venue_type_id', 2)
+            ->assertSchemaComponentStateSet('info', 'Great gluten free cakes.')
+            ->assertSchemaComponentStateSet('type_id', 1)
+            ->assertSchemaComponentHidden('recommendation_eligibility');
+    }
+
+    #[Test]
+    public function itPrefillsFromARecommendationsAiData(): void
+    {
+        $recommendation = $this->create(EateryRecommendation::class, ['place_details' => 'Great gluten free cakes.']);
+
+        $venueType = EateryVenueType::query()->findOrFail(3);
+        $cuisine = EateryCuisine::query()->findOrFail(2);
+        $feature = EateryFeature::query()->firstOrFail();
+
+        $this->build(EateryRecommendationAiData::class)->on($recommendation)->create([
+            'place_name' => 'The AI Cafe',
+            'place_address' => '2 High Street, Truro',
+            'place_country' => 'England',
+            'place_county' => 'Cornwall',
+            'place_town' => 'Truro',
+            'latitude' => '50.26',
+            'longitude' => '-5.05',
+            'phone_number' => '01872 123456',
+            'website' => 'https://ai.example.com',
+            'facebook' => 'https://facebook.com/ai',
+            'instagram' => 'https://instagram.com/ai',
+            'eatery_type' => 'Hotel',
+            'venue_type' => $venueType->venue_type,
+            'cuisine' => $cuisine->cuisine,
+            'info' => 'An AI summary.',
+            'features' => [$feature->feature],
+            'completed_at' => now(),
+        ]);
+
+        Livewire::withQueryParams(['recommendation' => $recommendation->id])->test(CreateEatery::class)
+            ->assertSchemaComponentStateSet('name', 'The AI Cafe')
+            ->assertSchemaComponentStateSet('address', '2 High Street, Truro')
+            ->assertSchemaComponentStateSet('country_id', 1)
+            ->assertSchemaComponentStateSet('county_id', 2)
+            ->assertSchemaComponentStateSet('town_id', 2)
+            ->assertSchemaComponentStateSet('lat', '50.26')
+            ->assertSchemaComponentStateSet('lng', '-5.05')
+            ->assertSchemaComponentStateSet('map', ['lat' => 50.26, 'lng' => -5.05])
+            ->assertSchemaComponentStateSet('phone', '01872 123456')
+            ->assertSchemaComponentStateSet('website', 'https://ai.example.com')
+            ->assertSchemaComponentStateSet('facebook_url', 'https://facebook.com/ai')
+            ->assertSchemaComponentStateSet('instagram_url', 'https://instagram.com/ai')
+            ->assertSchemaComponentStateSet('type_id', 3)
+            ->assertSchemaComponentStateSet('venue_type_id', 3)
+            ->assertSchemaComponentStateSet('cuisine_id', 2)
+            ->assertSchemaComponentStateSet('info', "An AI summary.\n\nSubmitted Data:\n\nGreat gluten free cakes.")
+            ->assertSchemaComponentStateSet('features', [$feature->id]);
+    }
+
+    #[Test]
+    public function itShowsTheAiEligibilityForARecommendation(): void
+    {
+        $recommendation = $this->create(EateryRecommendation::class);
+
+        $this->build(EateryRecommendationAiData::class)->on($recommendation)->create(['completed_at' => now()]);
+
+        Livewire::withQueryParams(['recommendation' => $recommendation->id])->test(CreateEatery::class)
+            ->assertSchemaComponentVisible('recommendation_eligibility');
+    }
+
+    #[Test]
+    public function itDoesNotShowTheAiEligibilityWhileTheAiCheckIsInProgress(): void
+    {
+        $recommendation = $this->create(EateryRecommendation::class);
+
+        $this->build(EateryRecommendationAiData::class)->on($recommendation)->create(['completed_at' => null]);
+
+        Livewire::withQueryParams(['recommendation' => $recommendation->id])->test(CreateEatery::class)
+            ->assertSchemaComponentHidden('recommendation_eligibility');
+    }
+
+    #[Test]
+    public function itCompletesTheRecommendationAndEmailsTheUserAfterCreating(): void
+    {
+        Notification::fake();
+
+        $recommendation = $this->create(EateryRecommendation::class);
+
+        Livewire::withQueryParams(['recommendation' => $recommendation->id])->test(CreateEatery::class)
+            ->fillForm([
+                'name' => 'The Gluten Free Cafe',
+                'location' => '1|2|2|',
+                'address' => "1 High Street\nCrewe\nCW1 2AB",
+                'lat' => 53.0977,
+                'lng' => -2.4426,
+                'type_id' => 1,
+                'venue_type_id' => 1,
+                'cuisine_id' => 1,
+                'info' => 'A lovely little cafe.',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertTrue($recommendation->refresh()->completed);
+
+        Notification::assertSentTo(new AnonymousNotifiable(), EateryRecommendationAddedNotification::class);
+    }
+
+    #[Test]
+    public function itDoesNotSendTheRecommendationEmailWhenNotCreatedFromARecommendation(): void
+    {
+        Notification::fake();
+
+        $this->createEatery();
+
+        Notification::assertNothingSent();
     }
 
     protected function createEatery(array $overrides = []): Testable

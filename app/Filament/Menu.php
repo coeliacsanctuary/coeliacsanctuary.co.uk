@@ -13,6 +13,7 @@ use App\Filament\Resources\EatingOut\EateryBoroughs\EateryBoroughResource;
 use App\Filament\Resources\EatingOut\EateryCounties\EateryCountyResource;
 use App\Filament\Resources\EatingOut\EateryCuisines\EateryCuisineResource;
 use App\Filament\Resources\EatingOut\EateryMagicRoutes\EateryMagicRouteResource;
+use App\Filament\Resources\EatingOut\EateryRecommendations\EateryRecommendationResource;
 use App\Filament\Resources\EatingOut\EateryReports\EateryReportResource;
 use App\Filament\Resources\EatingOut\EateryReviews\EateryReviewResource;
 use App\Filament\Resources\EatingOut\EaterySuggestedEdits\EaterySuggestedEditResource;
@@ -76,6 +77,11 @@ class Menu
                     ...EateryAlertResource::getNavigationItems(),
                     ...EateryReportResource::getNavigationItems(),
                     ...EaterySuggestedEditResource::getNavigationItems(),
+                ]),
+
+            NavigationGroup::make('Eating Out Recommendations')
+                ->items([
+                    ...EateryRecommendationResource::getNavigationItems(),
                 ]),
         ]);
     }

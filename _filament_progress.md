@@ -20,6 +20,7 @@ Eatery reviews
 Eatery Alerts
 Eatery Reports
 Suggested Edits
+Place recomendations
 
 ## In progress
 Still to do with their own resources
