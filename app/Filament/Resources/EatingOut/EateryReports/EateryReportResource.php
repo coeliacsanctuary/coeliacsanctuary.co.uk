@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\EatingOut\EateryReports;
 
+use App\Filament\Resources\BaseResource;
 use App\Filament\Resources\EatingOut\EateryReports\Pages\ListEateryReports;
 use App\Filament\Resources\EatingOut\EateryReports\Tables\EateryReportsTable;
 use App\Models\EatingOut\EateryReport;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
-class EateryReportResource extends Resource
+class EateryReportResource extends BaseResource
 {
     protected static ?string $model = EateryReport::class;
 
@@ -32,7 +32,7 @@ class EateryReportResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = EateryReport::query()->withoutGlobalScopes()->where('completed', false)->where('ignored', false)->count();
+        $count = EateryReport::query()->where('completed', false)->where('ignored', false)->count();
 
         if ($count > 0) {
             return (string) $count;
