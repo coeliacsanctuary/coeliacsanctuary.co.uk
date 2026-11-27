@@ -155,29 +155,30 @@ class CreateEatery extends CreateRecord
         $latitude = $aiData?->latitude;
         $longitude = $aiData?->longitude;
 
-        $this->data = [
-            ...$this->data,
-            ...array_filter([
-                'name' => $aiData->place_name ?? $recommendation->place_name,
-                'address' => $aiData->place_address ?? $recommendation->place_location,
-                'country_id' => $this->resolveRelatedId($aiData?->place_country, null, EateryCountry::class, 'country'),
-                'county_id' => $this->resolveRelatedId($aiData?->place_county, null, EateryCounty::class, 'county'),
-                'town_id' => $this->resolveRelatedId($aiData?->place_town, null, EateryTown::class, 'town'),
-                'area_id' => $this->resolveRelatedId($aiData?->place_area, null, EateryArea::class, 'area'),
-                'lat' => $latitude,
-                'lng' => $longitude,
-                'map' => $latitude !== null && $longitude !== null ? ['lat' => (float) $latitude, 'lng' => (float) $longitude] : null,
-                'phone' => $aiData?->phone_number,
-                'website' => $aiData->website ?? $recommendation->place_web_address,
-                'facebook_url' => $aiData?->facebook,
-                'instagram_url' => $aiData?->instagram,
-                'type_id' => collect(EateryType::cases())->first(fn (EateryType $type): bool => $type->name() === $aiData?->eatery_type)?->value,
-                'venue_type_id' => $this->resolveRelatedId($aiData?->venue_type, $recommendation->place_venue_type_id, EateryVenueType::class, 'venue_type'),
-                'cuisine_id' => $this->resolveRelatedId($aiData?->cuisine, null, EateryCuisine::class, 'cuisine'),
-                'info' => $aiData?->info ? "{$aiData->info}\n\nSubmitted Data:\n\n{$recommendation->place_details}" : $recommendation->place_details,
-                'features' => $aiData?->features ? EateryFeature::query()->whereIn('feature', $aiData->features)->pluck('id')->all() : null,
-            ], fn (mixed $value): bool => $value !== null),
-        ];
+        $prefill = array_filter([
+            'name' => $aiData->place_name ?? $recommendation->place_name,
+            'address' => $aiData->place_address ?? $recommendation->place_location,
+            'country_id' => $this->resolveRelatedId($aiData?->place_country, null, EateryCountry::class, 'country'),
+            'county_id' => $this->resolveRelatedId($aiData?->place_county, null, EateryCounty::class, 'county'),
+            'town_id' => $this->resolveRelatedId($aiData?->place_town, null, EateryTown::class, 'town'),
+            'area_id' => $this->resolveRelatedId($aiData?->place_area, null, EateryArea::class, 'area'),
+            'lat' => $latitude,
+            'lng' => $longitude,
+            'map' => $latitude !== null && $longitude !== null ? ['lat' => (float) $latitude, 'lng' => (float) $longitude] : null,
+            'phone' => $aiData?->phone_number,
+            'website' => $aiData->website ?? $recommendation->place_web_address,
+            'facebook_url' => $aiData?->facebook,
+            'instagram_url' => $aiData?->instagram,
+            'type_id' => collect(EateryType::cases())->first(fn (EateryType $type): bool => $type->name() === $aiData?->eatery_type)?->value,
+            'venue_type_id' => $this->resolveRelatedId($aiData?->venue_type, $recommendation->place_venue_type_id, EateryVenueType::class, 'venue_type'),
+            'cuisine_id' => $this->resolveRelatedId($aiData?->cuisine, null, EateryCuisine::class, 'cuisine'),
+            'info' => $aiData?->info ? "{$aiData->info}\n\nSubmitted Data:\n\n{$recommendation->place_details}" : $recommendation->place_details,
+            'features' => $aiData?->features ? EateryFeature::query()->whereIn('feature', $aiData->features)->pluck('id')->all() : null,
+        ], fn (mixed $value): bool => $value !== null);
+
+        foreach ($prefill as $key => $value) {
+            $this->data[$key] = $value;
+        }
     }
 
     /** @param class-string<Model> $model */
