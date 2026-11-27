@@ -64,7 +64,7 @@ class EateryReportsTable
                             TextColumn::make('branch_full_name')
                                 ->state(fn (EateryReport $record): ?string => $record->branch?->full_name)
                                 ->color('gray')
-                                ->visible(fn ($livewire): bool => ! ($livewire instanceof RelationManager && $livewire->getOwnerRecord() instanceof NationwideBranch)),
+                                ->visible(fn ($livewire): bool => ! $livewire instanceof RelationManager || ! $livewire->getOwnerRecord() instanceof NationwideBranch),
                         ]),
 
                         TextColumn::make('status')

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property Eatery $eatery
+ */
 #[Table(name: 'wheretoeat_place_reports')]
 class EateryReport extends Model
 {
