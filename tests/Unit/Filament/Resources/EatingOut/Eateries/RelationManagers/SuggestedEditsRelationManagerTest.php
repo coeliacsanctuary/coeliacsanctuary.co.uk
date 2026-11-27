@@ -103,14 +103,11 @@ class SuggestedEditsRelationManagerTest extends TestCase
     }
 
     #[Test]
-    public function itOpensTheEdit(): void
+    public function itHidesTheEateryName(): void
     {
-        $edit = $this->edit();
+        $this->edit();
 
-        $this->panel()
-            ->mountAction(TestAction::make('view')->table($edit))
-            ->assertMountedActionModalSee('https://old.com')
-            ->assertMountedActionModalSee('https://new.com');
+        $this->panel()->assertTableColumnHidden('eatery_name');
     }
 
     #[Test]
@@ -133,8 +130,23 @@ class SuggestedEditsRelationManagerTest extends TestCase
             ['key' => 2, 'label' => $features[1]->feature, 'selected' => true],
         ])]);
 
-        $this->assertSame([$features[0]->feature], EaterySuggestedEditsTable::currentValue($this->loaded($edit)));
-        $this->assertSame([$features[1]->feature], EaterySuggestedEditsTable::suggestedValue($edit));
+        $allFeatures = EateryFeature::query()->orderBy('feature')->pluck('feature')->all();
+
+        $this->assertSame($allFeatures, EaterySuggestedEditsTable::currentValue($this->loaded($edit)));
+        $this->assertSame($allFeatures, EaterySuggestedEditsTable::suggestedValue($edit));
+
+        $this->assertTrue(EaterySuggestedEditsTable::featureIsSelected($this->loaded($edit), $features[0]->feature, suggested: false));
+        $this->assertFalse(EaterySuggestedEditsTable::featureIsSelected($this->loaded($edit), $features[1]->feature, suggested: false));
+        $this->assertFalse(EaterySuggestedEditsTable::featureIsSelected($edit, $features[0]->feature, suggested: true));
+        $this->assertTrue(EaterySuggestedEditsTable::featureIsSelected($edit, $features[1]->feature, suggested: true));
+    }
+
+    #[Test]
+    public function itDoesNotMarkFeaturesOnOtherFields(): void
+    {
+        $edit = $this->edit();
+
+        $this->assertNull(EaterySuggestedEditsTable::featureIsSelected($this->loaded($edit), 'https://new.com', suggested: true));
     }
 
     #[Test]

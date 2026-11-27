@@ -19,6 +19,7 @@ Magic Routes
 Eatery reviews
 Eatery Alerts
 Eatery Reports
+Suggested Edits
 
 ## In progress
 Still to do with their own resources

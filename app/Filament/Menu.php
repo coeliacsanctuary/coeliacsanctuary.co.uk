@@ -15,6 +15,7 @@ use App\Filament\Resources\EatingOut\EateryCuisines\EateryCuisineResource;
 use App\Filament\Resources\EatingOut\EateryMagicRoutes\EateryMagicRouteResource;
 use App\Filament\Resources\EatingOut\EateryReports\EateryReportResource;
 use App\Filament\Resources\EatingOut\EateryReviews\EateryReviewResource;
+use App\Filament\Resources\EatingOut\EaterySuggestedEdits\EaterySuggestedEditResource;
 use App\Filament\Resources\EatingOut\EateryTowns\EateryTownResource;
 use App\Filament\Resources\MainSite\Announcements\AnnouncementResource;
 use App\Filament\Resources\MainSite\Blogs\BlogResource;
@@ -74,6 +75,7 @@ class Menu
                     ...EateryReviewResource::getNavigationItems(),
                     ...EateryAlertResource::getNavigationItems(),
                     ...EateryReportResource::getNavigationItems(),
+                    ...EaterySuggestedEditResource::getNavigationItems(),
                 ]),
         ]);
     }
