@@ -146,7 +146,7 @@ class CreateEatery extends CreateRecord
     {
         $recommendation = $this->eateryRecommendation();
 
-        if ( ! $recommendation) {
+        if ( ! $recommendation instanceof EateryRecommendation) {
             return;
         }
 
@@ -198,7 +198,7 @@ class CreateEatery extends CreateRecord
     {
         $recommendation = $this->eateryRecommendation();
 
-        if ( ! $recommendation) {
+        if ( ! $recommendation instanceof EateryRecommendation) {
             return;
         }
 
